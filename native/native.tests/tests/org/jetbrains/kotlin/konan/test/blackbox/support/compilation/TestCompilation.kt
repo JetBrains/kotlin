@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.compilation
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.withOSVersion
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.*
@@ -74,12 +73,7 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
         // We use dev distribution for tests as it provides a full set of testing utilities,
         // which might not be available in user distribution.
         add("-Xllvm-variant=dev")
-        addFlattened(binaryOptions.entries) { (name, value) ->
-            if (HostManager.hostIsMingw)
-                listOf("-Xbinary=\"$name=$value\"")
-            else
-                listOf("-Xbinary=$name=$value")
-        }
+        addFlattened(binaryOptions.entries) { (name, value) -> listOf("-Xbinary=$name=$value") }
     }
 
     protected abstract fun applySpecificArgs(argsBuilder: ArgsBuilder)
