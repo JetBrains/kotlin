@@ -1,7 +1,7 @@
 FILE: K1.kt
-    public final class K2 : <ERROR TYPE REF: Loop in supertype: /K2 -> /J1> {
+    public final class K2 : <ERROR TYPE REF: Symbol not found for J1> {
         public constructor(): R|K2| {
-            super<R|J1|>()
+            super<<ERROR TYPE REF: Symbol not found for J1>>()
         }
 
         public final class Q : <ERROR TYPE REF: Symbol not found for Nested> {
