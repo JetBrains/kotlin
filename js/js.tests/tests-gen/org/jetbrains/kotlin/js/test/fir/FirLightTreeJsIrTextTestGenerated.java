@@ -2355,6 +2355,12 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
     public void testAllFilesPresentInFakeOverrides() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
+
+    @Test
+    @TestMetadata("setterVisibliity.kt")
+    public void testSetterVisibliity() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/setterVisibliity.kt");
+    }
   }
 
   @Nested

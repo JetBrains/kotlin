@@ -2098,6 +2098,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
     public void testAllFilesPresentInFakeOverrides() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
+
+    @TestMetadata("setterVisibliity.kt")
+    public void testSetterVisibliity() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/setterVisibliity.kt");
+    }
   }
 
   @TestMetadata("compiler/testData/ir/irText/firProblems")
