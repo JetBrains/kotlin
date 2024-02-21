@@ -351,56 +351,6 @@ open class KonanStandaloneTest : KonanTest() {
 }
 
 /**
- * This is another way to run the konanc compiler. It runs a konanc shell script.
- *
- * @note This task is not intended for regular testing as project.exec + a shell script isolate the jvm from IDEA.
- */
-open class KonanDriverTest : KonanStandaloneTest() {
-    override fun configure(config: Closure<*>): Task {
-        super.configure(config)
-        notCompatibleWithConfigurationCache("This task uses Task.project at execution time")
-        doFirst { konan() }
-        doBeforeBuild?.let { doFirst(it) }
-        return this
-    }
-
-    private fun konan() {
-        val dist = project.kotlinNativeDist
-        val konancDriver = if (HostManager.hostIsMingw) "konanc.bat" else "konanc"
-        val konanc = File("${dist.canonicalPath}/bin/$konancDriver").absolutePath
-
-        File(executable).parentFile.mkdirs()
-
-        val args = mutableListOf("-output", executable).apply {
-            if (project.testTarget != HostManager.host) {
-                add("-target")
-                add(project.testTarget.visibleName)
-            }
-            addAll(getSources().get())
-            addAll(flags)
-            addAll(project.globalTestArgs)
-
-            add("-Xpartial-linkage=enable")
-            add("-Xpartial-linkage-loglevel=error")
-        }
-
-        // run konanc compiler locally
-        runProcess(localExecutor(project), konanc, args).let {
-            it.print("Konanc compiler execution:")
-            project.file("$executable.compilation.log").run {
-                writeText(it.stdOut)
-                appendText(it.stdErr)
-            }
-            check(it.exitCode == 0) {
-                "Compiler failed with exit code ${it.exitCode}\n" +
-                        "stdOut: ${it.stdOut}\n" +
-                        "stdErr: ${it.stdErr}"
-            }
-        }
-    }
-}
-
-/**
  * Test task to check a library built by `-produce dynamic`.
  * C source code should contain `testlib` as a reference to a testing library.
  * It will be replaced then by the actual library name.

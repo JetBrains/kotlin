@@ -64,7 +64,7 @@ internal class TestRunSettings(parent: TestClassSettings, settings: Iterable<Any
 class SimpleTestClassSettings(parent: TestProcessSettings, settings: Iterable<Any>) : Settings(parent, settings)
 class SimpleTestRunSettings(parent: SimpleTestClassSettings, settings: Iterable<Any>) : Settings(parent, settings)
 
-internal val Settings.configurables: Configurables
+val Settings.configurables: Configurables
     get() {
         val distribution = Distribution(
             get<KotlinNativeHome>().dir.path,

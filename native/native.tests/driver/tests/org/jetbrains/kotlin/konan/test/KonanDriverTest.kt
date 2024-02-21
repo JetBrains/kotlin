@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.executor
 import org.jetbrains.kotlin.konan.test.blackbox.targets
 import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
-import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Tag
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import java.io.File
 import kotlin.test.assertFalse
@@ -46,6 +43,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
 
     private val testSuiteDir = File("native/native.tests/driver/testData")
     private val source = testSuiteDir.resolve("driver0.kt")
+    private val fileRC = testSuiteDir.resolve("File.rc")
 
     // Driver tests are flaky on macOS hosts.
     private fun `check for KT-67454`() {
@@ -184,6 +182,42 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             "Compiler's stdout must contain string: $expected\n" +
                     "STDOUT:\n${compilationResult.stdout}\nSTDERR:${compilationResult.stderr}"
         )
+        testRunSettings.executor.runProcess(kexe.absolutePath)
+    }
+
+    @Disabled("The test is not working on Windows Server 2019-based TeamCity agents for the unknown reason." +
+                "KT-49279: TODO: Try re-enable test after LLVM update >=13.0.0 where llvm-windres was added")
+    @Test
+    fun testKT50983() {
+        Assumptions.assumeTrue(HostManager.hostIsMingw)
+
+        val windres = File(testRunSettings.configurables.absoluteTargetToolchain).resolve("bin").resolve("windres")
+        val fileRes = buildDir.resolve("File.res")
+        runProcess(
+            windres.absolutePath,
+            fileRC.absolutePath, "-O", "coff", "-o", fileRes.absolutePath,
+            "--use-temp-file", // https://github.com/msys2/MINGW-packages/issues/534
+            // https://sourceforge.net/p/mingw-w64/discussion/723798/thread/bf2a464d/
+            "--preprocessor=x86_64-w64-mingw32-g++.exe",
+            "--preprocessor-arg=-E", "--preprocessor-arg=-xc-header", "--preprocessor-arg=-DRC_INVOKED",
+        ) {
+            timeout = Duration.parse("1m")
+        }
+
+        val module = TestModule.Exclusive("moduleName", emptySet(), emptySet(), emptySet())
+        val kexe = buildDir.resolve("kexe.kexe").also { it.delete() }
+        val compilation = ExecutableCompilation(
+            settings = testRunSettings,
+            freeCompilerArgs = TestCompilerArgs(listOf("-linker-option", fileRes.absolutePath)),
+            sourceModules = listOf(module),
+            extras = TestCase.NoTestRunnerExtras("main"),
+            dependencies = emptyList(),
+            expectedArtifact = TestCompilationArtifact.Executable(kexe),
+            tryPassSystemCacheDirectory = true
+        )
+        runProcess(konanc.absolutePath, source.absolutePath, *compilation.getCompilerArgs()) {
+            timeout = Duration.parse("5m")
+        }
         testRunSettings.executor.runProcess(kexe.absolutePath)
     }
 }

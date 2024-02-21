@@ -422,22 +422,6 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 }
 
-tasks.register("KT-50983", KonanDriverTest) {
-    // The test is not working on Windows Server 2019-based TeamCity agents for the unknown reason.
-    // TODO: Re-enable it after LLVM update where llvm-windres will be added.
-    enabled = false
-    def resFile = project.layout.buildDirectory.file("File.res").get().asFile
-    doBeforeBuild {
-        mkdir(resFile.parentFile)
-        exec {
-            commandLine UtilsKt.binaryFromToolchain(project, "windres")
-            args "$projectDir/windows/KT-50983/File.rc", "-O", "coff", "-o", resFile.toString()
-        }
-    }
-    source = "windows/KT-50983/main.kt"
-    flags = ['-linker-option', resFile.toString()]
-}
-
 standaloneTest("kt51302") {
     enabled = project.target.name == PlatformInfo.hostName
     source = "serialization/KT-51302/main.kt"
