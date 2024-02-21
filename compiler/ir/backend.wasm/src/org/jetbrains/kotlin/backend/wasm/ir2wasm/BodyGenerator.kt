@@ -496,12 +496,7 @@ class BodyGenerator(
         call.dispatchReceiver?.let { generateExpression(it) }
         call.extensionReceiver?.let { generateExpression(it) }
         for (i in 0 until call.valueArgumentsCount) {
-            val valueArgument = call.getValueArgument(i)
-            if (valueArgument == null) {
-                generateDefaultInitializerForType(context.transformType(function.valueParameters[i].type), body)
-            } else {
-                generateExpression(valueArgument)
-            }
+            generateExpression(call.getValueArgument(i)!!)
         }
 
         if (tryToGenerateIntrinsicCall(call, function)) {

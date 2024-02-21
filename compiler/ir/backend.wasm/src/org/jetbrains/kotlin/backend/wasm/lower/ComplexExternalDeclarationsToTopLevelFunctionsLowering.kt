@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
@@ -337,7 +338,14 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         if (dispatchReceiver != null) {
             res.addValueParameter("_this", dispatchReceiver.type)
         }
-        function.valueParameters.forEach { res.addValueParameter(it.name, it.type).apply { varargElementType = it.varargElementType } }
+        function.valueParameters.forEach {
+            res.addValueParameter(
+                name = it.name,
+                type = if (it.type.isPrimitiveType(false)) it.type else it.type.makeNullable()
+            ).apply {
+                varargElementType = it.varargElementType
+            }
+        }
         // Using Int type with 0 and 1 values to prevent overhead of converting Boolean to true and false
         repeat(numDefaultParameters) { res.addValueParameter("isDefault$it", context.irBuiltIns.intType) }
         externalFunToTopLevelMapping[function] = res
@@ -518,6 +526,18 @@ class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) 
                     IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, value)
                 )
             }
+
+            // Add default argument values if needed
+            for (i in 0 until newFun.valueParameters.size) {
+                val parameter = newFun.valueParameters[i]
+                if (parameter.isVararg) continue // Handled with WasmVarargExpressionLowering
+                if (newCall.getValueArgument(i) != null) continue
+                newCall.putValueArgument(
+                    i,
+                    IrConstImpl.defaultValueForType(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.type)
+                )
+            }
+
             return newCall
         }
     }
