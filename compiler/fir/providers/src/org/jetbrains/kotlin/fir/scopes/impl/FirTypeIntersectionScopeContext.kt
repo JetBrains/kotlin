@@ -180,8 +180,8 @@ class FirTypeIntersectionScopeContext(
                     overriddenMembers = group,
                     containingScope = null,
                     containsMultipleNonSubsumed = when {
-                        forClassUseSiteScope -> group.flatMap { it.flattenPhantomIntersectionsRecursively() }.nonSubsumed().size > 1
-                        else -> mostSpecific.flatMap { it.flattenPhantomIntersectionsRecursively() }.nonSubsumed().size > 1
+                        forClassUseSiteScope -> group.getNonSubsumedNonPhantomOverriddenSymbols().size > 1
+                        else -> mostSpecific.getNonSubsumedNonPhantomOverriddenSymbols().size > 1
                     },
                 )
             } else {

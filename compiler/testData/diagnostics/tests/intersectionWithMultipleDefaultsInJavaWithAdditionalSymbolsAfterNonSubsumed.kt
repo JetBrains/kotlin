@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: JvmElement.java
 public interface JvmElement {
     default void accept() {}

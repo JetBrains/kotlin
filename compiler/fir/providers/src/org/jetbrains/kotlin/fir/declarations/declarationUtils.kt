@@ -160,6 +160,12 @@ fun MemberWithBaseScope<FirCallableSymbol<*>>.getNonSubsumedOverriddenSymbols():
         .map { it.member }
 }
 
+fun List<MemberWithBaseScope<FirCallableSymbol<*>>>.getNonSubsumedNonPhantomOverriddenSymbols(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
+    return flatMap { it.flattenPhantomIntersectionsRecursively() }
+        .nonSubsumed()
+        .distinctBy { it.member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>() }
+}
+
 fun FirCallableSymbol<*>.dispatchReceiverScope(session: FirSession, scopeSession: ScopeSession): FirTypeScope {
     val dispatchReceiverType = requireNotNull(dispatchReceiverType)
     return dispatchReceiverType.scope(
