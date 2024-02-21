@@ -53,8 +53,8 @@ import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.transformer.transformConst
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionPublicSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -300,9 +300,7 @@ class Fir2IrConverter(
 
         declarationStorage.enterScope(irClass.symbol)
 
-        val signature = irClass.symbol.signature!!
-
-        symbolTable.declareConstructor(signature, { IrConstructorPublicSymbolImpl(signature) }) { irSymbol ->
+        IrConstructorSymbolImpl().let { irSymbol ->
             irFactory.createConstructor(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 IrDeclarationOrigin.DEFINED,
@@ -331,7 +329,7 @@ class Fir2IrConverter(
             }
         }
 
-        symbolTable.declareSimpleFunction(signature, { IrSimpleFunctionPublicSymbolImpl(signature) }) { irSymbol ->
+        IrSimpleFunctionSymbolImpl().let { irSymbol ->
             val lastStatement = codeFragment.block.statements.lastOrNull()
             val returnType = (lastStatement as? FirExpression)?.resolvedType?.toIrType(typeConverter) ?: irBuiltIns.unitType
 
