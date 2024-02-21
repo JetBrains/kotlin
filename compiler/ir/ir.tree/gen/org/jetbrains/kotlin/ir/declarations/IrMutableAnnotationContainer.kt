@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
 /**
- * A non-leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.mutableAnnotationContainer]
  */
 interface IrMutableAnnotationContainer : IrElement, IrAnnotationContainer {

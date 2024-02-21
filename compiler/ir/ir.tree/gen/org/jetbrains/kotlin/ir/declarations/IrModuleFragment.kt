@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
 /**
- * A leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.moduleFragment]
  */
 abstract class IrModuleFragment : IrElementBase(), IrElement {

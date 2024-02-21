@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.Variance
 
 /**
- * A leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.typeParameter]
  */
 abstract class IrTypeParameter : IrDeclarationBase(), IrDeclarationWithName {

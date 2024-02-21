@@ -22,8 +22,6 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, 
     context(ImportCollector)
     protected abstract fun SmartPrinter.printAdditionalMethods(element: Element)
 
-    protected open fun defaultElementKDoc(element: Element): String? = null
-
     protected open val separateFieldsWithBlankLine: Boolean
         get() = false
 
@@ -35,7 +33,7 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, 
         printer.run {
             val kind = element.kind ?: error("Expected non-null element kind")
 
-            printKDoc(element.extendedKDoc(defaultElementKDoc(element)))
+            printKDoc(element.extendedKDoc())
             print(kind.title, " ", element.typeName)
             print(element.params.typeParameters())
 

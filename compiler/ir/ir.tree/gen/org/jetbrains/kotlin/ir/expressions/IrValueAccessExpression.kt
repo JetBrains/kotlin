@@ -11,8 +11,6 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 
 /**
- * A non-leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.valueAccessExpression]
  */
 abstract class IrValueAccessExpression : IrDeclarationReference() {

@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 /**
- * A non-leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.body]
  */
 abstract class IrBody : IrElementBase(), IrElement {

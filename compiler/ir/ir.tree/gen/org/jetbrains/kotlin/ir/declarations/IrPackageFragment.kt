@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.ir.symbols.IrPackageFragmentSymbol
 import org.jetbrains.kotlin.name.FqName
 
 /**
- * A non-leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.packageFragment]
  */
 abstract class IrPackageFragment : IrElementBase(), IrDeclarationContainer, IrSymbolOwner {

@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
 /**
- * A non-leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.valueDeclaration]
  */
 interface IrValueDeclaration : IrDeclarationWithName, IrSymbolOwner {

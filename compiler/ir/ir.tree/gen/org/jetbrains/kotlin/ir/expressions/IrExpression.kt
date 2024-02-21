@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 /**
- * A non-leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.expression]
  */
 abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement, IrAttributeContainer {

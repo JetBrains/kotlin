@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
- * A leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.enumConstructorCall]
  */
 abstract class IrEnumConstructorCall : IrFunctionAccessExpression() {

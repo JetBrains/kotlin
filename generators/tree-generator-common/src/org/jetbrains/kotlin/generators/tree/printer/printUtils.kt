@@ -85,8 +85,8 @@ fun SmartPrinter.printKDoc(kDoc: String?) {
     println(" */")
 }
 
-fun AbstractElement<*, *, *>.extendedKDoc(defaultKDoc: String? = null): String = buildString {
-    val doc = kDoc ?: defaultKDoc
+fun AbstractElement<*, *, *>.extendedKDoc(): String = buildString {
+    val doc = kDoc
     if (doc != null) {
         appendLine(doc)
         appendLine()
