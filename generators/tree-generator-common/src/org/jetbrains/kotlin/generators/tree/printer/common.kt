@@ -101,7 +101,7 @@ fun <Element, Implementation, ElementField, ImplementationField> generateTree(
         detectBaseTransformerTypes(model)
     }
     implementationConfigurator?.configureImplementations(model)
-    val implementations = model.elements.flatMap { it.allImplementations }
+    val implementations = model.elements.flatMap { it.implementations }
     InterfaceAndAbstractClassConfigurator((model.elements + implementations))
         .configureInterfacesAndAbstractClasses()
     addPureAbstractElement(model.elements, pureAbstractElement)

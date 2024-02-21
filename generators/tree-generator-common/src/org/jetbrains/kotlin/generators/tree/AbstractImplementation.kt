@@ -17,9 +17,6 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
               Element : AbstractElement<Element, *, Implementation>,
               Field : AbstractField<*> {
 
-    private val isDefault: Boolean
-        get() = name == null
-
     override val allParents: List<ImplementationKindOwner>
         get() = listOf(element)
 
@@ -53,11 +50,7 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
 
     init {
         @Suppress("UNCHECKED_CAST")
-        if (isDefault) {
-            element.defaultImplementation = this as Implementation
-        } else {
-            element.customImplementations += this as Implementation
-        }
+        element.implementations += this as Implementation
     }
 
     override val hasAcceptChildrenMethod: Boolean

@@ -60,11 +60,8 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
      * @return The configured implementation.
      */
     protected fun impl(element: Element, name: String? = null, config: ImplementationContext.() -> Unit = {}): Implementation {
-        val implementation = if (name == null) {
-            element.defaultImplementation
-        } else {
-            element.customImplementations.firstOrNull { it.name == name }
-        } ?: createImplementation(element, name)
+        val implementation = element.implementations.firstOrNull { it.name == name }
+            ?: createImplementation(element, name)
         val context = ImplementationContext(implementation)
         context.apply(config)
         elementsWithImpl += element
@@ -103,7 +100,7 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
         config: ImplementationContext.(field: String) -> Unit,
     ) {
         for (element in elementsWithImpl) {
-            for (implementation in element.allImplementations) {
+            for (implementation in element.implementations) {
                 if (!implementationPredicate(implementation)) continue
                 if (!implementation.allFields.any { it.name == field }) continue
                 if (!fieldPredicate(implementation.getField(field))) continue

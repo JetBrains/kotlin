@@ -154,21 +154,9 @@ abstract class AbstractElement<Element, Field, Implementation>(
     val transformerClass: Element
         get() = transformerReturnType ?: baseTransformerType ?: element
 
-    var defaultImplementation: Implementation? = null
-
-    val customImplementations = mutableListOf<Implementation>()
+    val implementations = mutableListOf<Implementation>()
 
     var doesNotNeedImplementation: Boolean = false
-
-    val allImplementations: List<Implementation> by lazy {
-        if (doesNotNeedImplementation) {
-            emptyList()
-        } else {
-            val implementations = customImplementations.toMutableList()
-            defaultImplementation?.let { implementations += it }
-            implementations
-        }
-    }
 
     /**
      * Types/functions that you want to additionally import in the file with the element class.
