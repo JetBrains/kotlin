@@ -121,23 +121,23 @@ class JvmAbiClassBuilderInterceptor(
             declaration: IrField?, access: Int, name: String, desc: String, signature: String?, value: Any?
         ): FieldVisitor {
             if (keepClassAsIs || removeClassFromAbi) {
-                // We don't care about fields when we remove or keep this class completely
+                // We don't care about fields when we remove or keep this class completely.
                 return delegate.newField(declaration, access, name, desc, signature, value)
             }
 
             val visibility = declaration?.visibility ?: DescriptorVisibilities.DEFAULT_VISIBILITY
 
             if (DescriptorVisibilities.isPrivate(visibility)) {
-                // Remove all private fields
+                // Remove all private fields.
                 return delegate.newField(declaration, access, name, desc, signature, value)
             }
 
             if (treatInternalAsPrivate && visibility == DescriptorVisibilities.INTERNAL) {
-                // Remove all internal fields
+                // Remove all internal fields.
                 return delegate.newField(declaration, access, name, desc, signature, value)
             }
 
-            // Keep otherwise
+            // Keep otherwise.
             memberInfos[JvmFieldSignature(name, desc)] = AbiMethodInfo.KEEP
 
             return delegate.newField(declaration, access, name, desc, signature, value)
@@ -147,11 +147,11 @@ class JvmAbiClassBuilderInterceptor(
             declaration: IrFunction?, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?
         ): MethodVisitor {
             if (keepClassAsIs || removeClassFromAbi) {
-                // We don't care about methods when we remove or keep this class completely
+                // We don't care about methods when we remove or keep this class completely.
                 return delegate.newMethod(declaration, access, name, desc, signature, exceptions)
             }
 
-            // Inline suspend functions are a special case: Unless they use reified type parameters,
+            // inline suspend functions are a special case: Unless they use reified type parameters,
             // we will transform the original method and generate a $$forInline method for the inliner.
             // Only the latter needs to be kept, the former can be stripped. Unfortunately, there is no
             // metadata to indicate this (the inliner simply first checks for a method such as `f$$forInline`
