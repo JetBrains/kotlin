@@ -54,6 +54,8 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
 
         val (executableTestCase: TestCase, executableCompilationResult: TestCompilationResult<out Executable>) =
             if (fromSources) {
+                // Compile test, NOT respecting possible `mode=TWO_STAGE_MULTI_MODULE`: don't add intermediate LibraryCompilation(kt->klib).
+                // KT-66014: Extract this test from usual Native test run, and run it in scope of new test module
                 barTestCase to compileToExecutable(barTestCase, fooLibrary.asLibraryDependency())
             } else {
                 val barCompilationResult: Success<out KLIB> = compileToLibrary(barTestCase, fooLibrary.asLibraryDependency())

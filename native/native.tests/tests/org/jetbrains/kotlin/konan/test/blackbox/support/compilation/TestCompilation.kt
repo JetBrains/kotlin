@@ -296,7 +296,7 @@ internal class ObjCFrameworkCompilation(
     gcType = settings.get(),
     gcScheduler = settings.get(),
     allocator = settings.get(),
-    pipelineType = settings.getStageDependentPipelineType(),
+    pipelineType = settings.getStageDependentPipelineType(sourceModules),
     cacheMode = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
@@ -341,7 +341,7 @@ internal class BinaryLibraryCompilation(
     gcType = settings.get(),
     gcScheduler = settings.get(),
     allocator = settings.get(),
-    pipelineType = settings.getStageDependentPipelineType(),
+    pipelineType = settings.getStageDependentPipelineType(sourceModules),
     cacheMode = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
@@ -508,7 +508,7 @@ internal class ExecutableCompilation(
     gcType = settings.get(),
     gcScheduler = settings.get(),
     allocator = settings.get(),
-    pipelineType = settings.getStageDependentPipelineType(),
+    pipelineType = settings.getStageDependentPipelineType(sourceModules),
     cacheMode = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
@@ -712,8 +712,24 @@ private object BinaryOptions {
     }
 }
 
-internal fun Settings.getStageDependentPipelineType(): PipelineType =
+// Calculates PipelineType to be used for compilations involving native backend or C/ObjC export.
+// Second stage of TWO_STAGE_MULTI_MODULE must receive PipelineType.DEFAULT to be unaware of the language version used before, during first stage.
+internal fun Settings.getStageDependentPipelineType(sourceModules: Collection<TestModule>): PipelineType =
     when (get<TestMode>()) {
         TestMode.ONE_STAGE_MULTI_MODULE -> get<PipelineType>()
-        TestMode.TWO_STAGE_MULTI_MODULE -> PipelineType.DEFAULT  // Don't pass "-language_version" option to the second stage
+        TestMode.TWO_STAGE_MULTI_MODULE -> {
+            if (sourceModules.isEmpty())
+                PipelineType.DEFAULT // KT-56182: Don't pass "-language_version" option to pure second compilation stage.
+            else {
+                println(  // KT-66014: TODO change println() to fail{} if all testsuites in KT-66014 would be changed
+                    "WARNING: Wrong testing approach for `mode=TWO_STAGE_MULTI_MODULE`: test explicitly uses one-stage compilation for sources:\n" +
+                            "${sourceModules.map { it.files.map { it.location.name } }}\n" +
+                            "Please re-implement test to split compilation to two stages, when `mode=TWO_STAGE_MULTI_MODULE` is specified.\n" +
+                            "TestCompilationFactory provides some tooling for this."
+                )
+                // Provided source modules must be compiled with proper frontend version,
+                // even if this version would be then wrongly passed to backend or C/ObjC generator
+                get<PipelineType>()
+            }
+        }
     }

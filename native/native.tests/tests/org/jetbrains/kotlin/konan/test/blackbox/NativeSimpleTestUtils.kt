@@ -78,6 +78,7 @@ internal class LibraryBuilder(
         )
 }
 
+// WARNING: compiles in one-stage mode (sources->executable) even when `mode=TWO_STAGE_MULTI_MODULE`
 internal class ExecutableBuilder(
     test: AbstractNativeSimpleTest,
     rootDir: File,
@@ -91,6 +92,7 @@ internal class ExecutableBuilder(
         freeCompilerArgs.add(this)
     }
 
+    // WARNING: compiles in one-stage mode (sources->executable) even when `mode=TWO_STAGE_MULTI_MODULE`
     override fun build(sourcesDir: File, outputDir: File, dependencies: List<TestCompilationArtifact.KLIB>) =
         test.compileToExecutable(
             sourcesDir,
@@ -161,6 +163,7 @@ internal class CompiledExecutable(
     val testExecutable by lazy { TestExecutable.fromCompilationResult(testCase, compilationResult) }
 }
 
+// WARNING: compiles in one-stage mode (sources->executable) even when `mode=TWO_STAGE_MULTI_MODULE`
 internal fun AbstractNativeSimpleTest.compileToExecutable(
     sourcesDir: File,
     tryPassSystemCacheDirectory: Boolean,
@@ -168,6 +171,7 @@ internal fun AbstractNativeSimpleTest.compileToExecutable(
     vararg dependencies: TestCompilationArtifact.KLIB
 ) = compileToExecutable(sourcesDir, tryPassSystemCacheDirectory, freeCompilerArgs, dependencies.asList())
 
+// WARNING: compiles in one-stage mode (sources->executable) even when `mode=TWO_STAGE_MULTI_MODULE`
 internal fun AbstractNativeSimpleTest.compileToExecutable(
     sourcesDir: File,
     tryPassSystemCacheDirectory: Boolean,
@@ -179,9 +183,11 @@ internal fun AbstractNativeSimpleTest.compileToExecutable(
     return CompiledExecutable(testCase, compilationResult.assertSuccess())
 }
 
+// WARNING: compiles in one-stage mode (sources->executable) even when `mode=TWO_STAGE_MULTI_MODULE`
 internal fun AbstractNativeSimpleTest.compileToExecutable(testCase: TestCase, vararg dependencies: TestCompilationDependency<*>) =
     compileToExecutable(testCase, true, dependencies.asList())
 
+// WARNING: compiles in one-stage mode (sources->static cache) even when `mode=TWO_STAGE_MULTI_MODULE`
 internal fun AbstractNativeSimpleTest.compileToStaticCache(
     klib: TestCompilationArtifact.KLIB,
     cacheDir: File,

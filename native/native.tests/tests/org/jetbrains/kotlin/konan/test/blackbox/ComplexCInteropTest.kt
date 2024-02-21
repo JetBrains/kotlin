@@ -44,6 +44,7 @@ class FirComplexCInteropTest : ComplexCInteropTestBase()
 abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     private val interopDir = File("native/native.tests/testData/interop")
     private val interopObjCDir = interopDir.resolve("objc")
+    private val testCompilationFactory = TestCompilationFactory()
 
     @Test
     @TestMetadata("embedStaticLibraries.kt")
@@ -79,26 +80,20 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
                 )
             }
         }
-        val cinteropKlib = cinteropToLibrary(
-            targets = targets,
+        val (testCase, compilationResult) = compileDefAndKtToExecutable(
+            testName = "embedStaticLibraries",
             defFile = defFile,
-            outputDir = buildDir,
+            ktFiles = listOf(embedStaticLibrariesDir.resolve("embedStaticLibraries.kt")),
             freeCompilerArgs = TestCompilerArgs(
-                emptyList(), cinteropArgs = listOf(
+                compilerArgs = listOf("-opt-in=kotlinx.cinterop.ExperimentalForeignApi"),
+                cinteropArgs = listOf(
                     "-header", embedStaticLibrariesDir.resolve("embedStaticLibraries.h").absolutePath,
                     "-staticLibrary", "1.a",
                     "-staticLibrary", "2.a",
                 )
-            )
-        ).assertSuccess().resultingArtifact
-
-        val testCase = generateTestCaseWithSingleFile(
-            sourceFile = embedStaticLibrariesDir.resolve("embedStaticLibraries.kt"),
-            testKind = TestKind.STANDALONE_NO_TR,
+            ),
             extras = TestCase.NoTestRunnerExtras("main"),
-            freeCompilerArgs = TestCompilerArgs("-opt-in=kotlinx.cinterop.ExperimentalForeignApi"),
         )
-        val compilationResult = compileToExecutable(testCase, cinteropKlib.asLibraryDependency()).assertSuccess()
         val testExecutable = TestExecutable(
             compilationResult.resultingArtifact,
             compilationResult.loggedData,
@@ -132,30 +127,21 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         if (testRunSettings.configurables.targetTriple.isSimulator)
             codesign(dylib.resultingArtifact.path)
         val stringsdict = interopObjCDir.resolve("Localizable.stringsdict")
-        stringsdict.copyTo(buildDir.resolve("en.lproj/Localizable.stringsdict"), overwrite = true)
+        stringsdict.copyTo(buildDir.resolve("$ktFilePrefix/en.lproj/Localizable.stringsdict"), overwrite = true)
 
-        val cinteropKlib = cinteropToLibrary(
-            targets = targets,
+        val (testCase, success) = compileDefAndKtToExecutable(
+            testName = ktFilePrefix,
             defFile = interopObjCDir.resolve("objcSmoke.def"),
-            outputDir = buildDir,
-            freeCompilerArgs = TestCompilerArgs(emptyList(), cinteropArgs = listOf("-header", "smoke.h"))
-        ).assertSuccess().resultingArtifact
-
-        val testCase = generateTestCaseWithSingleFile(
-            sourceFile = interopObjCDir.resolve("$ktFilePrefix.kt"),
-            moduleName = "smoke",
+            ktFiles = listOf(interopObjCDir.resolve("$ktFilePrefix.kt")),
             freeCompilerArgs = TestCompilerArgs(
-                "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
-                "-linker-option",
-                "-L${buildDir.absolutePath}"
+                compilerArgs = listOf("-opt-in=kotlinx.cinterop.ExperimentalForeignApi", "-linker-option", "-L${buildDir.absolutePath}"),
+                cinteropArgs = listOf("-header", "smoke.h")
             ),
-            testKind = TestKind.STANDALONE_NO_TR,
             extras = TestCase.NoTestRunnerExtras("main"),
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).copy(
                 outputDataFile = TestRunCheck.OutputDataFile(file = interopObjCDir.resolve("$ktFilePrefix.out"))
-            )
+            ),
         )
-        val success = compileToExecutable(testCase, cinteropKlib.asLibraryDependency()).assertSuccess()
         val testExecutable = TestExecutable(
             success.resultingArtifact,
             success.loggedData,
@@ -167,19 +153,16 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("tests")
     fun testInteropObjCTests() {
+        fun fileList(subFolder: String, extension: String) =
+            interopObjCDir.resolve(subFolder).walk().filter { it.isFile && it.extension == extension }.toList()
+
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
-        val mSources = interopObjCDir.resolve("tests").listFiles { file: File -> file.name.endsWith(".m") }!!.toList()
-        val dylib = compileDylib("objctests", mSources)
+        val ktFiles = fileList("tests", "kt")
+        val hFiles = fileList("tests", "h")
+        val mFiles = fileList("tests", "m")
+        val dylib = compileDylib("objctests", mFiles)
         if (testRunSettings.configurables.targetTriple.isSimulator)
             codesign(dylib.resultingArtifact.path)
-
-        val hFiles = interopObjCDir.resolve("tests").listFiles { file: File -> file.name.endsWith(".h") }!!.toList()
-        val cinteropKlib = cinteropToLibrary(
-            targets = targets,
-            defFile = interopObjCDir.resolve("objcTests.def"),
-            outputDir = buildDir,
-            freeCompilerArgs = TestCompilerArgs(emptyList(), cinteropArgs = hFiles.flatMap { listOf("-header", "tests/${it.name}") })
-        ).assertSuccess().resultingArtifact
 
         val ignoredTestGTestPatterns = if (testRunSettings.get<GCType>() != GCType.NOOP) emptySet() else setOf(
             "Kt41811Kt.*",
@@ -188,17 +171,21 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             "ObjcWeakRefsKt.testObjCWeakRef",
             "WeakRefsKt.testWeakRefs",
         )
-        val testCase = generateTestCaseWithSingleModule(
-            moduleDir = interopObjCDir.resolve("tests"),
+        val (testCase, success) = compileDefAndKtToExecutable(
+            testName = "embedStaticLibraries",
+            defFile = interopObjCDir.resolve("objcTests.def"),
+            ktFiles = ktFiles,
             freeCompilerArgs = TestCompilerArgs(
-                "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
-                "-opt-in=kotlin.native.internal.InternalForKotlinNative",
-                "-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion",
-                "-tr", "-e", "main", "-linker-option", "-L${buildDir.absolutePath}"
+                compilerArgs = listOf(
+                    "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                    "-opt-in=kotlin.native.internal.InternalForKotlinNative",
+                    "-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion",
+                    "-tr", "-e", "main", "-linker-option", "-L${buildDir.absolutePath}"
+                ),
+                cinteropArgs = hFiles.flatMap { listOf("-header", "tests/${it.name}") }
             ),
             extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT, ignoredTestGTestPatterns),
         )
-        val success = compileToExecutable(testCase, cinteropKlib.asLibraryDependency()).assertSuccess()
         val testExecutable = TestExecutable(
             success.resultingArtifact,
             success.loggedData,
@@ -257,7 +244,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             extraClangOpts = listOf("-framework", "AppKit", "-fobjc-arc"),
             extraCompilerOpts = listOf("-tr"),
         )
-        assertTrue(execResult.stdout.contains("[  PASSED  ] 8 tests"))
+        assertTrue(execResult.stdout.contains("[  PASSED  ] 8 tests"), execResult.stdout)
     }
 
     @Test
@@ -362,34 +349,21 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         if (testRunSettings.configurables.targetTriple.isSimulator)
             codesign(dylib.resultingArtifact.path)
 
-        val cinteropKlib = cinteropToLibrary(
-            targets = targets,
+        val (_, success) = compileDefAndKtToExecutable(
+            testName = testName,
             defFile = srcDir.resolve(defFile),
-            outputDir = buildDir,
+            ktFiles = listOf(srcDir.resolve(ktFile)),
             freeCompilerArgs = TestCompilerArgs(
-                compilerArgs = emptyList(),
+                compilerArgs = listOf(
+                    "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                    "-opt-in=kotlin.native.internal.InternalForKotlinNative",
+                    "-linker-option", "-L${buildDir.absolutePath}",
+                    *extraCompilerOpts.toTypedArray<String>()
+                ),
                 cinteropArgs = extraCinteropArgs + listOf("-header", srcDir.resolve(hFile).absolutePath)
-            )
-        ).assertSuccess().resultingArtifact
-
-        val testKind = when (extras) {
-            is TestCase.NoTestRunnerExtras -> TestKind.STANDALONE_NO_TR
-            is TestCase.WithTestRunnerExtras -> TestKind.STANDALONE
-        }
-        val testCase = generateTestCaseWithSingleFile(
-            sourceFile = srcDir.resolve(ktFile),
-            moduleName = testName,
-            testKind = testKind,
+            ),
             extras = extras,
-            freeCompilerArgs = TestCompilerArgs(
-                "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
-                "-opt-in=kotlin.native.internal.InternalForKotlinNative",
-                "-linker-option", "-L${buildDir.absolutePath}",
-                *extraCompilerOpts.toTypedArray()
-            )
         )
-
-        val success = compileToExecutable(testCase, cinteropKlib.asLibraryDependency()).assertSuccess()
         return testRunSettings.executor.runProcess(success.resultingArtifact.executableFile.absolutePath)
     }
 
@@ -418,22 +392,15 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
                 )
             }
         }
-        val cinteropKlib = cinteropToLibrary(
-            targets = targets,
-            defFile = withSpacesDef,
-            outputDir = buildDir,
-            freeCompilerArgs = TestCompilerArgs.EMPTY
-        ).assertSuccess().resultingArtifact
 
-        val testCase = generateTestCaseWithSingleFile(
-            sourceFile = srcDir.resolve("withSpaces.kt"),
-            freeCompilerArgs = TestCompilerArgs(
-                "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
-            ),
-            testKind = TestKind.STANDALONE_NO_TR,
+        val (testCase, success) = compileDefAndKtToExecutable(
+            testName = "withSpaces",
+            defFile = withSpacesDef,
+            ktFiles = listOf(srcDir.resolve("withSpaces.kt")),
+            freeCompilerArgs = TestCompilerArgs("-opt-in=kotlinx.cinterop.ExperimentalForeignApi"),
             extras = TestCase.NoTestRunnerExtras("main"),
         )
-        val success = compileToExecutable(testCase, cinteropKlib.asLibraryDependency()).assertSuccess()
+
         val testExecutable = TestExecutable(
             success.resultingArtifact,
             success.loggedData,
@@ -441,6 +408,40 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         )
         runExecutableAndVerify(testCase, testExecutable)
         assertTrue(mapfile.exists())
+    }
+
+    private fun compileDefAndKtToExecutable(
+        testName: String,
+        defFile: File,
+        ktFiles: Collection<File>,
+        freeCompilerArgs: TestCompilerArgs,
+        extras: TestCase.Extras,
+        checks: TestRunChecks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
+    ): Pair<TestCase, TestCompilationResult.Success<out TestCompilationArtifact.Executable>> {
+        val cinteropModule = TestModule.Exclusive("cinterop", emptySet(), emptySet(), emptySet())
+        cinteropModule.files += TestFile.createCommitted(defFile, cinteropModule)
+
+        val ktModule = TestModule.Exclusive("main", setOf("cinterop"), emptySet(), emptySet())
+        ktFiles.forEach { ktModule.files += TestFile.createCommitted(it, ktModule) }
+
+        val testKind = when (extras) {
+            is TestCase.NoTestRunnerExtras -> TestKind.STANDALONE_NO_TR
+            is TestCase.WithTestRunnerExtras -> TestKind.STANDALONE
+        }
+        val testCase = TestCase(
+            id = TestCaseId.Named(testName),
+            kind = testKind,
+            modules = setOf(cinteropModule, ktModule),
+            freeCompilerArgs = freeCompilerArgs,
+            nominalPackageName = PackageName(testName),
+            checks = checks,
+            extras = extras
+        ).apply {
+            initialize(null, null)
+        }
+        // Compile test, respecting possible `mode=TWO_STAGE_MULTI_MODULE`: add intermediate LibraryCompilation(kt->klib), if needed.
+        val success = testCompilationFactory.testCasesToExecutable(listOf(testCase), testRunSettings).result.assertSuccess()
+        return Pair(testCase, success)
     }
 
     private fun compileDylib(name: String, mSources: List<File>, extraClangOpts: List<String> = listOf("-fobjc-arc")): TestCompilationResult.Success<out TestCompilationArtifact.Executable> {
