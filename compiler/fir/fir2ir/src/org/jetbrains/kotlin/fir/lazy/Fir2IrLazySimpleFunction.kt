@@ -40,7 +40,7 @@ class Fir2IrLazySimpleFunction(
 ) : AbstractFir2IrLazyFunction<FirSimpleFunction>(components, startOffset, endOffset, origin, symbol, parent, isFakeOverride) {
     init {
         symbol.bind(this)
-        classifierStorage.preCacheTypeParameters(fir, symbol)
+        classifierStorage.preCacheTypeParameters(fir)
     }
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()

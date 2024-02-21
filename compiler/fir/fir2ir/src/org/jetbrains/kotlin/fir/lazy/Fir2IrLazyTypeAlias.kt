@@ -34,7 +34,7 @@ class Fir2IrLazyTypeAlias(
 ) : IrTypeAlias(), AbstractFir2IrLazyDeclaration<FirTypeAlias>, Fir2IrTypeParametersContainer, Fir2IrComponents by components {
     init {
         symbol.bind(this)
-        classifierStorage.preCacheTypeParameters(fir, symbol)
+        classifierStorage.preCacheTypeParameters(fir)
     }
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()

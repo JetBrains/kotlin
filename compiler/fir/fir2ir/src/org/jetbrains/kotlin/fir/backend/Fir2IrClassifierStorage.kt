@@ -78,15 +78,15 @@ class Fir2IrClassifierStorage(
     // ------------------------------------ type parameters ------------------------------------
 
     // Note: declareTypeParameters should be called before!
-    internal fun preCacheTypeParameters(owner: FirTypeParameterRefsOwner, irOwnerSymbol: IrSymbol) {
+    internal fun preCacheTypeParameters(owner: FirTypeParameterRefsOwner) {
         for ((index, typeParameter) in owner.typeParameters.withIndex()) {
             val original = typeParameter.symbol.fir
             getCachedIrTypeParameter(original)
-                ?: createAndCacheIrTypeParameter(original, index, irOwnerSymbol)
+                ?: createAndCacheIrTypeParameter(original, index)
             if (owner is FirProperty && owner.isVar) {
                 val context = ConversionTypeOrigin.SETTER
                 getCachedIrTypeParameter(original, context)
-                    ?: createAndCacheIrTypeParameter(original, index, irOwnerSymbol, context)
+                    ?: createAndCacheIrTypeParameter(original, index, context)
             }
         }
     }
@@ -94,11 +94,10 @@ class Fir2IrClassifierStorage(
     internal fun getIrTypeParameter(
         typeParameter: FirTypeParameter,
         index: Int,
-        ownerSymbol: IrSymbol,
         typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT
     ): IrTypeParameter {
         getCachedIrTypeParameter(typeParameter, typeOrigin)?.let { return it }
-        val irTypeParameter = createAndCacheIrTypeParameter(typeParameter, index, ownerSymbol, typeOrigin)
+        val irTypeParameter = createAndCacheIrTypeParameter(typeParameter, index, typeOrigin)
         classifiersGenerator.initializeTypeParameterBounds(typeParameter, irTypeParameter)
         return irTypeParameter
     }
@@ -106,10 +105,9 @@ class Fir2IrClassifierStorage(
     private fun createAndCacheIrTypeParameter(
         typeParameter: FirTypeParameter,
         index: Int,
-        ownerSymbol: IrSymbol,
         typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
     ): IrTypeParameter {
-        val symbol = createTypeParameterSymbol(ownerSymbol, index)
+        val symbol = IrTypeParameterSymbolImpl()
         val irTypeParameter = classifiersGenerator.createIrTypeParameterWithoutBounds(typeParameter, index, symbol)
         // Cache the type parameter BEFORE processing its bounds/supertypes, to properly handle recursive type bounds.
         if (typeOrigin.forSetter) {
@@ -118,13 +116,6 @@ class Fir2IrClassifierStorage(
             typeParameterCache[typeParameter] = irTypeParameter
         }
         return irTypeParameter
-    }
-
-    private fun createTypeParameterSymbol(ownerSymbol: IrSymbol, index: Int): IrTypeParameterSymbol {
-        if (ownerSymbol !is IrClassifierSymbol) return IrTypeParameterSymbolImpl()
-        val signature = signatureComposer.composeTypeParameterSignature(index, ownerSymbol.signature)
-            ?: return IrTypeParameterSymbolImpl()
-        return symbolTable.referenceTypeParameter(signature)
     }
 
     internal fun getCachedIrTypeParameter(
@@ -165,7 +156,7 @@ class Fir2IrClassifierStorage(
         val isSetter = firTypeParameterOwner is FirPropertyAccessor && firTypeParameterOwner.isSetter
         val conversionTypeOrigin = if (isSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
 
-        return createAndCacheIrTypeParameter(firTypeParameter, index, IrTypeParameterSymbolImpl(), conversionTypeOrigin).also {
+        return createAndCacheIrTypeParameter(firTypeParameter, index, conversionTypeOrigin).also {
             classifiersGenerator.initializeTypeParameterBounds(firTypeParameter, it)
         }.symbol
     }

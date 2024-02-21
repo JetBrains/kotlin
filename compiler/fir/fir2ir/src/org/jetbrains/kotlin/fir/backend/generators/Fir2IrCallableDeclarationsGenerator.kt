@@ -111,7 +111,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
             if (isLambda) ((function as FirAnonymousFunction).typeRef as? FirResolvedTypeRef)?.type?.isSuspendOrKSuspendFunctionType(session) == true
             else function.isSuspend
         val created = function.convertWithOffsets { startOffset, endOffset ->
-            classifierStorage.preCacheTypeParameters(function, symbol)
+            classifierStorage.preCacheTypeParameters(function)
             irFactory.createSimpleFunction(
                 startOffset = if (updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER) SYNTHETIC_OFFSET else startOffset,
                 endOffset = if (updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER) SYNTHETIC_OFFSET else endOffset,
@@ -186,7 +186,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         }
         val visibility = if (irParent.isAnonymousObject) Visibilities.Public else constructor.visibility
         return constructor.convertWithOffsets { startOffset, endOffset ->
-            classifierStorage.preCacheTypeParameters(constructor, symbol)
+            classifierStorage.preCacheTypeParameters(constructor)
             irFactory.createConstructor(
                 startOffset = startOffset,
                 endOffset = endOffset,
@@ -245,7 +245,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
             return lazyDeclarationsGenerator.createIrLazyProperty(property, irParent!!, symbols, origin)
         }
         return property.convertWithOffsets { startOffset, endOffset ->
-            classifierStorage.preCacheTypeParameters(property, symbols.propertySymbol)
+            classifierStorage.preCacheTypeParameters(property)
             irFactory.createProperty(
                 startOffset = startOffset,
                 endOffset = endOffset,
@@ -275,7 +275,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                     if (delegate != null || property.hasBackingField) {
                         val backingField = if (delegate != null) {
                             ((delegate as? FirQualifiedAccessExpression)?.calleeReference?.toResolvedBaseSymbol()?.fir as? FirTypeParameterRefsOwner)?.let {
-                                classifierStorage.preCacheTypeParameters(it, symbol)
+                                classifierStorage.preCacheTypeParameters(it)
                             }
                             createBackingField(
                                 this,
