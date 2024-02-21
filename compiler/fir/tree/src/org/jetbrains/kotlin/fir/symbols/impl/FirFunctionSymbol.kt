@@ -47,11 +47,19 @@ open class FirNamedFunctionSymbol(callableId: CallableId) : FirFunctionSymbol<Fi
 
 interface FirIntersectionCallableSymbol {
     val intersections: Collection<FirCallableSymbol<*>>
+
+    /**
+     * `true` iff a call to `nonSubsumed()` for `intersections` would result into a list with more than one symbol.
+     * Intuitively, `false` means this intersection is, strictly speaking, redundant, but we still created it
+     * as an implementation detail.
+     */
+    val containsMultipleNonSubsumed: Boolean
 }
 
 class FirIntersectionOverrideFunctionSymbol(
     callableId: CallableId,
     override val intersections: Collection<FirCallableSymbol<*>>,
+    override val containsMultipleNonSubsumed: Boolean,
 ) : FirNamedFunctionSymbol(callableId), FirIntersectionCallableSymbol
 
 class FirConstructorSymbol(callableId: CallableId) : FirFunctionSymbol<FirConstructor>(callableId), ConstructorSymbolMarker {

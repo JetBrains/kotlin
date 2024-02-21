@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: ColoredTextContainer.java
 public interface ColoredTextContainer {
     default void setToolTipText(String text) {}

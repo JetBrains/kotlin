@@ -176,6 +176,16 @@ fun MemberWithBaseScope<FirCallableSymbol<*>>.flattenIntersectionsRecursively():
     return baseScope.getDirectOverriddenMembersWithBaseScope(member).flatMap { it.flattenIntersectionsRecursively() }
 }
 
+fun MemberWithBaseScope<FirCallableSymbol<*>>.flattenPhantomIntersectionsRecursively(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
+    val symbol = member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>()
+
+    if (symbol !is FirIntersectionCallableSymbol || symbol.containsMultipleNonSubsumed) {
+        return listOf(this)
+    }
+
+    return baseScope.getDirectOverriddenMembersWithBaseScope(member).flatMap { it.flattenPhantomIntersectionsRecursively() }
+}
+
 /**
  * A callable declaration D [subsumes](https://kotlinlang.org/spec/inheritance.html#matching-and-subsumption-of-declarations)
  * a callable declaration B if D overrides B.

@@ -375,7 +375,11 @@ class JavaOverrideChecker internal constructor(
         extractedOverrides: Collection<MemberWithBaseScope<D>>,
         dispatchClassSymbol: FirRegularClassSymbol?,
     ): Visibility {
-        val overridesWithoutIntersections = extractedOverrides.flatMap { it.flattenIntersectionsRecursively() }
+        // It's crucial that we only unwrap phantom intersection overrides.
+        // See comments in the following tests for explanation:
+        // - intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt
+        // - intersectionOverridesIntersection.kt
+        val overridesWithoutIntersections = extractedOverrides.flatMap { it.flattenPhantomIntersectionsRecursively() }
         val nonSubsumed = overridesWithoutIntersections.nonSubsumed().filterOutDuplicates()
 
         // In Java it's OK to inherit multiple implementations of the same function

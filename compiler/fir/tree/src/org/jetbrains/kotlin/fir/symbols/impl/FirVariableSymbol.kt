@@ -72,12 +72,14 @@ open class FirPropertySymbol(callableId: CallableId, ) : FirVariableSymbol<FirPr
 
 class FirIntersectionOverridePropertySymbol(
     callableId: CallableId,
-    override val intersections: Collection<FirCallableSymbol<*>>
+    override val intersections: Collection<FirCallableSymbol<*>>,
+    override val containsMultipleNonSubsumed: Boolean,
 ) : FirPropertySymbol(callableId), FirIntersectionCallableSymbol
 
 class FirIntersectionOverrideFieldSymbol(
     callableId: CallableId,
-    override val intersections: Collection<FirCallableSymbol<*>>
+    override val intersections: Collection<FirCallableSymbol<*>>,
+    override val containsMultipleNonSubsumed: Boolean,
 ) : FirFieldSymbol(callableId), FirIntersectionCallableSymbol
 
 class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirBackingField>(callableId) {
