@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // IGNORE_LIGHT_ANALYSIS
-// JVM_ABI_K1_K2_DIFF: KT-62465, KT-63960
+// JVM_ABI_K1_K2_DIFF: KT-63960
 // LANGUAGE: +ReferencesToSyntheticJavaProperties
 // LANGUAGE: -SkipStandaloneScriptsInSourceRoots
 // WITH_STDLIB

@@ -894,6 +894,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/arrays/constantArrayOfAny.kt");
     }
 
+    @TestMetadata("emptyArrayDesugaring.kt")
+    public void testEmptyArrayDesugaring() {
+      runTest("compiler/testData/codegen/box/arrays/emptyArrayDesugaring.kt");
+    }
+
     @TestMetadata("forEachBooleanArray.kt")
     public void testForEachBooleanArray() {
       runTest("compiler/testData/codegen/box/arrays/forEachBooleanArray.kt");

@@ -1018,6 +1018,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
     }
 
     @Test
+    @TestMetadata("emptyArrayDesugaring.kt")
+    public void testEmptyArrayDesugaring() {
+      runTest("compiler/testData/codegen/box/arrays/emptyArrayDesugaring.kt");
+    }
+
+    @Test
     @TestMetadata("forEachBooleanArray.kt")
     public void testForEachBooleanArray() {
       runTest("compiler/testData/codegen/box/arrays/forEachBooleanArray.kt");
