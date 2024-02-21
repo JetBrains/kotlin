@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildSamConversionExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -936,9 +937,25 @@ class FirCallCompletionResultsWriterTransformer(
 
         runPCLARelatedTasksForCandidate(calleeReference.candidate)
 
-        return syntheticCall.apply {
-            replaceCalleeReference(calleeReference.toResolvedReference())
+        val resolvedCalleeReference = calleeReference.toResolvedReference()
+
+        // If we have a conflict between the expected type and the inferred type, we would like to set the inferred type on the expression,
+        // so that we report INITIALIZER_TYPE_MISMATCH/RETURN_TYPE_MISMATCH.
+        // This is required so that the IDE provides the correct quick fixes.
+        if (syntheticCall.resultType !is ConeErrorType && resolvedCalleeReference is FirResolvedErrorReference) {
+            val diagnostic = resolvedCalleeReference.diagnostic
+            if (diagnostic is ConeConstraintSystemHasContradiction) {
+                val candidate = diagnostic.candidate as Candidate
+                val newSyntheticCallType = session.typeContext.commonSuperTypeOrNull(candidate.argumentMapping!!.keys.map { it.resolvedType })
+                if (newSyntheticCallType != null && !newSyntheticCallType.hasError()) {
+                    syntheticCall.replaceConeTypeOrNull(newSyntheticCallType)
+                }
+            }
         }
+
+        syntheticCall.replaceCalleeReference(resolvedCalleeReference)
+
+        return syntheticCall
     }
 
     private inline fun <reified D> transformSyntheticCallChildren(

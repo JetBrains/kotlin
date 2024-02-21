@@ -1,0 +1,32 @@
+// FILE: KotlinInternalSeparate.kt
+
+// CHECK:
+//   Mangled name: KotlinInternalSeparate
+//   Public signature: /KotlinInternalSeparate|null[0]
+open class KotlinInternalSeparate {
+  // CHECK:
+  //   Mangled name: KotlinInternalSeparate#<init>(){}
+  //   Public signature: /KotlinInternalSeparate.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: KotlinInternalSeparate#foo(){}
+  //   Public signature: /KotlinInternalSeparate.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  @PublishedApi
+  internal open fun foo(): Unit
+
+  // CHECK:
+  //   Mangled name: KotlinInternalSeparate{}a
+  //   Public signature: /KotlinInternalSeparate.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  @PublishedApi
+  internal open val a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinInternalSeparate#<get-a>(){}kotlin.Int
+    //   Public signature: /KotlinInternalSeparate.a.<get-a>|4232747788241509192[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Int
+    internal open get(): Int
+
+}

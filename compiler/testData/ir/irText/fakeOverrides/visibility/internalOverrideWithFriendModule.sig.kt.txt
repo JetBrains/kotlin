@@ -1,0 +1,30 @@
+// FILE: KotlinInternal.kt
+
+// CHECK:
+//   Mangled name: KotlinInternal
+//   Public signature: /KotlinInternal|null[0]
+open class KotlinInternal {
+  // CHECK:
+  //   Mangled name: KotlinInternal#<init>(){}
+  //   Public signature: /KotlinInternal.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: KotlinInternal#foo(){}
+  //   Public signature: /KotlinInternal.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  internal open fun foo(): Unit
+
+  // CHECK:
+  //   Mangled name: KotlinInternal{}a
+  //   Public signature: /KotlinInternal.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  internal open val a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinInternal#<get-a>(){}kotlin.Int
+    //   Public signature: /KotlinInternal.a.<get-a>|4232747788241509192[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Int
+    internal open get(): Int
+
+}

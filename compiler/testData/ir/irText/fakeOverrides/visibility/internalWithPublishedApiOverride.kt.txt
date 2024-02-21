@@ -1,0 +1,20 @@
+// FILE: KotlinInternalSeparate.kt
+
+open class KotlinInternalSeparate {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  @PublishedApi
+  internal open fun foo() {
+  }
+
+  @PublishedApi
+  internal open val a: Int
+    internal open get(): Int {
+      return 1
+    }
+
+}

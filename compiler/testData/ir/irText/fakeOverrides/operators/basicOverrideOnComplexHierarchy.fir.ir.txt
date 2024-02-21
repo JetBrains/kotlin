@@ -211,7 +211,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:i index:0 type:kotlin.Int?
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun plus (i: kotlin.Int?): <root>.Java3 declared in <root>.F'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.Java3 origin=EXCLEXCL
             <T0>: kotlin.Nothing
             arg0: CONST Null type=kotlin.Nothing? value=null
   CLASS INTERFACE name:KotlinInterface modality:ABSTRACT visibility:public superTypes:[<root>.Java3]

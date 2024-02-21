@@ -16653,6 +16653,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("checkNotNullWithNullableExpectedType.kt")
+      public void testCheckNotNullWithNullableExpectedType() {
+        runTest("compiler/testData/diagnostics/tests/inference/checkNotNullWithNullableExpectedType.kt");
+      }
+
+      @Test
       @TestMetadata("coerceFunctionLiteralToSuspend.kt")
       public void testCoerceFunctionLiteralToSuspend() {
         runTest("compiler/testData/diagnostics/tests/inference/coerceFunctionLiteralToSuspend.kt");
@@ -17172,6 +17178,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       @TestMetadata("mostSpecificAfterInference.kt")
       public void testMostSpecificAfterInference() {
         runTest("compiler/testData/diagnostics/tests/inference/mostSpecificAfterInference.kt");
+      }
+
+      @Test
+      @TestMetadata("nestedIfWithExpectedType.kt")
+      public void testNestedIfWithExpectedType() {
+        runTest("compiler/testData/diagnostics/tests/inference/nestedIfWithExpectedType.kt");
       }
 
       @Test
@@ -18981,6 +18993,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         @TestMetadata("wrongApproximationWithDefNotNullTypesAndDelegates.kt")
         public void testWrongApproximationWithDefNotNullTypesAndDelegates() {
           runTest("compiler/testData/diagnostics/tests/inference/constraints/wrongApproximationWithDefNotNullTypesAndDelegates.kt");
+        }
+
+        @Test
+        @TestMetadata("wrongExpectedTypeForWhen.kt")
+        public void testWrongExpectedTypeForWhen() {
+          runTest("compiler/testData/diagnostics/tests/inference/constraints/wrongExpectedTypeForWhen.kt");
         }
       }
 
