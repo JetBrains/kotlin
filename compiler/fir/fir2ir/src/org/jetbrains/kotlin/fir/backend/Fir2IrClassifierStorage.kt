@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -178,18 +177,15 @@ class Fir2IrClassifierStorage(
         parent: IrDeclarationParent,
         predefinedOrigin: IrDeclarationOrigin? = null
     ): IrClass {
-        val symbol = createClassSymbol(signature = null)
+        val symbol = createClassSymbol()
         return classifiersGenerator.createIrClass(regularClass, parent, symbol, predefinedOrigin).also {
             @OptIn(LeakedDeclarationCaches::class)
             cacheIrClass(regularClass, it)
         }
     }
 
-    private fun createClassSymbol(signature: IdSignature?): IrClassSymbol {
-        return when {
-            signature != null -> symbolTable.referenceClass(signature)
-            else -> IrClassSymbolImpl()
-        }
+    private fun createClassSymbol(): IrClassSymbol {
+        return IrClassSymbolImpl()
     }
 
     @LeakedDeclarationCaches
@@ -216,7 +212,7 @@ class Fir2IrClassifierStorage(
             return createAndCacheLocalIrClassOnTheFly(firClass)
         }
         require(firClass is FirRegularClass)
-        val symbol = createClassSymbol(signature = null)
+        val symbol = createClassSymbol()
         val classId = firClass.symbol.classId
         val parentId = classId.outerClassId
         val parentClass = parentId?.let { session.symbolProvider.getClassLikeSymbolByClassId(it) }
@@ -418,8 +414,7 @@ class Fir2IrClassifierStorage(
     }
 
     fun createAndCacheCodeFragmentClass(codeFragment: FirCodeFragment, containingFile: IrFile): IrClass {
-        val signature = signatureComposer.composeSignature(codeFragment)
-        val symbol = createClassSymbol(signature)
+        val symbol = createClassSymbol()
         return classifiersGenerator.createCodeFragmentClass(codeFragment, containingFile, symbol).also {
             codeFragmentCache[codeFragment] = it
         }
