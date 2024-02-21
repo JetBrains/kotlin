@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.phaser.LoweringPhase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -18,6 +19,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 class ProvisionalFunctionExpressionLoweringContext(
     val startOffset: Int? = null,
     val endOffset: Int? = null
+)
+
+@LoweringPhase(
+    name = "FunctionExpression",
+    description = "Transform IrFunctionExpression to a local function reference"
 )
 class ProvisionalFunctionExpressionLowering :
     IrElementTransformer<ProvisionalFunctionExpressionLoweringContext>,

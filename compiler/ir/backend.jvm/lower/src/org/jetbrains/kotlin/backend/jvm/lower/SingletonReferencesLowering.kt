@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.phaser.LoweringPhase
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -22,6 +23,12 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
+@LoweringPhase(
+    name = "SingletonReferences",
+    description = "Handle singleton references",
+    // ReturnableBlock lowering may produce references to the `Unit` object
+    prerequisite = [JvmReturnableBlockLowering::class]
+)
 internal class SingletonReferencesLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     private val constructingEnums = arrayListOf<IrDeclarationParent>()
 

@@ -73,8 +73,7 @@ open class LocalDeclarationsLowering(
     val forceFieldsForInlineCaptures: Boolean = false, // See `LocalClassContext`
     private val postLocalDeclarationLoweringCallback: ((IntermediateDatastructures) -> Unit)? = null,
     private val getConstructorsThatCouldCaptureParamsWithoutFieldCreating: IrClass.() -> Iterable<IrConstructor> = { listOfNotNull(primaryConstructor) }
-) :
-    BodyLoweringPass {
+) : BodyLoweringPass {
 
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile)

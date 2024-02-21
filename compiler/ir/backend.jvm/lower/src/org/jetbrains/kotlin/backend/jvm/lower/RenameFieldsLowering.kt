@@ -6,19 +6,16 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.LoweringPhase
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.fields
 import org.jetbrains.kotlin.name.Name
 
-internal val renameFieldsPhase = makeIrFilePhase<CommonBackendContext>(
-    { RenameFieldsLowering() },
+@LoweringPhase(
     name = "RenameFields",
     description = "Rename private fields (including fields copied from companion object) to avoid JVM declaration clash"
 )
-
-private class RenameFieldsLowering : ClassLoweringPass {
+internal class RenameFieldsLowering : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         val fields = irClass.fields.toMutableList()
         fields.sortBy {

@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.common.phaser.LoweringPhase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -17,13 +16,11 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 
-internal val uniqueLoopLabelsPhase = makeIrFilePhase(
-    { _: JvmBackendContext -> UniqueLoopLabelsLowering() },
+@LoweringPhase(
     name = "UniqueLoopLabels",
     description = "Label all loops for non-local break/continue"
 )
-
-private class UniqueLoopLabelsLowering : FileLoweringPass {
+internal class UniqueLoopLabelsLowering : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(object : IrElementVisitorVoid {
             // This counter is intentionally not local to every declaration because their names might clash.

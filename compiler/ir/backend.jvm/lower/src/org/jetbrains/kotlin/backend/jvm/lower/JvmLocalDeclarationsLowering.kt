@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.lower.ConstructorDelegationKind
-import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
-import org.jetbrains.kotlin.backend.common.lower.VisibilityPolicy
-import org.jetbrains.kotlin.backend.common.lower.delegationKind
+import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.phaser.LoweringPhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -22,7 +20,12 @@ import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
-class JvmLocalDeclarationsLowering(context: JvmBackendContext) : LocalDeclarationsLowering(
+@LoweringPhase(
+    name = "JvmLocalDeclarations",
+    description = "Move local declarations to classes",
+    prerequisite = [FunctionReferenceLowering::class, SharedVariablesLowering::class]
+)
+internal class JvmLocalDeclarationsLowering(context: JvmBackendContext) : LocalDeclarationsLowering(
     context,
     NameUtils::sanitizeAsJavaIdentifier,
     JvmVisibilityPolicy,
