@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.Companion.IGNORE_REFERENCE_PARAMETER_NAME
 import org.jetbrains.kotlin.serialization.deserialization.ProtoBufContractDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
+import org.jetbrains.kotlin.metadata.deserialization.type
+import org.jetbrains.kotlin.metadata.deserialization.receiverType
 
 class ClsContractBuilder(private val c: ClsStubBuilderContext, private val typeStubBuilder: TypeClsStubBuilder) :
     ProtoBufContractDeserializer<KotlinTypeBean, Nothing?, ProtoBuf.Function>() {
@@ -26,9 +28,9 @@ class ClsContractBuilder(private val c: ClsStubBuilderContext, private val typeS
 
     override fun extractVariable(valueParameterIndex: Int, owner: ProtoBuf.Function): KtValueParameterReference<KotlinTypeBean, Nothing?> {
         val type = if (valueParameterIndex < 0) {
-            owner.receiverType
-        } else owner.valueParameterList[valueParameterIndex].type
-        return if (type.hasClassName() && c.nameResolver.getClassId(type.className) == StandardClassIds.Boolean) {
+            owner.receiverType(c.typeTable)
+        } else owner.valueParameterList[valueParameterIndex].type(c.typeTable)
+        return if (type?.hasClassName() == true && c.nameResolver.getClassId(type.className) == StandardClassIds.Boolean) {
             KtBooleanValueParameterReference(valueParameterIndex, name = IGNORE_REFERENCE_PARAMETER_NAME)
         } else KtValueParameterReference(valueParameterIndex, name = IGNORE_REFERENCE_PARAMETER_NAME)
     }
