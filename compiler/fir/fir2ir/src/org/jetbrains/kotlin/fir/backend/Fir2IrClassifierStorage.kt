@@ -35,7 +35,7 @@ class Fir2IrClassifierStorage(
 ) : Fir2IrComponents by components {
     private val classCache: MutableMap<FirRegularClass, IrClassSymbol> = commonMemberStorage.classCache
 
-    private val typeAliasCache: MutableMap<FirTypeAlias, IrTypeAlias> = mutableMapOf()
+    private val typeAliasCache: MutableMap<FirTypeAlias, IrTypeAliasSymbol> = mutableMapOf()
 
     private val typeParameterCache: MutableMap<FirTypeParameter, IrTypeParameter> = commonMemberStorage.typeParameterCache
 
@@ -63,7 +63,7 @@ class Fir2IrClassifierStorage(
     @DelicateDeclarationStorageApi
     fun forEachCachedDeclarationSymbol(block: (IrSymbol) -> Unit) {
         classCache.values.forEach { block(it) }
-        typeAliasCache.values.forEach { block(it.symbol) }
+        typeAliasCache.values.forEach { block(it) }
         enumEntryCache.values.forEach { block(it) }
         fieldsForContextReceivers.values.forEach { fields ->
             fields.forEach { block(it.symbol) }
@@ -381,15 +381,19 @@ class Fir2IrClassifierStorage(
     ): IrTypeAlias {
         val symbol = IrTypeAliasSymbolImpl()
         return classifiersGenerator.createIrTypeAlias(typeAlias, parent, symbol).also {
-            typeAliasCache[typeAlias] = it
+            typeAliasCache[typeAlias] = symbol
         }
     }
 
-    internal fun getCachedTypeAlias(firTypeAlias: FirTypeAlias): IrTypeAlias? = typeAliasCache[firTypeAlias]
+    internal fun getCachedTypeAlias(firTypeAlias: FirTypeAlias): IrTypeAlias? {
+        // Type alias should be created at this point
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
+        return typeAliasCache[firTypeAlias]?.owner
+    }
 
-    fun referenceTypeAlias(firTypeAliasSymbol: FirTypeAliasSymbol): IrTypeAlias {
+    fun getIrTypeAliasSymbol(firTypeAliasSymbol: FirTypeAliasSymbol): IrTypeAliasSymbol {
         val firTypeAlias = firTypeAliasSymbol.fir
-        classifierStorage.getCachedTypeAlias(firTypeAlias)?.let { return it }
+        getCachedTypeAlias(firTypeAlias)?.let { return it.symbol }
 
         val typeAliasId = firTypeAliasSymbol.classId
         val parentId = typeAliasId.outerClassId
@@ -403,10 +407,10 @@ class Fir2IrClassifierStorage(
 
         val symbol = IrTypeAliasSymbolImpl()
         val irTypeAlias = lazyDeclarationsGenerator.createIrLazyTypeAlias(firTypeAlias, irParent, symbol)
-        typeAliasCache[firTypeAlias] = irTypeAlias
+        typeAliasCache[firTypeAlias] = symbol
         irTypeAlias.prepareTypeParameters()
 
-        return irTypeAlias
+        return symbol
     }
 
     // ------------------------------------ code fragments ------------------------------------
