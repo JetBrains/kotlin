@@ -1,2 +1,2 @@
 Resolved to:
-PsiMethod:capitalize($this$capitalize: PsiType:String): PsiType:String
+PsiMethod:capitalize(p: PsiType:String): PsiType:String

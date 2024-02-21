@@ -1,2 +1,2 @@
 Resolved to:
-PsiMethod:getOrDefault($this$getOrDefault: PsiType:Map<? extends K, ? extends V>, key: PsiType:K, defaultValue: PsiType:V): PsiType:V
+PsiMethod:getOrDefault(p: PsiType:Map<? extends K, ? extends V>, p1: PsiType:K, p2: PsiType:V): PsiType:V

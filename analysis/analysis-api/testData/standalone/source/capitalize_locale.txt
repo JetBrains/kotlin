@@ -1,2 +1,2 @@
 Resolved to:
-PsiMethod:capitalize($this$capitalize: PsiType:String, locale: PsiType:Locale): PsiType:String
+PsiMethod:capitalize(p: PsiType:String, p1: PsiType:Locale): PsiType:String

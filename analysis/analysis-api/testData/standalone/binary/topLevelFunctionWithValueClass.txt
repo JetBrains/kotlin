@@ -1,2 +1,2 @@
 Resolved to:
-PsiMethod:ColorProvider-MpdQY78(color: PsiType:int): PsiType:ColorProvider
+PsiMethod:ColorProvider-MpdQY78(p: PsiType:int): PsiType:ColorProvider
