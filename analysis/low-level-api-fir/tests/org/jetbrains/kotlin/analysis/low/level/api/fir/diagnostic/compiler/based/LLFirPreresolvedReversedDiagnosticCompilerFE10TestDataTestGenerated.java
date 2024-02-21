@@ -634,6 +634,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt")
+    public void testIntersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin() {
+      runTest("compiler/testData/diagnostics/tests/intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt");
+    }
+
+    @Test
     @TestMetadata("invalidTargetCrashesCompiler.kt")
     public void testInvalidTargetCrashesCompiler() {
       runTest("compiler/testData/diagnostics/tests/invalidTargetCrashesCompiler.kt");
