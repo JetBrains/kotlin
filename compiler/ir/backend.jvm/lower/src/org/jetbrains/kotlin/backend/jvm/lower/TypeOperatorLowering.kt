@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.common.lower.irThrow
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -51,13 +51,11 @@ import java.lang.invoke.LambdaMetafactory
 //
 // The latter two correspond to the instanceof/checkcast instructions on the JVM, except for
 // the presence of reified type parameters.
-internal val typeOperatorLowering = makeIrFilePhase(
-    ::TypeOperatorLowering,
+@PhaseDescription(
     name = "TypeOperatorLowering",
     description = "Lower IrTypeOperatorCalls to (implicit) casts and instanceof checks"
 )
-
-private class TypeOperatorLowering(private val backendContext: JvmBackendContext) :
+internal class TypeOperatorLowering(private val backendContext: JvmBackendContext) :
     FileLoweringPass, IrBuildingTransformer(backendContext) {
 
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()

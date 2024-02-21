@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -26,13 +26,11 @@ import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.resolve.jvm.checkers.PolymorphicSignatureCallChecker
 
-internal val polymorphicSignaturePhase = makeIrFilePhase(
-    ::PolymorphicSignatureLowering,
+@PhaseDescription(
     name = "PolymorphicSignature",
     description = "Replace polymorphic methods with fake ones according to types at the call site"
 )
-
-private class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrElementTransformer<PolymorphicSignatureLowering.Data>,
+internal class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrElementTransformer<PolymorphicSignatureLowering.Data>,
     FileLoweringPass {
     override fun lower(irFile: IrFile) {
         if (context.config.languageVersionSettings.supportsFeature(LanguageFeature.PolymorphicSignature))

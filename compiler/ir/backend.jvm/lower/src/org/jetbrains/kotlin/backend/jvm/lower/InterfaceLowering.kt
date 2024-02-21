@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
@@ -38,8 +39,12 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * performs a traversal of any other code in this interface and redirects calls
  * to the interface to the companion, if functions were moved completely.
  */
+@PhaseDescription(
+    name = "Interface",
+    description = "Move default implementations of interface members to DefaultImpls class",
+    prerequisite = [JvmDefaultParameterInjector::class]
+)
 internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), ClassLoweringPass {
-
     private val removedFunctions = hashMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
     private val removedFunctionsWithoutRemapping = mutableSetOf<IrSimpleFunctionSymbol>()
 

@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
-import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -31,17 +30,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 
-val jvmInlineClassPhase = makeIrFilePhase(
-    ::JvmInlineClassLowering,
-    name = "InlineClasses",
-    description = "Lower inline classes",
-    // forLoopsPhase may produce UInt and ULong which are inline classes.
-    // Standard library replacements are done on the not mangled names for UInt and ULong classes.
-    // Collection stubs may require mangling by value class rules.
-    // SAM wrappers may require mangling for fun interfaces with value class parameters
-    prerequisite = setOf(forLoopsPhase, jvmBuiltInsPhase, collectionStubMethodLowering, singleAbstractMethodPhase),
-)
-
 /**
  * Adds new constructors, box, and unbox functions to inline classes as well as replacement
  * functions and bridges to avoid clashes between overloaded function. Changes call with
@@ -50,6 +38,17 @@ val jvmInlineClassPhase = makeIrFilePhase(
  * We do not unfold inline class types here. Instead, the type mapper will lower inline class
  * types to the types of their underlying field.
  */
+@PhaseDescription(
+    name = "InlineClasses",
+    description = "Lower inline classes",
+    // forLoopsPhase may produce UInt and ULong which are inline classes.
+    // Standard library replacements are done on the not mangled names for UInt and ULong classes.
+    // Collection stubs may require mangling by value class rules.
+    // SAM wrappers may require mangling for fun interfaces with value class parameters
+    prerequisite = [
+        ForLoopsLowering::class, JvmBuiltInsLowering::class, CollectionStubMethodLowering::class, JvmSingleAbstractMethodLowering::class
+    ]
+)
 internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClassAbstractLowering(context) {
     override val replacements: MemoizedValueClassAbstractReplacements
         get() = context.inlineClassReplacements

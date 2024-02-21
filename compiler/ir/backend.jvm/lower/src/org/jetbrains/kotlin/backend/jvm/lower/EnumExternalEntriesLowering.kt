@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.findEnumValuesFunction
@@ -31,12 +31,6 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-
-internal val enumExternalEntriesPhase = makeIrFilePhase(
-    ::EnumExternalEntriesLowering,
-    name = "EnumExternalEntries",
-    description = "Replaces '.entries' on Java and pre-compiled Kotlin enums with access to entries in generated \$EntriesMapping "
-)
 
 /**
  * When this lowering encounters call to `Enum.entries` where `Enum` is either Java enum or enum pre-compiled
@@ -64,8 +58,12 @@ internal val enumExternalEntriesPhase = makeIrFilePhase(
  *
  * There's similar code which handles the `enumEntries<Enum>()` intrinsic code generation in `EnumEntriesIntrinsicMappingsCacheImpl`.
  */
-class EnumExternalEntriesLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
-
+@PhaseDescription(
+    name = "EnumExternalEntries",
+    description = "Replaces '.entries' on Java and pre-compiled Kotlin enums with access to entries in generated \$EntriesMapping "
+)
+internal class EnumExternalEntriesLowering(private val context: JvmBackendContext) :
+    FileLoweringPass, IrElementTransformerVoidWithContext() {
     override fun lower(irFile: IrFile) {
         if (!context.config.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)) {
             return

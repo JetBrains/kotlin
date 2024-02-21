@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
@@ -32,13 +32,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-internal val inheritedDefaultMethodsOnClassesPhase = makeIrFilePhase(
-    ::InheritedDefaultMethodsOnClassesLowering,
+@PhaseDescription(
     name = "InheritedDefaultMethodsOnClasses",
     description = "Add bridge-implementations in classes that inherit default implementations from interfaces"
 )
-
-private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendContext) : ClassLoweringPass {
+internal class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         if (!irClass.isJvmInterface) {
             irClass.declarations.transformInPlace {
@@ -119,13 +117,11 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
     }
 }
 
-internal val replaceDefaultImplsOverriddenSymbolsPhase = makeIrFilePhase(
-    ::ReplaceDefaultImplsOverriddenSymbols,
+@PhaseDescription(
     name = "ReplaceDefaultImplsOverriddenSymbols",
     description = "Replace overridden symbols for methods inherited from interfaces to classes"
 )
-
-private class ReplaceDefaultImplsOverriddenSymbols(private val context: JvmBackendContext) : ClassLoweringPass {
+internal class ReplaceDefaultImplsOverriddenSymbols(private val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         for (declaration in irClass.declarations) {
             if (declaration is IrSimpleFunction) {
@@ -146,14 +142,11 @@ private class ReplaceDefaultImplsOverriddenSymbols(private val context: JvmBacke
     }
 }
 
-internal val interfaceSuperCallsPhase = makeIrFilePhase(
-    lowering = ::InterfaceSuperCallsLowering,
+@PhaseDescription(
     name = "InterfaceSuperCalls",
     description = "Redirect super interface calls to DefaultImpls"
 )
-
-private class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
-
+internal class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
     }
@@ -199,13 +192,11 @@ internal fun IrExpression.reinterpretAsDispatchReceiverOfType(irType: IrType): I
             this
         )
 
-internal val interfaceDefaultCallsPhase = makeIrFilePhase(
-    lowering = ::InterfaceDefaultCallsLowering,
+@PhaseDescription(
     name = "InterfaceDefaultCalls",
     description = "Redirect interface calls with default arguments to DefaultImpls (except method compiled to JVM defaults)"
 )
-
-private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
+internal class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
     // TODO If there are no default _implementations_ we can avoid generating defaultImpls class entirely by moving default arg dispatchers to the interface class
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
@@ -250,13 +241,11 @@ private fun IrSimpleFunction.isCloneableClone(): Boolean =
             (parent as? IrClass)?.fqNameWhenAvailable?.asString() == "kotlin.Cloneable" &&
             valueParameters.isEmpty()
 
-internal val interfaceObjectCallsPhase = makeIrFilePhase(
-    lowering = ::InterfaceObjectCallsLowering,
+@PhaseDescription(
     name = "InterfaceObjectCalls",
     description = "Resolve calls to Object methods on interface types to virtual methods"
 )
-
-private class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrElementVisitorVoid, FileLoweringPass {
+internal class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrElementVisitorVoid, FileLoweringPass {
     override fun lower(irFile: IrFile) = irFile.acceptChildren(this, null)
 
     override fun visitElement(element: IrElement) {

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
@@ -30,13 +30,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal val annotationImplementationPhase = makeIrFilePhase(
-    ::JvmAnnotationImplementationLowering,
+@PhaseDescription(
     name = "AnnotationImplementation",
     description = "Create synthetic annotations implementations and use them in annotations constructor calls"
 )
-
-private class JvmAnnotationImplementationLowering(context: JvmBackendContext) : AnnotationImplementationLowering(
+internal class JvmAnnotationImplementationLowering(context: JvmBackendContext) : AnnotationImplementationLowering(
     { JvmAnnotationImplementationTransformer(context, it) }
 )
 

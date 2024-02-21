@@ -10,11 +10,9 @@ import org.jetbrains.kotlin.backend.common.ir.getDefaultAdditionalStatementsFrom
 import org.jetbrains.kotlin.backend.common.ir.getNonDefaultAdditionalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.ir.getOriginalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.functionInliningPhase
-import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -27,14 +25,12 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.NameUtils
 
-internal val removeDuplicatedInlinedLocalClasses = makeIrFilePhase(
-    ::RemoveDuplicatedInlinedLocalClassesLowering,
+@PhaseDescription(
     name = "RemoveDuplicatedInlinedLocalClasses",
     description = "Drop excess local classes that were copied by ir inliner",
-    prerequisite = setOf(functionInliningPhase, localDeclarationsPhase)
+    prerequisite = [/* JvmIrInliner::class, */ JvmLocalDeclarationsLowering::class]
 )
-
-private class RemoveDuplicatedInlinedLocalClassesLowering(private val context: JvmBackendContext) : FileLoweringPass {
+internal class RemoveDuplicatedInlinedLocalClassesLowering(private val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         if (context.config.enableIrInliner) {
             irFile.transformChildren(RemoveDuplicatedInlinedLocalClassesTransformer(context), Data())

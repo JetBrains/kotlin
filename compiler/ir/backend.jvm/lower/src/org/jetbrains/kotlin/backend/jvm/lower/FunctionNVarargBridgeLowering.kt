@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
@@ -31,17 +31,15 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-internal val functionNVarargBridgePhase = makeIrFilePhase(
-    ::FunctionNVarargBridgeLowering,
-    name = "FunctionBridgePhase",
-    description = "Add bridges for invoke functions with a large number of arguments"
-)
-
 // There are concrete function classes for functions with up to 22 arguments. Above that, we
 // inherit from the generic FunctionN class which has a vararg invoke method. This phase
 // adds a bridge method for such large arity functions, which checks the number of arguments
 // dynamically.
-private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
+@PhaseDescription(
+    name = "FunctionBridgePhase",
+    description = "Add bridges for invoke functions with a large number of arguments"
+)
+internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
     FileLoweringPass, IrElementTransformerVoidWithContext() {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)
 

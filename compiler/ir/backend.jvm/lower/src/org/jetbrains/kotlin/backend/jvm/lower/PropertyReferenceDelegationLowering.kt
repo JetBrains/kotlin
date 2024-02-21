@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.ir.util.parents
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.fileParentOrNull
@@ -27,13 +26,11 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 
-internal val propertyReferenceDelegationPhase = makeIrFilePhase(
-    ::PropertyReferenceDelegationLowering,
+@PhaseDescription(
     name = "PropertyReferenceDelegation",
     description = "Optimize `val x by ::y`: there is no need to construct a KProperty instance"
 )
-
-private class PropertyReferenceDelegationLowering(val context: JvmBackendContext) : FileLoweringPass {
+internal class PropertyReferenceDelegationLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         if (!context.config.generateOptimizedCallableReferenceSuperClasses) return
         irFile.transform(PropertyReferenceDelegationTransformer(context), null)

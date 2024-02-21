@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.asInlinable
 import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.buildAssertionsDisabledField
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -24,19 +24,16 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
-internal val assertionPhase = makeIrFilePhase(
-    ::AssertionLowering,
+@PhaseDescription(
     name = "Assertion",
     description = "Lower assert calls depending on the assertions mode",
     // Necessary to place the `$assertionsDisabled` field into the reference's class, not the
     // class that contains it.
-    prerequisite = setOf(functionReferencePhase)
+    prerequisite = [FunctionReferenceLowering::class]
 )
-
-private class AssertionLowering(private val context: JvmBackendContext) :
+internal class AssertionLowering(private val context: JvmBackendContext) :
     FileLoweringPass,
-    IrElementTransformer<AssertionLowering.ClassInfo?>
-{
+    IrElementTransformer<AssertionLowering.ClassInfo?> {
     // Keeps track of the $assertionsDisabled field, which we generate lazily for classes containing
     // assertions when compiled with -Xassertions=jvm.
     class ClassInfo(val irClass: IrClass, val topLevelClass: IrClass, var assertionsDisabledField: IrField? = null)

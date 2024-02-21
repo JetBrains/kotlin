@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.hasPlatformDependent
+import org.jetbrains.kotlin.backend.jvm.lower.JvmArgumentNullabilityAssertionsLowering.AssertionScope
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
@@ -18,20 +19,18 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
-val jvmArgumentNullabilityAssertions = makeIrFilePhase(
-    ::JvmArgumentNullabilityAssertionsLowering,
+@PhaseDescription(
     name = "ArgumentNullabilityAssertions",
     description = "Transform nullability assertions on arguments according to the compiler settings",
-    // jvmStringConcatenationLowering may remove IMPLICIT_NOTNULL casts.
-    prerequisite = setOf(jvmStringConcatenationLowering)
+    // JvmStringConcatenationLowering may remove IMPLICIT_NOTNULL casts.
+    prerequisite = [JvmStringConcatenationLowering::class]
 )
-
-private enum class AssertionScope {
-    Enabled, Disabled
-}
-
-private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContext) : FileLoweringPass,
+internal class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContext) : FileLoweringPass,
     IrElementTransformer<AssertionScope> {
+
+    enum class AssertionScope {
+        Enabled, Disabled
+    }
 
     private val isWithUnifiedNullChecks = context.config.unifiedNullChecks
     private val isCallAssertionsDisabled = context.config.isCallAssertionsDisabled

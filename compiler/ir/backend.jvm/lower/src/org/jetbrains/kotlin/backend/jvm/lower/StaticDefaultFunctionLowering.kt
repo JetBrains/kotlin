@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -32,14 +32,12 @@ import org.jetbrains.kotlin.ir.util.createStaticFunctionWithReceivers
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
-internal val staticDefaultFunctionPhase = makeIrFilePhase(
-    ::StaticDefaultFunctionLowering,
+@PhaseDescription(
     name = "StaticDefaultFunction",
     description = "Make function adapters for default arguments static",
-    prerequisite = setOf(jvmStaticInObjectPhase),
+    prerequisite = [/* JvmStaticInObjectLowering::class */]
 )
-
-private class StaticDefaultFunctionLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+internal class StaticDefaultFunctionLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.accept(this, null)
     }

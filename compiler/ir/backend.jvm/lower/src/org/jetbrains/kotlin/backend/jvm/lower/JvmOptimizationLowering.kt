@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.AbstractVariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.lower.loops.isInductionVariable
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineScopeResolver
@@ -31,13 +31,11 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal val jvmOptimizationLoweringPhase = makeIrFilePhase(
-    ::JvmOptimizationLowering,
+@PhaseDescription(
     name = "JvmOptimizationLowering",
     description = "Optimize code for JVM code generation"
 )
-
-class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass {
+internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass {
     private companion object {
         private fun isNegation(expression: IrExpression): Boolean =
             expression is IrCall && expression.symbol.owner.let { not ->

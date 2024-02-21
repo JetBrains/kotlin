@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -30,14 +29,12 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 //
 // So PropertyReferenceDelegationLowering generates `$delegate` methods for optimized property references as instance methods,
 // and this phase, which runs _after_ LocalDeclarationsLowering, transforms them to static methods.
-internal val makePropertyDelegateMethodsStaticPhase = makeIrFilePhase(
-    ::MakePropertyDelegateMethodsStaticLowering,
+@PhaseDescription(
     name = "MakePropertyDelegateMethodsStatic",
     description = "Make `\$delegate` methods for optimized delegated properties static",
-    prerequisite = setOf(propertyReferenceDelegationPhase, localDeclarationsPhase)
+    prerequisite = [PropertyReferenceDelegationLowering::class, JvmLocalDeclarationsLowering::class]
 )
-
-private class MakePropertyDelegateMethodsStaticLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+internal class MakePropertyDelegateMethodsStaticLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transform(this, null)
     }

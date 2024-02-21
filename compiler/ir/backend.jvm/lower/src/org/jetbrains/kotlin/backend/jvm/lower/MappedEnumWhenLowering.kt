@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.lower.EnumWhenLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irCatch
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.findEnumValuesFunction
@@ -29,12 +29,6 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
-
-internal val enumWhenPhase = makeIrFilePhase(
-    ::MappedEnumWhenLowering,
-    name = "EnumWhenLowering",
-    description = "Replace `when` subjects of enum types with their ordinals"
-)
 
 // A version of EnumWhenLowering that is more friendly to incremental compilation. For example,
 // suppose the code initially looks like this:
@@ -61,7 +55,11 @@ internal val enumWhenPhase = makeIrFilePhase(
 // The latter would not need to be recompiled if new entries were added before `X`
 // at the negligible cost of an additional initializer per run + one array read per call.
 //
-private class MappedEnumWhenLowering(override val context: JvmBackendContext) : EnumWhenLowering(context) {
+@PhaseDescription(
+    name = "EnumWhenLowering",
+    description = "Replace `when` subjects of enum types with their ordinals"
+)
+internal class MappedEnumWhenLowering(override val context: JvmBackendContext) : EnumWhenLowering(context) {
     private val intArray = context.irBuiltIns.primitiveArrayForType.getValue(context.irBuiltIns.intType)
     private val intArrayConstructor = intArray.constructors.single { it.owner.valueParameters.size == 1 }
     private val intArrayGet = intArray.functions.single { it.owner.name == OperatorNameConventions.GET }

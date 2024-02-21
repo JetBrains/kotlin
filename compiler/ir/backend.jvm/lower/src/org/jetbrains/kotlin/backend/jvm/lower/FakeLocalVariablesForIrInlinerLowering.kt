@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
@@ -35,13 +35,11 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
-internal val fakeLocalVariablesForIrInlinerLowering = makeIrFilePhase(
-    ::FakeLocalVariablesForIrInlinerLowering,
+@PhaseDescription(
     name = "FakeLocalVariablesForIrInlinerLowering",
-    description = """Add fake locals to identify the range of inlined functions and lambdas. 
-        |This lowering adds fake locals into already inlined blocks.""".trimMargin()
+    description = "Add fake locals to identify the range of inlined functions and lambdas. " +
+            "This lowering adds fake locals into already inlined blocks."
 )
-
 internal class FakeLocalVariablesForIrInlinerLowering(
     override val context: JvmBackendContext
 ) : IrElementVisitorVoid, FakeInliningLocalVariables<IrInlinedFunctionBlock>, FileLoweringPass {

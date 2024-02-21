@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -28,14 +28,12 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.Name
 import java.lang.annotation.ElementType
 
-internal val additionalClassAnnotationPhase = makeIrFilePhase(
-    ::AdditionalClassAnnotationLowering,
+@PhaseDescription(
     name = "AdditionalClassAnnotation",
     description = "Add Documented, Retention, Target, Repeatable annotations to annotation classes",
-    prerequisite = setOf(repeatedAnnotationPhase)
+    prerequisite = [/* RepeatedAnnotationLowering::class */]
 )
-
-private class AdditionalClassAnnotationLowering(private val context: JvmBackendContext) : ClassLoweringPass {
+internal class AdditionalClassAnnotationLowering(private val context: JvmBackendContext) : ClassLoweringPass {
     private val symbols = context.ir.symbols.javaAnnotations
     private val noNewJavaAnnotationTargets =
         context.config.noNewJavaAnnotationTargets || !context.isCompilingAgainstJdk8OrLater

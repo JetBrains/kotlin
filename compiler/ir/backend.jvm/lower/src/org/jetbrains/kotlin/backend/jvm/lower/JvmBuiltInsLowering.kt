@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArrayOf
@@ -21,14 +21,11 @@ import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.render
 
-internal val jvmBuiltInsPhase = makeIrFilePhase(
-    ::JvmBuiltInsLowering,
+@PhaseDescription(
     name = "JvmBuiltInsLowering",
     description = "JVM-specific implementations of some built-ins"
 )
-
-class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLoweringPass {
-
+internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         val transformer = object : IrElementTransformerVoidWithContext() {
             override fun visitCall(expression: IrCall): IrExpression {

@@ -10,8 +10,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.ir.util.parents
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.hasChild
@@ -48,12 +47,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 import kotlin.collections.set
-
-internal val suspendLambdaPhase = makeIrFilePhase(
-    ::SuspendLambdaLowering,
-    "SuspendLambda",
-    "Transform suspend lambdas into continuation classes"
-)
 
 private fun IrFunction.capturesCrossinline(): Boolean {
     val parents = parents.toSet()
@@ -108,7 +101,11 @@ internal abstract class SuspendLoweringUtils(protected val context: JvmBackendCo
         context.ir.symbols.continuationClass.typeWith(returnType).makeNullable()
 }
 
-private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweringUtils(context), FileLoweringPass {
+@PhaseDescription(
+    name = "SuspendLambda",
+    description = "Transform suspend lambdas into continuation classes"
+)
+internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweringUtils(context), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
             override fun visitBlock(expression: IrBlock): IrExpression {

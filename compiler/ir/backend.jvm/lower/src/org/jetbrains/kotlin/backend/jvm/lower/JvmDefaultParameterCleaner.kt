@@ -6,8 +6,14 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.lower.DefaultParameterCleaner
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 
+@PhaseDescription(
+    name = "DefaultParameterCleaner",
+    description = "Replace default values arguments with stubs",
+    prerequisite = [JvmDefaultArgumentStubGenerator::class]
+)
 internal class JvmDefaultParameterCleaner(
     context: JvmBackendContext
 ) : DefaultParameterCleaner(context, replaceDefaultValuesWithStubs = true)

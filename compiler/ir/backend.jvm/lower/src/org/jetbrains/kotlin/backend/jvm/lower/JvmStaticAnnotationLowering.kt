@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.CachedFieldsForObjectInstances
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -33,12 +33,6 @@ internal val jvmStaticInObjectPhase = makeIrModulePhase(
     description = "Make JvmStatic functions in non-companion objects static and replace all call sites in the module"
 )
 
-internal val jvmStaticInCompanionPhase = makeIrFilePhase(
-    ::JvmStaticInCompanionLowering,
-    name = "JvmStaticInCompanion",
-    description = "Synthesize static proxy functions for JvmStatic functions in companion objects"
-)
-
 private class JvmStaticInObjectLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) =
         irFile.transformChildrenVoid(
@@ -46,7 +40,11 @@ private class JvmStaticInObjectLowering(val context: JvmBackendContext) : FileLo
         )
 }
 
-private class JvmStaticInCompanionLowering(val context: JvmBackendContext) : FileLoweringPass {
+@PhaseDescription(
+    name = "JvmStaticInCompanion",
+    description = "Synthesize static proxy functions for JvmStatic functions in companion objects"
+)
+internal class JvmStaticInCompanionLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) =
         irFile.transformChildrenVoid(CompanionObjectJvmStaticTransformer(context))
 }

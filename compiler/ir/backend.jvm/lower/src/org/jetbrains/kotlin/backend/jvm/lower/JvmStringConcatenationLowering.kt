@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.FlattenStringConcatenationLowering
-import org.jetbrains.kotlin.backend.common.lower.flattenStringConcatenationPhase
-import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
@@ -25,15 +24,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-
-internal val jvmStringConcatenationLowering = makeIrFilePhase(
-    ::JvmStringConcatenationLowering,
-    name = "StringConcatenation",
-    description = "Replace IrStringConcatenation with string builders",
-    // flattenStringConcatenationPhase consolidates string concatenation expressions.
-    // forLoopsPhase may produce IrStringConcatenations.
-    prerequisite = setOf(flattenStringConcatenationPhase, forLoopsPhase)
-)
 
 private val IrClass.toStringFunction: IrSimpleFunction
     get() = functions.single {
@@ -129,7 +119,14 @@ private const val MAX_STRING_CONCAT_DEPTH = 23
  * is that this pass also handles JVM specific optimizations, such as calling stringPlus
  * for two arguments, and properly handles inline classes.
  */
-private class JvmStringConcatenationLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
+@PhaseDescription(
+    name = "StringConcatenation",
+    description = "Replace IrStringConcatenation with string builders",
+    // FlattenStringConcatenationLowering consolidates string concatenation expressions.
+    // ForLoopsLowering may produce IrStringConcatenations.
+    prerequisite = [FlattenStringConcatenationLowering::class, ForLoopsLowering::class]
+)
+internal class JvmStringConcatenationLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     private val stringBuilder = context.ir.symbols.stringBuilder.owner

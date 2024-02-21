@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.ir.IrElement
@@ -22,19 +22,17 @@ import org.jetbrains.kotlin.ir.util.isFromJava
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 
-internal val addSuperQualifierToJavaFieldAccessPhase = makeIrFilePhase(
-    ::AddSuperQualifierToJavaFieldAccessLowering,
+// This lowering changes field accesses so that codegen will correctly generate access to a public field in a Java superclass of a Kotlin
+// class, even if that field is "shadowed" by a property in the Kotlin class, with a _private_ field with the same name.
+// See KT-49507 and KT-48954 as good examples for cases we try to handle here.
+@PhaseDescription(
     name = "AddSuperQualifierToJavaFieldAccess",
     description = "Make `\$delegate` methods for optimized delegated properties static",
     // Property references need to be lowered to classes with field access inside. We can't perform this phase on unlowered property
     // references as IrPropertyReference doesn't have superQualifierSymbol.
-    prerequisite = setOf(propertyReferencePhase),
+    prerequisite = [PropertyReferenceLowering::class],
 )
-
-// This lowering changes field accesses so that codegen will correctly generate access to a public field in a Java superclass of a Kotlin
-// class, even if that field is "shadowed" by a property in the Kotlin class, with a _private_ field with the same name.
-// See KT-49507 and KT-48954 as good examples for cases we try to handle here.
-private class AddSuperQualifierToJavaFieldAccessLowering(private val context: JvmBackendContext) : IrElementVisitorVoid, FileLoweringPass {
+internal class AddSuperQualifierToJavaFieldAccessLowering(private val context: JvmBackendContext) : IrElementVisitorVoid, FileLoweringPass {
     override fun lower(irFile: IrFile) {
         if (context.config.useFir) {
             irFile.accept(this, null)

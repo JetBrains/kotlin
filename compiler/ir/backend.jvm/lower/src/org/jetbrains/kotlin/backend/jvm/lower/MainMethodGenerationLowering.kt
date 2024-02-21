@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmNameFromAnnotation
@@ -29,15 +29,12 @@ import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
-internal val mainMethodGenerationPhase = makeIrFilePhase(
-    ::MainMethodGenerationLowering,
+@PhaseDescription(
     name = "MainMethodGeneration",
     description = "Generate main bridges to parameterless mains, and wrappers for suspend mains.",
-    prerequisite = setOf(jvmOverloadsAnnotationPhase)
+    prerequisite = [JvmOverloadsAnnotationLowering::class],
 )
-
-private class MainMethodGenerationLowering(private val context: JvmBackendContext) : ClassLoweringPass {
-
+internal class MainMethodGenerationLowering(private val context: JvmBackendContext) : ClassLoweringPass {
     /**
      * This pass finds extended main methods and introduces a regular
      * `public static void main(String[] args)` entry point, as appropriate:

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.loops.*
 import org.jetbrains.kotlin.backend.common.lower.loops.handlers.*
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.IrStatement
@@ -34,17 +34,15 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-val rangeContainsLoweringPhase = makeIrFilePhase(
-    ::RangeContainsLowering,
-    name = "RangeContainsLowering",
-    description = "Optimizes calls to contains() for ClosedRanges"
-)
-
 /**
  * This lowering pass optimizes calls to contains() (`in` operator) for ClosedRanges.
  *
  * For example, the expression `X in A..B` is transformed into `A <= X && X <= B`.
  */
+@PhaseDescription(
+    name = "RangeContainsLowering",
+    description = "Optimizes calls to contains() for ClosedRanges"
+)
 class RangeContainsLowering(val context: CommonBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val transformer = Transformer(context, container as IrSymbolOwner)

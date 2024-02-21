@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.ir.util.isFunctionInlining
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -17,21 +16,20 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isFunctionInlining
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-internal val tailCallOptimizationPhase = makeIrFilePhase(
-    ::TailCallOptimizationLowering,
-    "TailCallOptimization",
-    "Add or move returns to suspension points on tail-call positions"
-)
-
 // Find all tail-calls inside suspend function. We should add IrReturn before them, so the codegen will generate
 // code which is understandable by old BE's tail-call optimizer.
-private class TailCallOptimizationLowering(private val context: JvmBackendContext) : FileLoweringPass {
+@PhaseDescription(
+    name = "TailCallOptimization",
+    description = "Add or move returns to suspension points on tail-call positions"
+)
+internal class TailCallOptimizationLowering(private val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildren(object : IrElementTransformer<TailCallOptimizationData?> {
             override fun visitSimpleFunction(declaration: IrSimpleFunction, data: TailCallOptimizationData?) =

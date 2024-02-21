@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -24,12 +24,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformInPlace
-
-internal val anonymousObjectSuperConstructorPhase = makeIrFilePhase(
-    ::AnonymousObjectSuperConstructorLowering,
-    name = "AnonymousObjectSuperConstructor",
-    description = "Move evaluation of anonymous object super constructor arguments to call site"
-)
 
 // Transform code like this:
 //
@@ -56,7 +50,11 @@ internal val anonymousObjectSuperConstructorPhase = makeIrFilePhase(
 // attempts to read them from fields, causing a bytecode validation error.
 //
 // (TODO fix the inliner instead. Then keep this code for one more version for backwards compatibility.)
-private class AnonymousObjectSuperConstructorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(),
+@PhaseDescription(
+    name = "AnonymousObjectSuperConstructor",
+    description = "Move evaluation of anonymous object super constructor arguments to call site"
+)
+internal class AnonymousObjectSuperConstructorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(),
     FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid()

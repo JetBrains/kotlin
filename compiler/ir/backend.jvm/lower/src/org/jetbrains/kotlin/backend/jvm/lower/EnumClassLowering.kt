@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
@@ -38,17 +38,14 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
-internal val enumClassPhase = makeIrFilePhase(
-    ::EnumClassLowering,
-    name = "EnumClass",
-    description = "Handle enum classes"
-)
-
 private const val VALUES_HELPER_FUNCTION_NAME = "\$values"
 private const val ENTRIES_FIELD_NAME = "\$ENTRIES"
 
-private class EnumClassLowering(private val context: JvmBackendContext) : ClassLoweringPass {
-
+@PhaseDescription(
+    name = "EnumClass",
+    description = "Handle enum classes"
+)
+internal class EnumClassLowering(private val context: JvmBackendContext) : ClassLoweringPass {
     /*
      * Example of codegen for
      * `enum class MyEnum { A }`

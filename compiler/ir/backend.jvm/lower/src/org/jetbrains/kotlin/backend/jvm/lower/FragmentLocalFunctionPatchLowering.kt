@@ -8,10 +8,9 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
-import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -27,19 +26,17 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-val fragmentLocalFunctionPatchLowering = makeIrFilePhase(
-    ::FragmentLocalFunctionPatchLowering,
-    name = "FragmentLocalFunctionPatching",
-    description = "Rewrite calls to local functions to the appropriate, lifted function created by local declarations lowering.",
-    prerequisite = setOf(localDeclarationsPhase)
-)
-
 // This lowering rewrites local function calls in code fragments to the
 // corresponding lifted declaration. In the process, the lowering determines
 // whether the captures of the local function are a subset of the captures of
 // the fragment, and if not, introduces additional captures to the fragment
 // wrapper. The captures are then supplied to the fragment wrapper as
 // parameters supplied at evaluation time.
+@PhaseDescription(
+    name = "FragmentLocalFunctionPatching",
+    description = "Rewrite calls to local functions to the appropriate, lifted function created by local declarations lowering.",
+    prerequisite = [JvmLocalDeclarationsLowering::class]
+)
 internal class FragmentLocalFunctionPatchLowering(
     val context: JvmBackendContext
 ) : IrElementTransformerVoidWithContext(), FileLoweringPass {

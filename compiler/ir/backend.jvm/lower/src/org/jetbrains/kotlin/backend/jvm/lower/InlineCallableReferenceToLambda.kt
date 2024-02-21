@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
@@ -30,12 +30,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
-internal val inlineCallableReferenceToLambdaPhase = makeIrFilePhase(
-    ::InlineCallableReferenceToLambdaPhase,
-    name = "InlineCallableReferenceToLambdaPhase",
-    description = "Transform callable reference to inline lambdas, mark inline lambdas for later passes"
-)
-
 // This lowering transforms CR passed to inline function to lambda which would be inlined
 //
 //      inline fun foo(inlineParameter: (A) -> B): B {
@@ -44,6 +38,10 @@ internal val inlineCallableReferenceToLambdaPhase = makeIrFilePhase(
 //
 //      foo(::smth) -> foo { a -> smth(a) }
 //
+@PhaseDescription(
+    name = "InlineCallableReferenceToLambdaPhase",
+    description = "Transform callable reference to inline lambdas, mark inline lambdas for later passes"
+)
 internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) =
         irFile.accept(InlineCallableReferenceToLambdaVisitor(context), null)

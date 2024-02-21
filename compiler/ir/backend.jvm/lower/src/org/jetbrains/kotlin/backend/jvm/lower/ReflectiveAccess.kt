@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.defaultArgumentCleanerPhase
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.SyntheticAccessorLowering.Companion.isAccessible
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -25,13 +24,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
-
-val reflectiveAccessLowering = makeIrFilePhase(
-    ::ReflectiveAccessLowering,
-    name = "ReflectiveCalls",
-    description = "Avoid the need for accessors by replacing direct access to inaccessible members with accesses via reflection",
-    prerequisite = setOf(defaultArgumentCleanerPhase)
-)
 
 // This lowering replaces member accesses that are illegal according to JVM
 // accessibility rules with corresponding calls to the java.lang.reflect
@@ -57,6 +49,11 @@ val reflectiveAccessLowering = makeIrFilePhase(
 // *super calls, private or not, are not allowed from outside the class
 // hierarchy of the involved classes, so is emulated in fragment compilation by
 // the use of `invokespecial` - see `invokeSpecialForCall` below.
+@PhaseDescription(
+    name = "ReflectiveCalls",
+    description = "Avoid the need for accessors by replacing direct access to inaccessible members with accesses via reflection",
+    prerequisite = [JvmDefaultParameterCleaner::class]
+)
 internal class ReflectiveAccessLowering(
     val context: JvmBackendContext
 ) : IrElementTransformerVoidWithContext(), FileLoweringPass {
