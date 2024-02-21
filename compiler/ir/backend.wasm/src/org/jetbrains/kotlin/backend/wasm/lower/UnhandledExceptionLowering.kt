@@ -56,6 +56,7 @@ internal class UnhandledExceptionLowering(val context: WasmBackendContext) : Fil
     private fun processExportFunction(irFunction: IrFunction) {
         val body = irFunction.body ?: return
         if (body is IrBlockBody && body.statements.isEmpty()) return
+        if (irFunction in context.closureCallExports.values) return
 
         val bodyType = when (body) {
             is IrExpressionBody -> body.expression.type
