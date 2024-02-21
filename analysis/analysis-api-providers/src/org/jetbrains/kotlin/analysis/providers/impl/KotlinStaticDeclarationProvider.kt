@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.util.concurrent.ConcurrentHashMap
 
 public class KotlinStaticDeclarationProvider internal constructor(
@@ -396,6 +397,8 @@ public class KotlinStaticDeclarationProviderFactory(
     public fun getAdditionalCreatedKtFiles(): List<KtFile> {
         return createdFakeKtFiles
     }
+
+    public fun getAllKtClasses(): List<KtClassOrObject> = index.classMap.values.flattenTo(mutableListOf())
 }
 
 /**
