@@ -554,7 +554,9 @@ internal class KtFirCallResolver(
                     KtSimpleVariableAccess.Write(rhs)
                 )
             }
-            is FirPropertyAccessExpression -> {
+            is FirPropertyAccessExpression, is FirCallableReferenceAccess -> {
+                @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
+                require(fir is FirQualifiedAccessExpression)
                 when (unsubstitutedKtSignature.symbol) {
                     is KtVariableLikeSymbol -> {
                         @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
@@ -999,11 +1001,12 @@ internal class KtFirCallResolver(
             is FirArrayLiteral, is FirEqualityOperatorCall -> {
                 toKtCallInfo(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKtCallCandidateInfos()
             }
-            is FirComparisonExpression -> compareToCall.toKtCallInfo(
-                psi,
-                resolveCalleeExpressionOfFunctionCall,
-                resolveFragmentOfCall
-            ).toKtCallCandidateInfos()
+            is FirComparisonExpression -> {
+                compareToCall.toKtCallInfo(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKtCallCandidateInfos()
+            }
+            is FirCallableReferenceAccess -> {
+                calleeReference.toKtCallInfo(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKtCallCandidateInfos()
+            }
             is FirResolvedQualifier -> toKtCallCandidateInfos()
             is FirDelegatedConstructorCall -> collectCallCandidatesForDelegatedConstructorCall(psi, resolveFragmentOfCall)
             else -> toKtCallInfo(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKtCallCandidateInfos()

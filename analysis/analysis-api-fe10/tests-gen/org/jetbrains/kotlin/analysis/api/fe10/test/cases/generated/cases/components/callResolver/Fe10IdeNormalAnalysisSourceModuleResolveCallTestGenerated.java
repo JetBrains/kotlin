@@ -1011,6 +1011,130 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CallableReferences {
+    @Test
+    public void testAllFilesPresentInCallableReferences() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("annotationConstructor.kt")
+    public void testAnnotationConstructor() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences/annotationConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("boundMemberExtensionFunction.kt")
+    public void testBoundMemberExtensionFunction() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences/boundMemberExtensionFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("boundMemberFunction.kt")
+    public void testBoundMemberFunction() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences/boundMemberFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("boundMemberProperty.kt")
+    public void testBoundMemberProperty() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences/boundMemberProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("boundTopLevelExtensionFunction.kt")
+    public void testBoundTopLevelExtensionFunction() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences/boundTopLevelExtensionFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("boundTopLevelExtensionProperty.kt")
+    public void testBoundTopLevelExtensionProperty() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences/boundTopLevelExtensionProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("constructor.kt")
+    public void testConstructor() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences/constructor.kt");
+    }
+
+    @Test
+    @TestMetadata("genericParameterType.kt")
+    public void testGenericParameterType() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences/genericParameterType.kt");
+    }
+
+    @Test
+    @TestMetadata("genericParameterTypeGenericConsumer.kt")
+    public void testGenericParameterTypeGenericConsumer() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences/genericParameterTypeGenericConsumer.kt");
+    }
+
+    @Test
+    @TestMetadata("genericReturnType.kt")
+    public void testGenericReturnType() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences/genericReturnType.kt");
+    }
+
+    @Test
+    @TestMetadata("genericReturnTypeGenericConsumer.kt")
+    public void testGenericReturnTypeGenericConsumer() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences/genericReturnTypeGenericConsumer.kt");
+    }
+
+    @Test
+    @TestMetadata("memberExtensionProperty.kt")
+    public void testMemberExtensionProperty() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences/memberExtensionProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("memberFunction.kt")
+    public void testMemberFunction() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences/memberFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("memberProperty.kt")
+    public void testMemberProperty() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences/memberProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("simple.kt")
+    public void testSimple() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences/simple.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelExtensionFunction.kt")
+    public void testTopLevelExtensionFunction() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences/topLevelExtensionFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelExtensionProperty.kt")
+    public void testTopLevelExtensionProperty() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences/topLevelExtensionProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelFunction.kt")
+    public void testTopLevelFunction() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences/topLevelFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelProperty.kt")
+    public void testTopLevelProperty() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences/topLevelProperty.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode")
   @TestDataPath("$PROJECT_ROOT")
   public class InvalidCode {
