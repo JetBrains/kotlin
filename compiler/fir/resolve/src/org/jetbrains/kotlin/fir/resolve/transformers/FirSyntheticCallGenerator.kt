@@ -430,7 +430,7 @@ class FirSyntheticCallGenerator(
         val typeParameter =
             buildTypeParameter {
                 moduleData = session.moduleData
-                origin = FirDeclarationOrigin.Library
+                origin = FirDeclarationOrigin.Synthetic.FakeFunction
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 name = Name.identifier("K")
                 symbol = typeParameterSymbol
@@ -550,7 +550,7 @@ class FirSyntheticCallGenerator(
         return buildValueParameter {
             moduleData = session.moduleData
             containingFunctionSymbol = functionSymbol
-            origin = FirDeclarationOrigin.Library
+            origin = FirDeclarationOrigin.Synthetic.FakeFunction
             this.name = name
             returnTypeRef = this@toValueParameter
             isCrossinline = false
