@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.tooling.core.Extras
  * inside the implementation of the given [IdeaKotlinExtrasSerializer]
  */
 interface IdeaKotlinExtrasSerializationExtension {
-    fun <T : Any> serializer(key: Extras.Key<T>): IdeaKotlinExtrasSerializer<T>?
+    fun <T> serializer(key: Extras.Key<T>): IdeaKotlinExtrasSerializer<T>?
 
     object Empty : IdeaKotlinExtrasSerializationExtension {
-        override fun <T : Any> serializer(key: Extras.Key<T>): IdeaKotlinExtrasSerializer<T>? = null
+        override fun <T> serializer(key: Extras.Key<T>): IdeaKotlinExtrasSerializer<T>? = null
     }
 }
 
@@ -48,7 +48,7 @@ private class IdeaKotlinExtrasSerializationExtensionBuilderImpl : IdeaKotlinExtr
 private class IdeaKotlinExtrasSerializationExtensionImpl(
     private val map: Map<Extras.Key<*>, IdeaKotlinExtrasSerializer<*>>
 ) : IdeaKotlinExtrasSerializationExtension {
-    override fun <T : Any> serializer(key: Extras.Key<T>): IdeaKotlinExtrasSerializer<T>? {
+    override fun <T> serializer(key: Extras.Key<T>): IdeaKotlinExtrasSerializer<T>? {
         @Suppress("unchecked_cast")
         return map[key] as? IdeaKotlinExtrasSerializer<T>
     }

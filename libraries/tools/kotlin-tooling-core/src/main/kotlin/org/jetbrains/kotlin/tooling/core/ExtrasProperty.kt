@@ -11,19 +11,19 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-interface ExtrasProperty<T : Any> {
+interface ExtrasProperty<T> {
     val key: Extras.Key<T>
 }
 
 val <T : Any> Extras.Key<T>.readWriteProperty get() = extrasReadWriteProperty(this)
 
-fun <Receiver : HasMutableExtras, T : Any> Extras.Key<T>.lazyProperty(factory: Receiver.() -> T) = extrasLazyProperty(this, factory)
+fun <Receiver : HasMutableExtras, T> Extras.Key<T>.lazyProperty(factory: Receiver.() -> T) = extrasLazyProperty(this, factory)
 
 fun <T : Any> extrasReadWriteProperty(key: Extras.Key<T>): ExtrasReadWriteProperty<T> = object : ExtrasReadWriteProperty<T> {
     override val key: Extras.Key<T> = key
 }
 
-fun <Receiver : HasMutableExtras, T : Any> extrasLazyProperty(
+fun <Receiver : HasMutableExtras, T> extrasLazyProperty(
     key: Extras.Key<T>, factory: Receiver.() -> T,
 ): ExtrasLazyProperty<Receiver, T> =
     object : ExtrasLazyProperty<Receiver, T> {
@@ -36,7 +36,7 @@ inline fun <reified T : Any> extrasReadWriteProperty(name: String? = null) =
     extrasReadWriteProperty(extrasKeyOf<T>(name))
 
 
-inline fun <Receiver : HasMutableExtras, reified T : Any> extrasLazyProperty(name: String? = null, noinline factory: Receiver.() -> T) =
+inline fun <Receiver : HasMutableExtras, reified T> extrasLazyProperty(name: String? = null, noinline factory: Receiver.() -> T) =
     extrasLazyProperty(extrasKeyOf(name), factory)
 
 
@@ -76,11 +76,11 @@ interface NotNullExtrasReadWriteProperty<T : Any> : ExtrasProperty<T>, ReadWrite
     }
 }
 
-interface ExtrasLazyProperty<Receiver : HasMutableExtras, T : Any> : ExtrasProperty<T>, ReadWriteProperty<Receiver, T> {
+interface ExtrasLazyProperty<Receiver : HasMutableExtras, T> : ExtrasProperty<T>, ReadWriteProperty<Receiver, T> {
     val factory: Receiver.() -> T
 
     override fun getValue(thisRef: Receiver, property: KProperty<*>): T {
-        return thisRef.extras.getOrPut(key) { thisRef.factory() }
+        return thisRef.extras.getOrPutNullable(key) { thisRef.factory() }
     }
 
     override fun setValue(thisRef: Receiver, property: KProperty<*>, value: T) {
