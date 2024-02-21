@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import java.util.zip.ZipFile
 import kotlin.io.path.name
+import kotlin.io.path.writeText
 
 @MppGradlePluginTests
 @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_73)
@@ -126,6 +127,51 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
             publishedArchive = "build/repo/test/publication-wasm-wasi/1.0/publication-wasm-wasi-1.0-kotlin_resources.kotlin_resources.zip",
             referenceName = "wasmWasi",
         )
+    }
+
+    @DisplayName("Multiplatform resources publication when a previously non-existent source set with resource is added")
+    @GradleAndroidTest
+    fun testNativeTargetResourcesPublicationWithNewSourceSet(
+        gradleVersion: GradleVersion,
+        androidVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "multiplatformResources/publication",
+            gradleVersion,
+            buildJdk = providedJdk.location,
+        ) {
+            val publishedArchive = projectPath.resolve(
+                "build/repo/test/publication-linuxx64/1.0/publication-linuxx64-1.0-kotlin_resources.kotlin_resources.zip"
+            )
+
+            buildWithAGPVersion(
+                ":publishLinuxX64PublicationToMavenRepository",
+                androidVersion = androidVersion,
+                defaultBuildOptions = defaultBuildOptions,
+            )
+            compareEmbeddedResources(
+                publishedArchive,
+                reference("linuxX64")
+            )
+
+            // Add a file to a source set that didn't exist previously
+            val linuxMainSourceSet = projectPath.resolve("src/linuxMain")
+            assertDirectoryDoesNotExist(linuxMainSourceSet)
+            val newResource = linuxMainSourceSet.resolve("multiplatformResources/newSourceSetResource")
+            assert(newResource.parent.toFile().mkdirs())
+            newResource.writeText(newResource.name)
+
+            buildWithAGPVersion(
+                ":publishLinuxX64PublicationToMavenRepository",
+                androidVersion = androidVersion,
+                defaultBuildOptions = defaultBuildOptions,
+            )
+            compareEmbeddedResources(
+                publishedArchive,
+                reference("linuxX64WithNewSourceSet")
+            )
+        }
     }
 
     private fun testEmbeddedResources(
