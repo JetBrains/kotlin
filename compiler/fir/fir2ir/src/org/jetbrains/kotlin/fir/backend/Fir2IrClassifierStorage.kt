@@ -41,7 +41,7 @@ class Fir2IrClassifierStorage(
 
     private val typeParameterCacheForSetter: MutableMap<FirTypeParameter, IrTypeParameter> = mutableMapOf()
 
-    private val enumEntryCache: MutableMap<FirEnumEntry, IrEnumEntry> = commonMemberStorage.enumEntryCache
+    private val enumEntryCache: MutableMap<FirEnumEntry, IrEnumEntrySymbol> = commonMemberStorage.enumEntryCache
 
     private val codeFragmentCache: MutableMap<FirCodeFragment, IrClass> = mutableMapOf()
 
@@ -64,7 +64,7 @@ class Fir2IrClassifierStorage(
     fun forEachCachedDeclarationSymbol(block: (IrSymbol) -> Unit) {
         classCache.values.forEach { block(it) }
         typeAliasCache.values.forEach { block(it.symbol) }
-        enumEntryCache.values.forEach { block(it.symbol) }
+        enumEntryCache.values.forEach { block(it) }
         fieldsForContextReceivers.values.forEach { fields ->
             fields.forEach { block(it.symbol) }
         }
@@ -332,17 +332,30 @@ class Fir2IrClassifierStorage(
         localStorage[(enumEntry.initializer as FirAnonymousObjectExpression).anonymousObject] = correspondingClass
     }
 
-    internal fun getCachedIrEnumEntry(enumEntry: FirEnumEntry): IrEnumEntry? {
-        return enumEntryCache[enumEntry]
+    fun getIrEnumEntrySymbol(enumEntry: FirEnumEntry): IrEnumEntrySymbol {
+        enumEntryCache[enumEntry]?.let { return it }
+
+        val symbol = IrEnumEntrySymbolImpl()
+        enumEntryCache[enumEntry] = symbol
+
+        val irParent = declarationStorage.findIrParent(enumEntry, fakeOverrideOwnerLookupTag = null) as IrClass
+        if (irParent.isExternalParent()) {
+            classifiersGenerator.createIrEnumEntry(
+                enumEntry,
+                irParent = irParent,
+                symbol,
+                predefinedOrigin = irParent.origin
+            )
+        }
+        return symbol
     }
 
-    fun getOrCreateIrEnumEntry(
+    fun createAndCacheIrEnumEntry(
         enumEntry: FirEnumEntry,
         irParent: IrClass,
         predefinedOrigin: IrDeclarationOrigin? = null,
     ): IrEnumEntry {
-        getCachedIrEnumEntry(enumEntry)?.let { return it }
-
+        val symbol = getIrEnumEntrySymbol(enumEntry)
         val containingFile = firProvider.getFirCallableContainerFile(enumEntry.symbol)
 
         @Suppress("NAME_SHADOWING")
@@ -351,15 +364,13 @@ class Fir2IrClassifierStorage(
         } else {
             irParent.origin
         }
-        val symbol = IrEnumEntrySymbolImpl()
+
         return classifiersGenerator.createIrEnumEntry(
             enumEntry,
             irParent = irParent,
             symbol,
             predefinedOrigin = predefinedOrigin
-        ).also {
-            enumEntryCache[enumEntry] = it
-        }
+        )
     }
 
     // ------------------------------------ typealiases ------------------------------------

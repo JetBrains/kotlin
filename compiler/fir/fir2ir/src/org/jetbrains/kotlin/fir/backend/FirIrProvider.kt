@@ -172,15 +172,14 @@ class FirIrProvider(val components: Fir2IrComponents) : IrProvider {
         }
 
         val firDeclaration = findDeclarationByHash(firCandidates, signature.id) ?: return null
-        val parent = parentClass ?: declarationStorage.getIrExternalPackageFragment(packageFqName, firDeclaration.moduleData)
 
         return when (kind) {
             SymbolKind.CLASS_SYMBOL -> {
                 shouldNotBeCalled()
             }
-            SymbolKind.ENUM_ENTRY_SYMBOL -> classifierStorage.getOrCreateIrEnumEntry(
-                firDeclaration as FirEnumEntry, parent as IrClass
-            )
+            SymbolKind.ENUM_ENTRY_SYMBOL -> {
+                shouldNotBeCalled()
+            }
             SymbolKind.CONSTRUCTOR_SYMBOL -> {
                 shouldNotBeCalled()
             }

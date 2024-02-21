@@ -181,7 +181,7 @@ class Fir2IrLazyClass(
         if (fir.classKind == ClassKind.ENUM_CLASS) {
             for (declaration in fir.declarations) {
                 if (declaration is FirEnumEntry && shouldBuildStub(declaration)) {
-                    result += classifierStorage.getOrCreateIrEnumEntry(declaration, this, origin)
+                    result += classifierStorage.getIrEnumEntrySymbol(declaration).owner
                 }
             }
         }

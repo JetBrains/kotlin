@@ -992,26 +992,12 @@ class Fir2IrDeclarationStorage(
 
     fun getIrValueSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
         return when (val firDeclaration = firVariableSymbol.fir) {
-            is FirEnumEntry -> {
-                classifierStorage.getCachedIrEnumEntry(firDeclaration)?.let { return it.symbol }
-                val irParentClass = firDeclaration.containingClassLookupTag()?.let { classifierStorage.getIrClass(it) }!!
+            is FirEnumEntry -> classifierStorage.getIrEnumEntrySymbol(firDeclaration)
 
-                val containingFile = firProvider.getFirCallableContainerFile(firVariableSymbol)
+            is FirValueParameter -> localStorage.getParameter(firDeclaration)
+                ?: getIrVariableSymbol(firDeclaration) // catch parameter is FirValueParameter in FIR but IrVariable in IR
 
-                classifierStorage.getOrCreateIrEnumEntry(
-                    firDeclaration,
-                    irParent = irParentClass,
-                    predefinedOrigin = if (containingFile != null) IrDeclarationOrigin.DEFINED else irParentClass.origin
-                ).symbol
-            }
-            is FirValueParameter -> {
-                localStorage.getParameter(firDeclaration)
-                // catch parameter is FirValueParameter in FIR but IrVariable in IR
-                    ?: return getIrVariableSymbol(firDeclaration)
-            }
-            else -> {
-                getIrVariableSymbol(firDeclaration)
-            }
+            else -> getIrVariableSymbol(firDeclaration)
         }
     }
 
@@ -1498,7 +1484,7 @@ class Fir2IrDeclarationStorage(
         return parentPackage
     }
 
-    private fun findIrParent(
+    internal fun findIrParent(
         callableDeclaration: FirCallableDeclaration,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
     ): IrDeclarationParent? {

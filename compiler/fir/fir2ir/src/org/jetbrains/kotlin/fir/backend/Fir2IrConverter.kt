@@ -462,7 +462,7 @@ class Fir2IrConverter(
     private fun processClassAndNestedClassHeaders(klass: FirClass) {
         classifiersGenerator.processClassHeader(klass)
         processNestedClassHeaders(klass)
-        val irClass = classifierStorage.getIrClass(klass)!!
+        val irClass = classifierStorage.getIrClass(klass)
         /*
          * This is needed to preserve the source order of declarations in the class
          * IrClass should contain declarations in the source order, but creating of nested IrClass automatically adds created class to the list
@@ -521,7 +521,7 @@ class Fir2IrConverter(
         val isInLocalClass = containingClass != null && (containingClass !is FirRegularClass || containingClass.isLocal)
         when (declaration) {
             is FirRegularClass -> {
-                val irClass = classifierStorage.getIrClass(declaration)!!
+                val irClass = classifierStorage.getIrClass(declaration)
                 addDeclarationToParentIfNeeded(irClass)
                 processClassMembers(declaration, irClass)
             }
@@ -594,7 +594,7 @@ class Fir2IrConverter(
                 declarationStorage.createAndCacheIrConstructor(declaration, { parent as IrClass }, isLocal = isInLocalClass)
             }
             is FirEnumEntry -> {
-                classifierStorage.getOrCreateIrEnumEntry(declaration, parent as IrClass)
+                classifierStorage.createAndCacheIrEnumEntry(declaration, parent as IrClass)
             }
             is FirAnonymousInitializer -> {
                 declarationStorage.createIrAnonymousInitializer(declaration, parent as IrClass)

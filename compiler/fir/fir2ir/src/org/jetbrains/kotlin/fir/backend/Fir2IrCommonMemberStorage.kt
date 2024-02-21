@@ -30,7 +30,7 @@ class Fir2IrCommonMemberStorage(firMangler: FirMangler) {
 
     val typeParameterCache: MutableMap<FirTypeParameter, IrTypeParameter> = mutableMapOf()
 
-    val enumEntryCache: MutableMap<FirEnumEntry, IrEnumEntry> = mutableMapOf()
+    val enumEntryCache: MutableMap<FirEnumEntry, IrEnumEntrySymbol> = mutableMapOf()
 
     val localClassCache: MutableMap<FirClass, IrClass> = mutableMapOf()
 

@@ -60,10 +60,10 @@ FILE fqName:<root> fileName:/selfReferentialAnnotation.kt
               receiver: GET_VAR '<this>: <root>.MyRequiresOptIn declared in <root>.MyRequiresOptIn.<get-b>' type=<root>.MyRequiresOptIn origin=null
     CLASS ENUM_CLASS name:MyLevel modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.MyRequiresOptIn.MyLevel>]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyRequiresOptIn.MyLevel
-      ENUM_ENTRY name:ERROR
+      ENUM_ENTRY name:WARNING
         init: EXPRESSION_BODY
           ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.MyRequiresOptIn.MyLevel'
-      ENUM_ENTRY name:WARNING
+      ENUM_ENTRY name:ERROR
         init: EXPRESSION_BODY
           ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.MyRequiresOptIn.MyLevel'
       CONSTRUCTOR visibility:private <> () returnType:<root>.MyRequiresOptIn.MyLevel [primary]

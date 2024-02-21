@@ -1,7 +1,6 @@
 // FIR_DUMP
 // DUMP_IR
 // WITH_STDLIB
-// IGNORE_BACKEND_K2: ANY
 
 annotation class Ann(@Ann(1) val e: Int)
 
