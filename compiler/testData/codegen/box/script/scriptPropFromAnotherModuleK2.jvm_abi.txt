@@ -1,0 +1,43 @@
+MODULE lib
+	CLASS Script.class
+		CLASS METADATA
+			K1
+				<init>([Ljava/lang/String;)V
+			K2
+				---
+			Property: class.metadata.superTypes
+				K1
+					[kotlin/script/templates/standard/ScriptTemplateWithArgs]
+				K2
+					[]
+			Property: class.metadata.contextReceiverTypes
+				K1
+					[]
+				K2
+					[kotlin/script/templates/standard/ScriptTemplateWithArgs]
+MODULE main
+	CLASS TestKt.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				test.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 test.kt
+				TestKt
+				+ 2 ArrayIntrinsics.kt
+				kotlin/ArrayIntrinsicsKt
+				*L
+				1#1,29:1
+				26#2:30
+				*S KotlinDebug
+				*F
+				+ 1 test.kt
+				TestKt
+				*L
+				22#1:30
+				*E
+				 } )
+			K2
+				---

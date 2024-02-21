@@ -80,7 +80,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
 
             // We split JVM ABI tests into two parts, to avoid creation of a huge file, unable to analyze by IntelliJ with default settings
             testClass<AbstractJvmAbiConsistencyTest>("JvmAbiConsistencyTestBoxGenerated") {
-                model("codegen/box", excludeDirs = k2BoxTestDir + excludedScriptDirs)
+                model("codegen/box", excludeDirs = k2BoxTestDir)
             }
 
             testClass<AbstractJvmAbiConsistencyTest>("JvmAbiConsistencyTestRestGenerated") {
