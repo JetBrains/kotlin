@@ -33599,6 +33599,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("samConversionToGenericWrongNullability.kt")
+      public void testSamConversionToGenericWrongNullability() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/samConversionToGenericWrongNullability.kt");
+      }
+
+      @Test
       @TestMetadata("samConversionWithCondition.kt")
       public void testSamConversionWithCondition() {
         runTest("compiler/testData/diagnostics/tests/samConversions/samConversionWithCondition.kt");
