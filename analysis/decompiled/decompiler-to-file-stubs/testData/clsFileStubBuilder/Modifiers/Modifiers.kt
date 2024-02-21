@@ -1,7 +1,3 @@
-// Issue: KTIJ-26788 (need stdlib for Continuation)
-// KNM_K2_IGNORE
-// KNM_FE10_IGNORE
-
 package test
 import kotlin.coroutines.*
 

@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -50,6 +52,8 @@ object KlibTestUtil {
         )
         configuration.put(CommonConfigurationKeys.MODULE_NAME, libraryName)
         configuration.addKotlinSourceRoots(sourceFiles.map { it.absolutePath })
+        val stdlibFile = ForTestCompileRuntime.stdlibCommonForTests()
+        configuration.addJvmClasspathRoot(stdlibFile)
 
         val rootDisposable = Disposer.newDisposable("Disposable for ${KlibTestUtil::class.simpleName}.compileCommonSourcesToKlib")
         val module = try {
@@ -100,7 +104,8 @@ object KlibTestUtil {
             metadataVersion = KlibMetadataVersion.INSTANCE,
             exportKDoc = false,
             skipExpects = false,
-            project = null
+            project = null,
+            includeOnlyModuleContent = true,
         )
 
         val serializedMetadata = serializer.serializeModule(module)
