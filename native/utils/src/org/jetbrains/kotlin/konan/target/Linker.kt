@@ -407,15 +407,6 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             if (!debug) +linkerNoDebugFlags
             if (dynamic) +linkerDynamicFlags
             +objectFiles
-            +libraries
-            +linkerArgs
-            if (mimallocEnabled) +mimallocLinkerDependencies
-            // See explanation about `-u__llvm_profile_runtime` here:
-            // https://github.com/llvm/llvm-project/blob/21e270a479a24738d641e641115bce6af6ed360a/llvm/lib/Transforms/Instrumentation/InstrProfiling.cpp#L930
-            +linkerKonanFlags
-            +linkerGccFlags
-            +if (dynamic) "$libGcc/crtendS.o" else "$libGcc/crtend.o"
-            +"$crtPrefix/crtn.o"
             when (sanitizer) {
                 null -> {}
                 SanitizerKind.ADDRESS -> {
@@ -429,6 +420,15 @@ class GccBasedLinker(targetProperties: GccConfigurables)
                     +provideCompilerRtLibrary("tsan_cxx")!!
                 }
             }
+            +libraries
+            +linkerArgs
+            if (mimallocEnabled) +mimallocLinkerDependencies
+            // See explanation about `-u__llvm_profile_runtime` here:
+            // https://github.com/llvm/llvm-project/blob/21e270a479a24738d641e641115bce6af6ed360a/llvm/lib/Transforms/Instrumentation/InstrProfiling.cpp#L930
+            +linkerKonanFlags
+            +linkerGccFlags
+            +if (dynamic) "$libGcc/crtendS.o" else "$libGcc/crtend.o"
+            +"$crtPrefix/crtn.o"
         })
     }
 }
