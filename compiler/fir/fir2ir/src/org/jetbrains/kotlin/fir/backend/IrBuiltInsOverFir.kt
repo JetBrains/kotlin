@@ -596,7 +596,7 @@ class IrBuiltInsOverFir(
 
     private fun loadClassSafe(classId: ClassId): IrClassSymbol? {
         val firClassSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: return null
-        return components.classifierStorage.getOrCreateIrClass(firClassSymbol).symbol
+        return components.classifierStorage.getIrClassSymbol(firClassSymbol)
     }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)

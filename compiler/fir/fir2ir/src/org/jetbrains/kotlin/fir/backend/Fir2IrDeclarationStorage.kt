@@ -410,7 +410,7 @@ class Fir2IrDeclarationStorage(
             else -> shouldNotBeCalled()
         }
         requireNotNull(containingClassLookupTag) { "Containing class not found for ${callable.render()}"}
-        return classifierStorage.findIrClass(containingClassLookupTag)?.symbol
+        return classifierStorage.getIrClassSymbol(containingClassLookupTag)
             ?: error("IR class for $containingClassLookupTag not found")
     }
 
@@ -994,7 +994,7 @@ class Fir2IrDeclarationStorage(
         return when (val firDeclaration = firVariableSymbol.fir) {
             is FirEnumEntry -> {
                 classifierStorage.getCachedIrEnumEntry(firDeclaration)?.let { return it.symbol }
-                val irParentClass = firDeclaration.containingClassLookupTag()?.let { classifierStorage.findIrClass(it) }!!
+                val irParentClass = firDeclaration.containingClassLookupTag()?.let { classifierStorage.getIrClass(it) }!!
 
                 val containingFile = firProvider.getFirCallableContainerFile(firVariableSymbol)
 
@@ -1247,9 +1247,9 @@ class Fir2IrDeclarationStorage(
     }
 
     private fun generateLazyFakeOverrides(name: Name, fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?) {
-        val firClassSymbol = fakeOverrideOwnerLookupTag?.toSymbol(session) as? FirClassSymbol
+        val firClassSymbol = fakeOverrideOwnerLookupTag?.toSymbol(session) as? FirClassSymbol<*>
         if (firClassSymbol != null) {
-            val irClass = classifierStorage.getOrCreateIrClass(firClassSymbol)
+            val irClass = classifierStorage.getIrClass(firClassSymbol.fir)
             if (irClass is Fir2IrLazyClass) {
                 irClass.getFakeOverridesByName(name)
             }
@@ -1427,7 +1427,9 @@ class Fir2IrDeclarationStorage(
         firOrigin: FirDeclarationOrigin
     ): IrDeclarationParent? {
         if (parentLookupTag != null) {
-            return classifierStorage.findIrClass(parentLookupTag)
+            // At this point all source classes should be already created and bound to symbols
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            return classifierStorage.getIrClassSymbol(parentLookupTag)?.owner
         }
 
 

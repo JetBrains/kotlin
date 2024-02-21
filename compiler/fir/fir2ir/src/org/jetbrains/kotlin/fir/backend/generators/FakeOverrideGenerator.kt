@@ -593,7 +593,7 @@ class FakeOverrideGenerator(
 
         @OptIn(UnsafeDuringIrConstructionAPI::class)
         val overriddenContainingIrClass =
-            declarationStorage.classifierStorage.getOrCreateIrClass(overriddenContainingClass.symbol).symbol.owner
+            declarationStorage.classifierStorage.getIrClassSymbol(overriddenContainingClass.symbol).owner
 
         return superClasses.mapNotNull { superClass ->
             if (superClass == overriddenContainingIrClass ||
@@ -733,9 +733,8 @@ internal fun FirSimpleFunction.generateOverriddenFunctionSymbols(containingClass
 }
 
 context(Fir2IrComponents)
+@OptIn(UnsafeDuringIrConstructionAPI::class)
 private fun FirClass.getSuperTypesAsIrClasses(): Set<IrClass> {
-    val irClass = declarationStorage.classifierStorage.getOrCreateIrClass(symbol)
-
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    val irClass = declarationStorage.classifierStorage.getIrClassSymbol(symbol).owner
     return irClass.superTypes.mapNotNull { it.classifierOrNull?.owner as? IrClass }.toSet()
 }

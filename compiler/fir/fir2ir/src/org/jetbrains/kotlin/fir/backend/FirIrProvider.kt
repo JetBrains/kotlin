@@ -92,7 +92,7 @@ class FirIrProvider(val components: Fir2IrComponents) : IrProvider {
             val scope = with(components) { firClass.unsubstitutedScope() }
 
             fun findIrClass(firClass: FirRegularClass): IrClass {
-                val irClassSymbol = classifierStorage.getOrCreateIrClass(firClass.symbol).symbol
+                val irClassSymbol = classifierStorage.getIrClassSymbol(firClass.symbol)
                 return getDeclaration(irClassSymbol) as IrClass
             }
 
@@ -176,7 +176,7 @@ class FirIrProvider(val components: Fir2IrComponents) : IrProvider {
 
         return when (kind) {
             SymbolKind.CLASS_SYMBOL -> {
-                classifierStorage.getOrCreateIrClass((firDeclaration as FirRegularClass).symbol)
+                shouldNotBeCalled()
             }
             SymbolKind.ENUM_ENTRY_SYMBOL -> classifierStorage.getOrCreateIrEnumEntry(
                 firDeclaration as FirEnumEntry, parent as IrClass

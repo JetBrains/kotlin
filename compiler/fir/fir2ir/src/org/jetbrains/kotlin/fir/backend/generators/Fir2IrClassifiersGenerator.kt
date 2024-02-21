@@ -108,7 +108,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
         return irClass
     }
 
-    fun processClassHeader(klass: FirClass, irClass: IrClass = classifierStorage.getCachedIrClass(klass)!!): IrClass {
+    fun processClassHeader(klass: FirClass, irClass: IrClass = classifierStorage.getIrClass(klass)): IrClass {
         irClass.declareTypeParameters(klass)
         irClass.setThisReceiver(klass.typeParameters)
         irClass.declareSupertypes(klass)
@@ -221,8 +221,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
         val irClass = if (classOrLocalParent === klass) {
             result
         } else {
-            classifierStorage.getCachedIrClass(klass)
-                ?: error("Assuming that all nested classes of ${classOrLocalParent.classId.asString()} should already be cached")
+            classifierStorage.getIrClass(klass)
         }
         return LocalIrClassInfo(irClass, classOrLocalParent, result)
     }

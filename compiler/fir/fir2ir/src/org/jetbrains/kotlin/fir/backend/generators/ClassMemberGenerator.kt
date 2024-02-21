@@ -82,7 +82,7 @@ internal class ClassMemberGenerator(
                     declaration is FirConstructor && declaration.isPrimary -> {
                     }
                     declaration is FirRegularClass && declaration.visibility == Visibilities.Local -> {
-                        val irNestedClass = classifierStorage.getCachedIrClass(declaration)!!
+                        val irNestedClass = classifierStorage.getIrClass(declaration)
                         irNestedClass.parent = irClass
                         conversionScope.withParent(irNestedClass) {
                             convertClassContent(irNestedClass, declaration)
@@ -101,7 +101,7 @@ internal class ClassMemberGenerator(
                     dataClassMembersGenerator.generateBodiesForMultiFieldValueClassMembers(klass, irClass)
                 }
                 if (irClass.isData) {
-                     dataClassMembersGenerator.generateBodiesForDataClassMembers(klass, irClass)
+                    dataClassMembersGenerator.generateBodiesForDataClassMembers(klass, irClass)
                 }
             }
 

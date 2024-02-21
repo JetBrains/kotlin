@@ -434,13 +434,12 @@ class Fir2IrConverter(
     private fun registerClassAndNestedClasses(klass: FirClass, parent: IrDeclarationParent): IrClass {
         // Local classes might be referenced before they declared (see usages of Fir2IrClassifierStorage.createLocalIrClassOnTheFly)
         // So, we only need to set its parent properly
-        val irClass =
-            classifierStorage.getCachedIrClass(klass)?.apply {
-                this.parent = parent
-            } ?: when (klass) {
-                is FirRegularClass -> classifierStorage.createAndCacheIrClass(klass, parent)
-                is FirAnonymousObject -> classifierStorage.createAndCacheAnonymousObject(klass, irParent = parent)
-            }
+        val irClass = classifierStorage.getCachedIrLocalClass(klass)?.apply {
+            this.parent = parent
+        } ?: when (klass) {
+            is FirRegularClass -> classifierStorage.createAndCacheIrClass(klass, parent)
+            is FirAnonymousObject -> classifierStorage.createAndCacheAnonymousObject(klass, irParent = parent)
+        }
         registerNestedClasses(klass, irClass)
         return irClass
     }
@@ -463,7 +462,7 @@ class Fir2IrConverter(
     private fun processClassAndNestedClassHeaders(klass: FirClass) {
         classifiersGenerator.processClassHeader(klass)
         processNestedClassHeaders(klass)
-        val irClass = classifierStorage.getCachedIrClass(klass)!!
+        val irClass = classifierStorage.getIrClass(klass)!!
         /*
          * This is needed to preserve the source order of declarations in the class
          * IrClass should contain declarations in the source order, but creating of nested IrClass automatically adds created class to the list
@@ -522,7 +521,7 @@ class Fir2IrConverter(
         val isInLocalClass = containingClass != null && (containingClass !is FirRegularClass || containingClass.isLocal)
         when (declaration) {
             is FirRegularClass -> {
-                val irClass = classifierStorage.getCachedIrClass(declaration)!!
+                val irClass = classifierStorage.getIrClass(declaration)!!
                 addDeclarationToParentIfNeeded(irClass)
                 processClassMembers(declaration, irClass)
             }

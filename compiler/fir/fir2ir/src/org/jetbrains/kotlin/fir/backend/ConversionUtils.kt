@@ -188,7 +188,7 @@ fun FirClassifierSymbol<*>.toSymbol(
         }
 
         is FirClassSymbol -> {
-            classifierStorage.getOrCreateIrClass(this).symbol
+            classifierStorage.getIrClassSymbol(this)
         }
 
         else -> error("Unknown symbol: $this")
