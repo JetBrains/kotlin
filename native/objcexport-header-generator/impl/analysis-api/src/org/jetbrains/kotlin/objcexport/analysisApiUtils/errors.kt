@@ -4,7 +4,8 @@ import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.objcexport.KtObjCExportSession
-import org.jetbrains.kotlin.objcexport.extras.withRequiresForwardDeclaration
+import org.jetbrains.kotlin.objcexport.extras.objCTypeExtras
+import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
 
 /**
  * Traverses stubs and returns true if [objCErrorType] is used as a return, parameter or property type
@@ -45,4 +46,6 @@ internal val errorInterface
         superClassGenerics = emptyList()
     )
 
-internal val objCErrorType = ObjCClassType(errorClassName).withRequiresForwardDeclaration()
+internal val objCErrorType = ObjCClassType(errorClassName, extras = objCTypeExtras {
+    requiresForwardDeclaration = true
+})

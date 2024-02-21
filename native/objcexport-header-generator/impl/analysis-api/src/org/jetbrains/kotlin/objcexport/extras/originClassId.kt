@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.objcexport.extras
 
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCNullableReferenceType
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCReferenceType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCType
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 
-private val originClassIdKey = extrasKeyOf<ClassId>()
+
+private val originClassIdKey = extrasKeyOf<ClassId?>()
 
 /**
  * Tracks the Kotlin origin associated with [this] [ObjCType].
@@ -30,9 +31,11 @@ internal val ObjCType.originClassId: ClassId?
     }
 
 /**
- * See [originClassId]
+ * See [ObjCType.originClassId]
  */
-internal fun <T : ObjCReferenceType> T.withOriginClassId(classId: ClassId?): T = also { type ->
-    if (classId != null) type.extras[originClassIdKey] = classId
-    else type.extras.remove(originClassIdKey)
-}
+context(ObjCTypeExtrasBuilderContext)
+internal var MutableExtras.originClassId: ClassId?
+    get() = this[originClassIdKey]
+    set(value) {
+        this[originClassIdKey] = value
+    }

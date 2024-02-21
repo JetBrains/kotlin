@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.name.NativeStandardInteropNames.cInteropPackage
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDeclaredSuperInterfaceSymbols
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getSuperClassSymbolNotAny
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.objCErrorType
-import org.jetbrains.kotlin.objcexport.extras.withRequiresForwardDeclaration
+import org.jetbrains.kotlin.objcexport.extras.objCTypeExtras
+import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
 
 /**
  * ClassId for 'kotlinx.cinterop.ObjCClass'
@@ -49,13 +50,19 @@ internal fun KtType.translateToObjCObjectType(): ObjCNonNullReferenceType {
 context(KtAnalysisSession, KtObjCExportSession)
 private fun KtClassOrObjectSymbol.translateToObjCObjectType(): ObjCNonNullReferenceType {
     if (isObjCMetaClass()) return ObjCMetaClassType
-    if (isObjCProtocolClass()) return ObjCClassType("Protocol").withRequiresForwardDeclaration()
+    if (isObjCProtocolClass()) return ObjCClassType("Protocol", extras = objCTypeExtras {
+        requiresForwardDeclaration = true
+    })
 
     if (isExternalObjCClass() || isObjCForwardDeclaration()) {
         return if (classKind == KtClassKind.INTERFACE) {
-            ObjCProtocolType(nameOrAnonymous.asString().removeSuffix("Protocol")).withRequiresForwardDeclaration()
+            ObjCProtocolType(nameOrAnonymous.asString().removeSuffix("Protocol"), extras = objCTypeExtras {
+                requiresForwardDeclaration = true
+            })
         } else {
-            ObjCClassType(nameOrAnonymous.asString()).withRequiresForwardDeclaration()
+            ObjCClassType(nameOrAnonymous.asString(), extras = objCTypeExtras {
+                requiresForwardDeclaration = true
+            })
         }
     }
 

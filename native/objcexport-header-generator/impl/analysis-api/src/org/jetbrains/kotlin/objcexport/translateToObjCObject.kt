@@ -8,8 +8,9 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isCompanion
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
-import org.jetbrains.kotlin.objcexport.extras.withOriginClassId
-import org.jetbrains.kotlin.objcexport.extras.withRequiresForwardDeclaration
+import org.jetbrains.kotlin.objcexport.extras.objCTypeExtras
+import org.jetbrains.kotlin.objcexport.extras.originClassId
+import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
 
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
@@ -85,8 +86,14 @@ private fun KtClassOrObjectSymbol.getDefaultMembers(): List<ObjCExportStub> {
  * See also: [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReferenceType]
  */
 context(KtAnalysisSession, KtObjCExportSession)
-private fun KtClassOrObjectSymbol.toPropertyType() = ObjCClassType(getObjCClassOrProtocolName().objCName, emptyList(),)
-    .withRequiresForwardDeclaration().withOriginClassId(classIdIfNonLocal)
+private fun KtClassOrObjectSymbol.toPropertyType() = ObjCClassType(
+    className = getObjCClassOrProtocolName().objCName,
+    typeArguments = emptyList(),
+    extras = objCTypeExtras {
+        requiresForwardDeclaration = true
+        originClassId = classIdIfNonLocal
+    }
+)
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getObjectInstanceSelector]

@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.objcexport.extras
 
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCReferenceType
+import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
-import org.jetbrains.kotlin.tooling.core.readWriteProperty
 
 private val requiresForwardDeclarationKey = extrasKeyOf<Boolean>("isForwardDeclaration")
 
@@ -16,13 +16,16 @@ private val requiresForwardDeclarationKey = extrasKeyOf<Boolean>("isForwardDecla
  * - Default value: `false`.
  * - Example: All types used in function and method signature are expected to render forward declarations
  */
-internal val ObjCReferenceType.requiresForwardDeclaration by requiresForwardDeclarationKey.readWriteProperty.notNull(false)
+internal val ObjCReferenceType.requiresForwardDeclaration: Boolean get() = extras[requiresForwardDeclarationKey] ?: false
 
 /**
  * ⚠️ Marks [this] [ObjCReferenceType] as 'requires forward declaration' and returns the same instance.
  * This method shall be used during the construction of a new type.
  * @see ObjCReferenceType.requiresForwardDeclaration
  */
-internal fun <T : ObjCReferenceType> T.withRequiresForwardDeclaration(): T = also { type ->
-    type.extras[requiresForwardDeclarationKey] = true
-}
+context(ObjCTypeExtrasBuilderContext)
+internal var MutableExtras.requiresForwardDeclaration: Boolean
+    get() = this[requiresForwardDeclarationKey] ?: false
+    set(value) {
+        this[requiresForwardDeclarationKey] = value
+    }

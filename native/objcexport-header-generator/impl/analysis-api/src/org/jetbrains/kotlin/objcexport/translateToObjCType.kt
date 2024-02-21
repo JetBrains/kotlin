@@ -19,8 +19,9 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getInlineTargetTypeOrNul
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isError
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isObjCObjectType
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.objCErrorType
-import org.jetbrains.kotlin.objcexport.extras.withOriginClassId
-import org.jetbrains.kotlin.objcexport.extras.withRequiresForwardDeclaration
+import org.jetbrains.kotlin.objcexport.extras.objCTypeExtras
+import org.jetbrains.kotlin.objcexport.extras.originClassId
+import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
 
 
 /**
@@ -106,13 +107,24 @@ internal fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
     }
 
     if (fullyExpandedType is KtNonErrorClassType) {
-
-        // TODO NOW: create type translation test
         return if (classSymbol?.classKind == KtClassKind.INTERFACE) {
-            ObjCProtocolType(fullyExpandedType.objCTypeName)
+            ObjCProtocolType(
+                protocolName = fullyExpandedType.objCTypeName,
+                extras = objCTypeExtras {
+                    requiresForwardDeclaration = true
+                    originClassId = classId
+                }
+            )
         } else {
-            ObjCClassType(fullyExpandedType.objCTypeName, translateTypeArgumentsToObjC())
-        }.withRequiresForwardDeclaration().withOriginClassId(classId)
+            ObjCClassType(
+                className = fullyExpandedType.objCTypeName,
+                typeArguments = translateTypeArgumentsToObjC(),
+                extras = objCTypeExtras {
+                    requiresForwardDeclaration = true
+                    originClassId = classId
+                }
+            )
+        }
     }
 
     if (fullyExpandedType is KtTypeParameterType) {
