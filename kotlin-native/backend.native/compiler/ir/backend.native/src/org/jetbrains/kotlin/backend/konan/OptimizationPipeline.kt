@@ -197,6 +197,7 @@ abstract class LlvmOptimizationPipeline(
     private val targetMachine: LLVMTargetMachineRef by targetMachineDelegate
 
     fun execute(llvmModule: LLVMModuleRef) {
+        if (passes.isEmpty()) return
         var options: LLVMPassBuilderOptionsRef? = null
         try {
             initLLVMOnce()
@@ -209,6 +210,7 @@ abstract class LlvmOptimizationPipeline(
                 LLVMSetTimePasses(1)
             }
             executeCustomPreprocessing(config, llvmModule)
+            val passDescription = passes.joinToString(",")
             logger?.log {
                 """
                     Running ${pipelineName} with the following parameters:
@@ -218,10 +220,11 @@ abstract class LlvmOptimizationPipeline(
                     optimization_level: ${config.optimizationLevel.value}
                     size_level: ${config.sizeLevel.value}
                     inline_threshold: ${config.inlineThreshold ?: "default"}
+                    passes: ${passDescription}
                 """.trimIndent()
             }
-            println("running passes: ${passes.joinToString(",")}")
-            val errorCode = LLVMRunPasses(llvmModule, passes.joinToString(","), targetMachine, options)
+            println("Running passes: $passDescription")
+            val errorCode = LLVMRunPasses(llvmModule, passDescription, targetMachine, options)
             require(errorCode == null) {
                 LLVMGetErrorMessage(errorCode)!!.toKString()
             }
@@ -308,6 +311,12 @@ class ThreadSanitizerPipeline(config: LlvmPipelineConfig, logger: LoggingContext
         LlvmOptimizationPipeline(config, logger) {
     override val pipelineName = "New PM thread sanitizer"
     override val passes = listOf("tsan-module,function(tsan)")
+
+    override fun executeCustomPreprocessing(config: LlvmPipelineConfig, module: LLVMModuleRef) {
+        getFunctions(module)
+                .filter { LLVMIsDeclaration(it) == 0 }
+                .forEach { addLlvmFunctionEnumAttribute(it, LlvmFunctionAttribute.SanitizeThread) }
+    }
 }
 
 internal fun RelocationModeFlags.currentRelocationMode(context: PhaseContext): RelocationModeFlags.Mode =
