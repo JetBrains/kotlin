@@ -97,7 +97,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:i index:0 type:kotlin.Any?
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun plus (i: kotlin.Any?): <root>.Java2 declared in <root>.B'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.Java2 origin=EXCLEXCL
             <T0>: kotlin.Nothing
             arg0: CONST Null type=kotlin.Nothing? value=null
     FUN name:plus visibility:public modality:OPEN <> ($this:<root>.B, i:kotlin.Int?) returnType:<root>.Java1 [operator]
@@ -107,7 +107,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:i index:0 type:kotlin.Int?
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun plus (i: kotlin.Int?): <root>.Java1 declared in <root>.B'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.Java1 origin=EXCLEXCL
             <T0>: kotlin.Nothing
             arg0: CONST Null type=kotlin.Nothing? value=null
   CLASS CLASS name:C modality:ABSTRACT visibility:public superTypes:[<root>.KotlinInterface; <root>.Java1]
@@ -192,7 +192,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:i index:0 type:kotlin.Int?
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun plus (i: kotlin.Int?): <root>.Java1 declared in <root>.D'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.Java1 origin=EXCLEXCL
             <T0>: kotlin.Nothing
             arg0: CONST Null type=kotlin.Nothing? value=null
   CLASS INTERFACE name:KotlinInterface modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
