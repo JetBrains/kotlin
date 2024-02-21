@@ -19956,6 +19956,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/inference/kt51040.kt");
     }
 
+    @TestMetadata("kt65882.kt")
+    public void testKt65882() {
+      runTest("compiler/testData/codegen/box/inference/kt65882.kt");
+    }
+
     @TestMetadata("lambdaWithStarReturn.kt")
     public void testLambdaWithStarReturn() {
       runTest("compiler/testData/codegen/box/inference/lambdaWithStarReturn.kt");

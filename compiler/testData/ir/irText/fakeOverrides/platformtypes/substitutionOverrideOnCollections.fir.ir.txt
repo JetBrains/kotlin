@@ -186,7 +186,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.D
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.collections.MutableList<kotlin.Int> declared in <root>.D'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.collections.MutableList<kotlin.Int> origin=EXCLEXCL
             <T0>: kotlin.Nothing
             arg0: CONST Null type=kotlin.Nothing? value=null
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.D, a:kotlin.collections.MutableList<kotlin.Int>) returnType:kotlin.Unit
@@ -239,7 +239,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.E
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar3 (): kotlin.collections.MutableSet<kotlin.String> declared in <root>.E'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.collections.MutableSet<kotlin.String> origin=EXCLEXCL
             <T0>: kotlin.Nothing
             arg0: CONST Null type=kotlin.Nothing? value=null
     FUN name:foo3 visibility:public modality:OPEN <> ($this:<root>.E, c:kotlin.collections.MutableSet<kotlin.String?>) returnType:kotlin.Unit
@@ -292,7 +292,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.F
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar2 (): java.util.Queue<kotlin.Any> declared in <root>.F'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=java.util.Queue<kotlin.Any> origin=EXCLEXCL
             <T0>: kotlin.Nothing
             arg0: CONST Null type=kotlin.Nothing? value=null
     FUN name:foo2 visibility:public modality:OPEN <> ($this:<root>.F, b:java.util.Queue<kotlin.Any>?) returnType:kotlin.Unit

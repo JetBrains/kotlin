@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.B
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.collections.MutableList<out kotlin.Number> declared in <root>.B'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.collections.MutableList<out kotlin.Number> origin=EXCLEXCL
             <T0>: kotlin.Nothing
             arg0: CONST Null type=kotlin.Nothing? value=null
     FUN name:bar2 visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.collections.MutableList<in kotlin.Number>
@@ -79,7 +79,7 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.B
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar2 (): kotlin.collections.MutableList<in kotlin.Number> declared in <root>.B'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.collections.MutableList<in kotlin.Number> origin=EXCLEXCL
             <T0>: kotlin.Nothing
             arg0: CONST Null type=kotlin.Nothing? value=null
     FUN name:bar3 visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.collections.MutableList<*>
@@ -88,7 +88,7 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.B
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar3 (): kotlin.collections.MutableList<*> declared in <root>.B'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.collections.MutableList<*> origin=EXCLEXCL
             <T0>: kotlin.Nothing
             arg0: CONST Null type=kotlin.Nothing? value=null
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.B, a:kotlin.collections.MutableList<out kotlin.Number>?) returnType:kotlin.Unit

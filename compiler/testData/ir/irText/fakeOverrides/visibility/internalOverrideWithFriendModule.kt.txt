@@ -1,0 +1,18 @@
+// FILE: KotlinInternal.kt
+
+open class KotlinInternal {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  internal open fun foo() {
+  }
+
+  internal open val a: Int
+    internal open get(): Int {
+      return 1
+    }
+
+}

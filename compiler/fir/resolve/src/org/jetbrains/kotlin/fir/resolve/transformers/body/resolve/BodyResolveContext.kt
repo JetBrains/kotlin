@@ -87,6 +87,20 @@ class BodyResolveContext(
     @set:PrivateForInline
     var inferenceSession: FirInferenceSession = FirInferenceSession.DEFAULT
 
+    @set:PrivateForInline
+    var isInsideAssignmentRhs: Boolean = false
+
+    @OptIn(PrivateForInline::class)
+    inline fun <R> withAssignmentRhs(block: () -> R): R {
+        val oldMode = this.isInsideAssignmentRhs
+        this.isInsideAssignmentRhs = true
+        return try {
+            block()
+        } finally {
+            this.isInsideAssignmentRhs = oldMode
+        }
+    }
+
     /**
      * This is required to avoid changing current mode into [FirTowerDataMode.CLASS_HEADER_ANNOTATIONS].
      * E.g., we can visit the same annotation in two ways – during a class visiting and outside of this class

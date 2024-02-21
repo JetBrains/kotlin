@@ -18937,6 +18937,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("kt65882.kt")
+      public void testKt65882() {
+        runTest("compiler/testData/codegen/box/inference/kt65882.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaWithStarReturn.kt")
       public void testLambdaWithStarReturn() {
         runTest("compiler/testData/codegen/box/inference/lambdaWithStarReturn.kt");
