@@ -261,18 +261,6 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
 
         project.evaluate()
 
-        fun HasKotlinDependencies.allDependenciesConfigurationNames() = listOfNotNull(
-            apiConfigurationName,
-            implementationConfigurationName,
-            compileOnlyConfigurationName,
-            runtimeOnlyConfigurationName
-        )
-
-        fun KotlinCompilation<*>.allCompilationDependenciesConfigurationNames() = allDependenciesConfigurationNames() + listOfNotNull(
-            compileDependencyConfigurationName,
-            runtimeDependencyConfigurationName,
-        )
-
         project.kotlinExtension.targets.flatMap { it.compilations }.forEach { compilation ->
             val compilationSourceSets = compilation.allKotlinSourceSets
             val compilationConfigurationNames = compilation.allCompilationDependenciesConfigurationNames()

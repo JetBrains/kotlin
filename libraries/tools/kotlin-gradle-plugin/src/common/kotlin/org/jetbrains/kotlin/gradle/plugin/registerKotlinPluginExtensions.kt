@@ -77,6 +77,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, IdeMultiplatformImportActionSetupAction)
             register(project, KotlinLLDBScriptSetupAction)
             register(project, ExcludeDefaultPlatformDependenciesFromKotlinNativeCompileTasks)
+            register(project, SetupConsistentMetadataDependenciesResolution)
         }
     }
 

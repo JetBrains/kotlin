@@ -1,0 +1,24 @@
+commonMain
+  test:lib:3.0
+commonTest
+  test:lib:3.0
+jsMain
+  test:lib:3.0
+jsTest
+  test:lib:3.0
+jvmMain
+  test:lib:3.0
+jvmTest
+  test:lib:3.0
+linuxMain
+  test:lib:3.0
+linuxTest
+  test:lib:3.0
+linuxX64Main
+  test:lib:3.0
+linuxX64Test
+  test:lib:3.0
+nativeMain
+  test:lib:3.0
+nativeTest
+  test:lib:3.0

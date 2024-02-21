@@ -1,0 +1,28 @@
+commonMain
+  test:lib:2.0
+commonTest
+  test:lib:2.0
+jsMain
+  test:lib:2.0
+jsTest
+  test:lib:2.0
+jvmMain
+  test:lib:2.0
+jvmTest
+  test:lib:2.0
+linuxArm64Main
+  test:lib:2.0
+linuxArm64Test
+  test:lib:2.0
+linuxMain
+  test:lib:2.0
+linuxTest
+  test:lib:2.0
+linuxX64Main
+  test:lib:2.0
+linuxX64Test
+  test:lib:2.0
+nativeMain
+  test:lib:2.0
+nativeTest
+  test:lib:2.0

@@ -1282,7 +1282,8 @@ open class HierarchicalMppIT : KGPBaseTest() {
             gradleVersion,
             localRepoDir = tempDir,
         ).run {
-            // add a dependency from commonTest on 2.0 version
+            // add a dependency from jvmTest on 2.0 version
+            // and assert that this dependency isn't leaking to the main source sets, including metadata compilation
             buildGradleKts.appendText(
                 """
 
