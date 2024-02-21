@@ -640,6 +640,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("intersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed.kt")
+    public void testIntersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed() {
+      runTest("compiler/testData/diagnostics/tests/intersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed.kt");
+    }
+
+    @Test
     @TestMetadata("invalidTargetCrashesCompiler.kt")
     public void testInvalidTargetCrashesCompiler() {
       runTest("compiler/testData/diagnostics/tests/invalidTargetCrashesCompiler.kt");
