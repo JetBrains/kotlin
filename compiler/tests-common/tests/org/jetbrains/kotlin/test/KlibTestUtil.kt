@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMo
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -42,7 +44,10 @@ object KlibTestUtil {
         require(!Name.guessByFirstCharacter(libraryName).isSpecial) { "Invalid library name: $libraryName" }
 
         val configuration = KotlinTestUtils.newConfiguration()
-        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+        configuration.put(
+            CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY,
+            PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, false)
+        )
         configuration.put(CommonConfigurationKeys.MODULE_NAME, libraryName)
         configuration.addKotlinSourceRoots(sourceFiles.map { it.absolutePath })
 
@@ -54,16 +59,32 @@ object KlibTestUtil {
                 extensionConfigs = EnvironmentConfigFiles.METADATA_CONFIG_FILES
             )
 
-            CommonResolverForModuleFactory.analyzeFiles(
-                environment.getSourceFiles(),
-                moduleName = Name.special("<$libraryName>"),
-                dependOnBuiltIns = true,
-                environment.configuration.languageVersionSettings,
-                CommonPlatforms.defaultCommonPlatform,
-                CompilerEnvironment,
-            ) { content ->
-                environment.createPackagePartProvider(content.moduleContentScope)
-            }.moduleDescriptor
+            val analyzer = AnalyzerWithCompilerReport(
+                configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY),
+                configuration.languageVersionSettings,
+                configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+            )
+
+            analyzer.analyzeAndReport(environment.getSourceFiles()) {
+                CommonResolverForModuleFactory.analyzeFiles(
+                    environment.getSourceFiles(),
+                    moduleName = Name.special("<$libraryName>"),
+                    dependOnBuiltIns = true,
+                    environment.configuration.languageVersionSettings,
+                    CommonPlatforms.defaultCommonPlatform,
+                    CompilerEnvironment,
+                ) { content ->
+                    environment.createPackagePartProvider(content.moduleContentScope)
+                }
+            }
+
+            val analysisResult = analyzer.analysisResult
+
+            check(!analyzer.hasErrors()) {
+                "Compilation finished with errors. See the previous messages."
+            }
+
+            analysisResult.moduleDescriptor
         } finally {
             Disposer.dispose(rootDisposable)
         }
