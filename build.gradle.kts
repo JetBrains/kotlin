@@ -3,6 +3,7 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 buildscript {
     // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
@@ -543,6 +544,18 @@ allprojects {
     if (!project.path.startsWith(":kotlin-ide.")) {
         pluginManager.apply("common-configuration")
     }
+
+    if (kotlinBuildProperties.isInIdeaSync) {
+        afterEvaluate {
+            configurations.all {
+                // Remove kotlin-compiler from dependencies during Idea import. KTI-1598
+                dependencies.removeIf { (it as? ProjectDependency)?.dependencyProject?.path == ":kotlin-compiler" }.ifTrue {
+                    logger.warn("Removed :kotlin-compiler project dependency from $this")
+                }
+            }
+        }
+    }
+
     configurations.all {
         val configuration = this
         if (name != "compileClasspath") {
@@ -552,6 +565,7 @@ allprojects {
             if (requested.group != "org.jetbrains.kotlin") {
                 return@eachDependency
             }
+
             val isReflect = requested.name == "kotlin-reflect" || requested.name == "kotlin-reflect-api"
             // More strict check for "compilerModules". We can't apply this check for all modules because it would force to
             // exclude kotlin-reflect from transitive dependencies of kotlin-poet, ktor, com.android.tools.build:gradle, etc
