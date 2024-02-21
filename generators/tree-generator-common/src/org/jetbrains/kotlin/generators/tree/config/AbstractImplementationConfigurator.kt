@@ -80,14 +80,14 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
      * Allows to batch-apply [config] to certain fields in _all_ the implementations that satisfy the given
      * [implementationPredicate].
      *
-     * @param field The name of the field to configure across all `Impl` classes.
+     * @param fieldName The name of the field to configure across all `Impl` classes, or `null` if [config] should be applied to all fields.
      * @param implementationPredicate Only implementations satisfying this predicate will be used in this configuration.
      * @param fieldPredicate Only fields satisfying this predicate will be configured
      * @param config The configuration block. Accepts the field name as an argument.
      * See [ImplementationContext]'s documentation for description of its DSL methods.
      */
     protected fun configureFieldInAllImplementations(
-        field: String,
+        fieldName: String?,
         implementationPredicate: (Implementation) -> Boolean = { true },
         fieldPredicate: (ImplementationField) -> Boolean = { true },
         config: ImplementationContext.(field: String) -> Unit,
@@ -95,9 +95,17 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
         for (element in elementsWithImpl) {
             for (implementation in element.implementations) {
                 if (!implementationPredicate(implementation)) continue
-                if (!implementation.allFields.any { it.name == field }) continue
-                if (!fieldPredicate(implementation.getField(field))) continue
-                ImplementationContext(implementation).config(field)
+                if (fieldName != null && !implementation.allFields.any { it.name == fieldName }) continue
+
+                val fields = if (fieldName != null) {
+                    listOf(implementation.getField(fieldName))
+                } else {
+                    implementation.allFields
+                }
+
+                for (field in fields.filter(fieldPredicate)) {
+                    ImplementationContext(implementation).config(field.name)
+                }
             }
         }
     }

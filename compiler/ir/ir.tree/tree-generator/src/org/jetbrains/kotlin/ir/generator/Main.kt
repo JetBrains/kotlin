@@ -35,6 +35,7 @@ fun main(args: Array<String>) {
             typeTransformerType to ::TypeTransformerPrinter.bind(model.rootElement),
         ),
         ImplementationConfigurator,
+        createImplementationPrinter = ::ImplementationPrinter,
         enableBaseTransformerTypeDetection = false,
         addFiles = { add(printFactory(generationPath, model)) }
     )

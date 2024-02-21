@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 class Element(
     name: String,
     override val propertyName: String,
-    category: Category,
+    val category: Category,
 ) : AbstractElement<Element, Field, Implementation>(name) {
 
     enum class Category(private val packageDir: String, val defaultVisitorParam: String) {

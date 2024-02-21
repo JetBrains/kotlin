@@ -83,9 +83,9 @@ fun <Element, Implementation, ElementField, ImplementationField> generateTree(
     pureAbstractElement: ClassRef<*>,
     createElementPrinter: (SmartPrinter) -> AbstractElementPrinter<Element, ElementField>,
     createVisitorPrinters: List<Pair<ClassRef<*>, (SmartPrinter, ClassRef<*>) -> AbstractVisitorPrinter<Element, ElementField>>>,
-    implementationConfigurator: AbstractImplementationConfigurator<Implementation, Element, ImplementationField>? = null,
+    implementationConfigurator: AbstractImplementationConfigurator<Implementation, Element, ImplementationField>,
     builderConfigurator: AbstractBuilderConfigurator<Element, Implementation, ImplementationField, ElementField>? = null,
-    createImplementationPrinter: ((SmartPrinter) -> AbstractImplementationPrinter<Implementation, Element, ImplementationField>)? = null,
+    createImplementationPrinter: (SmartPrinter) -> AbstractImplementationPrinter<Implementation, Element, ImplementationField>,
     createBuilderPrinter: ((SmartPrinter) -> AbstractBuilderPrinter<Element, Implementation, ImplementationField, ElementField>)? = null,
     enableBaseTransformerTypeDetection: Boolean = true,
     addFiles: MutableList<GeneratedFile>.() -> Unit = {},
@@ -98,7 +98,7 @@ fun <Element, Implementation, ElementField, ImplementationField> generateTree(
         detectBaseTransformerTypes(model)
     }
     initializeSubElements(model.elements)
-    implementationConfigurator?.configureImplementations(model)
+    implementationConfigurator.configureImplementations(model)
     val implementations = model.elements.flatMap { it.implementations }
     InterfaceAndAbstractClassConfigurator((model.elements + implementations))
         .configureInterfacesAndAbstractClasses()
@@ -117,17 +117,15 @@ fun <Element, Implementation, ElementField, ImplementationField> generateTree(
         }
     }
 
-    if (createImplementationPrinter != null) {
-        implementations.mapTo(generatedFiles) { implementation ->
-            printGeneratedType(
-                generationPath,
-                treeGeneratorReadme,
-                implementation.packageName,
-                implementation.typeName,
-                fileSuppressions = listOf("DuplicatedCode", "unused"),
-            ) {
-                createImplementationPrinter(this).printImplementation(implementation)
-            }
+    implementations.filter { it.doPrint }.mapTo(generatedFiles) { implementation ->
+        printGeneratedType(
+            generationPath,
+            treeGeneratorReadme,
+            implementation.packageName,
+            implementation.typeName,
+            fileSuppressions = listOf("DuplicatedCode", "unused"),
+        ) {
+            createImplementationPrinter(this).printImplementation(implementation)
         }
     }
 

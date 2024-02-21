@@ -16,7 +16,7 @@ object ImplementationConfigurator : AbstractSwiftIrTreeImplementationConfigurato
     override fun configureAllImplementations(model: Model) {
         // Use configureFieldInAllImplementations to customize certain fields in all implementation classes
         configureFieldInAllImplementations(
-            field = "parent",
+            fieldName = "parent",
         ) {
             isMutable(it)
             isLateinit(it)

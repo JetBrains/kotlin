@@ -629,7 +629,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
     override fun configureAllImplementations(model: Model) {
         configureFieldInAllImplementations(
-            field = "controlFlowGraphReference",
+            fieldName = "controlFlowGraphReference",
             implementationPredicate = { it.typeName != "FirAnonymousFunctionImpl" }
         ) {
             defaultNull(it)
@@ -661,7 +661,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             "FirInaccessibleReceiverExpressionImpl"
         )
         configureFieldInAllImplementations(
-            field = "typeRef",
+            fieldName = "typeRef",
             implementationPredicate = { it.typeName !in implementationWithConfigurableTypeRef },
             fieldPredicate = { it.defaultValueInImplementation == null }
         ) {
@@ -670,7 +670,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         configureFieldInAllImplementations(
-            field = "lValueTypeRef",
+            fieldName = "lValueTypeRef",
             implementationPredicate = { it.typeName in "FirVariableAssignmentImpl" },
             fieldPredicate = { it.defaultValueInImplementation == null }
         ) {
