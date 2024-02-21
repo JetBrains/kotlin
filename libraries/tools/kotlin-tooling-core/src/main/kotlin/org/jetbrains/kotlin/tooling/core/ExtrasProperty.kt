@@ -11,15 +11,15 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-interface ExtrasProperty<T : Any> {
+interface ExtrasProperty<T> {
     val key: Extras.Key<T>
 }
 
-val <T : Any> Extras.Key<T>.readWriteProperty get() = extrasReadWriteProperty(this)
+val <T> Extras.Key<T>.readWriteProperty get() = extrasReadWriteProperty(this)
 
 fun <Receiver : HasMutableExtras, T : Any> Extras.Key<T>.lazyProperty(factory: Receiver.() -> T) = extrasLazyProperty(this, factory)
 
-fun <T : Any> extrasReadWriteProperty(key: Extras.Key<T>): ExtrasReadWriteProperty<T> = object : ExtrasReadWriteProperty<T> {
+fun <T> extrasReadWriteProperty(key: Extras.Key<T>): ExtrasReadWriteProperty<T> = object : ExtrasReadWriteProperty<T> {
     override val key: Extras.Key<T> = key
 }
 
@@ -32,7 +32,7 @@ fun <Receiver : HasMutableExtras, T : Any> extrasLazyProperty(
     }
 
 
-inline fun <reified T : Any> extrasReadWriteProperty(name: String? = null) =
+inline fun <reified T> extrasReadWriteProperty(name: String? = null) =
     extrasReadWriteProperty(extrasKeyOf<T>(name))
 
 
@@ -40,7 +40,7 @@ inline fun <Receiver : HasMutableExtras, reified T : Any> extrasLazyProperty(nam
     extrasLazyProperty(extrasKeyOf(name), factory)
 
 
-interface NotNullExtrasReadOnlyProperty<T : Any> : ExtrasProperty<T>, ReadOnlyProperty<HasExtras, T> {
+interface NotNullExtrasReadOnlyProperty<T> : ExtrasProperty<T>, ReadOnlyProperty<HasExtras, T> {
     val defaultValue: T
 
     override fun getValue(thisRef: HasExtras, property: KProperty<*>): T {
@@ -48,7 +48,7 @@ interface NotNullExtrasReadOnlyProperty<T : Any> : ExtrasProperty<T>, ReadOnlyPr
     }
 }
 
-interface ExtrasReadWriteProperty<T : Any> : ExtrasProperty<T>, ReadWriteProperty<HasMutableExtras, T?> {
+interface ExtrasReadWriteProperty<T> : ExtrasProperty<T>, ReadWriteProperty<HasMutableExtras, T?> {
     override fun getValue(thisRef: HasMutableExtras, property: KProperty<*>): T? {
         return thisRef.extras[key]
     }
@@ -64,7 +64,7 @@ interface ExtrasReadWriteProperty<T : Any> : ExtrasProperty<T>, ReadWritePropert
     }
 }
 
-interface NotNullExtrasReadWriteProperty<T : Any> : ExtrasProperty<T>, ReadWriteProperty<HasMutableExtras, T> {
+interface NotNullExtrasReadWriteProperty<T> : ExtrasProperty<T>, ReadWriteProperty<HasMutableExtras, T> {
     val defaultValue: T
 
     override fun getValue(thisRef: HasMutableExtras, property: KProperty<*>): T {
@@ -76,11 +76,11 @@ interface NotNullExtrasReadWriteProperty<T : Any> : ExtrasProperty<T>, ReadWrite
     }
 }
 
-interface ExtrasLazyProperty<Receiver : HasMutableExtras, T : Any> : ExtrasProperty<T>, ReadWriteProperty<Receiver, T> {
+interface ExtrasLazyProperty<Receiver : HasMutableExtras, T> : ExtrasProperty<T>, ReadWriteProperty<Receiver, T> {
     val factory: Receiver.() -> T
 
     override fun getValue(thisRef: Receiver, property: KProperty<*>): T {
-        return thisRef.extras.getOrPut(key) { thisRef.factory() }
+        return thisRef.extras.getOrPutNullable(key) { thisRef.factory() }
     }
 
     override fun setValue(thisRef: Receiver, property: KProperty<*>, value: T) {
@@ -146,7 +146,7 @@ inline fun <Receiver : HasMutableExtras, reified T : Any> extrasNullableLazyProp
 ) = extrasNullableLazyProperty(extrasKeyOf(name), factory)
 
 @Deprecated("Scheduled for removal in Kotlin 2.2")
-interface ExtrasReadOnlyProperty<T : Any> : ExtrasProperty<T>, ReadOnlyProperty<HasExtras, T?> {
+interface ExtrasReadOnlyProperty<T> : ExtrasProperty<T>, ReadOnlyProperty<HasExtras, T?> {
     override fun getValue(thisRef: HasExtras, property: KProperty<*>): T? {
         return thisRef.extras[key]
     }
@@ -158,11 +158,11 @@ interface ExtrasReadOnlyProperty<T : Any> : ExtrasProperty<T>, ReadOnlyProperty<
 }
 
 @Deprecated("Scheduled for removal in Kotlin 2.2")
-interface ExtrasFactoryProperty<T : Any> : ExtrasProperty<T>, ReadWriteProperty<HasMutableExtras, T> {
+interface ExtrasFactoryProperty<T> : ExtrasProperty<T>, ReadWriteProperty<HasMutableExtras, T> {
     val factory: () -> T
 
     override fun getValue(thisRef: HasMutableExtras, property: KProperty<*>): T {
-        return thisRef.extras.getOrPut(key, factory)
+        return thisRef.extras.getOrPutNullable(key, factory)
     }
 
     override fun setValue(thisRef: HasMutableExtras, property: KProperty<*>, value: T) {

@@ -11,9 +11,11 @@ import com.google.protobuf.ByteString
 import com.google.protobuf.InvalidProtocolBufferException
 import org.jetbrains.kotlin.gradle.idea.proto.generated.IdeaExtrasProto
 import org.jetbrains.kotlin.gradle.idea.proto.generated.ideaExtrasProto
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
-import org.jetbrains.kotlin.tooling.core.*
+import org.jetbrains.kotlin.tooling.core.Extras
+import org.jetbrains.kotlin.tooling.core.MutableExtras
+import org.jetbrains.kotlin.tooling.core.toMutableExtras
+import org.jetbrains.kotlin.tooling.core.withValue
 
 fun Extras.toByteArray(context: IdeaKotlinSerializationContext): ByteArray {
     return context.IdeaExtrasProto(this).toByteArray()
@@ -35,8 +37,8 @@ internal fun IdeaKotlinSerializationContext.IdeaExtrasProto(extras: Extras): Ide
     val context = this
     return ideaExtrasProto {
         extras.entries.forEach { (key, value) ->
+            key as Extras.Key<Any?>
             val serializer = context.extrasSerializationExtension.serializer(key) ?: return@forEach
-            serializer as IdeaKotlinExtrasSerializer<Any>
             val serialized = runCatching { serializer.serialize(context, value) ?: return@forEach }.getOrElse { exception ->
                 logger.error("Failed to serialize $key, using ${serializer.javaClass.simpleName}", exception)
                 return@forEach

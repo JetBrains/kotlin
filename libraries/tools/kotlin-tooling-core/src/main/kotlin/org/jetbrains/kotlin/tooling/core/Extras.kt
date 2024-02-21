@@ -62,9 +62,9 @@ import java.io.Serializable
  *     .toExtras()
  * ```
  */
-interface Extras : Collection<Entry<out Any>> {
+interface Extras : Collection<Entry<*>> {
     class Type<T> @UnsafeApi("Use 'extrasTypeOf()' instead") @PublishedApi internal constructor(
-        internal val signature: String
+        internal val signature: String,
     ) : Serializable {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -85,7 +85,7 @@ interface Extras : Collection<Entry<out Any>> {
     }
 
     /* Not implemented as data class to ensure more controllable binary compatibility */
-    class Key<T : Any> @PublishedApi internal constructor(
+    class Key<T> @PublishedApi internal constructor(
         val type: Type<T>,
         val name: String? = null,
     ) : Serializable {
@@ -116,8 +116,8 @@ interface Extras : Collection<Entry<out Any>> {
             fun fromString(stableString: String): Key<*> {
                 @OptIn(UnsafeApi::class) return if (stableString.contains(';')) {
                     val split = stableString.split(';', limit = 2)
-                    Key(Type(split[0]), split[1])
-                } else Key(Type(stableString))
+                    Key<Any?>(Type(split[0]), split[1])
+                } else Key<Any?>(Type(stableString))
             }
 
             private const val serialVersionUID = 0L
@@ -125,7 +125,7 @@ interface Extras : Collection<Entry<out Any>> {
     }
 
     /* Not implemented as data class to ensure more controllable binary compatibility */
-    class Entry<T : Any>(val key: Key<T>, val value: T) : Serializable {
+    class Entry<T>(val key: Key<T>, val value: T) : Serializable {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is Entry<*>) return false
@@ -152,22 +152,22 @@ interface Extras : Collection<Entry<out Any>> {
 
     val keys: Set<Key<*>>
     val entries: Set<Entry<*>>
-    operator fun <T : Any> get(key: Key<T>): T?
+    operator fun <T> get(key: Key<T>): T?
     operator fun contains(key: Key<*>): Boolean
-    override fun iterator(): Iterator<Entry<out Any>>
+    override fun iterator(): Iterator<Entry<*>>
 }
 
 interface MutableExtras : Extras {
     /**
      * @return The previous value or null if no previous value was set
      */
-    operator fun <T : Any> set(key: Key<T>, value: T): T?
+    operator fun <T> set(key: Key<T>, value: T): T?
 
-    fun <T : Any> put(entry: Entry<T>): T?
+    fun <T> put(entry: Entry<T>): T?
 
     fun putAll(from: Iterable<Entry<*>>)
 
-    fun <T : Any> remove(key: Key<T>): T?
+    fun <T> remove(key: Key<T>): T?
 
     fun clear()
 }
