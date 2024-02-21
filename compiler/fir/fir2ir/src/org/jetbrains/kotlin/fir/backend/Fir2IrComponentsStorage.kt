@@ -58,7 +58,7 @@ class Fir2IrComponentsStorage(
     override val builtIns: Fir2IrBuiltIns = Fir2IrBuiltIns(this, specialSymbolProvider)
     override val fakeOverrideBuilder: IrFakeOverrideBuilder = irFakeOverrideBuilderProvider(irBuiltIns)
 
-    override val irProviders: List<IrProvider> = listOf(FirIrProvider(this))
+    override val irProviders: List<IrProvider> = emptyList()
 
     override val typeConverter: Fir2IrTypeConverter = Fir2IrTypeConverter(this, conversionScope)
 
