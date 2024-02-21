@@ -32,7 +32,6 @@ class IrFunctionImpl @IrImplementationDetail constructor(
     override var name: Name,
     override var visibility: DescriptorVisibility,
     override var modality: Modality,
-    returnType: IrType,
     override var isInline: Boolean,
     override var isExternal: Boolean,
     override var isTailrec: Boolean,
@@ -55,13 +54,6 @@ class IrFunctionImpl @IrImplementationDetail constructor(
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()
 
-    override var returnType: IrType = returnType
-        get() = if (field === IrUninitializedType) {
-            throw ReturnTypeIsNotInitializedException(this)
-        } else {
-            field
-        }
-
     override var typeParameters: List<IrTypeParameter> = emptyList()
 
     override var dispatchReceiverParameter: IrValueParameter? = null
@@ -69,6 +61,8 @@ class IrFunctionImpl @IrImplementationDetail constructor(
     override var valueParameters: List<IrValueParameter> = emptyList()
 
     override var contextReceiverParametersCount: Int = 0
+
+    override lateinit var returnType: IrType
 
     override var body: IrBody? = null
 

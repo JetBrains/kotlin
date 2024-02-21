@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.Variance
@@ -83,9 +84,13 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         containerSource: DeserializedContainerSource?,
     ): IrConstructor =
         IrConstructorImpl(
-            startOffset, endOffset, origin, symbol, name, visibility, returnType, isInline, isExternal, isPrimary, isExpect,
+            startOffset, endOffset, origin, symbol, name, visibility, isInline, isExternal, isPrimary, isExpect,
             containerSource, factory = this
-        )
+        ).apply {
+            if (returnType != IrUninitializedType) {
+                this.returnType = returnType
+            }
+        }
 
     override fun createEnumEntry(
         startOffset: Int,
@@ -137,10 +142,14 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         isFakeOverride: Boolean,
     ): IrSimpleFunction =
         IrFunctionImpl(
-            startOffset, endOffset, origin, symbol, name, visibility, modality, returnType,
+            startOffset, endOffset, origin, symbol, name, visibility, modality,
             isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, isFakeOverride,
             containerSource, factory = this
-        )
+        ).apply {
+            if (returnType != IrUninitializedType) {
+                this.returnType = returnType
+            }
+        }
 
     override fun createFunctionWithLateBinding(
         startOffset: Int,
@@ -166,7 +175,6 @@ abstract class AbstractIrFactoryImpl : IrFactory {
             name = name,
             visibility = visibility,
             modality = modality,
-            returnType = returnType,
             isInline = isInline,
             isExternal = isExternal,
             isTailrec = isTailrec,
@@ -176,7 +184,11 @@ abstract class AbstractIrFactoryImpl : IrFactory {
             isExpect = isExpect,
             isFakeOverride = isFakeOverride,
             factory = this
-        )
+        ).apply {
+            if (returnType != IrUninitializedType) {
+                this.returnType = returnType
+            }
+        }
 
     override fun createLocalDelegatedProperty(
         startOffset: Int,
