@@ -46,7 +46,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override val declarations: MutableList<FirDeclaration>,
     override val scopeProvider: FirScopeProvider,
     override val symbol: FirRegularClassSymbol,
-    private val unenhnancedSuperTypes: List<FirTypeRef>,
+    private val nonEnhancedSuperTypes: List<FirTypeRef>,
     override val typeParameters: MutableList<FirTypeParameterRef>,
     internal val javaPackage: JavaPackage?,
     val javaTypeParameterStack: MutableJavaTypeParameterStack,
@@ -71,7 +71,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     // TODO: the lazy superTypeRefs is a workaround for KT-55387, some non-lazy solution should probably be used instead
     override val superTypeRefs: List<FirTypeRef> by lazy {
         val enhancement = FirSignatureEnhancement(this@FirJavaClass, moduleData.session, overridden = { emptyList() })
-        enhancement.enhanceSuperTypes(unenhnancedSuperTypes)
+        enhancement.enhanceSuperTypes(nonEnhancedSuperTypes)
     }
 
     // TODO: the lazy annotations is a workaround for KT-55387, some non-lazy solution should probably be used instead
