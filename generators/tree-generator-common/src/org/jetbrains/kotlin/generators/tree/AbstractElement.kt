@@ -42,6 +42,11 @@ abstract class AbstractElement<Element, Field, Implementation>(
     val isRootElement: Boolean
         get() = elementParents.isEmpty()
 
+    /**
+     * A list of [Element]s which are direct subclasses of this element.
+     */
+    lateinit var subElements: Set<Element>
+
     var isSealed: Boolean = false
 
     /**

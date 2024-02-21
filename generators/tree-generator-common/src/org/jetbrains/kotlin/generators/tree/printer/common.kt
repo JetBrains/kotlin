@@ -72,8 +72,6 @@ fun printGeneratedType(
  * @param builderConfigurator The class for configuring the set of builders, see [Builder] and [AbstractBuilderConfigurator].
  * @param createImplementationPrinter Provide the class that prints implementations of elements, see [AbstractImplementationPrinter].
  * @param createBuilderPrinter Provide the class that prints the corresponding builder for each element class, see [AbstractBuilderPrinter].
- * @param afterConfiguration The routine to run after all implementations and builders were fully configured,
- * but before anything was printed to a file.
  * @param enableBaseTransformerTypeDetection Whether to use a special algorithm for inferring return types of transformer methods for each
  * element, see [detectBaseTransformerTypes].
  * @param addFiles Arbitrary files to add to the set of generated files.
@@ -89,7 +87,6 @@ fun <Element, Implementation, ElementField, ImplementationField> generateTree(
     builderConfigurator: AbstractBuilderConfigurator<Element, Implementation, ImplementationField, ElementField>? = null,
     createImplementationPrinter: ((SmartPrinter) -> AbstractImplementationPrinter<Implementation, Element, ImplementationField>)? = null,
     createBuilderPrinter: ((SmartPrinter) -> AbstractBuilderPrinter<Element, Implementation, ImplementationField, ElementField>)? = null,
-    afterConfiguration: () -> Unit = {},
     enableBaseTransformerTypeDetection: Boolean = true,
     addFiles: MutableList<GeneratedFile>.() -> Unit = {},
 ) where Element : AbstractElement<Element, ElementField, Implementation>,
@@ -100,13 +97,13 @@ fun <Element, Implementation, ElementField, ImplementationField> generateTree(
     if (enableBaseTransformerTypeDetection) {
         detectBaseTransformerTypes(model)
     }
+    initializeSubElements(model.elements)
     implementationConfigurator?.configureImplementations(model)
     val implementations = model.elements.flatMap { it.implementations }
     InterfaceAndAbstractClassConfigurator((model.elements + implementations))
         .configureInterfacesAndAbstractClasses()
     addPureAbstractElement(model.elements, pureAbstractElement)
     builderConfigurator?.configureBuilders()
-    afterConfiguration()
     val generatedFiles = mutableListOf<GeneratedFile>()
 
     model.elements.mapTo(generatedFiles) { element ->

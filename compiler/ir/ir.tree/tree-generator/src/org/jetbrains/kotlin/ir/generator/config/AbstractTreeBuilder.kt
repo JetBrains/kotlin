@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.generator.model.*
 import org.jetbrains.kotlin.ir.generator.model.ElementOrRef
 import org.jetbrains.kotlin.ir.generator.model.ElementRef
 import org.jetbrains.kotlin.ir.generator.model.ListField
-import org.jetbrains.kotlin.ir.generator.model.Model
+import org.jetbrains.kotlin.ir.generator.Model
 import org.jetbrains.kotlin.types.Variance
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty

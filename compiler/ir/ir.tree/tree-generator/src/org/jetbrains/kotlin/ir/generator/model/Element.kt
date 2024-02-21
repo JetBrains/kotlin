@@ -17,7 +17,7 @@ class Element(
     name: String,
     override val propertyName: String,
     category: Category,
-) : AbstractElement<Element, Field, Nothing>(name) {
+) : AbstractElement<Element, Field, Implementation>(name) {
 
     enum class Category(private val packageDir: String, val defaultVisitorParam: String) {
         Expression("expressions", "expression"),
@@ -78,17 +78,6 @@ class Element(
     override val namePrefix: String
         get() = "Ir"
 
-    /**
-     * Whether this element is semantically a leaf element in the hierarchy.
-     *
-     * This is set automatically by the [markLeaves] function for all true leaves, but can also be set manually to `true` if
-     * this element should be considered a leaf semantically.
-     *
-     * For example, we only generate [org.jetbrains.kotlin.ir.declarations.IrFactory] methods for leaf elements.
-     * If we want to generate a method for this element, but it has subclasses, it can be done by manually setting this property to `true`.
-     */
-    var isLeaf = false
-
     override var childrenOrderOverride: List<String>? = null
 
     override var visitorParameterName = category.defaultVisitorParam
@@ -96,7 +85,7 @@ class Element(
     var customHasAcceptMethod: Boolean? = null
 
     override val hasAcceptMethod: Boolean
-        get() = customHasAcceptMethod ?: (isLeaf && parentInVisitor != null)
+        get() = customHasAcceptMethod ?: (implementations.isNotEmpty() && parentInVisitor != null)
 
 
     override var hasTransformMethod = false

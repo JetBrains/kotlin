@@ -496,8 +496,6 @@ object IrTree : AbstractTreeBuilder() {
         +listField("files", file, mutability = MutableList)
     }
     val property: Element by element(Declaration) {
-        isLeaf = true
-
         parent(declarationBase)
         parent(possiblyExternalDeclaration)
         parent(overridableDeclaration.withArgs("S" to propertySymbolType))
@@ -552,8 +550,6 @@ object IrTree : AbstractTreeBuilder() {
         +field("constructor", constructor, nullable = true, isChild = false) // K1
     }
     val simpleFunction: Element by element(Declaration) {
-        isLeaf = true
-
         parent(function)
         parent(overridableDeclaration.withArgs("S" to simpleFunctionSymbolType))
         parent(attributeContainer)

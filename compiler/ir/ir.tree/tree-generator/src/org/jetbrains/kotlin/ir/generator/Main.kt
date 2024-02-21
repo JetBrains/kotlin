@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.generator
 
 import org.jetbrains.kotlin.generators.tree.printer.generateTree
-import org.jetbrains.kotlin.ir.generator.model.markLeaves
+import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.print.*
 import org.jetbrains.kotlin.utils.bind
 import java.io.File
@@ -14,6 +14,8 @@ import java.io.File
 const val BASE_PACKAGE = "org.jetbrains.kotlin.ir"
 
 internal const val TREE_GENERATOR_README = "compiler/ir/ir.tree/tree-generator/ReadMe.md"
+
+typealias Model = org.jetbrains.kotlin.generators.tree.Model<Element>
 
 fun main(args: Array<String>) {
     val generationPath = args.firstOrNull()?.let { File(it) }
@@ -32,9 +34,7 @@ fun main(args: Array<String>) {
             elementTransformerVoidType to ::TransformerVoidPrinter,
             typeTransformerType to ::TypeTransformerPrinter.bind(model.rootElement),
         ),
-        afterConfiguration = {
-            markLeaves(model.elements)
-        },
+        ImplementationConfigurator,
         enableBaseTransformerTypeDetection = false,
         addFiles = { add(printFactory(generationPath, model)) }
     )
