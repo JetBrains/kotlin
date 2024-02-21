@@ -330,8 +330,8 @@ class MemberScopeTowerLevel(
     private fun Triple<FirLookupTrackerComponent?, SmartList<String>, CallInfo>.recordCallableMemberLookup(callable: FirCallableSymbol<*>) {
         first?.run {
             recordTypeResolveAsLookup(callable.fir.returnTypeRef, third.callSite.source, third.containingFile.source)
-            callable.callableId.className?.let { lookupScope ->
-                second.add(lookupScope.asString())
+            callable.callableId.classId?.takeIf { !it.isLocal }?.let { lookupScope ->
+                second.add(lookupScope.asFqNameString())
             }
         }
     }

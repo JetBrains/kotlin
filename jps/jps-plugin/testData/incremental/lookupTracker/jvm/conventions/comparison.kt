@@ -6,13 +6,13 @@ package foo.bar
     na == a
     na == null
 
-    /*p:A(compareTo) p:foo.bar.A(compareTo) p:kotlin(Int)*/a > b
-    /*p:A(compareTo) p:foo.bar.A(compareTo) p:kotlin(Int)*/a < b
-    /*p:A(compareTo) p:foo.bar.A(compareTo) p:kotlin(Int)*/a >= b
-    /*p:A(compareTo) p:foo.bar.A(compareTo) p:kotlin(Int)*/a <= b
+    /*p:foo.bar.A(compareTo) p:kotlin(Int)*/a > b
+    /*p:foo.bar.A(compareTo) p:kotlin(Int)*/a < b
+    /*p:foo.bar.A(compareTo) p:kotlin(Int)*/a >= b
+    /*p:foo.bar.A(compareTo) p:kotlin(Int)*/a <= b
 
-    /*p:A(compareTo) p:foo.bar(compareTo) p:foo.bar.A(compareTo) p:kotlin(Int)*/a > c
-    /*p:A(compareTo) p:foo.bar(compareTo) p:foo.bar.A(compareTo) p:kotlin(Int)*/a < c
-    /*p:A(compareTo) p:foo.bar(compareTo) p:foo.bar.A(compareTo) p:kotlin(Int)*/a >= c
-    /*p:A(compareTo) p:foo.bar(compareTo) p:foo.bar.A(compareTo) p:kotlin(Int)*/a <= c
+    /*p:foo.bar(compareTo) p:foo.bar.A(compareTo) p:kotlin(Int)*/a > c
+    /*p:foo.bar(compareTo) p:foo.bar.A(compareTo) p:kotlin(Int)*/a < c
+    /*p:foo.bar(compareTo) p:foo.bar.A(compareTo) p:kotlin(Int)*/a >= c
+    /*p:foo.bar(compareTo) p:foo.bar.A(compareTo) p:kotlin(Int)*/a <= c
 }

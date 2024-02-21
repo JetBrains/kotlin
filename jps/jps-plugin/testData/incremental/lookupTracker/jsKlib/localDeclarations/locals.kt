@@ -3,7 +3,7 @@ package local.declarations
 import bar.*
 
 /*p:local.declarations*/fun f(p: /*p:bar p:local.declarations*/Any) {
-    /*p:Any(toString) p:kotlin(String) p:kotlin.Any(toString)*/p.toString()
+    /*p:kotlin(String) p:kotlin.Any(toString)*/p.toString()
 
     val a = 1
     val b = a
@@ -43,7 +43,7 @@ import bar.*
     /*p:kotlin(Int)*/i.a
     /*p:kotlin(Unit)*/i.foo()
 
-    /*p:<anonymous>(a) p:kotlin(String)*/o.a
-    val ii = /*p:<anonymous>(foo)*/o.foo()
+    /*p:kotlin(String)*/o.a
+    val ii = o.foo()
     /*p:kotlin(Int)*/ii.a
 }
