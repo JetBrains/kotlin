@@ -29673,6 +29673,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
       }
 
       @Test
+      @TestMetadata("intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt")
+      public void testIntersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin() {
+        runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt");
+      }
+
+      @Test
       @TestMetadata("nullableInt.kt")
       public void testNullableInt() {
         runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/nullableInt.kt");
