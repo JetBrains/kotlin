@@ -363,7 +363,7 @@ private val forLoopsLoweringPhase = makeIrModulePhase(
 private val enumWhenPhase = makeIrModulePhase(
     ::EnumWhenLowering,
     name = "EnumWhenLowering",
-    description = "Replace `when` subjects of enum types with their ordinals"
+    description = "[Optimization] Replace `when` subjects of enum types with their ordinals"
 )
 
 private val propertyLazyInitLoweringPhase = makeIrModulePhase(
