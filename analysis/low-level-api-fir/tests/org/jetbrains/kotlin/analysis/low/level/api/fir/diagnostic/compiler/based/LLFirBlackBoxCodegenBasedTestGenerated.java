@@ -31634,6 +31634,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
       }
 
       @Test
+      @TestMetadata("intersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed.kt")
+      public void testIntersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed() {
+        runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/intersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed.kt");
+      }
+
+      @Test
       @TestMetadata("nullableInt.kt")
       public void testNullableInt() {
         runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/nullableInt.kt");
