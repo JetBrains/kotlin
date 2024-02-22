@@ -45,6 +45,7 @@ kotlin {
                 compileTaskProvider.configure {
                     compilerOptions {
                         freeCompilerArgs.empty() // avoid common options set from the root project
+                        freeCompilerArgs.addAll("-Xdont-warn-on-error-suppression")
                     }
                 }
             }

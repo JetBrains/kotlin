@@ -27,5 +27,3 @@ compileKotlin {
     ]
     compilerOptions.moduleName = project.name
 }
-
-LibrariesCommon.configureFrontendIr(project)
