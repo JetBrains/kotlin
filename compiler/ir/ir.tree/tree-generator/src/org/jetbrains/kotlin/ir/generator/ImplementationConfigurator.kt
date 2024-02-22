@@ -87,7 +87,10 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(`class`) {
-            implementation.doPrint = false
+            kind = ImplementationKind.OpenClass
+            defaultNull("thisReceiver", "valueClassRepresentation")
+            defaultEmptyList("superTypes", "sealedSubclasses")
+            defaultFalse("isExternal", "isCompanion", "isInner", "isData", "isValue", "isExpect", "isFun", "hasEnumEntries")
         }
 
         impl(enumEntry) {
