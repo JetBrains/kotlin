@@ -61,8 +61,6 @@ compileKotlin {
 compileTestKotlin {
 }
 
-LibrariesCommon.configureFrontendIr(project)
-
 LibrariesCommon.configureJava9Compilation(project, 'kotlin.stdlib.jdk8')
 
 tasks.named("compileModuleTestJava", JavaCompile) {
