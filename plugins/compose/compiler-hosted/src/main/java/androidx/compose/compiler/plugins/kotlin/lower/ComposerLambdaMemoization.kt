@@ -90,6 +90,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.isLocal
+import org.jetbrains.kotlin.ir.util.isSuspendFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.primaryConstructor
@@ -1129,10 +1130,15 @@ class ComposerLambdaMemoization(
         stabilityInferencer.stabilityOf(type).knownStable()
 
     private fun IrValueDeclaration.isInlinedLambda(): Boolean =
-        type.isFunctionOrKFunction() &&
+        isInlineableFunction() &&
             this is IrValueParameter &&
             (parent as? IrFunction)?.isInline == true &&
             !isNoinline
+
+    private fun IrValueDeclaration.isInlineableFunction(): Boolean =
+        type.isFunctionOrKFunction() ||
+            type.isSyntheticComposableFunction() ||
+            type.isSuspendFunctionOrKFunction()
 
     private fun <T : IrExpression> T.markAsStatic(mark: Boolean): T {
         if (mark) {
