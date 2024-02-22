@@ -78,29 +78,6 @@ private class Java9AdditionalArgumentsProvider(
     )
 }
 
-fun Project.configureFrontendIr() = tasks.withType<KotlinJvmCompile>().configureEach {
-    compilerOptions {
-        if (project.kotlinBuildProperties.useFirForLibraries) {
-            freeCompilerArgs.add("-Xuse-k2")
-            allWarningsAsErrors.set(false)
-        } else {
-            if (project.kotlinBuildProperties.useFir) {
-                freeCompilerArgs.add("-Xskip-prerelease-check")
-            }
-            if (languageVersion.get() >= KotlinVersion.KOTLIN_2_0) {
-                languageVersion.set(KotlinVersion.KOTLIN_1_9)
-                apiVersion.set(KotlinVersion.KOTLIN_1_9)
-                progressiveMode.set(false)
-            }
-        }
-
-        val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
-        if (renderDiagnosticNames) {
-            freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
-        }
-    }
-}
-
 @JvmOverloads
 fun Project.manifestAttributes(
     manifest: Manifest,

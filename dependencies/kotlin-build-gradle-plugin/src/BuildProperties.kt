@@ -84,8 +84,6 @@ class KotlinBuildProperties(
 
     val useFir: Boolean = getBoolean("kotlin.build.useFir")
 
-    val useFirForLibraries: Boolean = getBoolean("kotlin.build.useFirForLibraries")
-
     val useFirIdeaPlugin: Boolean = getBoolean("idea.fir.plugin")
 
     val teamCityBootstrapVersion: String? = getOrNull("bootstrap.teamcity.kotlin.version") as String?
