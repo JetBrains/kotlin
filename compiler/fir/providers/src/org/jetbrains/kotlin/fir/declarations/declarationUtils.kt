@@ -160,9 +160,15 @@ fun MemberWithBaseScope<FirCallableSymbol<*>>.getNonSubsumedOverriddenSymbols():
         .map { it.member }
 }
 
-fun List<MemberWithBaseScope<FirCallableSymbol<*>>>.getNonSubsumedNonPhantomOverriddenSymbols(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
+fun Collection<MemberWithBaseScope<FirCallableSymbol<*>>>.getNonSubsumedNonPhantomOverriddenSymbols(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
+    // It's crucial that we only unwrap phantom intersection overrides.
+    // See comments in the following tests for explanation:
+    // - intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt
+    // - intersectionOverridesIntersection.kt
     return flatMap { it.flattenPhantomIntersectionsRecursively() }
         .nonSubsumed()
+        // To learn why `distinctBy` is needed, see:
+        // - intersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed.kt
         .distinctBy { it.member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>() }
 }
 

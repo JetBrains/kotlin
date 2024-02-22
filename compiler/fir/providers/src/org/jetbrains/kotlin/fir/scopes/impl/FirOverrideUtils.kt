@@ -64,12 +64,13 @@ fun <D : FirCallableSymbol<*>> overrides(
     return result
 }
 
-fun chooseIntersectionVisibilityOrNull(
+inline fun chooseIntersectionVisibilityOrNull(
     nonSubsumedOverrides: List<MemberWithBaseScope<FirCallableSymbol<*>>>,
+    isAbstract: (MemberWithBaseScope<FirCallableSymbol<*>>) -> Boolean = MemberWithBaseScope<FirCallableSymbol<*>>::isAbstract,
 ): Visibility? {
     val nonAbstract = nonSubsumedOverrides.filter {
         // Kotlin's Cloneable interface contains phantom `protected open fun clone()`.
-        !it.isAbstract && it.member.callableId != StandardClassIds.Callables.clone
+        !isAbstract(it) && it.member.callableId != StandardClassIds.Callables.clone
     }
     val allAreAbstract = nonAbstract.isEmpty()
 
