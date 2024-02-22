@@ -239,6 +239,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         // Test depends on macOS-specific AppKit and some GC
         Assumptions.assumeTrue(targets.testTarget.family == Family.OSX)
         Assumptions.assumeFalse(testRunSettings.get<GCType>() == GCType.NOOP)
+        Assumptions.assumeFalse(testRunSettings.get<CacheMode>().useStaticCacheForUserLibraries) // KT-66032: -tr is incompatible with caches
         val execResult = testDylibCinteropExe(
             "kt56402",
             extraClangOpts = listOf("-framework", "AppKit", "-fobjc-arc"),
