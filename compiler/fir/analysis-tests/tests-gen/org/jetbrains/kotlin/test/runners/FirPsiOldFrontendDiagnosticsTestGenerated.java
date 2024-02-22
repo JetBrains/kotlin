@@ -1516,6 +1516,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Test
+    @TestMetadata("typealiasInAnnotationPrimitiveVararg.kt")
+    public void testTypealiasInAnnotationPrimitiveVararg() {
+      runTest("compiler/testData/diagnostics/tests/typealiasInAnnotationPrimitiveVararg.kt");
+    }
+
+    @Test
     @TestMetadata("Underscore.kt")
     public void testUnderscore() {
       runTest("compiler/testData/diagnostics/tests/Underscore.kt");
