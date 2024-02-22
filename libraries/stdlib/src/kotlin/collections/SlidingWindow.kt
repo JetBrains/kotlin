@@ -82,9 +82,9 @@ internal class MovingSubList<out E>(private val list: List<E>) : AbstractList<E>
 
 
 /**
- * Provides ring buffer implementation.
+ * Provides a ring buffer implementation.
  *
- * Buffer overflow is not allowed so [add] doesn't overwrite tail but raises an exception.
+ * Buffer overflow is not allowed so [add] doesn't overwrite the tail but raises an exception.
  */
 private class RingBuffer<T>(private val buffer: Array<Any?>, filledSize: Int) : AbstractList<T>(), RandomAccess {
     init {
@@ -155,7 +155,7 @@ private class RingBuffer<T>(private val buffer: Array<Any?>, filledSize: Int) : 
     }
 
     /**
-     * Creates a new ring buffer with the capacity equal to the minimum of [maxCapacity] and 1.5 * [capacity].
+     * Creates a new ring buffer with capacity equal to the minimum of [maxCapacity] and 1.5 * [capacity].
      * The returned ring buffer contains the same elements as this ring buffer.
      */
     fun expanded(maxCapacity: Int): RingBuffer<T> {
@@ -165,7 +165,7 @@ private class RingBuffer<T>(private val buffer: Array<Any?>, filledSize: Int) : 
     }
 
     /**
-     * Add [element] to the buffer or fail with [IllegalStateException] if no free space available in the buffer
+     * Add [element] to the buffer or fail with [IllegalStateException] if no free space is available in the buffer.
      */
     fun add(element: T) {
         if (isFull()) {
@@ -177,7 +177,8 @@ private class RingBuffer<T>(private val buffer: Array<Any?>, filledSize: Int) : 
     }
 
     /**
-     * Removes [n] first elements from the buffer or fails with [IllegalArgumentException] if not enough elements in the buffer to remove
+     * Removes the first [n] elements from the buffer or fails with [IllegalArgumentException] if there are fewer than [n]
+     * elements in the buffer.
      */
     fun removeFirst(n: Int) {
         require(n >= 0) { "n shouldn't be negative but it is $n" }
