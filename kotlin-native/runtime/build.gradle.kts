@@ -90,7 +90,7 @@ bitcode {
                     "-DMI_TSAN=1".takeIf { sanitizer == SanitizerKind.THREAD },
             ))
 
-            onlyIf { target.supportsMimallocAllocator() }
+            onlyIf { it.supportsMimallocAllocator() }
         }
 
         module("libbacktrace") {
@@ -142,7 +142,7 @@ bitcode {
                     "-Wno-atomic-alignment"
             ))
 
-            onlyIf { target.supportsLibBacktrace() }
+            onlyIf { it.supportsLibBacktrace() }
         }
 
         module("compiler_interface") {
@@ -251,7 +251,7 @@ bitcode {
                 main {}
             }
 
-            onlyIf { target.supportsCoreSymbolication() }
+            onlyIf { it.supportsCoreSymbolication() }
         }
 
         module("source_info_libbacktrace") {
@@ -261,7 +261,7 @@ bitcode {
                 main {}
             }
 
-            onlyIf { target.supportsLibBacktrace() }
+            onlyIf { it.supportsLibBacktrace() }
         }
 
         module("objc") {
@@ -488,7 +488,7 @@ bitcode {
             sourceSets {
                 main {}
             }
-            onlyIf { target.family.isAppleFamily }
+            onlyIf { it.family.isAppleFamily }
         }
     }
 }
