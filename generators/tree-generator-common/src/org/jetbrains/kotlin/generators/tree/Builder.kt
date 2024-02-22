@@ -53,7 +53,7 @@ class LeafBuilder<BuilderField, Element, Implementation>(
     override val typeName: String
         get() = (implementation.name ?: implementation.element.typeName) + "Builder"
 
-    override val allFields: List<BuilderField> by lazy { implementation.fieldsWithoutDefault }
+    override val allFields: List<BuilderField> by lazy { implementation.fieldsInConstructor }
 
     override val uselessFields: List<BuilderField> by lazy {
         val fieldsFromParents = parents.flatMap { it.allFields }.distinct()

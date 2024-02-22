@@ -70,9 +70,9 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
 
     private fun withDefault(field: Field) = !field.isFinal && (field.defaultValueInImplementation != null || field.isLateinit)
 
-    val fieldsWithoutDefault by lazy { allFields.filterNot(::withDefault) }
+    val fieldsInConstructor by lazy { allFields.filterNot(::withDefault) }
 
-    val fieldsWithDefault by lazy { allFields.filter(::withDefault) }
+    val fieldsInBody by lazy { allFields.filter(::withDefault) }
 
     var requiresOptIn = false
 

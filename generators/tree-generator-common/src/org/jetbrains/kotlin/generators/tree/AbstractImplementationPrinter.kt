@@ -39,7 +39,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
                     add(implementationOptInAnnotation)
                 }
 
-                for (field in implementation.fieldsWithoutDefault) {
+                for (field in implementation.fieldsInConstructor) {
                     field.optInAnnotation?.let {
                         add(it)
                     }
@@ -61,13 +61,13 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
 
             val fieldPrinter = makeFieldPrinter(this)
 
-            if (!isInterface && !isAbstract && implementation.fieldsWithoutDefault.isNotEmpty()) {
+            if (!isInterface && !isAbstract && implementation.fieldsInConstructor.isNotEmpty()) {
                 if (implementation.isPublic) {
                     print(" @", implementationOptInAnnotation.render(), " constructor")
                 }
                 println("(")
                 withIndent {
-                    implementation.fieldsWithoutDefault.forEachIndexed { _, field ->
+                    implementation.fieldsInConstructor.forEachIndexed { _, field ->
                         if (field.isParameter) {
                             print(field.name, ": ", field.typeRef.render())
                             println(",")
@@ -90,7 +90,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
                         fieldPrinter.printField(it, override = true, modality = Modality.ABSTRACT.takeIf { isAbstract })
                     }
                 } else {
-                    implementation.fieldsWithDefault.forEach {
+                    implementation.fieldsInBody.forEach {
                         fieldPrinter.printField(it, override = true)
                     }
                 }
