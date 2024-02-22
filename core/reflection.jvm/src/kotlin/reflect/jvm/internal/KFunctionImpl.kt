@@ -65,11 +65,12 @@ internal class KFunctionImpl private constructor(
     override val name: String get() = descriptor.name.asString()
 
     override val caller: Caller<*> by lazy(PUBLICATION) caller@{
+        @Suppress("USELESS_CAST")
         val member: Member? = when (val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)) {
             is KotlinConstructor -> {
                 if (isAnnotationConstructor)
                     return@caller AnnotationConstructorCaller(container.jClass, parameters.map { it.name!! }, POSITIONAL_CALL, KOTLIN)
-                container.findConstructorBySignature(jvmSignature.constructorDesc)
+                container.findConstructorBySignature(jvmSignature.constructorDesc) as Member?
             }
             is KotlinFunction -> {
                 if (descriptor.let { it.containingDeclaration.isMultiFieldValueClass() && it is ConstructorDescriptor && it.isPrimary }) {
@@ -77,10 +78,10 @@ internal class KFunctionImpl private constructor(
                         descriptor, container, jvmSignature.methodDesc, descriptor.valueParameters
                     )
                 }
-                container.findMethodBySignature(jvmSignature.methodName, jvmSignature.methodDesc)
+                container.findMethodBySignature(jvmSignature.methodName, jvmSignature.methodDesc) as Member?
             }
-            is JavaMethod -> jvmSignature.method
-            is JavaConstructor -> jvmSignature.constructor
+            is JavaMethod -> jvmSignature.method as Member
+            is JavaConstructor -> jvmSignature.constructor as Member
             is FakeJavaAnnotationConstructor -> {
                 val methods = jvmSignature.methods
                 return@caller AnnotationConstructorCaller(container.jClass, methods.map { it.name }, POSITIONAL_CALL, JAVA, methods)
@@ -103,6 +104,7 @@ internal class KFunctionImpl private constructor(
     }
 
     override val defaultCaller: Caller<*>? by lazy(PUBLICATION) defaultCaller@{
+        @Suppress("USELESS_CAST")
         val member: Member? = when (val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)) {
             is KotlinFunction -> run {
                 if (descriptor.let { it.containingDeclaration.isMultiFieldValueClass() && it is ConstructorDescriptor && it.isPrimary }) {
@@ -114,12 +116,12 @@ internal class KFunctionImpl private constructor(
                     return@run container.findDefaultMethod(replacingJvmSignature.methodName, replacingJvmSignature.methodDesc, true)
                 }
 
-                container.findDefaultMethod(jvmSignature.methodName, jvmSignature.methodDesc, !Modifier.isStatic(caller.member!!.modifiers))
+                container.findDefaultMethod(jvmSignature.methodName, jvmSignature.methodDesc, !Modifier.isStatic(caller.member!!.modifiers)) as Member?
             }
             is KotlinConstructor -> {
                 if (isAnnotationConstructor)
                     return@defaultCaller AnnotationConstructorCaller(container.jClass, parameters.map { it.name!! }, CALL_BY_NAME, KOTLIN)
-                container.findDefaultConstructor(jvmSignature.constructorDesc)
+                container.findDefaultConstructor(jvmSignature.constructorDesc) as Member?
             }
             is FakeJavaAnnotationConstructor -> {
                 val methods = jvmSignature.methods
