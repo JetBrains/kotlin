@@ -742,4 +742,42 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
             )
         }
     )
+
+    // regression test for https://youtrack.jetbrains.com/issue/KT-65791
+    @Test
+    fun testCrossinlineCapture() = testCompile(
+        """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun LazyColumn(
+                content: () -> Unit
+            ): Unit = TODO()
+
+            @Composable
+            inline fun Box(content: @Composable () -> Unit) {
+                content()
+            }
+
+            @Composable
+            inline fun ItemsPage(
+                crossinline itemContent: @Composable (Int) -> Unit,
+            ) {
+                Box {
+                    LazyColumn {
+                        val lambda: @Composable (item: Int) -> Unit = {
+                            itemContent(it)
+                        }
+                    }
+                }
+            }
+
+            @Composable
+            fun SearchResultScreen() {
+                ItemsPage(
+                    itemContent = {},
+                )
+            }
+        """
+    )
 }
