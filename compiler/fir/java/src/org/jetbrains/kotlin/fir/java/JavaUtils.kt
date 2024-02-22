@@ -58,15 +58,14 @@ val JavaClass.classKind: ClassKind
 fun JavaClass.hasMetadataAnnotation(): Boolean =
     annotations.any { it.isResolvedTo(JvmAnnotationNames.METADATA_FQ_NAME) }
 
-internal fun Any?.createConstantOrError(session: FirSession, expectedTypeRef: FirTypeRef? = null): FirExpression {
-    val coneType = expectedTypeRef?.coneTypeOrNull
-    val value = if (this is Int && coneType != null) {
+internal fun Any?.createConstantOrError(session: FirSession, expectedConeType: ConeKotlinType? = null): FirExpression {
+    val value = if (this is Int && expectedConeType != null) {
         // special case for Java literals in annotation default values:
         // literal value is always integer, but an expected parameter type can be any other number type
         when {
-            coneType.isByte -> this.toByte()
-            coneType.isShort -> this.toShort()
-            coneType.isLong -> this.toLong()
+            expectedConeType.isByte -> this.toByte()
+            expectedConeType.isShort -> this.toShort()
+            expectedConeType.isLong -> this.toLong()
             else -> this
         }
     } else this
