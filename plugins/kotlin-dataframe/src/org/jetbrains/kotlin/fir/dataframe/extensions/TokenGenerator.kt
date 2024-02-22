@@ -13,24 +13,16 @@ import org.jetbrains.kotlin.fir.dataframe.CallShapeData
 import org.jetbrains.kotlin.fir.dataframe.Names
 import org.jetbrains.kotlin.fir.dataframe.callShapeData
 import org.jetbrains.kotlin.fir.dataframe.generateExtensionProperty
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.builder.buildPrimaryConstructor
-import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
-import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
-import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.plugin.createConstructor
+import org.jetbrains.kotlin.fir.plugin.createMemberProperty
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -115,72 +107,14 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
         return properties.map { it.symbol }
     }
 
-    private fun buildProperty(resolvedTypeRef: FirResolvedTypeRef, firPropertySymbol: FirPropertySymbol, classId1: ClassId?, propertyName: Name, k: FirClassSymbol<*>): FirProperty {
-        return buildProperty {
-            moduleData = session.moduleData
-            resolvePhase = FirResolvePhase.BODY_RESOLVE
-            origin = FirDeclarationOrigin.Plugin(Key)
-            status = FirResolvedDeclarationStatusImpl(
-                    Visibilities.Public,
-                    Modality.ABSTRACT,
-                    EffectiveVisibility.Local
-            )
-            returnTypeRef = resolvedTypeRef
-            val classId = classId1
-            if (classId != null) {
-                dispatchReceiverType = ConeClassLikeTypeImpl(
-                    ConeClassLookupTagWithFixedSymbol(classId, k),
-                    emptyArray(),
-                    false
-                )
-            }
-            val receiverType = dispatchReceiverType
-            val firPropertyAccessorSymbol = FirPropertyAccessorSymbol()
-            getter = buildPropertyAccessor {
-                moduleData = session.moduleData
-                resolvePhase = FirResolvePhase.BODY_RESOLVE
-                origin = FirDeclarationOrigin.Plugin(Key)
-                returnTypeRef = resolvedTypeRef
-                dispatchReceiverType = receiverType
-                symbol = firPropertyAccessorSymbol
-                propertySymbol = firPropertySymbol
-                isGetter = true
-                status = FirResolvedDeclarationStatusImpl(
-                        Visibilities.Public,
-                        Modality.FINAL,
-                        EffectiveVisibility.Local
-                )
-            }.also { firPropertyAccessorSymbol.bind(it) }
-            name = propertyName
-            symbol = firPropertySymbol
-            isVar = false
-            isLocal = false
-        }.also { firPropertySymbol.bind(it) }
+    private fun buildProperty(resolvedTypeRef: FirResolvedTypeRef, firPropertySymbol: FirPropertySymbol, classId1: ClassId, propertyName: Name, k: FirClassSymbol<*>): FirProperty {
+        return createMemberProperty(k, Key, propertyName, resolvedTypeRef.type) {
+            modality = Modality.ABSTRACT
+            visibility = Visibilities.Public
+        }
     }
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
-        return listOf(buildConstructor(context.owner).symbol)
-    }
-
-    fun buildConstructor(owner: FirClassSymbol<*>): FirConstructor {
-        val lookupTag = ConeClassLookupTagWithFixedSymbol(owner.classId, owner)
-        return buildPrimaryConstructor {
-            resolvePhase = FirResolvePhase.BODY_RESOLVE
-            moduleData = session.moduleData
-            origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
-            returnTypeRef = buildResolvedTypeRef {
-                type = ConeClassLikeTypeImpl(
-                    lookupTag,
-                    emptyArray(),
-                    isNullable = false
-                )
-            }
-            status = FirResolvedDeclarationStatusImpl(
-                Visibilities.Public,
-                Modality.FINAL,
-                EffectiveVisibility.Public
-            )
-            symbol = FirConstructorSymbol(owner.classId)
-        }
+        return listOf(createConstructor(context.owner, DataFramePlugin, isPrimary = true).symbol)
     }
 }
