@@ -1,0 +1,37 @@
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: one/ValueClass.hashCode
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: hashCode
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: one/ValueClass
+  getContainingFileSymbol: null
+  getContainingJvmClassName: one.ValueClass
+  getContainingModule: KtLibraryModule "Library lib"
+  deprecationStatus: null
