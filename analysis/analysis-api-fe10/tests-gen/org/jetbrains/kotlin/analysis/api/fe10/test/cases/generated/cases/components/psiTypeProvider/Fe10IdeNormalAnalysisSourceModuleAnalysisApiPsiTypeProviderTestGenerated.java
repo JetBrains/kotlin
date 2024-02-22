@@ -128,4 +128,16 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiPsiTypeProviderTestGene
   public void testSuspendFunctionValueParameterWithStdlib() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/suspendFunctionValueParameterWithStdlib.kt");
   }
+
+  @Test
+  @TestMetadata("wildcardSuppression_false.kt")
+  public void testWildcardSuppression_false() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/wildcardSuppression_false.kt");
+  }
+
+  @Test
+  @TestMetadata("wildcardSuppression_true.kt")
+  public void testWildcardSuppression_true() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/wildcardSuppression_true.kt");
+  }
 }
