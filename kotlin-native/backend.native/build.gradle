@@ -170,7 +170,6 @@ dependencies {
     compilerApi project(":native:objcexport-header-generator-k1")
     compilerApi project(":native:base")
 
-    compilerImplementation project(":kotlin-compiler")
     compilerApi project(":native:kotlin-native-utils")
     compilerApi project(":core:descriptors")
     compilerApi project(":core:compiler.common.native")
