@@ -17,15 +17,28 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.resolve.fqName
+import org.jetbrains.kotlin.name.FqName
+
+private val safeCopyAnnotation = FqName("kotlin.SafeCopy")
+private val unsafeCopyAnnotation = FqName("kotlin.UnsafeCopy")
 
 object FirDataClassNonPublicConstructorChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)) {
             return
         }
-        val primaryConstructor = declaration.takeIf { it.classKind == ClassKind.CLASS && it.isData }
-            ?.primaryConstructorIfAny(context.session)
-            ?: return
+        if (declaration.classKind != ClassKind.CLASS || !declaration.isData) {
+            return
+        }
+        val isAlreadyAnnotated = declaration.annotations.any {
+            val fqName = it.fqName(context.session)
+            fqName == safeCopyAnnotation || fqName == unsafeCopyAnnotation
+        }
+        if (isAlreadyAnnotated) {
+            return
+        }
+        val primaryConstructor = declaration.primaryConstructorIfAny(context.session) ?: return
 
         if (primaryConstructor.visibility != Visibilities.Public) {
             val factory = when {

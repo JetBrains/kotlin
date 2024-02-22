@@ -866,6 +866,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.DATA_CLASS_COPY_WILL_BECOME_INACCESSIBLE_WARNING) { firDiagnostic ->
+        DataClassCopyWillBecomeInaccessibleWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.DATA_CLASS_COPY_WILL_BECOME_INACCESSIBLE_ERROR) { firDiagnostic ->
+        DataClassCopyWillBecomeInaccessibleErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.DATA_CLASS_WITHOUT_PARAMETERS) { firDiagnostic ->
         DataClassWithoutParametersImpl(
             firDiagnostic as KtPsiDiagnostic,

@@ -643,6 +643,14 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DataClassCopyVisibilityWillBeChangedError::class
     }
 
+    interface DataClassCopyWillBecomeInaccessibleWarning : KtFirDiagnostic<KtPrimaryConstructor> {
+        override val diagnosticClass get() = DataClassCopyWillBecomeInaccessibleWarning::class
+    }
+
+    interface DataClassCopyWillBecomeInaccessibleError : KtFirDiagnostic<KtPrimaryConstructor> {
+        override val diagnosticClass get() = DataClassCopyWillBecomeInaccessibleError::class
+    }
+
     interface DataClassWithoutParameters : KtFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = DataClassWithoutParameters::class
     }
