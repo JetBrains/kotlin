@@ -32,8 +32,6 @@ fun serializeSingleFirFile(
         produceHeaderKlib
     )
 
-    // TODO: typealiases (see klib serializer)
-    // TODO: split package fragment (see klib serializer)
     // TODO: handle incremental/monolothic (see klib serializer) - maybe externally
 
     val packageProto = packageSerializer.packagePartProto(file.packageFqName, listOf(file), actualizedExpectDeclarations).build()
