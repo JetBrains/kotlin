@@ -166,12 +166,7 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         extractedOverrides: Collection<MemberWithBaseScope<D>>,
         dispatchClassSymbol: FirRegularClassSymbol?,
     ): Visibility {
-        // It's crucial that we only unwrap phantom intersection overrides.
-        // See comments in the following tests for explanation:
-        // - intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt
-        // - intersectionOverridesIntersection.kt
-        val overridesWithoutIntersections = extractedOverrides.flatMap { it.flattenPhantomIntersectionsRecursively() }
-        val nonSubsumed = overridesWithoutIntersections.nonSubsumed().filterOutDuplicates()
+        val nonSubsumed = extractedOverrides.getNonSubsumedNonPhantomOverriddenSymbols()
         return chooseIntersectionVisibilityOrNull(nonSubsumed) ?: Visibilities.Unknown
     }
 }

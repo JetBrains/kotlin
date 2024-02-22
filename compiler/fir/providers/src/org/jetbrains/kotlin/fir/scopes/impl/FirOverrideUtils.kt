@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.StandardClassIds
 
 fun filterOutOverriddenFunctions(extractedOverridden: Collection<MemberWithBaseScope<FirNamedFunctionSymbol>>): Collection<MemberWithBaseScope<FirNamedFunctionSymbol>> {
@@ -91,11 +90,6 @@ val MemberWithBaseScope<FirCallableSymbol<*>>.isAbstract: Boolean
         // Kotlin's Cloneable interface contains phantom `protected open fun clone()`.
         return member.rawStatus.modality == Modality.ABSTRACT
     }
-
-fun <D : FirCallableSymbol<*>> List<MemberWithBaseScope<D>>.filterOutDuplicates(): List<MemberWithBaseScope<D>> {
-    val uniqueSymbols = mutableSetOf<FirCallableSymbol<*>>()
-    return filter { uniqueSymbols.add(it.member.fir.unwrapSubstitutionOverrides().symbol) }
-}
 
 fun <D : FirCallableSymbol<*>> findMaxVisibilityOrNull(
     extractedOverrides: Collection<MemberWithBaseScope<D>>

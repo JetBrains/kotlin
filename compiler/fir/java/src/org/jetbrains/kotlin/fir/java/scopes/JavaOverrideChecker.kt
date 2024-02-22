@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.chooseIntersectionVisibilityOrNull
-import org.jetbrains.kotlin.fir.scopes.impl.filterOutDuplicates
 import org.jetbrains.kotlin.fir.scopes.impl.isAbstract
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptorRepresentation
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
@@ -375,12 +374,7 @@ class JavaOverrideChecker internal constructor(
         extractedOverrides: Collection<MemberWithBaseScope<D>>,
         dispatchClassSymbol: FirRegularClassSymbol?,
     ): Visibility {
-        // It's crucial that we only unwrap phantom intersection overrides.
-        // See comments in the following tests for explanation:
-        // - intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt
-        // - intersectionOverridesIntersection.kt
-        val overridesWithoutIntersections = extractedOverrides.flatMap { it.flattenPhantomIntersectionsRecursively() }
-        val nonSubsumed = overridesWithoutIntersections.nonSubsumed().filterOutDuplicates()
+        val nonSubsumed = extractedOverrides.getNonSubsumedNonPhantomOverriddenSymbols()
 
         // In Java it's OK to inherit multiple implementations of the same function
         // from the supertypes as long as there's an implementation from a class.
