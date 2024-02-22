@@ -1,6 +1,11 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("io.qameta.allure") version "2.11.2"
+}
+
+apply {
+    plugin("io.qameta.allure")
 }
 
 dependencies {
@@ -75,4 +80,19 @@ val test by nativeTest("test", testTags, requirePlatformLibs = true) {
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateNativeTestsKt") {
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
     dependsOn(":compiler:generateTestData")
+}
+
+tasks.create<Delete>("allureClean") {
+    delete("${layout.buildDirectory}/allure-results")
+}
+
+tasks.withType<Test> {
+    dependsOn("allureClean")
+}
+
+allure {
+    version.set("2.24.0")
+    adapter {
+        frameworks.junit5
+    }
 }
