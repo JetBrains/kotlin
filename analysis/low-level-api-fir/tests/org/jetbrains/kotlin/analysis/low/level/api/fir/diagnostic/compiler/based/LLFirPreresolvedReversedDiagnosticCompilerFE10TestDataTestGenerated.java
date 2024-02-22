@@ -29753,6 +29753,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("comparingWithWrongNullability.kt")
+      public void testComparingWithWrongNullability() {
+        runTest("compiler/testData/diagnostics/tests/platformTypes/comparingWithWrongNullability.kt");
+      }
+
+      @Test
       @TestMetadata("delegateByComplexInheritance.kt")
       public void testDelegateByComplexInheritance() {
         runTest("compiler/testData/diagnostics/tests/platformTypes/delegateByComplexInheritance.kt");
