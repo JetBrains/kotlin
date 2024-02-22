@@ -32,6 +32,9 @@ object JvmStandardClassIds {
     val JVM_OVERLOADS_FQ_NAME = FqName("kotlin.jvm.JvmOverloads")
     val JVM_OVERLOADS_CLASS_ID = ClassId.topLevel(JVM_OVERLOADS_FQ_NAME)
 
+    val JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSuppressWildcards")
+    val JVM_WILDCARD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmWildcard")
+
     @JvmField
     val JVM_SYNTHETIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSynthetic")
 
@@ -77,6 +80,8 @@ object JvmStandardClassIds {
         val JvmDefault = "JvmDefault".jvmId()
         val JvmRepeatable = "JvmRepeatable".jvmId()
         val JvmRecord = "JvmRecord".jvmId()
+        val JvmSuppressWildcards = "JvmSuppressWildcards".jvmId()
+        val JvmWildcard = "JvmWildcard".jvmId()
         val JvmVolatile = "Volatile".jvmId()
         val Throws = "Throws".jvmId()
         val ThrowsAlias = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("Throws"))
