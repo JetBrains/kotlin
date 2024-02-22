@@ -2721,6 +2721,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     public void testIntersectionWithMappedSignature() {
       runTest("compiler/testData/ir/irText/fakeOverrides/intersectionWithMappedSignature.kt");
     }
+
+    @Test
+    @TestMetadata("intersectionWithRawType.kt")
+    public void testIntersectionWithRawType() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/intersectionWithRawType.kt");
+    }
   }
 
   @Nested
