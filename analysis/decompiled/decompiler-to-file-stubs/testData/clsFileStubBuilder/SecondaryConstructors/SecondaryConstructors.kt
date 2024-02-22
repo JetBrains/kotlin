@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+/* Unavailable Serializable */
+// KNM_K2_IGNORE
+// KNM_FE10_IGNORE
+
 package test
 
 import java.io.Serializable
