@@ -40145,12 +40145,6 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       runTest("compiler/testData/diagnostics/testsWithStdLib/shadowingInDestructuring.kt");
     }
 
-    @Test
-    @TestMetadata("streams.kt")
-    public void testStreams() {
-      runTest("compiler/testData/diagnostics/testsWithStdLib/streams.kt");
-    }
-
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations")
     @TestDataPath("$PROJECT_ROOT")
@@ -44822,6 +44816,28 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("withChangesToNull.kt")
       public void testWithChangesToNull() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/smartcasts/withChangesToNull.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/streams")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Streams {
+      @Test
+      public void testAllFilesPresentInStreams() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/streams"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("basic.kt")
+      public void testBasic() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/streams/basic.kt");
+      }
+
+      @Test
+      @TestMetadata("wrongNullability.kt")
+      public void testWrongNullability() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/streams/wrongNullability.kt");
       }
     }
 
