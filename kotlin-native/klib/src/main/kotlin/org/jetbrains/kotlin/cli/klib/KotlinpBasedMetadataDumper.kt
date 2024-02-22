@@ -47,7 +47,10 @@ internal class KotlinpBasedMetadataDumper(
 
         val signatureComputer = prepareSignatureComputer(library, moduleMetadata)
 
-        KlibKotlinp(DEFAULT_SETTINGS, signatureComputer).renderModule(moduleMetadata, printer)
+        KlibKotlinp(
+                Settings(isVerbose = true, sortDeclarations = testMode),
+                signatureComputer
+        ).renderModule(moduleMetadata, printer)
     }
 
     private fun preprocessMetadataForTests(originalModuleMetadata: KlibModuleMetadata) = KlibModuleMetadata(
@@ -108,7 +111,7 @@ internal class KotlinpBasedMetadataDumper(
     private fun KmProperty.sortingKey() = propertyId("")
 
     companion object {
-        private val DEFAULT_SETTINGS = Settings(isVerbose = true, sortDeclarations = true)
+        private val DEFAULT_SETTINGS = Settings(isVerbose = true, sortDeclarations = false)
     }
 }
 
