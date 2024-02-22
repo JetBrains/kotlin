@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtReturnExpression
@@ -632,6 +633,14 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     interface SealedClassConstructorCall : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = SealedClassConstructorCall::class
+    }
+
+    interface DataClassCopyVisibilityWillBeChangedWarning : KtFirDiagnostic<KtPrimaryConstructor> {
+        override val diagnosticClass get() = DataClassCopyVisibilityWillBeChangedWarning::class
+    }
+
+    interface DataClassCopyVisibilityWillBeChangedError : KtFirDiagnostic<KtPrimaryConstructor> {
+        override val diagnosticClass get() = DataClassCopyVisibilityWillBeChangedError::class
     }
 
     interface DataClassWithoutParameters : KtFirDiagnostic<KtNamedDeclaration> {

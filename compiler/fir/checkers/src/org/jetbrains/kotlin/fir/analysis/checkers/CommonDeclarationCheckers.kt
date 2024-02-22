@@ -134,6 +134,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirManyCompanionObjectsChecker,
             FirMethodOfAnyImplementedInInterfaceChecker,
             FirDataClassPrimaryConstructorChecker,
+            FirDataClassNonPublicConstructorChecker,
             FirFunInterfaceDeclarationChecker.Regular,
             FirFunInterfaceDeclarationChecker.ForExpectClass,
             FirNestedClassChecker,

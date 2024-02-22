@@ -170,6 +170,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_CONSTRUCTO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_GENERIC_UPPER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_INHERITANCE_HIERARCHY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DANGEROUS_CHARACTERS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_NOT_PROPERTY_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_OVERRIDE_CONFLICT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_OVERRIDE_DEFAULT_VALUES
@@ -981,6 +983,34 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Explicit 'this' or 'super' call is required. There is no constructor in the superclass that can be called without arguments."
         )
         map.put(SEALED_CLASS_CONSTRUCTOR_CALL, "Sealed types cannot be instantiated.")
+        map.put(
+            DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING,
+            """
+                Private primary constructor is exposed via the generated 'copy()' method of a 'data' class.
+
+                The generated 'copy()' will change it's visibility in future releases.
+
+                To suppress the warning do one of the following:
+                - Annotate the data class with '@SafeCopy' annotation
+                - Add '-Xsafe-data-class-copy-visibility' compiler option
+                - Annotate the data class with '@UnsafeCopy' annotation (Discouraged, but useful if you want to keep binary compatibility)
+
+                This warning will become an error in future releases.
+            """.trimIndent()
+        )
+        map.put(
+            DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_ERROR,
+            """
+                Private primary constructor is exposed via the generated 'copy()' method of a 'data' class.
+
+                The generated 'copy()' will change it's visibility in future releases.
+
+                To suppress the error do one of the following:
+                - Annotate the data class with '@SafeCopy' annotation
+                - Add '-Xsafe-data-class-copy-visibility' compiler option
+                - Annotate the data class with '@UnsafeCopy' annotation (Discouraged, but useful if you want to keep binary compatibility)
+            """.trimIndent()
+        )
         map.put(DATA_CLASS_WITHOUT_PARAMETERS, "Data class must have at least one primary constructor parameter.")
         map.put(DATA_CLASS_VARARG_PARAMETER, "Primary constructor vararg parameters are prohibited for data classes.")
         map.put(DATA_CLASS_NOT_PROPERTY_PARAMETER, "Primary constructor of data class must only have property ('val' / 'var') parameters.")

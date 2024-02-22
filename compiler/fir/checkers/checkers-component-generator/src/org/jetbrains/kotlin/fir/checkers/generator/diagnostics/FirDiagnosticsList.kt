@@ -314,6 +314,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val EXPLICIT_DELEGATION_CALL_REQUIRED by error<PsiElement>(PositioningStrategy.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
         val SEALED_CLASS_CONSTRUCTOR_CALL by error<PsiElement>()
 
+        val DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING by warning<KtPrimaryConstructor>(PositioningStrategy.VISIBILITY_MODIFIER)
+        val DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_ERROR by warning<KtPrimaryConstructor>(PositioningStrategy.VISIBILITY_MODIFIER)
+
         // TODO: Consider creating a parameter list position strategy and report on the parameter list instead
         val DATA_CLASS_WITHOUT_PARAMETERS by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
         val DATA_CLASS_VARARG_PARAMETER by error<KtParameter>()
