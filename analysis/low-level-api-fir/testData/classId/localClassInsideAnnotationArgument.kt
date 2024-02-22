@@ -1,2 +1,2 @@
-/* ClassId: /Bar */@Retention(if (true) { /* ClassId: /Bar.Foo */class Foo })
+/* ClassId: /Bar */@Retention(if (true) { /* ClassId: null */class Foo })
 class Bar
