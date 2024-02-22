@@ -85,6 +85,12 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
   }
 
   @Test
+  @TestMetadata("invariantLambdaAdapters.kt")
+  public void testInvariantLambdaAdapters() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/invariantLambdaAdapters.kt");
+  }
+
+  @Test
   @TestMetadata("jsCode.kt")
   public void testJsCode() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/jsCode.kt");
