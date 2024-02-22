@@ -36,7 +36,7 @@ inline fun <reified T : Any> extrasReadWriteProperty(name: String? = null) =
     extrasReadWriteProperty(extrasKeyOf<T>(name))
 
 
-inline fun <Receiver : HasMutableExtras, reified T : Any> extrasLazyProperty(name: String? = null, noinline factory: Receiver.() -> T) =
+inline fun <Receiver : HasMutableExtras, reified T> extrasLazyProperty(name: String? = null, noinline factory: Receiver.() -> T) =
     extrasLazyProperty(extrasKeyOf(name), factory)
 
 
