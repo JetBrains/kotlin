@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.prefixIfNot
 
 interface IGeneratedNames {
@@ -29,7 +28,6 @@ interface IGeneratedNames {
     val tokens: Set<ClassId>
     fun nextName(s: String): ClassId
     fun nextScope(s: String): ClassId
-    fun nextFunction(s: String): CallableId
 }
 
 class Checker(private val generator: IGeneratedNames) : IGeneratedNames by generator {
@@ -47,8 +45,6 @@ class GeneratedNames : IGeneratedNames {
     override val callables = mutableSetOf<CallableId>()
     override val tokens = mutableSetOf<ClassId>()
 
-    private val id = mutableMapOf<String, Int>().withDefault { 0 }
-
     override fun nextName(s: String): ClassId {
         val s = s.prefixIfNot("Token")
         val newId = ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName(s), true)
@@ -61,15 +57,6 @@ class GeneratedNames : IGeneratedNames {
         scopes.add(newId)
         return newId
     }
-
-    override fun nextFunction(s: String): CallableId {
-        val i = id.getValue(s)
-        val callableId = CallableId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, Name.identifier("$s$i"))
-        id[s] = i + 1
-        callables.add(callableId)
-        return callableId
-    }
-
 }
 val PATH: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("annotation qualified name")
 
@@ -98,14 +85,12 @@ class FirDataFrameExtensionRegistrar(
     override fun ExtensionRegistrarContext.configurePlugin() {
         // if input data schema for refinement is also generated schema, maybe it'll be possible to save names to a set
         val generator = Checker(GeneratedNames())
-        with(generator) {
-            +::ExtensionsGenerator
-            +::ReturnTypeBasedReceiverInjector
-            +{ it: FirSession ->
-                CandidateInterceptor(path, it, ::nextFunction, this::nextName)
-            }
-            +::TokenGenerator
+        +::ExtensionsGenerator
+        +::ReturnTypeBasedReceiverInjector
+        +{ it: FirSession ->
+            CandidateInterceptor(path, it, generator::nextName)
         }
+        +::TokenGenerator
     }
 }
 
