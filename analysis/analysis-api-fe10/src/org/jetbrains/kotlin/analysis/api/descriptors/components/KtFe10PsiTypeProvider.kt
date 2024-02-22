@@ -73,6 +73,13 @@ internal class KtFe10PsiTypeProvider(
                 typeMapper.typeContext.getOptimalModeForReturnType(type.fe10Type, isAnnotationMethod)
             KtTypeMappingMode.VALUE_PARAMETER ->
                 typeMapper.typeContext.getOptimalModeForValueParameter(type.fe10Type)
+        }.let { typeMappingMode ->
+            // Otherwise, i.e., if we won't skip type with no type arguments, flag overriding might bother a case like:
+            // @JvmSuppressWildcards(false) Long -> java.lang.Long, not long, even though it should be no-op!
+            if (type.fe10Type.arguments.isEmpty())
+                typeMappingMode
+            else
+                typeMappingMode.updateArgumentModeFromAnnotations(type.fe10Type, typeMapper.typeContext)
         }
     }
 

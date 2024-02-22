@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.updateArgumentModeFromAnnotations
 import java.text.StringCharacterIterator
 
 internal class KtFirPsiTypeProvider(
@@ -89,6 +90,7 @@ internal class KtFirPsiTypeProvider(
 
     private fun KtTypeMappingMode.toTypeMappingMode(type: KtType, isAnnotationMethod: Boolean): TypeMappingMode {
         require(type is KtFirType)
+        val expandedType = type.coneType.fullyExpandedType(rootModuleSession)
         return when (this) {
             KtTypeMappingMode.DEFAULT -> TypeMappingMode.DEFAULT
             KtTypeMappingMode.DEFAULT_UAST -> TypeMappingMode.DEFAULT_UAST
@@ -97,13 +99,18 @@ internal class KtFirPsiTypeProvider(
             KtTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS -> TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS
             KtTypeMappingMode.RETURN_TYPE_BOXED -> TypeMappingMode.RETURN_TYPE_BOXED
             KtTypeMappingMode.RETURN_TYPE -> {
-                val expandedType = type.coneType.fullyExpandedType(rootModuleSession)
                 rootModuleSession.jvmTypeMapper.typeContext.getOptimalModeForReturnType(expandedType, isAnnotationMethod)
             }
             KtTypeMappingMode.VALUE_PARAMETER -> {
-                val expandedType = type.coneType.fullyExpandedType(rootModuleSession)
                 rootModuleSession.jvmTypeMapper.typeContext.getOptimalModeForValueParameter(expandedType)
             }
+        }.let { typeMappingMode ->
+            // Otherwise, i.e., if we won't skip type with no type arguments, flag overriding might bother a case like:
+            // @JvmSuppressWildcards(false) Long -> java.lang.Long, not long, even though it should be no-op!
+            if (expandedType.typeArguments.isEmpty())
+                typeMappingMode
+            else
+                typeMappingMode.updateArgumentModeFromAnnotations(expandedType, rootModuleSession.jvmTypeMapper.typeContext)
         }
     }
 
