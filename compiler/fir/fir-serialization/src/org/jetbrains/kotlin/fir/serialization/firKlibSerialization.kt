@@ -44,7 +44,6 @@ fun serializeSingleFirFile(
                 it.fir.isNotExpectOrShouldBeSerialized(actualizedExpectDeclarations) &&
                         it.fir.isNotPrivateOrShouldBeSerialized(produceHeaderKlib)
             }
-            .sortedBy { it.classId.asFqNameString() }
         for (symbol in classSymbols) {
             val klass = symbol.fir
             val classSerializer = FirElementSerializer.create(
