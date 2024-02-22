@@ -37,10 +37,6 @@ configurations {
     api.extendsFrom nopPluginApi
 }
 
-dependencies {
-    // TODO: upgrade coroutines to common version
-    api RepoDependencies.commonDependency(project, "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
-}
 ext.testOutputRoot = rootProject.file("test.output").absolutePath
 
 ext.platformManager = project.project(":kotlin-native").platformManager
