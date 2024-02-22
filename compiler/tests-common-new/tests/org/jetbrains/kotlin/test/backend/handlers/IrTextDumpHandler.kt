@@ -113,10 +113,6 @@ class IrTextDumpHandler(
             builder.append(actualDump)
         }
 
-        compareDumpsOfExternalClasses(module, info)
-    }
-
-    private fun compareDumpsOfExternalClasses(module: TestModule, info: IrBackendInput) {
         val externalClassIds = module.directives[DUMP_EXTERNAL_CLASS]
         if (externalClassIds.isEmpty()) return
 
@@ -124,7 +120,7 @@ class IrTextDumpHandler(
         assertions.assertAll(
             externalClassIds.map { externalClassId ->
                 {
-                    val classDump = info.irPluginContext.findExternalClass(externalClassId).dump()
+                    val classDump = info.irPluginContext.findExternalClass(externalClassId).dump(dumpOptions)
                     val suffix = ".__${externalClassId.replace("/", ".")}"
                     val expectedFile = baseFile.withSuffixAndExtension(suffix, module.getDumpExtension(ignoreFirIdentical = true))
                     assertions.assertEqualsToFile(expectedFile, classDump)
