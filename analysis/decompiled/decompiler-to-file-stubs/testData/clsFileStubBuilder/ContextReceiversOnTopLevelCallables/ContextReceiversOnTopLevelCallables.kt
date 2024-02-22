@@ -1,9 +1,6 @@
 // FIR_IDENTICAL
 // JVM_FILE_NAME: ContextReceiversOnTopLevelCallablesKt
 // !LANGUAGE: +ContextReceivers
-/* Unsupported arguments in test metadata compiler */
-// KNM_K2_IGNORE
-// KNM_FE10_IGNORE
 
 context(A, B)
 private fun Int.function(): Int = valueA + valueB

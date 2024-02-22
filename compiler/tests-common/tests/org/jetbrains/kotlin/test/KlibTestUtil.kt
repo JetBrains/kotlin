@@ -13,10 +13,14 @@ import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.FilteringMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.kotlin.cli.common.setupCommonArguments
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
@@ -50,19 +54,27 @@ import java.nio.file.Path
 import org.jetbrains.kotlin.konan.file.File as KFile
 
 object KlibTestUtil {
-    fun compileCommonSourcesToKlib(sourceFiles: Collection<File>, libraryName: String, klibFile: File) {
+    fun compileCommonSourcesToKlib(
+        sourceFiles: Collection<File>,
+        libraryName: String,
+        klibFile: File,
+        additionalArguments: List<String> = emptyList(),
+    ) {
         require(!Name.guessByFirstCharacter(libraryName).isSpecial) { "Invalid library name: $libraryName" }
 
         val configuration = KotlinTestUtils.newConfiguration()
         configuration.put(
             CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY,
-            PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, false)
+            FilteringMessageCollector(
+                PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, false)
+            ) /* decline = */ { !it.isError }
         )
         configuration.put(CommonConfigurationKeys.MODULE_NAME, libraryName)
         configuration.addKotlinSourceRoots(sourceFiles.map { it.absolutePath })
         val stdlibFile = ForTestCompileRuntime.stdlibCommonForTests()
         // support for the legacy version of kotlin-stdlib-common (JAR with .kotlin_metadata)
         configuration.addJvmClasspathRoot(stdlibFile)
+        configuration.setupCommonArguments(parseCommandLineArguments<K2MetadataCompilerArguments>(additionalArguments))
 
         val rootDisposable = Disposer.newDisposable("Disposable for ${KlibTestUtil::class.simpleName}.compileCommonSourcesToKlib")
         val module = try {
@@ -77,7 +89,7 @@ object KlibTestUtil {
             val analyzer = AnalyzerWithCompilerReport(
                 configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY),
                 configuration.languageVersionSettings,
-                configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+                renderDiagnosticName = true,
             )
 
             analyzer.analyzeAndReport(environment.getSourceFiles()) {

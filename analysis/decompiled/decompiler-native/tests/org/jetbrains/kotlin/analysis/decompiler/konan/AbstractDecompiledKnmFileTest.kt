@@ -22,6 +22,7 @@ import java.nio.file.Paths
 import java.util.stream.Collectors
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.extension
+import kotlin.io.path.readText
 
 abstract class AbstractDecompiledKnmFileTest : KotlinTestWithEnvironment() {
     abstract val knmTestSupport: KnmTestSupport
@@ -60,10 +61,16 @@ abstract class AbstractDecompiledKnmFileTest : KotlinTestWithEnvironment() {
     private fun compileCommonKlib(testDirectory: Path): File {
         val ktFiles = Files.list(testDirectory).filter { it.extension == "kt" }.collect(Collectors.toList())
         val testKlib = KtTestUtil.tmpDir("testLibrary").resolve("library.klib")
+        val additionalArgumentsFromLanguageDirectives = ktFiles.flatMap { path ->
+            path.readText().let { fileText ->
+                InTextDirectivesUtils.findListWithPrefixes(fileText, "// !LANGUAGE: ").map { "-XXLanguage:$it" }
+            }
+        }
         KlibTestUtil.compileCommonSourcesToKlib(
             ktFiles.map(Path::toFile),
             libraryName = "library",
             testKlib,
+            additionalArgumentsFromLanguageDirectives,
         )
 
         return testKlib
