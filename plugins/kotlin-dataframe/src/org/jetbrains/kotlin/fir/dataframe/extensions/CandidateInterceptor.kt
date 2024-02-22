@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.classId
@@ -78,10 +77,13 @@ import kotlin.math.abs
 class CandidateInterceptor(
     val path: String?,
     session: FirSession,
-    val nextFunction: (String) -> CallableId,
     val nextName: (String) -> ClassId,
 ) : FirFunctionCallRefinementExtension(session), KotlinTypeFacade {
     val Key = DataFramePlugin
+
+    companion object {
+        val DEFAULT_NAME = "DataFrameType"
+    }
 
     override val resolutionPath: String? = path
 
@@ -101,19 +103,23 @@ class CandidateInterceptor(
             }
         }
         hash = abs(hash)
-        val generatedName = nextFunction("${symbol.name.identifier}_${hash + 1}")
 
-        val newSymbol = FirNamedFunctionSymbol(generatedName)
+        fun Name.asTokenName() = identifierOrNullIfSpecial?.titleCase() ?: DEFAULT_NAME
 
         // possibly null if explicit receiver type is AnyFrame
         val argument = (callInfo.explicitReceiver?.resolvedType)?.typeArguments?.singleOrNull()
         val suggestedName = if (argument == null) {
-            "${callInfo.name.identifier.titleCase()}_$hash"
+            "${callInfo.name.asTokenName()}_$hash"
         } else {
             when (argument) {
-                is ConeStarProjection -> "${callInfo.name.identifier.titleCase()}_$hash"
+                is ConeStarProjection -> {
+                    "${callInfo.name.asTokenName()}_$hash"
+                }
                 is ConeKotlinTypeProjection -> {
-                    val titleCase = argument.type.classId?.shortClassName?.identifier?.titleCase()?.substringBeforeLast("_")
+                    val titleCase = argument.type.classId?.shortClassName
+                        ?.identifierOrNullIfSpecial?.titleCase()
+                        ?.substringBeforeLast("_")
+                        ?: DEFAULT_NAME
                     "${titleCase}_$hash"
                 }
             }
