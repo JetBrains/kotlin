@@ -44,6 +44,7 @@ fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
 context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtClassOrObjectSymbol.superProtocols(): List<String> {
     return getDeclaredSuperInterfaceSymbols()
+        .filter { it.isVisibleInObjC() }
         .map { superInterface -> superInterface.getObjCClassOrProtocolName().objCName }
         .toList()
 }

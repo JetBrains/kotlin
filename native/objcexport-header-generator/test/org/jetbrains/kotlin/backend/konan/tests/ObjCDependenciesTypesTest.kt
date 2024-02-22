@@ -49,11 +49,7 @@ class ObjCDependenciesTypesTest(
         doTest(dependenciesDir.resolve("arrayList"))
     }
 
-    /**
-     * Int* type conversion issue: KT-65687
-     */
     @Test
-    @TodoAnalysisApi
     fun `test - implementIterator`() {
         doTest(dependenciesDir.resolve("implementIterator"))
     }

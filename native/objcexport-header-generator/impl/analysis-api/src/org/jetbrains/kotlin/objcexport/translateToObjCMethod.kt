@@ -32,7 +32,17 @@ context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtFunctionLikeSymbol.buildObjCMethod(
     unavailable: Boolean = false,
 ): ObjCMethod {
-    val bridge = getFunctionMethodBridge()
+
+    val bridge = if (this is KtFunctionSymbol) {
+        /**
+         * Unlike constructor, a function can have base return type.
+         * So in case of function we need to call [getFunctionMethodBridge] on [baseMethod]
+         */
+        baseMethod.getFunctionMethodBridge()
+    } else {
+        this.getFunctionMethodBridge()
+    }
+
     val returnType: ObjCType = mapReturnType(bridge.returnBridge)
     val parameters = translateToObjCParameters(bridge)
     val selector = getSelector(bridge)
@@ -74,7 +84,6 @@ internal fun KtFunctionLikeSymbol.buildObjCMethod(
         attributes = attributes
     )
 }
-
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerKt.toValidObjCSwiftIdentifier]
