@@ -122,7 +122,7 @@ class IrTextDumpHandler(
                 {
                     val classDump = info.irPluginContext.findExternalClass(externalClassId).dump(dumpOptions)
                     val suffix = ".__${externalClassId.replace("/", ".")}"
-                    val expectedFile = baseFile.withSuffixAndExtension(suffix, module.getDumpExtension(ignoreFirIdentical = true))
+                    val expectedFile = baseFile.withSuffixAndExtension(suffix, module.getDumpExtension())
                     assertions.assertEqualsToFile(expectedFile, classDump)
                 }
             }

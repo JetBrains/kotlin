@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.test.WrappedException
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_EXTERNAL_CLASS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_IDENTICAL
@@ -17,33 +18,42 @@ import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.FirIdenticalCheckerHelper
 import org.jetbrains.kotlin.test.utils.withExtension
+import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
 import java.io.File
 
 class FirIrDumpIdenticalChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
-    private val simpleDumpChecker = object : FirIdenticalCheckerHelper(testServices) {
+    private inner class DumpChecker(
+        val suffix: String?,
+        val classicExtension: String,
+        val firExtension: String,
+    ) : FirIdenticalCheckerHelper(testServices) {
+        private fun withExtension(testDataFile: File, extension: String) : File {
+            return if (suffix == null)
+                testDataFile.withExtension(extension)
+            else
+                testDataFile.withSuffixAndExtension(suffix, extension)
+        }
+
         override fun getClassicFileToCompare(testDataFile: File): File? {
-            return testDataFile.withExtension(IrTextDumpHandler.DUMP_EXTENSION).takeIf { it.exists() }
+            return withExtension(testDataFile, classicExtension).takeIf { it.exists() }
         }
 
         override fun getFirFileToCompare(testDataFile: File): File? {
-            return testDataFile.withExtension("fir.${IrTextDumpHandler.DUMP_EXTENSION}").takeIf { it.exists() }
-        }
-    }
-
-    private val prettyDumpChecker = object : FirIdenticalCheckerHelper(testServices) {
-        override fun getClassicFileToCompare(testDataFile: File): File? {
-            return testDataFile.withExtension(IrPrettyKotlinDumpHandler.DUMP_EXTENSION).takeIf { it.exists() }
-        }
-
-        override fun getFirFileToCompare(testDataFile: File): File? {
-            return testDataFile.withExtension("fir.${IrPrettyKotlinDumpHandler.DUMP_EXTENSION}").takeIf { it.exists() }
+            return withExtension(testDataFile, firExtension).takeIf { it.exists() }
         }
     }
 
     override fun check(failedAssertions: List<WrappedException>) {
+        val dumpCheckers = buildList {
+            add(DumpChecker(null, IrTextDumpHandler.DUMP_EXTENSION, "fir.${IrTextDumpHandler.DUMP_EXTENSION}"))
+            add(DumpChecker(null, IrPrettyKotlinDumpHandler.DUMP_EXTENSION, "fir.${IrPrettyKotlinDumpHandler.DUMP_EXTENSION}"))
+            for (externalClassId in testServices.moduleStructure.allDirectives[DUMP_EXTERNAL_CLASS]) {
+                add(DumpChecker(".__${externalClassId.replace("/", ".")}", IrTextDumpHandler.DUMP_EXTENSION, "fir.${IrTextDumpHandler.DUMP_EXTENSION}"))
+            }
+        }
         if (failedAssertions.isNotEmpty()) return
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         if (testServices.defaultsProvider.defaultFrontend != FrontendKinds.FIR)
@@ -51,17 +61,18 @@ class FirIrDumpIdenticalChecker(testServices: TestServices) : AfterAnalysisCheck
         if (DUMP_IR !in testServices.moduleStructure.allDirectives)
             return
         if (FIR_IDENTICAL in testServices.moduleStructure.allDirectives) {
-            simpleDumpChecker.deleteFirFile(testDataFile)
-            prettyDumpChecker.deleteFirFile(testDataFile)
+            for (checker in dumpCheckers) {
+                checker.deleteFirFile(testDataFile)
+            }
             return
         }
         if (
-            simpleDumpChecker.firAndClassicContentsAreEquals(testDataFile) &&
-            prettyDumpChecker.firAndClassicContentsAreEquals(testDataFile, trimLines = true)
+            dumpCheckers.all { it.firAndClassicContentsAreEquals(testDataFile, trimLines = true) }
         ) {
-            simpleDumpChecker.deleteFirFile(testDataFile)
-            prettyDumpChecker.deleteFirFile(testDataFile)
-            simpleDumpChecker.addDirectiveToClassicFileAndAssert(testDataFile)
+            for (checker in dumpCheckers) {
+                checker.deleteFirFile(testDataFile)
+            }
+            dumpCheckers.first().addDirectiveToClassicFileAndAssert(testDataFile)
         }
     }
 }

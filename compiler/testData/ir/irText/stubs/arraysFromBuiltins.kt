@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // DUMP_EXTERNAL_CLASS: kotlin/Array
 // DUMP_EXTERNAL_CLASS: kotlin/IntArray
 // DUMP_EXTERNAL_CLASS: kotlin/collections/IntIterator
