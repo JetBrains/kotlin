@@ -49,6 +49,12 @@ public class SourceClassIdConsistencyTestGenerated extends AbstractSourceClassId
   }
 
   @Test
+  @TestMetadata("localClassInsideAnnotationArgument.kt")
+  public void testLocalClassInsideAnnotationArgument() {
+    runTest("analysis/low-level-api-fir/testData/classId/localClassInsideAnnotationArgument.kt");
+  }
+
+  @Test
   @TestMetadata("localClassInsideFunctionLiteral.kt")
   public void testLocalClassInsideFunctionLiteral() {
     runTest("analysis/low-level-api-fir/testData/classId/localClassInsideFunctionLiteral.kt");
@@ -64,6 +70,12 @@ public class SourceClassIdConsistencyTestGenerated extends AbstractSourceClassId
   @TestMetadata("localClassInsideSuperEntryCall.kt")
   public void testLocalClassInsideSuperEntryCall() {
     runTest("analysis/low-level-api-fir/testData/classId/localClassInsideSuperEntryCall.kt");
+  }
+
+  @Test
+  @TestMetadata("localClassInsideUnclosedAnnotation.kt")
+  public void testLocalClassInsideUnclosedAnnotation() {
+    runTest("analysis/low-level-api-fir/testData/classId/localClassInsideUnclosedAnnotation.kt");
   }
 
   @Test
