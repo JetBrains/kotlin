@@ -83,7 +83,11 @@ interface Xcode {
         val current: Xcode
             get() = findCurrent()
 
-        fun findCurrent(): Xcode = CurrentXcode()
+        var xcodeOverride: Xcode? = null
+
+        fun findCurrent(): Xcode = xcodeOverride ?: defaultCurrent()
+
+        fun defaultCurrent(): Xcode = CurrentXcode()
     }
 }
 
