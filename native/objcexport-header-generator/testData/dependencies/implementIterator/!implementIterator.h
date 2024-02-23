@@ -6,7 +6,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@protocol Iterator;
+@protocol KotlinIterator;
 
 NS_ASSUME_NONNULL_BEGIN
 #pragma clang diagnostic push
@@ -20,14 +20,14 @@ NS_ASSUME_NONNULL_BEGIN
 #define _Nullable_result _Nullable
 #endif
 
-@protocol Iterator
+@protocol KotlinIterator
 @required
 - (BOOL)hasNext __attribute__((swift_name("hasNext()")));
 - (id _Nullable)next __attribute__((swift_name("next()")));
 @end
 
 __attribute__((objc_subclassing_restricted))
-@interface Foo : Base <Iterator>
+@interface Foo : Base <KotlinIterator>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (BOOL)hasNext __attribute__((swift_name("hasNext()")));

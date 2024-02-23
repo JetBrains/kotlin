@@ -6,9 +6,9 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class IntIterator;
+@class KotlinIntIterator;
 
-@protocol Iterator;
+@protocol KotlinIterator;
 
 NS_ASSUME_NONNULL_BEGIN
 #pragma clang diagnostic push
@@ -26,16 +26,16 @@ __attribute__((objc_subclassing_restricted))
 @interface Foo : Base
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (IntIterator *)foo __attribute__((swift_name("foo()")));
+- (KotlinIntIterator *)foo __attribute__((swift_name("foo()")));
 @end
 
-@protocol Iterator
+@protocol KotlinIterator
 @required
 - (BOOL)hasNext __attribute__((swift_name("hasNext()")));
 - (id _Nullable)next __attribute__((swift_name("next()")));
 @end
 
-@interface IntIterator : Base <Iterator>
+@interface KotlinIntIterator : Base <KotlinIterator>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (Int *)next __attribute__((swift_name("next()")));
