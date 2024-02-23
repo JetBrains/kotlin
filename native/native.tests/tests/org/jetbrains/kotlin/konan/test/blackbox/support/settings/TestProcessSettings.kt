@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.MutedOption
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.RunnerWithExecutor
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.NoopTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.Runner
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.io.File
 import java.io.IOException
@@ -227,6 +229,13 @@ internal sealed class CacheMode {
         override val makePerFileCaches: Boolean,
         override val alias: Alias,
     ) : CacheMode() {
+        init {
+            assertFalse (optimizationMode == OptimizationMode.OPT) {
+                "Static caches are incompatible with `-P${ClassLevelProperty.OPTIMIZATION_MODE.propertyName}=${OptimizationMode.OPT.name}`.\n" +
+                "To test in ${OptimizationMode.OPT.name} mode, either don't specify `-P${ClassLevelProperty.CACHE_MODE.propertyName}`, or set it to ${Alias.NO.name}."
+            }
+        }
+
         override val staticCacheForDistributionLibrariesRootDir: File = File(distribution.klib)
             .resolve("cache")
             .resolve(
