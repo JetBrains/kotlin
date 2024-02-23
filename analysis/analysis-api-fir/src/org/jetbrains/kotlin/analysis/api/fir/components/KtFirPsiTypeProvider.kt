@@ -72,7 +72,8 @@ internal class KtFirPsiTypeProvider(
         useSitePosition: PsiElement,
         mode: KtTypeMappingMode,
         isAnnotationMethod: Boolean,
-        allowErrorTypes: Boolean
+        suppressWildcards: Boolean?,
+        allowErrorTypes: Boolean,
     ): PsiTypeElement? {
         val coneType = type.coneType
 
@@ -85,10 +86,19 @@ internal class KtFirPsiTypeProvider(
         if (!rootModuleSession.moduleData.platform.has<JvmPlatform>()) return null
 
         return coneType.simplifyType(rootModuleSession, useSitePosition)
-            .asPsiTypeElement(rootModuleSession, mode.toTypeMappingMode(type, isAnnotationMethod), useSitePosition, allowErrorTypes)
+            .asPsiTypeElement(
+                rootModuleSession,
+                mode.toTypeMappingMode(type, isAnnotationMethod, suppressWildcards),
+                useSitePosition,
+                allowErrorTypes,
+            )
     }
 
-    private fun KtTypeMappingMode.toTypeMappingMode(type: KtType, isAnnotationMethod: Boolean): TypeMappingMode {
+    private fun KtTypeMappingMode.toTypeMappingMode(
+        type: KtType,
+        isAnnotationMethod: Boolean,
+        suppressWildcards: Boolean?,
+    ): TypeMappingMode {
         require(type is KtFirType)
         val expandedType = type.coneType.fullyExpandedType(rootModuleSession)
         return when (this) {
@@ -110,7 +120,11 @@ internal class KtFirPsiTypeProvider(
             if (expandedType.typeArguments.isEmpty())
                 typeMappingMode
             else
-                typeMappingMode.updateArgumentModeFromAnnotations(expandedType, rootModuleSession.jvmTypeMapper.typeContext)
+                typeMappingMode.updateArgumentModeFromAnnotations(
+                    expandedType,
+                    rootModuleSession.jvmTypeMapper.typeContext,
+                    suppressWildcards,
+                )
         }
     }
 

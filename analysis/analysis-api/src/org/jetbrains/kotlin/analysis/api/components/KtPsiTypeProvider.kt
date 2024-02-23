@@ -18,7 +18,8 @@ public abstract class KtPsiTypeProvider : KtAnalysisSessionComponent() {
         useSitePosition: PsiElement,
         mode: KtTypeMappingMode,
         isAnnotationMethod: Boolean,
-        allowErrorTypes: Boolean
+        suppressWildcards: Boolean?,
+        allowErrorTypes: Boolean,
     ): PsiTypeElement?
 
     public abstract fun asKtType(
@@ -46,15 +47,29 @@ public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
      *
      * If [allowErrorTypes] set to true then erroneous types will be replaced with `error.NonExistentClass` type.
      *
+     * [suppressWildcards] indicates whether wild cards in type arguments need to be suppressed or not,
+     * e.g., according to the annotation on the containing declarations.
+     *   `true` means they should be suppressed;
+     *   `false` means they should appear;
+     *   `null` is no-op by default, i.e., their suppression/appearance is determined by type annotations.
+     *
      * Note: [PsiTypeElement] is JVM conception, so this method will return `null` for non-JVM platforms.
      */
     public fun KtType.asPsiTypeElement(
         useSitePosition: PsiElement,
         allowErrorTypes: Boolean,
         mode: KtTypeMappingMode = KtTypeMappingMode.DEFAULT,
-        isAnnotationMethod: Boolean = false
+        isAnnotationMethod: Boolean = false,
+        suppressWildcards: Boolean? = null,
     ): PsiTypeElement? = withValidityAssertion {
-        analysisSession.psiTypeProvider.asPsiTypeElement(this, useSitePosition, mode, isAnnotationMethod, allowErrorTypes)
+        analysisSession.psiTypeProvider.asPsiTypeElement(
+            this,
+            useSitePosition,
+            mode,
+            isAnnotationMethod,
+            suppressWildcards,
+            allowErrorTypes,
+        )
     }
 
     /**
@@ -70,9 +85,16 @@ public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
         useSitePosition: PsiElement,
         allowErrorTypes: Boolean,
         mode: KtTypeMappingMode = KtTypeMappingMode.DEFAULT,
-        isAnnotationMethod: Boolean = false
+        isAnnotationMethod: Boolean = false,
+        suppressWildcards: Boolean? = null,
     ): PsiType? =
-        asPsiTypeElement(useSitePosition, allowErrorTypes, mode, isAnnotationMethod)?.type
+        asPsiTypeElement(
+            useSitePosition,
+            allowErrorTypes,
+            mode,
+            isAnnotationMethod,
+            suppressWildcards,
+        )?.type
 
     /**
      * Converts given [PsiType] to [KtType].
