@@ -628,6 +628,24 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     }
 
     @Test
+    @TestMetadata("intersectionWithMultipleDefaultsInJava.kt")
+    public void testIntersectionWithMultipleDefaultsInJava() {
+      runTest("compiler/testData/diagnostics/tests/intersectionWithMultipleDefaultsInJava.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt")
+    public void testIntersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin() {
+      runTest("compiler/testData/diagnostics/tests/intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed.kt")
+    public void testIntersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed() {
+      runTest("compiler/testData/diagnostics/tests/intersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed.kt");
+    }
+
+    @Test
     @TestMetadata("invalidTargetCrashesCompiler.kt")
     public void testInvalidTargetCrashesCompiler() {
       runTest("compiler/testData/diagnostics/tests/invalidTargetCrashesCompiler.kt");
@@ -1495,6 +1513,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     @TestMetadata("TypeMismatchOnOverrideWithSyntaxErrors.kt")
     public void testTypeMismatchOnOverrideWithSyntaxErrors() {
       runTest("compiler/testData/diagnostics/tests/TypeMismatchOnOverrideWithSyntaxErrors.kt");
+    }
+
+    @Test
+    @TestMetadata("typealiasInAnnotationPrimitiveVararg.kt")
+    public void testTypealiasInAnnotationPrimitiveVararg() {
+      runTest("compiler/testData/diagnostics/tests/typealiasInAnnotationPrimitiveVararg.kt");
     }
 
     @Test
@@ -8063,6 +8087,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("tryCatchFinallyIfs.kt")
+      public void testTryCatchFinallyIfs() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/tryCatchFinallyIfs.kt");
+      }
+
+      @Test
       @TestMetadata("tryWithAssignmentUsedInCatch.kt")
       public void testTryWithAssignmentUsedInCatch() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/tryWithAssignmentUsedInCatch.kt");
@@ -13182,6 +13212,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       @TestMetadata("annotationWithWrongArgInDanglingModifierList.kt")
       public void testAnnotationWithWrongArgInDanglingModifierList() {
         runTest("compiler/testData/diagnostics/tests/exceptions/annotationWithWrongArgInDanglingModifierList.kt");
+      }
+
+      @Test
+      @TestMetadata("assignmentWithIncorrectLValue.kt")
+      public void testAssignmentWithIncorrectLValue() {
+        runTest("compiler/testData/diagnostics/tests/exceptions/assignmentWithIncorrectLValue.kt");
       }
 
       @Test
@@ -22722,6 +22758,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("intersectionWithMappedSignature.kt")
+        public void testIntersectionWithMappedSignature() {
+          runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/intersectionWithMappedSignature.kt");
+        }
+
+        @Test
         @TestMetadata("irrelevantCharAtAbstract.kt")
         public void testIrrelevantCharAtAbstract() {
           runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/irrelevantCharAtAbstract.kt");
@@ -26646,6 +26688,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("hmppRedeclaration.kt")
+        public void testHmppRedeclaration() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/hmppRedeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("hmppRedeclarationWithExpectActualPair.kt")
+        public void testHmppRedeclarationWithExpectActualPair() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/hmppRedeclarationWithExpectActualPair.kt");
+        }
+
+        @Test
         @TestMetadata("intermediateActualHasAdditionalSupertypes.kt")
         public void testIntermediateActualHasAdditionalSupertypes() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/intermediateActualHasAdditionalSupertypes.kt");
@@ -29201,12 +29255,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         @TestMetadata("kt13355viaJava.kt")
         public void testKt13355viaJava() {
           runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/kt13355viaJava.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65555.kt")
-        public void testKt65555() {
-          runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/kt65555.kt");
         }
 
         @Test
@@ -34168,6 +34216,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       @TestMetadata("resolveInitializerOfDestructuringDeclarationOnce.kts")
       public void testResolveInitializerOfDestructuringDeclarationOnce() {
         runTest("compiler/testData/diagnostics/tests/script/resolveInitializerOfDestructuringDeclarationOnce.kts");
+      }
+
+      @Test
+      @TestMetadata("scriptDeclsShouldVisibleLocally.kts")
+      public void testScriptDeclsShouldVisibleLocally() {
+        runTest("compiler/testData/diagnostics/tests/script/scriptDeclsShouldVisibleLocally.kts");
       }
 
       @Test

@@ -117,7 +117,6 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    @TodoAnalysisApi
     fun `test - functionWithObjCNameAnnotation`() {
         doTest(headersTestDataDir.resolve("functionWithObjCNameAnnotation"))
     }
@@ -243,14 +242,16 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("interfaceImplementingInterfaceOrder"))
     }
 
-    /**
-     * Extension functions aren't supported KT-65630
-     */
     @Test
-    @TodoAnalysisApi
     fun `test - extensionFunctions`() {
         doTest(headersTestDataDir.resolve("extensionFunctions"))
     }
+
+    @Test
+    fun `test - extensionProperties`() {
+        doTest(headersTestDataDir.resolve("extensionProperties"))
+    }
+
 
     @Test
     fun `test - classWithGenerics`() {

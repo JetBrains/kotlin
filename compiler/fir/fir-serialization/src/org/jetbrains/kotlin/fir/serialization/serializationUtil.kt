@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.nonSourceAnnotations
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -60,9 +58,11 @@ fun FirMemberDeclaration.isNotExpectOrShouldBeSerialized(actualizedExpectDeclara
 }
 
 fun FirMemberDeclaration.isNotPrivateOrShouldBeSerialized(produceHeaderKlib: Boolean): Boolean {
-    return !produceHeaderKlib || visibility.isPublicAPI
+    return !produceHeaderKlib || visibility.isPublicAPI || visibility == Visibilities.Internal
             // Always keep private interfaces as they can be part of public type hierarchies.
-            || (this as? FirClass)?.isInterface == true
+            // We also keep private type aliases as they leak into public signatures (KT-17229).
+            // TODO: stop preserving private type aliases once KT-17229 is fixed.
+            || (this as? FirClass)?.isInterface == true || this is FirTypeAlias
 }
 
 fun <

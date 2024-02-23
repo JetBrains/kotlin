@@ -154,20 +154,14 @@ Keep in mind:
   Otherwise, native-only dependencies may not be added to the verification metadata. This is because `local.properties` has higher 
   precedence than the `-Pkotlin.native.enabled=true` specified in the Gradle command.
 
-## Using -dev and -SNAPSHOT versions
+## Using -dev versions
 
-We publish `-dev` and `-SNAPSHOT` versions frequently.
+We publish `-dev` versions frequently.
 
 For `-dev` versions you can use the [list of available versions](https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap/org/jetbrains/kotlin/kotlin-compiler/maven-metadata.xml) and include this maven repository:
 
 ```kotlin
 maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap")
-```
-
-For `-SNAPSHOT` versions that are updated daily, you can use the [list of available versions](https://oss.sonatype.org/content/repositories/snapshots/org/jetbrains/kotlin/kotlin-compiler/maven-metadata.xml) and include this maven repository:
-
-```kotlin
-maven("https://oss.sonatype.org/content/repositories/snapshots/")
 ```
 
 # License

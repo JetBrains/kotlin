@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.name.Name
 
 internal object LLFirStatusLazyResolver : LLFirLazyResolver(FirResolvePhase.STATUS) {
     override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirStatusTargetResolver(
@@ -48,18 +47,6 @@ private sealed class StatusResolveMode(val resolveSupertypes: Boolean) {
 
     object AllCallables : StatusResolveMode(resolveSupertypes = true) {
         override fun shouldBeResolved(callableDeclaration: FirCallableDeclaration): Boolean = true
-    }
-
-    class FunctionWithSpecificName(val name: Name) : StatusResolveMode(resolveSupertypes = true) {
-        override fun shouldBeResolved(callableDeclaration: FirCallableDeclaration): Boolean {
-            return callableDeclaration is FirSimpleFunction && callableDeclaration.name == name
-        }
-    }
-
-    class PropertyWithSpecificName(val name: Name) : StatusResolveMode(resolveSupertypes = true) {
-        override fun shouldBeResolved(callableDeclaration: FirCallableDeclaration): Boolean {
-            return callableDeclaration is FirProperty && callableDeclaration.name == name
-        }
     }
 }
 
@@ -91,6 +78,21 @@ private class LLStatusComputationSession(val useSiteSession: FirSession) : Statu
     val canHaveActualization: Boolean get() = shouldCheckForActualization
 }
 
+/**
+ * This resolver is responsible for [STATUS][FirResolvePhase.STATUS] phase.
+ *
+ * This resolver:
+ * - Transforms modality, visibility, and modifiers for [member declarations][FirMemberDeclaration].
+ *
+ * Special rules:
+ * - First resolves outer classes to this phase.
+ * - First resolves all members of super types for non-[FirClassLikeDeclaration] declarations.
+ * - [Searches][org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirStatusTargetResolver.Transformer.superTypeToSymbols]
+ *   super types not only in the declaration site session, but also in the call site session to resolve `expect` declaration first.
+ *
+ * @see FirStatusResolveTransformer
+ * @see FirResolvePhase.STATUS
+ */
 private class LLFirStatusTargetResolver(
     target: LLFirResolveTarget,
     private val statusComputationSession: LLStatusComputationSession = LLStatusComputationSession(target.session),

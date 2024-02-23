@@ -1,31 +1,68 @@
+library {
+  // module name: <pod1.def>
 
-package pod1 {
+  library fragment {
+    // package name: pod1
 
-    @CStruct(spelling = "struct  { unsigned int gp_offset; unsigned int fp_offset; void* overflow_arg_area; void* reg_save_area; }") class __va_list_tag constructor(rawPtr: NativePtr /* = NativePtr */) : CStructVar {
-        var fp_offset: UInt
-            @CStruct.MemberAt(offset = 4.toLong()) get
-            @CStruct.MemberAt(offset = 4.toLong()) set
-        var gp_offset: UInt
-            @CStruct.MemberAt(offset = 0.toLong()) get
-            @CStruct.MemberAt(offset = 0.toLong()) set
-        var overflow_arg_area: COpaquePointer? /* = CPointer<out CPointed>? */
-            @CStruct.MemberAt(offset = 8.toLong()) get
-            @CStruct.MemberAt(offset = 8.toLong()) set
-        var reg_save_area: COpaquePointer? /* = CPointer<out CPointed>? */
-            @CStruct.MemberAt(offset = 16.toLong()) get
-            @CStruct.MemberAt(offset = 16.toLong()) set
-        @CStruct.VarType(align = 8, size = 24.toLong()) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(expression = "", imports = {})) companion object : CStructVar.Type
+    // class name: pod1/__va_list_tag
+    // class name: pod1/__va_list_tag.Companion
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { unsigned int gp_offset; unsigned int fp_offset; void* overflow_arg_area; void* reg_save_area; }")
+    public final class pod1/__va_list_tag : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var fp_offset: kotlin/UInt
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 4L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 4L)
+        public final /* non-default */ external set(value: kotlin/UInt)
+
+      public final var gp_offset: kotlin/UInt
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external set(value: kotlin/UInt)
+
+      public final var overflow_arg_area: kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed>? /* = kotlinx/cinterop/COpaquePointer^? */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 8L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 8L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed>? /* = kotlinx/cinterop/COpaquePointer^? */)
+
+      public final var reg_save_area: kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed>? /* = kotlinx/cinterop/COpaquePointer^? */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 16L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 16L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed>? /* = kotlinx/cinterop/COpaquePointer^? */)
+
+      // companion object: Companion
+
+      // nested class: Companion
     }
 
-}
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 24L, align = 8)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/__va_list_tag.Companion : kotlinx/cinterop/CStructVar.Type {
 
-package pod1 {
-    var A: Int
-        @CCall(id = "knifunptr_pod10_A_getter") get
-        @CCall(id = "knifunptr_pod11_A_setter") set
-    val A_va_list: __builtin_va_list /* = CPointer<__va_list_tag> */
-        @CCall(id = "knifunptr_pod12_A_va_list_getter") get
-    typealias __builtin_va_list = CArrayPointer<__va_list_tag>
-    typealias __builtin_va_listVar = CPointerVarOf<__builtin_va_list /* = CPointer<__va_list_tag> */>
-}
+      private constructor()
+    }
 
+    package {
+
+      public final var A: kotlin/Int
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_A_getter")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_A_setter")
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      public final val A_va_list: kotlinx/cinterop/CPointer<pod1/__va_list_tag> /* = pod1/__builtin_va_list^ */
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod12_A_va_list_getter")
+        public final /* non-default */ external get
+
+      public typealias __builtin_va_list = kotlinx/cinterop/CArrayPointer^<pod1/__va_list_tag> /* = kotlinx/cinterop/CPointer<pod1/__va_list_tag> /* = kotlinx/cinterop/CArrayPointer^<pod1/__va_list_tag> */ */
+
+      public typealias __builtin_va_listVar = kotlinx/cinterop/CPointerVarOf<pod1/__builtin_va_list^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<pod1/__va_list_tag> /* = pod1/__builtin_va_list^ */> */
+    }
+  }
+}

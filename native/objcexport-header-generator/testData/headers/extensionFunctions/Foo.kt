@@ -1,5 +1,9 @@
-class Foo {
-    fun funA() {}
-}
+fun topLevelFunA() {}
+fun topLevelFunB() {}
 
-fun Foo.funB() {}
+fun Foo.extensionFunA() {}
+fun Foo.extensionFunB() {}
+
+class Foo {
+    fun memberFun() {}
+}

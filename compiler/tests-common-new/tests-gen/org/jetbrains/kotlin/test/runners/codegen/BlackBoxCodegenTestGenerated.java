@@ -7902,6 +7902,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
 
     @Test
+    @TestMetadata("kt65555.kt")
+    public void testKt65555() {
+      runTest("compiler/testData/codegen/box/collections/kt65555.kt");
+    }
+
+    @Test
     @TestMetadata("mutableList.kt")
     public void testMutableList() {
       runTest("compiler/testData/codegen/box/collections/mutableList.kt");
@@ -16417,6 +16423,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("delegationToVal.kt")
     public void testDelegationToVal() {
       runTest("compiler/testData/codegen/box/delegation/delegationToVal.kt");
+    }
+
+    @Test
+    @TestMetadata("delegationToVar.kt")
+    public void testDelegationToVar() {
+      runTest("compiler/testData/codegen/box/delegation/delegationToVar.kt");
     }
 
     @Test
@@ -29014,6 +29026,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
 
     @Test
+    @TestMetadata("immutableName.kt")
+    public void testImmutableName() {
+      runTest("compiler/testData/codegen/box/javaInterop/immutableName.kt");
+    }
+
+    @Test
     @TestMetadata("inheritanceWithWildcard.kt")
     public void testInheritanceWithWildcard() {
       runTest("compiler/testData/codegen/box/javaInterop/inheritanceWithWildcard.kt");
@@ -29646,6 +29664,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
       @TestMetadata("int.kt")
       public void testInt() {
         runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/int.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithMultipleDefaultsInJava.kt")
+      public void testIntersectionWithMultipleDefaultsInJava() {
+        runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/intersectionWithMultipleDefaultsInJava.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt")
+      public void testIntersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin() {
+        runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed.kt")
+      public void testIntersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed() {
+        runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/intersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed.kt");
       }
 
       @Test
@@ -47400,6 +47436,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
       @TestMetadata("sameWrapperClass2.kt")
       public void testSameWrapperClass2() {
         runTest("compiler/testData/codegen/box/sam/constructors/sameWrapperClass2.kt");
+      }
+
+      @Test
+      @TestMetadata("suspendSamConstructorAdaptation.kt")
+      public void testSuspendSamConstructorAdaptation() {
+        runTest("compiler/testData/codegen/box/sam/constructors/suspendSamConstructorAdaptation.kt");
       }
 
       @Test

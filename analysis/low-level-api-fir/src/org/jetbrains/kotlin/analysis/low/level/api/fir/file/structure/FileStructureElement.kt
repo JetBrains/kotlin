@@ -24,6 +24,14 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
+/**
+ * Collects [KT -> FIR][KtToFirMapping] mapping and [diagnostics][FileStructureElementDiagnostics] for [declaration].
+ *
+ * @param declaration is a fully resolved declaration
+ *
+ * @see FileStructure
+ * @see org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileStructureElementDiagnosticsCollector
+ */
 internal sealed class FileStructureElement(
     val declaration: FirDeclaration,
     val diagnostics: FileStructureElementDiagnostics,

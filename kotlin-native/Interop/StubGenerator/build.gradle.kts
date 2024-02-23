@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.config.AnalysisFlags.optIn
+
 /*
  * Copyright 2010-2022 JetBrains s.r.o.
  *
@@ -42,12 +44,10 @@ dependencies {
 }
 
 tasks {
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs += listOf(
-                "-opt-in=kotlin.ExperimentalUnsignedTypes",
-                "-Xskip-metadata-version-check"
-            )
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>> {
+        compilerOptions {
+            optIn.add("kotlin.ExperimentalUnsignedTypes")
+            freeCompilerArgs.add("-Xskip-metadata-version-check")
         }
     }
 

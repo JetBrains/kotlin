@@ -295,3 +295,12 @@ internal enum class CompilerOutputInterceptor {
     DEFAULT,
     NONE
 }
+
+internal enum class BinaryLibraryKind {
+    STATIC, DYNAMIC
+}
+
+internal enum class CInterfaceMode(val compilerFlag: String) {
+    V1("-Xbinary=cInterfaceMode=v1"),
+    NONE("-Xbinary=cInterfaceMode=none")
+}

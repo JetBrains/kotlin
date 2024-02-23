@@ -54,7 +54,10 @@ tasks.compileKotlin {
     val commonSources = listOf(
         "kotlin/enums/EnumEntries.kt"
     ).map { copySources.get().destinationDir.resolve(it) }
+    @Suppress("DEPRECATION")
     kotlinOptions {
+        languageVersion = "1.9"
+        apiVersion = "2.0"
         freeCompilerArgs += listOf(
             "-Xallow-kotlin-package",
             "-Xexpect-actual-classes",
@@ -62,10 +65,12 @@ tasks.compileKotlin {
             "-opt-in=kotlin.RequiresOptIn",
             "-opt-in=kotlin.contracts.ExperimentalContracts",
             "-opt-in=kotlin.ExperimentalMultiplatform",
+            "-Xsuppress-api-version-greater-than-language-version-error",
         )
         moduleName = "kotlin-stdlib"
     }
     doFirst {
+        @Suppress("DEPRECATION")
         kotlinOptions.freeCompilerArgs += listOf(
             "-Xcommon-sources=${commonSources.joinToString(File.pathSeparator)}",
         )

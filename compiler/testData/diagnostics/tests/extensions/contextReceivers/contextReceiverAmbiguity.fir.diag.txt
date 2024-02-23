@@ -1,1 +1,3 @@
-/contextReceiverAmbiguity.kt:(203,206): error: Overload resolution ambiguity between candidates: [context(String) fun foo(x: Comparable<*>): Unit, context(String) fun foo(x: Number): Unit]
+/contextReceiverAmbiguity.kt:(203,206): error: Overload resolution ambiguity between candidates:
+context(String) fun foo(x: Comparable<*>): Unit
+context(String) fun foo(x: Number): Unit

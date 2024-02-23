@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -82,12 +84,14 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
 }
 
 allprojects {
-    tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-        kotlinOptions {
-            freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.fir.symbols.SymbolInternals"
-            freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals"
-            freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals"
-        }
+    tasks.withType<KotlinJvmCompile>().configureEach {
+        compilerOptions.optIn.addAll(
+            listOf(
+                "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
+                "org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals",
+                "org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals",
+            )
+        )
     }
 }
 

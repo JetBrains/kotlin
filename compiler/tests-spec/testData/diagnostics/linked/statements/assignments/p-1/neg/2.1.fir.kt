@@ -16,8 +16,8 @@
  * NOTE: right-hand side of an assignment must be expression
  */
 fun case1() {
-    val x = <!ITERATOR_AMBIGUITY!>for (<!SYNTAX!><!>) { }<!>
-    val y = for (x in 1..2) { }
+    val x = <!EXPRESSION_EXPECTED, ITERATOR_AMBIGUITY!>for (<!SYNTAX!><!>) { }<!>
+    val y = <!EXPRESSION_EXPECTED!>for (x in 1..2) { }<!>
 
     val a = <!EXPRESSION_EXPECTED!>while (<!SYNTAX!><!>) { }<!>
     val b = <!EXPRESSION_EXPECTED!>while (false) { }<!>
@@ -29,8 +29,8 @@ fun case1() {
  * NOTE: right-hand side of an assignment must be expression
  */
 fun case2() {
-    var x = <!ITERATOR_AMBIGUITY!>for (<!SYNTAX!><!>) { }<!>
-    var y = for (x in 1..2) { }
+    var x = <!EXPRESSION_EXPECTED, ITERATOR_AMBIGUITY!>for (<!SYNTAX!><!>) { }<!>
+    var y = <!EXPRESSION_EXPECTED!>for (x in 1..2) { }<!>
 
     var a = <!EXPRESSION_EXPECTED!>while (<!SYNTAX!><!>) { }<!>
     var b = <!EXPRESSION_EXPECTED!>while (false) { }<!>
@@ -49,8 +49,8 @@ fun case3() {
     var b :Any?
     var c :Any?
 
-    x = <!ITERATOR_AMBIGUITY!>for (<!SYNTAX!><!>) { }<!>
-    y = for (x in 1..2) { }
+    x = <!EXPRESSION_EXPECTED, ITERATOR_AMBIGUITY!>for (<!SYNTAX!><!>) { }<!>
+    y = <!EXPRESSION_EXPECTED!>for (x in 1..2) { }<!>
 
     a = <!EXPRESSION_EXPECTED!>while (<!SYNTAX!><!>) { }<!>
     b = <!EXPRESSION_EXPECTED!>while (false) { }<!>
@@ -62,7 +62,7 @@ fun case3() {
  * NOTE: left-hand side of an assignment must be expression
  */
 fun case4() {
-    <!VARIABLE_EXPECTED!>for (x in 1..2) {}<!>  = TODO();
+    <!EXPRESSION_EXPECTED, VARIABLE_EXPECTED!>for (x in 1..2) {}<!>  = TODO();
 
     <!EXPRESSION_EXPECTED, VARIABLE_EXPECTED!>while (false) { }<!> = TODO()
 }

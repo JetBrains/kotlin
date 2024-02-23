@@ -9280,6 +9280,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       }
 
       @Test
+      @TestMetadata("forInRangeInlinedFromStdlib.kt")
+      public void testForInRangeInlinedFromStdlib() {
+        runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeInlinedFromStdlib.kt");
+      }
+
+      @Test
       @TestMetadata("forInRangeSpecializedToUntil.kt")
       public void testForInRangeSpecializedToUntil() {
         runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeSpecializedToUntil.kt");
@@ -13483,6 +13489,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       @TestMetadata("kt43459.kt")
       public void testKt43459() {
         runTest("compiler/testData/codegen/bytecodeListing/annotations/kt43459.kt");
+      }
+
+      @Test
+      @TestMetadata("kt62788.kt")
+      public void testKt62788() {
+        runTest("compiler/testData/codegen/bytecodeListing/annotations/kt62788.kt");
       }
 
       @Test

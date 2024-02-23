@@ -46,7 +46,7 @@ if (includeJava9) {
 }
 
 compileKotlin {
-    kotlinOptions {
+    compilerOptions {
         freeCompilerArgs = [
                 "-Xallow-kotlin-package",
                 "-Xno-optimized-callable-references",

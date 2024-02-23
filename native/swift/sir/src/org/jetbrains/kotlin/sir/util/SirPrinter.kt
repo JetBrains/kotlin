@@ -61,7 +61,7 @@ private fun render(
     attributes: List<Pair<String, Any?>> = emptyList(),
     children: List<SirElement> = emptyList(),
 ): String {
-    return "${base::class.simpleName}${attributes.renderAsAttributres()} ${children.renderAsChildren()}"
+    return "${base::class.simpleName}${attributes.renderAsAttributes()} ${children.renderAsChildren()}"
 }
 
 private fun List<SirElement>.renderAsChildren(): String {
@@ -70,7 +70,7 @@ private fun List<SirElement>.renderAsChildren(): String {
     } ?: "{}"
 }
 
-private fun List<Pair<String, Any?>>.renderAsAttributres(): String {
+private fun List<Pair<String, Any?>>.renderAsAttributes(): String {
     return this.takeIf { isNotEmpty() }?.joinToString(prefix = "(\n", separator = "\n", postfix = "\n)") {
         "  ${it.first}: ${it.second}"
     } ?: "()"

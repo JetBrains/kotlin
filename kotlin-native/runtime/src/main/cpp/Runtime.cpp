@@ -196,7 +196,7 @@ RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeeded() {
   }
 }
 
-void Kotlin_deinitRuntimeIfNeeded() {
+void deinitRuntimeIfNeeded() {
   if (isValidRuntime()) {
     deinitRuntime(::runtimeState, false);
   }

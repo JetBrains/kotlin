@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,8 +9,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLDiagnosticProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleResolutionStrategyProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleResolutionStrategyProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLScopeSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -57,11 +57,21 @@ abstract class LLFirResolveSession(
     }
 
     /**
-     * Build fully resolved FIR node for a requested element.
-     * This operation could be time-consuming because it creates FileStructureElement
-     * and resolves non-local declaration into BODY phase.
-     * Please use [getOrBuildFirFile] to get [FirFile] in undefined phase
+     * Build [FirElement] node in its final resolved state for a requested element.
+     *
+     * Note: that it isn't always [BODY_RESOLVE][FirResolvePhase.BODY_RESOLVE]
+     * as not all declarations have types/bodies/etc. to resolve.
+     *
+     * This operation could be time-consuming because it creates
+     * [FileStructureElement][org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureElement]
+     * and may resolve non-local declarations into [BODY_RESOLVE][FirResolvePhase.BODY_RESOLVE] phase.
+     *
+     * Please use [getOrBuildFirFile] to get [FirFile] in undefined phase.
+     *
+     * @return associated [FirElement] in final resolved state if it exists.
+     *
      * @see getOrBuildFirFile
+     * @see org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirElementBuilder.getOrBuildFirFor
      */
     internal abstract fun getOrBuildFirFor(element: KtElement): FirElement?
 
@@ -70,10 +80,16 @@ abstract class LLFirResolveSession(
      */
     internal abstract fun getOrBuildFirFile(ktFile: KtFile): FirFile
 
+    /**
+     * @see LLDiagnosticProvider.getDiagnostics
+     */
     internal fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> {
         return diagnosticProvider.getDiagnostics(element, filter)
     }
 
+    /**
+     * @see LLDiagnosticProvider.collectDiagnostics
+     */
     internal fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> {
         return diagnosticProvider.collectDiagnostics(ktFile, filter)
     }

@@ -1,0 +1,8 @@
+abstract class B : ArrayList<Int>, Java1 {
+  constructor() /* primary */ {
+    super/*ArrayList*/<Int>()
+    /* <init>() */
+
+  }
+
+}

@@ -17,6 +17,15 @@ internal object LLFirGeneratedCompanionObjectLazyResolver : LLFirLazyResolver(Fi
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {}
 }
 
+/**
+ * This resolver is responsible for [COMPANION_GENERATION][FirResolvePhase.COMPANION_GENERATION] phase.
+ *
+ * This resolver:
+ * - Generates companion objects which were provided by compiler plugins.
+ *
+ * @see FirCompanionGenerationTransformer
+ * @see FirResolvePhase.COMPANION_GENERATION
+ */
 private class LLFirCompanionGenerationTargetResolver(target: LLFirResolveTarget) : LLFirTargetResolver(
     target,
     FirResolvePhase.COMPANION_GENERATION,

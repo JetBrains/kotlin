@@ -11,8 +11,9 @@ sourceSets {
 
 dependencies {
     api(intellijCore())
-    api(project(":native:base"))
     api(project(":core:compiler.common"))
+    api(project(":kotlin-tooling-core"))
+    api(project(":native:base"))
 
     testApi(libs.junit.jupiter.api)
     testApi(libs.junit.jupiter.engine)

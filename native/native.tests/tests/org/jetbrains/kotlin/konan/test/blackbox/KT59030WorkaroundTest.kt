@@ -58,6 +58,8 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
         ).assertSuccess().resultingArtifact
         spoilDeprecatedAnnotationsInLibrary(library)
 
+        // Compile test, NOT respecting possible `mode=TWO_STAGE_MULTI_MODULE`: don't add intermediate LibraryCompilation(kt->klib).
+        // KT-66014: Extract this test from usual Native test run, and run it in scope of new test module
         compileToExecutable(
             generateTestCaseWithSingleFile(
                 sourceFile = File(MAIN_FILE_PATH),

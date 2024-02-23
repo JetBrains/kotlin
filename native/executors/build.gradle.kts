@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 buildscript {
     dependencies {
@@ -52,13 +52,19 @@ java {
     }
 }
 
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions {
-        freeCompilerArgs += listOf(
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        optIn.addAll(
+            listOf(
+                "kotlin.ExperimentalStdlibApi",
+                "kotlin.RequiresOptIn",
+            )
+        )
+        freeCompilerArgs.addAll(
+            listOf(
                 "-Xskip-prerelease-check",
                 "-Xsuppress-version-warnings",
-                "-opt-in=kotlin.ExperimentalStdlibApi",
-                "-opt-in=kotlin.RequiresOptIn"
+            )
         )
     }
 }

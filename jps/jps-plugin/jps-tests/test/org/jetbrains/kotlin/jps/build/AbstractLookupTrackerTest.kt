@@ -42,6 +42,8 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
     override fun setUp() {
         super.setUp()
         sourceToOutputMapping.clear()
+        System.getProperties()
+            .setProperty("kotlin.jps.classPrefixesToLoadByParent", "kotlin.") // for debugging tests with in-process compiler
     }
 
     override fun markDirty(removedAndModifiedSources: Iterable<File>) {
@@ -269,7 +271,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         val exitCode: String,
         val errors: List<String>,
         val compiledFiles: Iterable<File>,
-        val lookups: Map<File, List<LookupInfo>>
+        val lookups: Map<File, List<LookupInfo>>,
     )
 
     private fun make(filesToCompile: Iterable<File>): CompilerOutput {

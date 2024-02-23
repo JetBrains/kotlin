@@ -1,4 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.nio.file.Paths
@@ -120,8 +121,8 @@ val splitGradleIntegrationTestTasks =
     project.providers.gradleProperty("gradle.integration.tests.split.tasks").orNull?.toBoolean()
         ?: project.kotlinBuildProperties.isTeamcityBuild
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.io.path.ExperimentalPathApi"
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.optIn.add("kotlin.io.path.ExperimentalPathApi")
 }
 
 val cleanTestKitCacheTask = tasks.register<Delete>("cleanTestKitCache") {
@@ -223,7 +224,7 @@ fun Test.includeTestsWithPattern(include: Boolean, patterns: (MutableSet<String>
 }
 
 fun Test.advanceGradleVersion() {
-    val gradleVersionForTests = "8.5"
+    val gradleVersionForTests = "8.6"
     systemProperty("kotlin.gradle.version.for.tests", gradleVersionForTests)
 }
 

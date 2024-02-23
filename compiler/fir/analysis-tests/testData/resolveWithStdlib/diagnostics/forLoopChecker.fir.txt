@@ -260,9 +260,9 @@ FILE: forLoopChecker.kt
         }
 
          {
-            lval <iterator>: R|ImproperIterator6| = R|<local>/notRange9|.R|/NotRange9.iterator|()
-            while(R|<local>/<iterator>|.R|/ImproperIterator6.hasNext|()) {
-                lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|/ImproperIterator6.next|()
+            lval <iterator>: R|ImproperIterator6| = R|<local>/notRange9|.R|/NotRange9.iterator<Inapplicable(CONVENTION_ERROR): /NotRange9.iterator>#|()
+            while(R|<local>/<iterator>|.R|/ImproperIterator6.hasNext<Inapplicable(CONVENTION_ERROR): /ImproperIterator6.hasNext>#|()) {
+                lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|/ImproperIterator6.next<Inapplicable(CONVENTION_ERROR): /ImproperIterator6.next>#|()
                  {
                 }
 

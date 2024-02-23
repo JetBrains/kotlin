@@ -57,7 +57,10 @@ abstract class UsefulDeclarationProcessor(
             super.visitBlock(expression, data)
 
             if (expression is IrReturnableBlock) {
-                expression.inlineFunction?.addToUsefulPolyfilledDeclarations()
+                // We need to extract `originalFunction` here because saved `inlineFunction`
+                // is actually a copy made in `SaveInlineFunctionsBeforeInlining`.
+                // Without this, we are not going to find proper intersection in the `saveOnlyIntersectionOfNextDeclarationsFor` method.
+                expression.inlineFunction?.originalFunction?.addToUsefulPolyfilledDeclarations()
             }
         }
 

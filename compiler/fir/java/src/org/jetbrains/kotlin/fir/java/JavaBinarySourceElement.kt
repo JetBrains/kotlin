@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.fir.java
 
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
 
 class JavaBinarySourceElement(val javaClass: BinaryJavaClass) : SourceElement {
+    val virtualFile: VirtualFile
+        get() = javaClass.virtualFile
+
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 }

@@ -40,11 +40,7 @@ internal sealed interface TestCompilationArtifact {
         val mainHeader: File get() = headersDir.resolve("$frameworkName.h")
     }
 
-    data class BinaryLibrary(val libraryFile: File, val kind: Kind) : TestCompilationArtifact {
-
-        enum class Kind {
-            STATIC, DYNAMIC
-        }
+    data class BinaryLibrary(val libraryFile: File) : TestCompilationArtifact {
 
         override val logFile: File get() = libraryFile.resolveSibling("${libraryFile.name}.log")
 

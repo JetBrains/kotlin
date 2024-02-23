@@ -22,9 +22,6 @@ import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.konanTargets
 import org.jetbrains.kotlin.compilerRunner.*
-import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
-import org.jetbrains.kotlin.compilerRunner.KotlinNativeCommonizerToolRunner
-import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
@@ -104,7 +101,12 @@ internal abstract class NativeDistributionCommonizerTask
 
     @get:Nested
     internal val kotlinNativeProvider: Provider<KotlinNativeProvider> = project.provider {
-        KotlinNativeProvider(project, commonizerTargets.flatMap { target -> target.konanTargets }.toSet(), kotlinNativeBundleBuildService)
+        KotlinNativeProvider(
+            project,
+            commonizerTargets.flatMap { target -> target.konanTargets }.toSet(),
+            kotlinNativeBundleBuildService,
+            enableDependenciesDownloading = false
+        )
     }
 
     @TaskAction

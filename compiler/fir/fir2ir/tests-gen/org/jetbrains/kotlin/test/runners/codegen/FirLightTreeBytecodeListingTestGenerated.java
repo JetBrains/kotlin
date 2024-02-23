@@ -377,6 +377,12 @@ public class FirLightTreeBytecodeListingTestGenerated extends AbstractFirLightTr
     }
 
     @Test
+    @TestMetadata("kt62788.kt")
+    public void testKt62788() {
+      runTest("compiler/testData/codegen/bytecodeListing/annotations/kt62788.kt");
+    }
+
+    @Test
     @TestMetadata("kt9320.kt")
     public void testKt9320() {
       runTest("compiler/testData/codegen/bytecodeListing/annotations/kt9320.kt");

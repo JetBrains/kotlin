@@ -12,7 +12,7 @@ internal object EmptyIterator : ListIterator<Nothing> {
     override fun previous(): Nothing = throw NoSuchElementException()
 }
 
-internal object EmptyList : List<Nothing>, Serializable, RandomAccess {
+internal object EmptyList : List<Nothing>, java.io.Serializable, RandomAccess {
     private const val serialVersionUID: Long = -7390468764508069838L
 
     override fun equals(other: Any?): Boolean = other is List<*> && other.isEmpty()

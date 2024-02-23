@@ -19,12 +19,14 @@ package org.jetbrains.kotlin.konan.target
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.util.InternalServer
+import org.jetbrains.kotlin.konan.util.ProgressCallback
 
 class AppleConfigurablesImpl(
     target: KonanTarget,
     properties: Properties,
-    dependenciesDir: String?
-) : AppleConfigurables, KonanPropertiesLoader(target, properties, dependenciesDir) {
+    dependenciesDir: String?,
+    progressCallback: ProgressCallback,
+) : AppleConfigurables, KonanPropertiesLoader(target, properties, dependenciesDir, progressCallback = progressCallback) {
 
     private val sdkDependency = this.targetSysRoot!!
     private val toolchainDependency = this.targetToolchain!!
@@ -45,10 +47,13 @@ class AppleConfigurablesImpl(
         XcodePartsProvider.InternalServer -> absolute(additionalToolsDir)
     }
 
-    override val dependencies get() = super.dependencies + when (xcodePartsProvider) {
-        is XcodePartsProvider.Local -> emptyList()
-        XcodePartsProvider.InternalServer -> listOf(sdkDependency, toolchainDependency, xcodeAddonDependency)
-    }
+    override val dependencies
+        get() = super.dependencies +
+                if (InternalServer.isAvailable) listOf(
+                    sdkDependency,
+                    toolchainDependency,
+                    xcodeAddonDependency
+                ) else emptyList()
 
     private val xcodePartsProvider by lazy {
         if (InternalServer.isAvailable) {

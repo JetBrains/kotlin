@@ -162,6 +162,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/hmpp/sameSourceInDifferentFragments.args");
     }
 
+    @TestMetadata("scriptInCommonFragment.args")
+    public void testScriptInCommonFragment() {
+      runTest("compiler/testData/cli/jvm/hmpp/scriptInCommonFragment.args");
+    }
+
     @TestMetadata("sourceNotInAnyFragment.args")
     public void testSourceNotInAnyFragment() {
       runTest("compiler/testData/cli/jvm/hmpp/sourceNotInAnyFragment.args");
@@ -175,6 +180,11 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("successfulCompilation2.args")
     public void testSuccessfulCompilation2() {
       runTest("compiler/testData/cli/jvm/hmpp/successfulCompilation2.args");
+    }
+
+    @TestMetadata("successfulCompilationWithScript.args")
+    public void testSuccessfulCompilationWithScript() {
+      runTest("compiler/testData/cli/jvm/hmpp/successfulCompilationWithScript.args");
     }
   }
 
@@ -998,6 +1008,16 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("modulesWithDependencyCycle.args")
     public void testModulesWithDependencyCycle() {
       runTest("compiler/testData/cli/jvm/modulesWithDependencyCycle.args");
+    }
+
+    @TestMetadata("multiplatformCompilationWithCommonScript.args")
+    public void testMultiplatformCompilationWithCommonScript() {
+      runTest("compiler/testData/cli/jvm/multiplatformCompilationWithCommonScript.args");
+    }
+
+    @TestMetadata("multiplatformCompilationWithScript.args")
+    public void testMultiplatformCompilationWithScript() {
+      runTest("compiler/testData/cli/jvm/multiplatformCompilationWithScript.args");
     }
 
     @TestMetadata("multipleTextRangesInDiagnosticsOrder.args")

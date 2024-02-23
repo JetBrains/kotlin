@@ -47,8 +47,8 @@ abstract class SirTransformer<in D> : SirVisitor<SirElement, D>() {
     }
 
 
-    open fun transformNamedDeclaration(namedDeclaration: SirNamedDeclaration, data: D): SirDeclaration {
-        return transformDeclaration(namedDeclaration, data)
+    open fun transformNamedDeclaration(declaration: SirNamedDeclaration, data: D): SirDeclaration {
+        return transformDeclaration(declaration, data)
     }
 
     final override fun visitNamedDeclaration(declaration: SirNamedDeclaration, data: D): SirDeclaration {

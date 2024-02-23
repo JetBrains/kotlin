@@ -11,20 +11,27 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockFileMismatchReport
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockStoreTask
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.Companion.YARN_LOCK_MISMATCH_MESSAGE
 
 @DisableCachingByDefault
 abstract class YarnLockCopyTask : LockCopyTask()
 
 @DisableCachingByDefault
 abstract class YarnLockStoreTask : LockStoreTask() {
-    @Internal
-    val yarnLockMismatchReport: Provider<YarnLockMismatchReport> = lockFileMismatchReport.map { it.fromLockFileMismatchReport() }
+    @get:Internal
+    val yarnLockMismatchReport: Provider<YarnLockMismatchReport>
+        get() = lockFileMismatchReport.map { it.fromLockFileMismatchReport() }
 
-    @Internal
-    val reportNewYarnLock: Provider<Boolean> = reportNewLockFile
+    @get:Internal
+    val reportNewYarnLock: Provider<Boolean>
+        get() = reportNewLockFile
 
-    @Internal
-    val yarnLockAutoReplace: Provider<Boolean> = lockFileAutoReplace
+    @get:Internal
+    val yarnLockAutoReplace: Provider<Boolean>
+        get() = lockFileAutoReplace
+
+    override val mismatchMessage: String
+        get() = YARN_LOCK_MISMATCH_MESSAGE
 }
 
 enum class YarnLockMismatchReport {

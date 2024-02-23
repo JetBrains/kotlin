@@ -583,7 +583,7 @@ class Fir2IrConverter(
                 requireNotNull(delegateFieldToPropertyMap)
                 require(parent is IrClass)
                 val correspondingClassProperty = declaration.findCorrespondingDelegateProperty(containingClass)
-                if (correspondingClassProperty == null) {
+                if (correspondingClassProperty == null || correspondingClassProperty.isVar) {
                     val irField = declarationStorage.createDelegateIrField(declaration, parent)
                     delegatedMemberGenerator.generateWithBodiesIfNeeded(declaration, irField, containingClass, parent)
                 } else {

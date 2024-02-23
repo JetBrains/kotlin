@@ -3,10 +3,12 @@
  * that can be found in the LICENSE file.
  */
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.cpp.CppConsumerPlugin
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.cpp.DependencyHandlerExKt
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.tools.NativePluginKt
 
 
@@ -33,19 +35,29 @@ sourceSets {
 }
 
 compileCompilerKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.freeCompilerArgs += [
-            '-opt-in=kotlin.RequiresOptIn',
-            "-opt-in=kotlinx.cinterop.BetaInteropApi",
-            "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
-            "-opt-in=org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi",
-            '-Xskip-prerelease-check']
+    compilerOptions.jvmTarget = JvmTarget.JVM_1_8
+    compilerOptions.optIn.addAll([
+            'kotlin.RequiresOptIn',
+            "kotlinx.cinterop.BetaInteropApi",
+            "kotlinx.cinterop.ExperimentalForeignApi",
+            "org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi",
+    ])
+    compilerOptions.freeCompilerArgs.add('-Xskip-prerelease-check')
 }
 
-TasksKt.optInToUnsafeDuringIrConstructionAPI(project)
+def tasksWithoutOptInUsage = [
+        "compileEnvInteropStubsKotlin",
+        "compileFilesInteropStubsKotlin",
+        "compileLlvmInteropStubsKotlin"
+]
+tasks.withType(KotlinCompilationTask.class).configureEach {
+    if (!tasksWithoutOptInUsage.contains(name)) {
+        compilerOptions.optIn.add("org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI")
+    }
+}
 
 compileCli_bcKotlin {
-    kotlinOptions.freeCompilerArgs += ['-Xskip-prerelease-check']
+    compilerOptions.freeCompilerArgs.add('-Xskip-prerelease-check')
 }
 
 configurations {

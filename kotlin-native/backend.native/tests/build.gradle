@@ -61,9 +61,7 @@ if (!useCustomDist) {
 }
 
 compileTestKotlin {
-    kotlinOptions {
-        freeCompilerArgs += "-Xskip-prerelease-check"
-    }
+    compilerOptions.freeCompilerArgs.add("-Xskip-prerelease-check")
 }
 
 // Do not generate run tasks for konan built artifacts
@@ -914,6 +912,21 @@ standaloneTest("testing_stacktrace") {
     }
 }
 
+// Just check that the driver is able to produce runnable binaries.
+tasks.register("driver0", KonanDriverTest) {
+    disabled = isAggressiveGC // No need to test with different GC schedulers
+    useGoldenData = true
+    source = "runtime/basic/driver0.kt"
+}
+
+tasks.register("driver_opt", KonanDriverTest) {
+    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
+        || isAggressiveGC // No need to test with different GC schedulers
+    useGoldenData = true
+    source = "runtime/basic/driver_opt.kt"
+    flags = ["-opt"]
+}
+
 // A helper method to create interop artifacts
 void createInterop(String name, Closure conf) {
     konanArtifacts {
@@ -1112,13 +1125,6 @@ if (PlatformInfo.isAppleTarget(project)) {
         UtilsKt.dependsOnPlatformLibs(it)
     }
 
-    standaloneTest("interop_kt40426") {
-        // Test depends on iOS-specific UIKit
-        enabled = (project.testTarget == 'ios_x64' || project.testTarget == 'ios_simulator_arm64' || project.testTarget == 'ios_arm64')
-        source = "interop/objc/kt40426/main.kt"
-        useGoldenData = true
-        UtilsKt.dependsOnPlatformLibs(it)
-    }
 
     interopTest("interop_objc_kt63423_dispose_on_main_stress") {
         // Test depends on macOS-specific AppKit
@@ -1165,12 +1171,6 @@ standaloneTest("interop_objc_illegal_sharing") {
     outputChecker = {
         it.startsWith("Before") && it.contains("After")
     }
-}
-
-standaloneTest("interop_kt62262") {
-    enabled = project.testTarget == 'ios_x64' || project.testTarget == 'ios_arm64' || project.testTarget == 'ios_simulator_arm64'
-    source = "interop/objc/kt62262.kt"
-    UtilsKt.dependsOnPlatformLibs(it)
 }
 
 dynamicTest("produce_dynamic") {
@@ -1346,6 +1346,42 @@ standaloneTest("split_compilation_pipeline") {
     useGoldenData = true
 }
 
+tasks.register("override_konan_properties0", KonanDriverTest) {
+    disabled = isAggressiveGC // No need to test with different GC schedulers
+    def overrides = PlatformInfo.isWindows()
+            ? '-Xoverride-konan-properties="llvmInlineThreshold=76"'
+            : '-Xoverride-konan-properties=llvmInlineThreshold=76'
+    flags = [
+            "-opt",
+            "-Xverbose-phases=MandatoryBitcodeLLVMPostprocessingPhase",
+            overrides
+    ]
+    compilerMessages = true
+    source = "link/ir_providers/hello.kt"
+    def messages = "inline_threshold: 76\nhello\n"
+    outputChecker = { out ->
+        messages.split("\n")
+                .collect { line -> out.contains(line) }
+                .every { it == true }
+    }
+}
+
+tasks.register("llvm_variant_dev", KonanDriverTest) {
+    // We use clang from Xcode on macOS for apple targets,
+    // so it is hard to reliably detect LLVM variant for these targets.
+    disabled = PlatformInfo.isAppleTarget(project)
+        || isAggressiveGC // No need to test with different GC schedulers
+    flags = [
+            "-Xllvm-variant=dev",
+            "-Xverbose-phases=ObjectFiles"
+    ]
+    compilerMessages = true
+    source = "link/ir_providers/hello.kt"
+    // User LLVM variant has "essentials" suffix.
+    def message = "-essentials"
+    outputChecker = { out -> !out.contains(message) }
+}
+
 /**
  * Builds tests into a single binary with TestRunner
  */
@@ -1397,7 +1433,7 @@ sourceSets {
 }
 
 compileNopPluginKotlin {
-    kotlinOptions.freeCompilerArgs += ['-Xskip-prerelease-check']
+    compilerOptions.freeCompilerArgs.add('-Xskip-prerelease-check')
 }
 
 Task pluginTest(String name, String pluginName, Closure configureClosure) {

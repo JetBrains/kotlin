@@ -15,7 +15,7 @@ class Test : J {
   }
 
   @Nullable
-  override fun returnNullable(): String? {
+  override fun returnNullable(): @EnhancedNullability String? {
     return <this>.#j.returnNullable()
   }
 
@@ -31,7 +31,7 @@ class Test : J {
     <this>.#j.takeNotNull(x = x)
   }
 
-  override fun takeNullable(@Nullable x: String?) {
+  override fun takeNullable(@Nullable x: @EnhancedNullability String?) {
     <this>.#j.takeNullable(x = x)
   }
 

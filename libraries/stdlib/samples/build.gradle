@@ -10,10 +10,10 @@ sourceSets {
 }
 
 compileTestKotlin {
-    kotlinOptions {
-        freeCompilerArgs = [
-                "-opt-in=kotlin.ExperimentalStdlibApi",
-                "-opt-in=kotlin.ExperimentalUnsignedTypes",
-        ]
+    compilerOptions {
+        optIn.addAll([
+                "kotlin.ExperimentalStdlibApi",
+                "kotlin.ExperimentalUnsignedTypes",
+        ])
     }
 }

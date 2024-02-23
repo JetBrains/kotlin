@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.native.cocoapods
 
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.ERROR
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.WARNING
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 
 @InternalKotlinGradlePluginApi // used in integration tests
@@ -50,6 +49,15 @@ object CocoapodsPluginDiagnostics {
 
     object InteropBindingUnknownDependency : ToolingDiagnosticFactory(ERROR) {
         operator fun invoke(podName: String, dependencyName: String) = build("Couldn't find declaration of pod '$dependencyName' (interop-binding dependency of pod '${podName}')")
+    }
+
+    object EmbedAndSignUsedWithPodDependencies : ToolingDiagnosticFactory(FATAL) {
+        operator fun invoke() = build(
+            """
+                'embedAndSign' task can not be used in a project with dependencies to pods.
+                Please use CocoaPods for integration into Xcode.
+            """.trimIndent()
+        )
     }
 
 }

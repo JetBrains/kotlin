@@ -99,6 +99,11 @@ object FirJvmErrors {
     val JVM_RECORD_EXTENDS_CLASS: KtDiagnosticFactory1<ConeKotlinType> by error1<PsiElement, ConeKotlinType>(SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME)
     val ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE: KtDiagnosticFactory0 by error0<PsiElement>()
 
+    // JVM Modules
+    val JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE: KtDiagnosticFactory1<String> by error1<PsiElement, String>()
+    val JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE: KtDiagnosticFactory0 by error0<PsiElement>()
+    val JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE: KtDiagnosticFactory2<String, String> by error2<PsiElement, String, String>()
+
     // JVM Default
     val JVM_DEFAULT_IN_DECLARATION: KtDiagnosticFactory1<String> by error1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION: KtDiagnosticFactory0 by error0<KtElement>()

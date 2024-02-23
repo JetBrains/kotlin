@@ -23,8 +23,6 @@ dependencies {
     implementation(project(":kotlin-metadata")) { isTransitive = false }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions {
-        freeCompilerArgs += "-Xskip-prerelease-check"
-    }
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>> {
+    compilerOptions.freeCompilerArgs.add("-Xskip-prerelease-check")
 }

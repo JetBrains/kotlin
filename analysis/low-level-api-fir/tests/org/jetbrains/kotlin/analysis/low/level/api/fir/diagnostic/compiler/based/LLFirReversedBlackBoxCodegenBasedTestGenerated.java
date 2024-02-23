@@ -1023,6 +1023,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
+    @TestMetadata("emptyArrayDesugaring.kt")
+    public void testEmptyArrayDesugaring() {
+      runTest("compiler/testData/codegen/box/arrays/emptyArrayDesugaring.kt");
+    }
+
+    @Test
     @TestMetadata("forEachBooleanArray.kt")
     public void testForEachBooleanArray() {
       runTest("compiler/testData/codegen/box/arrays/forEachBooleanArray.kt");
@@ -8204,6 +8210,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     @TestMetadata("kt48945c.kt")
     public void testKt48945c() {
       runTest("compiler/testData/codegen/box/collections/kt48945c.kt");
+    }
+
+    @Test
+    @TestMetadata("kt65555.kt")
+    public void testKt65555() {
+      runTest("compiler/testData/codegen/box/collections/kt65555.kt");
     }
 
     @Test
@@ -16863,6 +16875,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
+    @TestMetadata("delegationToVar.kt")
+    public void testDelegationToVar() {
+      runTest("compiler/testData/codegen/box/delegation/delegationToVar.kt");
+    }
+
+    @Test
     @TestMetadata("delegationWithPrivateConstructor.kt")
     public void testDelegationWithPrivateConstructor() {
       runTest("compiler/testData/codegen/box/delegation/delegationWithPrivateConstructor.kt");
@@ -19314,6 +19332,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     @TestMetadata("diamondFunction.kt")
     public void testDiamondFunction() {
       runTest("compiler/testData/codegen/box/fakeOverride/diamondFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("diamondWithNullabilityAnnotations.kt")
+    public void testDiamondWithNullabilityAnnotations() {
+      runTest("compiler/testData/codegen/box/fakeOverride/diamondWithNullabilityAnnotations.kt");
     }
 
     @Test
@@ -30951,6 +30975,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
+    @TestMetadata("immutableName.kt")
+    public void testImmutableName() {
+      runTest("compiler/testData/codegen/box/javaInterop/immutableName.kt");
+    }
+
+    @Test
     @TestMetadata("inheritanceWithWildcard.kt")
     public void testInheritanceWithWildcard() {
       runTest("compiler/testData/codegen/box/javaInterop/inheritanceWithWildcard.kt");
@@ -31601,6 +31631,24 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
       @TestMetadata("int.kt")
       public void testInt() {
         runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/int.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithMultipleDefaultsInJava.kt")
+      public void testIntersectionWithMultipleDefaultsInJava() {
+        runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/intersectionWithMultipleDefaultsInJava.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt")
+      public void testIntersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin() {
+        runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed.kt")
+      public void testIntersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed() {
+        runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/intersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed.kt");
       }
 
       @Test
@@ -51464,6 +51512,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
       }
 
       @Test
+      @TestMetadata("suspendSamConstructorAdaptation.kt")
+      public void testSuspendSamConstructorAdaptation() {
+        runTest("compiler/testData/codegen/box/sam/constructors/suspendSamConstructorAdaptation.kt");
+      }
+
+      @Test
       @TestMetadata("syntheticVsReal.kt")
       public void testSyntheticVsReal() {
         runTest("compiler/testData/codegen/box/sam/constructors/syntheticVsReal.kt");
@@ -52314,6 +52368,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     @TestMetadata("explicitSuperCall.kt")
     public void testExplicitSuperCall() {
       runTest("compiler/testData/codegen/box/specialBuiltins/explicitSuperCall.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionWithMappedSignature.kt")
+    public void testIntersectionWithMappedSignature() {
+      runTest("compiler/testData/codegen/box/specialBuiltins/intersectionWithMappedSignature.kt");
     }
 
     @Test

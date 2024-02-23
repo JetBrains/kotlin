@@ -24,11 +24,18 @@ __attribute__((objc_subclassing_restricted))
 @interface Foo : Base
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (void)funA __attribute__((swift_name("funA()")));
+- (void)memberFun __attribute__((swift_name("memberFun()")));
 @end
 
 @interface Foo (Extensions)
-- (void)funB __attribute__((swift_name("funB()")));
+- (void)extensionFunA __attribute__((swift_name("extensionFunA()")));
+- (void)extensionFunB __attribute__((swift_name("extensionFunB()")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+@interface FooKt : Base
++ (void)topLevelFunA __attribute__((swift_name("topLevelFunA()")));
++ (void)topLevelFunB __attribute__((swift_name("topLevelFunB()")));
 @end
 
 #pragma pop_macro("_Nullable_result")

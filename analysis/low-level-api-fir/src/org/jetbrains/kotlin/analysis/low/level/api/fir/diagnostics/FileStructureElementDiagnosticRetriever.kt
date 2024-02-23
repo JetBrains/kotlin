@@ -22,6 +22,12 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.util.withSourceCodeAnalysisExceptionUnwrapping
 
+/**
+ * Collects [FileStructureElementDiagnosticList] for specific [declaration].
+ *
+ * @see FileStructureElementDiagnostics
+ * @see org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureElement
+ */
 internal sealed class FileStructureElementDiagnosticRetriever(
     val declaration: FirDeclaration,
     private val file: FirFile,

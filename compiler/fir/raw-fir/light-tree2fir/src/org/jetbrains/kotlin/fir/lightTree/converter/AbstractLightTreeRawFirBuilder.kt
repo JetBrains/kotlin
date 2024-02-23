@@ -90,7 +90,7 @@ abstract class AbstractLightTreeRawFirBuilder(
         }
     }
 
-    private fun LighterASTNode.getLastChildExpression(): LighterASTNode? {
+    fun LighterASTNode.getLastChildExpression(): LighterASTNode? {
         var result: LighterASTNode? = null
         forEachChildren {
             if (it.isExpression()) {

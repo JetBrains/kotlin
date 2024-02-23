@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
-import org.jetbrains.kotlin.fir.scopes.FirIntersectionScopeOverrideChecker
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.firOverrideChecker
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
@@ -49,12 +46,8 @@ class FirClassUseSiteMemberScope(
 
 
             val (properties, fields) = getPropertiesAndFieldsFromSupertypesByName(name)
-            for (propertyFromSupertype in properties) {
-                val superSymbol = propertyFromSupertype.extractSomeSymbolFromSuperType()
-                val overriddenBy = superSymbol.getOverridden(explicitlyDeclaredProperties)
-                if (overriddenBy == null) {
-                    add(propertyFromSupertype.chosenSymbol)
-                }
+            for (resultOfIntersection in properties) {
+                resultOfIntersection.collectNonOverriddenDeclarations(explicitlyDeclaredProperties, this@buildList)
             }
             addAll(fields)
         }
@@ -62,12 +55,8 @@ class FirClassUseSiteMemberScope(
 
     private fun computeDirectOverriddenForDeclaredProperty(declaredPropertySymbol: FirPropertySymbol): List<FirTypeIntersectionScopeContext.ResultOfIntersection<FirPropertySymbol>> {
         val result = mutableListOf<FirTypeIntersectionScopeContext.ResultOfIntersection<FirPropertySymbol>>()
-        val declaredProperty = declaredPropertySymbol.fir
         for (resultOfIntersection in getPropertiesAndFieldsFromSupertypesByName(declaredPropertySymbol.name).first) {
-            val symbolFromSupertype = resultOfIntersection.extractSomeSymbolFromSuperType()
-            if (overrideChecker.isOverriddenProperty(declaredProperty, symbolFromSupertype.fir)) {
-                result.add(resultOfIntersection)
-            }
+            resultOfIntersection.collectDirectOverriddenForDeclared(declaredPropertySymbol, result, overrideChecker::isOverriddenProperty)
         }
         return result
     }

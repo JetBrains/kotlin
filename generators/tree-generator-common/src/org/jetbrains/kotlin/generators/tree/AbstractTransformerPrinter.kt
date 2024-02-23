@@ -22,7 +22,7 @@ abstract class AbstractTransformerPrinter<Element : AbstractElement<Element, Fie
     override fun printMethodsForElement(element: Element) {
         printer.run {
             println()
-            val elementParameterName = element.safeDecapitalizedName
+            val elementParameterName = element.visitorParameterName
             if (element.isRootElement) {
                 val elementTP = TypeVariable("E", listOf(element))
                 printFunctionDeclaration(

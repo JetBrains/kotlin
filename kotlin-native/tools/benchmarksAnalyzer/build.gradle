@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.UtilsKt
 
@@ -100,10 +102,12 @@ kotlin {
     targets {
         fromPreset(presets.jvm, 'jvm') {
             compilations.all {
-                tasks[compileKotlinTaskName].kotlinOptions {
-                    jvmTarget = '1.8'
+                compileTaskProvider.configure {
+                    compilerOptions {
+                        jvmTarget = JvmTarget.JVM_1_8
+                        suppressWarnings = true
+                    }
                 }
-                tasks[compileKotlinTaskName].kotlinOptions.suppressWarnings = true
             }
         }
 
@@ -147,8 +151,8 @@ kotlin {
             }
         }
         fromPreset(presets.js, 'js') {
-            compilations.main.kotlinOptions {
-                main = "noCall"
+            compilations.main.compileTaskProvider.configure {
+                compilerOptions.main = JsMainFunctionExecutionMode.NO_CALL
             }
         }
 

@@ -115,13 +115,6 @@ public actual fun String.replaceFirst(oldValue: String, newValue: String, ignore
 }
 
 /**
- * Returns `true` if this string is empty or consists solely of whitespace characters.
- *
- * @sample samples.text.Strings.stringIsBlank
- */
-public actual fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
-
-/**
  * Returns the substring of this string starting at the [startIndex] and ending right before the [endIndex].
  *
  * @param startIndex the start index (inclusive).

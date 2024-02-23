@@ -53,7 +53,12 @@ object FirDiagnosticRenderers {
         }
     }
 
-    val SYMBOLS = KtDiagnosticRenderers.COLLECTION(SYMBOL)
+    /**
+     * Adds a line break before the list, then prints one symbol per line.
+     */
+    val SYMBOLS_ON_NEXT_LINES = Renderer { symbols: Collection<FirBasedSymbol<*>> ->
+        symbols.joinToString(separator = "\n", prefix = "\n", transform = SYMBOL::render)
+    }
 
     val SYMBOLS_ON_NEWLINE_WITH_INDENT = object : ContextIndependentParameterRenderer<Collection<FirCallableSymbol<*>>> {
         private val mode = MultiplatformDiagnosticRenderingMode()

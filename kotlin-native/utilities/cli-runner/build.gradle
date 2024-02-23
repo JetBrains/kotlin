@@ -9,9 +9,7 @@ buildscript {
 apply plugin: 'kotlin'
 
 compileKotlin {
-    kotlinOptions {
-        freeCompilerArgs += ['-Xskip-metadata-version-check']
-    }
+    compilerOptions.freeCompilerArgs.add('-Xskip-metadata-version-check')
 }
 
 

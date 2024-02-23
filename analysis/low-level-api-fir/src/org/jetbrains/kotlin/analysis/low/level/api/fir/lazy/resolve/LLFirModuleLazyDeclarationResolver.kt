@@ -19,6 +19,15 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 
+/**
+ * This is the entry point for lazy resolution.
+ *
+ * The class is responsible to [collect][LLFirResolveDesignationCollector] required [LLFirResolveTarget]
+ * and resolve it for the requested phase.
+ *
+ * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+ * @see LLFirLazyResolverRunner
+ */
 internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirModuleResolveComponents) {
     /**
      * Lazily resolves the [target] to a given [toPhase].

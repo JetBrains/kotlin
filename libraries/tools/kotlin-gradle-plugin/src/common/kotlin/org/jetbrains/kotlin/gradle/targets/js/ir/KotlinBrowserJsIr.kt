@@ -233,9 +233,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                             binary.linkSyncTask.zip(binary.linkTask) { linkSyncTask, linkTask ->
                                 val moduleNameProvider = linkTask.compilerOptions.moduleName
                                 linkSyncTask.destinationDirectory.zip(moduleNameProvider) { destDir, moduleName ->
-                                    moduleName.map {
-                                        destDir.resolve("$it.wasm")
-                                    }
+                                    destDir.resolve("$moduleName.wasm")
                                 }
                             }
                         )

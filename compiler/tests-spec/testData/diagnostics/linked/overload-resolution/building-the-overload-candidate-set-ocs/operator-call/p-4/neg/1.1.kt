@@ -187,7 +187,7 @@ class B(var a: Int = 0) {
  * TESTCASE NUMBER: 7
  * NOTE: for-loop operators
  * UNEXPECTED BEHAVIOUR
- * ISSUES: KT-36898
+ * ISSUES: KT-36898, KT-62356
  */
 package testPackCase7
 
@@ -220,7 +220,7 @@ class Inv(val c: Char) {
  * TESTCASE NUMBER: 8
  * NOTE: for-loop operators
  * UNEXPECTED BEHAVIOUR
- * ISSUES: KT-36898
+ * ISSUES: KT-36898, KT-62356
  */
 package testPackCase8
 

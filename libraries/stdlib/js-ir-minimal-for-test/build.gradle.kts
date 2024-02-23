@@ -147,7 +147,10 @@ kotlin {
     }
 }
 
-tasks.withType<KotlinCompile<*>> {
+@Suppress("DEPRECATION")
+tasks.withType<KotlinCompile<*>>().configureEach {
+    kotlinOptions.languageVersion = "1.9"
+    kotlinOptions.apiVersion = "2.0"
     kotlinOptions.freeCompilerArgs += listOf(
         "-Xallow-kotlin-package",
         "-Xexpect-actual-classes",
@@ -156,6 +159,7 @@ tasks.withType<KotlinCompile<*>> {
         "-opt-in=kotlin.RequiresOptIn",
         "-opt-in=kotlin.ExperimentalUnsignedTypes",
         "-opt-in=kotlin.ExperimentalStdlibApi",
+        "-Xsuppress-api-version-greater-than-language-version-error",
     )
 }
 
@@ -164,6 +168,7 @@ tasks {
         enabled = false
     }
 
+    @Suppress("DEPRECATION")
     named("compileKotlinJs", KotlinCompile::class) {
         kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
     }

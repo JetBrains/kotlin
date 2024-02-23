@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.isError
+import org.jetbrains.kotlin.fir.resolve.calls.OperatorCallOfNonOperatorFunction
 import org.jetbrains.kotlin.fir.resolve.calls.UnsafeCall
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -106,10 +107,13 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
         when {
             calleeReference.isError() -> {
                 when (val diagnostic = calleeReference.diagnostic) {
-                    is ConeAmbiguityError -> if (diagnostic.applicability.isSuccess) {
-                        reporter.reportOn(reportSource, ambiguityFactory, diagnostic.candidates.map { it.symbol }, context)
-                    } else if (noneApplicableFactory != null) {
-                        reporter.reportOn(reportSource, noneApplicableFactory, diagnostic.candidates.map { it.symbol }, context)
+                    is ConeAmbiguityError -> {
+                        reporter.reportOn(
+                            reportSource,
+                            noneApplicableFactory ?: ambiguityFactory,
+                            diagnostic.candidates.map { it.symbol },
+                            context
+                        )
                     }
                     is ConeUnresolvedNameError -> {
                         reporter.reportOn(reportSource, missingFactory, context)
@@ -132,17 +136,25 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
                     is ConeInapplicableCandidateError -> {
                         if (unsafeCallFactory != null || noneApplicableFactory != null) {
                             diagnostic.candidate.diagnostics.filter { it.applicability == diagnostic.applicability }.forEach {
-                                if (it is UnsafeCall) {
-                                    if (unsafeCallFactory != null) {
+                                when (it) {
+                                    is UnsafeCall -> {
+                                        if (unsafeCallFactory != null) {
+                                            reporter.reportOn(
+                                                reportSource, unsafeCallFactory, context
+                                            )
+                                        } else {
+                                            reporter.reportOn(
+                                                reportSource, noneApplicableFactory!!, listOf(diagnostic.candidate.symbol), context
+                                            )
+                                        }
+                                        return true
+                                    }
+                                    is OperatorCallOfNonOperatorFunction -> {
+                                        val symbol = it.function
                                         reporter.reportOn(
-                                            reportSource, unsafeCallFactory, context
-                                        )
-                                    } else {
-                                        reporter.reportOn(
-                                            reportSource, noneApplicableFactory!!, listOf(diagnostic.candidate.symbol), context
+                                            reportSource, OPERATOR_MODIFIER_REQUIRED, symbol, symbol.name.asString(), context
                                         )
                                     }
-                                    return true
                                 }
                             }
                         }

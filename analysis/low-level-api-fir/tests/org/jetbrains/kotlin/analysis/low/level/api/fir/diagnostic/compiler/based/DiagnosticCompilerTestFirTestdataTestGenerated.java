@@ -4473,6 +4473,16 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/scripts")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Scripts {
+      @Test
+      public void testAllFilesPresentInScripts() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/scripts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts")
     @TestDataPath("$PROJECT_ROOT")
     public class Smartcasts {

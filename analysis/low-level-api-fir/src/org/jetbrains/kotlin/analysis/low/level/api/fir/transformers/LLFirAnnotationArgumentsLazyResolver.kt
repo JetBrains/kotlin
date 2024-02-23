@@ -67,6 +67,21 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
     }
 }
 
+/**
+ * This resolver is responsible for [ANNOTATION_ARGUMENTS][FirResolvePhase.ANNOTATION_ARGUMENTS] phase.
+ *
+ * This resolver:
+ * - Transforms unresolved annotation arguments into resolved ones.
+ *   It includes both regular and type annotations.
+ *
+ * Before the transformation, the resolver [recreates][AnnotationArgumentsStateKeepers] all unresolved argument lists
+ * to prevent corrupted states due to [PCE][com.intellij.openapi.progress.ProcessCanceledException].
+ *
+ * @see postponedSymbolsForAnnotationResolution
+ * @see AnnotationArgumentsStateKeepers
+ * @see FirAnnotationArgumentsTransformer
+ * @see FirResolvePhase.ANNOTATION_ARGUMENTS
+ */
 private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolveTarget) : LLFirAbstractBodyTargetResolver(
     resolveTarget,
     FirResolvePhase.ANNOTATION_ARGUMENTS,

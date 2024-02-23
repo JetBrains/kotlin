@@ -19,6 +19,14 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 
+/**
+ * Collects [LLFirResolveTarget] for requested [FirElementWithResolveState].
+ *
+ * Effectively, this class is responsible for which elements can be lazily resolved and which cannot.
+ *
+ * @see LLFirResolveTarget
+ * @see shouldBeResolved
+ */
 internal object LLFirResolveDesignationCollector {
     fun getDesignationToResolve(target: FirElementWithResolveState): LLFirResolveTarget? {
         return getDesignationToResolve(target, FirDesignation::asResolveTarget)
@@ -54,6 +62,9 @@ internal object LLFirResolveDesignationCollector {
         }
     }
 
+    /**
+     * @see isLazyResolvable
+     */
     private fun FirElementWithResolveState.shouldBeResolved() = when (this) {
         is FirDeclaration -> shouldBeResolved()
         is FirFileAnnotationsContainer -> annotations.isNotEmpty()

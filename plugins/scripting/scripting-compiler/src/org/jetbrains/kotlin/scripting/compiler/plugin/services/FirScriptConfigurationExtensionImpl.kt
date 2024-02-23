@@ -196,7 +196,7 @@ class FirScriptConfiguratorExtensionImpl(
 
     private fun buildContextReceiverWithFqName(classFqn: FqName, customName: Name? = null) =
         buildContextReceiver {
-            typeRef = buildUserTypeRef {
+            val userTypeRef = buildUserTypeRef {
                 isMarkedNullable = false
                 qualifier.addAll(
                     classFqn.pathSegments().map {
@@ -204,9 +204,9 @@ class FirScriptConfiguratorExtensionImpl(
                     }
                 )
             }
-            if (customName != null) {
-                customLabelName = customName
-            }
+            typeRef = userTypeRef
+            labelNameFromTypeRef = userTypeRef.qualifier.lastOrNull()?.name
+            customLabelName = customName
         }
 
     private val _knownAnnotationsForSamWithReceiver = hashSetOf<String>()

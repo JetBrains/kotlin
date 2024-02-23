@@ -3751,6 +3751,21 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = IllegalJavaLangRecordSupertype::class
     }
 
+    interface JavaModuleDoesNotDependOnModule : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JavaModuleDoesNotDependOnModule::class
+        val moduleName: String
+    }
+
+    interface JavaModuleDoesNotReadUnnamedModule : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JavaModuleDoesNotReadUnnamedModule::class
+    }
+
+    interface JavaModuleDoesNotExportPackage : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JavaModuleDoesNotExportPackage::class
+        val moduleName: String
+        val packageName: String
+    }
+
     interface JvmDefaultInDeclaration : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = JvmDefaultInDeclaration::class
         val annotation: String

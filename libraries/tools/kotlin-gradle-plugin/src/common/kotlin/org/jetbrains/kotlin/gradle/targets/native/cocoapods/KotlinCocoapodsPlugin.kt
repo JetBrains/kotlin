@@ -815,6 +815,24 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         }
     }
 
+
+    private fun checkEmbedAndSignNotUsedTogetherWithPodDependencies(project: Project, kotlinExtension: KotlinMultiplatformExtension, cocoapodsExtension: CocoapodsExtension) {
+        cocoapodsExtension.pods.all {
+            SingleActionPerProject.run(project, "assertEmbedAndSignNotUsedTogetherWithPodDependencies") {
+                kotlinExtension.targets.withType<KotlinNativeTarget>().all { target ->
+                    target.binaries.withType<Framework>().all {
+                        project.tasks.withType<EmbedAndSignTask>().all { embedAndSignTask ->
+                            embedAndSignTask.doFirst {
+                                embedAndSignTask.reportDiagnostic(CocoapodsPluginDiagnostics.EmbedAndSignUsedWithPodDependencies())
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
     private fun Project.gradleWrapperPath(): Provider<String?> {
         return provider { rootProject.tasks.locateTask<Wrapper>("wrapper")?.get()?.scriptFile?.absolutePath }
     }
@@ -873,6 +891,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             createInterops(project, kotlinExtension, cocoapodsExtension)
             configureLinkingOptions(project, cocoapodsExtension)
             checkLinkOnlyNotUsedWithStaticFramework(project, cocoapodsExtension)
+            checkEmbedAndSignNotUsedTogetherWithPodDependencies(project, kotlinExtension, cocoapodsExtension)
         }
     }
 

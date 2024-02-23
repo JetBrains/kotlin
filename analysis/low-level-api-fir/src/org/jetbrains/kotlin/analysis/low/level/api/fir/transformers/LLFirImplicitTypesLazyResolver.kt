@@ -117,6 +117,20 @@ internal class LLImplicitBodyResolveComputationSession : ImplicitBodyResolveComp
     fun popCycledSymbolIfExists(): FirCallableSymbol<*>? = cycledSymbol?.also { cycledSymbol = null }
 }
 
+/**
+ * This resolver is responsible for [IMPLICIT_TYPES_BODY_RESOLVE][FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE] phase.
+ *
+ * This resolver:
+ * - Transforms [FirImplicitTypeRef] into [FirResolvedTypeRef][org.jetbrains.kotlin.fir.types.FirResolvedTypeRef].
+ *
+ * Before the transformation, the resolver [recreates][BodyStateKeepers] all bodies
+ * to prevent corrupted states due to [PCE][com.intellij.openapi.progress.ProcessCanceledException].
+ *
+ * @see postponedSymbolsForAnnotationResolution
+ * @see BodyStateKeepers
+ * @see FirImplicitAwareBodyResolveTransformer
+ * @see FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
+ */
 internal class LLFirImplicitBodyTargetResolver(
     target: LLFirResolveTarget,
     llImplicitBodyResolveComputationSessionParameter: LLImplicitBodyResolveComputationSession? = null,

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFakeOverrideSymbolBase
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 /**
@@ -116,40 +117,46 @@ class SpecialFakeOverrideSymbolsResolver(private val expectActualMap: Map<IrSymb
 
 class SpecialFakeOverrideSymbolsResolverVisitor(private val resolver: SpecialFakeOverrideSymbolsResolver) : IrElementVisitorVoid {
     override fun visitElement(element: IrElement) {
+        // E.g. annotation can contain fake override of constant property
+        if (element is IrAnnotationContainer) {
+            for (annotation in element.annotations) {
+                annotation.acceptVoid(this)
+            }
+        }
         element.acceptChildrenVoid(this)
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         declaration.overriddenSymbols = declaration.overriddenSymbols.map(resolver::getReferencedSimpleFunction)
-        declaration.acceptChildrenVoid(this)
+        visitElement(declaration)
     }
 
     override fun visitProperty(declaration: IrProperty) {
         declaration.overriddenSymbols = declaration.overriddenSymbols.map(resolver::getReferencedProperty)
-        declaration.acceptChildrenVoid(this)
+        visitElement(declaration)
     }
 
     override fun visitCall(expression: IrCall) {
         expression.symbol = resolver.getReferencedSimpleFunction(expression.symbol)
-        expression.acceptChildrenVoid(this)
+        visitElement(expression)
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference) {
         expression.symbol = resolver.getReferencedFunction(expression.symbol)
         expression.reflectionTarget = expression.reflectionTarget?.let(resolver::getReferencedFunction)
-        expression.acceptChildrenVoid(this)
+        visitElement(expression)
     }
 
     override fun visitPropertyReference(expression: IrPropertyReference) {
         expression.symbol = expression.symbol.let(resolver::getReferencedProperty)
         expression.getter = expression.getter?.let(resolver::getReferencedSimpleFunction)
         expression.setter = expression.setter?.let(resolver::getReferencedSimpleFunction)
-        expression.acceptChildrenVoid(this)
+        visitElement(expression)
     }
 
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference) {
         expression.getter = expression.getter.let(resolver::getReferencedSimpleFunction)
         expression.setter = expression.setter?.let(resolver::getReferencedSimpleFunction)
-        expression.acceptChildrenVoid(this)
+        visitElement(expression)
     }
 }

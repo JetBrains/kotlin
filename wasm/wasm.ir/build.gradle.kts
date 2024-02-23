@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.net.URI
 
 plugins {
@@ -92,11 +93,9 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += listOf(
-        "-opt-in=kotlin.ExperimentalUnsignedTypes",
-        "-Xskip-prerelease-check"
-    )
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.optIn.add("kotlin.ExperimentalUnsignedTypes")
+    compilerOptions.freeCompilerArgs.add("-Xskip-prerelease-check")
 }
 
 projectTest("test", true) {

@@ -628,6 +628,24 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("intersectionWithMultipleDefaultsInJava.kt")
+    public void testIntersectionWithMultipleDefaultsInJava() {
+      runTest("compiler/testData/diagnostics/tests/intersectionWithMultipleDefaultsInJava.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt")
+    public void testIntersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin() {
+      runTest("compiler/testData/diagnostics/tests/intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed.kt")
+    public void testIntersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed() {
+      runTest("compiler/testData/diagnostics/tests/intersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed.kt");
+    }
+
+    @Test
     @TestMetadata("invalidTargetCrashesCompiler.kt")
     public void testInvalidTargetCrashesCompiler() {
       runTest("compiler/testData/diagnostics/tests/invalidTargetCrashesCompiler.kt");
@@ -1495,6 +1513,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     @TestMetadata("TypeMismatchOnOverrideWithSyntaxErrors.kt")
     public void testTypeMismatchOnOverrideWithSyntaxErrors() {
       runTest("compiler/testData/diagnostics/tests/TypeMismatchOnOverrideWithSyntaxErrors.kt");
+    }
+
+    @Test
+    @TestMetadata("typealiasInAnnotationPrimitiveVararg.kt")
+    public void testTypealiasInAnnotationPrimitiveVararg() {
+      runTest("compiler/testData/diagnostics/tests/typealiasInAnnotationPrimitiveVararg.kt");
     }
 
     @Test
@@ -8057,6 +8081,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("tryCatchFinallyIfs.kt")
+      public void testTryCatchFinallyIfs() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/tryCatchFinallyIfs.kt");
+      }
+
+      @Test
       @TestMetadata("tryWithAssignmentUsedInCatch.kt")
       public void testTryWithAssignmentUsedInCatch() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/tryWithAssignmentUsedInCatch.kt");
@@ -13176,6 +13206,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       @TestMetadata("annotationWithWrongArgInDanglingModifierList.kt")
       public void testAnnotationWithWrongArgInDanglingModifierList() {
         runTest("compiler/testData/diagnostics/tests/exceptions/annotationWithWrongArgInDanglingModifierList.kt");
+      }
+
+      @Test
+      @TestMetadata("assignmentWithIncorrectLValue.kt")
+      public void testAssignmentWithIncorrectLValue() {
+        runTest("compiler/testData/diagnostics/tests/exceptions/assignmentWithIncorrectLValue.kt");
       }
 
       @Test
@@ -22716,6 +22752,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("intersectionWithMappedSignature.kt")
+        public void testIntersectionWithMappedSignature() {
+          runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/intersectionWithMappedSignature.kt");
+        }
+
+        @Test
         @TestMetadata("irrelevantCharAtAbstract.kt")
         public void testIrrelevantCharAtAbstract() {
           runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/irrelevantCharAtAbstract.kt");
@@ -26947,12 +26989,6 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         @TestMetadata("kt13355viaJava.kt")
         public void testKt13355viaJava() {
           runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/kt13355viaJava.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65555.kt")
-        public void testKt65555() {
-          runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/kt65555.kt");
         }
 
         @Test

@@ -334,7 +334,10 @@ class FirSignatureEnhancement(
                     this.name = name!!
                     status = firMethod.status
                     symbol = if (isIntersectionOverride) {
-                        FirIntersectionOverrideFunctionSymbol(methodId, overriddenMembers.map { it.symbol })
+                        FirIntersectionOverrideFunctionSymbol(
+                            methodId, overriddenMembers.map { it.symbol },
+                            containsMultipleNonSubsumed = (firMethod.symbol as? FirIntersectionCallableSymbol)?.containsMultipleNonSubsumed == true,
+                        )
                     } else {
                         FirNamedFunctionSymbol(methodId)
                     }.also { functionSymbol = it }

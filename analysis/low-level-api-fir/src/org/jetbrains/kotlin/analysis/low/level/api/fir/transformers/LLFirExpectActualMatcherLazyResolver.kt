@@ -29,6 +29,19 @@ internal object LLFirExpectActualMatcherLazyResolver : LLFirLazyResolver(FirReso
     }
 }
 
+/**
+ * This resolver is responsible for [EXPECT_ACTUAL_MATCHING][FirResolvePhase.EXPECT_ACTUAL_MATCHING] phase.
+ *
+ * This resolver:
+ * - Searches and set [expectForActual][org.jetbrains.kotlin.fir.declarations.expectForActual]
+ *   property for declarations.
+ *
+ * Special rules:
+ * - First resolves outer classes to this phase in multiplatform projects.
+ *
+ * @see FirExpectActualMatcherTransformer
+ * @see FirResolvePhase.EXPECT_ACTUAL_MATCHING
+ */
 private class LLFirExpectActualMatchingTargetResolver(target: LLFirResolveTarget) : LLFirTargetResolver(
     target,
     FirResolvePhase.EXPECT_ACTUAL_MATCHING

@@ -20,6 +20,7 @@ object JvmExpressionCheckers : ExpressionCheckers() {
             FirInterfaceDefaultMethodCallChecker,
             FirJavaSamInterfaceConstructorReferenceChecker,
             FirQualifiedAccessJavaNullabilityWarningChecker,
+            FirJvmModuleAccessibilityQualifiedAccessChecker,
         )
 
     override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker>
@@ -81,5 +82,10 @@ object JvmExpressionCheckers : ExpressionCheckers() {
     override val checkNotNullCallCheckers: Set<FirCheckNotNullCallChecker>
         get() = setOf(
             FirJavaUnnecessaryNotNullChecker,
+        )
+
+    override val resolvedQualifierCheckers: Set<FirResolvedQualifierChecker>
+        get() = setOf(
+            FirJvmModuleAccessibilityResolvedQualifierChecker,
         )
 }

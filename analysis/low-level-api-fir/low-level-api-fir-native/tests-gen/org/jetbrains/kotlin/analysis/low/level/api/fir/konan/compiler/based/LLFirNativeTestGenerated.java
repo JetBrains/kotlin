@@ -111,6 +111,24 @@ public class LLFirNativeTestGenerated extends AbstractLLFirNativeTest {
   }
 
   @Test
+  @TestMetadata("objCName6.kt")
+  public void testObjCName6() {
+    runTest("compiler/testData/diagnostics/nativeTests/objCName6.kt");
+  }
+
+  @Test
+  @TestMetadata("objCNameWIthDifferentSwiftName.kt")
+  public void testObjCNameWIthDifferentSwiftName() {
+    runTest("compiler/testData/diagnostics/nativeTests/objCNameWIthDifferentSwiftName.kt");
+  }
+
+  @Test
+  @TestMetadata("objCNameWithTwoModules.kt")
+  public void testObjCNameWithTwoModules() {
+    runTest("compiler/testData/diagnostics/nativeTests/objCNameWithTwoModules.kt");
+  }
+
+  @Test
   @TestMetadata("objCRefinement.kt")
   public void testObjCRefinement() {
     runTest("compiler/testData/diagnostics/nativeTests/objCRefinement.kt");

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.internal
 
+import org.gradle.api.Project
 import org.gradle.api.internal.StartParameterInternal
 import org.gradle.api.invocation.Gradle
 
@@ -16,8 +17,8 @@ internal class ProjectIsolationStartParameterAccessorG71(
     }
 
     internal class Factory : ProjectIsolationStartParameterAccessor.Factory {
-        override fun getInstance(gradle: Gradle): ProjectIsolationStartParameterAccessor {
-            return ProjectIsolationStartParameterAccessorG71(gradle)
+        override fun getInstance(project: Project): ProjectIsolationStartParameterAccessor {
+            return ProjectIsolationStartParameterAccessorG71(project.gradle)
         }
     }
 }

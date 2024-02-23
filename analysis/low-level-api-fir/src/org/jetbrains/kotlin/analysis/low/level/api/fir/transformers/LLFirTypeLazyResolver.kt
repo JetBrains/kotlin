@@ -56,6 +56,18 @@ internal object LLFirTypeLazyResolver : LLFirLazyResolver(FirResolvePhase.TYPES)
     }
 }
 
+/**
+ * This resolver is responsible for [TYPES][FirResolvePhase.TYPES] phase.
+ *
+ * This resolver:
+ * - Transform explicitly written types in declaration headers.
+ *
+ * Special rules:
+ * - First resolves outer classes to this phase.
+ *
+ * @see FirTypeResolveTransformer
+ * @see FirResolvePhase.TYPES
+ */
 private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetResolver(target, FirResolvePhase.TYPES) {
     private val transformer = object : FirTypeResolveTransformer(resolveTargetSession, resolveTargetScopeSession) {
         override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {

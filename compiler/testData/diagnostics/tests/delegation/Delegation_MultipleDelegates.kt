@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !DIAGNOSTICS: -CONFLICTING_JVM_DECLARATIONS
 interface One {
   public <!REDUNDANT_OPEN_IN_INTERFACE!>open<!> fun foo() : Int

@@ -44,6 +44,8 @@ import org.jetbrains.kotlin.parcelize.test.runners.*
 import org.jetbrains.kotlin.powerassert.AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.powerassert.AbstractIrBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.samWithReceiver.*
+import org.jetbrains.kotlin.scripting.test.AbstractScriptWithCustomDefBlackBoxCodegenTest
+import org.jetbrains.kotlin.scripting.test.AbstractScriptWithCustomDefDiagnosticsTestBase
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJsIrTest
 import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJvmIrTest
@@ -405,6 +407,18 @@ fun main(args: Array<String>) {
         testGroup("plugins/kapt4/tests-gen", "plugins/kapt4/") {
             testClass<AbstractKotlinKapt4ContextTest> {
                 model("../kapt3/kapt3-compiler/testData/converter")
+            }
+        }
+
+        testGroup("plugins/scripting/scripting-tests/tests-gen", "plugins/scripting/scripting-tests") {
+            testClass<AbstractScriptWithCustomDefDiagnosticsTestBase> {
+                model("testData/diagnostics/testScripts", extension = "kts")
+            }
+        }
+
+        testGroup("plugins/scripting/scripting-tests/tests-gen", "plugins/scripting/scripting-tests") {
+            testClass<AbstractScriptWithCustomDefBlackBoxCodegenTest> {
+                model("testData/codegen/testScripts", extension = "kts")
             }
         }
 

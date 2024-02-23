@@ -289,15 +289,16 @@ $jsCodeBodyIndented
     let wasmExports;
 
     const isNodeJs = (typeof process !== 'undefined') && (process.release.name === 'node');
+    const isDeno = !isNodeJs && (typeof Deno !== 'undefined')
     const isStandaloneJsVM =
-        !isNodeJs && (
+        !isDeno && !isNodeJs && (
             typeof d8 !== 'undefined' // V8
             || typeof inIon !== 'undefined' // SpiderMonkey
             || typeof jscOptions !== 'undefined' // JavaScriptCore
         );
-    const isBrowser = !isNodeJs && !isStandaloneJsVM && (typeof window !== 'undefined');
+    const isBrowser = !isNodeJs && !isDeno && !isStandaloneJsVM && (typeof window !== 'undefined');
     
-    if (!isNodeJs && !isStandaloneJsVM && !isBrowser) {
+    if (!isNodeJs && !isDeno && !isStandaloneJsVM && !isBrowser) {
       throw "Supported JS engine not detected";
     }
     
@@ -319,6 +320,14 @@ $imports
         const wasmBuffer = fs.readFileSync(path.resolve(dirpath, wasmFilePath));
         const wasmModule = new WebAssembly.Module(wasmBuffer);
         wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
+      }
+      
+      if (isDeno) {
+        const path = await import(/* webpackIgnore: true */'https://deno.land/std/path/mod.ts');
+        const dirpath = path.dirname(path.fromFileUrl(import.meta.url));
+        const binary = Deno.readFileSync(path.resolve(dirpath, wasmFilePath));
+        const module = await WebAssembly.compile(binary);
+        wasmInstance = await WebAssembly.instantiate(module, importObject);
       }
       
       if (isStandaloneJsVM) {

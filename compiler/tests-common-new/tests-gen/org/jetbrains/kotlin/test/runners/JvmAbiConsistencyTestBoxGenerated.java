@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistencyTest {
   @Test
   public void testAllFilesPresentInBox() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "multiplatform/k2", "script");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "multiplatform/k2");
   }
 
   @Nested
@@ -1015,6 +1015,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("constantArrayOfAny.kt")
     public void testConstantArrayOfAny() {
       runTest("compiler/testData/codegen/box/arrays/constantArrayOfAny.kt");
+    }
+
+    @Test
+    @TestMetadata("emptyArrayDesugaring.kt")
+    public void testEmptyArrayDesugaring() {
+      runTest("compiler/testData/codegen/box/arrays/emptyArrayDesugaring.kt");
     }
 
     @Test
@@ -8145,6 +8151,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("kt48945c.kt")
     public void testKt48945c() {
       runTest("compiler/testData/codegen/box/collections/kt48945c.kt");
+    }
+
+    @Test
+    @TestMetadata("kt65555.kt")
+    public void testKt65555() {
+      runTest("compiler/testData/codegen/box/collections/kt65555.kt");
     }
 
     @Test
@@ -16804,6 +16816,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
+    @TestMetadata("delegationToVar.kt")
+    public void testDelegationToVar() {
+      runTest("compiler/testData/codegen/box/delegation/delegationToVar.kt");
+    }
+
+    @Test
     @TestMetadata("delegationWithPrivateConstructor.kt")
     public void testDelegationWithPrivateConstructor() {
       runTest("compiler/testData/codegen/box/delegation/delegationWithPrivateConstructor.kt");
@@ -19243,6 +19261,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("diamondFunction.kt")
     public void testDiamondFunction() {
       runTest("compiler/testData/codegen/box/fakeOverride/diamondFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("diamondWithNullabilityAnnotations.kt")
+    public void testDiamondWithNullabilityAnnotations() {
+      runTest("compiler/testData/codegen/box/fakeOverride/diamondWithNullabilityAnnotations.kt");
     }
 
     @Test
@@ -30820,6 +30844,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
+    @TestMetadata("immutableName.kt")
+    public void testImmutableName() {
+      runTest("compiler/testData/codegen/box/javaInterop/immutableName.kt");
+    }
+
+    @Test
     @TestMetadata("inheritanceWithWildcard.kt")
     public void testInheritanceWithWildcard() {
       runTest("compiler/testData/codegen/box/javaInterop/inheritanceWithWildcard.kt");
@@ -31470,6 +31500,24 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       @TestMetadata("int.kt")
       public void testInt() {
         runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/int.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithMultipleDefaultsInJava.kt")
+      public void testIntersectionWithMultipleDefaultsInJava() {
+        runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/intersectionWithMultipleDefaultsInJava.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt")
+      public void testIntersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin() {
+        runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed.kt")
+      public void testIntersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed() {
+        runTest("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance/intersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed.kt");
       }
 
       @Test
@@ -50499,6 +50547,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       }
 
       @Test
+      @TestMetadata("suspendSamConstructorAdaptation.kt")
+      public void testSuspendSamConstructorAdaptation() {
+        runTest("compiler/testData/codegen/box/sam/constructors/suspendSamConstructorAdaptation.kt");
+      }
+
+      @Test
       @TestMetadata("syntheticVsReal.kt")
       public void testSyntheticVsReal() {
         runTest("compiler/testData/codegen/box/sam/constructors/syntheticVsReal.kt");
@@ -50641,6 +50695,64 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("propertyDeclaration.kt")
     public void testPropertyDeclaration() {
       runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/propertyDeclaration.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/box/script")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Script {
+    @Test
+    public void testAllFilesPresentInScript() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/script"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("classReference.kt")
+    public void testClassReference() {
+      runTest("compiler/testData/codegen/box/script/classReference.kt");
+    }
+
+    @Test
+    @TestMetadata("localCaptureTests.kt")
+    public void testLocalCaptureTests() {
+      runTest("compiler/testData/codegen/box/script/localCaptureTests.kt");
+    }
+
+    @Test
+    @TestMetadata("localCaptureTestsK2.kt")
+    public void testLocalCaptureTestsK2() {
+      runTest("compiler/testData/codegen/box/script/localCaptureTestsK2.kt");
+    }
+
+    @Test
+    @TestMetadata("scripInstance.kt")
+    public void testScripInstance() {
+      runTest("compiler/testData/codegen/box/script/scripInstance.kt");
+    }
+
+    @Test
+    @TestMetadata("scriptNestedClassInstance.kt")
+    public void testScriptNestedClassInstance() {
+      runTest("compiler/testData/codegen/box/script/scriptNestedClassInstance.kt");
+    }
+
+    @Test
+    @TestMetadata("scriptNestedClassInstanceK2.kt")
+    public void testScriptNestedClassInstanceK2() {
+      runTest("compiler/testData/codegen/box/script/scriptNestedClassInstanceK2.kt");
+    }
+
+    @Test
+    @TestMetadata("scriptPropFromAnotherModuleK2.kt")
+    public void testScriptPropFromAnotherModuleK2() {
+      runTest("compiler/testData/codegen/box/script/scriptPropFromAnotherModuleK2.kt");
+    }
+
+    @Test
+    @TestMetadata("syntheticJavaPropertyInScript.kt")
+    public void testSyntheticJavaPropertyInScript() {
+      runTest("compiler/testData/codegen/box/script/syntheticJavaPropertyInScript.kt");
     }
   }
 
@@ -51307,6 +51419,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("explicitSuperCall.kt")
     public void testExplicitSuperCall() {
       runTest("compiler/testData/codegen/box/specialBuiltins/explicitSuperCall.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionWithMappedSignature.kt")
+    public void testIntersectionWithMappedSignature() {
+      runTest("compiler/testData/codegen/box/specialBuiltins/intersectionWithMappedSignature.kt");
     }
 
     @Test

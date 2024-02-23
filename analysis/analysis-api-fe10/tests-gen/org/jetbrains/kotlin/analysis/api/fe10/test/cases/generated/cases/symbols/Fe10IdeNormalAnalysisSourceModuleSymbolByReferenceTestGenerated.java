@@ -191,6 +191,36 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
   }
 
   @Test
+  @TestMetadata("libraryDataClass_component.kt")
+  public void testLibraryDataClass_component() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryDataClass_component.kt");
+  }
+
+  @Test
+  @TestMetadata("libraryDataClass_copy.kt")
+  public void testLibraryDataClass_copy() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryDataClass_copy.kt");
+  }
+
+  @Test
+  @TestMetadata("libraryDataClass_equals.kt")
+  public void testLibraryDataClass_equals() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryDataClass_equals.kt");
+  }
+
+  @Test
+  @TestMetadata("libraryDataClass_hashCode.kt")
+  public void testLibraryDataClass_hashCode() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryDataClass_hashCode.kt");
+  }
+
+  @Test
+  @TestMetadata("libraryDataClass_toString.kt")
+  public void testLibraryDataClass_toString() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryDataClass_toString.kt");
+  }
+
+  @Test
   @TestMetadata("libraryMemberProperty.kt")
   public void testLibraryMemberProperty() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryMemberProperty.kt");
@@ -224,6 +254,24 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
   @TestMetadata("libraryPropertyWithAnnotations.kt")
   public void testLibraryPropertyWithAnnotations() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryPropertyWithAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("libraryValueClass_equals.kt")
+  public void testLibraryValueClass_equals() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryValueClass_equals.kt");
+  }
+
+  @Test
+  @TestMetadata("libraryValueClass_hashCode.kt")
+  public void testLibraryValueClass_hashCode() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryValueClass_hashCode.kt");
+  }
+
+  @Test
+  @TestMetadata("libraryValueClass_toString.kt")
+  public void testLibraryValueClass_toString() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryValueClass_toString.kt");
   }
 
   @Test

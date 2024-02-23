@@ -2693,6 +2693,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
     }
 
     @Test
+    @TestMetadata("annotatedTypeParameter.kt")
+    public void testAnnotatedTypeParameter() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/annotatedTypeParameter.kt");
+    }
+
+    @Test
     @TestMetadata("fakeOverrideOfRaw.kt")
     public void testFakeOverrideOfRaw() {
       runTest("compiler/testData/ir/irText/fakeOverrides/fakeOverrideOfRaw.kt");
@@ -2702,6 +2708,24 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
     @TestMetadata("fakeOverrideOfRawJavaCollection.kt")
     public void testFakeOverrideOfRawJavaCollection() {
       runTest("compiler/testData/ir/irText/fakeOverrides/fakeOverrideOfRawJavaCollection.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionWithJava.kt")
+    public void testIntersectionWithJava() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/intersectionWithJava.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionWithMappedSignature.kt")
+    public void testIntersectionWithMappedSignature() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/intersectionWithMappedSignature.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionWithRawType.kt")
+    public void testIntersectionWithRawType() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/intersectionWithRawType.kt");
     }
   }
 
@@ -2841,6 +2865,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
     }
 
     @Test
+    @TestMetadata("FieldsFromJavaClass.kt")
+    public void testFieldsFromJavaClass() {
+      runTest("compiler/testData/ir/irText/firProblems/FieldsFromJavaClass.kt");
+    }
+
+    @Test
     @TestMetadata("Fir2IrClassifierStorage.kt")
     public void testFir2IrClassifierStorage() {
       runTest("compiler/testData/ir/irText/firProblems/Fir2IrClassifierStorage.kt");
@@ -2952,12 +2982,6 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
     @TestMetadata("LocalSuspendFun.kt")
     public void testLocalSuspendFun() {
       runTest("compiler/testData/ir/irText/firProblems/LocalSuspendFun.kt");
-    }
-
-    @Test
-    @TestMetadata("MissingFieldInJavaClass.kt")
-    public void testMissingFieldInJavaClass() {
-      runTest("compiler/testData/ir/irText/firProblems/MissingFieldInJavaClass.kt");
     }
 
     @Test

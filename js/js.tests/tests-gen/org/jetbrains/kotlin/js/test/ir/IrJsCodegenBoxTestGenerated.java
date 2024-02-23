@@ -12754,6 +12754,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("delegationToVar.kt")
+    public void testDelegationToVar() {
+      runTest("compiler/testData/codegen/box/delegation/delegationToVar.kt");
+    }
+
+    @Test
     @TestMetadata("delegationWithPrivateConstructor.kt")
     public void testDelegationWithPrivateConstructor() {
       runTest("compiler/testData/codegen/box/delegation/delegationWithPrivateConstructor.kt");
@@ -34824,6 +34830,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
       @TestMetadata("sameWrapperClass2.kt")
       public void testSameWrapperClass2() {
         runTest("compiler/testData/codegen/box/sam/constructors/sameWrapperClass2.kt");
+      }
+
+      @Test
+      @TestMetadata("suspendSamConstructorAdaptation.kt")
+      public void testSuspendSamConstructorAdaptation() {
+        runTest("compiler/testData/codegen/box/sam/constructors/suspendSamConstructorAdaptation.kt");
       }
     }
 

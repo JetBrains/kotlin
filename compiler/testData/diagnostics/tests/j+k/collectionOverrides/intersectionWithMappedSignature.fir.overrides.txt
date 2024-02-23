@@ -1,0 +1,25 @@
+B1:
+  [Source]: public open override fun remove(element: R|kotlin/Int?|): R|kotlin/Boolean| from Use site scope of /B1 [id: 0]
+    [Enhancement]: public abstract fun remove(element: R|kotlin/Int!|): R|kotlin/Boolean!| from Java enhancement scope for /Java1 [id: 1]
+  [SubstitutionOverride(DeclarationSite)]: public open override fun remove(p0: R|@EnhancedNullability kotlin/Int|): R|kotlin/Boolean| from Use site scope of /B1 [id: 0]
+
+B2:
+  [IntersectionOverride]: public open override fun remove(p0: R|@EnhancedNullability kotlin/Int|): R|kotlin/Boolean| from Use site scope of /B2 [id: 0]
+    [SubstitutionOverride(DeclarationSite)]: public open override fun remove(p0: R|@EnhancedNullability kotlin/Int|): R|kotlin/Boolean| from Substitution scope for [Java enhancement scope for java/util/ArrayList] for type B2 [id: 1]
+      [Enhancement]: public open fun remove(p0: R|@EnhancedNullability E|): R|kotlin/Boolean| from Java enhancement scope for java/util/ArrayList [id: 2]
+        [SubstitutionOverride(DeclarationSite)]: public open override fun remove(p0: R|ft<E & Any, E?>|): R|kotlin/Boolean| from Substitution scope for [Java enhancement scope for java/util/AbstractList] for type java/util/ArrayList<E> [id: 3]
+          [IntersectionOverride]: public open override fun remove(p0: R|ft<E & Any, E?>|): R|kotlin/Boolean| from Java enhancement scope for java/util/AbstractList [id: 4]
+            [SubstitutionOverride(DeclarationSite)]: public open override fun remove(p0: R|ft<E & Any, E?>|): R|kotlin/Boolean| from Substitution scope for [Java enhancement scope for java/util/AbstractCollection] for type java/util/AbstractList<E> [id: 5]
+              [Enhancement]: public open fun remove(p0: R|ft<E & Any, E?>|): R|kotlin/Boolean| from Java enhancement scope for java/util/AbstractCollection [id: 6]
+                [SubstitutionOverride(DeclarationSite)]: public abstract override fun remove(element: R|ft<E & Any, E?>|): R|kotlin/Boolean| from Substitution scope for [Use site scope of kotlin/collections/MutableCollection] for type java/util/AbstractCollection<E> [id: 7]
+                  [Library]: public abstract fun remove(element: R|E|): R|kotlin/Boolean| from Use site scope of kotlin/collections/MutableCollection [id: 8]
+            [SubstitutionOverride(DeclarationSite)]: public abstract override fun remove(element: R|ft<E & Any, E?>|): R|kotlin/Boolean| from Substitution scope for [Use site scope of kotlin/collections/MutableList] for type java/util/AbstractList<E> [id: 9]
+              [Library]: public abstract fun remove(element: R|E|): R|kotlin/Boolean| from Use site scope of kotlin/collections/MutableList [id: 10]
+                [SubstitutionOverride(DeclarationSite)]: public abstract override fun remove(element: R|E|): R|kotlin/Boolean| from Substitution scope for [Use site scope of kotlin/collections/MutableCollection] for type kotlin/collections/MutableList<E> [id: 11]
+                  [Library]: public abstract fun remove(element: R|E|): R|kotlin/Boolean| from Use site scope of kotlin/collections/MutableCollection [id: 8]
+        [SubstitutionOverride(DeclarationSite)]: public abstract override fun remove(element: R|E|): R|kotlin/Boolean| from Substitution scope for [Use site scope of kotlin/collections/MutableList] for type java/util/ArrayList<E> [id: 12]
+          [Library]: public abstract fun remove(element: R|E|): R|kotlin/Boolean| from Use site scope of kotlin/collections/MutableList [id: 10]
+            [SubstitutionOverride(DeclarationSite)]: public abstract override fun remove(element: R|E|): R|kotlin/Boolean| from Substitution scope for [Use site scope of kotlin/collections/MutableCollection] for type kotlin/collections/MutableList<E> [id: 11]
+              [Library]: public abstract fun remove(element: R|E|): R|kotlin/Boolean| from Use site scope of kotlin/collections/MutableCollection [id: 8]
+    [Enhancement]: public abstract fun remove(element: R|kotlin/Int!|): R|kotlin/Boolean!| from Java enhancement scope for /Java1 [id: 13]
+

@@ -1086,7 +1086,7 @@ KtFunctionSymbol:
       returnType: KtUsualClassType:
         annotationsList: []
         ownTypeArguments: []
-        type: kotlin/Any?
+        type: @EnhancedNullability kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null

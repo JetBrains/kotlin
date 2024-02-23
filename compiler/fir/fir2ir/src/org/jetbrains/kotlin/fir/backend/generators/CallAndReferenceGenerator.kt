@@ -1064,11 +1064,12 @@ class CallAndReferenceGenerator(
         // In this case we have to use parameter type itself which is more precise, like Array<String> or IntArray.
         // See KT-62598 and its fix for details.
         val expectedType = unsubstitutedParameterType.takeIf { visitor.annotationMode && unsubstitutedParameterType?.isArrayType == true }
-        var irArgument = visitor.convertToIrExpression(argument, expectedType = expectedType)
+        val unwrappedArgument = argument.unwrapArgument()
+        var irArgument = visitor.convertToIrExpression(unwrappedArgument, expectedType = expectedType)
         if (unsubstitutedParameterType != null) {
             with(visitor.implicitCastInserter) {
-                val argumentType = argument.resolvedType.fullyExpandedType(session)
-                if (argument is FirSmartCastExpression) {
+                val argumentType = unwrappedArgument.resolvedType.fullyExpandedType(session)
+                if (unwrappedArgument is FirSmartCastExpression) {
                     val substitutedParameterType = substitutor.substituteOrSelf(unsubstitutedParameterType)
                     // here we should use a substituted parameter type to properly choose the component of an intersection type
                     //  to provide a proper cast to the smartcasted type
@@ -1076,7 +1077,7 @@ class CallAndReferenceGenerator(
                 }
                 // here we should pass unsubstituted parameter type to properly infer if the original type accepts null or not
                 // to properly insert nullability check
-                irArgument = irArgument.insertSpecialCast(argument, argumentType, unsubstitutedParameterType)
+                irArgument = irArgument.insertSpecialCast(unwrappedArgument, argumentType, unsubstitutedParameterType)
             }
         }
         with(adapterGenerator) {
@@ -1085,13 +1086,13 @@ class CallAndReferenceGenerator(
                 val parameterType = parameter.returnTypeRef.coneType
                 val unwrappedParameterType = if (parameter.isVararg) parameterType.arrayElementType()!! else parameterType
                 val samFunctionType = getFunctionTypeForPossibleSamType(unwrappedParameterType)
-                irArgument = irArgument.applySuspendConversionIfNeeded(argument, samFunctionType ?: unwrappedParameterType)
-                irArgument = irArgument.applySamConversionIfNeeded(argument, parameter)
+                irArgument = irArgument.applySuspendConversionIfNeeded(unwrappedArgument, samFunctionType ?: unwrappedParameterType)
+                irArgument = irArgument.applySamConversionIfNeeded(unwrappedArgument, parameter)
             }
         }
         return irArgument
-            .applyAssigningArrayElementsToVarargInNamedForm(argument, parameter)
-            .applyImplicitIntegerCoercionIfNeeded(argument, parameter)
+            .applyAssigningArrayElementsToVarargInNamedForm(unwrappedArgument, parameter)
+            .applyImplicitIntegerCoercionIfNeeded(unwrappedArgument, parameter)
     }
 
     private fun IrExpression.applyAssigningArrayElementsToVarargInNamedForm(

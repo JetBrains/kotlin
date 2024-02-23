@@ -24,22 +24,22 @@ class ExtrasTest {
         assertNull(extras[extrasKeyOf<String>("a")])
         assertNull(extras[extrasKeyOf<String>("b")])
 
-        extras[extrasKeyOf()] = "22222"
-        assertEquals("22222", extras[extrasKeyOf()])
-        assertNull(extras[extrasKeyOf("a")])
-        assertNull(extras[extrasKeyOf("b")])
+        extras[extrasKeyOf<String>()] = "22222"
+        assertEquals("22222", extras[extrasKeyOf<String>()])
+        assertNull(extras[extrasKeyOf<String>("a")])
+        assertNull(extras[extrasKeyOf<String>("b")])
 
         extras[extrasKeyOf("a")] = "value a"
-        assertEquals("22222", extras[extrasKeyOf()])
-        assertEquals("value a", extras[extrasKeyOf("a")])
+        assertEquals("22222", extras[extrasKeyOf<String>()])
+        assertEquals("value a", extras[extrasKeyOf<String>("a")])
         assertNull(extras[extrasKeyOf("b")])
 
         extras[extrasKeyOf("b")] = "value b"
-        assertEquals("22222", extras[extrasKeyOf()])
-        assertEquals("value a", extras[extrasKeyOf("a")])
-        assertEquals("value b", extras[extrasKeyOf("b")])
+        assertEquals("22222", extras[extrasKeyOf<String>()])
+        assertEquals("value a", extras[extrasKeyOf<String>("a")])
+        assertEquals("value b", extras[extrasKeyOf<String>("b")])
 
-        assertNull(extras[extrasKeyOf("c")])
+        assertNull(extras[extrasKeyOf<String>("c")])
     }
 
     @Test
@@ -285,5 +285,47 @@ class ExtrasTest {
             ),
             extras
         )
+    }
+
+    @Test
+    fun `test - extras - nullable key`() {
+        val empty = extrasOf()
+        assertNull(empty[extrasKeyOf<String>()])
+        assertNull(empty[extrasKeyOf<String?>()])
+
+        val nonEmpty = extrasOf(
+            extrasKeyOf<String>() withValue "!",
+            extrasKeyOf<String?>() withValue "?"
+        )
+
+        assertEquals("!", nonEmpty[extrasKeyOf<String>()])
+        assertEquals("?", nonEmpty[extrasKeyOf<String?>()])
+
+        val containsNull = extrasOf(
+            extrasKeyOf<String>() withValue "!",
+            extrasKeyOf<String?>() withValue null
+        )
+
+        assertEquals("!", containsNull[extrasKeyOf<String>()])
+        assertNull(containsNull[extrasKeyOf<String?>()])
+        assertTrue(extrasKeyOf<String?>() in containsNull)
+    }
+
+    @Test
+    fun `test - mutable extras - nullable key`() {
+        val extras = mutableExtrasOf()
+        assertNull(extras[extrasKeyOf<String>()])
+        assertNull(extras[extrasKeyOf<String?>()])
+
+        extras[extrasKeyOf<String>()] = "!"
+        extras[extrasKeyOf<String?>()] = "?"
+
+        assertEquals("!", extras[extrasKeyOf<String>()])
+        assertEquals("?", extras[extrasKeyOf<String?>()])
+
+        extras[extrasKeyOf<String?>()] = null
+        assertEquals("!", extras[extrasKeyOf<String>()])
+        assertNull(extras[extrasKeyOf<String?>()])
+        assertTrue(extrasKeyOf<String?>() in extras)
     }
 }

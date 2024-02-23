@@ -80,21 +80,29 @@ fun FirTypeScope.processOverriddenFunctions(
         mutableSetOf()
     )
 
+inline fun <reified S : FirCallableSymbol<*>> FirTypeScope.anyOverriddenOf(
+    symbol: S,
+    processOverridden: FirTypeScope.(S, (S) -> ProcessorAction) -> ProcessorAction,
+    noinline predicate: (S) -> Boolean,
+): Boolean {
+    var result = false
+    processOverridden(symbol) {
+        if (predicate(it)) {
+            result = true
+            return@processOverridden ProcessorAction.STOP
+        }
+
+        return@processOverridden ProcessorAction.NEXT
+    }
+
+    return result
+}
+
 fun FirTypeScope.anyOverriddenOf(
     functionSymbol: FirNamedFunctionSymbol,
     predicate: (FirNamedFunctionSymbol) -> Boolean
 ): Boolean {
-    var result = false
-    processOverriddenFunctions(functionSymbol) {
-        if (predicate(it)) {
-            result = true
-            return@processOverriddenFunctions ProcessorAction.STOP
-        }
-
-        return@processOverriddenFunctions ProcessorAction.NEXT
-    }
-
-    return result
+    return anyOverriddenOf(functionSymbol, FirTypeScope::processOverriddenFunctions, predicate)
 }
 
 private fun FirTypeScope.processOverriddenFunctionsWithVisited(

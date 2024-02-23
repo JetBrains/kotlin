@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.jupiter.api.DisplayName
@@ -147,7 +148,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
         project("new-mpp-wasm-js", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
             buildGradleKts.modify {
-                it.replace("wasmJs {", "wasmJs {\napplyBinaryen()")
+                it.replace("<JsEngine>", "d8")
             }
 
             build("assemble") {
@@ -161,6 +162,27 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertTrue {
                     Files.size(original) > Files.size(optimized)
                 }
+            }
+        }
+    }
+
+    @DisplayName("Check js target with browser")
+    @GradleTest
+    fun jsTargetWithBrowser(gradleVersion: GradleVersion) {
+        project("new-mpp-wasm-js", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+            buildGradleKts.modify {
+                it.replace("<JsEngine>", "browser")
+            }
+
+            build("assemble") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
+                assertTasksExecuted(":wasmJsBrowserDistribution")
+
+                assertFileInProjectExists("build/${Distribution.DIST}/wasmJs/productionExecutable/redefined-wasm-module-name.wasm")
+                assertFileInProjectExists("build/${Distribution.DIST}/wasmJs/productionExecutable/new-mpp-wasm-js.js")
+                assertFileInProjectExists("build/${Distribution.DIST}/wasmJs/productionExecutable/new-mpp-wasm-js.js.map")
             }
         }
     }

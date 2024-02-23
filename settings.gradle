@@ -260,6 +260,8 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":kotlin-scripting-compiler-embeddable",
         ":kotlin-scripting-compiler-impl",
         ":kotlin-scripting-compiler-impl-embeddable",
+        ":plugins:scripting:test-script-definition",
+        ":plugins:scripting:scripting-tests",
         ":kotlin-scripting-dependencies",
         ":kotlin-scripting-dependencies-maven",
         ":kotlin-scripting-dependencies-maven-all",
@@ -423,9 +425,7 @@ include ":compiler:build-tools:kotlin-build-tools-api",
 include ":plugins:compose-compiler-plugin:compiler",
         ":plugins:compose-compiler-plugin:compiler:integration-tests",
         ":plugins:compose-compiler-plugin:compiler-hosted",
-        ":plugins:compose-compiler-plugin:testutils-gradle-plugin",
-        ":plugins:compose-compiler-plugin:compiler-daemon", // Should be removed after a while
-        ":plugins:compose-compiler-plugin:compiler-daemon:integration-tests" // Should be removed after a while
+        ":plugins:compose-compiler-plugin:testutils-gradle-plugin"
 
 // Swift Export modules
 include ":native:swift:sir",

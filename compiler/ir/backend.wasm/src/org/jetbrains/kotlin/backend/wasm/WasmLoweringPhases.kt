@@ -202,6 +202,12 @@ private val jsInteropFunctionCallsLowering = makeIrModulePhase(
     description = "Replace calls to delegates",
 )
 
+private val enumWhenPhase = makeIrModulePhase(
+    ::EnumWhenLowering,
+    name = "EnumWhenLowering",
+    description = "[Optimization] Replace `when` subjects of enum types with their ordinals"
+)
+
 private val enumClassConstructorLoweringPhase = makeIrModulePhase(
     ::EnumClassConstructorLowering,
     name = "EnumClassConstructorLowering",
@@ -646,6 +652,7 @@ val loweringList = listOf(
 
     tailrecLoweringPhase,
 
+    enumWhenPhase,
     enumClassConstructorLoweringPhase,
     enumClassConstructorBodyLoweringPhase,
     enumEntryInstancesLoweringPhase,

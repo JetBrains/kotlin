@@ -95,6 +95,12 @@ public class FirStandaloneNormalAnalysisSourceModuleDoubleColonReceiverTypeTestG
   }
 
   @Test
+  @TestMetadata("nullableType.kt")
+  public void testNullableType() {
+    runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/nullableType.kt");
+  }
+
+  @Test
   @TestMetadata("outerThisReceiver.kt")
   public void testOuterThisReceiver() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/outerThisReceiver.kt");

@@ -21,7 +21,7 @@ open class C : A<Int>()
 
 interface D : B<Int>
 
-<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class E<!> : C(), D
+<!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class E<!> : C(), D
 
 fun main() {
     E().foo(42)

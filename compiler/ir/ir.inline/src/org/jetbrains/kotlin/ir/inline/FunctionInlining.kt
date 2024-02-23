@@ -38,14 +38,25 @@ import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-interface InlineFunctionResolver {
-    fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction = symbol.owner
-    fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
-        return Symbols.isLateinitIsInitializedPropertyGetter(symbol) || Symbols.isTypeOfIntrinsic(symbol)
+abstract class InlineFunctionResolver {
+    open val allowExternalInlining: Boolean
+        get() = false
+
+    private val IrFunction.needsInlining get() = this.isInline && (allowExternalInlining || !this.isExternal)
+
+    open fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
+        if (shouldExcludeFunctionFromInlining(symbol)) return null
+
+        val owner = symbol.owner
+        return (owner as? IrSimpleFunction)?.resolveFakeOverride() ?: owner
+    }
+
+    protected open fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
+        return !symbol.owner.needsInlining || Symbols.isLateinitIsInitializedPropertyGetter(symbol) || Symbols.isTypeOfIntrinsic(symbol)
     }
 
     companion object {
-        val TRIVIAL = object : InlineFunctionResolver {}
+        val TRIVIAL = object : InlineFunctionResolver() {}
     }
 }
 
@@ -55,9 +66,9 @@ fun IrFunction.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean =
         StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
     )
 
-open class InlineFunctionResolverReplacingCoroutineIntrinsics(open val context: CommonBackendContext) : InlineFunctionResolver {
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
-        val function = symbol.owner
+open class InlineFunctionResolverReplacingCoroutineIntrinsics(open val context: CommonBackendContext) : InlineFunctionResolver() {
+    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
+        val function = super.getFunctionDeclaration(symbol) ?: return null
         // TODO: Remove these hacks when coroutine intrinsics are fixed.
         return when {
             function.isBuiltInSuspendCoroutineUninterceptedOrReturn() ->
@@ -79,7 +90,6 @@ class FunctionInlining(
     private val alwaysCreateTemporaryVariablesForArguments: Boolean = false,
     private val regenerateInlinedAnonymousObjects: Boolean = false,
     private val inlineArgumentsWithOriginalOffset: Boolean = false,
-    private val allowExternalInlining: Boolean = false,
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
     private var containerScope: ScopeWithIr? = null
 
@@ -96,17 +106,14 @@ class FunctionInlining(
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         expression.transformChildrenVoid(this)
-        val callee = when (expression) {
-            is IrCall -> expression.symbol.owner
-            is IrConstructorCall -> expression.symbol.owner
+        val calleeSymbol = when (expression) {
+            is IrCall -> expression.symbol
+            is IrConstructorCall -> expression.symbol
             else -> return expression
         }
-        if (!callee.needsInlining || inlineFunctionResolver.shouldExcludeFunctionFromInlining(callee.symbol))
-            return expression
 
-        val target = (callee as? IrSimpleFunction)?.resolveFakeOverride() ?: callee
-        val actualCallee = inlineFunctionResolver.getFunctionDeclaration(target.symbol)
-        if (actualCallee.body == null) {
+        val actualCallee = inlineFunctionResolver.getFunctionDeclaration(calleeSymbol)
+        if (actualCallee?.body == null) {
             return expression
         }
 
@@ -119,7 +126,7 @@ class FunctionInlining(
             ?: containerScope?.irElement as? IrDeclarationParent
             ?: (containerScope?.irElement as? IrDeclaration)?.parent
 
-        val inliner = Inliner(expression, actualCallee, target, currentScope ?: containerScope!!, parent, context)
+        val inliner = Inliner(expression, actualCallee, currentScope ?: containerScope!!, parent, context)
         return inliner.inline().markAsRegenerated()
     }
 
@@ -140,12 +147,9 @@ class FunctionInlining(
         return this
     }
 
-    private val IrFunction.needsInlining get() = this.isInline && (allowExternalInlining || !this.isExternal)
-
     private inner class Inliner(
         val callSite: IrFunctionAccessExpression,
         val callee: IrFunction,
-        val originalCallee: IrFunction,
         val currentScope: ScopeWithIr,
         val parent: IrDeclarationParent?,
         val context: CommonBackendContext
@@ -165,7 +169,7 @@ class FunctionInlining(
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
 
-        fun inline() = inlineFunction(callSite, callee, originalCallee, true)
+        fun inline() = inlineFunction(callSite, callee, callee, true)
 
         private fun <E : IrElement> E.copy(): E {
             @Suppress("UNCHECKED_CAST")
@@ -381,9 +385,7 @@ class FunctionInlining(
                 val inlinedFunction = inlinedFunctionSymbol.owner
                 return inlineFunctionReference(
                     irCall, irFunctionReference,
-                    if (inlinedFunction.needsInlining)
-                        inlineFunctionResolver.getFunctionDeclaration(inlinedFunction.symbol)
-                    else inlinedFunction
+                    inlineFunctionResolver.getFunctionDeclaration(inlinedFunction.symbol) ?: inlinedFunction
                 )
             }
 
@@ -489,7 +491,7 @@ class FunctionInlining(
                         putTypeArgument(index, irFunctionReference.getTypeArgument(index))
                 }
 
-                return if (inlinedFunction.needsInlining && inlinedFunction.body != null) {
+                return if (inlineFunctionResolver.getFunctionDeclaration(inlinedFunction.symbol)?.body != null) {
                     inlineFunction(immediateCall, inlinedFunction, irFunctionReference, performRecursiveInline = true)
                 } else {
                     val transformedExpression = super.visitExpression(immediateCall).transform(this@FunctionInlining, null)

@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.util.*
+import kotlin.math.exp
 
 internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
     session: FirSession,
@@ -103,21 +104,18 @@ internal fun JavaValueParameter.toFirValueParameter(
 internal fun JavaAnnotationArgument.toFirExpression(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack, expectedTypeRef: FirTypeRef?
 ): FirExpression {
-    return when (this) {
+    val expectedConeType = expectedTypeRef?.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
+    val expectedArrayElementTypeIfArray = expectedConeType?.lowerBoundIfFlexible()?.arrayElementType() ?: expectedConeType
+    val argument = when (this) {
         is JavaLiteralAnnotationArgument -> value.createConstantOrError(
             session,
-            expectedTypeRef?.resolveIfJavaType(session, javaTypeParameterStack)
+            expectedArrayElementTypeIfArray
         )
         is JavaArrayAnnotationArgument -> buildArrayLiteral {
-            val argumentTypeRef = expectedTypeRef?.let {
-                val type = if (it is FirJavaTypeRef) {
-                    it.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
-                } else {
-                    it.coneType
-                }
-                coneTypeOrNull = type
+            val argumentTypeRef = expectedConeType?.let {
+                coneTypeOrNull = it
                 buildResolvedTypeRef {
-                    this.type = type.lowerBoundIfFlexible().arrayElementType()
+                    this.type = it.lowerBoundIfFlexible().arrayElementType()
                         ?: ConeErrorType(ConeSimpleDiagnostic("expected type is not array type"))
                 }
             }
@@ -131,7 +129,7 @@ internal fun JavaAnnotationArgument.toFirExpression(
             // a static import. In this case, the parameter default initializer will not have its type set, which isn't usually an
             // issue except in edge cases like KT-47702 where we do need to evaluate the default values of annotations.
             // As a fallback, we use the expected type which should be the type of the enum.
-            classId = requireNotNull(enumClassId ?: expectedTypeRef?.coneTypeOrNull?.lowerBoundIfFlexible()?.classId),
+            classId = requireNotNull(enumClassId ?: expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId),
             entryName = entryName
         )
         is JavaClassObjectAnnotationArgument -> buildGetClassCall {
@@ -151,6 +149,17 @@ internal fun JavaAnnotationArgument.toFirExpression(
         else -> buildErrorExpression {
             diagnostic = ConeSimpleDiagnostic("Unknown JavaAnnotationArgument: ${this::class.java}", DiagnosticKind.Java)
         }
+    }
+
+    return if (expectedConeType?.lowerBoundIfFlexible()?.isArrayOrPrimitiveArray == true && argument !is FirArrayLiteral) {
+        buildArrayLiteral {
+            coneTypeOrNull = expectedConeType
+            argumentList = buildArgumentList {
+                arguments += argument
+            }
+        }
+    } else {
+        argument
     }
 }
 

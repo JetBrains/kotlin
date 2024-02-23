@@ -11,4 +11,4 @@ import kotlin.native.internal.*
 @ExperimentalStdlibApi
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.ENUM_ENTRIES)
-internal actual external inline fun <reified T : Enum<T>> enumEntriesIntrinsic(): EnumEntries<T>
+internal actual external fun <T : Enum<T>> enumEntriesIntrinsic(): EnumEntries<T>

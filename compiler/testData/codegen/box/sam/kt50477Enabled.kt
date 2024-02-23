@@ -1,6 +1,5 @@
 // !LANGUAGE: +SuspendOnlySamConversions
 // TARGET_BACKEND: JVM_IR
-// JVM_ABI_K1_K2_DIFF: KT-62855
 
 fun interface FI {
     suspend fun call() // suspending now(!!!)

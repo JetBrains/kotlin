@@ -131,10 +131,7 @@ class FirJvmScriptRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
             Regex("param: (\\S.*)").find(ktFile.text)?.let { it.groups[1]?.value?.split(" ") }
                 .orEmpty().toTypedArray()
         val scriptInstance = ctor.newInstance(args)
-        var anyExpectationFound = false
         for ((fieldName, expectedValue) in expected) {
-            anyExpectationFound = true
-
             if (expectedValue == "<nofield>") {
                 try {
                     scriptClass.getDeclaredField(fieldName)
@@ -150,7 +147,6 @@ class FirJvmScriptRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
             val resultString = result?.toString() ?: "null"
             assertions.assertEquals(expectedValue, resultString) { "comparing field $fieldName" }
         }
-        assertions.assertTrue(anyExpectationFound) { "expecting at least one expectation" }
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {

@@ -21,6 +21,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import java.io.File
 import java.lang.Character.isLowerCase
 import java.lang.Character.isUpperCase
@@ -411,10 +412,8 @@ fun Project.confugureFirPluginAnnotationsDependency(testTask: TaskProvider<Test>
 }
 
 private fun Project.optInTo(annotationFqName: String) {
-    tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
-        kotlinOptions {
-            freeCompilerArgs += "-opt-in=$annotationFqName"
-        }
+    tasks.withType<KotlinCompilationTask<*>>().configureEach {
+        compilerOptions.optIn.add(annotationFqName)
     }
 }
 

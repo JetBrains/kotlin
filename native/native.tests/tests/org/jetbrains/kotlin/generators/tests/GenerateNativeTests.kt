@@ -459,33 +459,37 @@ fun main() {
                 model("standalone")
             }
         }
+        val binaryLibraryKinds = mapOf(
+            "Static" to binaryLibraryKind("STATIC"),
+            "Dynamic" to binaryLibraryKind("DYNAMIC"),
+        )
+        val frontendFlags = mapOf(
+            "Classic" to arrayOf(),
+            "Fir" to frontendFir(),
+        )
         // C Export
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
-            testClass<AbstractNativeCExportDynamicTest>(
-                suiteTestClassName = "CExportTestDynamicGenerated"
-            ) {
-                model("CExport", pattern = "^([^_](.+))$", recursive = false)
-            }
-            testClass<AbstractNativeCExportDynamicTest>(
-                suiteTestClassName = "FirCExportTestDynamicGenerated",
-                annotations = listOf(
-                    *frontendFir()
-                ),
-            ) {
-                model("CExport", pattern = "^([^_](.+))$", recursive = false)
-            }
-            testClass<AbstractNativeCExportStaticTest>(
-                suiteTestClassName = "CExportTestStaticGenerated"
-            ) {
-                model("CExport", pattern = "^([^_](.+))$", recursive = false)
-            }
-            testClass<AbstractNativeCExportStaticTest>(
-                suiteTestClassName = "FirCExportTestStaticGenerated",
-                annotations = listOf(
-                    *frontendFir()
-                ),
-            ) {
-                model("CExport", pattern = "^([^_](.+))$", recursive = false)
+            val cinterfaceModes = mapOf(
+                "InterfaceV1" to cinterfaceMode("V1"),
+                "InterfaceNone" to cinterfaceMode("NONE")
+            )
+            binaryLibraryKinds.forEach { binaryKind ->
+                frontendFlags.forEach { frontend ->
+                    cinterfaceModes.forEach { cinterfaceMode ->
+                        val frontendKey = if (frontend.key == "Classic") "" else frontend.key
+                        val suiteTestClassName = "${frontendKey}CExport${binaryKind.key}${cinterfaceMode.key}TestGenerated"
+                        testClass<AbstractNativeCExportTest>(
+                            suiteTestClassName,
+                            annotations = listOf(
+                                binaryKind.value,
+                                cinterfaceMode.value,
+                                *frontend.value
+                            )
+                        ) {
+                            model("CExport/${cinterfaceMode.key}", pattern = "^([^_](.+))$", recursive = false)
+                        }
+                    }
+                }
             }
         }
         // Swift Export
@@ -563,4 +567,14 @@ private fun standalone() = arrayOf(
         "property" to ClassLevelProperty.TEST_KIND,
         "propertyValue" to "STANDALONE_NO_TR"
     )
+)
+private fun binaryLibraryKind(kind: String = "DYNAMIC") = annotation(
+    EnforcedProperty::class.java,
+    "property" to ClassLevelProperty.BINARY_LIBRARY_KIND,
+    "propertyValue" to kind
+)
+private fun cinterfaceMode(mode: String = "V1") = annotation(
+    EnforcedProperty::class.java,
+    "property" to ClassLevelProperty.C_INTERFACE_MODE,
+    "propertyValue" to mode
 )

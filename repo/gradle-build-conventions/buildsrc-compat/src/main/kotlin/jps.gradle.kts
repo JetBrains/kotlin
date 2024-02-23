@@ -98,6 +98,7 @@ fun JUnit.configureForKotlin(xmx: String = "1600m") {
         "-Xmx$xmx",
         "-XX:+UseCodeCacheFlushing",
         "-XX:ReservedCodeCacheSize=128m",
+        "-XX:+UseParallelGC",
         "-Djna.nosys=true",
         "-Didea.platform.prefix=Idea",
         "-Didea.is.unit.test=true",
@@ -137,7 +138,7 @@ fun setupGenerateAllTestsRunConfiguration() {
 // Needed because of idea.ext plugin doesn't allow to set TEST_SEARCH_SCOPE = moduleWithDependencies
 fun setupFirRunConfiguration() {
 
-    val junit = JUnit("_stub").apply { configureForKotlin("2048m") }
+    val junit = JUnit("_stub").apply { configureForKotlin("4096m") }
     junit.moduleName = "kotlin.compiler.fir.fir2ir.test"
     junit.pattern = """^.*\.FirPsi\w+Test\w*Generated$"""
     junit.vmParameters = junit.vmParameters.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")
