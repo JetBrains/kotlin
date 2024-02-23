@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCallInfo
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.SmartList
 
 abstract class FirLookupTrackerComponent : FirSessionComponent {
@@ -48,7 +49,7 @@ fun FirLookupTrackerComponent.recordTypeResolveAsLookup(type: ConeKotlinType?, s
     if (source == null && fileSource == null) return // TODO: investigate all cases
     if (type is ConeErrorType) return // TODO: investigate whether some cases should be recorded, e.g. unresolved
     type.classId?.let {
-        if (!it.isLocal) {
+        if (!it.isLocal && it !in StandardClassIds.allBuiltinTypes) {
             if (it.shortClassName.asString() != "Companion") {
                 recordLookup(it.shortClassName, it.packageFqName.asString(), source, fileSource)
             } else {

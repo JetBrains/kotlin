@@ -20,11 +20,11 @@ package foo.bar
 }
 
 
-/*p:foo.bar*/val x1 by /*p:foo.bar p:foo.bar(D2) p:foo.bar(provideDelegate) p:foo.bar.D1(getValue) p:foo.bar.D1(provideDelegate) p:kotlin(Int) p:kotlin.reflect p:kotlin.reflect(KProperty0) p:kotlin.reflect(provideDelegate)*/D1()
-/*p:foo.bar*/var y1 by /*p:foo.bar p:foo.bar(D2) p:foo.bar(provideDelegate) p:foo.bar(setValue) p:foo.bar.D1(getValue) p:foo.bar.D1(provideDelegate) p:foo.bar.D1(setValue) p:kotlin(Int) p:kotlin(Unit) p:kotlin.reflect p:kotlin.reflect(KMutableProperty0) p:kotlin.reflect(provideDelegate) p:kotlin.reflect(setValue)*/D1()
+/*p:foo.bar*/val x1 by /*p:foo.bar p:foo.bar(D2) p:foo.bar(provideDelegate) p:foo.bar.D1(getValue) p:foo.bar.D1(provideDelegate) p:kotlin.reflect p:kotlin.reflect(KProperty0) p:kotlin.reflect(provideDelegate)*/D1()
+/*p:foo.bar*/var y1 by /*p:foo.bar p:foo.bar(D2) p:foo.bar(provideDelegate) p:foo.bar(setValue) p:foo.bar.D1(getValue) p:foo.bar.D1(provideDelegate) p:foo.bar.D1(setValue) p:kotlin.reflect p:kotlin.reflect(KMutableProperty0) p:kotlin.reflect(provideDelegate) p:kotlin.reflect(setValue)*/D1()
 
-/*p:foo.bar*/val x2 by /*p:foo.bar p:foo.bar(getValue) p:foo.bar(provideDelegate) p:foo.bar.D2(getValue) p:foo.bar.D2(provideDelegate) p:kotlin(Int) p:kotlin.reflect p:kotlin.reflect(KProperty0) p:kotlin.reflect(getValue) p:kotlin.reflect(provideDelegate)*/D2()
-/*p:foo.bar*/var y2 by /*p:foo.bar p:foo.bar(getValue) p:foo.bar(provideDelegate) p:foo.bar.D2(getValue) p:foo.bar.D2(provideDelegate) p:foo.bar.D2(setValue) p:kotlin(Int) p:kotlin(Unit) p:kotlin.reflect p:kotlin.reflect(KMutableProperty0) p:kotlin.reflect(getValue) p:kotlin.reflect(provideDelegate)*/D2()
+/*p:foo.bar*/val x2 by /*p:foo.bar p:foo.bar(getValue) p:foo.bar(provideDelegate) p:foo.bar.D2(getValue) p:foo.bar.D2(provideDelegate) p:kotlin.reflect p:kotlin.reflect(KProperty0) p:kotlin.reflect(getValue) p:kotlin.reflect(provideDelegate)*/D2()
+/*p:foo.bar*/var y2 by /*p:foo.bar p:foo.bar(getValue) p:foo.bar(provideDelegate) p:foo.bar.D2(getValue) p:foo.bar.D2(provideDelegate) p:foo.bar.D2(setValue) p:kotlin.reflect p:kotlin.reflect(KMutableProperty0) p:kotlin.reflect(getValue) p:kotlin.reflect(provideDelegate)*/D2()
 
-/*p:foo.bar*/val x3 by /*p:foo.bar p:foo.bar(getValue) p:foo.bar.D3(getValue) p:foo.bar.D3(provideDelegate) p:kotlin(Int) p:kotlin.reflect p:kotlin.reflect(KProperty0) p:kotlin.reflect(getValue)*/D3()
-/*p:foo.bar*/var y3 by /*p:foo.bar p:foo.bar(getValue) p:foo.bar.D2(setValue) p:foo.bar.D3(getValue) p:foo.bar.D3(provideDelegate) p:foo.bar.D3(setValue) p:kotlin(Int) p:kotlin(Unit) p:kotlin.reflect p:kotlin.reflect(KMutableProperty0) p:kotlin.reflect(getValue)*/D3()
+/*p:foo.bar*/val x3 by /*p:foo.bar p:foo.bar(getValue) p:foo.bar.D3(getValue) p:foo.bar.D3(provideDelegate) p:kotlin.reflect p:kotlin.reflect(KProperty0) p:kotlin.reflect(getValue)*/D3()
+/*p:foo.bar*/var y3 by /*p:foo.bar p:foo.bar(getValue) p:foo.bar.D2(setValue) p:foo.bar.D3(getValue) p:foo.bar.D3(provideDelegate) p:foo.bar.D3(setValue) p:kotlin.reflect p:kotlin.reflect(KMutableProperty0) p:kotlin.reflect(getValue)*/D3()

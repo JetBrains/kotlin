@@ -3,12 +3,12 @@ package local.declarations
 import bar.*
 
 /*p:local.declarations*/fun f(p: /*p:bar p:local.declarations*/Any) {
-    /*p:kotlin(String) p:kotlin.Any(toString)*/p.toString()
+    /*p:kotlin.Any(toString)*/p.toString()
 
     val a = 1
     val b = a
     fun localFun() = b
-    fun /*p:bar p:local.declarations*/Int.localExtFun() = /*p:kotlin(Int)*/localFun()
+    fun /*p:bar p:local.declarations*/Int.localExtFun() = localFun()
 
     abstract class LocalI {
         abstract var a: /*p:bar p:local.declarations*/Int
@@ -30,20 +30,20 @@ import bar.*
         fun foo(): /*p:bar p:local.declarations*/LocalI = null as /*p:bar p:local.declarations*/LocalI
     }
 
-    /*p:kotlin(Int)*/localFun()
-    /*p:IOT(localExtFun) p:kotlin(Int)*/1.localExtFun()
+    localFun()
+    /*p:IOT(localExtFun)*/1.localExtFun()
 
     val c = LocalC()
-    /*p:kotlin(Int)*/c.a
-    /*p:kotlin(String)*/c.b
-    /*p:kotlin(Unit)*/c.foo()
-    /*p:kotlin(Int)*/c.bar()
+    c.a
+    c.b
+    c.foo()
+    c.bar()
 
     val i: /*p:bar p:local.declarations*/LocalI = c
-    /*p:kotlin(Int)*/i.a
-    /*p:kotlin(Unit)*/i.foo()
+    i.a
+    i.foo()
 
-    /*p:kotlin(String)*/o.a
+    o.a
     val ii = o.foo()
-    /*p:kotlin(Int)*/ii.a
+    ii.a
 }
