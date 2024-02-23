@@ -77,6 +77,7 @@ fun box() {
 // Array.kt:75 $kotlin.Array.set (8, 20, 27, 16, 8, 20, 27, 16)
 // Array.kt:76 $kotlin.Array.set (5, 5)
 // String.kt:149 $kotlin.stringLiteral (11, 4, 11, 4)
+// ClosureBoxes.kt:8 $kotlin.wasm.internal.ClosureBoxAny.<init> (29, 44)
 // test.kt:22 $box
 // test.kt:9 $box (4, 4)
 // test.kt:15 $<no name provided>.<init>

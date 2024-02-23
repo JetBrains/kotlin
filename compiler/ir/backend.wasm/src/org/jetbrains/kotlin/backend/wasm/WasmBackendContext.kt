@@ -122,8 +122,7 @@ class WasmBackendContext(
     val fieldInitFunction = createInitFunction("fieldInit")
     val mainCallsWrapperFunction = createInitFunction("mainCallsWrapper")
 
-    override val sharedVariablesManager =
-        WasmSharedVariablesManager(this, irBuiltIns, internalPackageFragment)
+    override val sharedVariablesManager = WasmSharedVariablesManager(this)
 
     val wasmSymbols: WasmSymbols = WasmSymbols(this@WasmBackendContext, symbolTable)
     override val reflectionSymbols: ReflectionSymbols get() = wasmSymbols.reflectionSymbols

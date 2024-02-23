@@ -45,7 +45,7 @@ fun box() {
 // EXPECTATIONS WASM
 // test.kt:18 $box
 // test.kt:10 $flaf
-// test.kt:7 $flaf (46, 46, 57)
+// test.kt:7 $flaf (46, 57)
 // test.kt:6 $foo (39, 46)
 // test.kt:7 $flaf$lambda.invoke (52, 55)
 // kotlin-package.kt:6 $flaf$lambda.invoke
