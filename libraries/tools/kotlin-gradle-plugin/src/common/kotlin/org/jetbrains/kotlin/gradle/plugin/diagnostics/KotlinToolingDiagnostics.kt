@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isRegisteredByK
 import org.jetbrains.kotlin.gradle.dsl.NativeTargetShortcutTrace
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -96,6 +97,66 @@ object KotlinToolingDiagnostics {
 
             return build(cause + "\n" + details)
         }
+    }
+
+    object MultipleSourceSetRootsInCompilation : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(
+            kotlinCompilation: KotlinCompilation<*>,
+            unexpectedSourceSetRoot: String,
+            expectedRoot: String,
+        ): ToolingDiagnostic = build(
+            """
+            Kotlin Source Set '$unexpectedSourceSetRoot' is included to '${kotlinCompilation.name}' compilation of '${kotlinCompilation.target.name}' target,
+            but it doesn't depend on '$expectedRoot'.
+            
+            Please remove '$unexpectedSourceSetRoot' and include its sources to the compilation's default source set:
+            
+                kotlin.sourceSets["${kotlinCompilation.defaultSourceSet.name}"].kotlin.srcDir() // <-- pass sources directory of '$unexpectedSourceSetRoot'                     
+
+            Or provide explicit dependency if the solution above is not applicable
+            
+                kotlin.sourceSets["$unexpectedSourceSetRoot"].dependsOn($expectedRoot)    
+
+            See https://kotl.in/connecting-source-sets for more details.
+            """.trimIndent()
+        )
+
+        operator fun invoke(
+            targetNames: Collection<String>,
+            unexpectedSourceSetRoot: String,
+            expectedRoot: String,
+        ): ToolingDiagnostic = build(
+            """
+            Kotlin Source Set '$unexpectedSourceSetRoot' is included in compilations of Kotlin Targets: ${targetNames.joinToString(", ") { "'$it'" }}  
+            but it doesn't depend on '$expectedRoot'
+            
+            Please remove '$unexpectedSourceSetRoot' and include its sources to one of the default source set: https://kotl.in/hierarchy-template
+            For example:
+
+                kotlin.sourceSets.commonMain.kotlin.srcDir() // <-- pass here sources directory
+            
+            Or add explicit dependency if the solution above is not applicable:
+            
+                kotlin.sourceSets["$unexpectedSourceSetRoot"].dependsOn($expectedRoot)
+            
+            See https://kotl.in/connecting-source-sets for more details.
+            """.trimIndent()
+        )
+
+        operator fun invoke(kotlinCompilation: KotlinCompilation<*>, sourceSetRoots: Collection<String>) = build(
+            """
+            Kotlin Source Sets: ${sourceSetRoots.joinToString(", ") { "'$it'" }} 
+            are included to '${kotlinCompilation.name}' compilation of '${kotlinCompilation.target.name}' target.
+            However, they have no common source set root between them.
+            
+            Please remove these kotlin source sets and include their source directories to the compilation's default source set.
+            
+                kotlin.sourceSets["${kotlinCompilation.defaultSourceSet.name}"].kotlin.srcDir() // <-- pass sources directories here 
+            
+            Or, if the solution above is not applicable, specify `dependsOn` edges between these source sets so that there are no multiple roots.
+            See https://kotl.in/connecting-source-sets for more details.
+            """.trimIndent()
+        )
     }
 
     object AndroidSourceSetLayoutV1Deprecation : ToolingDiagnosticFactory(ERROR) {

@@ -1,0 +1,23 @@
+[KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy Template was not applied to 'root project 'secondCommonMain'':
+Explicit .dependsOn() edges were configured for the following source sets:
+[jsMain, jvmMain, linuxX64Main]
+
+Consider removing dependsOn-calls or disabling the default template by adding
+    'kotlin.mpp.applyDefaultHierarchyTemplate=false'
+to your gradle.properties
+
+Learn more about hierarchy templates: https://kotl.in/hierarchy-template
+----
+[MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Set 'commonMain2' is included in compilations of Kotlin Targets: 'jvm', 'js', 'linuxX64'
+but it doesn't depend on 'commonMain'
+
+Please remove 'commonMain2' and include its sources to one of the default source set: https://kotl.in/hierarchy-template
+For example:
+
+    kotlin.sourceSets.commonMain.kotlin.srcDir() // <-- pass here sources directory
+
+Or add explicit dependency if the solution above is not applicable:
+
+    kotlin.sourceSets["commonMain2"].dependsOn(commonMain)
+
+See https://kotl.in/connecting-source-sets for more details.
