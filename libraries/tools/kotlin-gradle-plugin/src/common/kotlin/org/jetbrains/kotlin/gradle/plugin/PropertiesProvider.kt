@@ -66,11 +66,6 @@ import org.jetbrains.kotlin.util.prefixIfNot
 import java.io.File
 
 internal class PropertiesProvider private constructor(private val project: Project) {
-
-    @Deprecated(message = "Please use kotlin.build.report.output=SINGLE_FILE and kotlin.build.report.single_file ")
-    val singleBuildMetricsFile: File?
-        get() = property("kotlin.internal.single.build.metrics.file").orNull?.let { File(it) }
-
     val buildReportSingleFile: File?
         get() = property(PropertyNames.KOTLIN_BUILD_REPORT_SINGLE_FILE).orNull?.let { File(it) }
 
@@ -112,10 +107,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val buildReportVerbose: Boolean
         get() = booleanProperty("kotlin.build.report.verbose") ?: false
-
-    @Deprecated("Please use \"kotlin.build.report.file.output_dir\" property instead")
-    val buildReportDir: File?
-        get() = property("kotlin.build.report.dir").orNull?.let { File(it) }
 
     val incrementalJvm: Boolean?
         get() = booleanProperty("kotlin.incremental")

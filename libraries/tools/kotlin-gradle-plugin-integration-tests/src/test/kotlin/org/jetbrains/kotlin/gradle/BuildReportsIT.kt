@@ -237,21 +237,36 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("deprecated property")
+    @DisplayName("single build report output")
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
     )
     @GradleTest
-    fun testDeprecatedAndNewSingleBuildMetricsFile(gradleVersion: GradleVersion) {
+    fun testSingleBuildMetricsFile(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             val newMetricsPath = projectPath.resolve("metrics.bin")
-            val deprecatedMetricsPath = projectPath.resolve("deprecated_metrics.bin")
             build(
                 "compileKotlin", "-Pkotlin.build.report.single_file=${newMetricsPath.pathString}",
-                "-Pkotlin.internal.single.build.metrics.file=${deprecatedMetricsPath.pathString}"
+                "-Pkotlin.build.report.output=single_file"
             )
-            assertTrue { deprecatedMetricsPath.exists() }
-            assertTrue { newMetricsPath.notExists() }
+            assertTrue { newMetricsPath.exists() }
+        }
+    }
+
+    @DisplayName("deprecated properties")
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+    )
+    @GradleTest
+    fun testDeprecatedReportProperties(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            val deprecatedMetricsPath = projectPath.resolve("deprecated_metrics.bin")
+            buildAndFail(
+                "compileKotlin", "-Pkotlin.build.report.dir=${projectPath.resolve("reports").pathString}",
+                "-Pkotlin.internal.single.build.metrics.file=${projectPath.resolve("deprecated_metrics.bin").pathString}"
+            ) {
+                assertOutputContains("[kotlin.internal.single.build.metrics.file, kotlin.build.report.dir] properties were deprecated and are not supported anymore. Please, delete them from project properties ")
+            }
         }
     }
 
