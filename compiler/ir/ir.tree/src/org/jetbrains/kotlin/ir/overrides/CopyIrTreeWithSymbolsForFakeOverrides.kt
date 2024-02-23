@@ -110,6 +110,16 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
         override fun visitBlockBody(body: IrBlockBody) {} // don't visit function body and parameter default values
         override fun visitExpressionBody(body: IrExpressionBody) {} // don't visit function body and parameter default values
 
+        override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?) {
+            // In case of FIR tests with JVM IR serialization enabled, even accessing the function body with `IrFunction.body` does not work
+            // in some cases because it tries to load IR and ends up with unbound symbols for some reason (most likely related to KT-63509).
+            // So we avoid accessing the body by copying the `IrFunction.acceptChildren` implementation and removing the `body.accept` call.
+            declaration.typeParameters.forEach { it.accept(this, data) }
+            declaration.dispatchReceiverParameter?.accept(this, data)
+            declaration.extensionReceiverParameter?.accept(this, data)
+            declaration.valueParameters.forEach { it.accept(this, data) }
+        }
+
         override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol {
             val result = super.getReferencedClassifier(symbol)
             if (result !is IrTypeParameterSymbol)
