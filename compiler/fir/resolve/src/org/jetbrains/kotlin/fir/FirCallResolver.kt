@@ -375,7 +375,7 @@ class FirCallResolver(
                     annotations = qualifiedAccess.annotations
                 )
             }
-            referencedSymbol is FirTypeParameterSymbol && referencedSymbol.fir.isReified -> {
+            referencedSymbol is FirTypeParameterSymbol && referencedSymbol.fir.isReified && diagnostic == null -> {
                 return buildResolvedReifiedParameterReference {
                     source = nameReference.source
                     symbol = referencedSymbol
