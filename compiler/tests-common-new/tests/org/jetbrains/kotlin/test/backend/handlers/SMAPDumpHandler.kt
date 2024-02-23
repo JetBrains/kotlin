@@ -66,8 +66,6 @@ class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(tes
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        if (dumper.isEmpty()) return
-
         val separateDumpEnabled = separateDumpsEnabled()
         val isSeparateCompilation = isSeparateCompilation()
 
@@ -83,6 +81,12 @@ class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(tes
             if (testServices.moduleStructure.modules.first().frontendKind == FrontendKinds.FIR && firExpectedFile.exists())
                 firExpectedFile
             else testDataFile.withExtension(extension)
+
+        if (dumper.isEmpty()) {
+            assertions.assertFileDoesntExist(expectedFile, DUMP_SMAP)
+            return
+        }
+
         assertions.assertEqualsToFile(expectedFile, dumper.generateResultingDump())
 
         if (separateDumpEnabled && isSeparateCompilation) {

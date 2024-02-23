@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
+import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.RENDER_ALL_DIAGNOSTICS_FULL_TEXT
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCodeMetaInfo
 import org.jetbrains.kotlin.test.frontend.fir.handlers.toMetaInfos
@@ -61,7 +63,7 @@ fun BinaryArtifactHandler<*>.checkFullDiagnosticRender() {
     val moduleStructure = testServices.moduleStructure
     var needToVerifyDiagnostics = false
     for (module in moduleStructure.modules) {
-        if (DiagnosticsDirectives.RENDER_ALL_DIAGNOSTICS_FULL_TEXT !in module.directives) continue
+        if (RENDER_ALL_DIAGNOSTICS_FULL_TEXT !in module.directives) continue
         needToVerifyDiagnostics = true
         val reportedDiagnostics = mutableListOf<String>()
         for (testFile in module.files) {
@@ -89,15 +91,22 @@ fun BinaryArtifactHandler<*>.checkFullDiagnosticRender() {
         }
     }
 
+    val expectedFile = File(FileUtil.getNameWithoutExtension(moduleStructure.originalTestDataFiles.first().absolutePath) + ".diag.txt")
     if (needToVerifyDiagnostics) {
         testServices.assertions.assertEqualsToFile(
-            File(FileUtil.getNameWithoutExtension(moduleStructure.originalTestDataFiles.first().absolutePath) + ".diag.txt"),
+            expectedFile,
             dumper.generateResultingDump()
         )
+    } else {
+        testServices.assertions.assertFileDoesntExist(expectedFile, RENDER_ALL_DIAGNOSTICS_FULL_TEXT)
     }
 }
 
 private fun renderDiagnosticMessage(fileName: String, severity: Severity, message: String?, line: Int, column: Int): String {
     val severityString = AnalyzerWithCompilerReport.convertSeverity(severity).toString().toLowerCaseAsciiOnly()
     return "/${fileName}:$line:$column: $severityString: $message"
+}
+
+fun Assertions.assertFileDoesntExist(file: File, directive: Directive) {
+    assertFileDoesntExist(file) { "Dump file detected but no '$directive' directive specified or nothing to dump." }
 }

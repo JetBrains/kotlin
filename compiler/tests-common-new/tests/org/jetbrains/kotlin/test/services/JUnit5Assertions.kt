@@ -15,8 +15,6 @@ import java.io.IOException
 import org.junit.jupiter.api.Assertions as JUnit5PlatformAssertions
 
 object JUnit5Assertions : AssertionsService() {
-    val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
-
     override fun assertEqualsToFile(expectedFile: File, actual: String, sanitizer: (String) -> String, message: () -> String) {
         assertEqualsToFile(
             expectedFile,

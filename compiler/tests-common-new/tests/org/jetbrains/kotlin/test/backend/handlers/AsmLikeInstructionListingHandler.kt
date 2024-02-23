@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.codegen.DefaultParameterValueSubstitutor
 import org.jetbrains.kotlin.codegen.getClassFiles
+import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.CHECK_ASM_LIKE_INSTRUCTIONS
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.CURIOUS_ABOUT
@@ -387,8 +388,6 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        if (baseDumper.isEmpty()) return
-
         val irDifference = IR_DIFFERENCE in testServices.moduleStructure.allDirectives
         val firDifference = FIR_DIFFERENCE in testServices.moduleStructure.allDirectives
         val inlineScopesDifference = INLINE_SCOPES_DIFFERENCE in testServices.moduleStructure.allDirectives
@@ -409,8 +408,13 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
 
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         val file = testDataFile.withExtension(extension)
-        assertions.assertEqualsToFile(file, baseDumper.generateResultingDump())
 
+        if (baseDumper.isEmpty()) {
+            assertions.assertFileDoesntExist(file, CHECK_ASM_LIKE_INSTRUCTIONS)
+            return
+        }
+
+        assertions.assertEqualsToFile(file, baseDumper.generateResultingDump())
 
         val noIrDump = testDataFile.withExtension(DUMP_EXTENSION)
         val irDump = testDataFile.withExtension(IR_DUMP_EXTENSION)
