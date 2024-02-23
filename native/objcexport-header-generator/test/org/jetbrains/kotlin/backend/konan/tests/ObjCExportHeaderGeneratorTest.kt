@@ -307,6 +307,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("specialFunctionNames"))
     }
 
+    @Test
+    fun `test - vararg`() {
+        doTest(headersTestDataDir.resolve("vararg"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

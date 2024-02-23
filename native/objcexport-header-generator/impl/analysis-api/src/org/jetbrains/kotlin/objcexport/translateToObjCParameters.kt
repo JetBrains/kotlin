@@ -1,12 +1,15 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.components.buildClassType
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.backend.konan.objcexport.*
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.psi.KtParameter
 
 context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtFunctionLikeSymbol.translateToObjCParameters(baseMethodBridge: MethodBridge): List<ObjCParameter> {
@@ -41,8 +44,15 @@ internal fun KtFunctionLikeSymbol.translateToObjCParameters(baseMethodBridge: Me
         usedNames += uniqueName
 
         val type = when (bridge) {
-            is MethodBridgeValueParameter.Mapped ->
-                parameter!!.returnType.translateToObjCType(bridge.bridge)
+            is MethodBridgeValueParameter.Mapped -> {
+                val returnType = parameter!!.returnType
+                if (parameter.isVararg) {
+                    //vararg is a special case, [parameter.returnType] is T, we need Array<T>
+                    buildClassType(StandardClassIds.Array) { argument(parameter.returnType) }.translateToObjCType(bridge.bridge)
+                } else {
+                    returnType.translateToObjCType(bridge.bridge)
+                }
+            }
             MethodBridgeValueParameter.ErrorOutParameter ->
                 ObjCPointerType(ObjCNullableReferenceType(ObjCClassType("NSError")), nullable = true)
 
