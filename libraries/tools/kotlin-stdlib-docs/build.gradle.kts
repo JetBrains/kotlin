@@ -8,7 +8,7 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
-val isTeamcityBuild = project.hasProperty("teamcity.version")
+val isTeamcityBuild = project.hasProperty("teamcity.version") || System.getenv("TEAMCITY_VERSION") != null
 
 // kotlin/libraries/tools/kotlin-stdlib-docs  ->  kotlin
 val kotlin_root = rootProject.file("../../../").absoluteFile.invariantSeparatorsPath
