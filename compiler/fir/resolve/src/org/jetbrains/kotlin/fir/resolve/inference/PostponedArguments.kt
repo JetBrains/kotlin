@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.types.model.typeConstructor
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 fun Candidate.preprocessLambdaArgument(
     csBuilder: ConstraintSystemBuilder,
@@ -120,17 +121,18 @@ private fun extractLambdaInfo(
         argument.returnType
             ?: typeVariable.defaultType
 
-    val defaultType = when (candidate?.symbol?.origin) {
-        FirDeclarationOrigin.DynamicScope -> ConeDynamicType.create(session)
-        else -> session.builtinTypes.nothingType.type
+    val defaultType = runIf(candidate?.symbol?.origin == FirDeclarationOrigin.DynamicScope) { ConeDynamicType.create(session) }
+
+    val parameters = argument.valueParameters.mapIndexed { i, it ->
+        it.returnTypeRef.coneTypeSafe<ConeKotlinType>()
+            ?: defaultType
+            ?: ConeTypeVariableForLambdaParameterType("_P$i").apply { csBuilder.registerVariable(this) }.defaultType
     }
 
-    val parameters = argument.valueParameters.map {
-        it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: defaultType
-    }
-
-    val contextReceivers = argument.contextReceivers.map {
-        it.typeRef.coneTypeSafe<ConeKotlinType>() ?: defaultType
+    val contextReceivers = argument.contextReceivers.mapIndexed { i, it ->
+        it.typeRef.coneTypeSafe<ConeKotlinType>()
+            ?: defaultType
+            ?: ConeTypeVariableForLambdaParameterType("_C$i").apply { csBuilder.registerVariable(this) }.defaultType
     }
 
     val newTypeVariableUsed = returnType == typeVariable.defaultType

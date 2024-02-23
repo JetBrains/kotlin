@@ -2,7 +2,7 @@ FILE: main.kt
     public final fun foo(m: R|MyRunnable|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        Q|JavaUsage|.R|/JavaUsage.foo*s<Inapplicable(INAPPLICABLE): /JavaUsage.foo>#|(<L> = foo@fun <anonymous>(x: R|kotlin/Nothing|): R|kotlin/Boolean| <inline=Unknown>  {
+        Q|JavaUsage|.R|/JavaUsage.foo*s<Inapplicable(INAPPLICABLE): /JavaUsage.foo>#|(<L> = foo@fun <anonymous>(x: <ERROR TYPE REF: Cannot infer type for parameter x>): <ERROR TYPE REF: Cannot infer type variable TypeVariable(_L)> <inline=Unknown>  {
             ^ CMP(>, R|<local>/x|.<Unresolved name: compareTo>#(Int(1)))
         }
         )

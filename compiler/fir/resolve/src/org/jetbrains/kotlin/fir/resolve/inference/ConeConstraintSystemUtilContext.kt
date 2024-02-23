@@ -108,8 +108,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         index: Int
     ): TypeVariableMarker {
         return ConeTypeVariableForLambdaParameterType(
-            PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_PREFIX_FOR_LAMBDA_PARAMETER_TYPE + index,
-            index
+            PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_PREFIX_FOR_LAMBDA_PARAMETER_TYPE + index
         )
     }
 
