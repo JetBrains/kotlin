@@ -208,6 +208,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("compareWithReified.kt")
+    public void testCompareWithReified() {
+      runTest("compiler/testData/diagnostics/tests/compareWithReified.kt");
+    }
+
+    @Test
     @TestMetadata("comparingArbitraryClasses.kt")
     public void testComparingArbitraryClasses() {
       runTest("compiler/testData/diagnostics/tests/comparingArbitraryClasses.kt");
