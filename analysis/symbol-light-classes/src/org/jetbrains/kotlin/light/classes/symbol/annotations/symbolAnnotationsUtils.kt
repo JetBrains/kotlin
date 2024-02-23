@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.annotations.KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue
 import org.jetbrains.kotlin.analysis.api.components.buildClassType
+import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.asJava.classes.annotateByTypeAnnotationProvider
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.getContainingSymbolsWithSelf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_CLASS_ID
@@ -90,6 +92,28 @@ internal fun KtAnnotatedSymbol.hasJvmStaticAnnotation(
 ): Boolean = hasAnnotation(JvmStandardClassIds.Annotations.JvmStatic, useSiteTargetFilter)
 
 internal fun KtAnnotatedSymbol.hasInlineOnlyAnnotation(): Boolean = hasAnnotation(StandardClassIds.Annotations.InlineOnly)
+
+context(KtAnalysisSession)
+internal fun KtDeclarationSymbol.suppressWildcardMode(
+    declarationFilter: (KtDeclarationSymbol) -> Boolean = { true },
+): Boolean? {
+    return getContainingSymbolsWithSelf().firstNotNullOfOrNull { symbol ->
+        symbol.takeIf(declarationFilter)?.suppressWildcard()
+    }
+}
+
+internal fun KtAnnotatedSymbol.suppressWildcard(): Boolean? {
+    if (hasJvmWildcardAnnotation()) return true
+    return getJvmSuppressWildcardsFromAnnotation()
+}
+
+internal fun KtAnnotatedSymbol.getJvmSuppressWildcardsFromAnnotation(): Boolean? {
+    return annotationsByClassId(JvmStandardClassIds.Annotations.JvmSuppressWildcards).firstOrNull()?.let { annoApp ->
+        (annoApp.arguments.firstOrNull()?.expression as? KtConstantAnnotationValue)?.constantValue?.value as? Boolean
+    }
+}
+
+internal fun KtAnnotatedSymbol.hasJvmWildcardAnnotation(): Boolean = hasAnnotation(JvmStandardClassIds.Annotations.JvmWildcard)
 
 internal fun KtAnnotatedSymbol.findAnnotation(
     classId: ClassId,

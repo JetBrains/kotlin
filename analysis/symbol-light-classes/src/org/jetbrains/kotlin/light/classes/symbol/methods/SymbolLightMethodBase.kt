@@ -134,4 +134,6 @@ internal abstract class SymbolLightMethodBase(
     }
 
     abstract fun isOverride(): Boolean
+
+    internal open fun suppressWildcards(): Boolean? = null
 }

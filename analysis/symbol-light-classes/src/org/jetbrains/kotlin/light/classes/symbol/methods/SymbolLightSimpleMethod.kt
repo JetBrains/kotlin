@@ -234,6 +234,7 @@ internal class SymbolLightSimpleMethod(
                 allowErrorTypes = true,
                 typeMappingMode,
                 this@SymbolLightSimpleMethod.containingClass.isAnnotationType,
+                suppressWildcards = suppressWildcards(),
             )?.let {
                 annotateByKtType(it.type, ktType, it, modifierList)
             }
