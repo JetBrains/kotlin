@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.executor
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Binaries
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.GCScheduler
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.executor
 import org.jetbrains.kotlin.konan.test.blackbox.targets
 import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
@@ -84,6 +86,10 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
 
     @Test
     fun testDriverProducesRunnableBinaries() {
+        Assumptions.assumeFalse(HostManager.hostIsMingw &&
+            testRunSettings.get<CacheMode>() == CacheMode.WithoutCache &&
+            testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG
+        ) // KT-65963
         val module = TestModule.Exclusive("moduleName", emptySet(), emptySet(), emptySet())
         val kexe = buildDir.resolve("kexe.kexe").also { it.delete() }
         val compilation = ExecutableCompilation(
@@ -108,6 +114,10 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
 
     @Test
     fun testDriverVersion() {
+        Assumptions.assumeFalse(HostManager.hostIsMingw &&
+                                        testRunSettings.get<CacheMode>() == CacheMode.WithoutCache &&
+                                        testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG
+        ) // KT-65963
         // No need to test with different GC schedulers
         Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
 
@@ -130,6 +140,10 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
 
     @Test
     fun testOverrideKonanProperties() {
+        Assumptions.assumeFalse(HostManager.hostIsMingw &&
+                                        testRunSettings.get<CacheMode>() == CacheMode.WithoutCache &&
+                                        testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG
+        ) // KT-65963
         // No need to test with different GC schedulers
         Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
 
