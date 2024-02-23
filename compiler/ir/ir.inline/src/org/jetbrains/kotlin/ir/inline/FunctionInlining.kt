@@ -162,7 +162,7 @@ class FunctionInlining(
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
 
-        fun inline() = inlineFunction(callSite, callee, callee, true)
+        fun inline() = inlineFunction(callSite, callee, callee.originalFunction, true)
 
         private fun <E : IrElement> E.copy(): E {
             @Suppress("UNCHECKED_CAST")
