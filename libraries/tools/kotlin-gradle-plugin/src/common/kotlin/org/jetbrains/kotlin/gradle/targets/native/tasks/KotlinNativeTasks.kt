@@ -6,7 +6,6 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.*
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCInteropRunner.Companion.run
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -277,13 +275,12 @@ internal constructor(
     final override val compilation: KotlinCompilationInfo,
     override val compilerOptions: KotlinNativeCompilerOptions,
     private val objectFactory: ObjectFactory,
-    private val providerFactory: ProviderFactory,
+    providerFactory: ProviderFactory,
     private val execOperations: ExecOperations,
 ) : AbstractKotlinNativeCompile<KotlinCommonOptions, K2NativeCompilerArguments>(objectFactory),
-    KotlinCompile<KotlinCommonOptions>,
+    KotlinNativeCompileTask,
     K2MultiplatformCompilationTask,
     UsesBuildMetricsService,
-    KotlinCompilationTask<KotlinNativeCompilerOptions>,
     UsesBuildFusService,
     UsesKotlinNativeBundleBuildService {
 

@@ -44,7 +44,6 @@ abstract class KotlinCompileCommon @Inject constructor(
     workerExecutor: WorkerExecutor,
     objectFactory: ObjectFactory
 ) : AbstractKotlinCompile<K2MetadataCompilerArguments>(objectFactory, workerExecutor),
-    KotlinCompilationTask<KotlinMultiplatformCommonCompilerOptions>,
     KotlinCommonCompile {
 
     init {

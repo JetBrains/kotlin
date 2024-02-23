@@ -50,7 +50,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
     objectFactory: ObjectFactory,
     workerExecutor: WorkerExecutor,
 ) : AbstractKotlinCompile<K2JSCompilerArguments>(objectFactory, workerExecutor),
-    KotlinCompilationTask<KotlinJsCompilerOptions>,
     UsesLibraryFilterCachingService,
     UsesBuildFusService,
     KotlinJsCompile,

@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
  *
  * @see [KotlinCommonOptions]
  */
+@Deprecated(
+    message = "Replaced with 'KotlinCompilationTask' that exposes the compiler options DSL. More details are here: https://kotl.in/u1r8ln"
+)
 @KotlinGradlePluginDsl
 interface KotlinCompile<out T : KotlinCommonOptions> : Task {
 
