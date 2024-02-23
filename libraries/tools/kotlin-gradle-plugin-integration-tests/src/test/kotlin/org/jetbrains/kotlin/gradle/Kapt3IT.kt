@@ -156,10 +156,6 @@ open class Kapt3ClassLoadersCacheIT : Kapt3IT() {
     override fun testMultipleProcessingPasses(gradleVersion: GradleVersion) {
     }
 
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    override fun useK2KaptProperty(gradleVersion: GradleVersion) {
-    }
-
     override fun testAnnotationProcessorAsFqName(gradleVersion: GradleVersion) {
         project("annotationProcessorAsFqName".withPrefix, gradleVersion) {
             //classloaders caching is not compatible with includeCompileClasspath
@@ -1336,41 +1332,6 @@ open class Kapt3IT : Kapt3BaseIT() {
                 assertKaptSuccessful()
                 assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
                 assertOutputContains("Falling back to 1.9.")
-            }
-        }
-    }
-
-    @DisplayName("K2 Kapt can be enabled via Gradle property kapt.use.k2")
-    @GradleTest
-    open fun useK2KaptProperty(gradleVersion: GradleVersion) {
-        project("simple".withPrefix, gradleVersion) {
-            buildGradle.appendText(
-                """
-                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-                |    compilerOptions {
-                |        freeCompilerArgs.addAll([
-                |            "-Xuse-fir-ic",
-                |            "-Xuse-fir-lt"
-                |        ])
-                |    }
-                |    kotlinOptions {
-                |        languageVersion = "2.0"
-                |    }
-                |}
-                |
-                |compileKotlin.kotlinOptions.allWarningsAsErrors = false
-                """.trimMargin()
-            )
-            build("-Pkapt.use.k2=true", "build") {
-                assertKaptSuccessful()
-                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
-                assertOutputDoesNotContain("Falling back to 1.9.")
-                assertOutputContains("K2 kapt is an experimental feature. Use with caution.")
-            }
-            build("-Pkapt.use.k2=true", "cleanCompileKotlin", "compileKotlin") {
-                assertTasksExecuted(":compileKotlin")
-                // The warning should not be displayed for the compile task.
-                assertOutputDoesNotContain("K2 kapt is an experimental feature. Use with caution.")
             }
         }
     }

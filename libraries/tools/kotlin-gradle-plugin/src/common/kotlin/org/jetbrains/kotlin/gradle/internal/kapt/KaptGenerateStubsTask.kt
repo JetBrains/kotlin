@@ -75,9 +75,6 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     @get:Input
     abstract val verbose: Property<Boolean>
 
-    @get:Input
-    abstract val useK2Kapt: Property<Boolean>
-
     /**
      * Changes in this additional sources will trigger stubs regeneration,
      * but the sources themselves will not be used to find kapt annotations and generate stubs.
@@ -138,10 +135,6 @@ abstract class KaptGenerateStubsTask @Inject constructor(
 
             args.verbose = verbose.get()
             args.destinationAsFile = destinationDirectory.get().asFile
-
-            if (useK2Kapt.get()) {
-                args.freeArgs += "-Xuse-kapt4"
-            }
         }
 
         pluginClasspath { args ->
@@ -163,5 +156,5 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     }
 
     override fun isIncrementalCompilationEnabled(): Boolean =
-        super.isIncrementalCompilationEnabled() && !useK2Kapt.get() && ("-Xuse-kapt4" !in compilerOptions.freeCompilerArgs.get())
+        super.isIncrementalCompilationEnabled() && ("-Xuse-kapt4" !in compilerOptions.freeCompilerArgs.get())
 }
