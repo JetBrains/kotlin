@@ -2859,6 +2859,12 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
     }
 
     @Test
+    @TestMetadata("FieldsFromJavaClass.kt")
+    public void testFieldsFromJavaClass() {
+      runTest("compiler/testData/ir/irText/firProblems/FieldsFromJavaClass.kt");
+    }
+
+    @Test
     @TestMetadata("Fir2IrClassifierStorage.kt")
     public void testFir2IrClassifierStorage() {
       runTest("compiler/testData/ir/irText/firProblems/Fir2IrClassifierStorage.kt");
@@ -2970,12 +2976,6 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
     @TestMetadata("LocalSuspendFun.kt")
     public void testLocalSuspendFun() {
       runTest("compiler/testData/ir/irText/firProblems/LocalSuspendFun.kt");
-    }
-
-    @Test
-    @TestMetadata("MissingFieldInJavaClass.kt")
-    public void testMissingFieldInJavaClass() {
-      runTest("compiler/testData/ir/irText/firProblems/MissingFieldInJavaClass.kt");
     }
 
     @Test

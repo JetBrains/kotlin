@@ -1,6 +1,6 @@
-CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:X modality:OPEN visibility:public/*package*/ superTypes:[<root>.J]
+CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:X modality:OPEN visibility:public superTypes:[<root>.J]
   $this: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB name:<this> type:<root>.X
-  CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public/*package*/ <> () returnType:<root>.X [primary]
+  CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public <> () returnType:<root>.X [primary]
   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
     overridden:
       public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.J
