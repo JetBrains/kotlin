@@ -126,6 +126,7 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
         }
         task.libraries.setFrom(project.configurations.getByName(librariesConfigurationName))
         task.exportLibraries.setFrom(project.configurations.getByName(exportConfigurationName))
+        @Suppress("DEPRECATION")
         task.kotlinOptions(kotlinOptionsFn)
     }
     project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(resultTask)
