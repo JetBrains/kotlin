@@ -45,7 +45,8 @@ internal class KtFe10PsiTypeProvider(
         useSitePosition: PsiElement,
         mode: KtTypeMappingMode,
         isAnnotationMethod: Boolean,
-        allowErrorTypes: Boolean
+        suppressWildcards: Boolean?,
+        allowErrorTypes: Boolean,
     ): PsiTypeElement? {
         val kotlinType = (type as KtFe10Type).fe10Type
 
@@ -57,10 +58,18 @@ internal class KtFe10PsiTypeProvider(
 
         if (!analysisSession.useSiteModule.platform.has<JvmPlatform>()) return null
 
-        return asPsiTypeElement(simplifyType(kotlinType), useSitePosition, mode.toTypeMappingMode(type, isAnnotationMethod))
+        return asPsiTypeElement(
+            simplifyType(kotlinType),
+            useSitePosition,
+            mode.toTypeMappingMode(type, isAnnotationMethod, suppressWildcards),
+        )
     }
 
-    private fun KtTypeMappingMode.toTypeMappingMode(type: KtType, isAnnotationMethod: Boolean): TypeMappingMode {
+    private fun KtTypeMappingMode.toTypeMappingMode(
+        type: KtType,
+        isAnnotationMethod: Boolean,
+        suppressWildcards: Boolean?,
+    ): TypeMappingMode {
         require(type is KtFe10Type)
         return when (this) {
             KtTypeMappingMode.DEFAULT -> TypeMappingMode.DEFAULT
@@ -79,7 +88,11 @@ internal class KtFe10PsiTypeProvider(
             if (type.fe10Type.arguments.isEmpty())
                 typeMappingMode
             else
-                typeMappingMode.updateArgumentModeFromAnnotations(type.fe10Type, typeMapper.typeContext)
+                typeMappingMode.updateArgumentModeFromAnnotations(
+                    type.fe10Type,
+                    typeMapper.typeContext,
+                    suppressWildcards,
+                )
         }
     }
 

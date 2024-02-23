@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNO
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 fun TypeMappingMode.updateArgumentModeFromAnnotations(
-    type: KotlinTypeMarker, typeSystem: TypeSystemCommonBackendContext
+    type: KotlinTypeMarker,
+    typeSystem: TypeSystemCommonBackendContext,
+    suppressWildcardsByContainingDeclaration: Boolean? = null,
 ): TypeMappingMode {
     type.suppressWildcardsMode(typeSystem)?.let {
         return TypeMappingMode.createWithConstantDeclarationSiteWildcardsMode(
@@ -29,6 +31,20 @@ fun TypeMappingMode.updateArgumentModeFromAnnotations(
             skipDeclarationSiteWildcards = false,
             isForAnnotationParameter = isForAnnotationParameter,
             fallbackMode = this,
+            needInlineClassWrapping = needInlineClassWrapping,
+            mapTypeAliases = mapTypeAliases
+        )
+    }
+
+    // For example,
+    //   @JvmSuppressWildcards(true)
+    //   fun deepOpen(x: Out<Out<Out<Open>>>) {}
+    // Instead of the return type, the annotation associated with the declaration indicates that its type signature,
+    // including return type and parameter types, need to suppress wildcards.
+    suppressWildcardsByContainingDeclaration?.let {
+        return TypeMappingMode.createWithConstantDeclarationSiteWildcardsMode(
+            skipDeclarationSiteWildcards = it,
+            isForAnnotationParameter = isForAnnotationParameter,
             needInlineClassWrapping = needInlineClassWrapping,
             mapTypeAliases = mapTypeAliases
         )
