@@ -239,6 +239,20 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitWhen(expression: IrWhen, context: JsGenerationContext): JsExpression {
+        if (expression.origin == IrStatementOrigin.ANDAND) {
+            return JsBinaryOperation(
+                JsBinaryOperator.AND,
+                expression.branches[0].condition.accept(this, context),
+                expression.branches[0].result.accept(this, context)
+            )
+        }
+        if (expression.origin == IrStatementOrigin.OROR) {
+            return JsBinaryOperation(
+                JsBinaryOperator.OR,
+                expression.branches[0].condition.accept(this, context),
+                expression.branches[1].result.accept(this, context)
+            )
+        }
         val lastBranch = expression.branches.lastOrNull()
         val implicitElse =
             if (lastBranch == null || !isElseBranch(lastBranch))
