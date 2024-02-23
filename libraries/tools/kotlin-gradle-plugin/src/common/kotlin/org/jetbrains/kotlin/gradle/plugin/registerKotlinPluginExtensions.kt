@@ -144,6 +144,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, DuplicateSourceSetChecker)
         register(project, CInteropInputChecker)
         register(project, IncorrectNativeDependenciesChecker)
+        register(project, GradleDeprecatedPropertyChecker)
 
         if (isMultiplatform) {
             register(project, KotlinMultiplatformAndroidGradlePluginCompatibilityChecker)

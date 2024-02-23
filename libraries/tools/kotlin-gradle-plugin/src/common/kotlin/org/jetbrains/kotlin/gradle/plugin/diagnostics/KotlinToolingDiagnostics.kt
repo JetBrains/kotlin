@@ -808,6 +808,16 @@ object KotlinToolingDiagnostics {
             """.trimIndent()
         )
     }
+
+    object DeprecatedGradleProperties : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(usedDeprecatedProperties: List<String>): ToolingDiagnostic {
+            return build(
+                """
+                    $usedDeprecatedProperties properties were deprecated and are not supported anymore. Please, delete them from project properties.
+                """.trimMargin()
+            )
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
