@@ -168,7 +168,7 @@ fun Project.configureKotlinCompilationOptions() {
             // This is a workaround for KT-50876, but with no clear explanation why doFirst is used.
             // However, KGP with Native targets is used in the native-xctest project, and this code fails with
             //  The value for property 'freeCompilerArgs' is final and cannot be changed any further.
-            if (project.path != ":native:kotlin-test-native-xctest") {
+            if (project.path != ":native:kotlin-test-native-xctest" && !project.path.startsWith(":native:objcexport-header-generator")) {
                 doFirst {
                     if (!useAbsolutePathsInKlib) {
                         (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs +=

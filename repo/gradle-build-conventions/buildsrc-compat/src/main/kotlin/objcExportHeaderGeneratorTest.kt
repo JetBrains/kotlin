@@ -19,11 +19,20 @@ fun Project.objCExportHeaderGeneratorTest(
     tag = null,
     requirePlatformLibs = false,
 ) {
+    /* Prepare klibs that can be used in tests as dependencies */
+    dependsOn(":native:objcexport-header-generator:testLibraryA:prepareTestKlib")
+    dependsOn(":native:objcexport-header-generator:testLibraryB:prepareTestKlib")
+
     useJUnitPlatform()
     enableJunit5ExtensionsAutodetection()
+
+    /* Special 'Kotlin in Fleet' flag that can switch test mode to 'local development' */
     systemProperty("kif.local", project.providers.gradleProperty("kif.local").isPresent)
+
+    /* Tests will show this displayName as an additional tag (e.g., to differentiate between K1 and AA tests) */
     if (testDisplayNameTag != null) {
         systemProperty("testDisplayName.tag", testDisplayNameTag)
     }
+
     configure()
 }

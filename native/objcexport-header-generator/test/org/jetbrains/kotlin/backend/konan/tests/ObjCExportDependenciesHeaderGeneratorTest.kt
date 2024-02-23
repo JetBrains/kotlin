@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.tests
 
-import org.jetbrains.kotlin.backend.konan.testUtils.HeaderGenerator
-import org.jetbrains.kotlin.backend.konan.testUtils.TodoAnalysisApi
-import org.jetbrains.kotlin.backend.konan.testUtils.dependenciesDir
+import org.jetbrains.kotlin.backend.konan.testUtils.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -21,7 +19,7 @@ import kotlin.test.fail
  * - stubs orders
  * - depth of traversing (some types must be skipped
  */
-class ObjCDependenciesTypesTest(
+class ObjCExportDependenciesHeaderGeneratorTest(
     private val generator: HeaderGenerator,
 ) {
 
@@ -58,9 +56,21 @@ class ObjCDependenciesTypesTest(
         doTest(dependenciesDir.resolve("implementIterator"))
     }
 
-    private fun doTest(root: File) {
+    @Test
+    fun `test - exportedAndNotExportedDependency`() {
+        doTest(
+            dependenciesDir.resolve("exportedAndNotExportedDependency"), configuration = HeaderGenerator.Configuration(
+                frameworkName = "MyApp",
+                generateBaseDeclarationStubs = true,
+                dependencies = listOf(testLibraryAKlibFile, testLibraryBKlibFile),
+                exportedDependencyModuleNames = setOf("org.jetbrains.kotlin:testLibraryA")
+            )
+        )
+    }
+
+    private fun doTest(root: File, configuration: HeaderGenerator.Configuration = HeaderGenerator.Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
-        val generatedHeaders = generator.generateHeaders(root, HeaderGenerator.Configuration()).toString()
+        val generatedHeaders = generator.generateHeaders(root, configuration).toString()
         KotlinTestUtils.assertEqualsToFile(root.resolve("!${root.nameWithoutExtension}.h"), generatedHeaders)
     }
 }
