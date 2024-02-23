@@ -267,7 +267,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinCompile$DefaultImpls {
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/KotlinCompileKt {
-	public static final field KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE Ljava/lang/String;
 }
 
 public abstract interface annotation class org/jetbrains/kotlin/gradle/dsl/KotlinGradlePluginDsl : java/lang/annotation/Annotation {

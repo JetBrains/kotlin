@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-import groovy.lang.Closure
 import org.gradle.api.Task
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinToolTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile as KotlinJvmCompileApi
 
 @Suppress("DEPRECATION")
@@ -41,21 +41,21 @@ internal interface KotlinNativeCompileTask : KotlinCompile<KotlinCommonOptions>,
 interface KotlinCommonCompile : KotlinCompile<KotlinMultiplatformCommonOptions>,
     KotlinCompilationTask<KotlinMultiplatformCommonCompilerOptions>
 
-interface KotlinJsDce : Task {
+interface KotlinJsDce : Task, KotlinToolTask<KotlinJsDceCompilerToolOptions> {
+
+    @Deprecated(KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE)
     @get:Internal
     val dceOptions: KotlinJsDceOptions
 
-    @get:Input
-    val keep: MutableList<String>
-
+    @Suppress("DEPRECATION")
+    @Deprecated(KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE)
     fun dceOptions(fn: KotlinJsDceOptions.() -> Unit) {
         dceOptions.fn()
     }
 
-    fun dceOptions(fn: Closure<*>) {
-        fn.delegate = dceOptions
-        fn.call()
-    }
+    @get:Input
+    val keep: MutableList<String>
+
 
     fun keep(vararg fqn: String)
 }

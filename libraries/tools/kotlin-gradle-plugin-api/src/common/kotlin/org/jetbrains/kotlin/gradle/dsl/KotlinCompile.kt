@@ -71,4 +71,4 @@ const val KOTLIN_OPTIONS_DEPRECATION_MESSAGE = "Please migrate to the compilerOp
  * @suppress
  */
 @InternalKotlinGradlePluginApi
-const val KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE = "Please migrate to toolOptions DSL. More details are here: https://kotl.in/u1r8ln"
+const val KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE = "Please migrate to the toolOptions DSL. More details are here: https://kotl.in/u1r8ln"
