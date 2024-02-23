@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
@@ -38,7 +36,6 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.io.File
 import javax.inject.Inject
 
 abstract class KotlinJsIrTarget
@@ -304,28 +301,33 @@ constructor(
     }
 
     override fun useCommonJs() {
-        compilations.all {
-            it.kotlinOptions.configureCommonJsOptions()
+        compilations.configureEach { jsCompilation ->
+            jsCompilation.compileTaskProvider.configure {
+                compilerOptions.configureCommonJsOptions()
+            }
 
-            it.binaries
+            jsCompilation.binaries
                 .withType(JsIrBinary::class.java)
-                .all {
+                .configureEach {
                     it.linkTask.configure { linkTask ->
-                        linkTask.kotlinOptions.configureCommonJsOptions()
+                        linkTask.compilerOptions.configureCommonJsOptions()
                     }
                 }
         }
     }
 
     override fun useEsModules() {
-        compilations.all {
-            it.kotlinOptions.configureEsModulesOptions()
+        compilations.configureEach { jsCompilation ->
+            // Here it is essential to configure compilation compiler options as npm queries
+            // compilation fileExtension before any task configuration action is done
+            @Suppress("DEPRECATION")
+            jsCompilation.compilerOptions.options.configureEsModulesOptions()
 
-            it.binaries
+            jsCompilation.binaries
                 .withType(JsIrBinary::class.java)
-                .all {
+                .configureEach {
                     it.linkTask.configure { linkTask ->
-                        linkTask.kotlinOptions.configureEsModulesOptions()
+                        linkTask.compilerOptions.configureEsModulesOptions()
                     }
                 }
         }
@@ -346,16 +348,16 @@ constructor(
             }
     }
 
-    private fun KotlinJsOptions.configureCommonJsOptions() {
-        moduleKind = "commonjs"
-        sourceMap = true
-        sourceMapEmbedSources = "never"
+    private fun KotlinJsCompilerOptions.configureCommonJsOptions() {
+        moduleKind.convention(JsModuleKind.MODULE_COMMONJS)
+        sourceMap.convention(true)
+        sourceMapEmbedSources.convention(JsSourceMapEmbedMode.SOURCE_MAP_SOURCE_CONTENT_NEVER)
     }
 
-    private fun KotlinJsOptions.configureEsModulesOptions() {
-        moduleKind = "es"
-        sourceMap = true
-        sourceMapEmbedSources = "never"
+    private fun KotlinJsCompilerOptions.configureEsModulesOptions() {
+        moduleKind.convention(JsModuleKind.MODULE_ES)
+        sourceMap.convention(true)
+        sourceMapEmbedSources.convention(JsSourceMapEmbedMode.SOURCE_MAP_SOURCE_CONTENT_NEVER)
     }
 
     override fun generateTypeScriptDefinitions() {
