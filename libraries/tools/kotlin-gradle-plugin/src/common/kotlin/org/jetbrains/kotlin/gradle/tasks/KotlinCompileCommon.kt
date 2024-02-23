@@ -40,7 +40,7 @@ import javax.inject.Inject
 
 @CacheableTask
 abstract class KotlinCompileCommon @Inject constructor(
-    override val compilerOptions: KotlinMultiplatformCommonCompilerOptions,
+    final override val compilerOptions: KotlinMultiplatformCommonCompilerOptions,
     workerExecutor: WorkerExecutor,
     objectFactory: ObjectFactory
 ) : AbstractKotlinCompile<K2MetadataCompilerArguments>(objectFactory, workerExecutor),
@@ -51,6 +51,7 @@ abstract class KotlinCompileCommon @Inject constructor(
         compilerOptions.verbose.convention(logger.isDebugEnabled)
     }
 
+    @Deprecated(KOTLIN_OPTIONS_DEPRECATION_MESSAGE)
     override val kotlinOptions: KotlinMultiplatformCommonOptions = KotlinMultiplatformCommonOptionsCompat(
         { this },
         compilerOptions

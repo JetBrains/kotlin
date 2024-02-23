@@ -6,7 +6,7 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.tasks
 
-import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.*
@@ -187,21 +187,10 @@ abstract class AbstractKotlinNativeCompile<
     @Deprecated(
         message = "AbstractKotlinNativeCompile will not provide access to kotlinOptions." +
                 " Implementations should provide access to compilerOptions",
+        level = DeprecationLevel.ERROR
     )
     @get:Internal
     abstract val kotlinOptions: T
-
-    @Deprecated(
-        message = "AbstractKotlinNativeCompile will not provide access to kotlinOptions()." +
-                " Implementations should provide access to compilerOptions()",
-    )
-    abstract fun kotlinOptions(fn: T.() -> Unit)
-
-    @Deprecated(
-        message = "AbstractKotlinNativeCompile will not provide access to kotlinOptions()." +
-                " Implementations should provide access to compilerOptions()",
-    )
-    abstract fun kotlinOptions(fn: Closure<*>)
 
     @Deprecated("Use implementations compilerOptions to get/set freeCompilerArgs")
     @get:Input
@@ -391,23 +380,10 @@ internal constructor(
 
     // region Kotlin options
 
+    @Deprecated(KOTLIN_OPTIONS_DEPRECATION_MESSAGE)
     override val kotlinOptions: KotlinCommonOptions = object : KotlinCommonOptions {
         override val options: KotlinCommonCompilerOptions
             get() = compilerOptions
-    }
-
-    override fun kotlinOptions(fn: KotlinCommonOptions.() -> Unit) {
-        kotlinOptions.fn()
-    }
-
-    @Deprecated(
-        message = "Replaced with kotlinOptions()",
-        replaceWith = ReplaceWith("kotlinOptions(fn)")
-    )
-    override fun kotlinOptions(fn: Closure<*>) {
-        @Suppress("DEPRECATION")
-        fn.delegate = kotlinOptions
-        fn.call()
     }
 
     @Suppress("UNCHECKED_CAST")

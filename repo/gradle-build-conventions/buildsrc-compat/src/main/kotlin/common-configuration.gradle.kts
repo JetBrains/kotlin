@@ -1,5 +1,4 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
@@ -171,6 +170,7 @@ fun Project.configureKotlinCompilationOptions() {
             if (project.path != ":native:kotlin-test-native-xctest") {
                 doFirst {
                     if (!useAbsolutePathsInKlib) {
+                        @Suppress("DEPRECATION")
                         (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs +=
                             "-Xklib-relative-path-base=${layout.buildDirectory.get().asFile},${layout.projectDirectory.asFile},$rootDir"
                     }
