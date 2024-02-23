@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.executor
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Binaries
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.GCScheduler
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
@@ -43,14 +44,29 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
 
     @Test
     fun testLLVMVariantDev() {
-        // We use clang from Xcode on macOS for apple targets,
-        // so it is hard to reliably detect LLVM variant for these targets.
+        // On macOS for apple targets, clang++ from Xcode is used, which is not switchable as `dev/user`,
+        // so the test cannot detect LLVM variant for apple targets on macOS host.
         Assumptions.assumeFalse(targets.hostTarget.family.isAppleFamily && targets.testTarget.family.isAppleFamily)
         // No need to test with different GC schedulers
         Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
 
-        val flags = listOf("-Xllvm-variant=dev", "-Xverbose-phases=ObjectFiles")
-        val args = mutableListOf("-output", buildDir.resolve("kexe.kexe").absolutePath).apply {
+        compileSimpleFile(listOf("-Xllvm-variant=dev", "-Xverbose-phases=ObjectFiles")).let {
+            assertFalse(
+                it.stdout.contains("-essentials"),
+                "`-essentials` must not be in stdout of dev LLVM.\nSTDOUT: ${it.stdout}\nSTDERR: ${it.stderr}\n---"
+            )
+        }
+        compileSimpleFile(listOf("-Xllvm-variant=user", "-Xverbose-phases=ObjectFiles")).let {
+            assertTrue(
+                it.stdout.contains("-essentials"),
+                "`-essentials` must be in stdout of user LLVM.\nSTDOUT: ${it.stdout}\nSTDERR: ${it.stderr}\n---"
+            )
+        }
+    }
+
+    private fun compileSimpleFile(flags: List<String>): RunProcessResult {
+        val kexe = buildDir.resolve("kexe.kexe").also { it.delete() }
+        val args = mutableListOf("-output", kexe.absolutePath).apply {
             add("-target")
             add(targets.testTarget.visibleName)
             addAll(flags)
@@ -59,22 +75,17 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             add("-Xpartial-linkage-loglevel=error")
         }
 
-        val compilationResult: RunProcessResult = runProcess(konanc.absolutePath, source.absolutePath, *args.toTypedArray()) {
+        val compilationResult = runProcess(konanc.absolutePath, source.absolutePath, *args.toTypedArray<String>()) {
             timeout = Duration.parse("5m")
         }
-        assertFalse(
-            compilationResult.stdout.contains("-essentials"),
-            "`-essentials` must not be in stdout of dev LLVM.\nSTDOUT: ${compilationResult.stdout}\nSTDERR: ${compilationResult.stderr}\n---"
-        )
+        testRunSettings.executor.runProcess(kexe.absolutePath) // run generated executable just to check its sanity
+        return compilationResult
     }
 
     @Test
     fun testDriverProducesRunnableBinaries() {
-        // No need to test with different GC schedulers
-        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
-
         val module = TestModule.Exclusive("moduleName", emptySet(), emptySet(), emptySet())
-        val kexe = buildDir.resolve("kexe.kexe")
+        val kexe = buildDir.resolve("kexe.kexe").also { it.delete() }
         val compilation = ExecutableCompilation(
             settings = testRunSettings,
             freeCompilerArgs = TestCompilerArgs.EMPTY,
@@ -87,10 +98,34 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         runProcess(konanc.absolutePath, source.absolutePath, *compilation.getCompilerArgs()) {
             timeout = Duration.parse("5m")
         }
-        val runResult: RunProcessResult = runProcess(kexe.absolutePath) {
-            timeout = Duration.parse("5m")
+        val runResult: RunProcessResult = with(testRunSettings) {
+            executor.runProcess(kexe.absolutePath) {
+                timeout = Duration.parse("1m")
+            }
         }
         assertEquals("Hello, world!", runResult.stdout)
+    }
+
+    @Test
+    fun testDriverVersion() {
+        // No need to test with different GC schedulers
+        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
+
+        val module = TestModule.Exclusive("moduleName", emptySet(), emptySet(), emptySet())
+        val kexe = buildDir.resolve("kexe.kexe").also { it.delete() }
+        val compilation = ExecutableCompilation(
+            settings = testRunSettings,
+            freeCompilerArgs = TestCompilerArgs(listOf("-version")),
+            sourceModules = listOf(module),
+            extras = TestCase.NoTestRunnerExtras("main"),
+            dependencies = emptyList(),
+            expectedArtifact = TestCompilationArtifact.Executable(kexe),
+            tryPassSystemCacheDirectory = true
+        )
+        runProcess(konanc.absolutePath, source.absolutePath, *compilation.getCompilerArgs()) {
+            timeout = Duration.parse("5m")
+        }
+        assertFalse(kexe.exists())
     }
 
     @Test
@@ -99,7 +134,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
 
         val module = TestModule.Exclusive("moduleName", emptySet(), emptySet(), emptySet())
-        val kexe = buildDir.resolve("kexe.kexe")
+        val kexe = buildDir.resolve("kexe.kexe").also { it.delete() }
         val compilation = ExecutableCompilation(
             settings = testRunSettings,
             freeCompilerArgs = TestCompilerArgs(
@@ -125,5 +160,6 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             "Compiler's stdout must contain string: $expected\n" +
                     "STDOUT:\n${compilationResult.stdout}\nSTDERR:${compilationResult.stderr}"
         )
+        testRunSettings.executor.runProcess(kexe.absolutePath)
     }
 }

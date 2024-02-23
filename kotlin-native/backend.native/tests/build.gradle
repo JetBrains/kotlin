@@ -1292,26 +1292,6 @@ standaloneTest("split_compilation_pipeline") {
     useGoldenData = true
 }
 
-tasks.register("override_konan_properties0", KonanDriverTest) {
-    disabled = isAggressiveGC // No need to test with different GC schedulers
-    def overrides = PlatformInfo.isWindows()
-            ? '-Xoverride-konan-properties="llvmInlineThreshold=76"'
-            : '-Xoverride-konan-properties=llvmInlineThreshold=76'
-    flags = [
-            "-opt",
-            "-Xverbose-phases=MandatoryBitcodeLLVMPostprocessingPhase",
-            overrides
-    ]
-    compilerMessages = true
-    source = "link/ir_providers/hello.kt"
-    def messages = "inline_threshold: 76\nhello\n"
-    outputChecker = { out ->
-        messages.split("\n")
-                .collect { line -> out.contains(line) }
-                .every { it == true }
-    }
-}
-
 /**
  * Builds tests into a single binary with TestRunner
  */
