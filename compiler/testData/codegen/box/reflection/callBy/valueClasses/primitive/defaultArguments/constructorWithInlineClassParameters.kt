@@ -3,7 +3,8 @@
 
 import kotlin.test.assertEquals
 
-inline class A(val x: Int)
+@JvmInline
+value class A(val x: Int)
 
 data class TestCtor1_1(val x: A = A(0))
 data class TestCtor1_2(val x: A? = A(0))
