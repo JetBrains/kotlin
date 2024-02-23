@@ -899,21 +899,6 @@ standaloneTest("testing_stacktrace") {
     }
 }
 
-// Just check that the driver is able to produce runnable binaries.
-tasks.register("driver0", KonanDriverTest) {
-    disabled = isAggressiveGC // No need to test with different GC schedulers
-    useGoldenData = true
-    source = "runtime/basic/driver0.kt"
-}
-
-tasks.register("driver_opt", KonanDriverTest) {
-    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
-        || isAggressiveGC // No need to test with different GC schedulers
-    useGoldenData = true
-    source = "runtime/basic/driver_opt.kt"
-    flags = ["-opt"]
-}
-
 // A helper method to create interop artifacts
 void createInterop(String name, Closure conf) {
     konanArtifacts {
