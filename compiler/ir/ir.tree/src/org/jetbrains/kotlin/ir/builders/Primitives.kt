@@ -93,7 +93,7 @@ fun IrGeneratorContextInterface.oror(
     b: IrExpression,
     origin: IrStatementOrigin = IrStatementOrigin.OROR
 ): IrWhen =
-    IrIfThenElseImpl(startOffset, endOffset, irBuiltIns.booleanType, origin).apply {
+    IrWhenImpl(startOffset, endOffset, irBuiltIns.booleanType, origin).apply {
         branches.add(IrBranchImpl(a, constTrue(a.startOffset, a.endOffset)))
         branches.add(elseBranch(b))
     }
@@ -112,7 +112,7 @@ fun IrGeneratorContextInterface.andand(
     b: IrExpression,
     origin: IrStatementOrigin = IrStatementOrigin.ANDAND
 ): IrWhen =
-    IrIfThenElseImpl(startOffset, endOffset, irBuiltIns.booleanType, origin).apply {
+    IrWhenImpl(startOffset, endOffset, irBuiltIns.booleanType, origin).apply {
         branches.add(IrBranchImpl(a, b))
         branches.add(elseBranch(constFalse(b.startOffset, b.endOffset)))
     }

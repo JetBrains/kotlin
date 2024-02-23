@@ -697,7 +697,7 @@ abstract class AbstractComposeLowering(
     }
 
     protected fun irIf(condition: IrExpression, body: IrExpression): IrExpression {
-        return IrIfThenElseImpl(
+        return IrWhenImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             context.irBuiltIns.unitType,
@@ -717,7 +717,7 @@ abstract class AbstractComposeLowering(
         startOffset: Int = UNDEFINED_OFFSET,
         endOffset: Int = UNDEFINED_OFFSET
     ) =
-        IrIfThenElseImpl(startOffset, endOffset, type, IrStatementOrigin.IF).apply {
+        IrWhenImpl(startOffset, endOffset, type, IrStatementOrigin.IF).apply {
             branches.add(
                 IrBranchImpl(
                     startOffset,

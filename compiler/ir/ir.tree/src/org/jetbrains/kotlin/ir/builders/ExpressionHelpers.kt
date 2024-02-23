@@ -96,7 +96,7 @@ fun IrBuilderWithScope.irElseBranch(expression: IrExpression) =
     IrElseBranchImpl(startOffset, endOffset, irTrue(), expression)
 
 fun IrBuilderWithScope.irIfThen(type: IrType, condition: IrExpression, thenPart: IrExpression, origin: IrStatementOrigin? = null) =
-    IrIfThenElseImpl(startOffset, endOffset, type, origin).apply {
+    IrWhenImpl(startOffset, endOffset, type, origin).apply {
         branches.add(IrBranchImpl(startOffset, endOffset, condition, thenPart))
     }
 
@@ -107,7 +107,7 @@ fun IrBuilderWithScope.irIfThenElse(
     elsePart: IrExpression,
     origin: IrStatementOrigin? = null
 ) =
-    IrIfThenElseImpl(startOffset, endOffset, type, origin).apply {
+    IrWhenImpl(startOffset, endOffset, type, origin).apply {
         branches.add(IrBranchImpl(startOffset, endOffset, condition, thenPart))
         branches.add(irElseBranch(elsePart))
     }

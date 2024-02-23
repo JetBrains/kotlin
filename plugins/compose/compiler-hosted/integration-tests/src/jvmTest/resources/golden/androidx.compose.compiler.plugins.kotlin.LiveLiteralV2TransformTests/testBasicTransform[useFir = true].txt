@@ -42,12 +42,15 @@ internal object LiveLiterals%TestKt {
       return Int%arg-0%call-print%fun-A
     }
     val tmp0 = State%Int%arg-0%call-print%fun-A
-    return if (tmp0 == null) {
-      val tmp1 = liveLiteral("Int%arg-0%call-print%fun-A", Int%arg-0%call-print%fun-A)
-      State%Int%arg-0%call-print%fun-A = tmp1
-      tmp1
-    } else {
-      tmp0
+    return when {
+      tmp0 == null -> {
+        val tmp1 = liveLiteral("Int%arg-0%call-print%fun-A", Int%arg-0%call-print%fun-A)
+        State%Int%arg-0%call-print%fun-A = tmp1
+        tmp1
+      }
+      else -> {
+        tmp0
+      }
     }
     .value
   }
@@ -59,12 +62,15 @@ internal object LiveLiterals%TestKt {
       return String%arg-0%call-print-1%fun-A
     }
     val tmp0 = State%String%arg-0%call-print-1%fun-A
-    return if (tmp0 == null) {
-      val tmp1 = liveLiteral("String%arg-0%call-print-1%fun-A", String%arg-0%call-print-1%fun-A)
-      State%String%arg-0%call-print-1%fun-A = tmp1
-      tmp1
-    } else {
-      tmp0
+    return when {
+      tmp0 == null -> {
+        val tmp1 = liveLiteral("String%arg-0%call-print-1%fun-A", String%arg-0%call-print-1%fun-A)
+        State%String%arg-0%call-print-1%fun-A = tmp1
+        tmp1
+      }
+      else -> {
+        tmp0
+      }
     }
     .value
   }
@@ -76,12 +82,15 @@ internal object LiveLiterals%TestKt {
       return Boolean%cond%if%fun-A
     }
     val tmp0 = State%Boolean%cond%if%fun-A
-    return if (tmp0 == null) {
-      val tmp1 = liveLiteral("Boolean%cond%if%fun-A", Boolean%cond%if%fun-A)
-      State%Boolean%cond%if%fun-A = tmp1
-      tmp1
-    } else {
-      tmp0
+    return when {
+      tmp0 == null -> {
+        val tmp1 = liveLiteral("Boolean%cond%if%fun-A", Boolean%cond%if%fun-A)
+        State%Boolean%cond%if%fun-A = tmp1
+        tmp1
+      }
+      else -> {
+        tmp0
+      }
     }
     .value
   }
@@ -93,12 +102,15 @@ internal object LiveLiterals%TestKt {
       return Int%arg-0%call-print%branch%if%fun-A
     }
     val tmp0 = State%Int%arg-0%call-print%branch%if%fun-A
-    return if (tmp0 == null) {
-      val tmp1 = liveLiteral("Int%arg-0%call-print%branch%if%fun-A", Int%arg-0%call-print%branch%if%fun-A)
-      State%Int%arg-0%call-print%branch%if%fun-A = tmp1
-      tmp1
-    } else {
-      tmp0
+    return when {
+      tmp0 == null -> {
+        val tmp1 = liveLiteral("Int%arg-0%call-print%branch%if%fun-A", Int%arg-0%call-print%branch%if%fun-A)
+        State%Int%arg-0%call-print%branch%if%fun-A = tmp1
+        tmp1
+      }
+      else -> {
+        tmp0
+      }
     }
     .value
   }
@@ -110,12 +122,15 @@ internal object LiveLiterals%TestKt {
       return Boolean%cond%if-1%fun-A
     }
     val tmp0 = State%Boolean%cond%if-1%fun-A
-    return if (tmp0 == null) {
-      val tmp1 = liveLiteral("Boolean%cond%if-1%fun-A", Boolean%cond%if-1%fun-A)
-      State%Boolean%cond%if-1%fun-A = tmp1
-      tmp1
-    } else {
-      tmp0
+    return when {
+      tmp0 == null -> {
+        val tmp1 = liveLiteral("Boolean%cond%if-1%fun-A", Boolean%cond%if-1%fun-A)
+        State%Boolean%cond%if-1%fun-A = tmp1
+        tmp1
+      }
+      else -> {
+        tmp0
+      }
     }
     .value
   }
@@ -127,12 +142,15 @@ internal object LiveLiterals%TestKt {
       return Float%arg-0%call-print%branch%if-1%fun-A
     }
     val tmp0 = State%Float%arg-0%call-print%branch%if-1%fun-A
-    return if (tmp0 == null) {
-      val tmp1 = liveLiteral("Float%arg-0%call-print%branch%if-1%fun-A", Float%arg-0%call-print%branch%if-1%fun-A)
-      State%Float%arg-0%call-print%branch%if-1%fun-A = tmp1
-      tmp1
-    } else {
-      tmp0
+    return when {
+      tmp0 == null -> {
+        val tmp1 = liveLiteral("Float%arg-0%call-print%branch%if-1%fun-A", Float%arg-0%call-print%branch%if-1%fun-A)
+        State%Float%arg-0%call-print%branch%if-1%fun-A = tmp1
+        tmp1
+      }
+      else -> {
+        tmp0
+      }
     }
     .value
   }
@@ -144,12 +162,15 @@ internal object LiveLiterals%TestKt {
       return Int%arg-0%call-print-2%fun-A
     }
     val tmp0 = State%Int%arg-0%call-print-2%fun-A
-    return if (tmp0 == null) {
-      val tmp1 = liveLiteral("Int%arg-0%call-print-2%fun-A", Int%arg-0%call-print-2%fun-A)
-      State%Int%arg-0%call-print-2%fun-A = tmp1
-      tmp1
-    } else {
-      tmp0
+    return when {
+      tmp0 == null -> {
+        val tmp1 = liveLiteral("Int%arg-0%call-print-2%fun-A", Int%arg-0%call-print-2%fun-A)
+        State%Int%arg-0%call-print-2%fun-A = tmp1
+        tmp1
+      }
+      else -> {
+        tmp0
+      }
     }
     .value
   }

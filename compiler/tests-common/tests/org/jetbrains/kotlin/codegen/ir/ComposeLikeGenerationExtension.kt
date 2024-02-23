@@ -214,7 +214,7 @@ class ComposeLikeDefaultArgumentRewriter(
     }
 
     private fun irIf(condition: IrExpression, body: IrExpression): IrExpression {
-        return IrIfThenElseImpl(
+        return IrWhenImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             context.irBuiltIns.unitType,
