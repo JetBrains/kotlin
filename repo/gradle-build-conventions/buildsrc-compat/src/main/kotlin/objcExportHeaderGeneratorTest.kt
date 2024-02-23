@@ -19,6 +19,8 @@ fun Project.objCExportHeaderGeneratorTest(
     tag = null,
     requirePlatformLibs = false,
 ) {
+    dependsOn(":objcexport-header-generator:testLibraryA:assemble")
+    dependsOn(":objcexport-header-generator:testLibraryB:assemble")
     useJUnitPlatform()
     enableJunit5ExtensionsAutodetection()
     systemProperty("kif.local", project.providers.gradleProperty("kif.local").isPresent)
