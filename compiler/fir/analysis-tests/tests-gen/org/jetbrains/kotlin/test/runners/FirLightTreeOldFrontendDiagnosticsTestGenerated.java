@@ -9330,6 +9330,46 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/dataClassPrivateConstructor")
+    @TestDataPath("$PROJECT_ROOT")
+    public class DataClassPrivateConstructor {
+      @Test
+      public void testAllFilesPresentInDataClassPrivateConstructor() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dataClassPrivateConstructor"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+      }
+
+      @Test
+      @TestMetadata("customCopy.kt")
+      public void testCustomCopy() {
+        runTest("compiler/testData/diagnostics/tests/dataClassPrivateConstructor/customCopy.kt");
+      }
+
+      @Test
+      @TestMetadata("internalConstructor.kt")
+      public void testInternalConstructor() {
+        runTest("compiler/testData/diagnostics/tests/dataClassPrivateConstructor/internalConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("privateConstructor.kt")
+      public void testPrivateConstructor() {
+        runTest("compiler/testData/diagnostics/tests/dataClassPrivateConstructor/privateConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("unsafeCopy.kt")
+      public void testUnsafeCopy() {
+        runTest("compiler/testData/diagnostics/tests/dataClassPrivateConstructor/unsafeCopy.kt");
+      }
+
+      @Test
+      @TestMetadata("warning.kt")
+      public void testWarning() {
+        runTest("compiler/testData/diagnostics/tests/dataClassPrivateConstructor/warning.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/dataClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class DataClasses {

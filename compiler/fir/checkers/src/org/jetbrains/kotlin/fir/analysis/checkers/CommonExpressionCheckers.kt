@@ -67,9 +67,10 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirConventionFunctionCallChecker,
             FirDivisionByZeroChecker,
             FirConstructorCallChecker,
+            FirDataClassCopyWillBecomeInaccessibleChecker,
             FirSpreadOfNullableChecker,
             FirAssignmentOperatorCallChecker,
-            FirNamedVarargChecker,
+            FirNamedVarargChecker, // todo drop? duplicated
             FirUnderscoredTypeArgumentSyntaxChecker,
             FirContractNotFirstStatementChecker,
             FirProtectedConstructorNotInSuperCallChecker,

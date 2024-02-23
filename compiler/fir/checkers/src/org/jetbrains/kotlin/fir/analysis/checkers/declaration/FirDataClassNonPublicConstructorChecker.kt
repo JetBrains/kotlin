@@ -28,6 +28,11 @@ object FirDataClassNonPublicConstructorChecker : FirRegularClassChecker(MppCheck
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)) {
             return
         }
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.WarnAboutDataClassCopyVisibilityChange) &&
+            !context.languageVersionSettings.supportsFeature(LanguageFeature.ErrorAboutDataClassCopyVisibilityChange)
+        ) {
+            return
+        }
         if (declaration.classKind != ClassKind.CLASS || !declaration.isData) {
             return
         }
@@ -41,13 +46,11 @@ object FirDataClassNonPublicConstructorChecker : FirRegularClassChecker(MppCheck
         val primaryConstructor = declaration.primaryConstructorIfAny(context.session) ?: return
 
         if (primaryConstructor.visibility != Visibilities.Public) {
-            val factory = when {
-                context.languageVersionSettings.supportsFeature(LanguageFeature.WarnAboutDataClassCopyVisibilityChange) ->
-                    FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING
-                context.languageVersionSettings.supportsFeature(LanguageFeature.ErrorAboutDataClassCopyVisibilityChange) ->
-                    FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_ERROR
-                else -> return
-            }
+            val factory =
+                when (context.languageVersionSettings.supportsFeature(LanguageFeature.ErrorAboutDataClassCopyVisibilityChange)) {
+                    true -> FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_ERROR
+                    false -> FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING
+                }
             reporter.reportOn(primaryConstructor.source, factory, context)
         }
     }
