@@ -30,6 +30,9 @@ interface KotlinNativeArtifact : KotlinArtifact {
     val isStatic: Boolean
     val linkerOptions: List<String>
     @Suppress("DEPRECATION")
+    @Deprecated(
+        "Please migrate to toolOptionsConfigure DSL. More details are here: https://kotl.in/u1r8ln"
+    )
     val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit
     val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit
     val binaryOptions: Map<String, String>
@@ -85,6 +88,9 @@ interface KotlinNativeArtifactConfig : KotlinArtifactConfig {
     fun modes(vararg modes: NativeBuildType)
     var isStatic: Boolean
     var linkerOptions: List<String>
+    @Deprecated(
+        "Please migrate to toolOptions DSL. More details are here: https://kotl.in/u1r8ln"
+    )
     fun kotlinOptions(@Suppress("DEPRECATION") fn: Action<KotlinCommonToolOptions>)
     fun toolOptions(configure: Action<KotlinCommonCompilerToolOptions>)
     fun binaryOption(name: String, value: String)

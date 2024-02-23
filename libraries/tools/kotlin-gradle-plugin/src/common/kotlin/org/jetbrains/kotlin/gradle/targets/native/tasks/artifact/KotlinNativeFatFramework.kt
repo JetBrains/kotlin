@@ -67,7 +67,9 @@ class KotlinNativeFatFrameworkImpl(
     override val modes: Set<NativeBuildType>,
     override val isStatic: Boolean,
     override val linkerOptions: List<String>,
-    @Suppress("DEPRECATION") override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
+    @Suppress("DEPRECATION")
+    @Deprecated("Please migrate to toolOptionsConfigure DSL. More details are here: https://kotl.in/u1r8ln")
+    override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
     override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
     override val targets: Set<KonanTarget>,
