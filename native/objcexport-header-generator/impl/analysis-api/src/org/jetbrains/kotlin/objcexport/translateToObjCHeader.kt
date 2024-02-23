@@ -193,8 +193,9 @@ private class KtObjCExportHeaderGenerator {
             .filterIsInstance<ObjCReferenceType>()
             .onEach { type ->
                 if (!type.requiresForwardDeclaration) return@onEach
-                if (type is ObjCClassType) objCClassForwardDeclarations += type.className
-                if (type is ObjCProtocolType) objCProtocolForwardDeclarations += type.protocolName
+                val nonNullType = if (type is ObjCNullableReferenceType) type.nonNullType else type
+                if (nonNullType is ObjCClassType) objCClassForwardDeclarations += nonNullType.className
+                if (nonNullType is ObjCProtocolType) objCProtocolForwardDeclarations += nonNullType.protocolName
             }
             .mapNotNull { it.originClassId }
             .map(QueueElement::Class).toList()
