@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ParameterContext
@@ -57,28 +56,27 @@ private class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : Head
     private fun createObjCExportHeaderGenerator(
         disposable: Disposable, root: File, configuration: HeaderGenerator.Configuration,
     ): ObjCExportHeaderGenerator {
+        val environment: KotlinCoreEnvironment = createKotlinCoreEnvironment(disposable)
+
+        val kotlinFiles = root.walkTopDown().filter { it.isFile }.filter { it.extension == "kt" }.toList()
+        val moduleDescriptors = setOf(createModuleDescriptor(environment, kotlinFiles))
+
         val mapper = ObjCExportMapper(
             unitSuspendFunctionExport = UnitSuspendFunctionObjCExport.DEFAULT
         )
 
         val namer = ObjCExportNamerImpl(
-            mapper = mapper,
+            moduleDescriptors = moduleDescriptors,
             builtIns = DefaultBuiltIns.Instance,
-            local = false,
+            mapper = mapper,
             problemCollector = ObjCExportProblemCollector.SILENT,
-            configuration = object : ObjCExportNamer.Configuration {
-                override val topLevelNamePrefix: String get() = configuration.frameworkName
-                override fun getAdditionalPrefix(module: ModuleDescriptor): String? = null
-                override val objcGenerics: Boolean = true
-            }
+            topLevelNamePrefix = configuration.frameworkName,
+            local = false,
+            objcGenerics = true,
         )
 
-        val environment: KotlinCoreEnvironment = createKotlinCoreEnvironment(disposable)
-
-        val kotlinFiles = root.walkTopDown().filter { it.isFile }.filter { it.extension == "kt" }.toList()
-
         return ObjCExportHeaderGeneratorImpl(
-            moduleDescriptors = listOf(createModuleDescriptor(environment, kotlinFiles)),
+            moduleDescriptors = moduleDescriptors.toList(),
             mapper = mapper,
             namer = namer,
             problemCollector = ObjCExportProblemCollector.SILENT,
