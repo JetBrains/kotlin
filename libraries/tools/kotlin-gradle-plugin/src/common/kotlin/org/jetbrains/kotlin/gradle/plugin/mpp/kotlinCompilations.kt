@@ -24,13 +24,6 @@ internal fun KotlinCompilation<*>.isMain(): Boolean =
 internal fun KotlinCompilation<*>.isTest(): Boolean =
     name == KotlinCompilation.TEST_COMPILATION_NAME
 
-internal fun addCommonSourcesToKotlinCompileTask(
-    project: Project,
-    taskName: String,
-    sourceFileExtensions: Iterable<String>,
-    sources: () -> Any
-) = addSourcesToKotlinCompileTask(project, taskName, sourceFileExtensions, lazyOf(true), sources)
-
 // FIXME this function dangerously ignores an incorrect type of the task (e.g. if the actual task is a K/N one); consider reporting a failure
 internal fun addSourcesToKotlinCompileTask(
     project: Project,
