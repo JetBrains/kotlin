@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.component.ComponentIdentifier
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -94,7 +97,7 @@ internal class SourceSetVisibilityProvider(
                 val resolvedPlatformDependency = platformCompilationData
                     .resolvedDependenciesConfiguration
                     .allResolvedDependencies
-                    .find { it.selected.id == resolvedRootMppDependencyId }
+                    .find { it.selected.id isEqualsIgnoringVersion resolvedRootMppDependencyId }
                 /*
                 Returning null if we can't find the given dependency in a certain platform compilations dependencies.
                 This is not expected, since this means the dependency does not support the given targets which will
@@ -188,3 +191,13 @@ internal class SourceSetVisibilityProvider(
 
 internal fun kotlinVariantNameFromPublishedVariantName(resolvedToVariantName: String): String =
     originalVariantNameFromPublished(resolvedToVariantName) ?: resolvedToVariantName
+
+/**
+ * Returns true when two components identifiers are from the same maven module (group + name)
+ * Gradle projects can't be resolved into multiple versions since there is only one version of a project in gradle build
+ */
+private infix fun ComponentIdentifier.isEqualsIgnoringVersion(that: ComponentIdentifier): Boolean {
+    if (this is ProjectComponentIdentifier && that is ProjectComponentIdentifier) return this == that
+    if (this is ModuleComponentIdentifier && that is ModuleComponentIdentifier) return this.moduleIdentifier == that.moduleIdentifier
+    return false
+}
