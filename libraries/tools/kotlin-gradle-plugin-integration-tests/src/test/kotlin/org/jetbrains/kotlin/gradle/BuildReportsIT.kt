@@ -26,12 +26,12 @@ import kotlin.test.assertTrue
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.GRADLE_ENTERPRISE_PLUGIN_VERSION
 import java.lang.reflect.Type
 import java.nio.file.Files
 import kotlin.streams.asSequence
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 @DisplayName("Build reports")
 @JvmGradlePluginTests
@@ -248,21 +248,37 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("deprecated property")
+    @DisplayName("single build report output")
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
     )
     @GradleTest
-    fun testDeprecatedAndNewSingleBuildMetricsFile(gradleVersion: GradleVersion) {
+    fun testSingleBuildMetricsFile(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             val newMetricsPath = projectPath.resolve("metrics.bin")
-            val deprecatedMetricsPath = projectPath.resolve("deprecated_metrics.bin")
             build(
                 "compileKotlin", "-Pkotlin.build.report.single_file=${newMetricsPath.pathString}",
-                "-Pkotlin.internal.single.build.metrics.file=${deprecatedMetricsPath.pathString}"
+                "-Pkotlin.build.report.output=single_file"
             )
-            assertTrue { deprecatedMetricsPath.exists() }
-            assertTrue { newMetricsPath.notExists() }
+            assertTrue { newMetricsPath.exists() }
+        }
+    }
+
+    @DisplayName("deprecated properties")
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+    )
+    @GradleTest
+    fun testDeprecatedReportProperties(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            val deprecatedMetricsPath = projectPath.resolve("deprecated_metrics.bin")
+            build(
+                "compileKotlin", "-Pkotlin.build.report.dir=${projectPath.resolve("reports").pathString}",
+                "-Pkotlin.internal.single.build.metrics.file=${projectPath.resolve("deprecated_metrics.bin").pathString}"
+            ) {
+                assertHasDiagnostic(KotlinToolingDiagnostics.DeprecatedGradleProperties, "kotlin.internal.single.build.metrics.file")
+                assertHasDiagnostic(KotlinToolingDiagnostics.DeprecatedGradleProperties, "kotlin.build.report.dir")
+            }
         }
     }
 

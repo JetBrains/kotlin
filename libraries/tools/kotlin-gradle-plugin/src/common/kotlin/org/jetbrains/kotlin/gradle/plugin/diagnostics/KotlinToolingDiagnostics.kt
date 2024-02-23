@@ -810,10 +810,11 @@ object KotlinToolingDiagnostics {
     }
 
     object DeprecatedGradleProperties : ToolingDiagnosticFactory(WARNING) {
-        operator fun invoke(usedDeprecatedProperties: List<String>): ToolingDiagnostic {
+        operator fun invoke(usedDeprecatedProperty: String): ToolingDiagnostic {
             return build(
                 """
-                    $usedDeprecatedProperties properties were deprecated and are not supported anymore. Please, delete them from project properties.
+                |The `$usedDeprecatedProperty` deprecated property is used in your build.
+                |Please, stop using it as it is unsupported and may apply no effect to your build.
                 """.trimMargin()
             )
         }

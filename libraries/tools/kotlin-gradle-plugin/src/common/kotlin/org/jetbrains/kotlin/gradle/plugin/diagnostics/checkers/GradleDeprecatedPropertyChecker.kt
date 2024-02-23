@@ -25,10 +25,11 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
 
         val usedDeprecatedProperties = deprecatedProperties.filter { propertiesBuildService.get(it, project) != null }
 
-        if (usedDeprecatedProperties.isNotEmpty()) {
+        usedDeprecatedProperties.forEach {
             collector.reportOncePerGradleBuild(
                 project,
-                KotlinToolingDiagnostics.DeprecatedGradleProperties(usedDeprecatedProperties)
+                KotlinToolingDiagnostics.DeprecatedGradleProperties(it),
+                it
             )
         }
     }

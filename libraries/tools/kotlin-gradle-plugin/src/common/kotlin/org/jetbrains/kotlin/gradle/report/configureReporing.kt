@@ -84,10 +84,6 @@ internal fun reportingSettings(project: Project): ReportingSettings {
             ?: throw IllegalStateException("Can't configure json report: '$KOTLIN_BUILD_REPORT_JSON_DIR' property is mandatory")
     } else null
 
-    //temporary solution. support old property
-    @Suppress("DEPRECATION")
-    val oldSingleBuildMetric = properties.singleBuildMetricsFile?.also { buildReportOutputTypes.add(BuildReportType.SINGLE_FILE) }
-
     return ReportingSettings(
         buildReportMode = buildReportMode,
         buildReportLabel = properties.buildReportLabel,
@@ -95,7 +91,7 @@ internal fun reportingSettings(project: Project): ReportingSettings {
         httpReportSettings = httpReportSettings,
         buildScanReportSettings = buildScanSettings,
         buildReportOutputs = buildReportOutputTypes,
-        singleOutputFile = singleOutputFile ?: oldSingleBuildMetric,
+        singleOutputFile = singleOutputFile,
         jsonOutputDir = jsonReportDir,
         includeCompilerArguments = properties.buildReportIncludeCompilerArguments,
         experimentalTryNextConsoleOutput = experimentalTryNextEnabled
