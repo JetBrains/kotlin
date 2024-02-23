@@ -57,12 +57,12 @@ internal sealed class RuntimeLinkageStrategy {
             MandatoryOptimizationPipeline(config, generationState).use {
                 it.execute(runtimeModule)
             }
-//            ModuleOptimizationPipeline(config, generationState).use {
-//                it.execute(runtimeModule)
-//            }
-            LTOOptimizationPipeline(config, generationState).use {
+            ModuleOptimizationPipeline(config, generationState).use {
                 it.execute(runtimeModule)
             }
+//            LTOOptimizationPipeline(config, generationState).use {
+//                it.execute(runtimeModule)
+//            }
 
             return listOf(runtimeModule)
         }
