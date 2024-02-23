@@ -88,7 +88,7 @@ class ObjCExportTypeTranslationTest(
             """.trimIndent()
         )
 
-        assertEquals("Unit * -> void", header.renderTypesOfSymbol("foo"))
+        assertEquals("KotlinUnit * -> void", header.renderTypesOfSymbol("foo"))
     }
 
 
