@@ -169,6 +169,7 @@ internal class KotlinCompilationImpl constructor(
 
     //region CompilerOptions & KotlinOptions
 
+    @Suppress("OVERRIDE_DEPRECATION")
     override val kotlinOptions: KotlinCommonOptions
         get() = params.kotlinOptions
 

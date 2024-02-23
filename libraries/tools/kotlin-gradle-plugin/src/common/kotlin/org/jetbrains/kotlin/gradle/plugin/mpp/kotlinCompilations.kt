@@ -94,6 +94,7 @@ internal fun filterModuleName(moduleName: String): String =
     moduleName.replace(invalidModuleNameCharactersRegex, "_")
 
 internal inline fun <reified T : KotlinCommonOptions> InternalKotlinCompilation<*>.castKotlinOptionsType(): InternalKotlinCompilation<T> {
+    @Suppress("DEPRECATION")
     this.kotlinOptions as T
     @Suppress("UNCHECKED_CAST")
     return this as InternalKotlinCompilation<T>

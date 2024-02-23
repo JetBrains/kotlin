@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.DecoratedExternalKotlinCompilation
 
 class PrototypeAndroidCompilation(delegate: Delegate) : DecoratedExternalKotlinCompilation(delegate) {
+    @Suppress("OVERRIDE_DEPRECATION")
     override val kotlinOptions: KotlinCommonOptions
         get() = super.kotlinOptions as KotlinJvmOptions
 

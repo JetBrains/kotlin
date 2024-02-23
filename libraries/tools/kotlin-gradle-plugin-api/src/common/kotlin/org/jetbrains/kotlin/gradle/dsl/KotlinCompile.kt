@@ -9,6 +9,7 @@ import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.Task
 import org.gradle.api.tasks.Internal
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 /**
@@ -32,12 +33,16 @@ interface KotlinCompile<out T : KotlinCommonOptions> : Task {
      *
      * The [kotlinOptions] configuration is delegated to the related task `compilerOptions` input configuration.
      */
+    @OptIn(InternalKotlinGradlePluginApi::class)
+    @Deprecated(message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE)
     @get:Internal
     val kotlinOptions: T
 
     /**
      * Configures the [kotlinOptions] with the provided configuration.
      */
+    @OptIn(InternalKotlinGradlePluginApi::class)
+    @Deprecated(message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE)
     fun kotlinOptions(fn: T.() -> Unit) {
         kotlinOptions.fn()
     }
@@ -45,6 +50,8 @@ interface KotlinCompile<out T : KotlinCommonOptions> : Task {
     /**
      * Configures the [kotlinOptions] with the provided configuration.
      */
+    @OptIn(InternalKotlinGradlePluginApi::class)
+    @Deprecated(message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE)
     fun kotlinOptions(fn: Action<in T>) {
         fn.execute(kotlinOptions)
     }
@@ -57,3 +64,15 @@ interface KotlinCompile<out T : KotlinCommonOptions> : Task {
         project.configure(kotlinOptions, fn)
     }
 }
+
+/**
+ * @suppress
+ */
+@InternalKotlinGradlePluginApi
+const val KOTLIN_OPTIONS_DEPRECATION_MESSAGE = "Please migrate to the compilerOptions DSL. More details are here: https://kotl.in/u1r8ln"
+
+/**
+ * @suppress
+ */
+@InternalKotlinGradlePluginApi
+const val KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE = "Please migrate to toolOptions DSL. More details are here: https://kotl.in/u1r8ln"
