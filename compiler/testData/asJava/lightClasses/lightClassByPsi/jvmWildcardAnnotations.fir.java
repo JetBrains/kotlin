@@ -13,19 +13,19 @@ public abstract interface B /* B*/ {
 public final class Container /* Container*/ {
   @kotlin.jvm.JvmSuppressWildcards(suppress = false)
   @org.jetbrains.annotations.NotNull()
-  public final Out<Open> bar();//  bar()
+  public final Out<? extends Open> bar();//  bar()
 
   @kotlin.jvm.JvmSuppressWildcards(suppress = false)
-  public final int foo(boolean, @org.jetbrains.annotations.NotNull() Out<java.lang.Integer>);//  foo(boolean, Out<java.lang.Integer>)
+  public final int foo(boolean, @org.jetbrains.annotations.NotNull() Out<? extends java.lang.Integer>);//  foo(boolean, Out<? extends java.lang.Integer>)
 
   @kotlin.jvm.JvmSuppressWildcards(suppress = true)
-  public final int bar(boolean, @org.jetbrains.annotations.NotNull() In<? super java.lang.Long>, long);//  bar(boolean, In<? super java.lang.Long>, long)
+  public final int bar(boolean, @org.jetbrains.annotations.NotNull() In<java.lang.Long>, long);//  bar(boolean, In<java.lang.Long>, long)
 
   @kotlin.jvm.JvmSuppressWildcards(suppress = true)
-  public final void deepOpen(@org.jetbrains.annotations.NotNull() Out<? extends Out<? extends Out<? extends Open>>>);//  deepOpen(Out<? extends Out<? extends Out<? extends Open>>>)
+  public final void deepOpen(@org.jetbrains.annotations.NotNull() Out<Out<Out<Open>>>);//  deepOpen(Out<Out<Out<Open>>>)
 
   @kotlin.jvm.JvmSuppressWildcards(suppress = true)
-  public final void zoo(@org.jetbrains.annotations.NotNull() Out<? extends Out<? extends Out<? extends Open>>>, @org.jetbrains.annotations.NotNull() Out<? extends Open>);//  zoo(Out<? extends Out<? extends Out<? extends Open>>>, Out<? extends Open>)
+  public final void zoo(@org.jetbrains.annotations.NotNull() Out<Out<Out<Open>>>, @org.jetbrains.annotations.NotNull() Out<? extends Open>);//  zoo(Out<Out<Out<Open>>>, Out<? extends Open>)
 
   @org.jetbrains.annotations.NotNull()
   public final OutPair<Final, OutPair<Out<Final>, Out<Final>>> falseTrueFalse();//  falseTrueFalse()
@@ -60,10 +60,10 @@ public final class ContainerForPropertyAndAccessors /* ContainerForPropertyAndAc
   public final Out<? extends Final> getSimpleOut();//  getSimpleOut()
 
   @org.jetbrains.annotations.NotNull()
-  public final Out<? extends Open> getZoo(@org.jetbrains.annotations.NotNull() Out<? extends Out<? extends Out<? extends Open>>>);//  getZoo(Out<? extends Out<? extends Out<? extends Open>>>)
+  public final Out<Open> getBar();//  getBar()
 
   @org.jetbrains.annotations.NotNull()
-  public final Out<Open> getBar();//  getBar()
+  public final Out<Open> getZoo(@org.jetbrains.annotations.NotNull() Out<? extends Out<? extends Out<? extends Open>>>);//  getZoo(Out<? extends Out<? extends Out<? extends Open>>>)
 
   @org.jetbrains.annotations.NotNull()
   public final Out<Out<Out<Open>>> getDeepOpen();//  getDeepOpen()
@@ -81,7 +81,7 @@ public final class Final /* Final*/ {
 public final class HasAnnotation /* HasAnnotation*/ {
   public  HasAnnotation();//  .ctor()
 
-  public final void doesNot(@org.jetbrains.annotations.NotNull() Out<? extends Out<? extends Open>>);//  doesNot(Out<? extends Out<? extends Open>>)
+  public final void doesNot(@org.jetbrains.annotations.NotNull() Out<Out<Open>>);//  doesNot(Out<Out<Open>>)
 
   public final void parameterDisagrees(@org.jetbrains.annotations.NotNull() Out<java.lang.Integer>);//  parameterDisagrees(Out<java.lang.Integer>)
 }

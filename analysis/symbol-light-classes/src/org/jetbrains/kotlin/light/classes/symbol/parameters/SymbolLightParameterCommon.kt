@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.annotateByKtType
+import org.jetbrains.kotlin.light.classes.symbol.annotations.suppressWildcardMode
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.psi.KtParameter
 
@@ -80,7 +81,8 @@ internal abstract class SymbolLightParameterCommon(
                 ktType.asPsiTypeElement(
                     this@SymbolLightParameterCommon,
                     allowErrorTypes = true,
-                    ktType.typeMappingMode()
+                    ktType.typeMappingMode(),
+                    suppressWildcards = parameterSymbol.suppressWildcardMode(),
                 )?.let {
                     annotateByKtType(it.type, ktType, it, modifierList)
                 }

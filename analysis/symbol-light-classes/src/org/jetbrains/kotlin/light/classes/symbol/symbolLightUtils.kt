@@ -44,6 +44,10 @@ import java.util.*
 internal fun <L : Any> L.invalidAccess(): Nothing =
     error("Cls delegate shouldn't be accessed for symbol light classes! Qualified name: ${javaClass.name}")
 
+context(KtAnalysisSession)
+internal fun KtDeclarationSymbol.getContainingSymbolsWithSelf(): Sequence<KtDeclarationSymbol> =
+    generateSequence(this) { it.getContainingSymbol() }
+
 internal fun KtAnalysisSession.mapType(
     type: KtType,
     psiContext: PsiElement,
