@@ -19,7 +19,13 @@ internal val StableFunctionOrder: Comparator<KtFunctionSymbol>
         { it.isConstructor },
         { it.name },
         { it.valueParameters.size },
-        // TODO NOW! { KonanManglerDesc.run { it.signatureString(false) } }
+        /**
+         * Signature order should be added
+         *
+         * See KT-66066
+         * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorKt.makeMethodsOrderStable]
+         * { KonanManglerDesc.run { it.signatureString(false) } }
+         */
     )
 
 internal val StableClassifierOrder: Comparator<KtClassifierSymbol> =
