@@ -22,11 +22,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
  *
  * @see [KotlinCommonOptions]
  */
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
 @Deprecated(
     message = "Replaced with 'KotlinCompilationTask' that exposes the compiler options DSL. More details are here: https://kotl.in/u1r8ln"
 )
 @KotlinGradlePluginDsl
-interface KotlinCompile<out T : KotlinCommonOptions> : Task {
+interface KotlinCompile<out T : KotlinCommonOptionsDeprecated> : Task {
 
     /**
      * Represents the compiler options used by a Kotlin compilation process.

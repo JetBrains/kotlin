@@ -59,7 +59,7 @@ class KotlinNativeFrameworkImpl(
     override val modes: Set<NativeBuildType>,
     override val isStatic: Boolean,
     override val linkerOptions: List<String>,
-    override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
+    @Suppress("DEPRECATION") override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
     override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
     override val target: KonanTarget,

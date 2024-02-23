@@ -112,17 +112,22 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
             freeCompilerArgs.addAll(PropertiesProvider(project).nativeLinkArgs)
         }
 
+    @Suppress("DEPRECATION")
     @get:Internal
     val kotlinOptions = object : KotlinCommonToolOptions {
         override val options: KotlinCommonCompilerToolOptions
             get() = toolOptions
     }
 
-    fun kotlinOptions(fn: KotlinCommonToolOptions.() -> Unit) {
+    fun kotlinOptions(
+        @Suppress("DEPRECATION") fn: KotlinCommonToolOptions.() -> Unit
+    ) {
         kotlinOptions.fn()
     }
 
-    fun kotlinOptions(fn: Action<KotlinCommonToolOptions>) {
+    fun kotlinOptions(
+        @Suppress("DEPRECATION") fn: Action<KotlinCommonToolOptions>
+    ) {
         fn.execute(kotlinOptions)
     }
 

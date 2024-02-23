@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 
+@Suppress("DEPRECATION")
 @Deprecated("Use KotlinCompilation<T> instead")
 abstract class AbstractKotlinCompilation<T : KotlinCommonOptions> internal constructor(compilation: KotlinCompilationImpl) :
     DecoratedKotlinCompilation<T>(compilation)

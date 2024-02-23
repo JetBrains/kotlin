@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.KAPT_GENERATE_STUBS_PREFIX
 import org.jetbrains.kotlin.gradle.internal.getKaptTaskName
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -93,7 +92,8 @@ internal fun KotlinCompilation<*>.moduleNameForCompilation(
 internal fun filterModuleName(moduleName: String): String =
     moduleName.replace(invalidModuleNameCharactersRegex, "_")
 
-internal inline fun <reified T : KotlinCommonOptions> InternalKotlinCompilation<*>.castKotlinOptionsType(): InternalKotlinCompilation<T> {
+internal inline fun <@Suppress("DEPRECATION") reified T : KotlinCommonOptions> InternalKotlinCompilation<*>.castKotlinOptionsType(
+): InternalKotlinCompilation<T> {
     @Suppress("DEPRECATION")
     this.kotlinOptions as T
     @Suppress("UNCHECKED_CAST")

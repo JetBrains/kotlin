@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.external
 
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.DecoratedKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationI
  * Creating an instance will require an instance of [Delegate] which can only be retrieved by calling into the
  * [DecoratedExternalKotlinTarget.createCompilation] functions and providing a [ExternalKotlinCompilationDescriptor.compilationFactory]
  */
+@Suppress("DEPRECATION")
 @ExternalKotlinTargetApi
 abstract class DecoratedExternalKotlinCompilation(delegate: Delegate) :
     DecoratedKotlinCompilation<KotlinCommonOptions>(delegate.compilation) {

@@ -119,6 +119,7 @@ internal fun Collection<File>.filterKlibsPassedToCompiler(): List<File> = filter
 internal fun FileCollection.filterKlibsPassedToCompiler(): FileCollection = filter(File::canKlibBePassedToCompiler)
 
 // endregion
+@Suppress("DEPRECATION")
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class AbstractKotlinNativeCompile<
         T : KotlinCommonToolOptions,
@@ -266,6 +267,7 @@ abstract class AbstractKotlinNativeCompile<
 /**
  * A task producing a klibrary from a compilation.
  */
+@Suppress("DEPRECATION")
 @CacheableTask
 abstract class KotlinNativeCompile
 @Inject
@@ -377,6 +379,7 @@ internal constructor(
 
     // region Kotlin options
 
+    @Suppress("DEPRECATION")
     @Deprecated(KOTLIN_OPTIONS_DEPRECATION_MESSAGE)
     override val kotlinOptions: KotlinCommonOptions = object : KotlinCommonOptions {
         override val options: KotlinCommonCompilerOptions

@@ -43,6 +43,7 @@ interface KotlinCommonCompile : KotlinCompile<KotlinMultiplatformCommonOptions>,
 
 interface KotlinJsDce : Task, KotlinToolTask<KotlinJsDceCompilerToolOptions> {
 
+    @Suppress("DEPRECATION")
     @Deprecated(KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE)
     @get:Internal
     val dceOptions: KotlinJsDceOptions

@@ -67,6 +67,7 @@ abstract class KotlinJsDce @Inject constructor(
     @Internal
     var kotlinFilesOnly: Boolean = false
 
+    @Suppress("DEPRECATION")
     @Deprecated(KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE)
     @get:Internal
     override val dceOptions: KotlinJsDceOptions = object : KotlinJsDceOptions {

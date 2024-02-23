@@ -56,7 +56,9 @@ abstract class KotlinNativeArtifactConfigImpl(artifactName: String) : KotlinArti
 
     @Suppress("DEPRECATION")
     internal var kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit = {}
-    override fun kotlinOptions(fn: Action<KotlinCommonToolOptions>) {
+    override fun kotlinOptions(
+        @Suppress("DEPRECATION") fn: Action<KotlinCommonToolOptions>
+    ) {
         kotlinOptionsFn = fn::execute
     }
 

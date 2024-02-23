@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.gradle.dsl
 /**
  * Common options for all Kotlin platforms' compilations and tools.
  */
+@Deprecated(
+    "The kotlinOptions types are deprecated, please migrate to the compilerOptions types. More details are here: https://kotl.in/u1r8ln"
+)
 interface KotlinCommonToolOptions {
     /**
      * @suppress

@@ -654,10 +654,12 @@ private fun Printer.generateDeprecatedInterface(
     parentType: FqName? = null,
 ) {
     val afterType = parentType?.let { " : $it" }
-    // Add @Deprecated annotation back once proper migration to compilerOptions will be supported
     val modifier = """
-    interface
-    """.trimIndent()
+    |@Deprecated(
+    |    "The kotlinOptions types are deprecated, please migrate to the compilerOptions types. More details are here: https://kotl.in/u1r8ln"
+    |)
+    |interface
+    """.trimMargin()
     val deprecatedProperties = properties.filter { it.generateDeprecatedKotlinOption }
     // KotlinMultiplatformCommonOptions doesn't have any options, but it is being kept for backward compatibility
     if (deprecatedProperties.isNotEmpty() || type.asString().endsWith("KotlinMultiplatformCommonOptions")) {

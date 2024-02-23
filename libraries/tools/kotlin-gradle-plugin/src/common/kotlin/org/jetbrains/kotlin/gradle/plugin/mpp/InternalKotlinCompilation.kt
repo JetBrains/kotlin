@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationC
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
+@Suppress("DEPRECATION")
 @InternalKotlinGradlePluginApi
 internal interface InternalKotlinCompilation<out T : KotlinCommonOptions> : KotlinCompilation<T>, HasMutableExtras {
     override val kotlinSourceSets: ObservableSet<KotlinSourceSet>
@@ -34,6 +35,7 @@ internal interface InternalKotlinCompilation<out T : KotlinCommonOptions> : Kotl
     val archiveTaskName: String?
 }
 
+@Suppress("DEPRECATION")
 internal val <T : KotlinCommonOptions> KotlinCompilation<T>.internal: InternalKotlinCompilation<T>
     get() = (this as? InternalKotlinCompilation<T>) ?: throw IllegalArgumentException(
         "KotlinCompilation($name) ${this::class} does not implement ${InternalKotlinCompilation::class}"

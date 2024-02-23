@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.gradle.dsl
 /**
  * Options for the Kotlin JavaScript dead code elimination tool.
  */
+@Deprecated(
+    "The kotlinOptions types are deprecated, please migrate to the compilerOptions types. More details are here: https://kotl.in/u1r8ln"
+)
 interface KotlinJsDceOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions {
     /**
      * @suppress
