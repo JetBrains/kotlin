@@ -84,6 +84,7 @@ sealed class NativeBinary(
     }
 
     /** Additional arguments passed to the Kotlin/Native compiler. */
+    @Suppress("DEPRECATION")
     var freeCompilerArgs: List<String>
         get() = linkTask.kotlinOptions.freeCompilerArgs
         set(value) {

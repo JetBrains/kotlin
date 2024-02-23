@@ -6,6 +6,7 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.tasks
 
+import org.gradle.api.Action
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
@@ -128,14 +129,23 @@ constructor(
     val additionalCompilerOptions: Provider<Collection<String>> = toolOptions.freeCompilerArgs as Provider<Collection<String>>
 
     @Suppress("DEPRECATION")
+    @Deprecated(KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE)
     @get:Internal
     val kotlinOptions: KotlinCommonToolOptions = object : KotlinCommonToolOptions {
         override val options: KotlinCommonCompilerToolOptions
             get() = toolOptions
     }
 
-    fun kotlinOptions(@Suppress("DEPRECATION") fn: KotlinCommonToolOptions.() -> Unit) {
+    @Deprecated(KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
+    fun kotlinOptions(fn: KotlinCommonToolOptions.() -> Unit) {
         kotlinOptions.fn()
+    }
+
+    @Deprecated(KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
+    fun kotlinOptions(fn: Action<KotlinCommonToolOptions>) {
+        fn.execute(kotlinOptions)
     }
 
     // Binary-specific options.
