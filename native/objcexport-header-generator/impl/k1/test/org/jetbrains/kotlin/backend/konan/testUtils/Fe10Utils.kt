@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
+import java.nio.file.Path
 
 fun createModuleDescriptor(
     environment: KotlinCoreEnvironment,
@@ -51,9 +52,8 @@ fun createModuleDescriptor(
 fun createModuleDescriptor(
     environment: KotlinCoreEnvironment,
     kotlinFiles: List<File>,
+    dependencyKlibs: List<Path> = emptyList(),
 ): ModuleDescriptor {
-    val psiFactory = KtPsiFactory(environment.project)
-    val kotlinPsiFiles = kotlinFiles.map { file -> psiFactory.createFile(file.name, KtTestUtil.doLoadFile(file)) }
 
     val klibFactory = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
 
@@ -63,6 +63,15 @@ fun createModuleDescriptor(
         storageManager = LockBasedStorageManager.NO_LOCKS,
         packageAccessHandler = null
     ).also { it.setDependencies(it) }
+
+    val dependencyKlibDescriptors = dependencyKlibs.map { dependencyKlib ->
+        klibFactory.DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
+            library = resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File(dependencyKlib)),
+            languageVersionSettings = createLanguageVersionSettings(),
+            storageManager = LockBasedStorageManager.NO_LOCKS,
+            packageAccessHandler = null,
+        ).also { it.setDependencies(it, stdlibModuleDescriptor) }
+    }
 
     val moduleDescriptor = ModuleDescriptorImpl(
         moduleName = Name.special("<test_module>"),
@@ -78,7 +87,7 @@ fun createModuleDescriptor(
 
     moduleDescriptor.setDependencies(
         ModuleDependenciesImpl(
-            allDependencies = listOf(moduleDescriptor, stdlibModuleDescriptor),
+            allDependencies = listOf(moduleDescriptor, stdlibModuleDescriptor) + dependencyKlibDescriptors,
             modulesWhoseInternalsAreVisible = emptySet(),
             directExpectedByDependencies = emptyList(),
             allExpectedByDependencies = emptySet()
@@ -86,6 +95,9 @@ fun createModuleDescriptor(
     )
 
     val projectContext = ProjectContext(environment.project, "test project context")
+
+    val psiFactory = KtPsiFactory(environment.project)
+    val kotlinPsiFiles = kotlinFiles.map { file -> psiFactory.createFile(file.name, KtTestUtil.doLoadFile(file)) }
 
     return FakeTopDownAnalyzerFacadeForNative.analyzeFilesWithGivenTrace(
         files = kotlinPsiFiles,

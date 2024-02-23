@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.tooling.core.closure
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ParameterContext
@@ -59,14 +61,18 @@ private class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : Head
         val environment: KotlinCoreEnvironment = createKotlinCoreEnvironment(disposable)
 
         val kotlinFiles = root.walkTopDown().filter { it.isFile }.filter { it.extension == "kt" }.toList()
-        val moduleDescriptors = setOf(createModuleDescriptor(environment, kotlinFiles))
+        val moduleDescriptors = setOf(createModuleDescriptor(environment, kotlinFiles, configuration.dependencies))
 
         val mapper = ObjCExportMapper(
             unitSuspendFunctionExport = UnitSuspendFunctionObjCExport.DEFAULT
         )
 
+        val exportedModuleDescriptors = moduleDescriptors + moduleDescriptors
+            .closure<ModuleDescriptor> { it.allDependencyModules }
+            .filter { it.name.asStringStripSpecialMarkers() in configuration.exportedDependencyModuleNames }
+
         val namer = ObjCExportNamerImpl(
-            moduleDescriptors = moduleDescriptors,
+            moduleDescriptors = exportedModuleDescriptors,
             builtIns = DefaultBuiltIns.Instance,
             mapper = mapper,
             problemCollector = ObjCExportProblemCollector.SILENT,
@@ -76,7 +82,7 @@ private class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : Head
         )
 
         return ObjCExportHeaderGeneratorImpl(
-            moduleDescriptors = moduleDescriptors.toList(),
+            moduleDescriptors = exportedModuleDescriptors.toList(),
             mapper = mapper,
             namer = namer,
             problemCollector = ObjCExportProblemCollector.SILENT,
