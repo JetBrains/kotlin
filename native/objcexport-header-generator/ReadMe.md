@@ -46,7 +46,7 @@ This implementation _could_ theoretically also replace the K1 implementation if 
 
 ### Run all tests
 ```
-./gradlew :native:objcexport-header-generator:check
+./gradlew :native:objcexport-header-generator:check --continue
 ```
 
 The most important test is [ObjCExportHeaderGeneratorTest.kt](test%2Forg%2Fjetbrains%2Fkotlin%2Fbackend%2Fkonan%2Ftests%2FObjCExportHeaderGeneratorTest.kt)
@@ -54,8 +54,8 @@ as this test defines the contract of how a header shall be generated from a give
 both implementations. 
 
 ```
-./gradlew :native:objcexport-header-generator:testK1
-./gradlew :native:objcexport-header-generator:testAnalysisApi
+./gradlew :native:objcexport-header-generator:testK1 --continue
+./gradlew :native:objcexport-header-generator:testAnalysisApi --continue
 ```
 
 Note: Since the Analysis Api implementation is WIP yet, this test can be used for debugging, but is not fully implemented yet.
