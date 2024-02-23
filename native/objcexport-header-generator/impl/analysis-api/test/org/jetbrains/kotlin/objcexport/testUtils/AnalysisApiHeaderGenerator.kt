@@ -29,7 +29,11 @@ class AnalysisApiHeaderGeneratorExtension : ParameterResolver {
 
 object AnalysisApiHeaderGenerator : HeaderGenerator {
     override fun generateHeaders(root: File, configuration: HeaderGenerator.Configuration): ObjCHeader {
-        val session = createStandaloneAnalysisApiSession(root.listFiles().orEmpty().filter { it.extension == "kt" })
+        val session = createStandaloneAnalysisApiSession(
+            kotlinFiles = root.listFiles().orEmpty().filter { it.extension == "kt" },
+            dependencyKlibs = configuration.dependencies
+        )
+
         val (module, files) = session.modulesWithFiles.entries.single()
         return analyze(module) {
             KtObjCExportSession(
