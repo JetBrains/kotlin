@@ -13,6 +13,7 @@ import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.dependencyView.Callbacks
 import org.jetbrains.jps.builders.java.dependencyView.Callbacks.Backend
 import org.jetbrains.jps.builders.storage.BuildDataPaths
+import org.jetbrains.jps.dependency.java.LookupNameUsage
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsSdkDependency
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.build.JvmBuildMetaInfo
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.config.IncrementalCompilation
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalJvmCache
 import org.jetbrains.kotlin.jps.model.k2JvmCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
+import org.jetbrains.kotlin.jps.targets.impl.LookupUsageRegistrar
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
@@ -381,7 +384,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
             if (!cache.isMultifileFacade(className)) return emptySet()
 
             // In case of graph implementation of JPS
-            if (previousMappings == null) return emptySet()
+            if (KotlinBuilder.useDependencyGraph || previousMappings == null) return emptySet()
 
             val name = previousMappings.getName(className.internalName)
             return previousMappings.getClassSources(name).toSet()
@@ -408,6 +411,13 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                     ClassReader(output.outputClass.fileContents)
                 )
             }
+        }
+        if (KotlinBuilder.useDependencyGraph) {
+            LookupUsageRegistrar().processLookupTracker(
+                environment.services[LookupTracker::class.java],
+                callback,
+                environment.messageCollector
+            )
         }
 
         val allCompiled = dirtyFilesHolder.allDirtyFiles
