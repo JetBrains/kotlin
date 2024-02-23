@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
  * DSL entity with the ability to configure Kotlin compiler options.
  */
 @ExperimentalKotlinGradlePluginApi
-interface HasConfigurableCompilerOptions<CO : KotlinCommonCompilerOptions> {
+interface HasConfigurableKotlinCompilerOptions<CO : KotlinCommonCompilerOptions> {
 
     /**
      * Represents the compiler options used by a Kotlin compilation process.

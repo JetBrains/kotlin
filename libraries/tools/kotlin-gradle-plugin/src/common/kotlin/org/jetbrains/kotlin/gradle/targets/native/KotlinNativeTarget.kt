@@ -34,7 +34,7 @@ import javax.inject.Inject
 abstract class KotlinNativeTarget @Inject constructor(
     project: Project,
     val konanTarget: KonanTarget,
-) : HasConfigurableCompilerOptions<KotlinNativeCompilerOptions>,
+) : HasConfigurableKotlinCompilerOptions<KotlinNativeCompilerOptions>,
     KotlinTargetWithBinaries<KotlinNativeCompilation, KotlinNativeBinaryContainer>(
     project,
     KotlinPlatformType.native

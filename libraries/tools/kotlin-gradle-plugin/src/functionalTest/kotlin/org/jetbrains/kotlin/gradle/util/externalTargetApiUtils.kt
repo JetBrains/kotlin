@@ -24,7 +24,7 @@ class FakeCompilation(delegate: Delegate) : DecoratedExternalKotlinCompilation(d
 }
 
 class FakeTarget(delegate: Delegate) : DecoratedExternalKotlinTarget(delegate),
-    HasConfigurableCompilerOptions<KotlinJvmCompilerOptions> {
+    HasConfigurableKotlinCompilerOptions<KotlinJvmCompilerOptions> {
 
     @Suppress("UNCHECKED_CAST")
     override val compilations: NamedDomainObjectContainer<FakeCompilation>

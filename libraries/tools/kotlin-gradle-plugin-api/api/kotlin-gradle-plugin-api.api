@@ -8,15 +8,15 @@ public final class org/jetbrains/kotlin/gradle/dsl/ExplicitApiMode : java/lang/E
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/dsl/HasConfigurableCompilerOptions {
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions {
 	public abstract fun compilerOptions (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun compilerOptions (Lorg/gradle/api/Action;)V
 	public abstract fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions;
 }
 
-public final class org/jetbrains/kotlin/gradle/dsl/HasConfigurableCompilerOptions$DefaultImpls {
-	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/dsl/HasConfigurableCompilerOptions;Lkotlin/jvm/functions/Function1;)V
-	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/dsl/HasConfigurableCompilerOptions;Lorg/gradle/api/Action;)V
+public final class org/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions$DefaultImpls {
+	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions;Lkotlin/jvm/functions/Function1;)V
+	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions;Lorg/gradle/api/Action;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/JsDiagnosticMode : java/lang/Enum {

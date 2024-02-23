@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.dsl
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectContainer
-import org.jetbrains.kotlin.gradle.dsl.HasConfigurableCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -40,7 +40,7 @@ interface KotlinJsTargetDsl :
     KotlinTarget,
     KotlinTargetWithNodeJsDsl,
     HasBinaries<KotlinJsBinaryContainer>,
-    HasConfigurableCompilerOptions<KotlinJsCompilerOptions> {
+    HasConfigurableKotlinCompilerOptions<KotlinJsCompilerOptions> {
 
     var moduleName: String?
 

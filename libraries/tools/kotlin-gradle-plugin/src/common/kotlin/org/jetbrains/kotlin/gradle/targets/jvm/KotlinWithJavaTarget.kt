@@ -29,7 +29,7 @@ abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions, CO 
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") compilerOptionsFactory: () -> DeprecatedHasCompilerOptions<CO>,
     kotlinOptionsFactory: (CO) -> KotlinOptionsType
 ) : AbstractKotlinTarget(project),
-    HasConfigurableCompilerOptions<KotlinJvmCompilerOptions> {
+    HasConfigurableKotlinCompilerOptions<KotlinJvmCompilerOptions> {
     override var disambiguationClassifier: String? = null
         internal set
 

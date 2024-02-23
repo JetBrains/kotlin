@@ -47,7 +47,7 @@ import javax.inject.Inject
 abstract class KotlinJvmTarget @Inject constructor(
     project: Project,
 ) : KotlinOnlyTarget<KotlinJvmCompilation>(project, KotlinPlatformType.jvm),
-    HasConfigurableCompilerOptions<KotlinJvmCompilerOptions>,
+    HasConfigurableKotlinCompilerOptions<KotlinJvmCompilerOptions>,
     KotlinTargetWithTests<JvmClasspathTestRunSource, KotlinJvmTestRun> {
 
     override val testRuns: NamedDomainObjectContainer<KotlinJvmTestRun> by lazy {
