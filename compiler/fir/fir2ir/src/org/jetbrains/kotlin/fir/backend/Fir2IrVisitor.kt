@@ -126,7 +126,9 @@ class Fir2IrVisitor(
     }
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Any?): IrElement = whileAnalysing(session, enumEntry) {
-        val irEnumEntry = classifierStorage.getCachedIrEnumEntry(enumEntry)!!
+        // At this point all IR for source enum entries should be created and bound to symbols
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
+        val irEnumEntry = classifierStorage.getIrEnumEntrySymbol(enumEntry).owner
         annotationGenerator.generate(irEnumEntry, enumEntry)
         val correspondingClass = irEnumEntry.correspondingClass
         val initializer = enumEntry.initializer
@@ -191,7 +193,7 @@ class Fir2IrVisitor(
         if (regularClass.visibility == Visibilities.Local) {
             val irParent = conversionScope.parentFromStack()
             // NB: for implicit types it is possible that local class is already cached
-            val irClass = classifierStorage.getCachedIrClass(regularClass)?.apply { this.parent = irParent }
+            val irClass = classifierStorage.getCachedIrLocalClass(regularClass)?.apply { this.parent = irParent }
             if (irClass != null) {
                 conversionScope.withParent(irClass) {
                     memberGenerator.convertClassContent(irClass, regularClass)
@@ -200,7 +202,7 @@ class Fir2IrVisitor(
             }
             converter.processLocalClassAndNestedClasses(regularClass, irParent)
         }
-        val irClass = classifierStorage.getCachedIrClass(regularClass)!!
+        val irClass = classifierStorage.getIrClass(regularClass)
         if (regularClass.isSealed) {
             irClass.sealedSubclasses = regularClass.getIrSymbolsForSealedSubclasses()
         }
@@ -350,7 +352,7 @@ class Fir2IrVisitor(
     ) {
         val irParent = conversionScope.parentFromStack()
         // NB: for implicit types it is possible that anonymous object is already cached
-        val irAnonymousObject = classifierStorage.getCachedIrClass(anonymousObject)?.apply { this.parent = irParent }
+        val irAnonymousObject = classifierStorage.getCachedIrLocalClass(anonymousObject)?.apply { this.parent = irParent }
             ?: converter.processLocalClassAndNestedClasses(anonymousObject, irParent)
 
         conversionScope.withParent(irAnonymousObject) {
@@ -711,7 +713,7 @@ class Fir2IrVisitor(
             // We anyway can use 'else' branch as fallback, but
             // this is an additional check of FIR2IR invariants
             // (source classes should be already built when we analyze bodies)
-            classifierStorage.getCachedIrClass(firClass)!!.symbol
+            classifierStorage.getIrClass(firClass).symbol
         } else {
             /*
              * The only case when we can refer to non-source this is resolution to companion object of parent
@@ -729,7 +731,7 @@ class Fir2IrVisitor(
              *     val x: Int = foo() // this: Base.Companion
              * ) : Base()
              */
-            classifierStorage.getOrCreateIrClass(firClassSymbol).symbol
+            classifierStorage.getIrClassSymbol(firClassSymbol)
         }
 
         if (firClass.classKind.isObject && shouldGenerateReceiverAsSingletonReference(irClassSymbol)) {
@@ -1560,7 +1562,7 @@ class Fir2IrVisitor(
             is FirResolvedQualifier -> {
                 when (val symbol = argument.symbol) {
                     is FirClassSymbol -> {
-                        classifierStorage.getOrCreateIrClass(symbol).symbol
+                        classifierStorage.getIrClassSymbol(symbol)
                     }
                     is FirTypeAliasSymbol -> {
                         symbol.fir.fullyExpandedConeType(session).toIrClassSymbol()
@@ -1594,7 +1596,7 @@ class Fir2IrVisitor(
 
     private fun ConeClassLikeType?.toIrClassSymbol(): IrClassSymbol? =
         (this?.lookupTag?.toSymbol(session) as? FirClassSymbol<*>)?.let {
-            classifierStorage.getOrCreateIrClass(it).symbol
+            classifierStorage.getIrClassSymbol(it)
         }
 
     private fun convertToArrayLiteral(

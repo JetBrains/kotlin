@@ -53,8 +53,8 @@ import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.transformer.transformConst
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionPublicSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -300,9 +300,7 @@ class Fir2IrConverter(
 
         declarationStorage.enterScope(irClass.symbol)
 
-        val signature = irClass.symbol.signature!!
-
-        symbolTable.declareConstructor(signature, { IrConstructorPublicSymbolImpl(signature) }) { irSymbol ->
+        IrConstructorSymbolImpl().let { irSymbol ->
             irFactory.createConstructor(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 IrDeclarationOrigin.DEFINED,
@@ -331,7 +329,7 @@ class Fir2IrConverter(
             }
         }
 
-        symbolTable.declareSimpleFunction(signature, { IrSimpleFunctionPublicSymbolImpl(signature) }) { irSymbol ->
+        IrSimpleFunctionSymbolImpl().let { irSymbol ->
             val lastStatement = codeFragment.block.statements.lastOrNull()
             val returnType = (lastStatement as? FirExpression)?.resolvedType?.toIrType(typeConverter) ?: irBuiltIns.unitType
 
@@ -434,13 +432,12 @@ class Fir2IrConverter(
     private fun registerClassAndNestedClasses(klass: FirClass, parent: IrDeclarationParent): IrClass {
         // Local classes might be referenced before they declared (see usages of Fir2IrClassifierStorage.createLocalIrClassOnTheFly)
         // So, we only need to set its parent properly
-        val irClass =
-            classifierStorage.getCachedIrClass(klass)?.apply {
-                this.parent = parent
-            } ?: when (klass) {
-                is FirRegularClass -> classifierStorage.createAndCacheIrClass(klass, parent)
-                is FirAnonymousObject -> classifierStorage.createAndCacheAnonymousObject(klass, irParent = parent)
-            }
+        val irClass = classifierStorage.getCachedIrLocalClass(klass)?.apply {
+            this.parent = parent
+        } ?: when (klass) {
+            is FirRegularClass -> classifierStorage.createAndCacheIrClass(klass, parent)
+            is FirAnonymousObject -> classifierStorage.createAndCacheAnonymousObject(klass, irParent = parent)
+        }
         registerNestedClasses(klass, irClass)
         return irClass
     }
@@ -463,7 +460,7 @@ class Fir2IrConverter(
     private fun processClassAndNestedClassHeaders(klass: FirClass) {
         classifiersGenerator.processClassHeader(klass)
         processNestedClassHeaders(klass)
-        val irClass = classifierStorage.getCachedIrClass(klass)!!
+        val irClass = classifierStorage.getIrClass(klass)
         /*
          * This is needed to preserve the source order of declarations in the class
          * IrClass should contain declarations in the source order, but creating of nested IrClass automatically adds created class to the list
@@ -522,7 +519,7 @@ class Fir2IrConverter(
         val isInLocalClass = containingClass != null && (containingClass !is FirRegularClass || containingClass.isLocal)
         when (declaration) {
             is FirRegularClass -> {
-                val irClass = classifierStorage.getCachedIrClass(declaration)!!
+                val irClass = classifierStorage.getIrClass(declaration)
                 addDeclarationToParentIfNeeded(irClass)
                 processClassMembers(declaration, irClass)
             }
@@ -595,7 +592,7 @@ class Fir2IrConverter(
                 declarationStorage.createAndCacheIrConstructor(declaration, { parent as IrClass }, isLocal = isInLocalClass)
             }
             is FirEnumEntry -> {
-                classifierStorage.getOrCreateIrEnumEntry(declaration, parent as IrClass)
+                classifierStorage.createAndCacheIrEnumEntry(declaration, parent as IrClass)
             }
             is FirAnonymousInitializer -> {
                 declarationStorage.createIrAnonymousInitializer(declaration, parent as IrClass)

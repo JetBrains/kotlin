@@ -33,6 +33,7 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             FirSamConversionTransformerExtension::class,
             FirAssignExpressionAltererExtension::class,
             FirScriptConfiguratorExtension::class,
+            FirScriptResolutionConfigurationExtension::class,
             Fir2IrScriptConfiguratorExtension::class,
             FirFunctionTypeKindExtension::class,
             @OptIn(FirExtensionApiInternals::class)
@@ -98,6 +99,11 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
         @JvmName("plusScriptConfiguratorExtension")
         operator fun (FirScriptConfiguratorExtension.Factory).unaryPlus() {
             registerExtension(FirScriptConfiguratorExtension::class, this)
+        }
+
+        @JvmName("plusFirScriptResolutionConfigurationExtension")
+        operator fun (FirScriptResolutionConfigurationExtension.Factory).unaryPlus() {
+            registerExtension(FirScriptResolutionConfigurationExtension::class, this)
         }
 
         @JvmName("plusFir2IrScriptConfiguratorExtension")
@@ -166,6 +172,11 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
         @JvmName("plusScriptConfiguratorExtension")
         operator fun ((FirSession) -> FirScriptConfiguratorExtension).unaryPlus() {
             FirScriptConfiguratorExtension.Factory { this.invoke(it) }.unaryPlus()
+        }
+
+        @JvmName("plusFirScriptResolutionConfigurationExtension")
+        operator fun ((FirSession) -> FirScriptResolutionConfigurationExtension).unaryPlus() {
+            FirScriptResolutionConfigurationExtension.Factory { this.invoke(it) }.unaryPlus()
         }
 
         @JvmName("plusFir2IrScriptConfiguratorExtension")

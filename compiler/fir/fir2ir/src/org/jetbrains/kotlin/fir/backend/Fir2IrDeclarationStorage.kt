@@ -410,7 +410,7 @@ class Fir2IrDeclarationStorage(
             else -> shouldNotBeCalled()
         }
         requireNotNull(containingClassLookupTag) { "Containing class not found for ${callable.render()}"}
-        return classifierStorage.findIrClass(containingClassLookupTag)?.symbol
+        return classifierStorage.getIrClassSymbol(containingClassLookupTag)
             ?: error("IR class for $containingClassLookupTag not found")
     }
 
@@ -992,26 +992,12 @@ class Fir2IrDeclarationStorage(
 
     fun getIrValueSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
         return when (val firDeclaration = firVariableSymbol.fir) {
-            is FirEnumEntry -> {
-                classifierStorage.getCachedIrEnumEntry(firDeclaration)?.let { return it.symbol }
-                val irParentClass = firDeclaration.containingClassLookupTag()?.let { classifierStorage.findIrClass(it) }!!
+            is FirEnumEntry -> classifierStorage.getIrEnumEntrySymbol(firDeclaration)
 
-                val containingFile = firProvider.getFirCallableContainerFile(firVariableSymbol)
+            is FirValueParameter -> localStorage.getParameter(firDeclaration)
+                ?: getIrVariableSymbol(firDeclaration) // catch parameter is FirValueParameter in FIR but IrVariable in IR
 
-                classifierStorage.getOrCreateIrEnumEntry(
-                    firDeclaration,
-                    irParent = irParentClass,
-                    predefinedOrigin = if (containingFile != null) IrDeclarationOrigin.DEFINED else irParentClass.origin
-                ).symbol
-            }
-            is FirValueParameter -> {
-                localStorage.getParameter(firDeclaration)
-                // catch parameter is FirValueParameter in FIR but IrVariable in IR
-                    ?: return getIrVariableSymbol(firDeclaration)
-            }
-            else -> {
-                getIrVariableSymbol(firDeclaration)
-            }
+            else -> getIrVariableSymbol(firDeclaration)
         }
     }
 
@@ -1247,9 +1233,9 @@ class Fir2IrDeclarationStorage(
     }
 
     private fun generateLazyFakeOverrides(name: Name, fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?) {
-        val firClassSymbol = fakeOverrideOwnerLookupTag?.toSymbol(session) as? FirClassSymbol
+        val firClassSymbol = fakeOverrideOwnerLookupTag?.toSymbol(session) as? FirClassSymbol<*>
         if (firClassSymbol != null) {
-            val irClass = classifierStorage.getOrCreateIrClass(firClassSymbol)
+            val irClass = classifierStorage.getIrClass(firClassSymbol.fir)
             if (irClass is Fir2IrLazyClass) {
                 irClass.getFakeOverridesByName(name)
             }
@@ -1427,7 +1413,9 @@ class Fir2IrDeclarationStorage(
         firOrigin: FirDeclarationOrigin
     ): IrDeclarationParent? {
         if (parentLookupTag != null) {
-            return classifierStorage.findIrClass(parentLookupTag)
+            // At this point all source classes should be already created and bound to symbols
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            return classifierStorage.getIrClassSymbol(parentLookupTag)?.owner
         }
 
 
@@ -1496,7 +1484,7 @@ class Fir2IrDeclarationStorage(
         return parentPackage
     }
 
-    private fun findIrParent(
+    internal fun findIrParent(
         callableDeclaration: FirCallableDeclaration,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
     ): IrDeclarationParent? {

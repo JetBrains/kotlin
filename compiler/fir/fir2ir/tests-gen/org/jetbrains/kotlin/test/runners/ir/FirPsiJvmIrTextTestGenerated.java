@@ -2727,6 +2727,18 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     public void testIntersectionWithRawType() {
       runTest("compiler/testData/ir/irText/fakeOverrides/intersectionWithRawType.kt");
     }
+
+    @Test
+    @TestMetadata("setterVisibliity.kt")
+    public void testSetterVisibliity() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/setterVisibliity.kt");
+    }
+
+    @Test
+    @TestMetadata("setterVisibliityWithJava.kt")
+    public void testSetterVisibliityWithJava() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/setterVisibliityWithJava.kt");
+    }
   }
 
   @Nested

@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
@@ -686,9 +685,7 @@ class ExpressionCodegen(
                 SuspensionPointKind.NEVER
             // Copy-pasted bytecode blocks are not suspension points.
             symbol.owner.isInline ->
-                if (symbol.owner.name.asString() == "suspendCoroutineUninterceptedOrReturn" &&
-                    symbol.owner.getPackageFragment().packageFqName == FqName("kotlin.coroutines.intrinsics")
-                )
+                if (symbol.owner.isBuiltInSuspendCoroutineUninterceptedOrReturn())
                     SuspensionPointKind.ALWAYS
                 else
                     SuspensionPointKind.NEVER

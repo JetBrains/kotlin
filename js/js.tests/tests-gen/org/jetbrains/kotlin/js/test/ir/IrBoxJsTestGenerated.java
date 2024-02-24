@@ -7165,6 +7165,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     }
 
     @Test
+    @TestMetadata("logicalOperators.kt")
+    public void testLogicalOperators() {
+      runTest("js/js.translator/testData/box/jsAstOptimizations/logicalOperators.kt");
+    }
+
+    @Test
     @TestMetadata("tempVarDeclOnAssignment.kt")
     public void testTempVarDeclOnAssignment() {
       runTest("js/js.translator/testData/box/jsAstOptimizations/tempVarDeclOnAssignment.kt");

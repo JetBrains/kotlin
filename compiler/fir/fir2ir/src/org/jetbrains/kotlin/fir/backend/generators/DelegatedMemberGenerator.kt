@@ -337,7 +337,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
             // dispatch receiver of the target method. Therefore, we need to check if a cast must be inserted.
             val superFunctionDispatchReceiverType = originalFirDeclaration.dispatchReceiverType
             val superFunctionDispatchReceiverLookupTag = (superFunctionDispatchReceiverType as? ConeClassLikeType)?.lookupTag
-            val superFunctionParentSymbol = superFunctionDispatchReceiverLookupTag?.let { classifierStorage.findIrClass(it)?.symbol }
+            val superFunctionParentSymbol = superFunctionDispatchReceiverLookupTag?.let { classifierStorage.getIrClassSymbol(it) }
             dispatchReceiver = if (superFunctionParentSymbol == null || irField.type.isSubtypeOfClass(superFunctionParentSymbol)) {
                 getField
             } else {

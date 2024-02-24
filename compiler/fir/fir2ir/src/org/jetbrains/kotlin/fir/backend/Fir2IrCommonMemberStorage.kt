@@ -26,11 +26,11 @@ class Fir2IrCommonMemberStorage(firMangler: FirMangler) {
 
     val symbolTable = SymbolTable(signaturer = null, irFactory = IrFactoryImpl)
 
-    val classCache: MutableMap<FirRegularClass, IrClass> = mutableMapOf()
+    val classCache: MutableMap<FirRegularClass, IrClassSymbol> = mutableMapOf()
 
     val typeParameterCache: MutableMap<FirTypeParameter, IrTypeParameter> = mutableMapOf()
 
-    val enumEntryCache: MutableMap<FirEnumEntry, IrEnumEntry> = mutableMapOf()
+    val enumEntryCache: MutableMap<FirEnumEntry, IrEnumEntrySymbol> = mutableMapOf()
 
     val localClassCache: MutableMap<FirClass, IrClass> = mutableMapOf()
 

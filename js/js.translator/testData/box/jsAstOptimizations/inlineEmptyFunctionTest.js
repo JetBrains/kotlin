@@ -7,7 +7,7 @@ function box() {
   if (!(flag1 === 0)) {
     var tmp;
     var tmp_0;
-    if (equals(OK, 'OK') ? flag1 === 1 : false) {
+    if (equals(OK, 'OK') && flag1 === 1) {
       var tmp_1 = flag2;
       tmp_0 = typeof tmp_1 === 'number';
     } else {
@@ -26,7 +26,7 @@ function box() {
   if (!(flag1 === 0)) {
     var tmp_2;
     var tmp_3;
-    if (equals(OK, 'OK') ? flag1 === 1 : false) {
+    if (equals(OK, 'OK') && flag1 === 1) {
       var tmp_4 = flag2;
       tmp_3 = typeof tmp_4 === 'number';
     } else {

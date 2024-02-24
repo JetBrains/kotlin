@@ -11,5 +11,6 @@ const val SCRIPT_RECEIVER_NAME_PREFIX = "\$script_receiver"
 enum class FirScriptCustomizationKind {
     DEFAULT,
     RESULT_PROPERTY,
-    PARAMETER
+    PARAMETER,
+    PARAMETER_FROM_BASE_CLASS, // TODO: remove after fixing KT-60449
 }

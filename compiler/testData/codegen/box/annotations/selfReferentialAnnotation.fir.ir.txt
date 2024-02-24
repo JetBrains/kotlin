@@ -60,10 +60,10 @@ FILE fqName:<root> fileName:/selfReferentialAnnotation.kt
               receiver: GET_VAR '<this>: <root>.MyRequiresOptIn declared in <root>.MyRequiresOptIn.<get-b>' type=<root>.MyRequiresOptIn origin=null
     CLASS ENUM_CLASS name:MyLevel modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.MyRequiresOptIn.MyLevel>]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyRequiresOptIn.MyLevel
-      ENUM_ENTRY name:ERROR
+      ENUM_ENTRY name:WARNING
         init: EXPRESSION_BODY
           ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.MyRequiresOptIn.MyLevel'
-      ENUM_ENTRY name:WARNING
+      ENUM_ENTRY name:ERROR
         init: EXPRESSION_BODY
           ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.MyRequiresOptIn.MyLevel'
       CONSTRUCTOR visibility:private <> () returnType:<root>.MyRequiresOptIn.MyLevel [primary]
@@ -143,5 +143,22 @@ FILE fqName:<root> fileName:/selfReferentialAnnotation.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
+      VAR name:result type:kotlin.String [val]
+        CALL 'public final fun joinToString <T> (separator: kotlin.CharSequence, prefix: kotlin.CharSequence, postfix: kotlin.CharSequence, limit: kotlin.Int, truncated: kotlin.CharSequence, transform: kotlin.Function1<T of kotlin.collections.joinToString, kotlin.CharSequence>?): kotlin.String declared in kotlin.collections' type=kotlin.String origin=null
+          <T>: <root>.MyRequiresOptIn.MyLevel
+          $receiver: CALL 'public final fun values (): kotlin.Array<<root>.MyRequiresOptIn.MyLevel> declared in <root>.MyRequiresOptIn.MyLevel' type=kotlin.Array<<root>.MyRequiresOptIn.MyLevel> origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CONST String type=kotlin.String value="OK"
+        BLOCK type=kotlin.String origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.String [val]
+            GET_VAR 'val result: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+          WHEN type=kotlin.String origin=WHEN
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val tmp_0: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+                arg1: CONST String type=kotlin.String value="WARNING, ERROR"
+              then: CONST String type=kotlin.String value="OK"
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: STRING_CONCATENATION type=kotlin.String
+                CONST String type=kotlin.String value="Fail: "
+                GET_VAR 'val result: kotlin.String declared in <root>.box' type=kotlin.String origin=null

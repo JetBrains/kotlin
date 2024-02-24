@@ -26,7 +26,7 @@ fun SessionHolder.collectTowerDataElementsForScript(owner: FirScript): TowerElem
             owner.symbol, receiver.typeRef.coneType, receiver.labelName, session, scopeSession,
             contextReceiverNumber = index,
         )
-    }
+    }.asReversed()
 
     return TowerElementsForScript(
         contextReceivers,

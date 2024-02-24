@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.jvm.mapping.mapType
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.*
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -312,7 +311,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 // Not generating parameter annotations for default stubs fixes KT-7892, though
                 // this certainly looks like a workaround for a javac bug.
                 IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
-                JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
+                IrDeclarationOrigin.SYNTHETIC_ACCESSOR,
                 IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER,
                 IrDeclarationOrigin.BRIDGE,
                 IrDeclarationOrigin.BRIDGE_SPECIAL,
@@ -333,8 +332,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
 
 
 private fun IrValueParameter.isSyntheticMarkerParameter(): Boolean =
-    origin == IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER ||
-            origin == JvmLoweredDeclarationOrigin.SYNTHETIC_MARKER_PARAMETER
+    origin == IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER
 
 private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, config: JvmBackendConfig) {
     irFunction.extensionReceiverParameter?.let {

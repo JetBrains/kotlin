@@ -269,7 +269,8 @@ internal object NativeTestSupport {
         val cacheMode = ClassLevelProperty.CACHE_MODE.readValue(
             enforcedProperties,
             CacheMode.Alias.values(),
-            default = defaultCache
+            default = if (optimizationMode != OptimizationMode.OPT) defaultCache
+                      else CacheMode.Alias.NO,
         )
         val useStaticCacheForUserLibraries = when (cacheMode) {
             CacheMode.Alias.NO -> return CacheMode.WithoutCache

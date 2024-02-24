@@ -14,9 +14,7 @@ object JvmLoweredDeclarationOrigin {
     val FIELD_FOR_OUTER_THIS by IrDeclarationOriginImpl
     val LAMBDA_IMPL by IrDeclarationOriginImpl
     val FUNCTION_REFERENCE_IMPL by IrDeclarationOriginImpl.Synthetic
-    val SYNTHETIC_ACCESSOR by IrDeclarationOriginImpl.Synthetic
     val SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR by IrDeclarationOriginImpl.Synthetic
-    val SYNTHETIC_MARKER_PARAMETER by IrDeclarationOriginImpl.Synthetic
     val TO_ARRAY by IrDeclarationOriginImpl
     val JVM_STATIC_WRAPPER by IrDeclarationOriginImpl
     val JVM_OVERLOADS_WRAPPER by IrDeclarationOriginImpl

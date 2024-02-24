@@ -25,6 +25,7 @@ fun test(): Long {
 
 // EXPECTATIONS JS_IR
 // test.kt:6 box
+// test.kt:10 test
 // test.kt:12 test
 // test.kt:7 box
 

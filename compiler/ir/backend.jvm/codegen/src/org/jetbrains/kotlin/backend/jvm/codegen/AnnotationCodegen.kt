@@ -400,7 +400,7 @@ abstract class AnnotationCodegen(
         annotated: IrAnnotationContainer,
         type: IrType?
     ) {
-        if ((annotated as? IrDeclaration)?.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
+        if ((annotated as? IrDeclaration)?.origin == IrDeclarationOrigin.SYNTHETIC_ACCESSOR ||
             type == null || !context.config.emitJvmTypeAnnotations
         ) {
             return

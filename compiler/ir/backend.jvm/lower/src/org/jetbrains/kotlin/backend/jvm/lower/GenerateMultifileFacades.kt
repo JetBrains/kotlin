@@ -215,7 +215,7 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
 
     if (DescriptorVisibilities.isPrivate(originalVisibility) ||
         name == StaticInitializersLowering.clinitName ||
-        origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
+        origin == IrDeclarationOrigin.SYNTHETIC_ACCESSOR ||
         origin == JvmLoweredDeclarationOrigin.INLINE_LAMBDA ||
         origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
         origin == IrDeclarationOrigin.PROPERTY_DELEGATE ||

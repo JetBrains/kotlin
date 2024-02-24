@@ -44,7 +44,7 @@ class Fir2IrLazyClass(
     IrMaybeDeserializedClass, DeserializableClass, Fir2IrComponents by components {
     init {
         symbol.bind(this)
-        classifierStorage.preCacheTypeParameters(fir, symbol)
+        classifierStorage.preCacheTypeParameters(fir)
     }
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
@@ -173,7 +173,7 @@ class Fir2IrLazyClass(
             scope.processClassifiersByName(name) {
                 val declaration = it.fir as? FirRegularClass ?: return@processClassifiersByName
                 if (declaration.classId.outerClassId == fir.classId && shouldBuildStub(declaration)) {
-                    result += classifierStorage.getOrCreateIrClass(declaration.symbol)
+                    result += classifierStorage.getIrClassSymbol(declaration.symbol).owner
                 }
             }
         }
@@ -181,7 +181,7 @@ class Fir2IrLazyClass(
         if (fir.classKind == ClassKind.ENUM_CLASS) {
             for (declaration in fir.declarations) {
                 if (declaration is FirEnumEntry && shouldBuildStub(declaration)) {
-                    result += classifierStorage.getOrCreateIrEnumEntry(declaration, this, origin)
+                    result += classifierStorage.getIrEnumEntrySymbol(declaration).owner
                 }
             }
         }

@@ -659,8 +659,6 @@ allprojects {
     }
 }
 
-preparePublication()
-
 gradle.taskGraph.whenReady {
     fun Boolean.toOnOff(): String = if (this) "on" else "off"
     val profile = if (isTeamcityBuild) "CI" else "Local"

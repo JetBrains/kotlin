@@ -23,9 +23,10 @@ class FirJvmElementAwareStringTable(
     private val localPoppedUpClasses: List<IrAttributeContainer>,
     nameResolver: JvmNameResolver? = null
 ) : JvmStringTable(nameResolver), FirElementAwareStringTable {
-    override fun getLocalClassIdReplacement(firClass: FirClass): ClassId =
-        components.classifierStorage.getCachedIrClass(firClass)?.getLocalClassIdReplacement()
-            ?: throw AssertionError("not a local class: ${firClass.symbol.classId}")
+    override fun getLocalClassIdReplacement(firClass: FirClass): ClassId {
+        // TODO: should call getCachedIrLocalClass, see KT-66018
+        return components.classifierStorage.getIrClass(firClass).getLocalClassIdReplacement()
+    }
 
     private fun IrClass.getLocalClassIdReplacement(): ClassId {
         // This convoluted implementation aims to reproduce K1 behaviour (see JvmCodegenStringTable::getLocalClassIdReplacement).

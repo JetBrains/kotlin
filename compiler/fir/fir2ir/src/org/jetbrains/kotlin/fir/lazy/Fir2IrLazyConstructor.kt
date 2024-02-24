@@ -41,7 +41,7 @@ class Fir2IrLazyConstructor(
     Fir2IrComponents by components {
     init {
         symbol.bind(this)
-        classifierStorage.preCacheTypeParameters(fir, symbol)
+        classifierStorage.preCacheTypeParameters(fir)
     }
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()

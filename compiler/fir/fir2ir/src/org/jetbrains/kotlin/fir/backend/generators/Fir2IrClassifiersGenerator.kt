@@ -108,7 +108,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
         return irClass
     }
 
-    fun processClassHeader(klass: FirClass, irClass: IrClass = classifierStorage.getCachedIrClass(klass)!!): IrClass {
+    fun processClassHeader(klass: FirClass, irClass: IrClass = classifierStorage.getIrClass(klass)): IrClass {
         irClass.declareTypeParameters(klass)
         irClass.setThisReceiver(klass.typeParameters)
         irClass.declareSupertypes(klass)
@@ -121,7 +121,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
     // `irClass` is a source class and definitely is not a lazy class
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun IrClass.declareTypeParameters(klass: FirClass) {
-        classifierStorage.preCacheTypeParameters(klass, symbol)
+        classifierStorage.preCacheTypeParameters(klass)
         setTypeParameters(this, klass)
         if (klass is FirRegularClass) {
             val fieldsForContextReceiversOfCurrentClass = classifierStorage.getFieldsWithContextReceiversForClass(this, klass)
@@ -221,8 +221,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
         val irClass = if (classOrLocalParent === klass) {
             result
         } else {
-            classifierStorage.getCachedIrClass(klass)
-                ?: error("Assuming that all nested classes of ${classOrLocalParent.classId.asString()} should already be cached")
+            classifierStorage.getIrClass(klass)
         }
         return LocalIrClassInfo(irClass, classOrLocalParent, result)
     }
@@ -286,7 +285,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
         parent: IrDeclarationParent,
         symbol: IrTypeAliasSymbol,
     ): IrTypeAlias = typeAlias.convertWithOffsets { startOffset, endOffset ->
-        classifierStorage.preCacheTypeParameters(typeAlias, symbol)
+        classifierStorage.preCacheTypeParameters(typeAlias)
         irFactory.createTypeAlias(
             startOffset = startOffset,
             endOffset = endOffset,
@@ -390,7 +389,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
     ) {
         irOwner.typeParameters = owner.typeParameters.mapIndexedNotNull { index, typeParameter ->
             if (typeParameter !is FirTypeParameter) return@mapIndexedNotNull null
-            classifierStorage.getIrTypeParameter(typeParameter, index, irOwner.symbol, typeOrigin).apply {
+            classifierStorage.getIrTypeParameter(typeParameter, index, typeOrigin).apply {
                 parent = irOwner
                 if (superTypes.isEmpty()) {
                     superTypes = typeParameter.bounds.map { it.toIrType(typeOrigin) }

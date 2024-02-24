@@ -74,12 +74,12 @@ class Fir2IrPluginContext(
 
     override fun referenceClass(classId: ClassId): IrClassSymbol? {
         val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) as? FirClassSymbol<*> ?: return null
-        return components.classifierStorage.getOrCreateIrClass(firSymbol).symbol
+        return components.classifierStorage.getIrClassSymbol(firSymbol)
     }
 
     override fun referenceTypeAlias(classId: ClassId): IrTypeAliasSymbol? {
         val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) as? FirTypeAliasSymbol ?: return null
-        return components.classifierStorage.referenceTypeAlias(firSymbol).symbol
+        return components.classifierStorage.getIrTypeAliasSymbol(firSymbol)
     }
 
     override fun referenceConstructors(classId: ClassId): Collection<IrConstructorSymbol> {

@@ -1,14 +1,13 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.jvm
+package org.jetbrains.kotlin.backend.common.lower.inline
 
+import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
-import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
-import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -22,13 +21,19 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.concurrent.ConcurrentHashMap
 
-class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
+/**
+ * Generates visible synthetic accessor functions for symbols that are otherwise inaccessible, for example,
+ * when inlining a function that references a private method of a class outside of that class, or generating a class for a lambda
+ * expression that uses a `super` qualifier in its body.
+ *
+ * TODO: Right now this class is only used in the JVM backend. There is an ongoing effort to also generate synthetic
+ *    accessors on KLIB-based backends ([KT-64865](https://youtrack.jetbrains.com/issue/KT-64865)).
+ *    Please consider this fact when you want to change its implementation.
+ */
+open class SyntheticAccessorGenerator<Context : BackendContext>(protected val context: Context) {
     private data class FieldKey(val fieldSymbol: IrFieldSymbol, val parent: IrDeclarationParent, val superQualifierSymbol: IrClassSymbol?)
 
     private data class FunctionKey(
@@ -42,18 +47,15 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
     private val setterMap = ConcurrentHashMap<FieldKey, IrSimpleFunctionSymbol>()
 
     fun getSyntheticFunctionAccessor(expression: IrFunctionAccessExpression, scopes: List<ScopeWithIr>): IrFunctionSymbol {
-        return createAccessor(expression, scopes)
+        return if (expression is IrCall)
+            createAccessor(expression.symbol, scopes, expression.dispatchReceiver?.type, expression.superQualifierSymbol)
+        else
+            createAccessor(expression.symbol, scopes, null, null)
     }
 
     fun getSyntheticFunctionAccessor(reference: IrFunctionReference, scopes: List<ScopeWithIr>): IrFunctionSymbol {
         return createAccessor(reference.symbol, scopes, reference.dispatchReceiver?.type, null)
     }
-
-    private fun createAccessor(expression: IrFunctionAccessExpression, scopes: List<ScopeWithIr>): IrFunctionSymbol =
-        if (expression is IrCall)
-            createAccessor(expression.symbol, scopes, expression.dispatchReceiver?.type, expression.superQualifierSymbol)
-        else
-            createAccessor(expression.symbol, scopes, null, null)
 
     private fun createAccessor(
         symbol: IrFunctionSymbol,
@@ -119,33 +121,8 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
         }
     }
 
-    private fun getSyntheticConstructorAccessor(
-        declaration: IrConstructor,
-        constructorToAccessorMap: ConcurrentHashMap<IrConstructor, IrConstructor>
-    ): IrConstructor {
-        return constructorToAccessorMap.getOrPut(declaration) {
-            declaration.makeConstructorAccessor(JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR).also { accessor ->
-                if (declaration.constructedClass.modality != Modality.SEALED) {
-                    // There's a special case in the JVM backend for serializing the metadata of hidden
-                    // constructors - we serialize the descriptor of the original constructor, but the
-                    // signature of the accessor. We implement this special case in the JVM IR backend by
-                    // attaching the metadata directly to the accessor. We also have to move all annotations
-                    // to the accessor. Parameter annotations are already moved by the copyTo method.
-                    if (declaration.metadata != null) {
-                        accessor.metadata = declaration.metadata
-                        declaration.metadata = null
-                    }
-                    accessor.annotations += declaration.annotations
-                    declaration.annotations = emptyList()
-                    declaration.valueParameters.forEach { it.annotations = emptyList() }
-                }
-            }
-        }
-    }
-
-    private fun IrConstructor.makeConstructorAccessor(
-        originForConstructorAccessor: IrDeclarationOrigin =
-            JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+    protected fun IrConstructor.makeConstructorAccessor(
+        originForConstructorAccessor: IrDeclarationOrigin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
     ): IrConstructor {
         val source = this
 
@@ -156,8 +133,8 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
         }.also { accessor ->
             accessor.parent = source.parent
 
-            accessor.copyTypeParametersFrom(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
-            accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.copyTypeParametersFrom(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.copyValueParametersToStatic(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
             if (source.constructedClass.modality == Modality.SEALED) {
                 for (accessorValueParameter in accessor.valueParameters) {
                     accessorValueParameter.annotations = emptyList()
@@ -169,7 +146,7 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
             accessor.addValueParameter(
                 "constructor_marker".synthesizedString,
                 context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable(),
-                JvmLoweredDeclarationOrigin.SYNTHETIC_MARKER_PARAMETER
+                IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER,
             )
 
             accessor.body = context.irFactory.createExpressionBody(
@@ -188,6 +165,8 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
             copyAllParamsToArgs(it, accessor)
         }
 
+    protected open fun accessorModality(parent: IrDeclarationParent): Modality = Modality.FINAL
+
     private fun IrSimpleFunction.makeSimpleFunctionAccessor(
         superQualifierSymbol: IrClassSymbol?, dispatchReceiverType: IrType?, parent: IrDeclarationParent, scopes: List<ScopeWithIr>
     ): IrSimpleFunction {
@@ -196,16 +175,16 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
         return factory.buildFun {
             startOffset = parent.startOffset
             endOffset = parent.startOffset
-            origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+            origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = source.accessorName(superQualifierSymbol, scopes)
             visibility = DescriptorVisibilities.PUBLIC
-            modality = if (parent is IrClass && parent.isJvmInterface) Modality.OPEN else Modality.FINAL
+            modality = accessorModality(parent)
             isSuspend = source.isSuspend // synthetic accessors of suspend functions are handled in codegen
         }.also { accessor ->
             accessor.parent = parent
             accessor.copyAttributes(source)
-            accessor.copyTypeParametersFrom(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
-            accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR, dispatchReceiverType)
+            accessor.copyTypeParametersFrom(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.copyValueParametersToStatic(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR, dispatchReceiverType)
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
             accessor.body = context.irFactory.createExpressionBody(
@@ -244,7 +223,7 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
         context.irFactory.buildFun {
             startOffset = parent.startOffset
             endOffset = parent.startOffset
-            origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+            origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = fieldSymbol.owner.accessorNameForGetter(superQualifierSymbol)
             visibility = DescriptorVisibilities.PUBLIC
             modality = Modality.FINAL
@@ -255,7 +234,7 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
             if (!fieldSymbol.owner.isStatic) {
                 // Accessors are always to one's own fields.
                 accessor.addValueParameter(
-                    "\$this", parent.defaultType, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+                    "\$this", parent.defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
                 )
             }
 
@@ -300,7 +279,7 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
         context.irFactory.buildFun {
             startOffset = parent.startOffset
             endOffset = parent.startOffset
-            origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+            origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = fieldSymbol.owner.accessorNameForSetter(superQualifierSymbol)
             visibility = DescriptorVisibilities.PUBLIC
             modality = Modality.FINAL
@@ -311,11 +290,11 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
             if (!fieldSymbol.owner.isStatic) {
                 // Accessors are always to one's own fields.
                 accessor.addValueParameter(
-                    "\$this", parent.defaultType, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+                    "\$this", parent.defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
                 )
             }
 
-            accessor.addValueParameter("<set-?>", fieldSymbol.owner.type, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.addValueParameter("<set-?>", fieldSymbol.owner.type, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
 
             accessor.body = createAccessorBodyForSetter(fieldSymbol.owner, accessor, superQualifierSymbol)
         }.symbol
@@ -380,32 +359,22 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
         }
     }
 
-    // In case of Java `protected static`, access could be done from a public inline function in the same package,
-    // or a subclass of the Java class. Both cases require an accessor, which we cannot add to the Java class.
-    private fun IrDeclarationWithVisibility.accessorParent(parent: IrDeclarationParent, scopes: List<ScopeWithIr>) =
-        if (visibility == JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY) {
-            val classes = scopes.map { it.irElement }.filterIsInstance<IrClass>()
-            val companions = classes.mapNotNull(IrClass::companionObject)
-            val objectsInScope =
-                classes.flatMap { it.declarations.filter(IrDeclaration::isAnonymousObject).filterIsInstance<IrClass>() }
-            val candidates = objectsInScope + companions + classes
-            candidates.lastOrNull { parent is IrClass && it.isSubclassOf(parent) } ?: classes.last()
-        } else {
-            parent
-        }
+    /**
+     * In case of Java `protected static`, access could be done from a public inline function in the same package,
+     * or a subclass of the Java class. Both cases require an accessor, which we cannot add to a Java class.
+     */
+    protected open fun IrDeclarationWithVisibility.accessorParent(parent: IrDeclarationParent, scopes: List<ScopeWithIr>) = parent
 
-    private fun IrSimpleFunction.accessorName(superQualifier: IrClassSymbol?, scopes: List<ScopeWithIr>): Name {
-        val jvmName = context.defaultMethodSignatureMapper.mapFunctionName(this)
-        val currentClass = scopes.lastOrNull { it.scope.scopeOwnerSymbol is IrClassSymbol }
-        val suffix = when {
+    protected open fun mapFunctionName(function: IrSimpleFunction): String = function.name.asString()
+
+    protected open fun functionAccessorSuffix(
+        function: IrSimpleFunction,
+        superQualifier: IrClassSymbol?,
+        scopes: List<ScopeWithIr>,
+    ): String = function.run {
+        when {
             // Accessors for top level functions never need a suffix.
             isTopLevel -> ""
-
-            // The only function accessors placed on interfaces are for private functions and JvmDefault implementations.
-            // The two cannot clash.
-            currentClass?.irElement?.let { element ->
-                element is IrClass && element.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS && element.parentAsClass == parentAsClass
-            } ?: false -> if (!DescriptorVisibilities.isPrivate(visibility)) "\$jd" else ""
 
             // Accessor for _s_uper-qualified call
             superQualifier != null -> "\$s" + superQualifier.owner.syntheticAccessorToSuperSuffix()
@@ -417,31 +386,36 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
 
             else -> ""
         }
-        return Name.identifier("access\$$jvmName$suffix")
     }
+
+    private fun IrSimpleFunction.accessorName(superQualifier: IrClassSymbol?, scopes: List<ScopeWithIr>): Name {
+        return Name.identifier("access\$${mapFunctionName(this)}${functionAccessorSuffix(this, superQualifier, scopes)}")
+    }
+
+    protected open fun fieldGetterName(field: IrField): String = "<get-${field.name}>"
 
     private fun IrField.accessorNameForGetter(superQualifierSymbol: IrClassSymbol?): Name {
-        val getterName = JvmAbi.getterName(name.asString())
-        return Name.identifier("access\$$getterName\$${fieldAccessorSuffix(superQualifierSymbol)}")
+        val getterName = fieldGetterName(this)
+        return Name.identifier("access\$$getterName\$${fieldAccessorSuffix(this, superQualifierSymbol)}")
     }
+
+    protected open fun fieldSetterName(field: IrField): String = "<set-${field.name}>"
 
     private fun IrField.accessorNameForSetter(superQualifierSymbol: IrClassSymbol?): Name {
-        val setterName = JvmAbi.setterName(name.asString())
-        return Name.identifier("access\$$setterName\$${fieldAccessorSuffix(superQualifierSymbol)}")
+        val setterName = fieldSetterName(this)
+        return Name.identifier("access\$$setterName\$${fieldAccessorSuffix(this, superQualifierSymbol)}")
     }
 
-    private fun IrField.fieldAccessorSuffix(superQualifierSymbol: IrClassSymbol?): String {
-        // Special _c_ompanion _p_roperty suffix for accessing companion backing field moved to outer
-        if (origin == JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD && !parentAsClass.isCompanion) {
-            return "cp"
-        }
-
+    /**
+     * For both _reading_ and _writing_ field accessors, the suffix that includes some of [field]'s important properties.
+     */
+    protected open fun fieldAccessorSuffix(field: IrField, superQualifierSymbol: IrClassSymbol?): String = field.run {
         if (superQualifierSymbol != null) {
             return "p\$s${superQualifierSymbol.owner.syntheticAccessorToSuperSuffix()}"
         }
 
         // Accesses to static protected fields that need an accessor must be due to being inherited, hence accessed on a
-        // _s_upertype. If the field is static, the super class the access is on can be different and therefore
+        // _s_upertype. If the field is static, the super class the access is on can be different, and therefore
         // we generate a suffix to distinguish access to field with different receiver types in the super hierarchy.
         return "p" + if (isStatic && visibility.isProtected) "\$s" + parentAsClass.syntheticAccessorToSuperSuffix() else ""
     }
@@ -450,32 +424,6 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
         // TODO: change this to `fqNameUnsafe.asString().replace(".", "_")` as soon as we're ready to break compatibility with pre-KT-21178 code
         name.asString().hashCode().toString()
 
-    private val DescriptorVisibility.isProtected
-        get() = AsmUtil.getVisibilityAccessFlag(delegate) == Opcodes.ACC_PROTECTED
-
-    fun isOrShouldBeHiddenSinceHasMangledParams(constructor: IrConstructor): Boolean {
-        if (constructor in context.hiddenConstructorsWithMangledParams.keys) return true
-        return constructor.isOrShouldBeHiddenDueToOrigin &&
-                !DescriptorVisibilities.isPrivate(constructor.visibility) &&
-                !constructor.constructedClass.isValue &&
-                (context.multiFieldValueClassReplacements.originalConstructorForConstructorReplacement[constructor] ?: constructor).hasMangledParameters() &&
-                !constructor.constructedClass.isAnonymousObject
-    }
-
-    fun isOrShouldBeHiddenAsSealedClassConstructor(constructor: IrConstructor): Boolean {
-        if (constructor in context.hiddenConstructorsOfSealedClasses.keys) return true
-        return constructor.isOrShouldBeHiddenDueToOrigin && constructor.visibility != DescriptorVisibilities.PUBLIC && constructor.constructedClass.modality == Modality.SEALED
-    }
-
-    private val IrConstructor.isOrShouldBeHiddenDueToOrigin: Boolean
-        get() = !(origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
-                origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
-                origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR ||
-                origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
-
-    fun getSyntheticConstructorWithMangledParams(declaration: IrConstructor) =
-        getSyntheticConstructorAccessor(declaration, context.hiddenConstructorsWithMangledParams)
-
-    fun getSyntheticConstructorOfSealedClass(declaration: IrConstructor) =
-        getSyntheticConstructorAccessor(declaration, context.hiddenConstructorsOfSealedClasses)
+    protected open val DescriptorVisibility.isProtected
+        get() = this == DescriptorVisibilities.PROTECTED
 }
