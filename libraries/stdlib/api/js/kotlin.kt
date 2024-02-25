@@ -821,8 +821,8 @@ public inline fun kotlin.Long.toUShort(): kotlin.UShort
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Short.toUShort(): kotlin.UShort
 
-@kotlin.SinceKotlin(version = "1.8")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "2.0")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <T : kotlin.AutoCloseable?, R> T.use(block: (T) -> R): R
 
@@ -869,8 +869,8 @@ public open class AssertionError : kotlin.Error {
     public constructor AssertionError(message: kotlin.String?, cause: kotlin.Throwable?)
 }
 
-@kotlin.SinceKotlin(version = "1.8")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "2.0")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public interface AutoCloseable {
     public abstract fun close(): kotlin.Unit
 }

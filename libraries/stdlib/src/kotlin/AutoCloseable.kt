@@ -12,8 +12,8 @@ import kotlin.contracts.contract
  * A resource that can be closed or released.
  */
 @Suppress("NO_ACTUAL_FOR_EXPECT")
-@SinceKotlin("1.8")
-@ExperimentalStdlibApi
+@SinceKotlin("2.0")
+@WasExperimental(ExperimentalStdlibApi::class)
 public expect interface AutoCloseable {
     /**
      * Closes this resource.
@@ -43,8 +43,8 @@ public expect interface AutoCloseable {
  * @return the result of [block] function invoked on this resource.
  */
 @Suppress("NO_ACTUAL_FOR_EXPECT", "EXPECTED_DECLARATION_WITH_BODY")
-@SinceKotlin("1.8")
-@ExperimentalStdlibApi
+@SinceKotlin("2.0")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public expect inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
     contract {

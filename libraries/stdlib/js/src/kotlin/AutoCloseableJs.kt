@@ -8,14 +8,14 @@ package kotlin
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-@SinceKotlin("1.8")
-@ExperimentalStdlibApi
+@SinceKotlin("2.0")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual interface AutoCloseable {
     public actual fun close(): Unit
 }
 
-@SinceKotlin("1.8")
-@ExperimentalStdlibApi
+@SinceKotlin("2.0")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
     contract {
@@ -32,7 +32,6 @@ public actual inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
     }
 }
 
-@ExperimentalStdlibApi
 @SinceKotlin("1.8")
 @PublishedApi
 internal fun AutoCloseable?.closeFinally(cause: Throwable?): Unit = when {
