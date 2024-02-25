@@ -42131,6 +42131,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/suspendConversion/suspendConversionCompatibility.kt");
     }
 
+    @TestMetadata("suspendConversionOfAliasedType.kt")
+    public void testSuspendConversionOfAliasedType() {
+      runTest("compiler/testData/codegen/box/suspendConversion/suspendConversionOfAliasedType.kt");
+    }
+
     @TestMetadata("suspendConversionOnVarargElements.kt")
     public void testSuspendConversionOnVarargElements() {
       runTest("compiler/testData/codegen/box/suspendConversion/suspendConversionOnVarargElements.kt");

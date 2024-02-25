@@ -52916,6 +52916,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
     }
 
     @Test
+    @TestMetadata("suspendConversionOfAliasedType.kt")
+    public void testSuspendConversionOfAliasedType() {
+      runTest("compiler/testData/codegen/box/suspendConversion/suspendConversionOfAliasedType.kt");
+    }
+
+    @Test
     @TestMetadata("suspendConversionOnVarargElements.kt")
     public void testSuspendConversionOnVarargElements() {
       runTest("compiler/testData/codegen/box/suspendConversion/suspendConversionOnVarargElements.kt");
