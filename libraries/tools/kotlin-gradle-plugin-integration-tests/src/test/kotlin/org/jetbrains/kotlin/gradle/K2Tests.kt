@@ -220,6 +220,16 @@ class CustomK2Tests : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    @DisplayName("Native metadata compilation against other klib (KT-65840)")
+    fun nativeMetadataCompilationWithAgainstOtherKlib(gradleVersion: GradleVersion) {
+        project("k2-common-native-against-other-klib", gradleVersion) {
+            build(":app:compileNativeMainKotlinMetadata") {
+                assertTasksExecuted(":app:compileNativeMainKotlinMetadata")
+            }
+        }
+    }
 }
 
 @NativeGradlePluginTests
