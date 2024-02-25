@@ -15,6 +15,12 @@ public actual interface AutoCloseable {
 }
 
 @SinceKotlin("2.0")
+@kotlin.internal.InlineOnly
+public actual inline fun AutoCloseable(crossinline closeAction: () -> Unit): AutoCloseable = object : AutoCloseable {
+    override fun close() = closeAction()
+}
+
+@SinceKotlin("2.0")
 @WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {

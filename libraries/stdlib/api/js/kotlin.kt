@@ -12,6 +12,10 @@ kotlin.reflect.KProperty0<*>.isInitialized: kotlin.Boolean { get; }
 @kotlin.SinceKotlin(version = "1.4")
 public val kotlin.Throwable.suppressedExceptions: kotlin.collections.List<kotlin.Throwable> { get; }
 
+@kotlin.SinceKotlin(version = "2.0")
+@kotlin.internal.InlineOnly
+public inline fun AutoCloseable(crossinline closeAction: () -> kotlin.Unit): kotlin.AutoCloseable
+
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly

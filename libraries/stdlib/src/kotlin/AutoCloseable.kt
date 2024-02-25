@@ -33,6 +33,39 @@ public expect interface AutoCloseable {
 }
 
 /**
+ * Returns an [AutoCloseable] instance that executes the specified [closeAction]
+ * upon invocation of its [`close()`][AutoCloseable.close] function.
+ *
+ * This function allows specifying custom cleanup actions for resources.
+ *
+ * Note that each invocation of the `close()` function on the returned `AutoCloseable` instance executes the [closeAction].
+ * Therefore, implementers are strongly recommended to make the [closeAction] idempotent, or to prevent multiple invocations.
+ *
+ * Example:
+ *
+ * ```kotlin
+ * val autoCloseable = AutoCloseable {
+ *     // Cleanup action, e.g., closing a file or releasing a network connection
+ *     Logger.log("Releasing the network connection.")
+ *     networkConnection.release()
+ * }
+ *
+ * // Now you can pass the autoCloseable to a function or use it directly.
+ * autoCloseable.use {
+ *     // Use the connection, which will be automatically released when this scope finishes.
+ *     val content = networkConnection.readContent()
+ *     Logger.log("Network connection content: $content")
+ * }
+ * ```
+ *
+ * @See AutoCloseable.use
+ */
+@Suppress("NO_ACTUAL_FOR_EXPECT")
+@SinceKotlin("2.0")
+@kotlin.internal.InlineOnly
+public expect inline fun AutoCloseable(crossinline closeAction: () -> Unit): AutoCloseable
+
+/**
  * Executes the given [block] function on this resource and then closes it down correctly whether an exception
  * is thrown or not.
  *

@@ -17,6 +17,11 @@ import kotlin.contracts.contract
 public actual typealias AutoCloseable = java.lang.AutoCloseable
 
 @Suppress("ACTUAL_WITHOUT_EXPECT")
+@SinceKotlin("2.0")
+@kotlin.internal.InlineOnly
+public actual inline fun AutoCloseable(crossinline closeAction: () -> Unit): AutoCloseable = java.lang.AutoCloseable { closeAction() }
+
+@Suppress("ACTUAL_WITHOUT_EXPECT")
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 // TODO: remove java.lang package prefix when the kotlin.AutoCloseable typealias is introduced and KT-55392 is fixed.
