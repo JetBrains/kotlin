@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.KotlinAndroidTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.locateTask
@@ -36,10 +37,14 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
 
     private val targetsThatSupportPublication = listOf(
         KotlinJvmTarget::class,
+        KotlinAndroidTarget::class,
     )
 
     private val targetToResourcesMap: MutableMap<KotlinTarget, TargetResources> = mutableMapOf()
+    private val androidTargetAssetsMap: MutableMap<KotlinAndroidTarget, TargetResources> = mutableMapOf()
+
     private val targetResourcesSubscribers: MutableMap<KotlinTarget, MutableList<(TargetResources) -> (Unit)>> = mutableMapOf()
+    private val androidTargetAssetsSubscribers: MutableMap<KotlinAndroidTarget, MutableList<(TargetResources) -> (Unit)>> = mutableMapOf()
 
     internal fun subscribeOnPublishResources(
         target: KotlinTarget,
@@ -49,9 +54,19 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
         targetResourcesSubscribers.getOrPut(target, { mutableListOf() }).add(notify)
     }
 
+    internal fun subscribeOnAndroidPublishAssets(
+        target: KotlinAndroidTarget,
+        notify: (TargetResources) -> (Unit),
+    ) {
+        androidTargetAssetsMap[target]?.let(notify)
+        androidTargetAssetsSubscribers.getOrPut(target, { mutableListOf() }).add(notify)
+    }
 
     override fun canPublishResources(target: KotlinTarget): Boolean {
         if (targetsThatSupportPublication.none { it.isInstance(target) }) return false
+        if (target is KotlinAndroidTarget) {
+            return AndroidGradlePluginVersion.current >= KotlinAndroidTargetResourcesPublication.MIN_AGP_VERSION
+        }
         return true
     }
 
@@ -78,6 +93,25 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
             notify(resources)
         }
     }
+
+    override fun publishInAndroidAssets(
+        target: KotlinAndroidTarget,
+        resourcePathForSourceSet: (KotlinSourceSet) -> (KotlinTargetResourcesPublication.ResourceRoot),
+        relativeResourcePlacement: Provider<File>,
+    ) {
+        if (androidTargetAssetsMap[target] != null) {
+            target.project.reportDiagnostic(KotlinToolingDiagnostics.AssetsPublishedMoreThanOncePerTarget())
+        }
+        val resources = TargetResources(
+            resourcePathForSourceSet = resourcePathForSourceSet,
+            relativeResourcePlacement = relativeResourcePlacement,
+        )
+        androidTargetAssetsMap[target] = resources
+        androidTargetAssetsSubscribers[target].orEmpty().forEach { notify ->
+            notify(resources)
+        }
+    }
+
     internal companion object {
         const val MULTIPLATFORM_RESOURCES_DIRECTORY = "kotlin-multiplatform-resources"
     }

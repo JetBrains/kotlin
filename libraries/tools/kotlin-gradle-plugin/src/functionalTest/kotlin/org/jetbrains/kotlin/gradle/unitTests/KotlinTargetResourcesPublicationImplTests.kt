@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
@@ -43,6 +45,21 @@ class KotlinTargetResourcesPublicationImplTests {
     }
 
     @Test
+    fun `test assets callback - after resources publication`() {
+        val project = mppProjectWithAndroidTarget()
+        val target = project.multiplatformExtension.androidTarget()
+
+        testCallbacksAfterApiCall(
+            callback = { back ->
+                project.multiplatformExtension.resourcesPublicationExtension?.subscribeOnAndroidPublishAssets(target) {
+                    back(Unit)
+                }
+            },
+            apiCall = { project.publishFakeAssets(target) }
+        )
+    }
+
+    @Test
     fun `test publication callback - before and after resources publication`() {
         val project = buildProjectWithMPP {
             kotlin {
@@ -62,6 +79,21 @@ class KotlinTargetResourcesPublicationImplTests {
     }
 
     @Test
+    fun `test assets callback - before and after resources publication`() {
+        val project = mppProjectWithAndroidTarget()
+        val target = project.multiplatformExtension.androidTarget()
+
+        testCallbacksBeforeAndAfterApiCall(
+            callback = { back ->
+                project.multiplatformExtension.resourcesPublicationExtension?.subscribeOnAndroidPublishAssets(target) {
+                    back(Unit)
+                }
+            },
+            apiCall = { project.publishFakeAssets(target) }
+        )
+    }
+
+    @Test
     fun `test publication - reports a diagnostic when publishing multiple times per target`() {
         val project = buildProjectWithMPP {
             kotlin {
@@ -73,6 +105,17 @@ class KotlinTargetResourcesPublicationImplTests {
         project.testMultipleApiCallsEmitDiagnostic(
             apiCall = { project.publishFakeResources(target) },
             diagnostic = KotlinToolingDiagnostics.ResourcePublishedMoreThanOncePerTarget,
+        )
+    }
+
+    @Test
+    fun `test assets - reports a diagnostic when publishing multiple times per target`() {
+        val project = mppProjectWithAndroidTarget()
+        val target = project.multiplatformExtension.androidTarget()
+
+        project.testMultipleApiCallsEmitDiagnostic(
+            apiCall = { project.publishFakeAssets(target) },
+            diagnostic = KotlinToolingDiagnostics.AssetsPublishedMoreThanOncePerTarget,
         )
     }
 
@@ -125,8 +168,33 @@ class KotlinTargetResourcesPublicationImplTests {
         assertContainsDiagnostic(diagnostic)
     }
 
+    private fun mppProjectWithAndroidTarget(): ProjectInternal {
+        val project = buildProjectWithMPP {
+            plugins.apply("com.android.library")
+            kotlin {
+                androidTarget()
+            }
+        }
+        (project.extensions.getByName("android") as LibraryExtension).compileSdk = 30
+        return project
+    }
+
     private fun Project.publishFakeResources(target: KotlinTarget) {
         project.multiplatformExtension.resourcesPublicationExtension?.publishResourcesAsKotlinComponent(
+            target,
+            resourcePathForSourceSet = {
+                KotlinTargetResourcesPublication.ResourceRoot(
+                    project.provider { File(it.name) },
+                    emptyList(),
+                    emptyList(),
+                )
+            },
+            relativeResourcePlacement = project.provider { File("test") },
+        )
+    }
+
+    private fun Project.publishFakeAssets(target: KotlinAndroidTarget) {
+        project.multiplatformExtension.resourcesPublicationExtension?.publishInAndroidAssets(
             target,
             resourcePathForSourceSet = {
                 KotlinTargetResourcesPublication.ResourceRoot(

@@ -911,6 +911,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/resources
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/KotlinTargetResourcesPublication$Companion;
 	public static final field EXTENSION_NAME Ljava/lang/String;
 	public abstract fun canPublishResources (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Z
+	public abstract fun publishInAndroidAssets (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;Lkotlin/jvm/functions/Function1;Lorg/gradle/api/provider/Provider;)V
 	public abstract fun publishResourcesAsKotlinComponent (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;Lkotlin/jvm/functions/Function1;Lorg/gradle/api/provider/Provider;)V
 }
 
