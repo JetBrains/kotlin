@@ -105,7 +105,7 @@ internal object NativeTestSupport {
     fun computeNativeClassLoader(parent: ClassLoader? = null): KotlinNativeClassLoader = KotlinNativeClassLoader(
         lazy {
             val nativeClassPath = ProcessLevelProperty.COMPILER_CLASSPATH.readValue()
-                .split(':', ';')
+                .split(File.pathSeparatorChar)
                 .map { File(it).toURI().toURL() }
                 .toTypedArray()
 
@@ -299,7 +299,7 @@ internal object NativeTestSupport {
         CompilerPlugins(
             ClassLevelProperty.COMPILER_PLUGINS.readValue(
                 enforcedProperties,
-                { it.split(':', ';').mapToSet(::File) },
+                { it.split(File.pathSeparatorChar).mapToSet(::File) },
                 default = emptySet()
             )
         )
@@ -308,7 +308,7 @@ internal object NativeTestSupport {
         CustomKlibs(
             ClassLevelProperty.CUSTOM_KLIBS.readValue(
                 enforcedProperties,
-                { it.split(':', ';').mapToSet(::File) },
+                { it.split(File.pathSeparatorChar).mapToSet(::File) },
                 default = emptySet()
             )
         )
