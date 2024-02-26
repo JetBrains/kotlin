@@ -813,8 +813,7 @@ tasks {
     register("nativeCompilerTest") {
         dependsOn(":native:native.tests:test")
         dependsOn(":native:objcexport-header-generator:check")
-        // TODO(KT-65977): enable atomicfu tests back
-        // dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
+        dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
     }
 
     // These are unit tests of Native compiler
