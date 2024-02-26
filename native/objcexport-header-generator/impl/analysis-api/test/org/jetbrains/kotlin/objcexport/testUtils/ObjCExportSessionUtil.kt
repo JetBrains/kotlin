@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.psi.KtElement
 
 inline fun <T> analyzeWithObjCExport(
     useSiteKtElement: KtElement,
-    configuration: KtObjCExportConfiguration = KtObjCExportConfiguration(),
+    configuration: KtObjCExportConfiguration = KtObjCExportConfiguration(
+        exportedModuleNames = setOf(defaultKotlinSourceModuleName)
+    ),
     action: context(KtAnalysisSession, KtObjCExportSession) () -> T,
 ): T = analyze(useSiteKtElement) {
     KtObjCExportSession(configuration) {

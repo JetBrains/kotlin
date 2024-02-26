@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.objcexport
 
+import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+
 data class KtObjCExportConfiguration(
     /**
      * Also used as top level prefix for declarations if present
@@ -28,4 +31,16 @@ data class KtObjCExportConfiguration(
      * (see [org.jetbrains.kotlin.objcexport.objCBaseDeclarations]).
      */
     val generateBaseDeclarationStubs: Boolean = true,
+
+    /**
+     * The name of modules that are to be exported in this session.
+     * An exported library shall be read, and its entire API surface shall be translated and presented in the
+     * objc header at the end.
+     *
+     * Libraries/Modules that are not listed in this [exportedModuleNames] will only export types that are used in either source code
+     * or other exported libraries public surface
+     * (see [KtLibraryModule.libraryName], [KtSourceModule.moduleName])
+     */
+    val exportedModuleNames: Set<String> = emptySet(),
 )
+
