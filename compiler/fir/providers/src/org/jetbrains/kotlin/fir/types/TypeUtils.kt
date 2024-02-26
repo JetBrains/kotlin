@@ -592,7 +592,7 @@ fun ConeKotlinType.canHaveSubtypes(session: FirSession): Boolean {
         return true
     }
     val expandedType = fullyExpandedType(session)
-    val classSymbol = expandedType.toSymbol(session) as? FirRegularClassSymbol ?: return true
+    val classSymbol = expandedType.toSymbol(session) as? FirClassSymbol ?: return true
     // In K2 enum classes are final, though enum entries are their subclasses (which is a compiler implementation detail).
     if (classSymbol.isEnumClass || classSymbol.isExpect || classSymbol.modality != Modality.FINAL) {
         return true
