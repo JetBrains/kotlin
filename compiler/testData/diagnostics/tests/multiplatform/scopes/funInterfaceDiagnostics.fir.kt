@@ -11,11 +11,15 @@ expect interface I2
 
 expect interface I3
 
+expect interface I4
+
 <!FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES!>fun<!> interface F1 : I1 {}
 
-<!FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE!>fun<!> interface F2 : I2 {}
+<!FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES!>fun<!> interface F2 : I2 {}
 
-<!FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS!>fun<!> interface F3 : I3 {}
+<!FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE!>fun<!> interface F3 : I3 {}
+
+<!FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS!>fun<!> interface F4 : I4 {}
 
 // MODULE: jvm()()(common)
 // FILE: main.kt
@@ -25,9 +29,14 @@ actual interface I1 {
 }
 
 actual interface I2 {
-    fun foo(a: Int = 0)
+    fun foo()
+    val a: Int
 }
 
 actual interface I3 {
-    fun <T> foo(): T
+    fun foo(a: Int = 0)
+}
+
+actual interface I4 {
+    fun <T> foo()
 }
