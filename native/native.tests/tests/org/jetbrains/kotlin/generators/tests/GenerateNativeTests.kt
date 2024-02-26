@@ -363,7 +363,7 @@ fun main() {
         testGroup("plugins/atomicfu/atomicfu-compiler/test", "plugins/atomicfu/atomicfu-compiler/testData") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "AtomicfuNativeTestGenerated",
-                annotations = listOf(atomicfuNative(), provider<UseStandardTestCaseGroupProvider>())
+                annotations = listOf(*atomicfuNative(), provider<UseStandardTestCaseGroupProvider>())
             ) {
                 model("nativeBox")
             }
@@ -559,7 +559,10 @@ private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
 private fun k1libContents() = annotation(Tag::class.java, "k1libContents")
 private fun k2libContents() = annotation(Tag::class.java, "k2libContents")
-private fun atomicfuNative() = annotation(Tag::class.java, "atomicfu-native")
+private fun atomicfuNative() = arrayOf(
+    annotation(Tag::class.java, "atomicfu-native"),
+    annotation(EnforcedHostTarget::class.java), // TODO(KT-65977): Make atomicfu tests run on all targets.
+)
 private fun standalone() = arrayOf(
     annotation(Tag::class.java, "standalone"),
     annotation(
