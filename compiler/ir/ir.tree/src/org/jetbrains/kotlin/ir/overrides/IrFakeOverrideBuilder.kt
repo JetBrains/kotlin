@@ -67,7 +67,7 @@ class IrFakeOverrideBuilder(
             val (staticMembers, instanceMembers) =
                 clazz.declarations.filterIsInstance<IrOverridableMember>().partition { it.isStaticMember }
 
-            buildFakeOverridesForClassImpl(clazz, instanceMembers, oldSignatures, clazz.superTypes) { !it.isStaticMember }
+            buildFakeOverridesForClassImpl(clazz, instanceMembers, oldSignatures, clazz.superTypes, isStaticMembers = false)
 
             // Static Java members from the superclass need fake overrides in the subclass, to support the case when the static member is
             // declared in an inaccessible grandparent class but is exposed as public in the parent. For example:
@@ -80,7 +80,7 @@ class IrFakeOverrideBuilder(
             // we need to generate a fake override in class B. This is only possible in case of superclasses, as static _interface_ members
             // are not inherited (see JLS 8.4.8 and 9.4.1).
             val superClass = clazz.superTypes.filter { it.classOrFail.owner.isClass }
-            buildFakeOverridesForClassImpl(clazz, staticMembers, oldSignatures, superClass) { it.isStaticMember }
+            buildFakeOverridesForClassImpl(clazz, staticMembers, oldSignatures, superClass, isStaticMembers = true)
         }
     }
 
@@ -89,11 +89,11 @@ class IrFakeOverrideBuilder(
         allFromCurrent: List<IrOverridableMember>,
         oldSignatures: Boolean,
         supertypes: List<IrType>,
-        declarationFilter: (IrOverridableMember) -> Boolean,
+        isStaticMembers: Boolean,
     ) {
         val allFromSuper = supertypes.flatMap { superType ->
             superType.classOrFail.owner.declarations
-                .filterIsInstanceAnd<IrOverridableMember>(declarationFilter)
+                .filterIsInstanceAnd<IrOverridableMember> { it.isStaticMember == isStaticMembers }
                 .mapNotNull {
                     val fakeOverride = strategy.fakeOverrideMember(superType, it, clazz) ?: return@mapNotNull null
                     FakeOverride(fakeOverride, it)
@@ -105,10 +105,7 @@ class IrFakeOverrideBuilder(
 
         allFromSuperByName.forEach { (name, superMembers) ->
             generateOverridesInFunctionGroup(
-                superMembers,
-                allFromCurrentByName[name] ?: emptyList(),
-                clazz,
-                oldSignatures
+                superMembers, allFromCurrentByName[name] ?: emptyList(), clazz, oldSignatures, isStaticMembers
             )
         }
 
@@ -164,7 +161,8 @@ class IrFakeOverrideBuilder(
         membersFromSupertypes: List<FakeOverride>,
         membersFromCurrent: List<IrOverridableMember>,
         current: IrClass,
-        compatibilityMode: Boolean
+        compatibilityMode: Boolean,
+        isStaticMembers: Boolean,
     ) {
         val notOverridden = membersFromSupertypes.toMutableSet()
 
@@ -174,7 +172,11 @@ class IrFakeOverrideBuilder(
         }
 
         val addedFakeOverrides = mutableListOf<IrOverridableMember>()
-        createAndBindFakeOverrides(current, notOverridden, addedFakeOverrides, compatibilityMode)
+        if (isStaticMembers) {
+            createAndBindFakeOverride(notOverridden.toList(), current, addedFakeOverrides, compatibilityMode)
+        } else {
+            createAndBindFakeOverrides(current, notOverridden, addedFakeOverrides, compatibilityMode)
+        }
         current.declarations.addAll(addedFakeOverrides)
     }
 

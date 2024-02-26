@@ -34078,6 +34078,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
       }
 
       @Test
+      @TestMetadata("inheritTwoStaticMethods2.kt")
+      public void testInheritTwoStaticMethods2() {
+        runTest("compiler/testData/codegen/box/javaInterop/statics/inheritTwoStaticMethods2.kt");
+      }
+
+      @Test
       @TestMetadata("jkkjk.kt")
       public void testJkkjk() {
         runTest("compiler/testData/codegen/box/javaInterop/statics/jkkjk.kt");
