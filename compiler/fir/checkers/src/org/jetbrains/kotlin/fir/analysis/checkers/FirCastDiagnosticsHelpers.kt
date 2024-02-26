@@ -135,7 +135,7 @@ private fun getCorrespondingKotlinClass(type: ConeSimpleKotlinType, session: Fir
 }
 
 private fun isFinal(type: ConeSimpleKotlinType, session: FirSession): Boolean {
-    return !type.canHaveSubtypes(session)
+    return !type.canHaveSubtypesAccordingToK1(session)
 }
 
 fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: CheckerContext): Boolean {

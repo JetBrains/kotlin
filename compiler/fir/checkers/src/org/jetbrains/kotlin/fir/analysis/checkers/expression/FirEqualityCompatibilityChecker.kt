@@ -333,7 +333,7 @@ private fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
         isValueClass = bounds.any { it.toClassSymbol(session)?.isInline == true },
         isFinal = bounds.any { it.toClassSymbol(session)?.isFinalClass == true },
         // In K1's intersector, `canHaveSubtypes()` is called for `nullabilityStripped`.
-        withNullability(ConeNullability.NOT_NULL, session.typeContext).canHaveSubtypes(session),
+        withNullability(ConeNullability.NOT_NULL, session.typeContext).canHaveSubtypesAccordingToK1(session),
     )
 }
 

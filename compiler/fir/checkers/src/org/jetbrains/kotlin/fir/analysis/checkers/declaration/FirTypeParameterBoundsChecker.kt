@@ -75,7 +75,7 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
         if (containingDeclaration is FirProperty && containingDeclaration.isOverride) return
 
         declaration.symbol.resolvedBounds.forEach { bound ->
-            if (!bound.coneType.canHaveSubtypes(context.session)) {
+            if (!bound.coneType.canHaveSubtypesAccordingToK1(context.session)) {
                 reporter.reportOn(bound.source, FirErrors.FINAL_UPPER_BOUND, bound.coneType, context)
             }
         }
@@ -148,7 +148,7 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
 
         fun anyConflictingTypes(types: List<ConeKotlinType>): Boolean {
             types.forEach { type ->
-                if (!type.canHaveSubtypes(context.session)) {
+                if (!type.canHaveSubtypesAccordingToK1(context.session)) {
                     types.forEach { otherType ->
                         if (type != otherType && !type.isRelated(context.session.typeContext, otherType)) {
                             return true
