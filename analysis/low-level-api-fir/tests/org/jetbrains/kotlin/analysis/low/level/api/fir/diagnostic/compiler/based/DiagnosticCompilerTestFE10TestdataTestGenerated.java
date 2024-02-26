@@ -28303,6 +28303,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("implicitInvokeOnPropertyInItsInitializer.kt")
+      public void testImplicitInvokeOnPropertyInItsInitializer() {
+        runTest("compiler/testData/diagnostics/tests/operatorsOverloading/implicitInvokeOnPropertyInItsInitializer.kt");
+      }
+
+      @Test
       @TestMetadata("incForAssignmentSmartCast.kt")
       public void testIncForAssignmentSmartCast() {
         runTest("compiler/testData/diagnostics/tests/operatorsOverloading/incForAssignmentSmartCast.kt");
