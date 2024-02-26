@@ -765,6 +765,17 @@ object KotlinToolingDiagnostics {
         )
     }
 
+    private val resourcesBugReportRequest get() = "This is likely a bug in Kotlin Gradle Plugin configuration. Please report this issue to https://kotl.in/issue."
+    object ResourcePublishedMoreThanOncePerTarget : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(targetName: String) = build(
+            """
+            Only one resources publication per target $targetName is allowed.
+            
+            $resourcesBugReportRequest
+            """.trimIndent()
+        )
+    }
+
     object DependencyDoesNotPhysicallyExist : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(dependency: File) = build(
             """
