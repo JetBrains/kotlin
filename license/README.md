@@ -102,7 +102,7 @@ the Kotlin IntelliJ IDEA plugin:
       - Origin: Derived from assemblyscript standard library
 
  - Path: libraries/tools/kotlin-power-assert
-      - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
+      - License: Apache 2 ([license/third_party/power_assert_license.txt][power-assert])
       - Origin: Copyright (C) 2020-2023 Brian Norman
 
  - Path: plugins/lint/android-annotations
@@ -122,7 +122,7 @@ the Kotlin IntelliJ IDEA plugin:
       - Origin: Copyright (C) 2011-15 The Android Open Source Project
 
  - Path: plugins/power-assert
-      - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
+      - License: Apache 2 ([license/third_party/power_assert_license.txt][power-assert])
       - Origin: Copyright (C) 2020-2023 Brian Norman
           
  - Path: wasm/ir/src/org/jetbrains/kotlin/wasm/ir/convertors
@@ -299,6 +299,7 @@ any distributions of the compiler, libraries or plugin:
 [jquery]: third_party/jquery_license.txt
 [jspecify]: third_party/testdata/jspecify_license.txt
 [lombok]: third_party/testdata/lombok_license.txt
+[power-assert]: third_party/power_assert_license.txt
 [qunit]: third_party/qunit_license.txt
 [rhino]: third_party/rhino_LICENSE.txt
 [rxjava]: third_party/testdata/rxjava_license.txt
