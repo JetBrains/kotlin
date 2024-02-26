@@ -4214,6 +4214,11 @@ internal class DeprecatedAccessToEntryPropertyFromEnumImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.DeprecatedAccessToEntryPropertyFromEnum
 
+internal class DeprecatedAccessToEntriesPropertyImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.DeprecatedAccessToEntriesProperty
+
 internal class DeprecatedAccessToEnumEntryPropertyAsReferenceImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

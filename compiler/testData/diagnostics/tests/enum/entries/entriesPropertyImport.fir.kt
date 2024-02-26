@@ -7,5 +7,5 @@ enum class MyEnum
 val entries = "local str"
 
 fun test() {
-    <!DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM!>entries<!>
+    <!DEPRECATED_ACCESS_TO_ENTRIES_PROPERTY!>entries<!>
 }

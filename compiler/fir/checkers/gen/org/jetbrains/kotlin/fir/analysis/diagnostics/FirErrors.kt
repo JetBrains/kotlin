@@ -883,6 +883,7 @@ object FirErrors {
     // Enum.entries resolve deprecations
     val DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY: KtDiagnosticFactory0 by warning0<PsiElement>()
     val DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM: KtDiagnosticFactory0 by warning0<PsiElement>()
+    val DEPRECATED_ACCESS_TO_ENTRIES_PROPERTY: KtDiagnosticFactory0 by warning0<PsiElement>()
     val DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE: KtDiagnosticFactory0 by warning0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DEPRECATED_DECLARATION_OF_ENUM_ENTRY: KtDiagnosticFactory0 by warning0<KtEnumEntry>()
 
