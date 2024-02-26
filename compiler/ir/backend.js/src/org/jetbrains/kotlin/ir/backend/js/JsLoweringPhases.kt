@@ -154,14 +154,14 @@ private val localClassesInInlineLambdasPhase = makeIrModulePhase(
     ::LocalClassesInInlineLambdasLowering,
     name = "LocalClassesInInlineLambdasPhase",
     description = "Extract local classes from inline lambdas",
-    prerequisite = setOf(inventNamesForLocalClassesPhase)
+    prerequisite = setOf()
 )
 
 private val localClassesInInlineFunctionsPhase = makeIrModulePhase(
     ::LocalClassesInInlineFunctionsLowering,
     name = "LocalClassesInInlineFunctionsPhase",
     description = "Extract local classes from inline functions",
-    prerequisite = setOf(inventNamesForLocalClassesPhase)
+    prerequisite = setOf()
 )
 
 private val localClassesExtractionFromInlineFunctionsPhase = makeIrModulePhase(
@@ -195,7 +195,7 @@ private val saveInlineFunctionsBeforeInlining = makeIrModulePhase(
     description = "Save inline function before inlining",
     prerequisite = setOf(
         replaceSuspendIntrinsicLowering,
-        expectDeclarationsRemovingPhase, sharedVariablesLoweringPhase,
+        sharedVariablesLoweringPhase,
         localClassesInInlineLambdasPhase, localClassesExtractionFromInlineFunctionsPhase,
         syntheticAccessorLoweringPhase, wrapInlineDeclarationsWithReifiedTypeParametersLowering
     )
@@ -779,13 +779,6 @@ val mainFunctionCallWrapperLowering = makeIrModulePhase<JsIrBackendContext>(
 
 val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>(
     validateIrBeforeLowering,
-    prepareCollectionsToExportLowering,
-    preventExportOfSyntheticDeclarationsLowering,
-    inventNamesForLocalClassesPhase,
-    collectClassIdentifiersLowering,
-    annotationInstantiationLowering,
-    expectDeclarationsRemovingPhase,
-    stripTypeAliasDeclarationsPhase,
     jsCodeOutliningPhase,
     arrayConstructorReferencePhase,
     arrayConstructorPhase,
@@ -804,6 +797,13 @@ val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleF
     constEvaluationPhase,
     copyInlineFunctionBodyLoweringPhase,
     removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
+    prepareCollectionsToExportLowering,
+    preventExportOfSyntheticDeclarationsLowering,
+    inventNamesForLocalClassesPhase,
+    collectClassIdentifiersLowering,
+    annotationInstantiationLowering,
+    expectDeclarationsRemovingPhase,
+    stripTypeAliasDeclarationsPhase,
     createScriptFunctionsPhase,
     stringConcatenationLoweringPhase,
     callableReferenceLowering,
