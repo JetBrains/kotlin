@@ -101,10 +101,10 @@ private class TestGeneratorImplInstance(
         val generatedCode = generate()
 
         val testSourceFile = File(testSourceFilePath)
-        val changed =
-            GeneratorsFileUtil.isFileContentChangedIgnoringLineSeparators(testSourceFile, generatedCode)
-        if (!dryRun) {
+        val changed = if (!dryRun) {
             GeneratorsFileUtil.writeFileIfContentChanged(testSourceFile, generatedCode, false)
+        } else {
+            GeneratorsFileUtil.isFileContentChangedIgnoringLineSeparators(testSourceFile, generatedCode)
         }
         return TestGenerator.GenerationResult(changed, testSourceFilePath)
     }
