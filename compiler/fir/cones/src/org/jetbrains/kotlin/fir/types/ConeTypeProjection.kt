@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 
 enum class ProjectionKind {
@@ -84,3 +85,11 @@ fun ConeKotlinTypeProjection.replaceType(newType: ConeKotlinType): ConeKotlinTyp
         is ConeKotlinTypeConflictingProjection -> ConeKotlinTypeConflictingProjection(newType)
     }
 }
+
+val ConeTypeProjection.variance: Variance
+    get() = when (this.kind) {
+        ProjectionKind.STAR -> Variance.OUT_VARIANCE
+        ProjectionKind.IN -> Variance.IN_VARIANCE
+        ProjectionKind.OUT -> Variance.OUT_VARIANCE
+        ProjectionKind.INVARIANT -> Variance.INVARIANT
+    }

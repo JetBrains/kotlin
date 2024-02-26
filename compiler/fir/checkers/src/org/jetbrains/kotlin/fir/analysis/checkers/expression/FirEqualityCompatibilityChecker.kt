@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -101,15 +100,11 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
     }
 
     private fun checkIdentityApplicability(l: TypeInfo, r: TypeInfo, context: CheckerContext): Applicability {
-        // The compiler should only check comparisons
-        // when identity-less types or builtins are involved.
-
-        val oneIsBuiltin = l.isBuiltin || r.isBuiltin
         val oneIsNotNull = !l.type.isNullable || !r.type.isNullable
 
         return when {
             l.isIdentityLess || r.isIdentityLess -> Applicability.INAPPLICABLE_AS_IDENTITY_LESS
-            oneIsBuiltin && oneIsNotNull && shouldReportAsPerRules1(l, r, context) -> getInapplicabilityFor(l, r)
+            oneIsNotNull && shouldReportAsPerRules1(l, r, context) -> getInapplicabilityFor(l, r)
             else -> Applicability.APPLICABLE
         }
     }
@@ -126,13 +121,12 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
     }
 
     private fun shouldReportAsPerRules1(l: TypeInfo, r: TypeInfo, context: CheckerContext): Boolean {
-        // Builtins are always final classes, so
-        // we only need to check if one is related
-        // to the other
+        val oneIsFinal = l.isFinal || r.isFinal
 
         return when {
             l.type.isNothingOrNullableNothing || r.type.isNothingOrNullableNothing -> false
-            else -> !l.isSubtypeOf(r, context) && !r.isSubtypeOf(l, context)
+            oneIsFinal -> !l.isSubtypeOf(r, context) && !r.isSubtypeOf(l, context)
+            else -> false
         }
     }
 
@@ -302,26 +296,13 @@ private class TypeInfo(
     val isPrimitive: Boolean,
     val isBuiltin: Boolean,
     val isValueClass: Boolean,
+    val isFinal: Boolean,
     val canHaveSubtypesAccordingToK1: Boolean,
 ) {
     override fun toString() = "$type"
 }
 
 private val FirClassSymbol<*>.isBuiltin get() = isPrimitiveType() || classId == StandardClassIds.String || isEnumClass
-
-// This property is used to replicate K1 behavior, and it
-// tries to match the `TypeUtils.canHaveSubtypes(typeChecker, type)`
-// check in the K1 intersector.
-// In K2 enum classes are final, though enum entries are their subclasses.
-private fun ConeKotlinType.canHaveSubtypesAccordingToK1(session: FirSession): Boolean {
-    val symbol = toSymbol(session)
-
-    return when {
-        symbol is FirRegularClassSymbol && symbol.isEnumClass -> true
-        symbol is FirClassSymbol<*> && symbol.isFinalClass -> false
-        else -> true
-    }
-}
 
 private val TypeInfo.isNullableEnum get() = isEnumClass && type.isNullable
 
@@ -350,7 +331,9 @@ private fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
         isPrimitive = bounds.any { it.isPrimitiveOrNullablePrimitive },
         isBuiltin = bounds.any { it.toClassSymbol(session)?.isBuiltin == true },
         isValueClass = bounds.any { it.toClassSymbol(session)?.isInline == true },
-        canHaveSubtypesAccordingToK1(session),
+        isFinal = bounds.any { it.toClassSymbol(session)?.isFinalClass == true },
+        // In K1's intersector, `canHaveSubtypes()` is called for `nullabilityStripped`.
+        withNullability(ConeNullability.NOT_NULL, session.typeContext).canHaveSubtypes(session),
     )
 }
 

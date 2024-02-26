@@ -584,12 +584,16 @@ fun FirCallableDeclaration.isSubtypeOf(
     )
 }
 
+/**
+ * The original K1 function: [org.jetbrains.kotlin.types.TypeUtils.canHaveSubtypes].
+ */
 fun ConeKotlinType.canHaveSubtypes(session: FirSession): Boolean {
     if (this.isMarkedNullable) {
         return true
     }
     val expandedType = fullyExpandedType(session)
     val classSymbol = expandedType.toSymbol(session) as? FirRegularClassSymbol ?: return true
+    // In K2 enum classes are final, though enum entries are their subclasses (which is a compiler implementation detail).
     if (classSymbol.isEnumClass || classSymbol.isExpect || classSymbol.modality != Modality.FINAL) {
         return true
     }
@@ -603,49 +607,18 @@ fun ConeKotlinType.canHaveSubtypes(session: FirSession): Boolean {
 
         val argument = typeProjection.type!! //safe because it is not a star
 
-        when (typeParameterSymbol.variance) {
-            Variance.INVARIANT ->
-                when (typeProjection.kind) {
-                    ProjectionKind.INVARIANT ->
-                        if (lowerThanBound(session.typeContext, argument, typeParameterSymbol) || argument.canHaveSubtypes(session)) {
-                            return true
-                        }
+        val canHaveSubtypes = when (typeProjection.variance) {
+            Variance.OUT_VARIANCE -> argument.canHaveSubtypes(session)
+            Variance.IN_VARIANCE -> argument.lowerThanBound(typeParameterSymbol, session)
+            Variance.INVARIANT -> when (typeParameterSymbol.variance) {
+                Variance.OUT_VARIANCE -> argument.canHaveSubtypes(session)
+                Variance.IN_VARIANCE -> argument.lowerThanBound(typeParameterSymbol, session)
+                Variance.INVARIANT -> argument.canHaveSubtypes(session) || argument.lowerThanBound(typeParameterSymbol, session)
+            }
+        }
 
-                    ProjectionKind.IN ->
-                        if (lowerThanBound(session.typeContext, argument, typeParameterSymbol)) {
-                            return true
-                        }
-
-                    ProjectionKind.OUT ->
-                        if (argument.canHaveSubtypes(session)) {
-                            return true
-                        }
-
-                    ProjectionKind.STAR ->
-                        return true
-                }
-
-            Variance.IN_VARIANCE ->
-                if (typeProjection.kind != ProjectionKind.OUT) {
-                    if (lowerThanBound(session.typeContext, argument, typeParameterSymbol)) {
-                        return true
-                    }
-                } else {
-                    if (argument.canHaveSubtypes(session)) {
-                        return true
-                    }
-                }
-
-            Variance.OUT_VARIANCE ->
-                if (typeProjection.kind != ProjectionKind.IN) {
-                    if (argument.canHaveSubtypes(session)) {
-                        return true
-                    }
-                } else {
-                    if (lowerThanBound(session.typeContext, argument, typeParameterSymbol)) {
-                        return true
-                    }
-                }
+        if (canHaveSubtypes) {
+            return true
         }
     }
 
@@ -668,9 +641,14 @@ fun ConeClassLikeType.toClassSymbol(session: FirSession): FirClassSymbol<*>? {
     return fullyExpandedType(session).toSymbol(session) as? FirClassSymbol<*>
 }
 
-private fun lowerThanBound(context: ConeInferenceContext, argument: ConeKotlinType, typeParameterSymbol: FirTypeParameterSymbol): Boolean {
+/**
+ * The original K1 function: [org.jetbrains.kotlin.types.TypeUtils.lowerThanBound].
+ * This function returns `true` if `argument` suits any bound rather than the
+ * intersection of them all, and it expects there to be at least a single bound.
+ */
+private fun ConeKotlinType.lowerThanBound(typeParameterSymbol: FirTypeParameterSymbol, session: FirSession): Boolean {
     typeParameterSymbol.resolvedBounds.forEach { boundTypeRef ->
-        if (argument != boundTypeRef.coneType && argument.isSubtypeOf(context, boundTypeRef.coneType)) {
+        if (this != boundTypeRef.coneType && isSubtypeOf(session.typeContext, boundTypeRef.coneType)) {
             return true
         }
     }

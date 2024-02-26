@@ -5,5 +5,5 @@ class A
 class B
 fun main() {
     A() == B()
-    A() === B()
+    <!EQUALITY_NOT_APPLICABLE!>A() === B()<!>
 }
