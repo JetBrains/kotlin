@@ -62,6 +62,7 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     EnumEntriesRedeclarationChecker,
     VolatileAnnotationChecker,
     ActualTypealiasToSpecialAnnotationChecker,
+    StubForBuilderInferenceParameterTypeChecker,
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
@@ -80,7 +81,7 @@ private val DEFAULT_CALL_CHECKERS = listOf(
     NewSchemeOfIntegerOperatorResolutionChecker, EnumEntryVsCompanionPriorityCallChecker, CompanionInParenthesesLHSCallChecker,
     ResolutionToPrivateConstructorOfSealedClassChecker, EqualityCallChecker, UnsupportedUntilOperatorChecker,
     BuilderInferenceAssignmentChecker, IncorrectCapturedApproximationCallChecker, CompanionIncorrectlyUnboundedWhenUsedAsLHSCallChecker,
-    CustomEnumEntriesMigrationCallChecker, EnumEntriesUnsupportedChecker
+    CustomEnumEntriesMigrationCallChecker, EnumEntriesUnsupportedChecker,
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(

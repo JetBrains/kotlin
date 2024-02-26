@@ -3317,6 +3317,34 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/builderInference/issues")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Issues {
+                @Test
+                public void testAllFilesPresentInIssues() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/issues"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+                }
+
+                @Test
+                @TestMetadata("kt53478.kt")
+                public void testKt53478() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt53478.kt");
+                }
+
+                @Test
+                @TestMetadata("kt64066.kt")
+                public void testKt64066() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt64066.kt");
+                }
+
+                @Test
+                @TestMetadata("kt64066disabled.kt")
+                public void testKt64066disabled() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt64066disabled.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/builderInference/oneParameter")
             @TestDataPath("$PROJECT_ROOT")
             public class OneParameter {

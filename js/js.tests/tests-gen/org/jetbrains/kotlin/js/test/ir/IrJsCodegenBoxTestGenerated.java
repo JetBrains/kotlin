@@ -1832,6 +1832,28 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/builderInference/issues")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Issues {
+            @Test
+            public void testAllFilesPresentInIssues() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            }
+
+            @Test
+            @TestMetadata("kt53478.kt")
+            public void testKt53478() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt53478.kt");
+            }
+
+            @Test
+            @TestMetadata("kt64066.kt")
+            public void testKt64066() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt64066.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/builderInference/oneParameter")
         @TestDataPath("$PROJECT_ROOT")
         public class OneParameter {
