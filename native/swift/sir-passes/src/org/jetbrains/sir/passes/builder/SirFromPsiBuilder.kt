@@ -6,15 +6,15 @@
 package org.jetbrains.sir.passes.builder
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isPublic
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.builder.buildFunction
-import org.jetbrains.kotlin.sir.builder.buildGetter
-import org.jetbrains.kotlin.sir.builder.buildSetter
-import org.jetbrains.kotlin.sir.builder.buildVariable
+import org.jetbrains.kotlin.sir.builder.*
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 
@@ -28,6 +28,17 @@ private class Visitor(
     private val res: MutableList<SirDeclaration>,
     private val analysisSession: KtAnalysisSession
 ) : KtTreeVisitorVoid() {
+
+    override fun visitClassOrObject(classOrObject: KtClassOrObject) {
+        // we do not handle inner declarations of class currently. No need to go deeper.
+        // super.visitClassOrObject(classOrObject)
+        with(analysisSession) {
+            classOrObject.process {
+                buildSirClassFromPsi(classOrObject)
+            }
+        }
+    }
+
     override fun visitNamedFunction(function: KtNamedFunction) {
         super.visitNamedFunction(function)
         with(analysisSession) {
@@ -46,10 +57,22 @@ private class Visitor(
         }
     }
 
-    private inline fun <T : KtDeclaration> T.process(converter: T.() -> SirDeclaration) {
+    private inline fun <T : KtDeclaration> T.process(converter: T.() -> SirDeclaration?) {
         this.takeIf { it.isPublic }
             ?.let(converter)
             ?.let { res.add(it) }
+    }
+}
+
+context(KtAnalysisSession)
+internal fun buildSirClassFromPsi(classOrObject: KtClassOrObject): SirNamedDeclaration? {
+    val symbol = classOrObject
+        .getNamedClassOrObjectSymbol()
+        ?.takeIf { it.isConsumableBySirBuilder() }
+        ?: return null // todo: error handling strategy: KT-65980
+    return buildClass {
+        name = classOrObject.name ?: "UNKNOWN_CLASS" // todo: error handling strategy: KT-65980
+        origin = KotlinSource(symbol)
     }
 }
 
@@ -134,3 +157,12 @@ private fun buildSirNominalType(it: KtType): SirNominalType = SirNominalType(
             throw IllegalArgumentException("Swift Export does not support argument type: ${it.asStringForDebugging()}")
     }
 )
+
+context(KtAnalysisSession)
+private fun KtNamedClassOrObjectSymbol.isConsumableBySirBuilder(): Boolean =
+    classKind == KtClassKind.CLASS
+            && (superTypes.count() == 1 && superTypes.first().isAny) // Every class has Any as a superclass
+            && classIdIfNonLocal?.packageFqName?.isRoot != false
+            && !isData
+            && !isInline
+            && modality == Modality.FINAL

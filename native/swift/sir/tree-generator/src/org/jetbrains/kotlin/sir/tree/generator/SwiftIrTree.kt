@@ -68,6 +68,12 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(declarationContainer)
     }
 
+    val `class`: Element by element {
+        customParentInVisitor = namedDeclaration
+        parent(namedDeclaration)
+        parent(declarationContainer)
+    }
+
     val callable by sealedElement {
         parent(declaration)
     }

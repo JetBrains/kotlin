@@ -71,6 +71,14 @@ abstract class SirTransformer<in D> : SirVisitor<SirElement, D>() {
         return transformStruct(struct, data)
     }
 
+    open fun transformClass(klass: SirClass, data: D): SirDeclaration {
+        return transformNamedDeclaration(klass, data)
+    }
+
+    final override fun visitClass(klass: SirClass, data: D): SirDeclaration {
+        return transformClass(klass, data)
+    }
+
     open fun transformCallable(callable: SirCallable, data: D): SirDeclaration {
         return transformDeclaration(callable, data)
     }

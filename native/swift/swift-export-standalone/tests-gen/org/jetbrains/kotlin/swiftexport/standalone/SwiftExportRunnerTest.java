@@ -25,6 +25,12 @@ public class SwiftExportRunnerTest extends AbstractSwiftRunnerTest {
   }
 
   @Test
+  @TestMetadata("classes")
+  public void testClasses() {
+    runTest("native/swift/swift-export-standalone/testData/classes/");
+  }
+
+  @Test
   @TestMetadata("documentation")
   public void testDocumentation() {
     runTest("native/swift/swift-export-standalone/testData/documentation/");

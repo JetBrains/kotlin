@@ -41,9 +41,22 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
         println("import ${import.moduleName}")
     }
 
+    override fun visitClass(klass: SirClass): Unit = with(printer) {
+        printVisibility(klass)
+        println(
+            "class ",
+            klass.name.swiftIdentifier,
+            " {"
+        )
+        withIndent {
+            klass.acceptChildren(this@SirAsSwiftSourcesPrinter)
+        }
+        println("}")
+    }
+
     override fun visitVariable(variable: SirVariable): Unit = with(printer) {
+        printVisibility(variable)
         print(
-            variable.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " } ?: "",
             if (variable.isStatic) "static " else "",
             "var ",
             variable.name.swiftIdentifier,
@@ -82,8 +95,8 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
 
     override fun visitFunction(function: SirFunction): Unit = with(printer) {
         function.documentation?.let { println(it) }
+        printVisibility(function)
         print(
-            function.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " } ?: "",
             if (function.isStatic) {
                 "static "
             } else {
@@ -121,8 +134,8 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
     }
 
     override fun visitEnum(enum: SirEnum): Unit = with(printer) {
+        printVisibility(enum)
         println(
-            enum.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " } ?: "",
             "enum ",
             enum.name.swiftIdentifier,
             " {"
@@ -168,3 +181,9 @@ private val SirNamedDeclaration.swiftFqName: String
 private val simpleIdentifierRegex = Regex("[_a-zA-Z][_a-zA-Z0-9]*")
 
 private val String.swiftIdentifier get() = if (simpleIdentifierRegex.matches(this)) this else "`$this`"
+
+internal fun SmartPrinter.printVisibility(decl: SirDeclaration) {
+    print(
+        decl.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " } ?: ""
+    )
+}

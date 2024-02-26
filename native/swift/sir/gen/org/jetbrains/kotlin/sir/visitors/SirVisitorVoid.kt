@@ -70,6 +70,14 @@ abstract class SirVisitorVoid : SirVisitor<Unit, Nothing?>() {
         visitNamedDeclaration(struct)
     }
 
+    final override fun visitClass(klass: SirClass, data: Nothing?) {
+        visitClass(klass)
+    }
+
+    open fun visitClass(klass: SirClass) {
+        visitNamedDeclaration(klass)
+    }
+
     final override fun visitCallable(callable: SirCallable, data: Nothing?) {
         visitCallable(callable)
     }
