@@ -175,12 +175,13 @@ class JavaClassUseSiteMemberScope(
     }
 
     internal fun syntheticPropertyFromOverride(overriddenProperty: ResultOfIntersection<FirPropertySymbol>): FirSyntheticPropertySymbol? {
-        val overrideInClass = overriddenProperty.overriddenMembers.firstNotNullOfOrNull { (symbol, _) ->
+        val overrideInClass = overriddenProperty.overriddenMembers.firstNotNullOfOrNull superMember@{ (symbol, baseScope) ->
             // We may call this function at the STATUS phase, which means that using resolved status may lead to cycle
             // So we need to use raw status here
-            if (!symbol.isVisibleInClass(klass.symbol, symbol.rawStatus)) return@firstNotNullOfOrNull null
+            if (!symbol.isVisibleInClass(klass.symbol, symbol.rawStatus)) return@superMember null
             symbol.createOverridePropertyIfExists(declaredMemberScope, takeModalityFromGetter = true)
-                ?: superTypeScopes.firstNotNullOfOrNull { scope ->
+                ?: superTypeScopes.firstNotNullOfOrNull superScope@{ scope ->
+                    if (scope == baseScope) return@superScope null
                     symbol.createOverridePropertyIfExists(scope, takeModalityFromGetter = false)
                 }
         }

@@ -35520,6 +35520,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("conflictingGetterAndPropertyInBaseKotlinClass.kt")
+    public void testConflictingGetterAndPropertyInBaseKotlinClass() {
+      runTest("compiler/testData/codegen/box/jvmName/conflictingGetterAndPropertyInBaseKotlinClass.kt");
+    }
+
+    @Test
     @TestMetadata("fakeJvmNameInJava.kt")
     public void testFakeJvmNameInJava() {
       runTest("compiler/testData/codegen/box/jvmName/fakeJvmNameInJava.kt");

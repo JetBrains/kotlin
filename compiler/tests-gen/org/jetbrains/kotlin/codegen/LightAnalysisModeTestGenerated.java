@@ -30217,6 +30217,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/jvmName/classMembers.kt");
     }
 
+    @TestMetadata("conflictingGetterAndPropertyInBaseKotlinClass.kt")
+    public void testConflictingGetterAndPropertyInBaseKotlinClass() {
+      runTest("compiler/testData/codegen/box/jvmName/conflictingGetterAndPropertyInBaseKotlinClass.kt");
+    }
+
     @TestMetadata("fakeJvmNameInJava.kt")
     public void testFakeJvmNameInJava() {
       runTest("compiler/testData/codegen/box/jvmName/fakeJvmNameInJava.kt");
