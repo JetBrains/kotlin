@@ -702,6 +702,18 @@ object KotlinToolingDiagnostics {
             """.trimIndent()
         )
     }
+
+    private val resourcesBugReportRequest get() = "This is likely a bug in Kotlin Gradle Plugin configuration. Please report this issue to https://kotl.in/issue."
+    object ResourcePublishedMoreThanOncePerTarget : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(targetName: String) = build(
+            """
+            Only one resources publication per target $targetName is allowed.
+            
+            $resourcesBugReportRequest
+            """.trimIndent()
+        )
+    }
+
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
