@@ -90,7 +90,9 @@ object TestModuleStructureFactory {
     }
 
     /**
-     * A function to create [KtModuleWithFiles] for the given [moduleStructure]. This function guarantees:
+     * A function to create [KtModuleWithFiles] for the given [moduleStructure].
+     *
+     * This function guarantees:
      *   - For [TestModule] A and B, where A has dependency on B,
      *     - B will always be created earlier than A.
      *     - The class path of B will be given to the creation of A's module.
@@ -102,25 +104,31 @@ object TestModuleStructureFactory {
         testServices: TestServices,
         project: Project,
     ): List<KtModuleWithFiles> {
-        val modulesSortedByDependencies = sortInDependencyPostOrder(moduleStructure.modules)
-        val moduleCount = modulesSortedByDependencies.size
-        val moduleNamesToPaths = mutableMapOf<String, Collection<Path>>()
-        val existingModules = HashMap<String, KtModuleWithFiles>(moduleCount)
+        val moduleCount = moduleStructure.modules.size
         val result = ArrayList<KtModuleWithFiles>(moduleCount)
 
-        for (testModule in modulesSortedByDependencies) {
-            val contextModuleName = testModule.directives.singleOrZeroValue(AnalysisApiTestDirectives.CONTEXT_MODULE)
-            val contextModule = contextModuleName?.let(existingModules::getValue)
+        val processedModules = HashMap<String, KtModuleWithFiles>(moduleCount)
+        val processedDependencies = mutableMapOf<String, Collection<Path>>()
 
-            val dependencyPaths = testModule.regularDependencies.mapNotNull { moduleNamesToPaths[it.moduleName] }.flatten()
+        for (testModule in sortInDependencyPostOrder(moduleStructure.modules)) {
+            val contextModuleName = testModule.directives.singleOrZeroValue(AnalysisApiTestDirectives.CONTEXT_MODULE)
+            val contextModule = contextModuleName?.let(processedModules::getValue)
+
+            val dependencyPaths = testModule.regularDependencies
+                .mapNotNull { processedDependencies[it.moduleName] }
+                .flatten()
+
             val moduleWithFiles = testServices
                 .getKtModuleFactoryForTestModule(testModule)
                 .createModule(testModule, contextModule, dependencyPaths, testServices, project)
 
-            existingModules[testModule.name] = moduleWithFiles
+            processedModules[testModule.name] = moduleWithFiles
             result.add(moduleWithFiles)
-            val libraryModule = moduleWithFiles.ktModule as? KtLibraryModuleImpl ?: continue
-            moduleNamesToPaths[testModule.name] = libraryModule.getBinaryRoots()
+
+            val libraryModule = moduleWithFiles.ktModule
+            if (libraryModule is KtLibraryModuleImpl) {
+                processedDependencies[testModule.name] = libraryModule.getBinaryRoots()
+            }
         }
 
         return result
