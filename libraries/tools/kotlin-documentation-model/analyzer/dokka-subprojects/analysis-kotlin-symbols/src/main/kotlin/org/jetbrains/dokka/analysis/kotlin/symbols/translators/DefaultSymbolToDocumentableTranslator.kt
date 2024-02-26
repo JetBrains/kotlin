@@ -652,8 +652,8 @@ internal class DokkaSymbolVisitor(
         val name = constructorSymbol.containingClassIdIfNonLocal?.shortClassName?.asString()
             ?: throw IllegalStateException("Unknown containing class of constructor")
         val dri = createDRIWithOverridden(constructorSymbol).origin
-        val isExpect = false // TODO
-        val isActual = false // TODO
+        val isExpect = constructorSymbol.isExpect
+        val isActual = constructorSymbol.isActual
 
         val generics = constructorSymbol.typeParameters.mapIndexed { index, symbol ->
             visitVariantTypeParameter(
