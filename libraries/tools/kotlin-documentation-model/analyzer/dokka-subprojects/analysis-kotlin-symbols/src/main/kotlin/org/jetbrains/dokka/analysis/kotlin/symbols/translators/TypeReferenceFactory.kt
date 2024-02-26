@@ -51,10 +51,6 @@ private fun KtAnalysisSession.getTypeReferenceFromPossiblyRecursive(
         }
 
         is KtClassErrorType -> TypeConstructor("$ERROR_CLASS_NAME $type", emptyList())
-        is KtFlexibleType -> getTypeReferenceFromPossiblyRecursive(
-            type.upperBound,
-            paramTrace
-        )
 
         is KtDefinitelyNotNullType -> getTypeReferenceFromPossiblyRecursive(
             type.original,
@@ -63,6 +59,17 @@ private fun KtAnalysisSession.getTypeReferenceFromPossiblyRecursive(
 
         is KtDynamicType -> TypeConstructor("[dynamic]", emptyList())
         is KtTypeErrorType -> TypeConstructor("$ERROR_CLASS_NAME $type", emptyList())
+        // Non-denotable types, see https://kotlinlang.org/spec/type-system.html#type-kinds
+
+        // By the definition [flexible types](https://kotlinlang.org/spec/type-system.html#flexible-types),
+        // we can take any type between lower and upper bounds
+        // In Dokka K1, a lower bound is taken
+        // For example, most Java types T in Kotlin are flexible (T..T?) or T!
+        // see https://github.com/JetBrains/kotlin/blob/master/spec-docs/flexible-java-types.md (warn: it is not official spec)
+        is KtFlexibleType -> getTypeReferenceFromPossiblyRecursive(
+            type.lowerBound,
+            paramTrace
+        )
         is KtCapturedType -> throw NotImplementedError()
         is KtIntegerLiteralType -> throw NotImplementedError()
         is KtIntersectionType -> throw NotImplementedError()

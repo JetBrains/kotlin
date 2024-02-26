@@ -494,6 +494,62 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
+    fun `link should lead to a function with a nullable parameter`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |
+            |/**
+            | * ref to [java.applet.AppletContext.showDocument]
+            | */
+            |fun x(){}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val functionDocs = module.packages.flatMap { it.functions }.first().documentation.values.first()
+                val expected = Description(
+                    root = CustomDocTag(
+                        children = listOf(
+                            P(
+                                children = listOf(
+                                    Text("ref to "),
+                                    DocumentationLink(
+                                        dri = DRI(
+                                            packageName = "java.applet",
+                                            classNames = "AppletContext",
+                                            callable = Callable(
+                                                name = "showDocument",
+                                                params = listOf(TypeConstructor("java.net.URL", emptyList()))
+                                            ),
+                                            target = PointingToDeclaration
+                                        ),
+                                        children = listOf(
+                                            Text("java.applet.AppletContext.showDocument")
+                                        ),
+                                        params = mapOf("href" to "[java.applet.AppletContext.showDocument]")
+                                    ),
+                                )
+                            )
+                        ),
+                        name = "MARKDOWN_FILE"
+                    )
+                )
+                assertEquals(expected, functionDocs.children.first())
+            }
+        }
+    }
+
+    @Test
     fun `link should lead to function rather than property`() {
         val configuration = dokkaConfiguration {
             sourceSets {
