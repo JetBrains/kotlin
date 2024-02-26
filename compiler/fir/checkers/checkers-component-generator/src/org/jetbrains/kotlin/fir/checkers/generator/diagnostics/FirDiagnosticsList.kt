@@ -1779,6 +1779,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM by warning<PsiElement>()
         val DEPRECATED_ACCESS_TO_ENTRIES_PROPERTY by warning<PsiElement>()
         val DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
+        val DEPRECATED_ACCESS_TO_ENTRIES_AS_QUALIFIER by warning<PsiElement>()
         val DEPRECATED_DECLARATION_OF_ENUM_ENTRY by warning<KtEnumEntry>()
     }
 

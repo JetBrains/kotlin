@@ -5031,6 +5031,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.DEPRECATED_ACCESS_TO_ENTRIES_AS_QUALIFIER) { firDiagnostic ->
+        DeprecatedAccessToEntriesAsQualifierImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.DEPRECATED_DECLARATION_OF_ENUM_ENTRY) { firDiagnostic ->
         DeprecatedDeclarationOfEnumEntryImpl(
             firDiagnostic as KtPsiDiagnostic,
