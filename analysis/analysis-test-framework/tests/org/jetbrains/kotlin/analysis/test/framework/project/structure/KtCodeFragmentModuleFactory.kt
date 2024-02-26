@@ -32,7 +32,7 @@ object KtCodeFragmentModuleFactory : KtModuleFactory {
     override fun createModule(
         testModule: TestModule,
         contextModule: KtTestModule?,
-        dependencyPaths: Collection<Path>,
+        dependencyBinaryRoots: Collection<Path>,
         testServices: TestServices,
         project: Project,
     ): KtTestModule {

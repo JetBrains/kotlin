@@ -25,13 +25,13 @@ object KtLibrarySourceModuleFactory : KtModuleFactory {
     override fun createModule(
         testModule: TestModule,
         contextModule: KtTestModule?,
-        dependencyPaths: Collection<Path>,
+        dependencyBinaryRoots: Collection<Path>,
         testServices: TestServices,
         project: Project,
     ): KtTestModule {
         Assume.assumeFalse("Compilation of multi-platform libraries is not supported", testModule.targetPlatform.isMultiPlatform())
 
-        val (libraryJar, librarySourcesJar) = testServices.compiledLibraryProvider.compileToLibrary(testModule)
+        val (libraryJar, librarySourcesJar) = testServices.compiledLibraryProvider.compileToLibrary(testModule, dependencyBinaryRoots)
 
         require(librarySourcesJar != null)
 

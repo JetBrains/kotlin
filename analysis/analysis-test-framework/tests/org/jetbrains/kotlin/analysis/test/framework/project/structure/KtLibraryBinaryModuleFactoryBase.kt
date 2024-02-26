@@ -23,11 +23,11 @@ abstract class KtLibraryBinaryModuleFactoryBase : KtModuleFactory {
     override fun createModule(
         testModule: TestModule,
         contextModule: KtTestModule?,
+        dependencyBinaryRoots: Collection<Path>,
         testServices: TestServices,
         project: Project,
-        dependencyPaths: Collection<Path>,
     ): KtTestModule {
-        val binaryRoot = testServices.compiledLibraryProvider.compileToLibrary(testModule).artifact
+        val binaryRoot = testServices.compiledLibraryProvider.compileToLibrary(testModule, dependencyBinaryRoots).artifact
         val decompiledFiles = decompileToPsiFiles(binaryRoot, testServices, project)
 
         return KtTestModule(

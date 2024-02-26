@@ -40,15 +40,15 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
     override fun compile(
         tmpDir: Path,
         module: TestModule,
+        dependencyBinaryRoots: Collection<Path>,
         testServices: TestServices,
-        dependencyPaths: Collection<Path>,
     ): Path = CompilerExecutor.compileLibrary(
         compilerKind,
         tmpDir,
         buildCompilerOptions(module, testServices),
         compilationErrorExpected = Directives.COMPILATION_ERRORS in module.directives,
         libraryName = module.name,
-        extraClasspath = buildExtraClasspath(module, testServices) + dependencyPaths.map { it.pathString },
+        extraClasspath = buildExtraClasspath(module, dependencyBinaryRoots, testServices),
     )
 
     override fun compileTestModuleToLibrarySources(module: TestModule, testServices: TestServices): Path {
@@ -65,8 +65,13 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
         return librarySourcesPath
     }
 
-    private fun buildExtraClasspath(module: TestModule, testServices: TestServices): List<String> = buildList {
+    private fun buildExtraClasspath(
+        module: TestModule,
+        dependencyBinaryRoots: Collection<Path>,
+        testServices: TestServices,
+    ): List<String> = buildList {
         addAll(buildPlatformExtraClasspath(module, testServices))
+        dependencyBinaryRoots.mapTo(this) { it.pathString }
     }
 
     protected open fun buildPlatformExtraClasspath(module: TestModule, testServices: TestServices): List<String> = emptyList()
@@ -151,8 +156,8 @@ class DispatchingTestModuleCompiler : TestModuleCompiler() {
         CompilerExecutor.CompilerKind.JS to JsKlibTestModuleCompiler(),
     )
 
-    override fun compile(tmpDir: Path, module: TestModule, testServices: TestServices, dependencyPaths: Collection<Path>): Path {
-        return getCompiler(module).compileTestModuleToLibrary(module, testServices, dependencyPaths)
+    override fun compile(tmpDir: Path, module: TestModule, dependencyBinaryRoots: Collection<Path>, testServices: TestServices): Path {
+        return getCompiler(module).compileTestModuleToLibrary(module, dependencyBinaryRoots, testServices)
     }
 
     override fun compileTestModuleToLibrarySources(module: TestModule, testServices: TestServices): Path {
