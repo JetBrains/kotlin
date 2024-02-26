@@ -148,6 +148,14 @@ configurations {
         }
     }
 
+    objcExportApi {
+        canBeConsumed = false
+        canBeResolved = true
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, CppUsage.API))
+        }
+    }
+
     embeddableJar {
         canBeConsumed = false
         canBeResolved = true
@@ -175,6 +183,7 @@ dependencies {
     compilationDatabase project(":kotlin-native:common")
     compilationDatabase project(":kotlin-native:runtime")
     runtimeBitcode project(":kotlin-native:runtime")
+    objcExportApi project(":kotlin-native:runtime")
     embeddableJar project(path: ':kotlin-native:prepare:kotlin-native-compiler-embeddable', configuration: 'runtimeElements')
 }
 
@@ -311,6 +320,10 @@ tasks.register("distCompiler", Copy) {
     from(project.file('konan')) {
         into('konan')
         exclude('**/*.properties')
+    }
+
+    from(configurations.objcExportApi) {
+        into('konan/swift_export/kotlin_runtime')
     }
 
     from(project.file('konan')) {

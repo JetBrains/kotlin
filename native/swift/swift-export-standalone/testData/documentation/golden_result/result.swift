@@ -1,4 +1,5 @@
 import KotlinBridges
+import KotlinRuntime
 
 /**
  * Function foo description

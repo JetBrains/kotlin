@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.keepOnlyDefaultProfiles
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
+import java.nio.file.Path
 
 class Distribution private constructor(private val serialized: Serialized) : java.io.Serializable {
     constructor(
@@ -87,6 +88,9 @@ class Distribution private constructor(private val serialized: Serialized) : jav
     val klib = "$konanHome/klib"
     val stdlib = "$klib/common/stdlib"
     val stdlibDefaultComponent = "$stdlib/default"
+
+    val kotlinRuntimeForSwiftHome = "$konanHome/konan/swift_export/kotlin_runtime"
+    val kotlinRuntimeForSwiftModuleMap = "$kotlinRuntimeForSwiftHome/module.modulemap"
 
     fun defaultNatives(target: KonanTarget) = "$konanHome/konan/targets/${target.visibleName}/native"
 
