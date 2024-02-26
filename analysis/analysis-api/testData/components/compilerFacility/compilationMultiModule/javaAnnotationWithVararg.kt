@@ -1,4 +1,5 @@
 // MODULE: lib
+// MODULE_KIND: LibraryBinary
 // FILE: p3/Anno.java
 package p3;
 
@@ -13,7 +14,9 @@ import static java.lang.annotation.ElementType.*;
 public @interface Anno {
     String[] value();
 }
+
 // MODULE: lib2(lib)
+// MODULE_KIND: LibraryBinary
 // FILE: p2/Parent.java
 package p2;
 
@@ -27,8 +30,8 @@ public class Parent {
     public void setContentView(@Anno({"UnknownNullness", "MissingNullability"}) int id) {
     }
 }
+
 // MODULE: main(lib, lib2)
-// MODULE_KIND: Source
 // FILE: main.kt
 import p2.Parent
 

@@ -59,9 +59,21 @@ public class FirIdeNormalAnalysisSourceModuleMultiModuleCompilerFacilityTestGene
   }
 
   @Test
+  @TestMetadata("dependencyBetweenBinaryLibraries.kt")
+  public void testDependencyBetweenBinaryLibraries() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/dependencyBetweenBinaryLibraries.kt");
+  }
+
+  @Test
   @TestMetadata("internalUsage.kt")
   public void testInternalUsage() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/internalUsage.kt");
+  }
+
+  @Test
+  @TestMetadata("javaAnnotationWithVararg.kt")
+  public void testJavaAnnotationWithVararg() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/javaAnnotationWithVararg.kt");
   }
 
   @Nested

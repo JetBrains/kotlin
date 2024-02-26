@@ -2,9 +2,9 @@
 // DUMP_IR
 
 // MODULE: lib
+// MODULE_KIND: LibraryBinary
 // FILE: p3/foo.kt
-
-package p3;
+package p3
 
 import org.jetbrains.kotlin.fir.plugin.MyComposable
 
@@ -14,9 +14,7 @@ fun setContent(content: @MyComposable () -> Unit): Int {
 }
 
 // MODULE: main(lib)
-// MODULE_KIND: Source
 // FILE: main.kt
-
 import org.jetbrains.kotlin.fir.plugin.MyComposable
 import p3.setContent
 

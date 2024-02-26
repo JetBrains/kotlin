@@ -48,7 +48,7 @@ import kotlin.test.assertFalse
 
 abstract class AbstractMultiModuleCompilerFacilityTest : AbstractCompilerFacilityTest()
 
-abstract class AbstractFirPluginPrototypeMultiBinaryModuleCompilerFacilityTest : AbstractCompilerFacilityTest() {
+abstract class AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest : AbstractCompilerFacilityTest() {
     override fun extraCustomRuntimeClasspathProviders(): Array<Constructor<RuntimeClasspathProvider>> =
         arrayOf(::PluginRuntimeAnnotationsProvider)
 }
