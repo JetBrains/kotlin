@@ -26,18 +26,19 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.parcelize.BuiltinParcelableTypes
 import org.jetbrains.kotlin.parcelize.ParcelizeNames
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_ID
 
-object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
+class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId>) : FirPropertyChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         val session = context.session
         val containingClassSymbol = declaration.dispatchReceiverType?.toRegularClassSymbol(session) ?: return
 
-        if (containingClassSymbol.isParcelize(session)) {
+        if (containingClassSymbol.isParcelize(session, parcelizeAnnotations)) {
             val fromPrimaryConstructor = declaration.fromPrimaryConstructor ?: false
             if (
                 !fromPrimaryConstructor &&
@@ -54,7 +55,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
 
         if (declaration.name == CREATOR_NAME && containingClassSymbol.isCompanion && declaration.hasJvmFieldAnnotation(session)) {
             val outerClass = context.containingDeclarations.asReversed().getOrNull(1) as? FirRegularClass
-            if (outerClass != null && outerClass.symbol.isParcelize(session)) {
+            if (outerClass != null && outerClass.symbol.isParcelize(session, parcelizeAnnotations)) {
                 reporter.reportOn(declaration.source, KtErrorsParcelize.CREATOR_DEFINITION_IS_NOT_ALLOWED, context)
             }
         }

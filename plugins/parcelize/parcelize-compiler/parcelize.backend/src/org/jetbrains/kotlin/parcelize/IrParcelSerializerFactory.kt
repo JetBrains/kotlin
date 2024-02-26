@@ -12,9 +12,10 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.RAW_VALUE_ANNOTATION_FQ_NAMES
 
-class IrParcelSerializerFactory(private val symbols: AndroidSymbols) {
+class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val parcelizeAnnotations: List<FqName>) {
     private val supportedBySimpleListSerializer = setOf(
         "kotlin.collections.List", "kotlin.collections.MutableList", "kotlin.collections.ArrayList",
         "java.util.List", "java.util.ArrayList",
@@ -313,7 +314,7 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols) {
                 // @Parcelize), we'll have a field in the class itself. Finally, with Parcelable instances which were
                 // manually implemented in Kotlin, we'll instead have an @JvmField property getter in the companion object.
                 return if (classifier.modality == Modality.FINAL && classifier.psiElement != null
-                    && (classifier.isParcelize || classifier.hasCreatorField)
+                    && (classifier.isParcelize(parcelizeAnnotations) || classifier.hasCreatorField)
                 ) {
                     wrapNullableSerializerIfNeeded(irType, IrEfficientParcelableParcelSerializer(classifier))
                 } else {

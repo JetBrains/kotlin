@@ -38,6 +38,7 @@ interface ParcelSerializer {
     fun readValue(v: InstructionAdapter)
 
     data class ParcelSerializerContext(
+        val parcelizeAnnotations: List<FqName>,
         val typeMapper: KotlinTypeMapper,
         val containerClassType: Type,
         val typeParcelers: List<TypeParcelerMapping>,
@@ -344,7 +345,7 @@ interface ParcelSerializer {
 
                         val creatorAsmType = when {
                             creatorVar != null -> typeMapper.mapTypeSafe(creatorVar.type, forceBoxed = true)
-                            clazz.isParcelize -> Type.getObjectType(asmType.internalName + "\$Creator")
+                            clazz.isParcelize(context.parcelizeAnnotations) -> Type.getObjectType(asmType.internalName + "\$Creator")
                             else -> null
                         }
 

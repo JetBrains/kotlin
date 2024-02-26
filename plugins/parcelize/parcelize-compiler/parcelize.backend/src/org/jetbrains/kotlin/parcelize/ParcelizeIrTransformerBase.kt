@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATE_FROM_PARCEL_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
@@ -27,7 +28,8 @@ import org.jetbrains.kotlin.parcelize.serializers.ParcelizeExtensionBase
 
 abstract class ParcelizeIrTransformerBase(
     protected val context: IrPluginContext,
-    protected val androidSymbols: AndroidSymbols
+    protected val androidSymbols: AndroidSymbols,
+    protected val parcelizeAnnotations: List<FqName>
 ) : ParcelizeExtensionBase, IrElementVisitorVoid {
     private val irFactory: IrFactory = IrFactoryImpl
 
@@ -173,7 +175,7 @@ abstract class ParcelizeIrTransformerBase(
         val parceler by lazy(parcelerThunk)
     }
 
-    private val serializerFactory = IrParcelSerializerFactory(androidSymbols)
+    private val serializerFactory = IrParcelSerializerFactory(androidSymbols, parcelizeAnnotations)
 
     protected val IrClass.parcelableProperties: List<ParcelableProperty?>
         get() {
