@@ -48,6 +48,12 @@ public class FirIdeDependentAnalysisSourceModuleExpectForActualTestGenerated ext
   }
 
   @Test
+  @TestMetadata("actual_primaryConstructor.kt")
+  public void testActual_primaryConstructor() {
+    runTest("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual/actual_primaryConstructor.kt");
+  }
+
+  @Test
   public void testAllFilesPresentInExpectForActual() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
