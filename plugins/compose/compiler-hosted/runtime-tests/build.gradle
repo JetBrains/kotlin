@@ -71,6 +71,12 @@ def composePluginFiles = configurations.getByName("composePlugin")
 
 tasks.withType(KotlinCompile).configureEach {
     pluginClasspath.from(composePluginFiles)
+    kotlinOptions {
+        freeCompilerArgs += [
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:nonSkippingGroupOptimization=true"
+        ]
+    }
 }
 
 androidx {

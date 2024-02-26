@@ -16,11 +16,15 @@
 
 package androidx.compose.compiler.test
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mock.Text
 import androidx.compose.runtime.mock.compositionTest
 import androidx.compose.runtime.mock.validate
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import kotlin.test.Test
 
 class CompositionTests {
@@ -42,4 +46,43 @@ class CompositionTests {
             }
         }
     }
+
+    @Test
+    fun test_crossinline_indirect() = compositionTest {
+        val state = CrossInlineState()
+
+        compose {
+            state.place()
+        }
+
+        state.show {
+            val s = remember { "string" }
+            Text(s)
+        }
+        advance()
+        validate {
+            Text("string")
+        }
+
+        state.show {
+            val i = remember { 1 }
+            Text("$i")
+        }
+        advance()
+        validate {
+            Text("1")
+        }
+    }
+}
+
+class CrossInlineState(content: @Composable () -> Unit = { }) {
+    @PublishedApi
+    internal var content by mutableStateOf(content)
+
+    inline fun show(crossinline content: @Composable () -> Unit) {
+        this.content = { content() }
+    }
+
+    @Composable
+    fun place() { content() }
 }

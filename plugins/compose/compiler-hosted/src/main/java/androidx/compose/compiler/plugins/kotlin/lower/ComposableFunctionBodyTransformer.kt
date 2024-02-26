@@ -2444,7 +2444,8 @@ class ComposableFunctionBodyTransformer(
     private fun IrContainerExpression.asSourceOrEarlyExitGroup(
         scope: Scope.FunctionScope
     ): IrContainerExpression {
-        if (scope.hasInlineEarlyReturn) {
+        val needsGroup = scope.hasInlineEarlyReturn || scope.isCrossinlineLambda
+        if (needsGroup) {
             currentFunctionScope.metrics.recordGroup()
         } else if (!collectSourceInformation) {
             // If we are not generating source information and the lambda does not contain an
@@ -2456,7 +2457,7 @@ class ComposableFunctionBodyTransformer(
         // the group, and we don't have to deal with any of the complicated jump logic that
         // could be inside of the block
         val makeStart = {
-            if (scope.hasInlineEarlyReturn) irStartReplaceGroup(
+            if (needsGroup) irStartReplaceGroup(
                 this,
                 scope,
                 startOffset = startOffset,
@@ -2465,7 +2466,7 @@ class ComposableFunctionBodyTransformer(
             else irSourceInformationMarkerStart(this, scope)
         }
         val makeEnd = {
-            if (scope.hasInlineEarlyReturn) irEndReplaceGroup(scope = scope)
+            if (needsGroup) irEndReplaceGroup(scope = scope)
             else irSourceInformationMarkerEnd(this, scope)
         }
         if (!scope.hasComposableCalls && !scope.hasReturn && !scope.hasJump) {
@@ -3916,6 +3917,8 @@ class ComposableFunctionBodyTransformer(
         ) : BlockScope("fun ${function.name.asString()}") {
             val isInlinedLambda: Boolean
                 get() = transformer.inlineLambdaInfo.isInlineLambda(function)
+            val isCrossinlineLambda: Boolean
+                get() = transformer.inlineLambdaInfo.isCrossinlineLambda(function)
 
             val inComposableCall: Boolean
                 get() = (parent as? Scope.CallScope)?.expression?.let { call ->
