@@ -52,7 +52,24 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         doTest(dependenciesDir.resolve("implementIterator"))
     }
 
+
     @Test
+    fun `test - notExportedDependency`() {
+        doTest(
+            dependenciesDir.resolve("notExportedDependency"), configuration = HeaderGenerator.Configuration(
+                frameworkName = "MyApp",
+                generateBaseDeclarationStubs = true,
+                dependencies = listOf(testLibraryAKlibFile, testLibraryBKlibFile),
+            )
+        )
+    }
+
+    /**
+     * https://youtrack.jetbrains.com/issue/KT-65327/Support-reading-klib-contents-in-Analysis-API
+     * Requires being able to use AA to iterate over symbols to 'export' the dependency
+     */
+    @Test
+    @TodoAnalysisApi
     fun `test - exportedAndNotExportedDependency`() {
         doTest(
             dependenciesDir.resolve("exportedAndNotExportedDependency"), configuration = HeaderGenerator.Configuration(
