@@ -28,7 +28,7 @@ import java.nio.file.Path
 /**
  * @see TestModuleKind.CodeFragment
  */
-object KtCodeFragmentModuleFactory : KtModuleFactory {
+object KtCodeFragmentTestModuleFactory : KtTestModuleFactory {
     override fun createModule(
         testModule: TestModule,
         contextModule: KtTestModule?,

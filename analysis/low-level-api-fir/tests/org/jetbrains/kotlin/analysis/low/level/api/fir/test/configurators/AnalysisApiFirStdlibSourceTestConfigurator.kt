@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.createKtLibrarySourceModule
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -20,12 +20,12 @@ object AnalysisApiFirStdlibSourceTestConfigurator : AnalysisApiFirSourceLikeTest
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         super.configureTest(builder, disposable)
         builder.apply {
-            useAdditionalService<KtModuleFactory> { KtStdlibSourceModuleFactory }
+            useAdditionalService<KtTestModuleFactory> { KtStdlibSourceTestModuleFactory }
         }
     }
 }
 
-private object KtStdlibSourceModuleFactory : KtModuleFactory {
+private object KtStdlibSourceTestModuleFactory : KtTestModuleFactory {
     override fun createModule(
         testModule: TestModule,
         contextModule: KtTestModule?,

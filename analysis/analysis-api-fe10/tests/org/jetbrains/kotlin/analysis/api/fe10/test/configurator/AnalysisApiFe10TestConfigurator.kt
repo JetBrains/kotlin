@@ -9,8 +9,8 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleProjectStructure
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
@@ -42,7 +42,7 @@ object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         builder.apply {
-            useAdditionalService<KtModuleFactory> { KtSourceModuleFactory }
+            useAdditionalService<KtTestModuleFactory> { KtSourceTestModuleFactory }
             useAdditionalService { AnalysisApiIndexingConfiguration(AnalysisApiBinaryLibraryIndexingMode.NO_INDEXING) }
             useConfigurators(
                 ::CommonEnvironmentConfigurator,

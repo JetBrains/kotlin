@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiScriptTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtScriptModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtScriptTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
@@ -18,7 +18,7 @@ class AnalysisApiFirScriptTestConfigurator(analyseInDependentSession: Boolean) :
         super.configureTest(builder, disposable)
 
         builder.apply {
-            useAdditionalService<KtModuleFactory> { KtScriptModuleFactory }
+            useAdditionalService<KtTestModuleFactory> { KtScriptTestModuleFactory }
         }
     }
 

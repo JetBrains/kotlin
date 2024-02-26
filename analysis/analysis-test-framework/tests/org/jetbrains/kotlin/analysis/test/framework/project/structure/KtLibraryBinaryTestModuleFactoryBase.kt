@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import java.nio.file.Path
 
-abstract class KtLibraryBinaryModuleFactoryBase : KtModuleFactory {
+abstract class KtLibraryBinaryTestModuleFactoryBase : KtTestModuleFactory {
     protected abstract val testModuleKind: TestModuleKind
 
     protected abstract fun decompileToPsiFiles(binaryRoot: Path, testServices: TestServices, project: Project): List<PsiFile>

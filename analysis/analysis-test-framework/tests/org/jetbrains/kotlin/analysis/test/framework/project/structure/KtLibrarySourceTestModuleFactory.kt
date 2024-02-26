@@ -21,7 +21,7 @@ import java.nio.file.Path
 /**
  * @see TestModuleKind.LibrarySource
  */
-object KtLibrarySourceModuleFactory : KtModuleFactory {
+object KtLibrarySourceTestModuleFactory : KtTestModuleFactory {
     override fun createModule(
         testModule: TestModule,
         contextModule: KtTestModule?,

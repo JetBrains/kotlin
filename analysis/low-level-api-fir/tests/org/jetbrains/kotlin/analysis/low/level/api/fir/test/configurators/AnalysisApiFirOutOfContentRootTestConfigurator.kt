@@ -12,7 +12,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleProjectStructure
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
@@ -38,7 +38,7 @@ object AnalysisApiFirOutOfContentRootTestConfigurator : AnalysisApiFirSourceLike
 
         builder.apply {
             useDirectives(Directives)
-            useAdditionalService<KtModuleFactory> { KtOutOfContentRootModuleFactory }
+            useAdditionalService<KtTestModuleFactory> { KtOutOfContentRootTestModuleFactory }
         }
     }
 
@@ -64,7 +64,7 @@ object AnalysisApiFirOutOfContentRootTestConfigurator : AnalysisApiFirSourceLike
 
 private class SkipWhenOutOfContentRootException : SkipTestException()
 
-private object KtOutOfContentRootModuleFactory : KtModuleFactory {
+private object KtOutOfContentRootTestModuleFactory : KtTestModuleFactory {
     override fun createModule(
         testModule: TestModule,
         contextModule: KtTestModule?,

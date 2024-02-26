@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
 import java.nio.file.Path
 
-fun interface KtModuleFactory : TestService {
+fun interface KtTestModuleFactory : TestService {
     /**
-     * Creates a [KtModule](org.jetbrains.kotlin.analysis.project.structure.KtModule) for the given [testModule].
+     * Creates a [KtTestModule] for the given [testModule].
      *
      * @param contextModule a module to use as a context module. Some kinds of modules (such as dangling file modules) require a
      * context module. Modules representing code fragments also require a context element. That is why the [KtTestModule] is passed
@@ -32,13 +32,13 @@ fun interface KtModuleFactory : TestService {
     ): KtTestModule
 }
 
-private val TestServices.ktModuleFactory: KtModuleFactory by TestServices.testServiceAccessor()
+private val TestServices.ktTestModuleFactory: KtTestModuleFactory by TestServices.testServiceAccessor()
 
 /**
- * Returns the appropriate [KtModuleFactory] to build a [KtModule][org.jetbrains.kotlin.analysis.project.structure.KtModule] for the given
+ * Returns the appropriate [KtTestModuleFactory] to build a [KtModule][org.jetbrains.kotlin.analysis.project.structure.KtModule] for the given
  * [testModule].
  *
- * By default, the [KtModuleFactory] registered with these [TestServices] is returned. It may be overruled by the
+ * By default, the [KtTestModuleFactory] registered with these [TestServices] is returned. It may be overruled by the
  * [MODULE_KIND][org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives.MODULE_KIND] directive for a specific test module.
  *
  * [DependencyKindModuleStructureTransformer][org.jetbrains.kotlin.analysis.test.framework.services.DependencyKindModuleStructureTransformer]
@@ -46,13 +46,13 @@ private val TestServices.ktModuleFactory: KtModuleFactory by TestServices.testSe
  *
  * @see org.jetbrains.kotlin.analysis.test.framework.services.DependencyKindModuleStructureTransformer
  */
-fun TestServices.getKtModuleFactoryForTestModule(testModule: TestModule): KtModuleFactory = when (testModule.explicitTestModuleKind) {
-    TestModuleKind.Source -> KtSourceModuleFactory
-    TestModuleKind.LibraryBinary -> KtLibraryBinaryModuleFactory
-    TestModuleKind.LibraryBinaryDecompiled -> KtLibraryBinaryDecompiledModuleFactory
-    TestModuleKind.LibrarySource -> KtLibrarySourceModuleFactory
-    TestModuleKind.ScriptSource -> KtScriptModuleFactory
-    TestModuleKind.CodeFragment -> KtCodeFragmentModuleFactory
+fun TestServices.getKtModuleFactoryForTestModule(testModule: TestModule): KtTestModuleFactory = when (testModule.explicitTestModuleKind) {
+    TestModuleKind.Source -> KtSourceTestModuleFactory
+    TestModuleKind.LibraryBinary -> KtLibraryBinaryTestModuleFactory
+    TestModuleKind.LibraryBinaryDecompiled -> KtLibraryBinaryDecompiledTestModuleFactory
+    TestModuleKind.LibrarySource -> KtLibrarySourceTestModuleFactory
+    TestModuleKind.ScriptSource -> KtScriptTestModuleFactory
+    TestModuleKind.CodeFragment -> KtCodeFragmentTestModuleFactory
     TestModuleKind.NotUnderContentRoot -> error("Unsupported test module kind: ${TestModuleKind.NotUnderContentRoot}")
-    else -> ktModuleFactory
+    else -> ktTestModuleFactory
 }

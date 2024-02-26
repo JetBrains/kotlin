@@ -15,7 +15,7 @@ import java.nio.file.Path
 /**
  * @see TestModuleKind.LibraryBinaryDecompiled
  */
-object KtLibraryBinaryDecompiledModuleFactory : KtLibraryBinaryModuleFactoryBase() {
+object KtLibraryBinaryDecompiledTestModuleFactory : KtLibraryBinaryTestModuleFactoryBase() {
     override val testModuleKind: TestModuleKind
         get() = TestModuleKind.LibraryBinaryDecompiled
 
