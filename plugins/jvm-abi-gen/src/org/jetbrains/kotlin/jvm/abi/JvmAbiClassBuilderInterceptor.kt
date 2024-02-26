@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.isFileClass
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -120,35 +123,39 @@ class JvmAbiClassBuilderInterceptor(
         override fun newField(
             declaration: IrField?, access: Int, name: String, desc: String, signature: String?, value: Any?
         ): FieldVisitor {
+            val field = delegate.newField(declaration, access, name, desc, signature, value)
+
             if (keepClassAsIs || removeClassFromAbi) {
                 // We don't care about fields when we remove or keep this class completely.
-                return delegate.newField(declaration, access, name, desc, signature, value)
+                return field
             }
 
             val visibility = declaration?.visibility ?: DescriptorVisibilities.DEFAULT_VISIBILITY
 
             if (DescriptorVisibilities.isPrivate(visibility)) {
                 // Remove all private fields.
-                return delegate.newField(declaration, access, name, desc, signature, value)
+                return field
             }
 
             if (treatInternalAsPrivate && visibility == DescriptorVisibilities.INTERNAL) {
                 // Remove all internal fields.
-                return delegate.newField(declaration, access, name, desc, signature, value)
+                return field
             }
 
             // Keep otherwise.
             memberInfos[JvmFieldSignature(name, desc)] = AbiMethodInfo.KEEP
 
-            return delegate.newField(declaration, access, name, desc, signature, value)
+            return field
         }
 
         override fun newMethod(
             declaration: IrFunction?, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?
         ): MethodVisitor {
+            val method = delegate.newMethod(declaration, access, name, desc, signature, exceptions)
+
             if (keepClassAsIs || removeClassFromAbi) {
                 // We don't care about methods when we remove or keep this class completely.
-                return delegate.newMethod(declaration, access, name, desc, signature, exceptions)
+                return method
             }
 
             // inline suspend functions are a special case: Unless they use reified type parameters,
@@ -160,7 +167,7 @@ class JvmAbiClassBuilderInterceptor(
             if (name.endsWith(FOR_INLINE_SUFFIX) && !isPrivateClass) {
                 memberInfos[JvmMethodSignature(name, desc)] = AbiMethodInfo.KEEP
                 maskedMethods += JvmMethodSignature(name.removeSuffix(FOR_INLINE_SUFFIX), desc)
-                return delegate.newMethod(declaration, access, name, desc, signature, exceptions)
+                return method
             }
 
             // Remove private functions from the ABI jars
@@ -168,19 +175,19 @@ class JvmAbiClassBuilderInterceptor(
                 access and Opcodes.ACC_PRIVATE != 0 && declaration != null && DescriptorVisibilities.isPrivate(declaration.visibility)
                 || name == "<clinit>" || name.startsWith("access\$") && access and Opcodes.ACC_SYNTHETIC != 0
             ) {
-                return delegate.newMethod(declaration, access, name, desc, signature, exceptions)
+                return method
             }
 
             // Remove internal functions from the ABI jars
             if (treatInternalAsPrivate && declaration?.visibility == DescriptorVisibilities.INTERNAL) {
-                return delegate.newMethod(declaration, access, name, desc, signature, exceptions)
+                return method
             }
 
             if (isDataClass && removeDataClassCopyIfConstructorIsPrivate &&
                 (name == "copy" || name == "copy${JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX}")
             ) {
                 if (primaryConstructorIsNotInAbi) {
-                    return delegate.newMethod(declaration, access, name, desc, signature, exceptions)
+                    return method
                 }
             }
 
@@ -190,7 +197,7 @@ class JvmAbiClassBuilderInterceptor(
             } else {
                 memberInfos[JvmMethodSignature(name, desc)] = AbiMethodInfo.STRIP
             }
-            return delegate.newMethod(declaration, access, name, desc, signature, exceptions)
+            return method
         }
 
         // Parse the public ABI flag from the Kotlin metadata annotation
