@@ -33,7 +33,7 @@ fun interface SoftValueCleaner<V> {
 
 /**
  * A cache with hard references to its keys [K] and soft references to its values [V], which will be cleaned up after manual removal and
- * garbage collection. The cache should only be used in read/write actions, as specified by the individual functions.
+ * garbage collection. **The cache should only be used in read/write actions, as specified by the individual functions.**
  *
  * Each value of the cache has a [SoftValueCleaner] associated with it. The cache ensures that this cleaner is invoked when the value is
  * removed from or replaced in the cache, or when the value has been garbage-collected. Already collected values from the cache's reference
@@ -71,13 +71,13 @@ class CleanableSoftValueCache<K : Any, V : Any>(
     }
 
     /**
-     * Returns a value for the given [key] if it exists in the map. Must be called from a read action.
+     * Returns a value for the given [key] if it exists in the map. **Must be called in a read action.**
      */
     operator fun get(key: K): V? = backingMap[key]?.get()
 
     /**
      * If [key] is currently absent, attempts to add a value computed by [computeValue] to the cache. [computeValue] is invoked exactly once
-     * if [key] is present, and otherwise never. Must be called in a read action.
+     * if [key] is present, and otherwise never. **Must be called in a read action.**
      *
      * [computeValue] should not modify the cache during computation.
      *
@@ -91,8 +91,8 @@ class CleanableSoftValueCache<K : Any, V : Any>(
     }
 
     /**
-     * Replaces the current value at [key] with a new value computed by [computeValue]. [computeValue] is invoked exactly once. Must be
-     * called in a read action.
+     * Replaces the current value at [key] with a new value computed by [computeValue]. [computeValue] is invoked exactly once. **Must be
+     * called in a read action.**
      *
      * If the cache already contains a value `v` at [key], cleanup will be performed on it, *unless* the result of the computation is
      * referentially equal to `v`. This behavior enables computation functions to decide to retain an existing value, without triggering
@@ -149,7 +149,7 @@ class CleanableSoftValueCache<K : Any, V : Any>(
     }
 
     /**
-     * Adds or replaces [value] to/in the cache at the given [key]. Must be called in a read action.
+     * Adds or replaces [value] to/in the cache at the given [key]. **Must be called in a read action.**
      *
      * As replacement constitutes removal, cleanup will be performed on the replaced value. When the existing value and the new value are
      * the same (referentially equal), cleanup will not be performed, because the existing value effectively wasn't removed from the cache.
@@ -185,8 +185,8 @@ class CleanableSoftValueCache<K : Any, V : Any>(
     }
 
     /**
-     * Removes the value associated with [key] from the cache, performs cleanup on it, and returns it if it exists. Must be called in a read
-     * action.
+     * Removes the value associated with [key] from the cache, performs cleanup on it, and returns it if it exists. **Must be called in a
+     * read action.**
      */
     fun remove(key: K): V? {
         val ref = backingMap.remove(key)
@@ -197,7 +197,7 @@ class CleanableSoftValueCache<K : Any, V : Any>(
     }
 
     /**
-     * Removes all values from the cache and performs cleanup on them. Must be called in a *write* action.
+     * Removes all values from the cache and performs cleanup on them. **Must be called in a *write* action.**
      *
      * The write action requirement is due to the complexity associated with atomically clearing a concurrent cache while also performing
      * cleanup on exactly the cleared values. Because this cache implementation is used by components which operate in read and write
@@ -214,7 +214,7 @@ class CleanableSoftValueCache<K : Any, V : Any>(
     }
 
     /**
-     * Returns the number of elements in the cache. Must be called in a read action.
+     * Returns the number of elements in the cache. **Must be called in a read action.**
      */
     val size: Int
         get() {
@@ -226,7 +226,7 @@ class CleanableSoftValueCache<K : Any, V : Any>(
         }
 
     /**
-     * Returns whether the cache is empty. Must be called in a read action.
+     * Returns whether the cache is empty. **Must be called in a read action.**
      */
     fun isEmpty(): Boolean {
         // Process the reference queue first to remove values which have already been garbage-collected to get a more accurate answer.
@@ -237,8 +237,8 @@ class CleanableSoftValueCache<K : Any, V : Any>(
     }
 
     /**
-     * Returns a snapshot of all keys in the cache. Changes to the cache do not reflect in the resulting set. Must be called in a read
-     * action.
+     * Returns a snapshot of all keys in the cache. Changes to the cache do not reflect in the resulting set. **Must be called in a read
+     * action.**
      */
     val keys: Set<K>
         get() {
