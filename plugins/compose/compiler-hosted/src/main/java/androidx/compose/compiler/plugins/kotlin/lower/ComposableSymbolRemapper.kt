@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.DescriptorsRemapper
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.StarProjectionImpl
 
 /**
  * This symbol remapper is aware of possible descriptor signature change to align
@@ -87,8 +88,8 @@ class ComposableSymbolRemapper : DeepCopySymbolRemapper(
             this is IrBasedDeclarationDescriptor<*> ||
                 containingDeclaration.let { it is FunctionDescriptor && it.isTransformed() }
 
-        private fun KotlinType.containsComposable() =
+        private fun KotlinType.containsComposable(): Boolean =
             hasComposableAnnotation() ||
-                arguments.any { it.type.hasComposableAnnotation() }
+                arguments.any { it !is StarProjectionImpl && it.type.containsComposable() }
     }
 )
