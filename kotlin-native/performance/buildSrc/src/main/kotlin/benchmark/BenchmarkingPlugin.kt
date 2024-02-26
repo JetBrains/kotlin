@@ -164,7 +164,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
         kotlin.targetFromPreset(hostPreset, NATIVE_TARGET_NAME) {
             compilations.named("main").configure {
                 compileTaskProvider.configure {
-                    compilerOptions.freeCompilerArgs.set(benchmark.compilerOpts + project.compilerArgs)
+                    compilerOptions.freeCompilerArgs.addAll(benchmark.compilerOpts + project.compilerArgs)
                 }
                 dependencies {
                     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
