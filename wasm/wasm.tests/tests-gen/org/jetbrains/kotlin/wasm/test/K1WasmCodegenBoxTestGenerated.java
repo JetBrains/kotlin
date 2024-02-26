@@ -2743,6 +2743,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("kt53478.kt")
+      public void testKt53478() {
+        runTest("compiler/testData/codegen/box/builderInference/issues/kt53478.kt");
+      }
+
+      @Test
       @TestMetadata("kt53553.kt")
       public void testKt53553() {
         runTest("compiler/testData/codegen/box/builderInference/issues/kt53553.kt");
@@ -2908,6 +2914,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
       @TestMetadata("kt63840c.kt")
       public void testKt63840c() {
         runTest("compiler/testData/codegen/box/builderInference/issues/kt63840c.kt");
+      }
+
+      @Test
+      @TestMetadata("kt64066.kt")
+      public void testKt64066() {
+        runTest("compiler/testData/codegen/box/builderInference/issues/kt64066.kt");
       }
     }
 

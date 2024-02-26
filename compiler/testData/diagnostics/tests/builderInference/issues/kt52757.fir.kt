@@ -4,7 +4,7 @@
 fun test() {
     val buildee = build {
         typeVariableConsumer = ::consumeTargetType
-        typeVariableConsumer = <!BUILDER_INFERENCE_STUB_PARAMETER_TYPE!>{}<!>
+        typeVariableConsumer = {}
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
