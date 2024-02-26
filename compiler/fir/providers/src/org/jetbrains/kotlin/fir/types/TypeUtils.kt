@@ -584,10 +584,13 @@ fun FirCallableDeclaration.isSubtypeOf(
     )
 }
 
+fun ConeKotlinType.canHaveSubtypesAccordingToK1(session: FirSession): Boolean =
+    hasSubtypesAboveNothingAccordingToK1(session)
+
 /**
  * The original K1 function: [org.jetbrains.kotlin.types.TypeUtils.canHaveSubtypes].
  */
-fun ConeKotlinType.canHaveSubtypes(session: FirSession): Boolean {
+private fun ConeKotlinType.hasSubtypesAboveNothingAccordingToK1(session: FirSession): Boolean {
     if (this.isMarkedNullable) {
         return true
     }
@@ -608,12 +611,13 @@ fun ConeKotlinType.canHaveSubtypes(session: FirSession): Boolean {
         val argument = typeProjection.type!! //safe because it is not a star
 
         val canHaveSubtypes = when (typeProjection.variance) {
-            Variance.OUT_VARIANCE -> argument.canHaveSubtypes(session)
-            Variance.IN_VARIANCE -> argument.lowerThanBound(typeParameterSymbol, session)
+            Variance.OUT_VARIANCE -> argument.hasSubtypesAboveNothingAccordingToK1(session)
+            Variance.IN_VARIANCE -> argument.hasSupertypesBelowParameterBoundsAccordingToK1(typeParameterSymbol, session)
             Variance.INVARIANT -> when (typeParameterSymbol.variance) {
-                Variance.OUT_VARIANCE -> argument.canHaveSubtypes(session)
-                Variance.IN_VARIANCE -> argument.lowerThanBound(typeParameterSymbol, session)
-                Variance.INVARIANT -> argument.canHaveSubtypes(session) || argument.lowerThanBound(typeParameterSymbol, session)
+                Variance.OUT_VARIANCE -> argument.hasSubtypesAboveNothingAccordingToK1(session)
+                Variance.IN_VARIANCE -> argument.hasSupertypesBelowParameterBoundsAccordingToK1(typeParameterSymbol, session)
+                Variance.INVARIANT -> argument.hasSubtypesAboveNothingAccordingToK1(session)
+                        || argument.hasSupertypesBelowParameterBoundsAccordingToK1(typeParameterSymbol, session)
             }
         }
 
@@ -646,7 +650,10 @@ fun ConeClassLikeType.toClassSymbol(session: FirSession): FirClassSymbol<*>? {
  * This function returns `true` if `argument` suits any bound rather than the
  * intersection of them all, and it expects there to be at least a single bound.
  */
-private fun ConeKotlinType.lowerThanBound(typeParameterSymbol: FirTypeParameterSymbol, session: FirSession): Boolean {
+private fun ConeKotlinType.hasSupertypesBelowParameterBoundsAccordingToK1(
+    typeParameterSymbol: FirTypeParameterSymbol,
+    session: FirSession,
+): Boolean {
     typeParameterSymbol.resolvedBounds.forEach { boundTypeRef ->
         if (this != boundTypeRef.coneType && isSubtypeOf(session.typeContext, boundTypeRef.coneType)) {
             return true
