@@ -21,6 +21,14 @@ interface KotlinTargetResourcesPublication {
         val excludes: List<String>,
     )
 
+    fun canPublishResources(target: KotlinTarget): Boolean
+
+    fun publishResourcesAsKotlinComponent(
+        target: KotlinTarget,
+        resourcePathForSourceSet: (KotlinSourceSet) -> (ResourceRoot),
+        relativeResourcePlacement: Provider<File>,
+    )
+
     companion object {
         const val EXTENSION_NAME = "multiplatformResourcesPublication"
     }

@@ -714,6 +714,16 @@ object KotlinToolingDiagnostics {
         )
     }
 
+    object ResourceMayNotBePublishedForTarget : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(targetName: String) = build(
+            """
+            Resources publication for target $targetName is not supported yet.
+            
+            $resourcesBugReportRequest
+            """.trimIndent()
+        )
+    }
+
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
