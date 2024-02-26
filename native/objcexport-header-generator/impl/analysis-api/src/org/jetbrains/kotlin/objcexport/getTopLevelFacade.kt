@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterfaceImpl
+import org.jetbrains.kotlin.backend.konan.objcexport.toNameAttributes
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrProtocolName
 
 
@@ -59,7 +60,7 @@ fun KtFileSymbol.getTopLevelFacade(): ObjCInterface? {
         name = fileName.objCName,
         comment = null,
         origin = null,
-        attributes = listOf(OBJC_SUBCLASSING_RESTRICTED),
+        attributes = listOf(OBJC_SUBCLASSING_RESTRICTED) + fileName.toNameAttributes(),
         superProtocols = emptyList(),
         members = extensions.mapNotNull { it.translateToObjCExportStub() },
         categoryName = null,
