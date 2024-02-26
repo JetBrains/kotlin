@@ -1,6 +1,7 @@
 import org.gradle.api.Project
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.named
@@ -59,7 +60,7 @@ fun Project.objCExportHeaderGeneratorTest(
         }
 
         /* Add dependency files as inputs to this test task */
-        inputs.files(testDependencyKlibs)
+        inputs.files(testDependencyKlibs).withPathSensitivity(PathSensitivity.RELATIVE)
     }
 
     useJUnitPlatform()
