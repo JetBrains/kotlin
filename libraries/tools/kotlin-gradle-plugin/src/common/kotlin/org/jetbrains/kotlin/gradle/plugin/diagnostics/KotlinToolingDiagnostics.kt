@@ -776,6 +776,16 @@ object KotlinToolingDiagnostics {
         )
     }
 
+    object ResourceMayNotBePublishedForTarget : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(targetName: String) = build(
+            """
+            Resources publication for target $targetName is not supported yet.
+            
+            $resourcesBugReportRequest
+            """.trimIndent()
+        )
+    }
+
     object DependencyDoesNotPhysicallyExist : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(dependency: File) = build(
             """
