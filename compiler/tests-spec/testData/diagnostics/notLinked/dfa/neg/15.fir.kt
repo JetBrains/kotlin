@@ -30,7 +30,7 @@ fun case_1() {
  */
 fun case_2() {
     var x: Boolean? = true
-    if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x !== null<!> && try { x = null; true } catch (e: Exception) { false }) {
+    if (x !== null && try { x = null; true } catch (e: Exception) { false }) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!><!UNSAFE_CALL!>.<!>not()
     }
