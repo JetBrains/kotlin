@@ -64,11 +64,11 @@ class JvmAbiCommandLineProcessor : CommandLineProcessor {
             CliOption(
                 "treatInternalAsPrivate",
                 "true/false",
-                "Treat internal declarations as private and remove from ABI. False by default due to backwards compatibility. If enabled, " +
-                        "internal functions are being removed and will no longer be available from Java if its being compiled against abi.jar. " +
-                        "Works best in conjunction with flags:" +
-                        "\n  removePrivateClasses - internal classes are being removed too;" +
-                        "\n  removeDataClassCopyIfConstructorIsPrivate - copy method is removed along with internal constructor.",
+                """Treat internal declarations as private and remove from ABI. False by default due to backwards compatibility.
+                   |If enabled, internal functions are removed and will no longer be available from Java if it's compiled against abi.jar.
+                   |Works best in conjunction with flags:
+                   |  * removePrivateClasses - internal classes are being removed too;
+                   |  * removeDataClassCopyIfConstructorIsPrivate - copy method is removed along with internal constructor.""".trimMargin(),
                 false,
             )
     }
