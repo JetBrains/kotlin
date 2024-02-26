@@ -5,8 +5,17 @@
 
 package org.jetbrains.kotlin.backend.konan.testUtils
 
+import java.io.File
 import kotlin.io.path.Path
 
-val testLibraryAKlibFile = Path("native/objcexport-header-generator/testDependencies/testLibraryA/build/testKlib/testLibraryA.klib")
+val testDependencyKlibs = System.getProperty("testDependencyKlibs").orEmpty()
+    .split(File.pathSeparator)
+    .map(::Path)
 
-val testLibraryBKlibFile = Path("native/objcexport-header-generator/testDependencies/testLibraryB/build/testKlib/testLibraryB.klib")
+val testLibraryAKlibFile
+    get() = testDependencyKlibs.firstOrNull { it.contains(Path("testLibraryA")) }
+        ?: error("Missing 'testLibraryA' in 'testDependencyKlibs' System Property")
+
+val testLibraryBKlibFile
+    get() = testDependencyKlibs.firstOrNull { it.contains(Path("testLibraryB")) }
+        ?: error("Missing 'testLibraryB' in 'testDependencyKlibs' System Property")
