@@ -864,7 +864,8 @@ internal class DokkaSymbolVisitor(
 
     private fun KtAnalysisSession.getDocumentation(symbol: KtSymbol) =
         if (symbol.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED)
-            getGeneratedKDocDocumentationFrom(symbol)
+            // a primary (implicit default) constructor  can be generated, so we need KDoc from @constructor tag
+            getGeneratedKDocDocumentationFrom(symbol) ?: if(symbol is KtConstructorSymbol) getKDocDocumentationFrom(symbol, logger) else null
         else
             getKDocDocumentationFrom(symbol, logger) ?: javadocParser?.let { getJavaDocDocumentationFrom(symbol, it) }
 
