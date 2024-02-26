@@ -2103,9 +2103,39 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("expectFunInterface.kt")
+    public void testExpectFunInterface() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/expectFunInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("expectFunInterfaceIsHeirOfExpect.kt")
+    public void testExpectFunInterfaceIsHeirOfExpect() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/expectFunInterfaceIsHeirOfExpect.kt");
+    }
+
+    @Test
     @TestMetadata("funInterfaceDiagnostics.kt")
     public void testFunInterfaceDiagnostics() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/funInterfaceDiagnostics.kt");
+    }
+
+    @Test
+    @TestMetadata("funInterfaceIsHeirOfExpect.kt")
+    public void testFunInterfaceIsHeirOfExpect() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/funInterfaceIsHeirOfExpect.kt");
+    }
+
+    @Test
+    @TestMetadata("funInterfaceIsHeirOfExpectJK.kt")
+    public void testFunInterfaceIsHeirOfExpectJK() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/funInterfaceIsHeirOfExpectJK.kt");
+    }
+
+    @Test
+    @TestMetadata("funInterfaceIsHeirOfTwoExpect.kt")
+    public void testFunInterfaceIsHeirOfTwoExpect() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/funInterfaceIsHeirOfTwoExpect.kt");
     }
 
     @Test
@@ -2166,18 +2196,6 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     @TestMetadata("propertyRedeclaration.kt")
     public void testPropertyRedeclaration() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/propertyRedeclaration.kt");
-    }
-
-    @Test
-    @TestMetadata("scopeOfFunInterface.kt")
-    public void testScopeOfFunInterface() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/scopeOfFunInterface.kt");
-    }
-
-    @Test
-    @TestMetadata("scopeOfFunInterfaceJK.kt")
-    public void testScopeOfFunInterfaceJK() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/scopeOfFunInterfaceJK.kt");
     }
   }
 
