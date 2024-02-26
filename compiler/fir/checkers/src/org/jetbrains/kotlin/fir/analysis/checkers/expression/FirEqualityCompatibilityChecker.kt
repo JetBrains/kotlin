@@ -103,6 +103,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         val oneIsNotNull = !l.type.isNullable || !r.type.isNullable
 
         return when {
+            l.type.isNullableNothing || r.type.isNullableNothing -> Applicability.APPLICABLE
             l.isIdentityLess || r.isIdentityLess -> Applicability.INAPPLICABLE_AS_IDENTITY_LESS
             oneIsNotNull && shouldReportAsPerRules1(l, r, context) -> getInapplicabilityFor(l, r)
             else -> Applicability.APPLICABLE
