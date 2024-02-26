@@ -85,6 +85,11 @@ fun incompatibleIdentityRegardlessNullabilitySmartCast(a: Any?, b: Any?) {
     }
 }
 
+fun incompatibleIdentityRegardlessNullabilityWithNull(a: Int?) {
+    a == null
+    <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>a === null<!>
+}
+
 fun incompatibleIdentityRegardlessNullabilityWithValueClasses(c: C?, d: D?) {
     <!EQUALITY_NOT_APPLICABLE!>c == d<!>
     <!FORBIDDEN_IDENTITY_EQUALS!>c === d<!>
