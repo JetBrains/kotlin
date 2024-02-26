@@ -148,7 +148,6 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    @TodoAnalysisApi
     fun `test - functionWithErrorTypeAndFrameworkName`() {
         doTest(headersTestDataDir.resolve("functionWithErrorTypeAndFrameworkName"), Configuration(frameworkName = "shared"))
     }

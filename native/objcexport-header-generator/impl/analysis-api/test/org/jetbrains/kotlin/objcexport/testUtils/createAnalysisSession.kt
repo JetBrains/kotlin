@@ -20,11 +20,14 @@ import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.nameWithoutExtension
 
+const val defaultKotlinSourceModuleName = "testModule"
+
 /**
  * Creates a standalone analysis session from Kotlin source code passed as [kotlinSources]
  */
 fun createStandaloneAnalysisApiSession(
     tempDir: File,
+    kotlinSourceModuleName: String = defaultKotlinSourceModuleName,
     kotlinSources: Map</* File Name */ String, /* Source Code */ String>,
     dependencyKlibs: List<Path> = emptyList(),
 ): StandaloneAnalysisAPISession {
@@ -36,14 +39,18 @@ fun createStandaloneAnalysisApiSession(
             writeText(sourceCode)
         }
     }
-    return createStandaloneAnalysisApiSession(listOf(testModuleRoot), dependencyKlibs)
+    return createStandaloneAnalysisApiSession(kotlinSourceModuleName, listOf(testModuleRoot), dependencyKlibs)
 }
 
 /**
  * Creates a standalone analysis session from [kotlinFiles] on disk.
  * The Kotlin/Native stdlib will be provided as dependency
  */
-fun createStandaloneAnalysisApiSession(kotlinFiles: List<File>, dependencyKlibs: List<Path> = emptyList()): StandaloneAnalysisAPISession {
+fun createStandaloneAnalysisApiSession(
+    kotlinSourceModuleName: String = defaultKotlinSourceModuleName,
+    kotlinFiles: List<File>,
+    dependencyKlibs: List<Path> = emptyList(),
+): StandaloneAnalysisAPISession {
     val currentArchitectureTarget = HostManager.host
     val nativePlatform = NativePlatforms.nativePlatformByTargets(listOf(currentArchitectureTarget))
     return buildStandaloneAnalysisAPISession {
@@ -77,7 +84,7 @@ fun createStandaloneAnalysisApiSession(kotlinFiles: List<File>, dependencyKlibs:
                         addRegularDependency(dependencyKlibModule)
                     }
                     platform = nativePlatform
-                    moduleName = "source"
+                    moduleName = kotlinSourceModuleName
                 }
             )
         }
