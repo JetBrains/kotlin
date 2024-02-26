@@ -5,7 +5,7 @@ fun foo(): Int = 0
 object Implicit {
     operator fun Any.invoke(): String = "Fail"
 
-    val foo = foo()
+    val foo = <!RECURSION_IN_IMPLICIT_TYPES!>foo<!>()
 }
 
 object Explicit {
@@ -27,7 +27,7 @@ object ImplicitIndirect {
 
     val foo get() = bar()
     val bar get() = baz()
-    val baz get() = foo()
+    val baz get() = <!RECURSION_IN_IMPLICIT_TYPES!>foo<!>()
 }
 
 fun takeInt(x: Int) {}

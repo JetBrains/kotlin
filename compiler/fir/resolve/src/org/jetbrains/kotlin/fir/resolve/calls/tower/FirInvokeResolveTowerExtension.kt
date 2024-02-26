@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePropertyAsOperator
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
-import org.jetbrains.kotlin.fir.types.isExtensionFunctionType
-import org.jetbrains.kotlin.fir.types.typeApproximator
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -317,15 +314,22 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
 ): FirExpression {
     return FirPropertyAccessExpressionBuilder().apply {
         val fakeSource = info.fakeSourceForImplicitInvokeCallReceiver
+        val returnTypeRef = returnTypeCalculator.tryCalculateReturnType(symbol.fir)
         calleeReference = when {
+            returnTypeRef is FirErrorTypeRef -> FirErrorReferenceWithCandidate(
+                fakeSource, symbol.callableId.callableName, candidate, returnTypeRef.diagnostic,
+            )
+
             candidate.isSuccessful -> FirNamedReferenceWithCandidate(fakeSource, symbol.callableId.callableName, candidate)
+
             else -> FirErrorReferenceWithCandidate(
                 fakeSource, symbol.callableId.callableName, candidate,
                 createConeDiagnosticForCandidateWithError(candidate.applicability, candidate),
             )
         }
         dispatchReceiver = candidate.dispatchReceiverExpression()
-        coneTypeOrNull = returnTypeCalculator.tryCalculateReturnType(symbol.fir).type
+
+        coneTypeOrNull = returnTypeRef.type
 
         if (!invokeBuiltinExtensionMode) {
             extensionReceiver = extensionReceiverExpression
