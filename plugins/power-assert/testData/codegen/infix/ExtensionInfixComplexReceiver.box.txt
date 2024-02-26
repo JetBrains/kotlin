@@ -1,0 +1,5 @@
+length mustEqual "world".length
+               |                        |
+               |                        5
+               3
+ell
