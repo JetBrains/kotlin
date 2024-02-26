@@ -33,6 +33,7 @@ internal val DEFAULT_GROOVY_SETTINGS_FILE =
             id "org.jetbrains.kotlin.plugin.jpa" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.plugin.noarg" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.plugin.lombok" version "${'$'}kotlin_version"
+            id "org.jetbrains.kotlin.plugin.power-assert" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.plugin.sam.with.receiver" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.plugin.serialization" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.plugin.assignment" version "${'$'}kotlin_version"
@@ -195,6 +196,7 @@ internal val DEFAULT_KOTLIN_SETTINGS_FILE =
             id("org.jetbrains.kotlin.plugin.jpa") version kotlin_version
             id("org.jetbrains.kotlin.plugin.noarg") version kotlin_version
             id("org.jetbrains.kotlin.plugin.lombok") version kotlin_version
+            id("org.jetbrains.kotlin.plugin.power-assert") version kotlin_version
             id("org.jetbrains.kotlin.plugin.sam.with.receiver") version kotlin_version
             id("org.jetbrains.kotlin.plugin.serialization") version kotlin_version
             id("org.jetbrains.kotlin.plugin.assignment") version kotlin_version
