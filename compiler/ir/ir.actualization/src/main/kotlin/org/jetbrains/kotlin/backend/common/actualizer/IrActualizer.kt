@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 data class IrActualizedResult(
     val actualizedExpectDeclarations: List<IrDeclaration>,
@@ -33,7 +32,7 @@ class IrActualizer(
     val ktDiagnosticReporter: IrDiagnosticReporter,
     val typeSystemContext: IrTypeSystemContext,
     expectActualTracker: ExpectActualTracker?,
-    val useIrFakeOverrideBuilder: Boolean,
+    val useFirBasedFakeOverrideGenerator: Boolean,
     val mainFragment: IrModuleFragment,
     val dependentFragments: List<IrModuleFragment>
 ) {
@@ -80,7 +79,7 @@ class IrActualizer(
         // 1. Collect expect-actual links for members of classes found on step 1.
         val expectActualMap = collector.collect(classActualizationInfo)
 
-        if (!useIrFakeOverrideBuilder) {
+        if (useFirBasedFakeOverrideGenerator) {
             //   2. Actualize expect fake overrides in non-expect classes inside common or multi-platform module.
             //      It's probably important to run FakeOverridesActualizer before ActualFakeOverridesAdder
             FakeOverridesActualizer(expectActualMap, ktDiagnosticReporter).apply { dependentFragments.forEach { visitModuleFragment(it) } }

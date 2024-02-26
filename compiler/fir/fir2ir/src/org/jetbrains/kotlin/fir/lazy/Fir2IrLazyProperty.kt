@@ -233,9 +233,9 @@ class Fir2IrLazyProperty(
     }
 
     override var overriddenSymbols: List<IrPropertySymbol> by symbolsMappingForLazyClasses.lazyMappedPropertyListVar(lock) {
-        when (configuration.useIrFakeOverrideBuilder) {
-            true -> computeOverriddenSymbolsForIrFakeOverrideGenerator()
-            false -> computeOverriddenUsingFir2IrFakeOverrideGenerator()
+        when (configuration.useFirBasedFakeOverrideGenerator) {
+            true -> computeOverriddenUsingFir2IrFakeOverrideGenerator()
+            false -> computeOverriddenSymbolsForIrFakeOverrideGenerator()
         }
     }
 

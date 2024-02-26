@@ -172,7 +172,7 @@ class KonanDriver(
             copy(BinaryOptions.objcExportDisableSwiftMemberNameMangling)
             copy(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
             copy(KonanConfigKeys.OBJC_GENERICS)
-            copy(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER)
+            copy(CommonConfigurationKeys.USE_FIR_BASED_FAKE_OVERRIDE_GENERATOR)
         }
 
         // For the second stage, remove already compiled source files from the configuration.

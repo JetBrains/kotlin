@@ -107,12 +107,12 @@ fun FirResult.convertToIrAndActualize(
         ),
         actualizerTypeContextProvider(irModuleFragment.irBuiltins),
         fir2IrConfiguration.expectActualTracker,
-        fir2IrConfiguration.useIrFakeOverrideBuilder,
+        fir2IrConfiguration.useFirBasedFakeOverrideGenerator,
         irModuleFragment,
         allIrModules.dropLast(1),
     )
 
-    if (fir2IrConfiguration.useIrFakeOverrideBuilder) {
+    if (!fir2IrConfiguration.useFirBasedFakeOverrideGenerator) {
         // actualizeCallablesAndMergeModules call below in fact can also actualize classifiers.
         // So to avoid even more changes, when this mode is disabled, we don't run classifiers
         // actualization separately. This should go away, after useIrFakeOverrideBuilder becomes
@@ -122,7 +122,7 @@ fun FirResult.convertToIrAndActualize(
         components.fakeOverrideBuilder.buildForAll(allIrModules, temporaryResolver)
     }
     val expectActualMap = irActualizer?.actualizeCallablesAndMergeModules() ?: emptyMap()
-    if (components.configuration.useIrFakeOverrideBuilder) {
+    if (!components.configuration.useFirBasedFakeOverrideGenerator) {
         val fakeOverrideResolver = SpecialFakeOverrideSymbolsResolver(expectActualMap)
         irModuleFragment.acceptVoid(SpecialFakeOverrideSymbolsResolverVisitor(fakeOverrideResolver))
         @OptIn(Fir2IrSymbolsMappingForLazyClasses.SymbolRemapperInternals::class)

@@ -333,7 +333,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/box")
             }
 
-            testClass<AbstractFirLightTreeBlackBoxCodegenWithIrFakeOverrideGeneratorTest> {
+            testClass<AbstractFirLightTreeBlackBoxCodegenWithFir2IrFakeOverrideGeneratorTest> {
                 model("codegen/box", excludeDirs = excludedScriptDirs)
             }
 

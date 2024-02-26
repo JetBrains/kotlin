@@ -197,9 +197,9 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
         return result
     }
 
-    @OptIn(FirBasedFakeOverrideGenerator::class) // checked for useIrFakeOverrideBuilder
+    @OptIn(FirBasedFakeOverrideGenerator::class)
     fun bindDelegatedMembersOverriddenSymbols(irClass: IrClass) {
-        if (components.configuration.useIrFakeOverrideBuilder) return
+        if (!components.configuration.useFirBasedFakeOverrideGenerator) return
         val superClasses by lazy(LazyThreadSafetyMode.NONE) {
             irClass.superTypes.mapNotNullTo(mutableSetOf()) {
                 // All class symbols should be already bound at this moment

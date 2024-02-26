@@ -7,21 +7,21 @@ package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.ENABLE_IR_FAKE_OVERRIDE_GENERATION
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.ENABLE_FIR_FAKE_OVERRIDE_GENERATION
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_CODEGEN_WITH_FIR2IR_FAKE_OVERRIDE_GENERATION
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 
-class CodegenWithIrFakeOverrideGeneratorSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+class CodegenWithFir2IrFakeOverrideGeneratorSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         return when {
             !mainDirectiveEnabled -> failedAssertions
             suppressDirectiveEnabled ->
                 if (failedAssertions.isEmpty())
                     listOf(
-                        AssertionError("Looks like this test can be unmuted. Remove $IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION directive.").wrap()
+                        AssertionError("Looks like this test can be unmuted. Remove $IGNORE_CODEGEN_WITH_FIR2IR_FAKE_OVERRIDE_GENERATION directive.").wrap()
                     )
                 else emptyList()
             testServices.defaultsProvider.defaultTargetBackend
@@ -32,8 +32,8 @@ class CodegenWithIrFakeOverrideGeneratorSuppressor(testServices: TestServices) :
     }
 
     private val mainDirectiveEnabled: Boolean
-        get() = ENABLE_IR_FAKE_OVERRIDE_GENERATION in testServices.moduleStructure.allDirectives
+        get() = ENABLE_FIR_FAKE_OVERRIDE_GENERATION in testServices.moduleStructure.allDirectives
 
     private val suppressDirectiveEnabled: Boolean
-        get() = IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION in testServices.moduleStructure.allDirectives
+        get() = IGNORE_CODEGEN_WITH_FIR2IR_FAKE_OVERRIDE_GENERATION in testServices.moduleStructure.allDirectives
 }

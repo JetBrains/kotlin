@@ -215,7 +215,7 @@ internal class ClassMemberGenerator(
                  * In useIrFakeOverrideBuilder it would be dropped anyway, as [org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder.buildFakeOverridesForClass]
                  * recalculates this value from scratch. Also, it's quite meaningless in non-platform modules anyway.
                  */
-                if (!configuration.useIrFakeOverrideBuilder) {
+                if (configuration.useFirBasedFakeOverrideGenerator) {
                     @OptIn(FirBasedFakeOverrideGenerator::class)
                     irFunction.overriddenSymbols = firFunction.generateOverriddenFunctionSymbols(containingClass)
                 }
@@ -234,7 +234,7 @@ internal class ClassMemberGenerator(
              * In useIrFakeOverrideBuilder it would be dropped anyway, as [org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder.buildFakeOverridesForClass]
              * recalculates this value from scratch. Also, it's quite meaningless in non-platform modules anyway.
              */
-            if (!configuration.useIrFakeOverrideBuilder) {
+            if (configuration.useFirBasedFakeOverrideGenerator) {
                 @OptIn(FirBasedFakeOverrideGenerator::class) // checked for useIrFakeOverrideBuilder
                 irProperty.overriddenSymbols = property.generateOverriddenPropertySymbols(containingClass)
             }
@@ -349,8 +349,8 @@ internal class ClassMemberGenerator(
                     declarationStorage.leaveScope(this.symbol)
                 }
             }
-            if (containingClass != null && !components.configuration.useIrFakeOverrideBuilder) {
-                @OptIn(FirBasedFakeOverrideGenerator::class) // checked for useIrFakeOverrideBuilder
+            if (containingClass != null && components.configuration.useFirBasedFakeOverrideGenerator) {
+                @OptIn(FirBasedFakeOverrideGenerator::class)
                 this.overriddenSymbols = property.generateOverriddenAccessorSymbols(containingClass, isGetter)
             }
 
