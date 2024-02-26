@@ -122,6 +122,10 @@ public class SymbolsAnalysisPlugin : DokkaPlugin() {
         plugin<KotlinAnalysisPlugin>().sampleAnalysisEnvironmentCreator providing ::SymbolSampleAnalysisEnvironmentCreator
     }
 
+    internal val sourceRootIndependentChecker by extending {
+        CoreExtensions.preGenerationCheck providing ::SourceRootIndependentChecker
+    }
+
     @OptIn(DokkaPluginApiPreview::class)
     override fun pluginApiPreviewAcknowledgement(): PluginApiPreviewAcknowledgement = PluginApiPreviewAcknowledgement
 }
