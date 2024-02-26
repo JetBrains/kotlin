@@ -7,15 +7,15 @@ interface I {
 enum class E1 : I {
     A {
         override fun foo() {
-            <!EQUALITY_NOT_APPLICABLE!>this == E2.A<!>
+            <!INCOMPATIBLE_ENUM_COMPARISON!>this == E2.A<!>
 
             val q = this
             when (q) {
                 this -> {}
                 E1.A -> {}
                 E1.B -> {}
-                <!INCOMPATIBLE_TYPES!>E2.A<!> -> {}
-                <!INCOMPATIBLE_TYPES!>E2.B<!> -> {}
+                <!INCOMPATIBLE_ENUM_COMPARISON!>E2.A<!> -> {}
+                <!INCOMPATIBLE_ENUM_COMPARISON!>E2.B<!> -> {}
                 else -> {}
             }
         }
