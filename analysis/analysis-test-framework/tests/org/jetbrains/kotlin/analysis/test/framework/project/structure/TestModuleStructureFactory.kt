@@ -12,6 +12,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
+import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
@@ -40,31 +41,6 @@ private typealias LibraryCache = MutableMap<Set<Path>, KtBinaryModule>
 
 private typealias ModulesByName = Map<String, KtTestModule>
 
-/**
- * A function to run the topological sort (or post-order sort) for [TestModule]s based on the dependency graph.
- * This function guarantees:
- *   - For [TestModule] A and B, where A has dependency on B, A will never appears earlier than B in the result list.
- */
-private fun sortInDependencyPostOrder(testModules: List<TestModule>): List<TestModule> {
-    val namesToModules = testModules.associateBy { it.name }
-    val notVisited = testModules.toMutableSet()
-    val sortedModules = mutableListOf<TestModule>()
-
-    fun dfsWalk(module: TestModule) {
-        notVisited.remove(module)
-        for (dependency in module.regularDependencies) {
-            val dependencyAsModule = namesToModules[dependency.moduleName] ?: error("Module ${dependency.moduleName} is missing")
-            if (dependencyAsModule in notVisited) dfsWalk(dependencyAsModule)
-        }
-        sortedModules.add(module)
-    }
-
-    while (notVisited.isNotEmpty()) {
-        dfsWalk(notVisited.first())
-    }
-    return sortedModules
-}
-
 object TestModuleStructureFactory {
     fun createProjectStructureByTestStructure(
         moduleStructure: TestModuleStructure,
@@ -86,14 +62,10 @@ object TestModuleStructureFactory {
     }
 
     /**
-     * A function to create [KtModuleWithFiles] for the given [moduleStructure].
+     * The test infrastructure ensures that the given [moduleStructure] contains properly ordered dependencies: a [TestModule] can only
+     * depend on test modules which precede it. Hence, this function does not need to order dependencies itself.
      *
-     * This function guarantees:
-     *   - For [TestModule] A and B, where A has dependency on B,
-     *     - B will always be created earlier than A.
-     *     - The class path of B will be given to the creation of A's module.
-     *
-     * In particular, it handles unresolved symbol issues caused by building binary libraries.
+     * @return A list of [KtTestModule]s in the same order as [TestModuleStructure.modules].
      */
     private fun createModules(
         moduleStructure: TestModuleStructure,
@@ -101,30 +73,24 @@ object TestModuleStructureFactory {
         project: Project,
     ): List<KtTestModule> {
         val moduleCount = moduleStructure.modules.size
+        val existingModules = HashMap<String, KtTestModule>(moduleCount)
         val result = ArrayList<KtTestModule>(moduleCount)
 
-        val processedModules = HashMap<String, KtTestModule>(moduleCount)
-        val processedDependencies = mutableMapOf<String, Collection<Path>>()
-
-        for (testModule in sortInDependencyPostOrder(moduleStructure.modules)) {
+        for (testModule in moduleStructure.modules) {
             val contextModuleName = testModule.directives.singleOrZeroValue(AnalysisApiTestDirectives.CONTEXT_MODULE)
-            val contextModule = contextModuleName?.let(processedModules::getValue)
+            val contextModule = contextModuleName?.let(existingModules::getValue)
 
-            val dependencyPaths = testModule.regularDependencies
-                .mapNotNull { processedDependencies[it.moduleName] }
-                .flatten()
-
-            val moduleWithFiles = testServices
-                .getKtModuleFactoryForTestModule(testModule)
-                .createModule(testModule, contextModule, dependencyPaths, testServices, project)
-
-            processedModules[testModule.name] = moduleWithFiles
-            result.add(moduleWithFiles)
-
-            val libraryModule = moduleWithFiles.ktModule
-            if (libraryModule is KtLibraryModuleImpl) {
-                processedDependencies[testModule.name] = libraryModule.getBinaryRoots()
+            val dependencyBinaryRoots = testModule.regularDependencies.flatMap { dependency ->
+                val libraryModule = existingModules.getValue(dependency.moduleName).ktModule as? KtLibraryModule
+                libraryModule?.getBinaryRoots().orEmpty()
             }
+
+            val ktTestModule = testServices
+                .getKtModuleFactoryForTestModule(testModule)
+                .createModule(testModule, contextModule, dependencyBinaryRoots, testServices, project)
+
+            existingModules[testModule.name] = ktTestModule
+            result.add(ktTestModule)
         }
 
         return result
