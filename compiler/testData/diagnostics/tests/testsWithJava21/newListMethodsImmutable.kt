@@ -5,10 +5,10 @@ fun bar(x: List<String>) {
     x.<!UNRESOLVED_REFERENCE!>addLast<!>("")
     x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>removeFirst<!>()
     x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>removeLast<!>()
-    x.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>getFirst<!>()
-    x.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>getLast<!>()
-    x.<!DEPRECATION!>first<!>
-    x.<!DEPRECATION!>last<!>
+    x.<!UNRESOLVED_REFERENCE!>getFirst<!>()
+    x.<!UNRESOLVED_REFERENCE!>getLast<!>()
+    x.<!DEPRECATION_ERROR!>first<!>
+    x.<!DEPRECATION_ERROR!>last<!>
 }
 
 // Additional test for other SequenceCollection inheritor
@@ -17,10 +17,10 @@ fun baz(x: ArrayDeque<String>, y: LinkedHashSet<String>) {
     x.addLast("")
     x.removeFirst()
     x.removeLast()
-    x.<!DEPRECATION!>getFirst<!>()
-    x.<!DEPRECATION!>getLast<!>()
-    x.<!DEPRECATION!>first<!>
-    x.<!DEPRECATION!>last<!>
+    x.<!UNRESOLVED_REFERENCE!>getFirst<!>()
+    x.<!UNRESOLVED_REFERENCE!>getLast<!>()
+    x.<!DEPRECATION_ERROR!>first<!>
+    x.<!DEPRECATION_ERROR!>last<!>
 
     y.addFirst("")
     y.addLast("")
