@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.mpp.resources
 
+import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.build
@@ -18,10 +19,12 @@ fun TestProject.buildWithAGPVersion(
     task: String,
     androidVersion: String,
     defaultBuildOptions: BuildOptions,
+    assertions: BuildResult.() -> Unit = {},
 ) {
     build(
         task,
-        buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion)
+        buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
+        assertions = assertions,
     )
 }
 
