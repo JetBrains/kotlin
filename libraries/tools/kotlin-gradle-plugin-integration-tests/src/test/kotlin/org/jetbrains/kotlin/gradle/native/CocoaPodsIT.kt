@@ -901,44 +901,28 @@ class CocoaPodsIT : KGPBaseTest() {
             ),
             configurationCache = true
         )
+
         nativeProjectWithCocoapodsAndIosAppPodFile(
             gradleVersion = gradleVersion,
             buildOptions = buildOptions
         ) {
             buildGradleKts.addCocoapodsBlock("""pod("Base64", version = "1.1.2")""")
 
-            val tasks = arrayOf(
-                ":podspec",
-                ":podImport",
-                ":podPublishDebugXCFramework",
-                ":podPublishReleaseXCFramework",
-                ":syncFramework",
+            assertSimpleConfigurationCacheScenarioWorks(
+                buildArguments = arrayOf(
+                    ":podspec",
+                    ":podImport",
+                    ":podPublishDebugXCFramework",
+                    ":podPublishReleaseXCFramework",
+                    ":syncFramework",
+                ),
+                buildOptions = buildOptions,
+                executedTaskNames = listOf(
+                    ":podPublishDebugXCFramework",
+                    ":podPublishReleaseXCFramework",
+                    ":linkPodDebugFrameworkIOS",
+                )
             )
-
-            val executableTasks = listOf(
-                ":podspec",
-                ":podPublishDebugXCFramework",
-                ":podPublishReleaseXCFramework",
-                ":linkPodDebugFrameworkIOS",
-            )
-
-            build(*tasks) {
-                assertTasksExecuted(executableTasks)
-
-                assertOutputContains("Calculating task graph as no configuration cache is available for tasks")
-
-                assertOutputContains("Configuration cache entry stored.")
-            }
-
-            build("clean")
-
-            build(*tasks) {
-                assertOutputContains("Reusing configuration cache.")
-            }
-
-            build(*tasks) {
-                assertTasksUpToDate(executableTasks)
-            }
         }
     }
 
