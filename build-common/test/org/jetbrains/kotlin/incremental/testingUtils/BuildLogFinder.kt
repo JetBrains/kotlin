@@ -24,7 +24,7 @@ data class BuildLogFinder(
     private val isJsEnabled: Boolean = false,
     private val isScopeExpansionEnabled: Boolean = false,
     private val isKlibEnabled: Boolean = false,
-    private val isFirEnabled: Boolean = false,
+    private val isFirEnabled: Boolean = true,
     private val isJpsBuild: Boolean = false,
 ) {
     companion object {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.jps.build
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 
 abstract class AbstractIncrementalK1JvmJpsTest(
     allowNoFilesWithSuffixInTestData: Boolean = false
@@ -17,4 +18,7 @@ abstract class AbstractIncrementalK1JvmJpsTest(
         }
         super.updateCommandLineArguments(arguments)
     }
+
+    override val buildLogFinder: BuildLogFinder
+        get() = super.buildLogFinder.copy(isFirEnabled = false)
 }

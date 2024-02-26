@@ -15,7 +15,7 @@ Exit code: OK
 Compiling files:
   src/usages.kt
 Exit code: COMPILATION_ERROR
-  Unresolved reference: vala
-  Unresolved reference: vara
-  Unresolved reference: foo
-  Unresolved reference: bar
+  Unresolved reference 'vala'.
+  Unresolved reference 'vara'.
+  Unresolved reference 'foo'.
+  Unresolved reference 'bar'.
