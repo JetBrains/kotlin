@@ -10,10 +10,7 @@ import org.jetbrains.dokka.analysis.java.parsers.JavadocParser
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
@@ -80,8 +77,28 @@ internal data class KDocContent(
 )
 
 internal fun KtAnalysisSession.findKDoc(symbol: KtSymbol): KDocContent? {
-    // for generated function (e.g. `copy`) psi returns class, see test `data class kdocs over generated methods`
+    // Dokka's HACK: primary constructors can be generated
+    // so [KtSymbol.psi] is undefined for [KtSymbolOrigin.SOURCE_MEMBER_GENERATED] origin
+    // we need to get psi of a containing class
+    if(symbol is KtConstructorSymbol && symbol.isPrimary) {
+        val containingClass = symbol.originalContainingClassForOverride
+        if (containingClass?.origin != KtSymbolOrigin.SOURCE) return null
+        val kdoc = (containingClass.psi as? KtDeclaration)?.docComment ?: return null
+        val constructorSection = kdoc.findSectionByTag(KDocKnownTag.CONSTRUCTOR)
+        if (constructorSection != null) {
+            // if annotated with @constructor tag and the caret is on constructor definition,
+            // then show @constructor description as the main content, and additional sections
+            // that contain @param tags (if any), as the most relatable ones
+            // practical example: val foo = Fo<caret>o("argument") -- show @constructor and @param content
+            val paramSections = kdoc.findSectionsContainingTag(KDocKnownTag.PARAM)
+            return KDocContent(constructorSection, paramSections)
+        }
+    }
+
+    // for generated function (e.g. `copy`) [KtSymbol.psi] is undefined (although actually returns a class psi), see test `data class kdocs over generated methods`
     if (symbol.origin != KtSymbolOrigin.SOURCE) return null
+
+
     val ktElement = symbol.psi as? KtElement
     ktElement?.findKDoc()?.let {
         return it
