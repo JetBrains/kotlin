@@ -10,13 +10,12 @@ import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 import java.util.regex.Pattern
 
-const val WORKS_WHEN_VALUE_CLASS = "WORKS_WHEN_VALUE_CLASS"
 // will replace OPTIONAL_JVM_INLINE_ANNOTATION with @JvmInline or remove it depending on compiler backend
 // for JVM IR both ones are generated according to value classes feature (https://github.com/Kotlin/KEEP/issues/237)
 
 fun TestEntityModel.containsWithoutJvmInline(): Boolean = when (this) {
     is ClassModel -> methods.any { it.containsWithoutJvmInline() } || innerTestClasses.any { it.containsWithoutJvmInline() }
-    is SimpleTestMethodModel -> file.isFile && file.readLines().any { Regex("^\\s*//\\s*$WORKS_WHEN_VALUE_CLASS\\s*$").matches(it) }
+    is SimpleTestMethodModel -> file.isFile && "WORKS_WHEN_VALUE_CLASS" in directives
     else -> false
 }
 
