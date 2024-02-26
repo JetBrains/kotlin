@@ -19,6 +19,7 @@
 
 package org.jetbrains.kotlin.powerassert.diagram
 
+import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.builders.IrStatementsBuilder
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irTemporary
@@ -30,11 +31,14 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 data class IrTemporaryVariable(
     val temporary: IrVariable,
     val original: IrExpression,
+    val sourceRangeInfo: SourceRangeInfo,
+    val text: String,
 )
 
 class IrTemporaryExtractionTransformer(
     private val builder: IrStatementsBuilder<*>,
     private val transform: Set<IrExpression>,
+    private val sourceFile: SourceFile,
 ) : IrElementTransformerVoid() {
     private val _variables = mutableListOf<IrTemporaryVariable>()
     val variables: List<IrTemporaryVariable> = _variables
@@ -43,7 +47,9 @@ class IrTemporaryExtractionTransformer(
         return if (expression in transform) {
             val copy = expression.deepCopyWithSymbols(builder.scope.getLocalDeclarationParent())
             val variable = builder.irTemporary(super.visitExpression(expression))
-            _variables.add(IrTemporaryVariable(variable, copy))
+            val sourceRangeInfo = sourceFile.getSourceRangeInfo(copy)
+            val text = sourceFile.getText(sourceRangeInfo)
+            _variables.add(IrTemporaryVariable(variable, copy, sourceRangeInfo, text))
             builder.irGet(variable)
         } else {
             super.visitExpression(expression)

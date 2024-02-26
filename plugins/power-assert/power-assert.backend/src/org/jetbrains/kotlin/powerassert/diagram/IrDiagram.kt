@@ -38,7 +38,7 @@ fun IrBuilderWithScope.irDiagramString(
     val callInfo = sourceFile.getSourceRangeInfo(call)
     val callIndent = callInfo.startColumnNumber
 
-    val stackValues = variables.map { it.toValueDisplay(sourceFile, callIndent, callInfo) }
+    val stackValues = variables.map { it.toValueDisplay(callIndent, callInfo) }
 
     val valuesByRow = stackValues.groupBy { it.row }
     val rows = sourceFile.getText(callInfo)
@@ -94,17 +94,14 @@ private data class ValueDisplay(
 )
 
 private fun IrTemporaryVariable.toValueDisplay(
-    fileSource: SourceFile,
     callIndent: Int,
     originalInfo: SourceRangeInfo,
 ): ValueDisplay {
-    val info = fileSource.getSourceRangeInfo(original)
-    var indent = info.startColumnNumber - callIndent
-    var row = info.startLineNumber - originalInfo.startLineNumber
+    var indent = sourceRangeInfo.startColumnNumber - callIndent
+    var row = sourceRangeInfo.startLineNumber - originalInfo.startLineNumber
 
-    val source = fileSource.getText(info)
-        .replace("\n" + " ".repeat(callIndent), "\n") // Remove additional indentation
-    val columnOffset = findDisplayOffset(fileSource, original, source)
+    val source = text.replace("\n" + " ".repeat(callIndent), "\n") // Remove additional indentation
+    val columnOffset = findDisplayOffset(original, sourceRangeInfo, source)
 
     val prefix = source.substring(0, columnOffset)
     val rowShift = prefix.count { it == '\n' }
@@ -151,20 +148,20 @@ private fun IrTemporaryVariable.toValueDisplay(
  * ```
  */
 private fun findDisplayOffset(
-    sourceFile: SourceFile,
     expression: IrExpression,
+    sourceRangeInfo: SourceRangeInfo,
     source: String,
 ): Int {
     return when (expression) {
-        is IrMemberAccessExpression<*> -> memberAccessOffset(sourceFile, expression, source)
+        is IrMemberAccessExpression<*> -> memberAccessOffset(expression, sourceRangeInfo, source)
         is IrTypeOperatorCall -> typeOperatorOffset(expression, source)
         else -> 0
     }
 }
 
 private fun memberAccessOffset(
-    sourceFile: SourceFile,
     expression: IrMemberAccessExpression<*>,
+    sourceRangeInfo: SourceRangeInfo,
     source: String,
 ): Int {
     when (expression.origin) {
@@ -190,8 +187,7 @@ private fun memberAccessOffset(
             ?: expression.extensionReceiver
             ?: expression.getValueArgument(0).takeIf { owner.origin == IrBuiltIns.BUILTIN_OPERATOR }
             ?: return 0
-        val expressionInfo = sourceFile.getSourceRangeInfo(expression)
-        var offset = receiver.endOffset - expressionInfo.startOffset + 1
+        var offset = receiver.endOffset - sourceRangeInfo.startOffset + 1
         if (offset < 0 || offset >= source.length) return 0 // infix function called using non-infix syntax
 
         // Continue until there is a non-whitespace character

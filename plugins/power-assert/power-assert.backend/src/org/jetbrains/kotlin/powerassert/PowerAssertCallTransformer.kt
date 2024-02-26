@@ -143,7 +143,7 @@ class PowerAssertCallTransformer(
                     val newArguments = arguments + call.getValueArgument(index)
                     return recursive(index + 1, dispatch, extension, newArguments, variables)
                 } else {
-                    return buildDiagramNesting(root, variables) { argument, newVariables ->
+                    return buildDiagramNesting(sourceFile, root, variables) { argument, newVariables ->
                         val newArguments = arguments + argument
                         recursive(index + 1, dispatch, extension, newArguments, newVariables)
                     }
@@ -151,8 +151,8 @@ class PowerAssertCallTransformer(
             }
         }
 
-        return buildDiagramNestingNullable(dispatchRoot) { dispatch, dispatchNewVariables ->
-            buildDiagramNestingNullable(extensionRoot, dispatchNewVariables) { extension, extensionNewVariables ->
+        return buildDiagramNestingNullable(sourceFile, dispatchRoot) { dispatch, dispatchNewVariables ->
+            buildDiagramNestingNullable(sourceFile, extensionRoot, dispatchNewVariables) { extension, extensionNewVariables ->
                 recursive(0, dispatch, extension, emptyList(), extensionNewVariables)
             }
         }
