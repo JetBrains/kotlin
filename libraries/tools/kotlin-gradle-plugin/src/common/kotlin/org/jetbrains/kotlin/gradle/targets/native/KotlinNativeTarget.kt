@@ -83,14 +83,11 @@ abstract class KotlinNativeTarget @Inject constructor(
             )
         )
 
-        if (project.kotlinPropertiesProvider.mppResourcesPublication) {
-            mutableUsageContexts.add(
-                project.multiplatformExtension.setUpResourcesVariant(
-                    this,
-                    mainCompilation,
-                )
+        mutableUsageContexts.addIfNotNull(
+            setUpResourcesVariant(
+                mainCompilation
             )
-        }
+        )
 
         val result = createKotlinVariant(targetName, mainCompilation, mutableUsageContexts)
 
