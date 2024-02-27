@@ -21,13 +21,12 @@ import org.jetbrains.kotlin.gradle.plugin.konan.konanExtension
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
-import kotlin.run
 
 /**
  * A task executing cinterop tool with the given args and compiling the stubs produced by this tool.
  */
 
-open class KonanInteropTask @Inject constructor(@Internal val workerExecutor: WorkerExecutor) : KonanBuildingTask(), KonanInteropSpec {
+abstract class KonanInteropTask @Inject constructor(private val workerExecutor: WorkerExecutor) : KonanBuildingTask(), KonanInteropSpec {
 
     private val interopRunner = KonanCliInteropRunner(project, project.konanExtension.jvmArgs)
 
@@ -36,6 +35,7 @@ open class KonanInteropTask @Inject constructor(@Internal val workerExecutor: Wo
 
     override fun init(config: KonanBuildingConfig<*>, destinationDir: File, artifactName: String, target: KonanTarget) {
         super.init(config, destinationDir, artifactName, target)
+        this.notCompatibleWithConfigurationCache("Unsupported inputs")
         this.defFile = project.konanDefaultDefFile(artifactName)
     }
 

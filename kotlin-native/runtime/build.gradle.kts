@@ -635,6 +635,8 @@ val stdlibTask = tasks.register<Copy>("nativeStdlib") {
     from(stdlibBuildTask.map { it.outputs.files })
     into(project.layout.buildDirectory.dir("nativeStdlib"))
 
+    val targetList = targetList
+    val kotlinVersion = kotlinVersion
     eachFile {
         if (name == "manifest") {
             // Stdlib is a common library that doesn't depend on anything target-specific.
@@ -660,6 +662,7 @@ val cacheableTargetNames: List<String> by project
 
 cacheableTargetNames.forEach { targetName ->
     tasks.register("${targetName}StdlibCache", KonanCacheTask::class.java) {
+        notCompatibleWithConfigurationCache("project used in execution time")
         target = targetName
         originalKlib.fileProvider(stdlibTask.map { it.destinationDir })
         klibUniqName = "stdlib"
