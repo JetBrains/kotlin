@@ -22493,6 +22493,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("kjkImplicitReturnType.kt")
+      public void testKjkImplicitReturnType() {
+        runTest("compiler/testData/diagnostics/tests/j+k/kjkImplicitReturnType.kt");
+      }
+
+      @Test
       @TestMetadata("kjkPropertyAndExtensionProperty.kt")
       public void testKjkPropertyAndExtensionProperty() {
         runTest("compiler/testData/diagnostics/tests/j+k/kjkPropertyAndExtensionProperty.kt");
