@@ -143,4 +143,10 @@ public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirL
   public void testTopLevelCallables() {
     runTest("plugins/fir-plugin-prototype/testData/box/topLevelCallables.kt");
   }
+
+  @Test
+  @TestMetadata("topLevelPrivateSuspendFun.kt")
+  public void testTopLevelPrivateSuspendFun() {
+    runTest("plugins/fir-plugin-prototype/testData/box/topLevelPrivateSuspendFun.kt");
+  }
 }

@@ -30,6 +30,7 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
 
         // Declaration generators
         +::TopLevelDeclarationsGenerator
+        +::TopLevelPrivateSuspendFunctionGenerator
         +::ExternalClassGenerator
         +::AdditionalMembersGenerator
         +::CompanionGenerator
