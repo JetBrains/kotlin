@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -321,7 +321,7 @@ private fun ConeKotlinType.isEnum(session: FirSession) = toRegularClassSymbol(se
 private fun ConeKotlinType.isClass(session: FirSession) = toRegularClassSymbol(session) != null
 
 private fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
-    val bounds = collectUpperBounds().map { type -> toKotlinType(type).replaceArgumentsWithStarProjections() }
+    val bounds = collectUpperBounds().map { type -> type.toKotlinTypeIfPlatform(session).replaceArgumentsWithStarProjections() }
     val type = bounds.ifNotEmpty { ConeTypeIntersector.intersectTypes(session.typeContext, this) }
         ?: session.builtinTypes.nullableAnyType.type
     val notNullType = type.withNullability(ConeNullability.NOT_NULL, session.typeContext)
@@ -338,9 +338,9 @@ private fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
     )
 }
 
-private fun toKotlinType(type: ConeClassLikeType): ConeClassLikeType {
-    // Type arguments are ignored by design
-    return ConeClassLikeTypeImpl(type.lookupTag, type.typeArguments, type.isNullable)
+private fun ConeClassLikeType.toKotlinTypeIfPlatform(session: FirSession): ConeClassLikeType {
+    val kotlinClassId = session.platformClassMapper.getCorrespondingKotlinClass(lookupTag.classId)
+    return kotlinClassId?.constructClassLikeType(typeArguments, isNullable, attributes) ?: this
 }
 
 private class ArgumentInfo(
