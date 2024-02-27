@@ -368,7 +368,7 @@ class FirSignatureEnhancement(
                         typeParameterSubstitutor?.substituteOrNull(newReturnTypeRef.coneType)
                     )
                     val substitutedReceiverTypeRef = newReceiverTypeRef?.withReplacedConeType(
-                        typeParameterSubstitutor?.substituteOrNull(newReturnTypeRef.coneType)
+                        typeParameterSubstitutor?.substituteOrNull(newReceiverTypeRef.coneType)
                     )
                     receiverParameter = substitutedReceiverTypeRef?.let { receiverType ->
                         buildReceiverParameter {

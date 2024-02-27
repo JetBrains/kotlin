@@ -22751,6 +22751,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("receiverEnhancement.kt")
+      public void testReceiverEnhancement() {
+        runTest("compiler/testData/diagnostics/tests/j+k/receiverEnhancement.kt");
+      }
+
+      @Test
       @TestMetadata("recursionWithJavaSyntheticProperty.kt")
       public void testRecursionWithJavaSyntheticProperty() {
         runTest("compiler/testData/diagnostics/tests/j+k/recursionWithJavaSyntheticProperty.kt");
