@@ -1,5 +1,6 @@
 // FIR_IDENTICAL
 // SKIP_TXT
+// ISSUE: KT-64872, KT-65911
 
 fun test1(cond1: Boolean) {
     do {
@@ -24,7 +25,6 @@ fun test2(cond1: Boolean, cond3: Boolean) {
     )
 }
 
-
 fun test3(cond1: Boolean, cond3: Boolean) {
     do {
         if (cond1) continue
@@ -39,4 +39,21 @@ fun test3(cond1: Boolean, cond3: Boolean) {
             cond3
         }
     )
+}
+
+fun test4() {
+    try {
+        for (i in 0..100) {
+            var counter = 0
+            do {
+                try {
+                } finally {
+                    counter++
+                }
+            } while (counter < 500)
+        }
+    } catch (e: Exception) {
+        e.cause?.let {}
+        e.let {}
+    }
 }
