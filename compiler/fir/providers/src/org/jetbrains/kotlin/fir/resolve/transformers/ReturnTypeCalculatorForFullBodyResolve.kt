@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.fir.canHaveDeferredReturnTypeCalculation
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -36,7 +37,7 @@ class ReturnTypeCalculatorForFullBodyResolve private constructor(
     override fun tryCalculateReturnTypeOrNull(declaration: FirCallableDeclaration): FirResolvedTypeRef? {
         val returnTypeRef = declaration.returnTypeRef
         if (returnTypeRef is FirResolvedTypeRef) return returnTypeRef
-        if (declaration.origin.fromSupertypes) {
+        if (declaration.canHaveDeferredReturnTypeCalculation) {
             return CallableCopyTypeCalculator.Forced.computeReturnType(declaration)
         }
 

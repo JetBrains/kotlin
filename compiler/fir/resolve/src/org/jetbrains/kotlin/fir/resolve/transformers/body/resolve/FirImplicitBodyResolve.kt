@@ -241,7 +241,7 @@ open class ReturnTypeCalculatorWithJump(
             }
         }
 
-        if (declaration.isCopyCreatedInScope) {
+        if (declaration.canHaveDeferredReturnTypeCalculation) {
             val resolvedTypeRef = callableCopyTypeCalculator.computeReturnType(declaration)
             requireWithAttachment(
                 resolvedTypeRef is FirResolvedTypeRef,

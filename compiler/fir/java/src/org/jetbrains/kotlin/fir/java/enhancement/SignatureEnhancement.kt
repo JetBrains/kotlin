@@ -22,26 +22,35 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
 import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
-import org.jetbrains.kotlin.fir.java.declarations.*
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaExternalAnnotation
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
+import org.jetbrains.kotlin.fir.java.declarations.buildJavaField
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.scopes.DeferredCallableCopyReturnType
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.deferredCallableCopyReturnType
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
@@ -110,7 +119,7 @@ class FirSignatureEnhancement(
                         emptyList()
                     )
 
-                val newReturnTypeRef = enhanceReturnType(firElement, emptyList(), firElement.computeDefaultQualifiers(), predefinedInfo)
+                val newReturnTypeRef = enhanceReturnType(firElement, firElement.computeDefaultQualifiers(), predefinedInfo)
 
                 return buildEnumEntryCopy(firElement) {
                     symbol = FirEnumEntrySymbol(firElement.symbol.callableId)
@@ -123,12 +132,13 @@ class FirSignatureEnhancement(
             is FirField -> {
                 if (firElement.returnTypeRef !is FirJavaTypeRef) return original
                 val newReturnTypeRef = enhanceReturnType(
-                    firElement, emptyList(), firElement.computeDefaultQualifiers(),
+                    firElement, firElement.computeDefaultQualifiers(),
                     predefinedEnhancementInfo = null
                 ).let {
-                    val lowerBound = it.type.lowerBoundIfFlexible()
-                    if (lowerBound.isString && firElement.isStatic && firElement.hasConstantInitializer) {
-                        it.withReplacedConeType(it.type.withNullability(ConeNullability.NOT_NULL, session.typeContext))
+                    val coneTypeOrNull = it.coneTypeOrNull
+                    val lowerBound = coneTypeOrNull?.lowerBoundIfFlexible()
+                    if (lowerBound != null && lowerBound.isString && firElement.isStatic && firElement.hasConstantInitializer) {
+                        it.withReplacedConeType(coneTypeOrNull.withNullability(ConeNullability.NOT_NULL, session.typeContext))
                     } else {
                         it
                     }
@@ -260,10 +270,10 @@ class FirSignatureEnhancement(
         val newReceiverTypeRef = if (firMethod is FirSimpleFunction && hasReceiver) {
             enhanceReceiverType(firMethod, overriddenMembers, defaultQualifiers)
         } else null
-        val newReturnTypeRef = if (firMethod is FirSimpleFunction) {
+        val (newReturnTypeRef, deferredCalc) = if (firMethod is FirSimpleFunction) {
             enhanceReturnType(firMethod, overriddenMembers, defaultQualifiers, predefinedEnhancementInfo)
         } else {
-            firMethod.returnTypeRef
+            firMethod.returnTypeRef to null
         }
 
         val enhancedValueParameterTypes = mutableListOf<FirResolvedTypeRef>()
@@ -290,7 +300,7 @@ class FirSignatureEnhancement(
                 val symbol = FirConstructorSymbol(methodId).also { functionSymbol = it }
                 if (firMethod.isPrimary) {
                     FirPrimaryConstructorBuilder().apply {
-                        returnTypeRef = newReturnTypeRef
+                        returnTypeRef = newReturnTypeRef!! // Constructors don't have overriddens, newReturnTypeRef is never null
                         val resolvedStatus = firMethod.status as? FirResolvedDeclarationStatus
                         status = if (resolvedStatus != null) {
                             FirResolvedDeclarationStatusImpl(
@@ -311,7 +321,7 @@ class FirSignatureEnhancement(
                     }
                 } else {
                     FirConstructorBuilder().apply {
-                        returnTypeRef = newReturnTypeRef
+                        returnTypeRef = newReturnTypeRef!! // Constructors don't have overriddens, newReturnTypeRef is never null
                         status = firMethod.status
                         this.symbol = symbol
                         dispatchReceiverType = firMethod.dispatchReceiverType
@@ -364,9 +374,13 @@ class FirSignatureEnhancement(
                     if (typeParameterSubstitutionMap.isNotEmpty()) {
                         typeParameterSubstitutor = ConeSubstitutorByMap.create(typeParameterSubstitutionMap, session)
                     }
-                    returnTypeRef = newReturnTypeRef.withReplacedConeType(
-                        typeParameterSubstitutor?.substituteOrNull(newReturnTypeRef.coneType)
-                    )
+                    returnTypeRef = if (typeParameterSubstitutor != null && newReturnTypeRef is FirResolvedTypeRef) {
+                        newReturnTypeRef.withReplacedConeType(
+                            typeParameterSubstitutor?.substituteOrNull(newReturnTypeRef.coneType)
+                        )
+                    } else {
+                        newReturnTypeRef ?: FirImplicitTypeRefImplWithoutSource
+                    }
                     val substitutedReceiverTypeRef = newReceiverTypeRef?.withReplacedConeType(
                         typeParameterSubstitutor?.substituteOrNull(newReceiverTypeRef.coneType)
                     )
@@ -386,7 +400,15 @@ class FirSignatureEnhancement(
                     }
 
                     dispatchReceiverType = firMethod.dispatchReceiverType
-                    attributes = firMethod.attributes.copy()
+                    attributes = firMethod.attributes.copy().apply {
+                        if (deferredCalc != null) {
+                            deferredCallableCopyReturnType = if (typeParameterSubstitutor != null) {
+                                DelegatingDeferredReturnTypeWithSubstitution(deferredCalc, typeParameterSubstitutor!!)
+                            } else {
+                                deferredCalc
+                            }
+                        }
+                    }
                 }
             }
             else -> errorWithAttachment("Unknown Java method to enhance: ${firMethod::class.java}") {
@@ -633,10 +655,23 @@ class FirSignatureEnhancement(
 
     private fun enhanceReturnType(
         owner: FirCallableDeclaration,
+        defaultQualifiers: JavaTypeQualifiersByElementType?,
+        predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?,
+    ): FirResolvedTypeRef {
+        return enhanceReturnType(owner, emptyList(), defaultQualifiers, predefinedEnhancementInfo).first!!
+    }
+
+    /**
+     * Either returns a not-null [FirResolvedTypeRef] or a not-null [DeferredCallableCopyReturnType], never both.
+     *
+     * [DeferredCallableCopyReturnType] can only (but doesn't need to) be not-null when [overriddenMembers] is non-empty.
+     */
+    private fun enhanceReturnType(
+        owner: FirCallableDeclaration,
         overriddenMembers: List<FirCallableDeclaration>,
         defaultQualifiers: JavaTypeQualifiersByElementType?,
-        predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?
-    ): FirResolvedTypeRef {
+        predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?,
+    ): Pair<FirResolvedTypeRef?, DeferredCallableCopyReturnType?> {
         val containerApplicabilityType = if (owner is FirJavaField) {
             AnnotationQualifierApplicabilityType.FIELD
         } else {
@@ -650,6 +685,28 @@ class FirSignatureEnhancement(
         } else {
             this.owner.classKind == ClassKind.ANNOTATION_CLASS
         }
+
+        // If any overridden member has implicit return type, we need to defer the return type computation.
+        if (overriddenMembers.any { it.returnTypeRef is FirImplicitTypeRef }) {
+            val deferredReturnTypeCalculation = object : DeferredCallableCopyReturnType() {
+                override fun computeReturnType(calc: CallableCopyTypeCalculator): ConeKotlinType {
+                    return owner.enhance(
+                        overriddenMembers,
+                        owner,
+                        isCovariant = true,
+                        defaultQualifiers,
+                        containerApplicabilityType,
+                        typeInSignature = TypeInSignature.ReturnPossiblyDeferred(calc),
+                        predefinedEnhancementInfo?.returnTypeInfo,
+                        forAnnotationMember = forAnnotationMember
+                    ).type
+                }
+
+                override fun toString(): String = "Deferred for Enhancement (Overriddens with Implicit Types)"
+            }
+            return null to deferredReturnTypeCalculation
+        }
+
         return owner.enhance(
             overriddenMembers,
             owner,
@@ -659,14 +716,26 @@ class FirSignatureEnhancement(
             TypeInSignature.Return,
             predefinedEnhancementInfo?.returnTypeInfo,
             forAnnotationMember = forAnnotationMember
-        )
+        ) to null
     }
 
-    private sealed class TypeInSignature {
+    private abstract class TypeInSignature {
         abstract fun getTypeRef(member: FirCallableDeclaration): FirTypeRef
 
         object Return : TypeInSignature() {
             override fun getTypeRef(member: FirCallableDeclaration): FirTypeRef = member.returnTypeRef
+        }
+
+        class ReturnPossiblyDeferred(private val calc: CallableCopyTypeCalculator) : TypeInSignature() {
+            override fun getTypeRef(member: FirCallableDeclaration): FirTypeRef {
+                return if (member.isJava) {
+                    member.returnTypeRef
+                } else {
+                    calc.computeReturnType(member) ?: buildErrorTypeRef {
+                        diagnostic = ConeSimpleDiagnostic("Could not resolve returnType for $member")
+                    }
+                }
+            }
         }
 
         object Receiver : TypeInSignature() {
@@ -750,6 +819,22 @@ class FirSignatureEnhancement(
 
     private fun FirTypeRef.toConeKotlinType(mode: FirJavaTypeConversionMode): ConeKotlinType =
         toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack, mode)
+}
+
+/**
+ * Delegates computation of return type to [deferredCalc] and substitutes the resulting type with [substitutor].
+ */
+private class DelegatingDeferredReturnTypeWithSubstitution(
+    private val deferredCalc: DeferredCallableCopyReturnType,
+    private val substitutor: ConeSubstitutor,
+) : DeferredCallableCopyReturnType() {
+    override fun computeReturnType(calc: CallableCopyTypeCalculator): ConeKotlinType? {
+        return deferredCalc.computeReturnType(calc)?.let(substitutor::substituteOrSelf)
+    }
+
+    override fun toString(): String {
+        return "DelegatingDeferredReturnTypeWithSubstitution(deferredCalc=$deferredCalc, substitutor=$substitutor)"
+    }
 }
 
 private class EnhancementSignatureParts(
