@@ -22229,6 +22229,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("internalClash.kt")
+      public void testInternalClash() {
+        runTest("compiler/testData/diagnostics/tests/j+k/internalClash.kt");
+      }
+
+      @Test
+      @TestMetadata("internalClash2.kt")
+      public void testInternalClash2() {
+        runTest("compiler/testData/diagnostics/tests/j+k/internalClash2.kt");
+      }
+
+      @Test
       @TestMetadata("intersectionWithJavaVoidNothing.kt")
       public void testIntersectionWithJavaVoidNothing() {
         runTest("compiler/testData/diagnostics/tests/j+k/intersectionWithJavaVoidNothing.kt");
