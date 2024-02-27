@@ -45,4 +45,7 @@ class FirStaticScope(private val delegateScope: FirContainingNamesAwareScope) : 
     override fun getClassifierNames(): Set<Name> {
         return delegateScope.getClassifierNames()
     }
+
+    override val scopeOwnerLookupNames: List<String>
+        get() = delegateScope.scopeOwnerLookupNames
 }

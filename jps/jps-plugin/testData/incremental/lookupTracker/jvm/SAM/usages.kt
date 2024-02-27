@@ -6,8 +6,8 @@ package foo
     /*p:bar(foo) p:bar.C(foo) p:foo(foo)*/c.foo()
     /*p:bar(SAMInterface) p:bar.C(foo) p:bar/SAMInterface(<SAM-CONSTRUCTOR>)*/c.foo /*p:kotlin(Function1)*/{  }
 
-    /*p:bar p:bar(bar) p:foo p:foo(bar)*/C.bar()
-    /*p:bar p:bar(SAMInterface) p:bar/SAMInterface(<SAM-CONSTRUCTOR>) p:foo*/C.bar /*p:kotlin(Function1)*/{}
+    /*p:bar p:bar(bar) p:bar.C(bar) p:foo p:foo(bar)*/C.bar()
+    /*p:bar p:bar(SAMInterface) p:bar.C(bar) p:bar/SAMInterface(<SAM-CONSTRUCTOR>) p:foo*/C.bar /*p:kotlin(Function1)*/{}
 
     /*p:bar p:foo*/SAMInterface()
     /*p:bar*/SAMInterface /*p:kotlin(Function1)*/{}

@@ -49,6 +49,11 @@ public class K1JvmLookupTrackerTestGenerated extends AbstractK1JvmLookupTrackerT
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/java/");
   }
 
+  @TestMetadata("javaStatics")
+  public void testJavaStatics() {
+    runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/javaStatics/");
+  }
+
   @TestMetadata("jvmNameChanged")
   public void testJvmNameChanged() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/jvmNameChanged/");

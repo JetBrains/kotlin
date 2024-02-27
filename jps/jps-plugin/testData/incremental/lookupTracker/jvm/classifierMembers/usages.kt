@@ -29,11 +29,11 @@ import bar.*
     val iii = /*p:bar(bar) p:foo p:foo(I) p:foo(bar) p:foo.Obj(bar)*/Obj.bar()
     /*p:foo.I(foo)*/iii.foo()
 
-    /*p:bar p:foo*/E.X
-    /*p:bar p:foo p:foo.E(a)*/E.X.a
-    /*p:bar p:foo p:foo.E(foo)*/E.Y.foo()
-    /*p:bar p:foo p:kotlin(Array)*/E.values()
-    /*p:bar p:foo*/E.valueOf("")
+    /*p:bar p:foo p:foo.E(X)*/E.X
+    /*p:bar p:foo p:foo.E(X) p:foo.E(a)*/E.X.a
+    /*p:bar p:foo p:foo.E(Y) p:foo.E(foo)*/E.Y.foo()
+    /*p:bar p:foo p:foo.E(values) p:kotlin(Array)*/E.values()
+    /*p:bar p:foo p:foo.E(valueOf)*/E.valueOf("")
 }
 
 /*p:foo*/fun classifiers(
