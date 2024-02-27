@@ -814,7 +814,7 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object MissingConfigurationForWasmTarget : ToolingDiagnosticFactory(ERROR) {
+    object MissingRuntimeDependencyConfigurationForWasmTarget : ToolingDiagnosticFactory(ERROR) {
         operator fun invoke(targetName: String) = build(
             """
             Resources will not be resolved for $targetName as it is missing runtimeDependencyConfiguration.
