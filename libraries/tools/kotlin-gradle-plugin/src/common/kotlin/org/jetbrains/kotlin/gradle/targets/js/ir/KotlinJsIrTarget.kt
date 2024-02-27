@@ -89,16 +89,11 @@ constructor(
             )
         )
 
-        if (project.kotlinPropertiesProvider.mppResourcesPublication) {
-            project.multiplatformExtensionOrNull?.let {
-                usageContexts.add(
-                    it.setUpResourcesVariant(
-                        this,
-                        mainCompilation
-                    )
-                )
-            }
-        }
+        usageContexts.addIfNotNull(
+            setUpResourcesVariant(
+                mainCompilation
+            )
+        )
 
         val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
 
