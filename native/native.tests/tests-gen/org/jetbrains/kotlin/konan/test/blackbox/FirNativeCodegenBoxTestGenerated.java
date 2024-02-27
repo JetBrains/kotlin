@@ -9537,6 +9537,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
+      @TestMetadata("callOnSmarcastedNothing.kt")
+      public void testCallOnSmarcastedNothing() {
+        runTest("compiler/testData/codegen/box/controlflow/callOnSmarcastedNothing.kt");
+      }
+
+      @Test
       @TestMetadata("for_loops.kt")
       public void testFor_loops() {
         runTest("compiler/testData/codegen/box/controlflow/for_loops.kt");

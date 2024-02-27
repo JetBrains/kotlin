@@ -277,7 +277,10 @@ fun FirCallableSymbol<*>.toSymbolForCall(
         }
         // Member fake override or bound callable reference
         dispatchReceiver != null -> {
-            val callSiteDispatchReceiverType = dispatchReceiver.resolvedType
+            val callSiteDispatchReceiverType = when (dispatchReceiver) {
+                is FirSmartCastExpression -> dispatchReceiver.smartcastTypeWithoutNullableNothing?.coneType ?: dispatchReceiver.resolvedType
+                else -> dispatchReceiver.resolvedType
+            }
             val declarationSiteDispatchReceiverType = dispatchReceiverType
             val type = if (callSiteDispatchReceiverType is ConeDynamicType && declarationSiteDispatchReceiverType != null) {
                 declarationSiteDispatchReceiverType
