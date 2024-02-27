@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
-class JsBackendDiagnosticsHandler(testServices: TestServices) : KlibArtifactHandler(testServices) {
+class KlibBackendDiagnosticsHandler(testServices: TestServices) : KlibArtifactHandler(testServices) {
     override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
         reportKtDiagnostics(module, info.reporter)
     }

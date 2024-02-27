@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.handlers.JsBackendDiagnosticsHandler
+import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
@@ -94,7 +94,7 @@ abstract class AbstractFirJsDiagnosticWithBackendTestBase(parser: FirParser) : A
         // facadeStep { JsIrBackendFacade(it, firstTimeCompilation = true) }
 
         klibArtifactsHandlersStep {
-            useHandlers(::JsBackendDiagnosticsHandler)
+            useHandlers(::KlibBackendDiagnosticsHandler)
         }
     }
 }
