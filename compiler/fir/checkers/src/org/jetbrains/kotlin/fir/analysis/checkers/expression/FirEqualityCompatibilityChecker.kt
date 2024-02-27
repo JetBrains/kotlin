@@ -12,24 +12,13 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.finalApproximationOrSelf
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.collectUpperBounds
-import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
-import org.jetbrains.kotlin.fir.declarations.utils.isFinal
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.declarations.utils.isInterface
-import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.isPrimitiveType
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.scopes.platformClassMapper
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
+import org.jetbrains.kotlin.fir.expressions.FirOperation
+import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.text
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirEqualityOperatorCall, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -77,11 +66,6 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
                 l.userType, r.userType, context,
             )
         }
-    }
-
-    private fun FirExpression.unwrapToMoreUsefulExpression() = when (this) {
-        is FirWhenSubjectExpression -> whenRef.value.subject ?: this
-        else -> this
     }
 
     private fun checkEqualityApplicability(l: TypeInfo, r: TypeInfo, context: CheckerContext): Applicability {
@@ -290,91 +274,6 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
     }
 }
 
-private class TypeInfo(
-    val type: ConeKotlinType,
-    val notNullType: ConeKotlinType,
-    val isEnumClass: Boolean,
-    val isPrimitive: Boolean,
-    val isBuiltin: Boolean,
-    val isValueClass: Boolean,
-    val isFinal: Boolean,
-    val canHaveSubtypesAccordingToK1: Boolean,
-) {
-    override fun toString() = "$type"
-}
-
-private val FirClassSymbol<*>.isBuiltin get() = isPrimitiveType() || classId == StandardClassIds.String || isEnumClass
-
-private val TypeInfo.isNullableEnum get() = isEnumClass && type.isNullable
-
-private val TypeInfo.isIdentityLess get() = isPrimitive || isValueClass
-
-private val TypeInfo.isNotNullPrimitive get() = isPrimitive && !type.isNullable
-
-private val FirClassSymbol<*>.isFinalClass get() = isClass && isFinal
-
-// NB: This is what RULES1 means then it says "class".
-private val FirClassSymbol<*>.isClass get() = !isInterface
-
-private fun ConeKotlinType.isEnum(session: FirSession) = toRegularClassSymbol(session)?.isEnumClass == true
-
-private fun ConeKotlinType.isClass(session: FirSession) = toRegularClassSymbol(session) != null
-
-private fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
-    val bounds = collectUpperBounds().map { type -> type.toKotlinTypeIfPlatform(session).replaceArgumentsWithStarProjections() }
-    val type = bounds.ifNotEmpty { ConeTypeIntersector.intersectTypes(session.typeContext, this) }
-        ?: session.builtinTypes.nullableAnyType.type
-    val notNullType = type.withNullability(ConeNullability.NOT_NULL, session.typeContext)
-
-    return TypeInfo(
-        type, notNullType,
-        isEnumClass = bounds.any { it.isEnum(session) },
-        isPrimitive = bounds.any { it.isPrimitiveOrNullablePrimitive },
-        isBuiltin = bounds.any { it.toClassSymbol(session)?.isBuiltin == true },
-        isValueClass = bounds.any { it.toClassSymbol(session)?.isInline == true },
-        isFinal = bounds.any { it.toClassSymbol(session)?.isFinalClass == true },
-        // In K1's intersector, `canHaveSubtypes()` is called for `nullabilityStripped`.
-        withNullability(ConeNullability.NOT_NULL, session.typeContext).canHaveSubtypesAccordingToK1(session),
-    )
-}
-
-private fun ConeClassLikeType.toKotlinTypeIfPlatform(session: FirSession): ConeClassLikeType {
-    val kotlinClassId = session.platformClassMapper.getCorrespondingKotlinClass(lookupTag.classId)
-    return kotlinClassId?.constructClassLikeType(typeArguments, isNullable, attributes) ?: this
-}
-
-private class ArgumentInfo(
-    val argument: FirExpression,
-    val userType: ConeKotlinType,
-    val originalType: ConeKotlinType,
-    val session: FirSession,
-) {
-    val smartCastType: ConeKotlinType by lazy {
-        if (argument !is FirSmartCastExpression) originalType else userType.fullyExpandedType(session)
-    }
-
-    val originalTypeInfo get() = originalType.toTypeInfo(session)
-
-    val smartCastTypeInfo get() = smartCastType.toTypeInfo(session)
-
-    override fun toString() = "${argument.source?.text} :: $userType"
-}
-
-@Suppress("RecursivePropertyAccessor")
-private val FirExpression.mostOriginalTypeIfSmartCast: ConeKotlinType
-    get() = when (this) {
-        is FirSmartCastExpression -> originalExpression.mostOriginalTypeIfSmartCast
-        else -> resolvedType
-    }
-
-private fun FirExpression.toArgumentInfo(context: CheckerContext) =
-    ArgumentInfo(
-        this,
-        userType = resolvedType.finalApproximationOrSelf(context),
-        originalType = mostOriginalTypeIfSmartCast.fullyExpandedType(context.session).finalApproximationOrSelf(context),
-        context.session,
-    )
-
 /**
  * Unfortunately, intersections in K1 are not
  * smart enough: K1 doesn't say that the
@@ -387,7 +286,7 @@ private fun FirExpression.toArgumentInfo(context: CheckerContext) =
  *
  * See: [org.jetbrains.kotlin.types.TypeIntersector.intersectTypes]
  */
-private fun isCaseMissedByK1Intersector(a: TypeInfo, b: TypeInfo) =
+internal fun isCaseMissedByK1Intersector(a: TypeInfo, b: TypeInfo) =
     a.canHaveSubtypesAccordingToK1 && b.canHaveSubtypesAccordingToK1
 
 /**
@@ -397,7 +296,7 @@ private fun isCaseMissedByK1Intersector(a: TypeInfo, b: TypeInfo) =
  *
  * See: [org.jetbrains.kotlin.types.isIncompatibleEnums]
  */
-private fun isCaseMissedByAdditionalK1IncompatibleEnumsCheck(a: ConeKotlinType, b: ConeKotlinType, session: FirSession): Boolean {
+internal fun isCaseMissedByAdditionalK1IncompatibleEnumsCheck(a: ConeKotlinType, b: ConeKotlinType, session: FirSession): Boolean {
     return when {
         !a.isEnum(session) && !b.isEnum(session) -> true
         a.isNullable && b.isNullable -> true
