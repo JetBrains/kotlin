@@ -36,6 +36,8 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
     )
 
     private val targetsThatSupportPublication = listOf(
+        KotlinJsIrTarget::class,
+        KotlinNativeTarget::class,
         KotlinJvmTarget::class,
         KotlinAndroidTarget::class,
     )
@@ -64,6 +66,9 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
 
     override fun canPublishResources(target: KotlinTarget): Boolean {
         if (targetsThatSupportPublication.none { it.isInstance(target) }) return false
+        if (target is KotlinJsIrTarget) {
+            return target.platformType == KotlinPlatformType.wasm
+        }
         if (target is KotlinAndroidTarget) {
             return AndroidGradlePluginVersion.current >= KotlinAndroidTargetResourcesPublication.MIN_AGP_VERSION
         }
@@ -114,6 +119,10 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
 
     internal companion object {
         const val MULTIPLATFORM_RESOURCES_DIRECTORY = "kotlin-multiplatform-resources"
+        const val RESOURCES_CLASSIFIER = "kotlin_resources"
+        const val RESOURCES_ZIP_EXTENSION = "${RESOURCES_CLASSIFIER}.zip"
+
+        const val RESOURCES_PATH = "ResourcesPath"
     }
 
 }
