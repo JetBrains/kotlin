@@ -375,7 +375,6 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
             @Suppress("OPT_IN_USAGE_ERROR")
             TypeResolutionInterceptor.registerExtension(
                 project,
-                @Suppress("IllegalExperimentalApiUsage")
                 ComposeTypeResolutionInterceptorExtension()
             )
             DescriptorSerializerPlugin.registerExtension(
