@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.KotlinAnchorModuleProvider
 import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
 import org.jetbrains.kotlin.analysis.providers.topics.*
+import org.jetbrains.kotlin.psi.KotlinCodeFragmentImportModificationListener
+import org.jetbrains.kotlin.psi.KtCodeFragment
 
 /**
  * [LLFirSessionInvalidationService] listens to [modification events][KotlinTopics] and invalidates [LLFirSession]s which depend on the
@@ -64,6 +66,12 @@ class LLFirSessionInvalidationService(private val project: Project) : Disposable
             PsiModificationTracker.TOPIC,
             PsiModificationTracker.Listener { invalidateUnstableDanglingFileSessions() }
         )
+
+        // 'KtCodeFragment' doesn't have access to 'analysisMessageBus' and always uses the project message bus
+        project.messageBus.connect(this).subscribe(
+            KtCodeFragment.IMPORT_MODIFICATION,
+            KotlinCodeFragmentImportModificationListener { codeFragment -> invalidateCodeFragment(codeFragment) }
+        )
     }
 
     /**
@@ -114,6 +122,11 @@ class LLFirSessionInvalidationService(private val project: Project) : Disposable
         }
 
         sessionCache.removeAllSessions(includeLibraryModules)
+    }
+
+    private fun invalidateCodeFragment(codeFragment: KtCodeFragment) {
+        val module = ProjectStructureProvider.getModule(project, codeFragment, contextualModule = null)
+        invalidateContextualDanglingFileSessions(module)
     }
 
     private fun invalidateContextualDanglingFileSessions(contextModule: KtModule) {

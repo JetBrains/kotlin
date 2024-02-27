@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi
-import org.jetbrains.kotlin.psi.KotlinCodeFragmentImportModificationListener
 import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtCodeFragment
@@ -69,11 +68,6 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
                 }
             },
             this,
-        )
-
-        project.messageBus.connect(this).subscribe(
-            KtCodeFragment.IMPORT_MODIFICATION,
-            KotlinCodeFragmentImportModificationListener { codeFragment -> outOfBlockModification(codeFragment) }
         )
     }
 
