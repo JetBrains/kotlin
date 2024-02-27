@@ -1,6 +1,6 @@
 // MODULE: m1-common
 // FILE: common.kt
-expect fun <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>main<!>()
+<!CONFLICTING_OVERLOADS!>expect fun main()<!>
 
 // FILE: common2.kt
 <!CONFLICTING_OVERLOADS!>actual fun <!ACTUAL_WITHOUT_EXPECT!>main<!>()<!> {}

@@ -25333,6 +25333,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("platformRedeclarationOfExpect.kt")
+      public void testPlatformRedeclarationOfExpect() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/platformRedeclarationOfExpect.kt");
+      }
+
+      @Test
       @TestMetadata("privateTopLevelDeclarations.kt")
       public void testPrivateTopLevelDeclarations() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/privateTopLevelDeclarations.kt");
