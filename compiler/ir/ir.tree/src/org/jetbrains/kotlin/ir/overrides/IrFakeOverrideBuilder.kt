@@ -173,7 +173,9 @@ class IrFakeOverrideBuilder(
 
         val addedFakeOverrides = mutableListOf<IrOverridableMember>()
         if (isStaticMembers) {
-            createAndBindFakeOverride(notOverridden.toList(), current, addedFakeOverrides, compatibilityMode)
+            for (member in notOverridden) {
+                createAndBindFakeOverride(listOf(member), current, addedFakeOverrides, compatibilityMode)
+            }
         } else {
             createAndBindFakeOverrides(current, notOverridden, addedFakeOverrides, compatibilityMode)
         }
