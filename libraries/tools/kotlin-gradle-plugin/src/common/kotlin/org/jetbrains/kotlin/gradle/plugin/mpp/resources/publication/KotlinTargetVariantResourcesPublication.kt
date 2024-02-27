@@ -9,7 +9,9 @@ import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext
@@ -23,10 +25,11 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 // Use KotlinMultiplatformExtension to make sure this usage context is only creatable in MPP
 @Suppress("UnusedReceiverParameter")
-internal fun KotlinMultiplatformExtension.setUpResourcesVariant(
-    target: AbstractKotlinTarget,
+internal fun AbstractKotlinTarget.setUpResourcesVariant(
     compilation: KotlinCompilation<*>,
-): DefaultKotlinUsageContext = with(target) {
+): DefaultKotlinUsageContext? {
+    if (project.multiplatformExtensionOrNull == null || !project.kotlinPropertiesProvider.mppResourcesPublication) return null
+
     var targetRegistersResourcesForPublication = false
     val resourcesVariant = DefaultKotlinUsageContext(
         compilation = compilation,
