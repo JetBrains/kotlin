@@ -2,6 +2,7 @@ import TestInterfaceImpl = JS_TESTS.foo.TestInterfaceImpl;
 import ChildTestInterfaceImpl = JS_TESTS.foo.ChildTestInterfaceImpl;
 import processInterface = JS_TESTS.foo.processInterface;
 import processOptionalInterface = JS_TESTS.foo.processOptionalInterface;
+import WithTheCompanion = JS_TESTS.foo.WithTheCompanion;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -19,6 +20,8 @@ function box(): string {
     assert(processOptionalInterface({ required: 4 }) == "4unknown")
     assert(processOptionalInterface({ required: 4, notRequired: null }) == "4unknown")
     assert(processOptionalInterface({ required: 4, notRequired: 5 }) == "45")
+
+    assert(WithTheCompanion.companionFunction() == "FUNCTION")
 
     return "OK";
 }

@@ -2606,6 +2606,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
       }
 
       @Test
+      @TestMetadata("interfaceWithCompanion.kt")
+      public void testInterfaceWithCompanion() {
+        runTest("js/js.translator/testData/box/esModules/jsExport/interfaceWithCompanion.kt");
+      }
+
+      @Test
       @TestMetadata("jsExportInClass.kt")
       public void testJsExportInClass() {
         runTest("js/js.translator/testData/box/esModules/jsExport/jsExportInClass.kt");
@@ -2697,6 +2703,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
       @TestMetadata("interfaces.kt")
       public void testInterfaces() {
         runTest("js/js.translator/testData/box/esModules/jsModule/interfaces.kt");
+      }
+
+      @Test
+      @TestMetadata("interfacesWithCompanion.kt")
+      public void testInterfacesWithCompanion() {
+        runTest("js/js.translator/testData/box/esModules/jsModule/interfacesWithCompanion.kt");
       }
 
       @Test
@@ -7525,6 +7537,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("interfaceWithCompanion.kt")
+    public void testInterfaceWithCompanion() {
+      runTest("js/js.translator/testData/box/jsExport/interfaceWithCompanion.kt");
+    }
+
+    @Test
     @TestMetadata("jsExportInClass.kt")
     public void testJsExportInClass() {
       runTest("js/js.translator/testData/box/jsExport/jsExportInClass.kt");
@@ -7658,6 +7676,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     @TestMetadata("interfaces.kt")
     public void testInterfaces() {
       runTest("js/js.translator/testData/box/jsModule/interfaces.kt");
+    }
+
+    @Test
+    @TestMetadata("interfacesWithCompanion.kt")
+    public void testInterfacesWithCompanion() {
+      runTest("js/js.translator/testData/box/jsModule/interfacesWithCompanion.kt");
     }
 
     @Test
@@ -7834,6 +7858,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     @TestMetadata("interfaces.kt")
     public void testInterfaces() {
       runTest("js/js.translator/testData/box/jsQualifier/interfaces.kt");
+    }
+
+    @Test
+    @TestMetadata("interfacesWithCompanion.kt")
+    public void testInterfacesWithCompanion() {
+      runTest("js/js.translator/testData/box/jsQualifier/interfacesWithCompanion.kt");
     }
 
     @Test

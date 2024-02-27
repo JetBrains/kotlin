@@ -4828,6 +4828,11 @@ internal class NonConsumableExportedIdentifierImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.NonConsumableExportedIdentifier
 
+internal class NamedCompanionInExportedInterfaceImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.NamedCompanionInExportedInterface
+
 internal class NestedJsExportImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
@@ -4944,6 +4949,11 @@ internal class ExternalInterfaceAsReifiedTypeArgumentImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.ExternalInterfaceAsReifiedTypeArgument
+
+internal class NamedCompanionInExternalInterfaceImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.NamedCompanionInExternalInterface
 
 internal class JscodeArgumentNonConstExpressionImpl(
     firDiagnostic: KtPsiDiagnostic,

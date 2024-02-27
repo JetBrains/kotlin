@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.JsStandardClassIds
+import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -28,9 +29,11 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
-object JsExternalChecker : DeclarationChecker {
-    val DEFINED_EXTERNALLY_PROPERTY_NAMES = JsStandardClassIds.Callables.definedExternallyPropertyNames
-        .map { it.asSingleFqName().toUnsafe() }
+class JsExternalChecker(private val allowCompanionInInterface: Boolean) : DeclarationChecker {
+    companion object {
+        val DEFINED_EXTERNALLY_PROPERTY_NAMES = JsStandardClassIds.Callables.definedExternallyPropertyNames
+            .map { it.asSingleFqName().toUnsafe() }
+    }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!AnnotationsUtils.isNativeObject(descriptor)) return
@@ -68,10 +71,14 @@ object JsExternalChecker : DeclarationChecker {
             trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "private member of class"))
         }
 
-        if (descriptor is ClassDescriptor && descriptor.kind != ClassKind.INTERFACE &&
-            descriptor.containingDeclaration.let { it is ClassDescriptor && it.kind == ClassKind.INTERFACE }
-        ) {
+        val containingDeclarationsIsInterface = descriptor.containingDeclaration.let { it is ClassDescriptor && it.kind == ClassKind.INTERFACE }
+
+        if (descriptor is ClassDescriptor && descriptor.kind != ClassKind.INTERFACE && (!allowCompanionInInterface || !descriptor.isCompanionObject) && containingDeclarationsIsInterface) {
             trace.report(ErrorsJs.NESTED_CLASS_IN_EXTERNAL_INTERFACE.on(declaration))
+        }
+
+        if (allowCompanionInInterface && descriptor.isCompanionObject() && containingDeclarationsIsInterface && descriptor.name != DEFAULT_NAME_FOR_COMPANION_OBJECT) {
+            trace.report(ErrorsJs.NAMED_COMPANION_IN_EXTERNAL_INTERFACE.on(declaration))
         }
 
         if (descriptor !is PropertyAccessorDescriptor && descriptor.isExtension) {

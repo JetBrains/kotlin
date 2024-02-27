@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration
 
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
@@ -30,9 +28,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-abstract class FirWebCommonExternalChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface: Boolean) : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     abstract fun isNativeOrEffectivelyExternal(symbol: FirBasedSymbol<*>, session: FirSession): Boolean
 
     abstract fun reportExternalEnum(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter)
@@ -87,11 +86,23 @@ abstract class FirWebCommonExternalChecker : FirBasicDeclarationChecker(MppCheck
 
         if (
             declaration is FirClass &&
-            declaration.classKind != ClassKind.INTERFACE &&
-            container is FirClass && container.classKind == ClassKind.INTERFACE
+            !declaration.classKind.isInterface && (!allowCompanionInInterface || !declaration.status.isCompanion) &&
+            container is FirClass && container.classKind.isInterface
         ) {
             reporter.reportOn(declaration.source, FirWebCommonErrors.NESTED_CLASS_IN_EXTERNAL_INTERFACE, context)
         }
+
+        if (
+            allowCompanionInInterface &&
+            declaration is FirClass &&
+            declaration.status.isCompanion &&
+            container is FirClass &&
+            container.isInterface &&
+            declaration.nameOrSpecialName != DEFAULT_NAME_FOR_COMPANION_OBJECT
+        ) {
+            reporter.reportOn(declaration.source, FirWebCommonErrors.NAMED_COMPANION_IN_EXTERNAL_INTERFACE, context)
+        }
+
 
         if (declaration !is FirPropertyAccessor && declaration is FirCallableDeclaration && declaration.isExtension) {
             val target = when (declaration) {

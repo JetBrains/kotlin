@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.js.resolve.diagnostics.JsExternalChecker.DEFINED_EXTERNALLY_PROPERTY_NAMES
+import org.jetbrains.kotlin.js.resolve.diagnostics.JsExternalChecker.Companion.DEFINED_EXTERNALLY_PROPERTY_NAMES
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext

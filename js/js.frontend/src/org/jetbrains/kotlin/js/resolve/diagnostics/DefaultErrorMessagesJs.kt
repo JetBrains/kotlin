@@ -34,6 +34,9 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING, "Using value classes as parameter type or return type of external declarations is experimental")
         put(ErrorsJs.ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING, "Using enum classes with an `external` qualifier becomes deprecated and will be an error in future releases")
 
+        put(ErrorsJs.NAMED_COMPANION_IN_EXTERNAL_INTERFACE, "Named companions are not allowed inside external interfaces")
+        put(ErrorsJs.NAMED_COMPANION_IN_EXPORTED_INTERFACE, "Named companions are not allowed inside exported interfaces")
+
         put(ErrorsJs.JS_NAME_CLASH, "JavaScript name ({0}) generated for this declaration clashes with another declaration: {1}",
             STRING, Renderers.COMPACT)
         put(ErrorsJs.JS_FAKE_NAME_CLASH, "JavaScript name {0} is generated for different inherited members: {1} and {2}",

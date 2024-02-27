@@ -43,6 +43,7 @@ object FirWebCommonErrors {
     val UNCHECKED_CAST_TO_EXTERNAL_INTERFACE: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> by warning2<KtElement, ConeKotlinType, ConeKotlinType>()
     val EXTERNAL_INTERFACE_AS_CLASS_LITERAL: KtDiagnosticFactory0 by error0<KtElement>()
     val EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT: KtDiagnosticFactory1<ConeKotlinType> by error1<KtElement, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val NAMED_COMPANION_IN_EXTERNAL_INTERFACE: KtDiagnosticFactory0 by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
     // Export
     val NESTED_JS_EXPORT: KtDiagnosticFactory0 by error0<KtElement>()

@@ -113,6 +113,7 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val NON_CONSUMABLE_EXPORTED_IDENTIFIER by warning<KtElement>(PositioningStrategy.DEFAULT) {
             parameter<String>("name")
         }
+        val NAMED_COMPANION_IN_EXPORTED_INTERFACE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
     }
 
     val DYNAMICS by object : DiagnosticGroup("Dynamics") {

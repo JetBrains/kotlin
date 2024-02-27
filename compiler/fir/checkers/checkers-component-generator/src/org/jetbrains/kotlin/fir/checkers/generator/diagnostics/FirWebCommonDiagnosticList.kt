@@ -44,6 +44,7 @@ object WEB_COMMON_DIAGNOSTICS_LIST : DiagnosticList("FirWebCommonErrors") {
         val EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<ConeKotlinType>("typeArgument")
         }
+        val NAMED_COMPANION_IN_EXTERNAL_INTERFACE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
     }
 
     val EXPORT by object : DiagnosticGroup("Export") {

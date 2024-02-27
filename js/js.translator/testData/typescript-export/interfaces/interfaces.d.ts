@@ -30,6 +30,15 @@ declare namespace JS_TESTS {
             readonly __doNotUseOrImplementIt: foo.TestInterfaceImpl["__doNotUseOrImplementIt"] & foo.AnotherExportedInterface["__doNotUseOrImplementIt"];
         }
         function processInterface(test: foo.TestInterface): string;
+        interface WithTheCompanion {
+            readonly interfaceField: string;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.WithTheCompanion": unique symbol;
+            };
+        }
+        const WithTheCompanion: {
+            companionFunction(): string;
+        };
         function processOptionalInterface(a: foo.OptionalFieldsInterface): string;
         interface InterfaceWithCompanion {
             readonly __doNotUseOrImplementIt: {

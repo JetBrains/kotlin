@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.js.common.RESERVED_KEYWORDS
 import org.jetbrains.kotlin.js.common.SPECIAL_KEYWORDS
 import org.jetbrains.kotlin.name.JsStandardClassIds
+import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 
 object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -135,9 +136,13 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                         declaration.isInline -> "value class"
                         else -> null
                     }
-                    else -> if (context.isInsideInterface) {
-                        "${if (declaration.status.isCompanion) "companion object" else "nested/inner declaration"} inside exported interface"
+                    else -> if (context.isInsideInterface && !declaration.status.isCompanion) {
+                        "nested/inner declaration inside exported interface"
                     } else null
+                }
+
+                if (context.isInsideInterface && declaration.status.isCompanion && declaration.nameOrSpecialName != DEFAULT_NAME_FOR_COMPANION_OBJECT) {
+                    reporter.reportOn(declaration.source, FirJsErrors.NAMED_COMPANION_IN_EXPORTED_INTERFACE, context)
                 }
 
                 if (wrongDeclaration != null) {

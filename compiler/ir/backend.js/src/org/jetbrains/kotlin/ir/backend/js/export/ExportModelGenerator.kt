@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -328,12 +329,15 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                     members.addIfNotNull(exportProperty(candidate)?.withAttributesFor(candidate))
 
                 is IrClass -> {
-                    if (klass.isInterface) continue
-                    val ec = exportClass(candidate)?.withAttributesFor(candidate)
-                    if (ec is ExportedClass) {
-                        nestedClasses.add(ec)
+                    if (klass.isInterface) {
+                        nestedClasses.addIfNotNull(klass.companionObject()?.let { exportClass(it) as? ExportedClass }?.withAttributesFor(candidate))
                     } else {
-                        members.addIfNotNull(ec)
+                        val ec = exportClass(candidate)?.withAttributesFor(candidate)
+                        if (ec is ExportedClass) {
+                            nestedClasses.add(ec)
+                        } else {
+                            members.addIfNotNull(ec)
+                        }
                     }
                 }
 
@@ -441,7 +445,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             .map { exportType(it, false) }
             .memoryOptimizedFilter { it !is ExportedType.ErrorType }
 
-        val name = klass.getExportedIdentifier()
+        val name = klass.getExportedIdentifierForClass()
 
         return if (klass.kind == ClassKind.OBJECT) {
             return ExportedObject(
@@ -862,10 +866,17 @@ val strictModeReservedWords = setOf(
 
 private val allReservedWords = reservedWords + strictModeReservedWords
 
-fun ExportedDeclaration.withAttributesFor(declaration: IrDeclaration): ExportedDeclaration {
+fun <T : ExportedDeclaration> T.withAttributesFor(declaration: IrDeclaration): T {
     declaration.getDeprecated()?.let { attributes.add(ExportedAttribute.DeprecatedAttribute(it)) }
 
     return this
+}
+
+fun IrClass.getExportedIdentifierForClass(): String {
+    val parentClass = parentClassOrNull
+    return if (parentClass != null && isCompanion && parentClass.isInterface) {
+        parentClass.getExportedIdentifierForClass()
+    } else getExportedIdentifier()
 }
 
 fun IrDeclarationWithName.getExportedIdentifier(): String =

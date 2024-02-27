@@ -36,6 +36,8 @@ public interface ErrorsJs {
     DiagnosticFactory0<KtElement> INLINE_CLASS_IN_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtElement> ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtElement> INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtElement> NAMED_COMPANION_IN_EXTERNAL_INTERFACE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtElement> NAMED_COMPANION_IN_EXPORTED_INTERFACE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
 
     DiagnosticFactory2<KtElement, String, DeclarationDescriptor> JS_NAME_CLASH = DiagnosticFactory2.create(
             ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);

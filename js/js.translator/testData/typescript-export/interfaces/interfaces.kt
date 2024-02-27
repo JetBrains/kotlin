@@ -39,6 +39,15 @@ external interface OptionalFieldsInterface {
 }
 
 @JsExport
+interface WithTheCompanion {
+    val interfaceField: String
+
+    companion object {
+        fun companionFunction(): String = "FUNCTION"
+    }
+}
+
+@JsExport
 fun processOptionalInterface(a: OptionalFieldsInterface): String {
     return "${a.required}${a.notRequired ?: "unknown"}"
 }
@@ -48,6 +57,7 @@ fun processOptionalInterface(a: OptionalFieldsInterface): String {
 interface InterfaceWithCompanion {
     // Emulate added by plugin companion like kotlinx.serialization does
     @Suppress("WRONG_EXPORTED_DECLARATION")
+    @JsExport.Ignore
     companion object {
         fun foo() = "String"
     }
