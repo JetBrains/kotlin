@@ -213,22 +213,22 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         this.annotations.addAll(annotations)
     }.build().apply {
         if (classId.isLocal) {
-            resultType = typeForQualifierByDeclaration(regularClass.fir, session)
+            resultType = typeForQualifierByDeclaration(regularClass.fir, session, element = this@apply, file)
                 ?.also { replaceCanBeValue(true) }
                 ?: session.builtinTypes.unitType.type
         } else {
-            setTypeOfQualifier(session)
+            setTypeOfQualifier(this@buildResolvedQualifierForClass)
         }
     }
 }
 
-fun FirResolvedQualifier.setTypeOfQualifier(session: FirSession) {
+fun FirResolvedQualifier.setTypeOfQualifier(components: BodyResolveComponents) {
     val classSymbol = symbol
     if (classSymbol != null) {
         classSymbol.lazyResolveToPhase(FirResolvePhase.TYPES)
         val declaration = classSymbol.fir
         if (declaration !is FirTypeAlias || typeArguments.isEmpty()) {
-            val typeByDeclaration = typeForQualifierByDeclaration(declaration, session)
+            val typeByDeclaration = typeForQualifierByDeclaration(declaration, components.session, element = this, components.file)
             if (typeByDeclaration != null) {
                 this.resultType = typeByDeclaration
                 replaceCanBeValue(true)
@@ -236,7 +236,7 @@ fun FirResolvedQualifier.setTypeOfQualifier(session: FirSession) {
             }
         }
     }
-    this.resultType = session.builtinTypes.unitType.type
+    this.resultType = components.session.builtinTypes.unitType.type
 }
 
 internal fun typeForReifiedParameterReference(parameterReferenceBuilder: FirResolvedReifiedParameterReferenceBuilder): ConeLookupTagBasedType {
@@ -244,10 +244,12 @@ internal fun typeForReifiedParameterReference(parameterReferenceBuilder: FirReso
     return typeParameterSymbol.constructType(emptyArray(), false)
 }
 
-internal fun typeForQualifierByDeclaration(declaration: FirDeclaration, session: FirSession): ConeKotlinType? {
+internal fun typeForQualifierByDeclaration(
+    declaration: FirDeclaration, session: FirSession, element: FirElement, file: FirFile
+): ConeKotlinType? {
     if (declaration is FirTypeAlias) {
         val expandedDeclaration = declaration.expandedConeType?.lookupTag?.toSymbol(session)?.fir ?: return null
-        return typeForQualifierByDeclaration(expandedDeclaration, session)
+        return typeForQualifierByDeclaration(expandedDeclaration, session, element, file)
     }
     if (declaration is FirRegularClass) {
         if (declaration.classKind == ClassKind.OBJECT) {
@@ -255,6 +257,7 @@ internal fun typeForQualifierByDeclaration(declaration: FirDeclaration, session:
         } else {
             val companionObjectSymbol = declaration.companionObjectSymbol
             if (companionObjectSymbol != null) {
+                session.lookupTracker?.recordCompanionLookup(companionObjectSymbol.classId, element.source, file.source)
                 return companionObjectSymbol.constructType(emptyArray(), false)
             }
         }

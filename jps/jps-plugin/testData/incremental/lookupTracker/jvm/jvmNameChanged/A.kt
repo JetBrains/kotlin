@@ -1,6 +1,6 @@
 package foo
 
 /*p:foo(A)*/open class A {
-    /*p:kotlin.jvm(JvmName)*/@/*p:foo*/JvmName("g")
+    /*p:kotlin.jvm(JvmName)*/@/*p:foo p:kotlin.jvm*/JvmName("g")
     fun f() {}
 }

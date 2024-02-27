@@ -6,10 +6,10 @@ import bar.*
     val a = 1
     var b = ""
 
-    val c: /*p:bar p:foo*/String
+    val c: /*p:bar p:foo p:foo.A*/String
         get() = /*p:foo.A*/b
 
-    var d: /*p:bar p:foo*/String = "ddd"
+    var d: /*p:bar p:foo p:foo.A*/String = "ddd"
         get() = field
         set(v) { field = v }
 
@@ -27,7 +27,7 @@ import bar.*
         val a = 1
 
         companion object CO {
-            fun bar(a: /*p:bar p:foo*/Int) {}
+            fun bar(a: /*p:bar p:foo p:foo.A p:foo.A.B*/Int) {}
         }
     }
 
@@ -44,7 +44,7 @@ import bar.*
 }
 
 /*p:foo*/interface I {
-    var a: /*p:bar p:foo*/Int
+    var a: /*p:bar p:foo p:foo.I*/Int
     fun foo()
 
     class NI
@@ -64,8 +64,8 @@ import bar.*
     val a = 1
     fun foo() {
         /*p:foo.E*/a
-        /*p:bar p:foo p:foo.E p:foo.E(a) p:kotlin.Enum p:kotlin.Enum.Companion*/Y.a
+        /*p:bar p:foo p:foo(E) p:foo.E p:foo.E(a) p:kotlin(Enum) p:kotlin.Enum p:kotlin.Enum(Companion) p:kotlin.Enum.Companion*/Y.a
         /*p:foo.E*/foo()
-        /*p:bar p:foo p:foo.E p:foo.E(foo) p:kotlin.Enum p:kotlin.Enum.Companion*/X.foo()
+        /*p:bar p:foo p:foo(E) p:foo.E p:foo.E(foo) p:kotlin(Enum) p:kotlin.Enum p:kotlin.Enum(Companion) p:kotlin.Enum.Companion*/X.foo()
     }
 }

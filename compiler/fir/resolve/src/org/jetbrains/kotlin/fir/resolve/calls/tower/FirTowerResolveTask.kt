@@ -119,7 +119,7 @@ internal abstract class FirBaseTowerResolveTask(
                 this.symbol = it
                 this.source = source?.fakeElement(KtFakeSourceElementKind.ImplicitReceiver)
             }.apply {
-                setTypeOfQualifier(components.session)
+                setTypeOfQualifier(components)
             }
             ExpressionReceiverValue(resolvedQualifier)
         }

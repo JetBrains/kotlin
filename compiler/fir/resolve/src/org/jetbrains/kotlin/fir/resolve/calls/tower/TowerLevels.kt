@@ -363,7 +363,7 @@ internal class ScopeTowerLevel(
             this.symbol = this@toResolvedQualifierExpressionReceiver
             this.source = source?.fakeElement(KtFakeSourceElementKind.ImplicitReceiver)
         }.apply {
-            setTypeOfQualifier(bodyResolveComponents.session)
+            setTypeOfQualifier(bodyResolveComponents)
         }
         return ExpressionReceiverValue(resolvedQualifier)
     }

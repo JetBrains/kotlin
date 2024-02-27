@@ -158,16 +158,25 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     },
                     data,
                 )
+
+                fun FirStatement.alsoRecordLookup() = also {
+                    if (transformedCallee is FirExpression && transformedCallee.isResolved) {
+                        session.lookupTracker?.recordTypeResolveAsLookup(
+                            transformedCallee.resolvedType, callee.source, components.file.source
+                        )
+                    }
+                }
+
                 // NB: here we can get raw expression because of dropped qualifiers (see transform callee),
                 // so candidate existence must be checked before calling completion
                 if (transformedCallee is FirQualifiedAccessExpression && transformedCallee.candidate() != null) {
                     if (!transformedCallee.isAcceptableResolvedQualifiedAccess()) {
-                        return qualifiedAccessExpression
+                        return qualifiedAccessExpression.alsoRecordLookup()
                     }
                     callCompleter.completeCall(transformedCallee, data)
                 } else {
                     transformedCallee
-                }
+                }.alsoRecordLookup()
             }
         }
 

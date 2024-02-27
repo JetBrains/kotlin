@@ -3,16 +3,16 @@ package foo.bar
 /*p:kotlin.reflect(KProperty)*/import kotlin.reflect.KProperty
 
 /*p:foo.bar*/class D1 {
-    operator fun getValue(t: /*p:foo.bar*/Any?, p: /*p:foo.bar*/KProperty<*>) = 1
+    operator fun getValue(t: /*p:foo.bar*/Any?, p: /*p:foo.bar p:kotlin.reflect*/KProperty<*>) = 1
 }
 
-/*p:foo.bar*/operator fun /*p:foo.bar*/D1.setValue(t: /*p:foo.bar*/Any?, p: /*p:foo.bar*/KProperty<*>, v: /*p:foo.bar*/Int) {}
+/*p:foo.bar*/operator fun /*p:foo.bar*/D1.setValue(t: /*p:foo.bar*/Any?, p: /*p:foo.bar p:kotlin.reflect*/KProperty<*>, v: /*p:foo.bar*/Int) {}
 
 /*p:foo.bar(D2)*/open class D2 {
-    operator fun setValue(t: /*p:foo.bar*/Any?, p: /*p:foo.bar*/KProperty<*>, v: /*p:foo.bar*/Int) {}
+    operator fun setValue(t: /*p:foo.bar*/Any?, p: /*p:foo.bar p:kotlin.reflect*/KProperty<*>, v: /*p:foo.bar*/Int) {}
 }
 
-/*p:foo.bar*/operator fun /*p:foo.bar*/D2.getValue(t: /*p:foo.bar*/Any?, p: /*p:foo.bar*/KProperty<*>) = 1
+/*p:foo.bar*/operator fun /*p:foo.bar*/D2.getValue(t: /*p:foo.bar*/Any?, p: /*p:foo.bar p:kotlin.reflect*/KProperty<*>) = 1
 /*p:foo.bar*/operator fun /*p:foo.bar*/D2.provideDelegate(p: /*p:foo.bar*/Any?, k: /*p:foo.bar*/Any) = this
 
 /*p:foo.bar*/class D3 : /*p:foo.bar*/D2() {

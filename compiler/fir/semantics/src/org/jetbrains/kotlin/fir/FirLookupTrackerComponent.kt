@@ -40,20 +40,22 @@ fun FirLookupTrackerComponent.recordCallLookup(callInfo: AbstractCallInfo, inSco
     recordNameLookup(callInfo.name, inScopes, callInfo.callSite.source, callInfo.containingFile.source)
 }
 
-fun FirLookupTrackerComponent.recordTypeLookup(typeRef: FirTypeRef, inScopes: Iterable<String>, fileSource: KtSourceElement?) {
-    if (typeRef is FirUserTypeRef) recordNameLookup(typeRef.qualifier.first().name, inScopes, typeRef.source, fileSource)
-}
-
 fun FirLookupTrackerComponent.recordClassLikeLookup(classId: ClassId, source: KtSourceElement?, fileSource: KtSourceElement?) {
     if (!classId.isLocal && classId !in StandardClassIds.allBuiltinTypes) {
-        recordLookup(classId.relativeClassName.asString(), classId.packageFqName.asString(), source, fileSource)
-        if (classId.shortClassName == DEFAULT_NAME_FOR_COMPANION_OBJECT) {
-            recordLookup(
-                classId.outerClassId!!.relativeClassName.asString(),
-                classId.outerClassId!!.packageFqName.asString(),
-                source, fileSource
-            )
-        }
+        val classFqName = classId.asSingleFqName()
+        recordLookup(classFqName.shortName().asString(), classFqName.parent().asString(), source, fileSource)
+    }
+}
+
+fun FirLookupTrackerComponent.recordCompanionLookup(classId: ClassId, source: KtSourceElement?, fileSource: KtSourceElement?) {
+    if (!classId.isLocal && classId !in StandardClassIds.allBuiltinTypes) {
+        val classFqName = classId.asSingleFqName()
+        recordLookup(classFqName.shortName().asString(), classFqName.parent().asString(), source, fileSource)
+        recordLookup(
+            classFqName.parent().shortName().asString(),
+            classFqName.parent().parent().asString(),
+            source, fileSource
+        )
     }
 }
 
@@ -80,6 +82,15 @@ fun FirLookupTrackerComponent.recordNameLookup(name: Name, inScope: String, sour
 fun FirLookupTrackerComponent.recordTypeResolveAsLookup(typeRef: FirTypeRef, source: KtSourceElement?, fileSource: KtSourceElement?) {
     if (typeRef !is FirResolvedTypeRef) return // TODO: check if this is the correct behavior
     recordTypeResolveAsLookup(typeRef.type, source, fileSource)
+}
+
+fun FirLookupTrackerComponent.recordUserTypeRefLookup(typeRef: FirUserTypeRef, inScopes: Iterable<String>, fileSource: KtSourceElement?) {
+    inScopes.forEach { scope ->
+        typeRef.qualifier.fold(FqName(scope)) { result, suffix ->
+            recordLookup(suffix.name.asString(), result.asString(), typeRef.source, fileSource)
+            result.child(suffix.name)
+        }
+    }
 }
 
 // TODO: review all places that record resolved type as lookup and consider minimize the number of them; see #KT-66366

@@ -18,7 +18,10 @@ import org.jetbrains.kotlin.name.FqName
 @NoMutableState
 class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver() {
 
-    override fun resolveSymbolWithPrefix(parts: List<FirQualifierPart>, prefix: ClassId): FirClassifierSymbol<*>? {
+    override fun resolveSymbolWithPrefix(
+        parts: List<FirQualifierPart>, prefix: ClassId
+    ): FirClassifierSymbol<*>? {
+
         val symbolProvider = session.symbolProvider
 
         val fqName = ClassId(

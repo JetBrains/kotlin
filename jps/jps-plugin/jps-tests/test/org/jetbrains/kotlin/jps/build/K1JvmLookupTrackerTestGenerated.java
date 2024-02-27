@@ -34,6 +34,11 @@ public class K1JvmLookupTrackerTestGenerated extends AbstractK1JvmLookupTrackerT
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/classifierMembers/");
   }
 
+  @TestMetadata("companion")
+  public void testCompanion() {
+    runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/companion/");
+  }
+
   @TestMetadata("conventions")
   public void testConventions() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/conventions/");
@@ -62,6 +67,16 @@ public class K1JvmLookupTrackerTestGenerated extends AbstractK1JvmLookupTrackerT
   @TestMetadata("localDeclarations")
   public void testLocalDeclarations() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/localDeclarations/");
+  }
+
+  @TestMetadata("namedCompanion")
+  public void testNamedCompanion() {
+    runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/namedCompanion/");
+  }
+
+  @TestMetadata("nested")
+  public void testNested() {
+    runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/nested/");
   }
 
   @TestMetadata("packageDeclarations")
