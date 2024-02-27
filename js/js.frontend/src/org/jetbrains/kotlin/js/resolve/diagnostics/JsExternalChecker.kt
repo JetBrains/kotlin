@@ -67,7 +67,11 @@ class JsExternalChecker(private val allowCompanionInInterface: Boolean) : Declar
 
         if (descriptor is PropertyAccessorDescriptor && isDirectlyExternal(declaration, descriptor)) {
             trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "property accessor"))
-        } else if (isPrivateMemberOfExternalClass(descriptor)) {
+        } else if (
+            descriptor !is ConstructorDescriptor &&
+            descriptor !is FieldDescriptor &&
+            isPrivateMemberOfExternalClass(descriptor)
+        ) {
             trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "private member of class"))
         }
 
