@@ -13,7 +13,6 @@ import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.dependencyView.Callbacks
 import org.jetbrains.jps.builders.java.dependencyView.Callbacks.Backend
 import org.jetbrains.jps.builders.storage.BuildDataPaths
-import org.jetbrains.jps.dependency.java.LookupNameUsage
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsSdkDependency
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.build.JvmBuildMetaInfo
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.config.IncrementalCompilation
@@ -394,6 +392,13 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
             return previousMappings.getClassSources(name).toSet()
         }
 
+        if (KotlinBuilder.useDependencyGraph) {
+            LookupUsageRegistrar().processLookupTracker(
+                environment.services[LookupTracker::class.java],
+                callback,
+                environment.messageCollector
+            )
+        }
         for ((target, outputs) in outputItems) {
             for (output in outputs) {
                 if (output !is GeneratedJvmClass) continue
@@ -416,13 +421,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 )
             }
         }
-        if (KotlinBuilder.useDependencyGraph) {
-            LookupUsageRegistrar().processLookupTracker(
-                environment.services[LookupTracker::class.java],
-                callback,
-                environment.messageCollector
-            )
-        }
+        // important: in jps-dependency-graph you can't register additional dependencies after [callback.associate].
 
         val allCompiled = dirtyFilesHolder.allDirtyFiles
         JavaBuilderUtil.registerFilesToCompile(localContext, allCompiled)
