@@ -58,12 +58,6 @@ private val preventExportOfSyntheticDeclarationsLowering = makeIrModulePhase(
     description = "Exclude synthetic declarations which we don't want to export such as `Enum.entries` or `DataClass::componentN`",
 )
 
-val scriptRemoveReceiverLowering = makeIrModulePhase(
-    ::ScriptRemoveReceiverLowering,
-    name = "ScriptRemoveReceiver",
-    description = "Remove receivers for declarations in script"
-)
-
 val createScriptFunctionsPhase = makeIrModulePhase(
     ::CreateScriptFunctionsPhase,
     name = "CreateScriptFunctionsPhase",
@@ -784,7 +778,6 @@ val mainFunctionCallWrapperLowering = makeIrModulePhase<JsIrBackendContext>(
 )
 
 val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>(
-    scriptRemoveReceiverLowering,
     validateIrBeforeLowering,
     prepareCollectionsToExportLowering,
     preventExportOfSyntheticDeclarationsLowering,
