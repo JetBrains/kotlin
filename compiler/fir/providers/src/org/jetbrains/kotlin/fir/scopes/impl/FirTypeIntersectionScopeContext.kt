@@ -427,7 +427,7 @@ class FirTypeIntersectionScopeContext(
         overrides: Collection<FirCallableSymbol<*>>,
         containsMultipleNonSubsumed: Boolean,
         createIntersectionOverrideSymbol: (CallableId, Collection<FirCallableSymbol<*>>, Boolean) -> S,
-        createCopy: (S, F, deferredReturnTypeCalculation: CallableCopyDeferredReturnTypeCalculation?, returnType: ConeKotlinType?) -> F
+        createCopy: (S, F, deferredReturnTypeCalculation: DeferredCallableCopyReturnType?, returnType: ConeKotlinType?) -> F
     ): S {
         val key = mostSpecific.first() as S
         val keyFir = key.fir
@@ -444,31 +444,45 @@ class FirTypeIntersectionScopeContext(
         return newSymbol
     }
 
-    private fun deferredReturnTypeCalculationOrNull(mostSpecific: Collection<FirCallableSymbol<*>>): CallableCopyIntersection? {
+    private fun deferredReturnTypeCalculationOrNull(mostSpecific: Collection<FirCallableSymbol<*>>): DeferredReturnTypeOfIntersection? {
         return runIf(mostSpecific.any { it.fir.returnTypeRef is FirImplicitTypeRef }) {
-            CallableCopyIntersection(mostSpecific, session)
+            DeferredReturnTypeOfIntersection(mostSpecific, session)
         }
     }
 
     private fun intersectReturnTypes(overrides: Collection<FirCallableSymbol<*>>): ConeKotlinType? {
         return intersectReturnTypes(overrides, session) { returnTypeRef.coneType }
     }
+}
 
-    companion object {
-        inline fun intersectReturnTypes(overrides: Collection<FirCallableSymbol<*>>, session: FirSession, getReturnType: FirCallableDeclaration.() -> ConeKotlinType?): ConeKotlinType? {
-            val key = overrides.first()
-            // Remap type parameters to the first declaration's:
-            //   (fun <A, B> foo(): B) & (fun <C, D> foo(): D?) -> (fun <A, B> foo(): B & B?)
-            val substituted = overrides.mapNotNull {
-                val returnType = it.fir.getReturnType() ?: return@mapNotNull null
-                if (it == key) return@mapNotNull returnType
-                val substitutor = buildSubstitutorForOverridesCheck(it.fir, key.fir, session) ?: return@mapNotNull null
-                returnType.let(substitutor::substituteOrSelf)
-            }
-            return if (substituted.isNotEmpty()) session.typeContext.intersectTypes(substituted) else null
+private class DeferredReturnTypeOfIntersection(
+    private val mostSpecific: Collection<FirCallableSymbol<*>>,
+    private val session: FirSession,
+) : DeferredCallableCopyReturnType() {
+    override fun computeReturnType(calc: CallableCopyTypeCalculator): ConeKotlinType? {
+        return intersectReturnTypes(mostSpecific, session) {
+            calc.computeReturnTypeOrNull(this)
         }
     }
+
+    override fun toString(): String {
+        return "CallableCopyIntersection(mostSpecific=$mostSpecific)"
+    }
 }
+
+private fun intersectReturnTypes(overrides: Collection<FirCallableSymbol<*>>, session: FirSession, getReturnType: FirCallableDeclaration.() -> ConeKotlinType?): ConeKotlinType? {
+    val key = overrides.first()
+    // Remap type parameters to the first declaration's:
+    //   (fun <A, B> foo(): B) & (fun <C, D> foo(): D?) -> (fun <A, B> foo(): B & B?)
+    val substituted = overrides.mapNotNull {
+        val returnType = it.fir.getReturnType() ?: return@mapNotNull null
+        if (it == key) return@mapNotNull returnType
+        val substitutor = buildSubstitutorForOverridesCheck(it.fir, key.fir, session) ?: return@mapNotNull null
+        returnType.let(substitutor::substituteOrSelf)
+    }
+    return if (substituted.isNotEmpty()) session.typeContext.intersectTypes(substituted) else null
+}
+
 
 private fun <D : FirCallableSymbol<*>> D.withScope(baseScope: FirTypeScope) = MemberWithBaseScope(this, baseScope)
 

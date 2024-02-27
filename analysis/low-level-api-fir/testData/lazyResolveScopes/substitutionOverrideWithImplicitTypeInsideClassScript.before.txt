@@ -1,6 +1,6 @@
 public open override [ResolvedTo(STATUS)] fun isSchemeFile([ResolvedTo(STATUS)] name: R|kotlin/CharSequence|): <implicit> { LAZY_BLOCK }
 
-public open override [ResolvedTo(STATUS)] [CallableCopyDeferredReturnTypeCalculationKey=CallableCopySubstitution(substitutor={SCHEME -> @R|second/Anno|(<strcat>(String(super1 ), constant#))  kotlin/Int | MUTABLE_SCHEME -> @R|second/Anno|(<strcat>(String(super2 ), constant#))  kotlin/Int}, baseSymbol=FirNamedFunctionSymbol second/LazySchemeProcessor.isSchemeFile), SubstitutedOverrideOriginalKey=second/LazySchemeProcessor.isSchemeFile] fun isSchemeFile([ResolvedTo(STATUS)] name: R|kotlin/CharSequence|): <implicit>
+public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={SCHEME -> @R|second/Anno|(<strcat>(String(super1 ), constant#))  kotlin/Int | MUTABLE_SCHEME -> @R|second/Anno|(<strcat>(String(super2 ), constant#))  kotlin/Int}, baseSymbol=FirNamedFunctionSymbol second/LazySchemeProcessor.isSchemeFile), SubstitutedOverrideOriginalKey=second/LazySchemeProcessor.isSchemeFile] fun isSchemeFile([ResolvedTo(STATUS)] name: R|kotlin/CharSequence|): <implicit>
 
 public open [ResolvedTo(STATUS)] fun isSchemeFile([ResolvedTo(STATUS)] name: R|kotlin/CharSequence|): <implicit> { LAZY_BLOCK }
 

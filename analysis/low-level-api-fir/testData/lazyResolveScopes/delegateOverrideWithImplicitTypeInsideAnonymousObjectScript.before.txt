@@ -4,7 +4,7 @@ public open override [ResolvedTo(BODY_RESOLVE)] fun isSchemeFile([ResolvedTo(BOD
 
 public open [ResolvedTo(STATUS)] fun isSchemeFile([ResolvedTo(STATUS)] name: R|kotlin/CharSequence| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
 
-public open override [ResolvedTo(STATUS)] [CallableCopyDeferredReturnTypeCalculationKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /BaseInterface.anotherFunction), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /BaseInterface.anotherFunction, containingClass=<anonymous>, delegateField=FirFieldSymbol <local>/<anonymous>.$$delegate_0] fun anotherFunction([ResolvedTo(STATUS)] name: R|kotlin/CharSequence|): <implicit>
+public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /BaseInterface.anotherFunction), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /BaseInterface.anotherFunction, containingClass=<anonymous>, delegateField=FirFieldSymbol <local>/<anonymous>.$$delegate_0] fun anotherFunction([ResolvedTo(STATUS)] name: R|kotlin/CharSequence|): <implicit>
 
 public open [ResolvedTo(STATUS)] fun anotherFunction([ResolvedTo(STATUS)] name: R|kotlin/CharSequence| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
 

@@ -1,5 +1,5 @@
 STATUS:
-TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] [CallableCopyDeferredReturnTypeCalculationKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirPropertySymbol second/Interface.resolveMe), DelegatedWrapperDataKey=[wrapped=FirPropertySymbol second/Interface.resolveMe, containingClass=Aaa, delegateField=FirFieldSymbol second/Aaa.$$delegate_0] var resolveMe: <implicit>
+TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirPropertySymbol second/Interface.resolveMe), DelegatedWrapperDataKey=[wrapped=FirPropertySymbol second/Interface.resolveMe, containingClass=Aaa, delegateField=FirFieldSymbol second/Aaa.$$delegate_0] var resolveMe: <implicit>
     @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] get(): <implicit>
     @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit|
 
@@ -41,7 +41,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
 
 
 EXPECT_ACTUAL_MATCHING:
-TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CallableCopyDeferredReturnTypeCalculationKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirPropertySymbol second/Interface.resolveMe), DelegatedWrapperDataKey=[wrapped=FirPropertySymbol second/Interface.resolveMe, containingClass=Aaa, delegateField=FirFieldSymbol second/Aaa.$$delegate_0] var resolveMe: <implicit>
+TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirPropertySymbol second/Interface.resolveMe), DelegatedWrapperDataKey=[wrapped=FirPropertySymbol second/Interface.resolveMe, containingClass=Aaa, delegateField=FirFieldSymbol second/Aaa.$$delegate_0] var resolveMe: <implicit>
     @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Aaa] get(): <implicit>
     @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Aaa] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: <implicit>): R|kotlin/Unit|
 
@@ -83,7 +83,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
 
 
 CONTRACTS:
-TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(CONTRACTS)] [CallableCopyDeferredReturnTypeCalculationKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirPropertySymbol second/Interface.resolveMe), DelegatedWrapperDataKey=[wrapped=FirPropertySymbol second/Interface.resolveMe, containingClass=Aaa, delegateField=FirFieldSymbol second/Aaa.$$delegate_0] var resolveMe: <implicit>
+TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirPropertySymbol second/Interface.resolveMe), DelegatedWrapperDataKey=[wrapped=FirPropertySymbol second/Interface.resolveMe, containingClass=Aaa, delegateField=FirFieldSymbol second/Aaa.$$delegate_0] var resolveMe: <implicit>
     @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Aaa] get(): <implicit>
     @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Aaa] set([ResolvedTo(CONTRACTS)] value: <implicit>): R|kotlin/Unit|
 

@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.ScopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
-import org.jetbrains.kotlin.fir.scopes.CallableCopySubstitution
+import org.jetbrains.kotlin.fir.scopes.DeferredCallableCopyReturnType
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -285,7 +286,7 @@ class FirClassSubstitutionScope(
         val receiverType: ConeKotlinType?,
         val returnType: ConeKotlinType?,
         val substitutor: ConeSubstitutor,
-        val callableCopySubstitution: CallableCopySubstitution?
+        val deferredReturnTypeOfSubstitution: DeferredReturnTypeOfSubstitution?
     )
 
     private fun createSubstitutedData(member: FirCallableDeclaration, symbolForOverride: FirBasedSymbol<*>): SubstitutedData {
@@ -307,7 +308,7 @@ class FirClassSubstitutionScope(
         val newDispatchReceiverType = dispatchReceiverTypeForSubstitutedMembers.substitute(substitutor)
 
         val returnType = member.returnTypeRef.coneTypeSafe<ConeKotlinType>()
-        val callableCopySubstitution = runIf(returnType == null) { CallableCopySubstitution(substitutor, member.symbol) }
+        val deferredReturnTypeOfSubstitution = runIf(returnType == null) { DeferredReturnTypeOfSubstitution(substitutor, member.symbol) }
         val newReturnType = returnType?.substitute(substitutor)
         return SubstitutedData(
             newTypeParameters,
@@ -315,7 +316,7 @@ class FirClassSubstitutionScope(
             newReceiverType,
             newReturnType,
             substitutor,
-            callableCopySubstitution
+            deferredReturnTypeOfSubstitution
         )
     }
 
@@ -377,3 +378,20 @@ class FirSubstitutionOverrideStorage(val session: FirSession) : FirSessionCompon
 }
 
 private val FirSession.substitutionOverrideStorage: FirSubstitutionOverrideStorage by FirSession.sessionComponentAccessor()
+
+internal class DeferredReturnTypeOfSubstitution(
+    private val substitutor: ConeSubstitutor,
+    private val baseSymbol: FirBasedSymbol<*>,
+) : DeferredCallableCopyReturnType() {
+    override fun computeReturnType(calc: CallableCopyTypeCalculator): ConeKotlinType? {
+        val baseDeclaration = baseSymbol.fir as FirCallableDeclaration
+        val baseReturnType = calc.computeReturnTypeOrNull(baseDeclaration) ?: return null
+        val coneType = substitutor.substituteOrSelf(baseReturnType)
+
+        return coneType
+    }
+
+    override fun toString(): String {
+        return "DeferredReturnTypeOfSubstitution(substitutor=$substitutor, baseSymbol=$baseSymbol)"
+    }
+}

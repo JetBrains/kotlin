@@ -346,8 +346,8 @@ open class ReturnTypeCalculatorWithJump(
         return newReturnTypeRef
     }
 
-    private inner class CallableCopyTypeCalculatorWithJump : CallableCopyTypeCalculator.AbstractCallableCopyTypeCalculator() {
-        override fun FirCallableDeclaration.getResolvedTypeRef(): FirResolvedTypeRef? {
+    private inner class CallableCopyTypeCalculatorWithJump : CallableCopyTypeCalculator.DeferredCallableCopyTypeCalculator() {
+        override fun FirCallableDeclaration.getResolvedTypeRef(): FirResolvedTypeRef {
             return this@ReturnTypeCalculatorWithJump.computeReturnTypeRef(this)
         }
     }
