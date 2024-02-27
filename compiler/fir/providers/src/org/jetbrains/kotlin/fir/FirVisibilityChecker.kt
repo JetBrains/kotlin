@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.container.topologicalSort
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
@@ -148,32 +147,33 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     }
 
     fun isVisibleForOverriding(
-        candidateInDerivedClass: FirMemberDeclaration,
-        candidateInBaseClass: FirMemberDeclaration,
-    ): Boolean =
-        isVisibleForOverriding(candidateInDerivedClass.moduleData, candidateInDerivedClass.symbol.packageFqName(), candidateInBaseClass)
+        candidateInDerivedClass: FirCallableDeclaration,
+        candidateInBaseClass: FirCallableDeclaration,
+    ): Boolean = isVisibleForOverriding(
+        candidateInDerivedClass.moduleData, candidateInDerivedClass.symbol.callableId.packageName, candidateInBaseClass
+    )
 
     fun isVisibleForOverriding(
         derivedClassModuleData: FirModuleData,
-        symbolFromDerivedClass: FirBasedSymbol<*>,
-        candidateInBaseClass: FirMemberDeclaration,
-    ): Boolean = isVisibleForOverriding(derivedClassModuleData, symbolFromDerivedClass.packageFqName(), candidateInBaseClass)
+        symbolFromDerivedClass: FirClassSymbol<*>,
+        candidateInBaseClass: FirCallableDeclaration,
+    ): Boolean = isVisibleForOverriding(derivedClassModuleData, symbolFromDerivedClass.classId.packageFqName, candidateInBaseClass)
 
-    fun isVisibleForOverriding(
+    private fun isVisibleForOverriding(
         derivedClassModuleData: FirModuleData,
         packageNameOfDerivedClass: FqName,
-        candidateInBaseClass: FirMemberDeclaration,
+        candidateInBaseClass: FirCallableDeclaration,
     ): Boolean = isSpecificDeclarationVisibleForOverriding(
         derivedClassModuleData,
         packageNameOfDerivedClass,
-        // It is important for package-private visiblity as fake override can be in another package
-        if (candidateInBaseClass is FirCallableDeclaration) candidateInBaseClass.originalOrSelf() else candidateInBaseClass,
+        // It is important for package-private visibility as fake override can be in another package
+        candidateInBaseClass.originalOrSelf(),
     )
 
     private fun isSpecificDeclarationVisibleForOverriding(
         derivedClassModuleData: FirModuleData,
         packageNameOfDerivedClass: FqName,
-        candidateInBaseClass: FirMemberDeclaration,
+        candidateInBaseClass: FirCallableDeclaration,
     ): Boolean = when (candidateInBaseClass.visibility) {
         Visibilities.Internal -> {
             candidateInBaseClass.moduleData == derivedClassModuleData ||

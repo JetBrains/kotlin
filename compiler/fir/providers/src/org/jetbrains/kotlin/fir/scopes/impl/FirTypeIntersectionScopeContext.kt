@@ -204,7 +204,7 @@ class FirTypeIntersectionScopeContext(
 
         return session.visibilityChecker.isVisibleForOverriding(
             dispatchClassSymbol.moduleData,
-            dispatchClassSymbol.classId.packageFqName,
+            dispatchClassSymbol,
             member.fir
         )
     }
