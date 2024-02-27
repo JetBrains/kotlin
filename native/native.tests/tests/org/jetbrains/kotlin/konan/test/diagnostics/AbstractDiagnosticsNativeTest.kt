@@ -6,13 +6,19 @@
 package org.jetbrains.kotlin.konan.test.diagnostics
 
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
+import org.jetbrains.kotlin.konan.test.FirNativeKlibBackendFacade
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
+import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -38,16 +44,19 @@ import java.io.File
 abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendOutput<R>> : AbstractKotlinCompilerTest() {
     abstract val targetFrontend: FrontendKind<R>
     abstract val frontend: Constructor<FrontendFacade<R>>
-    abstract fun handlersSetup(builder: TestConfigurationBuilder)
 
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() = Unit
+
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        super.configure(builder)
+
         globalDefaults {
             frontend = targetFrontend
             targetPlatform = NativePlatforms.unspecifiedNativePlatform
             dependencyKind = DependencyKind.Source
         }
+        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
         baseNativeDiagnosticTestConfiguration(frontend)
-        handlersSetup(this)
     }
 
     override fun runTest(filePath: String) {
@@ -56,7 +65,8 @@ abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendO
     }
 
     private fun mutePlatformTestIfNecessary(filePath: String) {
-        if(HostManager.hostIsMac) return
+        if (HostManager.hostIsMac) return
+
         if (InTextDirectivesUtils.isDirectiveDefined(File(filePath).readText(), WITH_PLATFORM_LIBS.name))
             Assumptions.abort<Nothing>("Diagnostic tests using platform libs are not supported at non-Mac hosts. Test source: $filePath")
     }
@@ -85,7 +95,6 @@ fun <R : ResultingArtifact.FrontendOutput<R>> TestConfigurationBuilder.baseNativ
 
     facadeStep(frontendFacade)
 
-
     forTestsMatching("testData/diagnostics/nativeTests/*") {
         defaultDirectives {
             +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
@@ -100,41 +109,61 @@ abstract class AbstractDiagnosticsNativeTest : AbstractDiagnosticsNativeTestBase
     override val frontend: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
         get() = ::ClassicFrontendFacade
 
-    override fun handlersSetup(builder: TestConfigurationBuilder) {
-        builder.classicFrontendHandlersStep {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        super.configure(builder)
+
+        classicFrontendHandlersStep {
             useHandlers(
                 ::DeclarationsDumpHandler,
                 ::ClassicDiagnosticsHandler,
             )
         }
-        builder.useAdditionalService(::LibraryProvider)
+        useAdditionalService(::LibraryProvider)
     }
 }
 
-abstract class AbstractFirNativeDiagnosticsTestBase(val parser: FirParser) : AbstractDiagnosticsNativeTestBase<FirOutputArtifact>() {
+abstract class AbstractFirNativeDiagnosticsTestBase(
+    private val parser: FirParser
+) : AbstractDiagnosticsNativeTestBase<FirOutputArtifact>() {
     override val targetFrontend: FrontendKind<FirOutputArtifact>
         get() = FrontendKinds.FIR
 
     override val frontend: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirFrontendFacade
 
-    override fun handlersSetup(builder: TestConfigurationBuilder) {
-        builder.baseFirNativeDiagnosticTestConfiguration()
-    }
-
-    override fun configure(builder: TestConfigurationBuilder) {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
-        with(builder) {
-            configureFirParser(parser)
-            enableLazyResolvePhaseChecking()
 
-            forTestsMatching("compiler/testData/diagnostics/*") {
-                configurationForClassicAndFirTestsAlongside()
-            }
+        configureFirParser(parser)
 
-            defaultDirectives {
-                LanguageSettingsDirectives.LANGUAGE + "+EnableDfaWarningsInK2"
-            }
+        baseFirNativeDiagnosticTestConfiguration()
+        enableLazyResolvePhaseChecking()
+
+        forTestsMatching("compiler/testData/diagnostics/*") {
+            configurationForClassicAndFirTestsAlongside()
+        }
+
+        defaultDirectives {
+            LanguageSettingsDirectives.LANGUAGE + "+EnableDfaWarningsInK2"
+        }
+    }
+}
+
+abstract class AbstractFirNativeDiagnosticsWithBackendTestBase(parser: FirParser) : AbstractFirNativeDiagnosticsTestBase(parser) {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        super.configure(builder)
+
+        globalDefaults {
+            targetBackend = TargetBackend.NATIVE
+        }
+
+        useAdditionalService(::LibraryProvider)
+
+        facadeStep(::Fir2IrNativeResultsConverter)
+        facadeStep(::FirNativeKlibBackendFacade)
+
+        klibArtifactsHandlersStep {
+            useHandlers(::KlibBackendDiagnosticsHandler)
         }
     }
 }
@@ -155,3 +184,5 @@ fun TestConfigurationBuilder.baseFirNativeDiagnosticTestConfiguration() {
 
 abstract class AbstractFirPsiNativeDiagnosticsTest : AbstractFirNativeDiagnosticsTestBase(FirParser.Psi)
 abstract class AbstractFirLightTreeNativeDiagnosticsTest : AbstractFirNativeDiagnosticsTestBase(FirParser.LightTree)
+
+abstract class AbstractFirPsiNativeDiagnosticsWithBackendTestBase : AbstractFirNativeDiagnosticsWithBackendTestBase(FirParser.Psi)
