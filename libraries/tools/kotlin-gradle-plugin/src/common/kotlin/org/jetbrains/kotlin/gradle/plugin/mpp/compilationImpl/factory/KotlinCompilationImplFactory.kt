@@ -19,7 +19,7 @@ internal class KotlinCompilationImplFactory(
         DefaultKotlinCompilationSourceSetsContainerFactory(),
 
     private val compilationDependencyConfigurationsFactory: KotlinCompilationDependencyConfigurationsFactory =
-        DefaultKotlinCompilationDependencyConfigurationsFactory.WithRuntime,
+        DefaultKotlinCompilationDependencyConfigurationsFactory.WithRuntime(),
 
     private val compilationAssociator: KotlinCompilationAssociator =
         DefaultKotlinCompilationAssociator,

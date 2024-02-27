@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.configureResourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import org.jetbrains.kotlin.gradle.utils.copyAttributesTo
 
 enum class KotlinTargetResourcesResolutionStrategy {
     VariantReselection,
@@ -27,7 +26,7 @@ enum class KotlinTargetResourcesResolutionStrategy {
                     compilation.internal.configurations.runtimeDependencyConfiguration
                         ?: return compilation.project.files().also {
                             compilation.project.reportDiagnostic(
-                                KotlinToolingDiagnostics.MissingConfigurationForWasmTarget(compilation.target.name)
+                                KotlinToolingDiagnostics.MissingRuntimeDependencyConfigurationForWasmTarget(compilation.target.name)
                             )
                         }
                 } else {
