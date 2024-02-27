@@ -293,6 +293,14 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 break;
             }
         }
+        if (modality != Modality.FINAL) {
+            for (FunctionDescriptor function : overriddenFunctions) {
+                if (function.getModality() == Modality.FINAL) {
+                    modality = Modality.FINAL;
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -774,8 +782,15 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                     @Override
                     public Collection<FunctionDescriptor> invoke() {
                         Collection<FunctionDescriptor> result = new SmartList<FunctionDescriptor>();
+                        boolean isFinal = modality == Modality.FINAL;
                         for (FunctionDescriptor overriddenFunction : getOverriddenDescriptors()) {
                             result.add(overriddenFunction.substitute(substitutor));
+                            if (overriddenFunction.getModality() == Modality.FINAL) {
+                                isFinal = true;
+                            }
+                        }
+                        if (modality != Modality.FINAL && isFinal) {
+                            modality = Modality.FINAL;
                         }
                         return result;
                     }

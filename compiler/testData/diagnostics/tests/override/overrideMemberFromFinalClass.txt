@@ -35,7 +35,7 @@ public final class B2 : A2 {
 public final class Bar : Foo {
     public constructor Bar()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ fun finalFoo(): kotlin.Unit
+    public final override /*1*/ fun finalFoo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ fun openFoo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -65,3 +65,4 @@ public final class Foo {
     public open fun openFoo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

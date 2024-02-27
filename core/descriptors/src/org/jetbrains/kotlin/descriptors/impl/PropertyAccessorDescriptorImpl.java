@@ -31,7 +31,7 @@ import java.util.List;
 public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescriptorNonRootImpl implements PropertyAccessorDescriptor {
     private boolean isDefault;
     private final boolean isExternal;
-    private final Modality modality;
+    private Modality modality;
     private final PropertyDescriptor correspondingProperty;
     private final boolean isInline;
     private final Kind kind;
@@ -205,11 +205,18 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
     @NotNull
     protected Collection<PropertyAccessorDescriptor> getOverriddenDescriptors(boolean isGetter) {
         Collection<PropertyAccessorDescriptor> result = new ArrayList<PropertyAccessorDescriptor>(0);
+        boolean isFinal = modality == Modality.FINAL;
         for (PropertyDescriptor overriddenProperty : getCorrespondingProperty().getOverriddenDescriptors()) {
             PropertyAccessorDescriptor accessorDescriptor = isGetter ? overriddenProperty.getGetter() : overriddenProperty.getSetter();
             if (accessorDescriptor != null) {
                 result.add(accessorDescriptor);
+                if (accessorDescriptor.getModality() == Modality.FINAL) {
+                    isFinal = true;
+                }
             }
+        }
+        if (isFinal) {
+            modality = Modality.FINAL;
         }
         return result;
     }

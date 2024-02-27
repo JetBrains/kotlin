@@ -8785,6 +8785,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
   @TestDataPath("$PROJECT_ROOT")
   public class Collections {
     @Test
+    @TestMetadata("accidentialOverrideOfSpecialBridges.kt")
+    public void testAccidentialOverrideOfSpecialBridges() {
+      runTest("compiler/testData/codegen/box/collections/accidentialOverrideOfSpecialBridges.kt");
+    }
+
+    @Test
     @TestMetadata("addCollectionStubWithCovariantOverride.kt")
     public void testAddCollectionStubWithCovariantOverride() {
       runTest("compiler/testData/codegen/box/collections/addCollectionStubWithCovariantOverride.kt");

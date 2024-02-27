@@ -7656,6 +7656,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
 
+    @TestMetadata("accidentialOverrideOfSpecialBridges.kt")
+    public void testAccidentialOverrideOfSpecialBridges() {
+      runTest("compiler/testData/codegen/box/collections/accidentialOverrideOfSpecialBridges.kt");
+    }
+
     @TestMetadata("addCollectionStubWithCovariantOverride.kt")
     public void testAddCollectionStubWithCovariantOverride() {
       runTest("compiler/testData/codegen/box/collections/addCollectionStubWithCovariantOverride.kt");

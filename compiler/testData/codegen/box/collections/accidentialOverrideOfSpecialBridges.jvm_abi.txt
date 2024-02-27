@@ -1,0 +1,14 @@
+MODULE main
+	CLASS X.class
+		K1
+			---
+		K2
+			contains(Ljava/lang/String;)Z [public, abstract]
+		K1
+			getSize()I [public, bridge]
+		K2
+			---
+		K1
+			---
+		K2
+			remove(I)Ljava/lang/String; [public, final, bridge]

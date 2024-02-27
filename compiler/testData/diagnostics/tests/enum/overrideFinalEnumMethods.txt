@@ -7,11 +7,11 @@ public final enum class E : kotlin.Enum<E> {
     public open override /*1*/ val name: kotlin.String = "lol"
     public open override /*1*/ val ordinal: kotlin.Int = 0
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
-    public open override /*1*/ fun compareTo(/*0*/ other: E): kotlin.Int
-    public open override /*1*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ fun compareTo(/*0*/ other: E): kotlin.Int
+    public final override /*1*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
     public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<E!>!
-    public open override /*1*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
@@ -19,3 +19,4 @@ public final enum class E : kotlin.Enum<E> {
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): E
     public final /*synthesized*/ fun values(): kotlin.Array<E>
 }
+
