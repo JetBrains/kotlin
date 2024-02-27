@@ -91,6 +91,7 @@ konanTargetList.forEach { target ->
 
         if (target in cacheableTargets) {
             val cacheTask = tasks.register("${libName}Cache", KonanCacheTask::class.java) {
+                notCompatibleWithConfigurationCache("project used in execution time")
                 this.target = targetName
                 originalKlib.fileProvider(libTask.map {
                     it.artifactDirectory ?: error("Artifact wasn't set for ${it.name}")

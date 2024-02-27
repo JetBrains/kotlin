@@ -77,9 +77,7 @@ abstract class KonanCacheTask : DefaultTask() {
 
     @get:Input
     /** Path to a compiler distribution that is used to build this cache. */
-    val compilerDistributionPath: Property<File> = project.objects.property(File::class.java).apply {
-        set(project.provider { project.kotlinNativeDist })
-    }
+    val compilerDistributionPath: Property<File> = project.objects.property(File::class.java).convention(project.kotlinNativeDist)
 
     @get:Input
     var cachedLibraries: Map<File, File> = emptyMap()
