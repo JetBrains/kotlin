@@ -453,8 +453,8 @@ open class FirSupertypeResolverVisitor(
             if (!classLikeDeclaration.isLocalClassOrAnonymousObject()) {
                 session.lookupTracker?.let {
                     val fileSource = getFirClassifierContainerFileIfAny(classLikeDeclaration.symbol)?.source
+                    val scopeOwnerLookupNames = scopeDeclaration.scopes.flatMap { scope -> scope.scopeOwnerLookupNames }
                     for (supertypeRef in supertypeRefs) {
-                        val scopeOwnerLookupNames = scopeDeclaration.scopes.flatMap { scope -> scope.scopeOwnerLookupNames }
                         it.recordTypeLookup(supertypeRef, scopeOwnerLookupNames, fileSource)
                     }
                 }

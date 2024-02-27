@@ -132,8 +132,6 @@ class FirSignatureEnhancement(
                     symbol = FirEnumEntrySymbol(firElement.symbol.callableId)
                     returnTypeRef = newReturnTypeRef
                     origin = FirDeclarationOrigin.Enhancement
-                }.apply {
-                    session.lookupTracker?.recordTypeResolveAsLookup(newReturnTypeRef, this.source, null)
                 }.symbol
             }
             is FirField -> {

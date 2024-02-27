@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.HidesMembers
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 enum class ProcessResult {
@@ -277,17 +276,16 @@ class MemberScopeTowerLevel(
     ): ProcessResult {
         val lookupTracker = session.lookupTracker
         return processMembers(info, processor) { consumer ->
-            withMemberCallLookup(lookupTracker, info) { lookupCtx ->
-                this.processFunctionsAndConstructorsByName(
-                    info, session, bodyResolveComponents,
-                    ConstructorFilter.OnlyInner,
-                    processor = {
-                        lookupCtx.recordCallableMemberLookup(it)
-                        // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
-                        consumer(it as FirFunctionSymbol<*>)
-                    }
-                )
-            }
+            lookupTracker?.recordCallLookup(info, dispatchReceiverValue.type)
+            this.processFunctionsAndConstructorsByName(
+                info, session, bodyResolveComponents,
+                ConstructorFilter.OnlyInner,
+                processor = {
+                    lookupTracker?.recordCallableCandidateAsLookup(it, info.callSite.source, info.containingFile.source)
+                    // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
+                    consumer(it as FirFunctionSymbol<*>)
+                }
+            )
         }
     }
 
@@ -297,12 +295,10 @@ class MemberScopeTowerLevel(
     ): ProcessResult {
         val lookupTracker = session.lookupTracker
         return processMembers(info, processor) { consumer ->
-            withMemberCallLookup(lookupTracker, info) { lookupCtx ->
-                lookupTracker?.recordCallLookup(info, dispatchReceiverValue.type)
-                this.processPropertiesByName(info.name) {
-                    lookupCtx.recordCallableMemberLookup(it)
-                    consumer(it)
-                }
+            lookupTracker?.recordCallLookup(info, dispatchReceiverValue.type)
+            this.processPropertiesByName(info.name) {
+                lookupTracker?.recordCallableCandidateAsLookup(it, info.callSite.source, info.containingFile.source)
+                consumer(it)
             }
         }
     }
@@ -312,28 +308,6 @@ class MemberScopeTowerLevel(
         processor: TowerScopeLevelProcessor<FirBasedSymbol<*>>
     ): ProcessResult {
         return ProcessResult.FOUND
-    }
-
-    private inline fun withMemberCallLookup(
-        lookupTracker: FirLookupTrackerComponent?,
-        info: CallInfo,
-        body: (Triple<FirLookupTrackerComponent?, SmartList<String>, CallInfo>) -> Unit
-    ) {
-        lookupTracker?.recordCallLookup(info, dispatchReceiverValue.type)
-        val lookupScopes = SmartList<String>()
-        body(Triple(lookupTracker, lookupScopes, info))
-        if (lookupScopes.isNotEmpty()) {
-            lookupTracker?.recordCallLookup(info, lookupScopes)
-        }
-    }
-
-    private fun Triple<FirLookupTrackerComponent?, SmartList<String>, CallInfo>.recordCallableMemberLookup(callable: FirCallableSymbol<*>) {
-        first?.run {
-            recordTypeResolveAsLookup(callable.fir.returnTypeRef, third.callSite.source, third.containingFile.source)
-            callable.callableId.classId?.takeIf { !it.isLocal }?.let { lookupScope ->
-                second.add(lookupScope.asFqNameString())
-            }
-        }
     }
 
     private fun FirCallableSymbol<*>.hasConsistentExtensionReceiver(givenExtensionReceivers: List<FirExpression>): Boolean {

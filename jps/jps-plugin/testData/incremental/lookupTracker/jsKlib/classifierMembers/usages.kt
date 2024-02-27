@@ -8,7 +8,7 @@ import bar.*
     /*p:foo p:foo.A(c)*/A().c
     /*p:foo p:foo.A(d)*/A().d = "new value"
     /*p:foo p:foo.A(foo)*/A().foo()
-    /*p:foo p:foo(B) p:foo.A.B(a)*/A.B().a
+    /*p:foo p:foo.A.B(a)*/A.B().a
     /*p:bar(bar) p:foo p:foo(bar) p:foo.A.B.CO(bar)*/A.B.bar(1)
     /*p:bar(bar) p:foo p:foo(bar) p:foo.A.B.CO(bar)*/A.B.CO.bar(1)
     /*p:foo*/A

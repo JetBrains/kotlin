@@ -476,18 +476,13 @@ private fun Candidate.prepareExpectedType(
         getExpectedTypeWithSAMConversion(session, scopeSession, argument, basicExpectedType, context)?.also {
             session.lookupTracker?.let { lookupTracker ->
                 parameter.returnTypeRef.coneType.lowerBoundIfFlexible().classId?.takeIf { !it.isLocal }?.let { classId ->
-                    lookupTracker.recordLookup(
-                        SAM_LOOKUP_NAME,
-                        classId.asString(),
+                    lookupTracker.recordClassMemberLookup(
+                        SAM_LOOKUP_NAME.asString(),
+                        classId,
                         callInfo.callSite.source,
                         callInfo.containingFile.source
                     )
-                    lookupTracker.recordLookup(
-                        classId.shortClassName,
-                        classId.packageFqName.asString(),
-                        callInfo.callSite.source,
-                        callInfo.containingFile.source
-                    )
+                    lookupTracker.recordClassLikeLookup(classId, callInfo.callSite.source, callInfo.containingFile.source)
                 }
             }
         }

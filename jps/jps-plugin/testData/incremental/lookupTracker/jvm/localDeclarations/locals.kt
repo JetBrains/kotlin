@@ -31,7 +31,7 @@ import bar.*
     }
 
     localFun()
-    /*p:IOT(localExtFun)*/1.localExtFun()
+    1.localExtFun()
 
     val c = LocalC()
     c.a

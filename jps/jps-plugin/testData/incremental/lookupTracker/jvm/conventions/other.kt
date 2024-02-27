@@ -12,5 +12,5 @@ package foo.bar
     val (/*p:foo.bar(A) p:foo.bar.A(component1)*/h, /*p:foo.bar(A) p:foo.bar(component2) p:foo.bar.A(component2)*/t) = a;
 
     for ((/*p:foo.bar(A) p:foo.bar.A(component1)*/f, /*p:foo.bar(A) p:foo.bar(component2) p:foo.bar.A(component2)*/s) in /*p:foo.bar(A) p:foo.bar(hasNext) p:foo.bar.A(hasNext) p:foo.bar.A(iterator) p:foo.bar.A(next)*/a);
-    for ((/*p:foo.bar(A) p:foo.bar.A(component1)*/f, /*p:foo.bar(A) p:foo.bar(component2) p:foo.bar.A(component2)*/s) in /*p:foo.bar(A) p:foo.bar(hasNext) p:foo.bar(iterator) p:foo.bar.A(hasNext) p:foo.bar.A(iterator) p:foo.bar.A(next) p:foo.bar.A?(iterator)*/na);
+    for ((/*p:foo.bar(A) p:foo.bar.A(component1)*/f, /*p:foo.bar(A) p:foo.bar(component2) p:foo.bar.A(component2)*/s) in /*p:foo.bar(A) p:foo.bar(hasNext) p:foo.bar(iterator) p:foo.bar.A(hasNext) p:foo.bar.A(iterator) p:foo.bar.A(next)*/na);
 }
