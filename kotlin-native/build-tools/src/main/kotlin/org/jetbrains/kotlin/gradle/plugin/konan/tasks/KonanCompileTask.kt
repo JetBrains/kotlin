@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.tasks
 
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
 import org.gradle.process.CommandLineArgumentProvider
@@ -13,11 +14,12 @@ import org.jetbrains.kotlin.gradle.plugin.konan.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import java.io.File
 import java.util.*
+import javax.inject.Inject
 
 /**
  * A task compiling the target executable/library using Kotlin/Native compiler
  */
-abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
+abstract class KonanCompileTask @Inject constructor(private val layout: ProjectLayout):  KonanBuildingTask(), KonanCompileSpec {
 
     @get:Internal
     override val toolRunner = KonanCliCompilerRunner(project, project.konanExtension.jvmArgs)
@@ -46,8 +48,11 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     // Other compilation parameters -------------------------------------------
 
     private val srcFiles_ = mutableSetOf<FileCollection>()
+    private val defaultFiles = project.konanDefaultSrcFiles
     val srcFiles: Collection<FileCollection>
-        @Internal get() = srcFiles_.takeIf { !it.isEmpty() } ?: listOf(project.konanDefaultSrcFiles)
+        @Internal get() {
+            return srcFiles_.takeIf { !it.isEmpty() } ?: listOf(defaultFiles)
+        }
 
     val allSources: Collection<FileCollection>
         @InputFiles @PathSensitive(PathSensitivity.RELATIVE) get() = listOf(srcFiles, commonSrcFiles).flatten()
@@ -76,10 +81,15 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
     @Console var measureTime       = false
 
+    private val konanBuildRoot = project.konanBuildRoot
+
+    @Internal
+    val konanExtension = project.konanExtension
+
     val languageVersion : String?
-        @Optional @Input get() = project.konanExtension.languageVersion
+        @Optional @Input get() = konanExtension.languageVersion
     val apiVersion      : String?
-        @Optional @Input get() = project.konanExtension.apiVersion
+        @Optional @Input get() = konanExtension.apiVersion
 
     @Input var buildNumber = project.properties.get("kotlinVersion") ?: error("kotlinVersion property is not specified in the project")
 
@@ -94,7 +104,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
     protected fun directoryToKt(dir: Any) = project.fileTree(dir).apply {
         include("**/*.kt")
-        exclude { it.file.startsWith(project.layout.buildDirectory.get().asFile) }
+        exclude { it.file.startsWith(layout.buildDirectory.get().asFile) }
     }
 
     // Command line  ------------------------------------------------------------
@@ -175,8 +185,8 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
     /** Args passed to the compiler at both stages of the two-stage compilation and during the singe-stage compilation. */
     protected open fun buildCommonArgs() = mutableListOf<String>().apply {
-        if (platformConfiguration.files.isNotEmpty()) {
-            platformConfiguration.files.filter { it.name.endsWith(".klib") }.forEach {
+        if (platformConfigurationFiles.files.isNotEmpty()) {
+            platformConfigurationFiles.files.filter { it.name.endsWith(".klib") }.forEach {
                 // The library's directory is added in libraries.repos.
                 addArg("-library", it.absolutePath)
             }
@@ -328,7 +338,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         }
         if (enableTwoStageCompilation) {
             logger.info("Start two-stage compilation")
-            val intermediateDir = project.konanBuildRoot
+            val intermediateDir = konanBuildRoot
                 .resolve("intermediate")
                 .targetSubdir(konanTarget)
                 .apply { mkdirs() }
@@ -345,12 +355,12 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     }
 }
 
-abstract class KonanCompileNativeBinary: KonanCompileTask() {
+abstract class KonanCompileNativeBinary @Inject constructor(layout: ProjectLayout) : KonanCompileTask(layout) {
     @Input
     override var enableTwoStageCompilation: Boolean = false
 }
 
-open class KonanCompileProgramTask: KonanCompileNativeBinary() {
+abstract class KonanCompileProgramTask @Inject constructor(layout: ProjectLayout): KonanCompileNativeBinary(layout) {
     override val produce: CompilerOutputKind get() = CompilerOutputKind.PROGRAM
 
     @Internal
@@ -363,14 +373,14 @@ open class KonanCompileProgramTask: KonanCompileNativeBinary() {
     }
 }
 
-open class KonanCompileDynamicTask: KonanCompileNativeBinary() {
+abstract class KonanCompileDynamicTask @Inject constructor(layout: ProjectLayout): KonanCompileNativeBinary(layout) {
     override val produce: CompilerOutputKind get() = CompilerOutputKind.DYNAMIC
 
     val headerFile: File
         @OutputFile get() = destinationDir.resolve("$artifactPrefix${artifactName}_api.h")
 }
 
-open class KonanCompileFrameworkTask: KonanCompileNativeBinary() {
+abstract class KonanCompileFrameworkTask @Inject constructor(layout: ProjectLayout): KonanCompileNativeBinary(layout) {
     override val produce: CompilerOutputKind get() = CompilerOutputKind.FRAMEWORK
 
     override val artifact
@@ -378,7 +388,11 @@ open class KonanCompileFrameworkTask: KonanCompileNativeBinary() {
 }
 
 @CacheableTask
-open class KonanCompileLibraryTask: KonanCompileTask() {
+abstract class KonanCompileLibraryTask @Inject constructor(layout: ProjectLayout) : KonanCompileTask(layout) {
+    init {
+        this.notCompatibleWithConfigurationCache("project references stored")
+    }
+
     override val artifact: File
         @Internal get() = destinationDir.resolve(artifactFullName)
 
@@ -399,6 +413,6 @@ open class KonanCompileLibraryTask: KonanCompileTask() {
     override val enableTwoStageCompilation: Boolean = false
 }
 
-open class KonanCompileBitcodeTask: KonanCompileNativeBinary() {
+abstract class KonanCompileBitcodeTask @Inject constructor(layout: ProjectLayout): KonanCompileNativeBinary(layout) {
     override val produce: CompilerOutputKind get() = CompilerOutputKind.BITCODE
 }

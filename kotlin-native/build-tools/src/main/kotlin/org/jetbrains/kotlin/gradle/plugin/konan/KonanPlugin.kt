@@ -224,7 +224,6 @@ internal fun dumpProperties(task: Task) {
             println("languageVersion    : $languageVersion")
             println("apiVersion         : $apiVersion")
             println("konanVersion       : ${KotlinVersion.CURRENT}")
-            println("konanHome          : $konanHome")
             println()
         }
         is KonanInteropTask -> with(task) {
@@ -244,7 +243,6 @@ internal fun dumpProperties(task: Task) {
             println("headers            : ${headers.dump()}")
             println("linkFiles          : ${linkFiles.dump()}")
             println("konanVersion       : ${KotlinVersion.CURRENT}")
-            println("konanHome          : $konanHome")
             println()
         }
         else -> {

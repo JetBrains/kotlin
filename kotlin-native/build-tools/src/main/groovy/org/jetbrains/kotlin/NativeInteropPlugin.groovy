@@ -203,6 +203,7 @@ class NamedNativeInteropConfig implements Named {
         }
 
         genTask.configure {
+            notCompatibleWithConfigurationCache("This task uses Task.project at execution time")
             dependsOn project.extensions.nativeDependencies.hostPlatformDependency
             dependsOn project.extensions.nativeDependencies.llvmDependency
             dependsOn ":kotlin-native:Interop:Indexer:nativelibs"
