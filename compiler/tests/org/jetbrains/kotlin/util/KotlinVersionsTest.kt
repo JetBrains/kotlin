@@ -35,7 +35,7 @@ import kotlin.test.Ignore
 @Ignore("Enable when KT-69280 is fixed")
 class KotlinVersionsTest : KtUsefulTestCase() {
     fun testVersionsAreConsistent() {
-        val versionPattern = "(\\d+)\\.(\\d+)(\\.(\\d+))?(?:-(\\p{Alpha}*\\p{Alnum}|[\\p{Alpha}-]*))?(?:-(\\d+))?".toRegex()
+        val versionPattern = "(\\d+)\\.(\\d+)(\\.(\\d+))?(?:-(\\p{Alpha}*\\p{Alnum}+(?:\\.\\p{Alnum}+)*|-[\\p{Alnum}.-]+))?(?:-(\\d+))?".toRegex()
 
         data class Version(val major: Int, val minor: Int, val patch: Int?, val versionString: String, val source: String) {
             fun isConsistentWith(other: Version): Boolean {
