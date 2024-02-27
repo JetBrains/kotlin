@@ -1,0 +1,2 @@
+error: '-Xjdk-release=1.6' option conflicts with '-jvm-target 9'. Please change the value of the 'jvm-target' option to 1.8
+COMPILATION_ERROR

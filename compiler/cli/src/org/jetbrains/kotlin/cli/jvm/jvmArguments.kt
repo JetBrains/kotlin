@@ -43,10 +43,12 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
                 put(JVMConfigurationKeys.JDK_RELEASE, value)
             }
             if (jvmTargetArg != null && !isCompatibleJvmTargetAndRelease(jvmTargetArg, releaseTargetArg)) {
+                val suggestion =
+                    if (value < 8) "Please change the value of the 'jvm-target' option to 1.8"
+                    else "Please remove the '-jvm-target' option"
                 messageCollector.report(
                     ERROR,
-                    "'-Xjdk-release=$releaseTargetArg' option conflicts with '-jvm-target $jvmTargetArg'. " +
-                            "Please remove the '-jvm-target' option"
+                    "'-Xjdk-release=$releaseTargetArg' option conflicts with '-jvm-target $jvmTargetArg'. $suggestion"
                 )
             }
         }
@@ -57,7 +59,8 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
             if (jvmTargetArg == null) {
                 messageCollector.report(
                     ERROR,
-                    "'-Xjdk-release=$releaseTargetArg' option requires explicit JVM target. Please specify the '-jvm-target' option"
+                    "'-Xjdk-release=$releaseTargetArg' option requires JVM target explicitly set to 1.8. " +
+                            "Please specify the '-jvm-target' option"
                 )
             }
             jvmTargetArg
