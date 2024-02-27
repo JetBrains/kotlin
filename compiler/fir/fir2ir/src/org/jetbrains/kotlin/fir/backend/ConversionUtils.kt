@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.psi.PsiCompiledElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
@@ -67,6 +69,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -918,3 +921,16 @@ val incOrDeclSourceKindToIrStatementOrigin = mapOf(
     KtFakeSourceElementKind.DesugaredPrefixIncSecondGetReference to IrStatementOrigin.PREFIX_INCR,
     KtFakeSourceElementKind.DesugaredPrefixDecSecondGetReference to IrStatementOrigin.PREFIX_DECR
 )
+
+internal inline fun <R> convertCatching(element: FirElement, conversionScope: Fir2IrConversionScope? = null, block: () -> R): R {
+    try {
+        return block()
+    } catch (e: ProcessCanceledException) {
+        throw e
+    } catch (e: Throwable) {
+        errorWithAttachment("Exception was thrown during transformation of ${element::class.java}", cause = e) {
+            withFirEntry("element", element)
+            conversionScope?.containingFileIfAny()?.let { withEntry("file", it.path) }
+        }
+    }
+}
