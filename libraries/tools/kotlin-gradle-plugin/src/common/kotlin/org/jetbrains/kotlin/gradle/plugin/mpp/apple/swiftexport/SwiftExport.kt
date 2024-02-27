@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsIm
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -26,12 +24,13 @@ import org.jetbrains.kotlin.gradle.utils.getOrCreate
 import org.jetbrains.kotlin.gradle.utils.konanDistribution
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.mapToFile
+import org.jetbrains.kotlin.konan.target.Distribution
 
 fun Project.registerSwiftExportTask(
     framework: Framework,
 ): TaskProvider<*> {
     return registerSwiftExportTask(
-        swiftApiModuleName = framework.baseNameProvider,
+        swiftApiModuleName = provider { framework.baseName },
         target = framework.target,
         buildType = framework.buildType,
     )
@@ -112,16 +111,16 @@ private fun Project.registerSwiftExportRun(
         val kotlinIntermediates = outputs.map { it.dir("kotlinIntermediates") }
 
         // Input
-        task.swiftExportClasspath.from(project.maybeCreateSwiftExportClasspathResolvableConfiguration())
-        task.parameters.sourceRoot.set(commonMainProvider.getOrThrow())
-        task.parameters.bridgeModuleName.set(swiftApiModuleName.map { "${it}Bridge" })
-        task.parameters.debugMode.set(true)
-        task.parameters.konanDistribution.set(konanDistribution.root)
+        task.swiftExportClasspath.from(maybeCreateSwiftExportClasspathResolvableConfiguration())
+        task.parameters.sourceRoot.convention(commonMainProvider.map { objects.directoryProperty(it) }.getOrThrow())
+        task.parameters.bridgeModuleName.convention(swiftApiModuleName.map { "${it}Bridge" })
+        task.parameters.debugMode.convention(true)
+        task.parameters.konanDistribution.convention(Distribution(konanDistribution.root.absolutePath))
 
         // Output
-        task.parameters.swiftApiPath.set(swiftIntermediates.map { it.file("KotlinAPI.swift") })
-        task.parameters.headerBridgePath.set(swiftIntermediates.map { it.file("KotlinBridge.h") })
-        task.parameters.kotlinBridgePath.set(kotlinIntermediates.map { it.file("KotlinBridge.kt") })
+        task.parameters.swiftApiPath.convention(swiftIntermediates.map { it.file("KotlinAPI.swift") })
+        task.parameters.headerBridgePath.convention(swiftIntermediates.map { it.file("KotlinBridge.h") })
+        task.parameters.kotlinBridgePath.convention(kotlinIntermediates.map { it.file("KotlinBridge.kt") })
     }
 }
 
@@ -174,13 +173,19 @@ private fun Project.registerPackageGeneration(
         task.description = "Generates $taskNamePrefix SPM Package"
 
         // Input
-        task.swiftApiPath.set(swiftExportTask.map { it.parameters.swiftApiPath.get() })
-        task.headerBridgePath.set(swiftExportTask.map { it.parameters.headerBridgePath.get() })
-        task.headerBridgeModuleName.set(swiftExportTask.map { it.parameters.bridgeModuleName.get() })
-        task.libraryPath.set { staticLibrary.linkTaskProvider.map { it.outputFile.get() }.get() }
-        task.swiftLibraryName.set(swiftApiLibraryName)
-        task.kotlinLibraryName.set(kotlinStaticLibraryName)
-        task.swiftApiModuleName.set(swiftApiModuleName)
+        task.kotlinRuntime.convention(
+            objects.directoryProperty(
+                file(Distribution(konanDistribution.root.absolutePath).kotlinRuntimeForSwiftHome)
+            )
+        )
+
+        task.swiftApiPath.convention(swiftExportTask.flatMap { it.parameters.swiftApiPath })
+        task.headerBridgePath.convention(swiftExportTask.flatMap { it.parameters.headerBridgePath })
+        task.headerBridgeModuleName.convention(swiftExportTask.flatMap { it.parameters.bridgeModuleName })
+        task.libraryPath.convention(staticLibrary.linkTaskProvider.flatMap { layout.file(it.outputFile) })
+        task.swiftLibraryName.convention(swiftApiLibraryName)
+        task.kotlinLibraryName.convention(kotlinStaticLibraryName)
+        task.swiftApiModuleName.convention(swiftApiModuleName)
 
         // Output
         task.packagePath.set(syntheticBuildRoot.flatMap { root ->
@@ -205,7 +210,7 @@ private fun Project.registerSyntheticProjectBuild(
         task.description = "Builds $taskNamePrefix synthetic project"
         task.swiftApiModuleName.set(swiftApiModuleName)
         task.swiftLibraryName.set(swiftApiLibraryName)
-        task.syntheticProjectDirectory.set(syntheticBuildRoot)
+        task.syntheticProjectDirectory.convention(syntheticBuildRoot)
     }
     syntheticProjectBuild.dependsOn(packageGenerationTask)
     return syntheticProjectBuild
@@ -222,6 +227,7 @@ private fun Project.registerCopyTask(
         task.group = BasePlugin.BUILD_GROUP
         task.description = "Copy $taskNamePrefix synthetic project intermediates"
         task.includeBridgeDirectory.convention(layout.file(packageGenerationTask.map { it.headerBridgeIncludePath }))
+        task.includeKotlinRuntimeDirectory.convention(layout.file(packageGenerationTask.map { it.kotlinRuntimeIncludePath }))
         task.kotlinLibraryPath.convention(layout.file(staticLibrary.linkTaskProvider.flatMap { it.outputFile }))
         task.syntheticLibraryPath.convention(layout.file(syntheticProjectBuild.flatMap { it.syntheticLibraryPath.mapToFile() }))
         task.syntheticInterfacesPath.convention(layout.file(syntheticProjectBuild.flatMap { it.syntheticInterfacesPath.mapToFile() }))

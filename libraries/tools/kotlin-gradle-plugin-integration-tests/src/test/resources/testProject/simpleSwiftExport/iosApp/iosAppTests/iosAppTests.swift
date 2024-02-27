@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import shared
+@testable import Shared
 
 final class iosAppTests: XCTestCase {
 

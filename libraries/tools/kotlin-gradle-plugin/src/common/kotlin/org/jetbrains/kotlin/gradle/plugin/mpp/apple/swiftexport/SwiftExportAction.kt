@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport
 
 import org.gradle.workers.WorkAction
 import org.jetbrains.kotlin.gradle.utils.getFile
-import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.swiftexport.standalone.*
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -40,7 +39,7 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportParameters> {
                     SwiftExportConfig.BRIDGE_MODULE_NAME to parameters.bridgeModuleName.getOrElse(SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME),
                 ),
                 Companion,
-                distribution = Distribution(parameters.konanDistribution.getFile().absolutePath),
+                distribution = parameters.konanDistribution.get(),
             ),
             output = SwiftExportOutput(
                 swiftApi = parameters.swiftApiPath.getFile().toPath(),

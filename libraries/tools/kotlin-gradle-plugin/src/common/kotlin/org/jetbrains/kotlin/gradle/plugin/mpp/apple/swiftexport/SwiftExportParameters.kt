@@ -10,6 +10,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.workers.WorkParameters
+import org.jetbrains.kotlin.konan.target.Distribution
 
 internal interface SwiftExportParameters : WorkParameters {
 
@@ -19,9 +20,8 @@ internal interface SwiftExportParameters : WorkParameters {
     @get:Input
     val debugMode: Property<Boolean>
 
-    @get:InputDirectory
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    val konanDistribution: DirectoryProperty
+    @get:Input
+    val konanDistribution: Property<Distribution>
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)

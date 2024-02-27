@@ -1,5 +1,5 @@
 import SwiftUI
-@testable import shared
+@testable import Shared
 
 struct ContentView: View {
     var body: some View {
