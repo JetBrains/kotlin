@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
@@ -197,7 +194,9 @@ private fun IrFakeOverrideBuilder.buildForAll(
         }
 
         override fun visitClass(declaration: IrClass) {
-            buildFakeOverrides(declaration)
+            if (declaration.metadata !is MetadataSource.CodeFragment) {
+                buildFakeOverrides(declaration)
+            }
             declaration.acceptChildrenVoid(this)
         }
     }
