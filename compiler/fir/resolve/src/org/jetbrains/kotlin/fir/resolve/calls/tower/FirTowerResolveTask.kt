@@ -86,15 +86,22 @@ internal abstract class FirBaseTowerResolveTask(
     protected fun FirScope.toScopeTowerLevel(
         extensionReceiver: ReceiverValue? = null,
         withHideMembersOnly: Boolean = false,
-        includeInnerConstructors: Boolean = extensionReceiver != null,
+        constructorFilter: ConstructorFilter = extensionReceiver.toConstructorFilter(),
         contextReceiverGroup: ContextReceiverGroup? = null,
         dispatchReceiverForStatics: ExpressionReceiverValue? = null
     ): ScopeTowerLevel {
         return ScopeTowerLevel(
             components, this,
             givenExtensionReceiverOptions = createExtensionReceiverOptions(contextReceiverGroup, extensionReceiver),
-            withHideMembersOnly, includeInnerConstructors, dispatchReceiverForStatics
+            withHideMembersOnly, constructorFilter, dispatchReceiverForStatics
         )
+    }
+
+    private fun ReceiverValue?.toConstructorFilter(): ConstructorFilter {
+        return when (this) {
+            null -> ConstructorFilter.OnlyNested
+            else -> ConstructorFilter.Both
+        }
     }
 
     protected fun FirScope.toScopeTowerLevelForStaticWithImplicitDispatchReceiver(
@@ -103,7 +110,7 @@ internal abstract class FirBaseTowerResolveTask(
     ): ScopeTowerLevel = toScopeTowerLevel(
         extensionReceiver = null,
         withHideMembersOnly = false,
-        includeInnerConstructors = false,
+        constructorFilter = ConstructorFilter.OnlyNested,
         contextReceiverGroup = null,
         staticOwnerOwnerSymbol?.let {
             val resolvedQualifier = buildResolvedQualifier {
@@ -256,7 +263,7 @@ internal open class FirTowerResolveTask(
         val callableScope = qualifierReceiver.callableScope() ?: return
         processLevel(
             callableScope.toScopeTowerLevel(
-                includeInnerConstructors = false,
+                constructorFilter = ConstructorFilter.OnlyNested,
                 dispatchReceiverForStatics = when (qualifierReceiver) {
                     is ClassQualifierReceiver -> ExpressionReceiverValue(qualifierReceiver.explicitReceiver)
                     else -> null
@@ -276,7 +283,7 @@ internal open class FirTowerResolveTask(
         ) return
         val scope = qualifierReceiver.classifierScope() ?: return
         processLevel(
-            scope.toScopeTowerLevel(includeInnerConstructors = false), info,
+            scope.toScopeTowerLevel(constructorFilter = ConstructorFilter.OnlyNested), info,
             TowerGroup.Classifier
         )
     }

@@ -280,7 +280,7 @@ class MemberScopeTowerLevel(
             withMemberCallLookup(lookupTracker, info) { lookupCtx ->
                 this.processFunctionsAndConstructorsByName(
                     info, session, bodyResolveComponents,
-                    includeInnerConstructors = true,
+                    ConstructorFilter.OnlyInner,
                     processor = {
                         lookupCtx.recordCallableMemberLookup(it)
                         // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
@@ -370,12 +370,12 @@ class ContextReceiverGroupMemberScopeTowerLevel(
 // So: dispatch receiver = strictly none (EXCEPTIONS: importing scopes with import from objects, synthetic field variable)
 // So: extension receiver = either none or explicit
 // (if explicit receiver exists, it always *should* be an extension receiver)
-class ScopeTowerLevel(
+internal class ScopeTowerLevel(
     private val bodyResolveComponents: BodyResolveComponents,
     val scope: FirScope,
     private val givenExtensionReceiverOptions: List<FirExpression>,
     private val withHideMembersOnly: Boolean,
-    private val includeInnerConstructors: Boolean,
+    private val constructorFilter: ConstructorFilter,
     private val dispatchReceiverForStatics: ExpressionReceiverValue?
 ) : TowerScopeLevel() {
     private val session: FirSession get() = bodyResolveComponents.session
@@ -486,7 +486,7 @@ class ScopeTowerLevel(
             info,
             session,
             bodyResolveComponents,
-            includeInnerConstructors = includeInnerConstructors
+            constructorFilter
         ) { candidate ->
             empty = false
             consumeCallableCandidate(candidate, info, processor)

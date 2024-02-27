@@ -30560,6 +30560,12 @@ public class FirLightTreeBlackBoxCodegenWithIrFakeOverrideGeneratorTestGenerated
     }
 
     @Test
+    @TestMetadata("inheritedInnerAndNested.kt")
+    public void testInheritedInnerAndNested() {
+      runTest("compiler/testData/codegen/box/innerNested/inheritedInnerAndNested.kt");
+    }
+
+    @Test
     @TestMetadata("innerGeneric.kt")
     public void testInnerGeneric() {
       runTest("compiler/testData/codegen/box/innerNested/innerGeneric.kt");
