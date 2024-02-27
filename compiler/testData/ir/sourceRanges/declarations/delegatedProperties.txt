@@ -11,7 +11,7 @@
             @6:25..8:5 FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
               @6:25..8:5 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Int
                 @7:8..9 BLOCK_BODY
-                  @7:8..9 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.MyClass.lazyProp$delegate'
+                  @7:9..9 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.MyClass.lazyProp$delegate'
                     @7:8..9 CONST Int type=kotlin.Int value=5
       @6:17..8:5 FUN DELEGATED_PROPERTY_ACCESSOR name:<get-lazyProp> visibility:public modality:FINAL <> ($this:<root>.MyClass) returnType:kotlin.Int
         @6:4..8:5 VALUE_PARAMETER name:<this> type:<root>.MyClass

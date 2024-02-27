@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: WASM
+
 // FILE: test.kt
 
 inline fun foo(stringMaker: () -> String): String {
@@ -30,7 +30,7 @@ fun box(): String {
 
 // EXPECTATIONS WASM
 // test.kt:1 $box__JsExportAdapter
-// test.kt:9 $box (4, 10, 10, 10, 10)
+// test.kt:9 $box (4, 10, 10, 10, 10, 15)
 // test.kt:5 $box (11, 11, 4, 11, 11, 4)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17, 17, 28, 17, 17, 28, 17)
 // Array.kt:59 $kotlin.Array.get (19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8)
@@ -46,7 +46,7 @@ fun box(): String {
 // Array.kt:76 $kotlin.Array.set (5, 5)
 // String.kt:149 $kotlin.stringLiteral (11, 4, 11, 4)
 // test.kt:10 $box
-// test.kt:11 $box (8, 8, 8, 8)
+// test.kt:11 $box (8, 8, 8, 8, 12)
 // test.kt:14 $box (11, 11, 11, 11, 4)
 // String.kt:143 $kotlin.stringLiteral (15, 8)
 // ExternalWrapper.kt:200 $kotlin.wasm.internal.kotlinToJsStringAdapter

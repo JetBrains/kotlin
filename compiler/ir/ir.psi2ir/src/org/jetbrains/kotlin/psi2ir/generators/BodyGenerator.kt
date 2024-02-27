@@ -69,6 +69,7 @@ internal class BodyGenerator(
                     context.irBuiltIns.nothingType,
                     ktBody::class.java.simpleName
                 )
+            // For implicit returns, use the expression endOffset to generate the expected line number for debugging.
             irBlockBody.statements.add(generateReturnExpression(irBody.endOffset, irBody.endOffset, irBody))
             return irBlockBody
         }
@@ -81,6 +82,7 @@ internal class BodyGenerator(
             val irBody = statementGenerator.generateStatement(ktBody)
             irBlockBody.statements.add(
                 if (ktBody.isUsedAsExpression(context.bindingContext) && irBody is IrExpression)
+                    // For implicit returns, use the expression endOffset to generate the expected line number for debugging.
                     generateReturnExpression(irBody.endOffset, irBody.endOffset, irBody)
                 else
                     irBody
@@ -128,7 +130,8 @@ internal class BodyGenerator(
                     irReturnedValue is IrExpression &&
                     irReturnedValue !is IrReturn && irReturnedValue !is IrThrow
                 ) {
-                    generateReturnExpression(irReturnedValue.startOffset, irReturnedValue.endOffset, irReturnedValue)
+                    // For implicit returns, use the expression endOffset to generate the expected line number for debugging.
+                    generateReturnExpression(irReturnedValue.endOffset, irReturnedValue.endOffset, irReturnedValue)
                 } else {
                     irReturnedValue
                 }
