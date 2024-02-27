@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.IrMangledNameAndSignatureDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.JsIrInterpreterDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.JsBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.handlers.KlibInterpreterDumpHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
