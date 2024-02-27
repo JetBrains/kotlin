@@ -33308,6 +33308,18 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
     }
 
     @Test
+    @TestMetadata("invisibleFake.kt")
+    public void testInvisibleFake() {
+      runTest("compiler/testData/codegen/box/javaInterop/invisibleFake.kt");
+    }
+
+    @Test
+    @TestMetadata("invisibleFake2.kt")
+    public void testInvisibleFake2() {
+      runTest("compiler/testData/codegen/box/javaInterop/invisibleFake2.kt");
+    }
+
+    @Test
     @TestMetadata("javaForKotlinOverrideProperty.kt")
     public void testJavaForKotlinOverrideProperty() {
       runTest("compiler/testData/codegen/box/javaInterop/javaForKotlinOverrideProperty.kt");

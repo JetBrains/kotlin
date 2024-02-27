@@ -28176,6 +28176,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
   public static class JavaInterop extends AbstractLightAnalysisModeTest {
+    @TestMetadata("invisibleFake2.kt")
+    public void ignoreInvisibleFake2() {
+      runTest("compiler/testData/codegen/box/javaInterop/invisibleFake2.kt");
+    }
+
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
@@ -28227,6 +28232,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestMetadata("inheritanceWithWildcard.kt")
     public void testInheritanceWithWildcard() {
       runTest("compiler/testData/codegen/box/javaInterop/inheritanceWithWildcard.kt");
+    }
+
+    @TestMetadata("invisibleFake.kt")
+    public void testInvisibleFake() {
+      runTest("compiler/testData/codegen/box/javaInterop/invisibleFake.kt");
     }
 
     @TestMetadata("javaForKotlinOverrideProperty.kt")

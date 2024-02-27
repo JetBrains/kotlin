@@ -22271,6 +22271,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("invisibleFake.kt")
+      public void testInvisibleFake() {
+        runTest("compiler/testData/diagnostics/tests/j+k/invisibleFake.kt");
+      }
+
+      @Test
+      @TestMetadata("invisibleFake2.kt")
+      public void testInvisibleFake2() {
+        runTest("compiler/testData/diagnostics/tests/j+k/invisibleFake2.kt");
+      }
+
+      @Test
       @TestMetadata("invisiblePackagePrivateInheritedMember.kt")
       public void testInvisiblePackagePrivateInheritedMember() {
         runTest("compiler/testData/diagnostics/tests/j+k/invisiblePackagePrivateInheritedMember.kt");
