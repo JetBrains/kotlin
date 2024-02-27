@@ -4,8 +4,8 @@ FILE fqName:<root> fileName:/kt47527.kt
       VAR name:result type:kotlin.String [var]
         CONST String type=kotlin.String value=""
       SET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.Unit origin=EQ
-        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
-          $this: GET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
+          $this: GET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.String origin=PLUSEQ
           other: BLOCK type=kotlin.String origin=ELVIS
             VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.String? [val]
               CALL 'public final fun test_1 (value: kotlin.Any?): kotlin.String? declared in <root>' type=kotlin.String? origin=null
@@ -21,8 +21,8 @@ FILE fqName:<root> fileName:/kt47527.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: GET_VAR 'val tmp_0: kotlin.String? declared in <root>.box' type=kotlin.String? origin=null
       SET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.Unit origin=EQ
-        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
-          $this: GET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
+          $this: GET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.String origin=PLUSEQ
           other: BLOCK type=kotlin.String origin=ELVIS
             VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.String? [val]
               CALL 'public final fun test_2 (value: kotlin.Any?): kotlin.String? declared in <root>' type=kotlin.String? origin=null

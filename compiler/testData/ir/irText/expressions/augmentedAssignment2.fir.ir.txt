@@ -65,19 +65,19 @@ FILE fqName:<root> fileName:/augmentedAssignment2.kt
       VAR name:a type:<root>.A [val]
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
       CALL 'public final fun plusAssign (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
-        $receiver: GET_VAR 'val a: <root>.A declared in <root>.testVariable' type=<root>.A origin=null
+        $receiver: GET_VAR 'val a: <root>.A declared in <root>.testVariable' type=<root>.A origin=PLUSEQ
         s: CONST String type=kotlin.String value="+="
       CALL 'public final fun minusAssign (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=MINUSEQ
-        $receiver: GET_VAR 'val a: <root>.A declared in <root>.testVariable' type=<root>.A origin=null
+        $receiver: GET_VAR 'val a: <root>.A declared in <root>.testVariable' type=<root>.A origin=MINUSEQ
         s: CONST String type=kotlin.String value="-="
       CALL 'public final fun timesAssign (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=MULTEQ
-        $receiver: GET_VAR 'val a: <root>.A declared in <root>.testVariable' type=<root>.A origin=null
+        $receiver: GET_VAR 'val a: <root>.A declared in <root>.testVariable' type=<root>.A origin=MULTEQ
         s: CONST String type=kotlin.String value="*="
       CALL 'public final fun divAssign (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=DIVEQ
-        $receiver: GET_VAR 'val a: <root>.A declared in <root>.testVariable' type=<root>.A origin=null
+        $receiver: GET_VAR 'val a: <root>.A declared in <root>.testVariable' type=<root>.A origin=DIVEQ
         s: CONST String type=kotlin.String value="/="
       CALL 'public final fun remAssign (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PERCEQ
-        $receiver: GET_VAR 'val a: <root>.A declared in <root>.testVariable' type=<root>.A origin=null
+        $receiver: GET_VAR 'val a: <root>.A declared in <root>.testVariable' type=<root>.A origin=PERCEQ
         s: CONST String type=kotlin.String value="*="
   FUN name:timesAssign visibility:public modality:FINAL <> ($receiver:<root>.A, s:kotlin.String) returnType:kotlin.Unit [operator]
     $receiver: VALUE_PARAMETER name:<this> type:<root>.A

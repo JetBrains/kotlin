@@ -478,11 +478,23 @@ class CallAndReferenceGenerator(
                 }
                 is IrSimpleFunctionSymbol -> {
                     require(firSymbol is FirCallableSymbol<*>) { "Illegal symbol: ${firSymbol!!::class}" }
+                    val callOrigin = calleeReference.statementOrigin()
+                    /*
+                     * For `x += y` -> `x = x.plus(y)` receiver of call `plus` should also have an augmented assignment origin.
+                     * But it's hard to detect this origin during conversion the receiver itself, so we update it afterward.
+                     */
+                    if (
+                        explicitReceiverExpression != null &&
+                        calleeReference.source?.kind is KtFakeSourceElementKind.DesugaredCompoundAssignment &&
+                        callOrigin != null
+                    ) {
+                        explicitReceiverExpression.updateStatementOrigin(callOrigin)
+                    }
                     IrCallImpl(
                         startOffset, endOffset, irType, symbol,
                         typeArgumentsCount = firSymbol.typeParameterSymbols.size,
                         valueArgumentsCount = firSymbol.valueParametersSize(),
-                        origin = calleeReference.statementOrigin(),
+                        origin = callOrigin,
                         superQualifierSymbol = dispatchReceiver?.superQualifierSymbol()
                     )
                 }
@@ -1342,5 +1354,13 @@ class CallAndReferenceGenerator(
             startOffset, endOffset, type ?: createErrorType(),
             "Unresolved reference: ${calleeReference.render()}"
         )
+    }
+
+    private fun IrExpression.updateStatementOrigin(newOrigin: IrStatementOrigin) {
+        when (this) {
+            is IrFieldAccessExpression -> origin = origin ?: newOrigin
+            is IrMemberAccessExpression<*> -> origin = origin ?: newOrigin
+            is IrValueAccessExpression -> origin = origin ?: newOrigin
+        }
     }
 }

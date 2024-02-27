@@ -83,8 +83,8 @@ FILE fqName:<root> fileName:/breakContinueInWhen.kt
                   arg1: CONST Int type=kotlin.Int value=2
                 then: CONTINUE label=null loop.label=null
             SET_VAR 'var s: kotlin.String declared in <root>.testContinueDoWhile' type=kotlin.Unit origin=EQ
-              CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
-                $this: GET_VAR 'var s: kotlin.String declared in <root>.testContinueDoWhile' type=kotlin.String origin=null
+              CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
+                $this: GET_VAR 'var s: kotlin.String declared in <root>.testContinueDoWhile' type=kotlin.String origin=PLUSEQ
                 other: STRING_CONCATENATION type=kotlin.String
                   GET_VAR 'var k: kotlin.Int declared in <root>.testContinueDoWhile' type=kotlin.Int origin=null
                   CONST String type=kotlin.String value=";"

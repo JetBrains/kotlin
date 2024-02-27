@@ -548,11 +548,12 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? = when (this) {
                 IrStatementOrigin.COMPONENT_N.withIndex(name.asString().removePrefix(DATA_CLASS_COMPONENT_PREFIX).toInt())
 
             source?.kind is KtFakeSourceElementKind.DesugaredCompoundAssignment -> when (name) {
-                OperatorNameConventions.PLUS_ASSIGN -> IrStatementOrigin.PLUSEQ
-                OperatorNameConventions.MINUS_ASSIGN -> IrStatementOrigin.MINUSEQ
-                OperatorNameConventions.TIMES_ASSIGN -> IrStatementOrigin.MULTEQ
-                OperatorNameConventions.DIV_ASSIGN -> IrStatementOrigin.DIVEQ
-                OperatorNameConventions.MOD_ASSIGN, OperatorNameConventions.REM_ASSIGN -> IrStatementOrigin.PERCEQ
+                OperatorNameConventions.PLUS_ASSIGN, OperatorNameConventions.PLUS -> IrStatementOrigin.PLUSEQ
+                OperatorNameConventions.MINUS_ASSIGN, OperatorNameConventions.MINUS -> IrStatementOrigin.MINUSEQ
+                OperatorNameConventions.TIMES_ASSIGN, OperatorNameConventions.TIMES -> IrStatementOrigin.MULTEQ
+                OperatorNameConventions.DIV_ASSIGN, OperatorNameConventions.DIV -> IrStatementOrigin.DIVEQ
+                OperatorNameConventions.MOD_ASSIGN, OperatorNameConventions.MOD,
+                OperatorNameConventions.REM_ASSIGN, OperatorNameConventions.REM -> IrStatementOrigin.PERCEQ
                 else -> null
             }
 

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun topLevelMethod() {
     var z = 1
 
