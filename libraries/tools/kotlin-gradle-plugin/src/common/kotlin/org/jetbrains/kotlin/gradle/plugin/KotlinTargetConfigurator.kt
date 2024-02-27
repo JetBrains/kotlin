@@ -55,7 +55,9 @@ internal fun Project.categoryByName(categoryName: String): Category =
 internal inline fun <reified T : Named> Project.attributeValueByName(attributeValueName: String): T =
     objects.named(T::class.java, attributeValueName)
 
-fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
+fun Configuration.usesPlatformOf(target: KotlinTarget) = setUsesPlatformOf(target)
+
+internal fun <T : HasAttributes> T.setUsesPlatformOf(target: KotlinTarget): T {
     attributes.setAttribute(KotlinPlatformType.attribute, target.platformType)
 
     when (target.platformType) {
@@ -94,7 +96,7 @@ fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
     return this
 }
 
-private fun Configuration.setJavaTargetEnvironmentAttributeIfSupported(project: Project, value: String) {
+private fun HasAttributes.setJavaTargetEnvironmentAttributeIfSupported(project: Project, value: String) {
     if (GradleVersion.current() >= GradleVersion.version("7.0")) {
         attributes.setAttribute(
             TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
