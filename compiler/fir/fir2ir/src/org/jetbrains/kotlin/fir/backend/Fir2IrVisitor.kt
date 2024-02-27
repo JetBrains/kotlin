@@ -937,30 +937,35 @@ class Fir2IrVisitor(
         selector: FirQualifiedAccessExpression,
     ): IrExpression? {
         val selectorCalleeReference = selector.calleeReference
-        return when (receiver) {
+        val irReceiver = when (receiver) {
             null -> return null
             is FirResolvedQualifier -> callGenerator.convertToGetObject(receiver, selector as? FirCallableReferenceAccess)
-            is FirFunctionCall, is FirThisReceiverExpression, is FirCallableReferenceAccess, is FirSmartCastExpression ->
-                convertToIrExpression(receiver)
-            else -> if (receiver is FirQualifiedAccessExpression && receiver.explicitReceiver == null) {
-                val variableAsFunctionMode = selectorCalleeReference is FirResolvedNamedReference &&
-                        selectorCalleeReference.name != OperatorNameConventions.INVOKE &&
-                        (selectorCalleeReference.resolvedSymbol as? FirCallableSymbol)?.callableId?.callableName == OperatorNameConventions.INVOKE
-                callGenerator.convertToIrCall(
-                    receiver, receiver.resolvedType, explicitReceiverExpression = null,
-                    variableAsFunctionMode = variableAsFunctionMode
-                )
-            } else {
-                convertToIrExpression(receiver)
-            }
-        }?.run {
-            if (receiver is FirQualifiedAccessExpression && receiver.calleeReference is FirSuperReference) return@run this
+            is FirFunctionCall,
+            is FirThisReceiverExpression,
+            is FirCallableReferenceAccess,
+            is FirSmartCastExpression -> convertToIrExpression(receiver)
 
-            implicitCastInserter.implicitCastFromReceivers(
-                this, receiver, selector,
-                conversionScope.defaultConversionTypeOrigin()
-            )
-        }
+            is FirQualifiedAccessExpression -> when (receiver.explicitReceiver) {
+                null -> {
+                    val variableAsFunctionMode = selectorCalleeReference is FirResolvedNamedReference &&
+                            selectorCalleeReference.name != OperatorNameConventions.INVOKE &&
+                            (selectorCalleeReference.resolvedSymbol as? FirCallableSymbol)?.callableId?.callableName == OperatorNameConventions.INVOKE
+                    callGenerator.convertToIrCall(
+                        receiver, receiver.resolvedType, explicitReceiverExpression = null,
+                        variableAsFunctionMode = variableAsFunctionMode
+                    )
+                }
+                else -> convertToIrExpression(receiver)
+            }
+            else -> convertToIrExpression(receiver)
+        } ?: return null
+
+        if (receiver is FirQualifiedAccessExpression && receiver.calleeReference is FirSuperReference) return irReceiver
+
+        return implicitCastInserter.implicitCastFromReceivers(
+            irReceiver, receiver, selector,
+            conversionScope.defaultConversionTypeOrigin()
+        )
     }
 
     private fun List<FirStatement>.mapToIrStatements(recognizePostfixIncDec: Boolean = true): List<IrStatement?> {
