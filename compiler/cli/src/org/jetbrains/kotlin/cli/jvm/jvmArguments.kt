@@ -79,7 +79,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         } else {
             messageCollector.report(
                 ERROR, "Unknown JVM target version: $jvmTargetValue\n" +
-                        "Supported versions: ${JvmTarget.entries.joinToString { it.description }}"
+                        "Supported versions: ${JvmTarget.supportedValues().joinToString { it.description }}"
             )
         }
     }
