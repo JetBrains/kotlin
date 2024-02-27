@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTestRunFactory
@@ -89,6 +91,17 @@ constructor(
                 artifactNameAppendix = wasmDecamelizedDefaultNameOrNull() ?: dashSeparatedName(targetName.toLowerCaseAsciiOnly())
             )
         )
+
+        if (project.kotlinPropertiesProvider.mppResourcesPublication) {
+            project.multiplatformExtensionOrNull?.let {
+                usageContexts.add(
+                    it.setUpResourcesVariant(
+                        this,
+                        mainCompilation
+                    )
+                )
+            }
+        }
 
         val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
 

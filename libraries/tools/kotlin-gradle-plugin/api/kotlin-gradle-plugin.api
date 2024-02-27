@@ -765,6 +765,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedE
 	public fun getPreset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public fun getProject ()Lorg/gradle/api/Project;
 	public fun getPublishable ()Z
+	public fun getResourcesElementsConfigurationName ()Ljava/lang/String;
 	public final fun getRuntimeElementsConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public fun getRuntimeElementsConfigurationName ()Ljava/lang/String;
 	public final fun getRuntimeElementsPublishedConfiguration ()Lorg/gradle/api/artifacts/Configuration;

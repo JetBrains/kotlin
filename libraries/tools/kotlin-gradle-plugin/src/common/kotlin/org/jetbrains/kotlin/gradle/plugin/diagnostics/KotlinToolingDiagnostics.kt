@@ -734,6 +734,44 @@ object KotlinToolingDiagnostics {
         )
     }
 
+    object ResourceMayNotBeResolvedForTarget : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(targetName: String) = build(
+            """
+            Resources resolution for target $targetName is not supported.
+            
+            $resourcesBugReportRequest
+            """.trimIndent()
+        )
+    }
+
+    object UnknownValueProvidedForResourcesStrategy : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(value: String) = build(
+            """
+            Unknown value $value provided for ${PropertiesProvider.PropertyNames.KOTLIN_MPP_RESOURCES_RESOLUTION_STRATEGY}
+            """.trimIndent()
+        )
+    }
+
+    object MissingConfigurationForWasmTarget : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(targetName: String) = build(
+            """
+            Resources will not be resolved for $targetName as it is missing runtimeDependencyConfiguration.
+            
+            $resourcesBugReportRequest
+            """.trimIndent()
+        )
+    }
+
+    object MissingResourcesConfigurationForTarget : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(targetName: String) = build(
+            """
+            Resources will not be resolved for $targetName as it is missing resourcesConfiguration.
+            
+            $resourcesBugReportRequest
+            """.trimIndent()
+        )
+    }
+
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

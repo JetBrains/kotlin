@@ -23,6 +23,7 @@ interface KotlinCompilationConfigurationsContainer {
     val runtimeDependencyConfiguration: Configuration?
     val hostSpecificMetadataConfiguration: Configuration?
     val pluginConfiguration: Configuration
+    val resourcesConfiguration: Configuration?
 }
 
 internal class DefaultKotlinCompilationConfigurationsContainer(
@@ -35,7 +36,8 @@ internal class DefaultKotlinCompilationConfigurationsContainer(
     override val compileDependencyConfiguration: Configuration,
     override val runtimeDependencyConfiguration: Configuration?,
     override val hostSpecificMetadataConfiguration: Configuration?,
-    override val pluginConfiguration: Configuration
+    override val pluginConfiguration: Configuration,
+    override val resourcesConfiguration: Configuration?,
 ) : KotlinCompilationConfigurationsContainer
 
 internal fun HasKotlinDependencies(
