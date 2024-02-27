@@ -21683,6 +21683,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("inheritedInnerAndNested.kt")
+      public void testInheritedInnerAndNested() {
+        runTest("compiler/testData/diagnostics/tests/inner/inheritedInnerAndNested.kt");
+      }
+
+      @Test
       @TestMetadata("innerClassInEnumEntryClassMemberResolve.kt")
       public void testInnerClassInEnumEntryClassMemberResolve() {
         runTest("compiler/testData/diagnostics/tests/inner/innerClassInEnumEntryClassMemberResolve.kt");
