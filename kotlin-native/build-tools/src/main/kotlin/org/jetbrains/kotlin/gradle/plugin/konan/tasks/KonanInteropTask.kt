@@ -28,7 +28,7 @@ import javax.inject.Inject
 
 abstract class KonanInteropTask @Inject constructor(private val workerExecutor: WorkerExecutor) : KonanBuildingTask(), KonanInteropSpec {
 
-    private val interopRunner = KonanCliInteropRunner(project, project.konanExtension.jvmArgs)
+    private val interopRunner = KonanCliInteropRunner(project, KonanCliRunnerIsolatedClassLoadersService.attachingToTask(this), project.konanExtension.jvmArgs)
 
     @get:Internal
     override val toolRunner: KonanToolRunner = interopRunner

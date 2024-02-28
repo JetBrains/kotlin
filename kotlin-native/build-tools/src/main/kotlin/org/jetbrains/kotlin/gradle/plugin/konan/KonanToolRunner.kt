@@ -11,15 +11,12 @@ import org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin.ProjectProperty.KONA
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.nio.file.Files
-import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyString
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import java.io.File
 import java.util.Properties
 import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
 import org.jetbrains.kotlin.konan.target.AbstractToolConfig
-import java.net.URLClassLoader
-import java.util.concurrent.ConcurrentHashMap
 
 internal interface KonanToolRunner {
     fun run(args: List<String>)
@@ -33,6 +30,7 @@ private const val runFromDaemonPropertyName = "kotlin.native.tool.runFromDaemon"
 internal abstract class KonanCliRunner(
         protected val toolName: String,
         project: Project,
+        isolatedClassLoadersService: KonanCliRunnerIsolatedClassLoadersService,
         val additionalJvmArgs: List<String> = emptyList(),
         val konanHome: String = project.konanHome
 ) : KotlinToolRunner(project), KonanToolRunner {
@@ -79,8 +77,7 @@ internal abstract class KonanCliRunner(
     final override val isolatedClassLoaderCacheKey get() = IsolatedClassLoaderCacheKey(classpath)
 
     // A separate map for each build for automatic cleaning the daemon after the build have finished.
-    @Suppress("UNCHECKED_CAST")
-    final override val isolatedClassLoaders = project.project(":kotlin-native").ext["toolClassLoadersMap"] as ConcurrentHashMap<Any, URLClassLoader>
+    final override val isolatedClassLoaders = isolatedClassLoadersService.isolatedClassLoaders
 
     override fun transformArgs(args: List<String>) = listOf(toolName) + args
 
@@ -90,10 +87,11 @@ internal abstract class KonanCliRunner(
 /** Kotlin/Native compiler runner */
 internal class KonanCliCompilerRunner(
         project: Project,
+        isolatedClassLoadersService: KonanCliRunnerIsolatedClassLoadersService,
         additionalJvmArgs: List<String> = emptyList(),
         val useArgFile: Boolean = true,
         konanHome: String = project.konanHome
-) : KonanCliRunner("konanc", project, additionalJvmArgs, konanHome) {
+) : KonanCliRunner("konanc", project, isolatedClassLoadersService, additionalJvmArgs, konanHome) {
     override fun transformArgs(args: List<String>): List<String> {
         if (!useArgFile) return super.transformArgs(args)
 
@@ -127,9 +125,10 @@ internal class CliToolConfig(konanHome: String, target: String) : AbstractToolCo
 /** Kotlin/Native C-interop tool runner */
 internal class KonanCliInteropRunner(
         private val project: Project,
+        isolatedClassLoadersService: KonanCliRunnerIsolatedClassLoadersService,
         additionalJvmArgs: List<String> = emptyList(),
         konanHome: String = project.konanHome
-) : KonanCliRunner("cinterop", project, additionalJvmArgs, konanHome) {
+) : KonanCliRunner("cinterop", project, isolatedClassLoadersService, additionalJvmArgs, konanHome) {
     private val projectDir = project.projectDir.toString()
 
     override val mustRunViaExec: Boolean
@@ -173,9 +172,3 @@ internal class KonanCliInteropRunner(
             null
     }
 }
-
-internal class KonanKlibRunner(
-        project: Project,
-        additionalJvmArgs: List<String> = emptyList(),
-        konanHome: String = project.konanHome
-) : KonanCliRunner("klib", project, additionalJvmArgs, konanHome)

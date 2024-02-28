@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliRunnerIsolatedClassLoadersService
 import org.jetbrains.kotlin.util.Logger
 import java.io.File
 import java.util.*
@@ -82,6 +83,8 @@ abstract class KonanCacheTask : DefaultTask() {
     @get:Input
     var cachedLibraries: Map<File, File> = emptyMap()
 
+    private val isolatedClassLoadersService = KonanCliRunnerIsolatedClassLoadersService.attachingToTask(this)
+
     @TaskAction
     fun compile() {
         // This code uses bootstrap version of util-klib and fails due to the older default ABI than library being used
@@ -112,6 +115,6 @@ abstract class KonanCacheTask : DefaultTask() {
             args += "-Xmake-per-file-cache"
         args += additionalCacheFlags
         args += cachedLibraries.map { "-Xcached-library=${it.key},${it.value}" }
-        KonanCliCompilerRunner(project, konanHome = konanHome).run(args)
+        KonanCliCompilerRunner(project, isolatedClassLoadersService, konanHome = konanHome).run(args)
     }
 }

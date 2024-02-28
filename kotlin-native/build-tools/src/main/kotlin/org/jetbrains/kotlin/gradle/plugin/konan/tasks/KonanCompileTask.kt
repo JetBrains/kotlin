@@ -22,7 +22,7 @@ import javax.inject.Inject
 abstract class KonanCompileTask @Inject constructor(private val layout: ProjectLayout):  KonanBuildingTask(), KonanCompileSpec {
 
     @get:Internal
-    override val toolRunner = KonanCliCompilerRunner(project, project.konanExtension.jvmArgs)
+    override val toolRunner = KonanCliCompilerRunner(project, KonanCliRunnerIsolatedClassLoadersService.attachingToTask(this), project.konanExtension.jvmArgs)
 
     abstract val produce: CompilerOutputKind
         @Internal get
