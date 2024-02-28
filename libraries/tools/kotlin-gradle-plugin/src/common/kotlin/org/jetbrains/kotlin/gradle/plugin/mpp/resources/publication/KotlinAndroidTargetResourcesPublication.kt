@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.assembleHierarchicalReso
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfo
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.androidExtension
 import org.jetbrains.kotlin.gradle.utils.androidPluginIds
 import org.jetbrains.kotlin.gradle.utils.findByType
@@ -105,6 +105,7 @@ internal class KotlinAndroidTargetResourcesPublication {
     private val copyTaskFromVariantName: MutableMap<String, TaskProvider<AssetsCopyForAGPTask>> = mutableMapOf()
     private val subscribers: MutableMap<String, MutableList<(TaskProvider<AssetsCopyForAGPTask>) -> (Unit)>> = mutableMapOf()
 
+    @UnsafeAtRuntime
     internal fun setUpCopyAssetsTasksForNewAgpVariants(
         project: Project,
         newAgpVariant: Variant,

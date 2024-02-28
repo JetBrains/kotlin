@@ -217,6 +217,7 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
         return project.provider { wrapPluginOptions(pluginOptions, "configuration") }
     }
 
+    @UnsafeAtRuntime
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
     private fun getVariantComponentNames(flavorData: Any?): VariantComponentNames? = when (flavorData) {
         is TestVariantData -> getVariantComponentNames(flavorData.testedVariantData)
