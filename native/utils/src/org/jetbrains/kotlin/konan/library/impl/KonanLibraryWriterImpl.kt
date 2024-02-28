@@ -54,7 +54,7 @@ fun buildLibrary(
     nopack: Boolean,
     shortName: String?,
     manifestProperties: Properties?,
-    dataFlowGraph: ByteArray?
+    dataFlowGraph: ByteArray? // TODO (KT-66218): remove this property
 ): KonanLibraryLayout {
 
     val libFile = File(output)
