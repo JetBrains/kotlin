@@ -973,6 +973,12 @@ public class ForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated exte
         public void testWildcardsWithDefault() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/WildcardsWithDefault.kt");
         }
+
+        @Test
+        @TestMetadata("wrongNullabilityForOverrides.kt")
+        public void testWrongNullabilityForOverrides() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/wrongNullabilityForOverrides.kt");
+        }
       }
     }
 
