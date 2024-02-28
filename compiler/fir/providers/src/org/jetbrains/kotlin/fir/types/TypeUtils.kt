@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -688,12 +689,12 @@ fun List<FirTypeParameterSymbol>.eraseToUpperBoundsAssociated(
     }
 }
 
-fun List<FirTypeParameterSymbol>.getProjectionsForRawType(session: FirSession): Array<ConeTypeProjection> {
+fun List<FirTypeParameterSymbol>.getProjectionsForRawType(session: FirSession, makeNullable: Boolean): Array<ConeKotlinType> {
     val cache = mutableMapOf<FirTypeParameter, ConeKotlinType>()
     return Array(size) { index ->
         this[index].fir.eraseToUpperBound(
             session, cache, mode = EraseUpperBoundMode.FOR_RAW_TYPE_ERASURE
-        )
+        ).applyIf(makeNullable) { withNullability(ConeNullability.NULLABLE, session.typeContext) }
     }
 }
 

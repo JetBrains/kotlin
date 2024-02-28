@@ -28229,6 +28229,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/javaInterop/javaTypeFromSameModuleWithRawTypedWildcardBound.kt");
     }
 
+    @TestMetadata("kjkWithRawTypes.kt")
+    public void testKjkWithRawTypes() {
+      runTest("compiler/testData/codegen/box/javaInterop/kjkWithRawTypes.kt");
+    }
+
     @TestMetadata("kt43217.kt")
     public void testKt43217() {
       runTest("compiler/testData/codegen/box/javaInterop/kt43217.kt");

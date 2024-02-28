@@ -200,7 +200,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                     // Given `C<T : X>`, `C` -> `C<X>..C<*>?`.
                     when {
                         mode.insideAnnotation -> Array(classifier.allTypeParametersNumber()) { ConeStarProjection }
-                        else -> typeParameterSymbols?.getProjectionsForRawType(session)
+                        else -> typeParameterSymbols?.getProjectionsForRawType(session, makeNullable = false)
                             ?: Array(classifier.allTypeParametersNumber()) { ConeStarProjection }
                     }
                 }

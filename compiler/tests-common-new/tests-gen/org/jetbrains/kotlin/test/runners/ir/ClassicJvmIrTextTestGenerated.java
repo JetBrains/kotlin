@@ -2729,6 +2729,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
     }
 
     @Test
+    @TestMetadata("kjkWithRawTypes.kt")
+    public void testKjkWithRawTypes() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/kjkWithRawTypes.kt");
+    }
+
+    @Test
     @TestMetadata("setterVisibliity.kt")
     public void testSetterVisibliity() {
       runTest("compiler/testData/ir/irText/fakeOverrides/setterVisibliity.kt");
