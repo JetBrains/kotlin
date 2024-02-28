@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.session
 
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.checkers.registerJvmCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.java.FirJvmTargetProvider
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
@@ -88,6 +90,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         createIncrementalCompilationSymbolProviders: (FirSession) -> FirJvmIncrementalCompilationSymbolProviders?,
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings,
+        jvmTarget: JvmTarget,
         lookupTracker: LookupTracker?,
         enumWhenTracker: EnumWhenTracker?,
         importTracker: ImportTracker?,
@@ -108,6 +111,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
             registerExtraComponents = {
                 it.registerDefaultComponents()
                 it.registerJavaComponents(projectEnvironment.getJavaModuleResolver(), predefinedJavaComponents)
+                it.register(FirJvmTargetProvider::class, FirJvmTargetProvider(jvmTarget))
                 registerExtraComponents(it)
             },
             registerExtraCheckers = { it.registerJvmCheckers() },

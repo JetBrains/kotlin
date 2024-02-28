@@ -13,6 +13,9 @@ fun baz() {
     allInline
     allInline = 1
 
+    inlineProperty
+    inlineProperty = 1
+
     val base = Base()
     base.inlineFunBase {}
     base.inlineGetterBase
@@ -23,6 +26,9 @@ fun baz() {
 
     base.allInlineBase
     base.allInlineBase = 1
+
+    base.inlinePropertyBase
+    base.inlinePropertyBase = 1
 }
 
 
@@ -38,5 +44,8 @@ class Derived : Base() {
 
         allInlineBase
         allInlineBase = 1
+
+        inlinePropertyBase
+        inlinePropertyBase = 1
     }
 }

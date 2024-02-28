@@ -193,6 +193,13 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
     }
 
+    val INLINE by object : DiagnosticGroup("Inline") {
+        val INLINE_FROM_HIGHER_PLATFORM by error<PsiElement> {
+            parameter<String>("inlinedBytecodeVersion")
+            parameter<String>("currentModuleBytecodeVersion")
+        }
+    }
+
     val MISC by object : DiagnosticGroup("Misc") {
         val INAPPLICABLE_JVM_FIELD by error<KtAnnotationEntry> {
             parameter<String>("message")
