@@ -51,7 +51,7 @@ class F : J() {
 class F2 : JOverridesRegular() {
     fun test() {
         a
-        "".<!UNRESOLVED_REFERENCE!>a<!>
+        "".a
     }
 }
 
@@ -65,6 +65,6 @@ class F3 : JOverridesExtension() {
 class F4 : JOVerridesBoth() {
     fun test() {
         a
-        "".<!UNRESOLVED_REFERENCE!>a<!>
+        "".a
     }
 }

@@ -62,7 +62,7 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
         get() = false
 
     override val receiverParameter: FirReceiverParameter?
-        get() = null
+        get() = getter.receiverParameter
 
     override val isVal: Boolean
         get() = !isVar
@@ -84,7 +84,7 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
         get() = FirPropertyBodyResolveState.ALL_BODIES_RESOLVED
 
     override val contextReceivers: List<FirContextReceiver>
-        get() = emptyList()
+        get() = getter.contextReceivers
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)

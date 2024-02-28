@@ -268,6 +268,8 @@ class FirSignatureEnhancement(
 
         val defaultQualifiers = firMethod.computeDefaultQualifiers()
         val overriddenMembers = precomputedOverridden ?: (firMethod as? FirSimpleFunction)?.overridden().orEmpty()
+
+        // TODO(KT-66195) handle context receivers
         val hasReceiver = overriddenMembers.any { it.receiverParameter != null }
 
         val newReceiverTypeRef = if (firMethod is FirSimpleFunction && hasReceiver) {
