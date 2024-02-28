@@ -305,6 +305,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     }
 
     @Test
+    @TestMetadata("contextDependentClassObjectTwoNames.kt")
+    public void testContextDependentClassObjectTwoNames() {
+      runTest("js/js.translator/testData/box/classObject/contextDependentClassObjectTwoNames.kt");
+    }
+
+    @Test
     @TestMetadata("defaultObjectSameNamesAsInOuter.kt")
     public void testDefaultObjectSameNamesAsInOuter() {
       runTest("js/js.translator/testData/box/classObject/defaultObjectSameNamesAsInOuter.kt");
@@ -9208,6 +9214,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("contextDependentObjectName.kt")
     public void testContextDependentObjectName() {
       runTest("js/js.translator/testData/box/objectDeclaration/contextDependentObjectName.kt");
+    }
+
+    @Test
+    @TestMetadata("contextDependentObjectTwoNames.kt")
+    public void testContextDependentObjectTwoNames() {
+      runTest("js/js.translator/testData/box/objectDeclaration/contextDependentObjectTwoNames.kt");
     }
 
     @Test
