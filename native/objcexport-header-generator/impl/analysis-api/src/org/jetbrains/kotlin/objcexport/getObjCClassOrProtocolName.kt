@@ -134,7 +134,7 @@ private fun mangleSwiftNestedClassName(name: String): String = when (name) {
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtSymbol.getObjCModuleNamePrefix(): String? {
+private fun KtSymbol.getObjCModuleNamePrefix(): String? {
     val module = getContainingModule()
     val moduleName = module.getObjCKotlinModuleName() ?: return null
     if (moduleName == "stdlib" || moduleName == "kotlin-stdlib-common") return "Kotlin"
