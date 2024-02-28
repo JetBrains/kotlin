@@ -88,9 +88,7 @@ internal class ArgumentInfo(
     val originalType: ConeKotlinType,
     val session: FirSession,
 ) {
-    val smartCastType: ConeKotlinType by lazy {
-        if (argument !is FirSmartCastExpression) originalType else userType.fullyExpandedType(session)
-    }
+    val smartCastType: ConeKotlinType by lazy { userType.fullyExpandedType(session) }
 
     val originalTypeInfo get() = originalType.toTypeInfo(session)
 
