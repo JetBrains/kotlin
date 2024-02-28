@@ -1212,14 +1212,6 @@ class FirElementSerializer private constructor(
         return proto
     }
 
-    private operator fun FirArgumentList.get(name: Name): FirExpression? {
-        // TODO: constant evaluation
-        return arguments.filterIsInstance<FirNamedArgumentExpression>().find {
-            it.name == name
-        }?.expression
-    }
-
-
     private fun normalizeVisibility(declaration: FirMemberDeclaration): Visibility {
         return declaration.visibility.normalize()
     }
