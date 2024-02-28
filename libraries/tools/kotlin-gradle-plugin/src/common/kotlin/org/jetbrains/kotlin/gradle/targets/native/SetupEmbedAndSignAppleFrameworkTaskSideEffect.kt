@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.gradle.targets.native
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeEnvironmentContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 
 internal val SetupEmbedAndSignAppleFrameworkTaskSideEffect = KotlinTargetSideEffect<KotlinNativeTarget> { target ->
     if (!target.konanTarget.family.isAppleFamily) return@KotlinTargetSideEffect
     target.binaries.withType(Framework::class.java).all { framework ->
+        XcodeEnvironmentContainer.setupEnvironment(target.project)
         target.project.registerEmbedAndSignAppleFrameworkTask(framework)
     }
 }
