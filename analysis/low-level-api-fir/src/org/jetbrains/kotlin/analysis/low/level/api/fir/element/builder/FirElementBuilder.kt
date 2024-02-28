@@ -159,10 +159,10 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         return findElementInside(firElement = anchorFir, element = element, stopAt = anchorElement)
     }
 
-    private fun KtAnnotationEntry.owner(): KtAnnotated? {
+    private fun PsiElement.annotationOwner(): KtAnnotated? {
         val modifierList = when (val parent = parent) {
             is KtModifierList -> parent
-            is KtAnnotation -> parent.parent as? KtModifierList
+            is KtAnnotation -> return parent.annotationOwner()
             is KtFileAnnotationList -> return parent.parent as? KtFile
             else -> null
         }
@@ -175,7 +175,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
     ): FirElement? = getFirForNonBodyElement<KtAnnotationEntry, KtAnnotated>(
         element = element,
         anchorElementProvider = { it.parentOfType<KtAnnotationEntry>(withSelf = true) },
-        elementOwnerProvider = { it.owner() },
+        elementOwnerProvider = { it.annotationOwner() },
         resolveAndFindFirForAnchor = { declaration, anchor -> declaration.resolveAndFindAnnotation(anchor, goDeep = true) },
     )
 

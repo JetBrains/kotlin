@@ -6,5 +6,5 @@ FIR element rendered:
 @FILE:R|kotlin/Suppress|[Types](names = vararg(String()))
 
 FIR FILE:
-FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotation2.kt
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] fileAnnotation2.kt
     @FILE:R|kotlin/Suppress|[Types](names = vararg(String()))
