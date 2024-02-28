@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstantPrimitive
+import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
-class IrConstantPrimitiveImpl(
+class IrConstantPrimitiveImpl internal constructor(
+    @Suppress("UNUSED_PARAMETER")
+    constructorIndicator: IrElementConstructorIndicator?,
     override val startOffset: Int,
     override val endOffset: Int,
     override var value: IrConst<*>,
@@ -18,3 +21,14 @@ class IrConstantPrimitiveImpl(
     override var originalBeforeInline: IrAttributeContainer? = null
     override var type = value.type
 }
+
+fun IrConstantPrimitiveImpl(
+    startOffset: Int,
+    endOffset: Int,
+    value: IrConst<*>,
+) = IrConstantPrimitiveImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    value = value,
+)

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
-class IrExpressionBodyImpl @IrImplementationDetail constructor(
+class IrExpressionBodyImpl @IrImplementationDetail internal constructor(
     override val startOffset: Int,
     override val endOffset: Int,
     override var expression: IrExpression,

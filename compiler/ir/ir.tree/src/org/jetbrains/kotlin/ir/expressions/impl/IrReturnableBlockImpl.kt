@@ -13,13 +13,16 @@ import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
-class IrReturnableBlockImpl(
+class IrReturnableBlockImpl internal constructor(
+    @Suppress("UNUSED_PARAMETER")
+    constructorIndicator: IrElementConstructorIndicator?,
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
     override val symbol: IrReturnableBlockSymbol,
-    override var origin: IrStatementOrigin? = null,
+    override var origin: IrStatementOrigin?,
 ) : IrReturnableBlock() {
     override val statements: MutableList<IrStatement> = ArrayList(2)
 
@@ -30,18 +33,40 @@ class IrReturnableBlockImpl(
     override val descriptor: FunctionDescriptor
         get() = symbol.descriptor
 
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        symbol: IrReturnableBlockSymbol,
-        origin: IrStatementOrigin?,
-        statements: List<IrStatement>,
-    ) : this(startOffset, endOffset, type, symbol, origin) {
-        this.statements.addAll(statements)
-    }
-
     init {
         symbol.bind(this)
     }
+}
+
+fun IrReturnableBlockImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrReturnableBlockSymbol,
+    origin: IrStatementOrigin? = null,
+) = IrReturnableBlockImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    origin = origin,
+)
+
+fun IrReturnableBlockImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrReturnableBlockSymbol,
+    origin: IrStatementOrigin?,
+    statements: List<IrStatement>,
+) = IrReturnableBlockImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    origin = origin,
+).apply {
+    this.statements.addAll(statements)
 }

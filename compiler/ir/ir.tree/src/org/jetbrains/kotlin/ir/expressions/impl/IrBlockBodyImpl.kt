@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 
-class IrBlockBodyImpl @IrImplementationDetail constructor(
+class IrBlockBodyImpl @IrImplementationDetail internal constructor(
     override val startOffset: Int,
-    override val endOffset: Int
+    override val endOffset: Int,
 ) : IrBlockBody() {
     override val statements: MutableList<IrStatement> = ArrayList(2)
 }
