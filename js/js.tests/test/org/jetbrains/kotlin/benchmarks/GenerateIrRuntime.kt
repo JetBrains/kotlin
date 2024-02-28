@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.incremental.withJsIC
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsGeneratorExtensions
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
@@ -465,7 +466,12 @@ class GenerateIrRuntime {
         val messageLogger = IrMessageLogger.None
         val psi2Ir = Psi2IrTranslator(languageVersionSettings, Psi2IrConfiguration(), messageLogger::checkNoUnboundSymbols)
         val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl)
-        val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
+        val psi2IrContext = psi2Ir.createGeneratorContext(
+            analysisResult.moduleDescriptor,
+            analysisResult.bindingContext,
+            symbolTable,
+            JsGeneratorExtensions()
+        )
 
         val irLinker = JsIrLinker(
             psi2IrContext.moduleDescriptor,

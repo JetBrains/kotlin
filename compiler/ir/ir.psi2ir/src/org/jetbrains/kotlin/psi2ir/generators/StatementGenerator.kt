@@ -113,14 +113,8 @@ internal class StatementGenerator(
             )
         }
 
-        val sourceElement =
-            if (context.extensions.debugInfoOnlyOnVariablesInDestructuringDeclarations) {
-                property.nameIdentifier ?: property
-            } else {
-                property
-            }
         return context.symbolTable.descriptorExtension.declareVariable(
-            sourceElement.startOffsetSkippingComments, sourceElement.endOffset, IrDeclarationOrigin.DEFINED,
+            property.startOffsetSkippingComments, property.endOffset, IrDeclarationOrigin.DEFINED,
             variableDescriptor,
             variableDescriptor.type.toIrType(),
             property.initializer?.let { generateExpression(it) }

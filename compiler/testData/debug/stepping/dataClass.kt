@@ -359,7 +359,8 @@ fun box() {
 // StringBuilderWasm.kt:48 $kotlin.text.unsafeStringFromCharArray (16, 4)
 // String.kt:57 $kotlin.text.unsafeStringFromCharArray
 // String.kt:138 $kotlin.text.unsafeStringFromCharArray (4, 4, 4, 4, 11, 17, 22, 29, 4, 34)
-// test.kt:18 $box (17, 9, 9, 17, 12, 12)
+// test.kt:18 $box (17, 9, 12)
+// test.kt:1 $box (0, 0, 0, 0)
 // test.kt:1 $D.component1
 // test.kt:19 $box (4, 6, 6, 6, 6, 6, 6)
 // test.kt:20 $box (12, 14, 17, 17, 17, 17, 12)
@@ -371,7 +372,7 @@ fun box() {
 // test.kt:9 $E.hashCode (30, 32)
 // test.kt:23 $box (4, 6, 6)
 // test.kt:7 $E.toString (30, 30, 30, 30, 34)
-// test.kt:24 $box (19, 9, 9, 19, 13, 13)
+// test.kt:24 $box (19, 9, 13)
 // test.kt:1 $E.component1
 // test.kt:25 $box (4, 6, 6)
 // test.kt:10 $E.copy (17, 19, 22, 17, 24)

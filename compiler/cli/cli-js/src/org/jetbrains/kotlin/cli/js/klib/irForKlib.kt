@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.generateModuleFragmentWithPlugins
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsGeneratorExtensions
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
@@ -63,7 +64,12 @@ fun generateIrForKlibSerialization(
         Psi2IrConfiguration(errorPolicy.allowErrors, configuration.partialLinkageConfig.isEnabled),
         messageLogger::checkNoUnboundSymbols
     )
-    val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
+    val psi2IrContext = psi2Ir.createGeneratorContext(
+        analysisResult.moduleDescriptor,
+        analysisResult.bindingContext,
+        symbolTable,
+        JsGeneratorExtensions()
+    )
     val irBuiltIns = psi2IrContext.irBuiltIns
 
     val feContext = psi2IrContext.run {
