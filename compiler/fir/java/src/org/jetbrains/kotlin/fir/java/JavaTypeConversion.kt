@@ -36,7 +36,7 @@ private fun ClassId.toConeFlexibleType(
 
 enum class FirJavaTypeConversionMode {
     DEFAULT, ANNOTATION_MEMBER, ANNOTATION_CONSTRUCTOR_PARAMETER, SUPERTYPE,
-    TYPE_PARAMETER_BOUND_FIRST_ROUND, TYPE_PARAMETER_BOUND_AFTER_FIRST_ROUND;
+    TYPE_PARAMETER_BOUND_FIRST_ROUND, TYPE_PARAMETER_BOUND_AFTER_FIRST_ROUND, MY_MODE;
 
     val insideAnnotation: Boolean get() = this == ANNOTATION_MEMBER || this == ANNOTATION_CONSTRUCTOR_PARAMETER
 }
@@ -68,7 +68,7 @@ internal fun JavaType?.toFirResolvedTypeRef(
 ): FirResolvedTypeRef {
     return buildResolvedTypeRef {
         type = toConeKotlinType(session, javaTypeParameterStack, mode)
-            .let { if (mode == FirJavaTypeConversionMode.SUPERTYPE) it.lowerBoundIfFlexible() else it }
+            .let { if (mode == FirJavaTypeConversionMode.SUPERTYPE || mode == FirJavaTypeConversionMode.MY_MODE) it.lowerBoundIfFlexible() else it }
         annotations += type.attributes.customAnnotations
     }
 }
@@ -181,7 +181,11 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             var classId = if (mode.insideAnnotation) {
                 JavaToKotlinClassMap.mapJavaToKotlinIncludingClassMapping(classifier.fqName!!)
             } else {
-                JavaToKotlinClassMap.mapJavaToKotlin(classifier.fqName!!)
+                if (mode == FirJavaTypeConversionMode.MY_MODE) {
+                    JavaToKotlinClassMap.mapJavaToKotlin(classifier.fqName!!)
+                } else {
+                    JavaToKotlinClassMap.mapJavaToKotlin(classifier.fqName!!)
+                }
             } ?: classifier.classId!!
 
             if (lowerBound == null || argumentsMakeSenseOnlyForMutableContainer(classId, session)) {

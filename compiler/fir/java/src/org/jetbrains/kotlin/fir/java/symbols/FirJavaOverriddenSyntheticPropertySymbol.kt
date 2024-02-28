@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java.symbols
 
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.name.CallableId
 
@@ -43,7 +44,8 @@ import org.jetbrains.kotlin.name.CallableId
  */
 class FirJavaOverriddenSyntheticPropertySymbol(
     propertyId: CallableId,
-    getterId: CallableId
+    getterId: CallableId,
+    val overriddenKotlinProperty: FirPropertySymbol? = null
 ) : FirSyntheticPropertySymbol(propertyId, getterId) {
     override fun copy(): FirSyntheticPropertySymbol = FirJavaOverriddenSyntheticPropertySymbol(callableId, getterId)
 }

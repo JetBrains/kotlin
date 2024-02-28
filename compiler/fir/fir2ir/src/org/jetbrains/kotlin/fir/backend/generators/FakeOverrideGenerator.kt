@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
@@ -300,6 +301,10 @@ class FakeOverrideGenerator(
         directOverridden: FirTypeScope.(S) -> List<S>,
         processOverridden: FirTypeScope.(S, (S) -> ProcessorAction) -> ProcessorAction
     ): List<Pair<S, ConeClassLikeLookupTag>> {
+        val originalKotlinProperty = (originalSymbol as? FirJavaOverriddenSyntheticPropertySymbol)?.overriddenKotlinProperty
+        if (originalKotlinProperty != null) {
+            return listOf(originalKotlinProperty as S to originalKotlinProperty.containingClassLookupTag()!!)
+        }
         val scope = klass.unsubstitutedScope()
         val classLookupTag = klass.symbol.toLookupTag()
         val overriddenFirSymbols = computeBaseSymbols(originalSymbol, directOverridden, scope, classLookupTag)

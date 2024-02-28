@@ -10,9 +10,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.declarations.utils.isJava
-import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.scopes.*
 import org.jetbrains.kotlin.fir.resolve.*
@@ -23,6 +22,9 @@ import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.scopes.scopeForSupertype
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.isAny
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -97,7 +99,29 @@ object JavaScopeProvider : FirScopeProvider() {
                 listOf(StandardClassIds.Any.constructClassLikeType(emptyArray(), isNullable = false))
             else
                 lookupSuperTypes(
-                    regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession, substituteTypes = true
+                    regularClass,
+                    lookupInterfaces = true,
+                    deep = false,
+                    useSiteSession = useSiteSession,
+                    substituteTypes = true,
+                    supertypeSupplier = object : SupertypeSupplier() {
+                        override fun forClass(firClass: FirClass, useSiteSession: FirSession): List<ConeClassLikeType> {
+                            if (!firClass.isLocal) {
+                                // for local classes the phase may not be updated till that moment
+                                firClass.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+                            }
+                            if (firClass is FirJavaClass) {
+                                return firClass.mySuperTypeRefs.mapNotNull { it.coneTypeSafe() }
+                            }
+                            return firClass.superConeTypes
+                        }
+
+                        override fun expansionForTypeAlias(typeAlias: FirTypeAlias, useSiteSession: FirSession): ConeClassLikeType? {
+                            typeAlias.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+                            return typeAlias.expandedConeType
+                        }
+
+                    }
                 )
 
             val superTypeScopes = superTypes.mapNotNull {

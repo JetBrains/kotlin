@@ -27,7 +27,10 @@ import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
 import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
-import org.jetbrains.kotlin.fir.java.declarations.*
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaExternalAnnotation
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
+import org.jetbrains.kotlin.fir.java.declarations.buildJavaField
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
@@ -557,6 +560,21 @@ class FirSignatureEnhancement(
         }
     }
 
+    fun myEnhanceSuperTypes(unenhnancedSuperTypes: List<FirTypeRef>): List<FirTypeRef> {
+        val purelyImplementedSupertype = getPurelyImplementedSupertype(moduleData.session)
+        val purelyImplementedSupertypeClassId = purelyImplementedSupertype?.classId
+        return buildList {
+            unenhnancedSuperTypes.mapNotNullTo(this) { superType ->
+                myEnhanceSuperType(superType).takeUnless {
+                    purelyImplementedSupertypeClassId != null && it.coneType.classId == purelyImplementedSupertypeClassId
+                }
+            }
+            purelyImplementedSupertype?.let {
+                add(buildResolvedTypeRef { type = it })
+            }
+        }
+    }
+
     private fun getPurelyImplementedSupertype(session: FirSession): ConeKotlinType? {
         val purelyImplementedClassIdFromAnnotation = owner.annotations
             .firstOrNull { it.unexpandedClassId?.asSingleFqName() == JvmAnnotationNames.PURELY_IMPLEMENTS_ANNOTATION }
@@ -593,6 +611,12 @@ class FirSignatureEnhancement(
             session, typeQualifierResolver, null, isCovariant = false, forceOnlyHeadTypeConstructor = false,
             AnnotationQualifierApplicabilityType.TYPE_USE, contextQualifiers
         ).enhance(type, emptyList(), FirJavaTypeConversionMode.SUPERTYPE)
+
+    private fun myEnhanceSuperType(type: FirTypeRef): FirTypeRef =
+        EnhancementSignatureParts(
+            session, typeQualifierResolver, null, isCovariant = false, forceOnlyHeadTypeConstructor = false,
+            AnnotationQualifierApplicabilityType.TYPE_USE, contextQualifiers
+        ).enhance(type, emptyList(), FirJavaTypeConversionMode.MY_MODE)
 
     // ================================================================================================
 

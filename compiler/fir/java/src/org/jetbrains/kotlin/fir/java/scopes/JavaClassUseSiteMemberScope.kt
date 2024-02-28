@@ -102,7 +102,8 @@ class JavaClassUseSiteMemberScope(
             name = property.name
             symbol = FirJavaOverriddenSyntheticPropertySymbol(
                 getterId = getterSymbol.callableId,
-                propertyId = CallableId(getterSymbol.callableId.packageName, getterSymbol.callableId.className, property.name)
+                propertyId = CallableId(getterSymbol.callableId.packageName, getterSymbol.callableId.className, property.name),
+                overriddenKotlinProperty = property.originalForSubstitutionOverride?.symbol ?: property.symbol
             )
             delegateGetter = getterSymbol.fir
             delegateSetter = setterSymbol?.fir
