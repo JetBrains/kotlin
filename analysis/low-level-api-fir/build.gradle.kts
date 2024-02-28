@@ -100,7 +100,6 @@ testsJar()
 tasks.register("analysisLowLevelApiFirAllTests") {
     dependsOn(
         ":analysis:low-level-api-fir:test",
-        ":analysis:low-level-api-fir:tests-jdk11:test",
     )
 
     if (kotlinBuildProperties.isKotlinNativeEnabled) {
