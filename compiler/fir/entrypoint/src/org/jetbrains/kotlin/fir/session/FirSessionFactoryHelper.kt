@@ -59,6 +59,7 @@ object FirSessionFactoryHelper {
             librariesScope,
             packagePartProvider,
             languageVersionSettings,
+            predefinedJavaComponents = null,
             registerExtraComponents = {},
         )
 
@@ -81,7 +82,8 @@ object FirSessionFactoryHelper {
             lookupTracker,
             enumWhenTracker,
             importTracker,
-            needRegisterJavaElementFinder = needRegisterJavaElementFinder,
+            predefinedJavaComponents = null,
+            needRegisterJavaElementFinder,
             registerExtraComponents = {},
             init = sessionConfigurator,
         )
