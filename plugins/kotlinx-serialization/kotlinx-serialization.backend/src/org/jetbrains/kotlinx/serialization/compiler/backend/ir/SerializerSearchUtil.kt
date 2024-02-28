@@ -48,7 +48,11 @@ fun BaseIrGenerator.getIrSerialTypeInfo(property: IrSerializableProperty, ctx: S
     findAddOnSerializer(T, ctx)?.let { return SerializableInfo(it) }
     T.overriddenSerializer?.let { return SerializableInfo(it) }
     return when {
-        T.isTypeParameter() -> IrSerialTypeInfo(property, if (property.type.isMarkedNullable()) "Nullable" else "", null)
+        T.isTypeParameter() -> IrSerialTypeInfo(
+            property,
+            if (property.type.classifier.superTypes().any { it.isMarkedNullable() }) "Nullable" else "",
+            null
+        )
         T.isPrimitiveType() -> IrSerialTypeInfo(
             property,
             T.classFqName!!.asString().removePrefix("kotlin.")
