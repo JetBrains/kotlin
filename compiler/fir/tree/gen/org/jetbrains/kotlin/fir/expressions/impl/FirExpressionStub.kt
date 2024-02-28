@@ -6,7 +6,7 @@
 // This file was generated automatically. See compiler/fir/tree/tree-generator/Readme.md.
 // DO NOT MODIFY IT MANUALLY.
 
-@file:Suppress("DuplicatedCode", "unused")
+@file:Suppress("DuplicatedCode")
 
 package org.jetbrains.kotlin.fir.expressions.impl
 

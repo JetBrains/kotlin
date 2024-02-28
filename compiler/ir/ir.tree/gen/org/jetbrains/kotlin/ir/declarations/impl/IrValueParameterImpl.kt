@@ -6,7 +6,7 @@
 // This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
-@file:Suppress("DuplicatedCode", "unused")
+@file:Suppress("DuplicatedCode")
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
