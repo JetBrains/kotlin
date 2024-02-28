@@ -6,5 +6,5 @@ FIR element rendered:
 null
 
 FIR FILE:
-FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotation.kt
-    @FILE:R|kotlin/Suppress|[Types](names = vararg(String()))
+FILE: [ResolvedTo(RAW_FIR)] fileAnnotation.kt
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
