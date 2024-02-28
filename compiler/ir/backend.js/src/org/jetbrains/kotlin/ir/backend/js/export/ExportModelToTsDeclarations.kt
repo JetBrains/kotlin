@@ -300,7 +300,8 @@ class ExportModelToTsDeclarations {
 
         val (innerClasses, nonInnerClasses) = nestedDeclarations.partition { it.ir.isInner }
         val innerClassesProperties = innerClasses.map { it.toReadonlyProperty() }
-        val membersString = (members + innerClassesProperties).joinToString("") { it.toTypeScript("$indent    ") + "\n" }
+        val membersString = (members + innerClassesProperties)
+            .joinToString("") { it.toTypeScript("$indent    ") + "\n" }
 
         // If there are no exported constructors, add a private constructor to disable default one
         val privateCtorString = if (!isInterface && !isAbstract && members.none { it is ExportedConstructor }) {

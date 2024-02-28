@@ -303,6 +303,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         specialProcessing: (IrDeclarationWithName) -> ExportedDeclaration? = { null }
     ): ExportedClassDeclarationsInfo {
         val members = mutableListOf<ExportedDeclaration>()
+        val specialMembers = mutableListOf<ExportedDeclaration>()
         val nestedClasses = mutableListOf<ExportedClass>()
         val isImplicitlyExportedClass = klass.isJsImplicitExport()
 
@@ -314,7 +315,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
             val processingResult = specialProcessing(candidate)
             if (processingResult != null) {
-                members.add(processingResult)
+                specialMembers.add(processingResult)
                 continue
             }
 
@@ -362,7 +363,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         }
 
         return ExportedClassDeclarationsInfo(
-            members,
+            specialMembers + members,
             nestedClasses
         )
     }
@@ -496,7 +497,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                         "ordinal" -> enumEntriesToOrdinal
                             .map { (_, ordinal) -> ExportedType.LiteralType.NumberLiteralType(ordinal) }
                             .reduce { acc: ExportedType, s: ExportedType -> ExportedType.UnionType(acc, s) }
-                        else -> null
+                        else -> return null
                     }
                     exportPropertyUnsafely(
                         candidate,

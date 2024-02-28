@@ -90,14 +90,14 @@ declare namespace JS_TESTS {
                 get name(): "EC3";
                 get ordinal(): 2;
             };
+            get name(): "EC1" | "EC2" | "EC3";
+            get ordinal(): 0 | 1 | 2;
             get foo(): string;
             get bar(): string;
             set bar(value: string);
             bay(): string;
             static values(): Array<foo.EC>;
             static valueOf(value: string): foo.EC;
-            get name(): "EC1" | "EC2" | "EC3";
-            get ordinal(): 0 | 1 | 2;
             abstract get baz(): string;
             readonly __doNotUseOrImplementIt: foo.I3["__doNotUseOrImplementIt"];
         }

@@ -163,10 +163,13 @@ fun main(args: Array<String>) {
                 model("box/", pattern = "^([^_](.+))\\.kt$")
             }
 
-            // see todo on defining class
-//            testClass<AbstractFirJsTypeScriptExportTest> {
-//                model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
-//            }
+            testClass<AbstractFirJsTypeScriptExportTest> {
+                model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
+            }
+
+            testClass<AbstractFirJsES6TypeScriptExportTest> {
+                model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
+            }
 
             testClass<AbstractFirJsLineNumberTest> {
                 model("lineNumbers/")

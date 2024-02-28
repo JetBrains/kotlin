@@ -3,7 +3,6 @@ declare namespace JS_TESTS {
     namespace foo {
         abstract class TestEnumClass {
             private constructor();
-            get constructorParameter(): string;
             static get A(): foo.TestEnumClass & {
                 get name(): "A";
                 get ordinal(): 0;
@@ -12,13 +11,14 @@ declare namespace JS_TESTS {
                 get name(): "B";
                 get ordinal(): 1;
             };
+            get name(): "A" | "B";
+            get ordinal(): 0 | 1;
+            get constructorParameter(): string;
             get foo(): number;
             bar(value: string): string;
             bay(): string;
             static values(): Array<foo.TestEnumClass>;
             static valueOf(value: string): foo.TestEnumClass;
-            get name(): "A" | "B";
-            get ordinal(): 0 | 1;
         }
         namespace TestEnumClass {
             class Nested {
@@ -40,10 +40,10 @@ declare namespace JS_TESTS {
                     get name(): "B";
                     get ordinal(): 1;
                 };
-                static values(): Array<foo.OuterClass.NestedEnum>;
-                static valueOf(value: string): foo.OuterClass.NestedEnum;
                 get name(): "A" | "B";
                 get ordinal(): 0 | 1;
+                static values(): Array<foo.OuterClass.NestedEnum>;
+                static valueOf(value: string): foo.OuterClass.NestedEnum;
             }
         }
     }
