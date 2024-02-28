@@ -22715,6 +22715,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
+    @TestMetadata("lambdaWithTwoContextReceivers.kt")
+    public void testLambdaWithTwoContextReceivers() {
+      runTest("compiler/testData/codegen/box/functions/lambdaWithTwoContextReceivers.kt");
+    }
+
+    @Test
     @TestMetadata("localFunction.kt")
     public void testLocalFunction() {
       runTest("compiler/testData/codegen/box/functions/localFunction.kt");
@@ -24018,6 +24024,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     @TestMetadata("referenceToCatchParameterFromLambdaExpression.kt")
     public void testReferenceToCatchParameterFromLambdaExpression() {
       runTest("compiler/testData/codegen/box/inference/referenceToCatchParameterFromLambdaExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("safeCastWithElvis.kt")
+    public void testSafeCastWithElvis() {
+      runTest("compiler/testData/codegen/box/inference/safeCastWithElvis.kt");
     }
 
     @Test
@@ -36504,6 +36516,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     @Test
     public void testAllFilesPresentInLambda() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lambda"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("ifWithReferenceAndLambda.kt")
+    public void testIfWithReferenceAndLambda() {
+      runTest("compiler/testData/codegen/box/lambda/ifWithReferenceAndLambda.kt");
     }
 
     @Test

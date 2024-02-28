@@ -4705,6 +4705,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     }
 
     @Test
+    @TestMetadata("inferenceOfDefinitelyNotNullableBoolean.kt")
+    public void testInferenceOfDefinitelyNotNullableBoolean() {
+      runTest("compiler/testData/ir/irText/types/inferenceOfDefinitelyNotNullableBoolean.kt");
+    }
+
+    @Test
     @TestMetadata("intersectionType1.kt")
     public void testIntersectionType1() {
       runTest("compiler/testData/ir/irText/types/intersectionType1.kt");

@@ -19467,6 +19467,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
+      @TestMetadata("safeCastWithElvis.kt")
+      public void testSafeCastWithElvis() {
+        runTest("compiler/testData/codegen/box/inference/safeCastWithElvis.kt");
+      }
+
+      @Test
       @TestMetadata("specialCallsWithCallableReferences.kt")
       public void testSpecialCallsWithCallableReferences() {
         runTest("compiler/testData/codegen/box/inference/specialCallsWithCallableReferences.kt");
@@ -28851,6 +28857,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       @Test
       public void testAllFilesPresentInLambda() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("ifWithReferenceAndLambda.kt")
+      public void testIfWithReferenceAndLambda() {
+        runTest("compiler/testData/codegen/box/lambda/ifWithReferenceAndLambda.kt");
       }
 
       @Test

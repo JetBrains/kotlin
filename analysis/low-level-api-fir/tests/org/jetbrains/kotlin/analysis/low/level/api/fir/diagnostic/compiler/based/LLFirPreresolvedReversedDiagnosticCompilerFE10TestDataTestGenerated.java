@@ -1606,6 +1606,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("unresolvedNameInBackticksInReceiver.kt")
+    public void testUnresolvedNameInBackticksInReceiver() {
+      runTest("compiler/testData/diagnostics/tests/unresolvedNameInBackticksInReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("UnusedInDestructuring.kt")
     public void testUnusedInDestructuring() {
       runTest("compiler/testData/diagnostics/tests/UnusedInDestructuring.kt");
@@ -2317,6 +2323,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("OptInWithArrayArgument.kt")
+      public void testOptInWithArrayArgument() {
+        runTest("compiler/testData/diagnostics/tests/annotations/OptInWithArrayArgument.kt");
+      }
+
+      @Test
       @TestMetadata("propagationAnnotationToLocalMemberFunction.kt")
       public void testPropagationAnnotationToLocalMemberFunction() {
         runTest("compiler/testData/diagnostics/tests/annotations/propagationAnnotationToLocalMemberFunction.kt");
@@ -2404,6 +2416,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       @TestMetadata("RecursivelyIncorrectlyAnnotatedParameter.kt")
       public void testRecursivelyIncorrectlyAnnotatedParameter() {
         runTest("compiler/testData/diagnostics/tests/annotations/RecursivelyIncorrectlyAnnotatedParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("referenceOfAnnotatedFunctionInAnnotation.kt")
+      public void testReferenceOfAnnotatedFunctionInAnnotation() {
+        runTest("compiler/testData/diagnostics/tests/annotations/referenceOfAnnotatedFunctionInAnnotation.kt");
       }
 
       @Test
@@ -6371,6 +6389,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("nonUselessCastInLambda.kt")
+      public void testNonUselessCastInLambda() {
+        runTest("compiler/testData/diagnostics/tests/cast/nonUselessCastInLambda.kt");
+      }
+
+      @Test
       @TestMetadata("nothingAs.kt")
       public void testNothingAs() {
         runTest("compiler/testData/diagnostics/tests/cast/nothingAs.kt");
@@ -6386,6 +6410,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       @TestMetadata("StableTypeForUselessCast.kt")
       public void testStableTypeForUselessCast() {
         runTest("compiler/testData/diagnostics/tests/cast/StableTypeForUselessCast.kt");
+      }
+
+      @Test
+      @TestMetadata("usefulCastInGetOperator.kt")
+      public void testUsefulCastInGetOperator() {
+        runTest("compiler/testData/diagnostics/tests/cast/usefulCastInGetOperator.kt");
       }
 
       @Test
@@ -9294,6 +9324,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       @TestMetadata("conflictingOverloads.kt")
       public void testConflictingOverloads() {
         runTest("compiler/testData/diagnostics/tests/dataClasses/conflictingOverloads.kt");
+      }
+
+      @Test
+      @TestMetadata("copyInDataObject.kt")
+      public void testCopyInDataObject() {
+        runTest("compiler/testData/diagnostics/tests/dataClasses/copyInDataObject.kt");
       }
 
       @Test
@@ -13403,6 +13439,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       public void testSimple() {
         runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/simple.kt");
       }
+
+      @Test
+      @TestMetadata("starProjection.kt")
+      public void testStarProjection() {
+        runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/starProjection.kt");
+      }
     }
 
     @Nested
@@ -15940,6 +15982,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     @TestDataPath("$PROJECT_ROOT")
     public class Imports {
       @Test
+      @TestMetadata("aliasedImportOfEnumConstructor.kt")
+      public void testAliasedImportOfEnumConstructor() {
+        runTest("compiler/testData/diagnostics/tests/imports/aliasedImportOfEnumConstructor.kt");
+      }
+
+      @Test
       public void testAllFilesPresentInImports() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/imports"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
@@ -16716,6 +16764,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       @TestMetadata("completionOfMultipleLambdas.kt")
       public void testCompletionOfMultipleLambdas() {
         runTest("compiler/testData/diagnostics/tests/inference/completionOfMultipleLambdas.kt");
+      }
+
+      @Test
+      @TestMetadata("complexInferenceOnParentizedExpression.kt")
+      public void testComplexInferenceOnParentizedExpression() {
+        runTest("compiler/testData/diagnostics/tests/inference/complexInferenceOnParentizedExpression.kt");
       }
 
       @Test
@@ -20524,6 +20578,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("multipleDiagnosticsInOneCallChain.kt")
+        public void testMultipleDiagnosticsInOneCallChain() {
+          runTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/multipleDiagnosticsInOneCallChain.kt");
+        }
+
+        @Test
         @TestMetadata("NoAmbiguityForDifferentFunctionTypes.kt")
         public void testNoAmbiguityForDifferentFunctionTypes() {
           runTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/NoAmbiguityForDifferentFunctionTypes.kt");
@@ -21944,6 +22004,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       @TestMetadata("selfAnnotationForClassObject.kt")
       public void testSelfAnnotationForClassObject() {
         runTest("compiler/testData/diagnostics/tests/inner/selfAnnotationForClassObject.kt");
+      }
+
+      @Test
+      @TestMetadata("starProjectedInnerType.kt")
+      public void testStarProjectedInnerType() {
+        runTest("compiler/testData/diagnostics/tests/inner/starProjectedInnerType.kt");
       }
 
       @Test
@@ -24264,6 +24330,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       @TestMetadata("multipleLabels.kt")
       public void testMultipleLabels() {
         runTest("compiler/testData/diagnostics/tests/labels/multipleLabels.kt");
+      }
+
+      @Test
+      @TestMetadata("qualifiedThisInExtensionProperty.kt")
+      public void testQualifiedThisInExtensionProperty() {
+        runTest("compiler/testData/diagnostics/tests/labels/qualifiedThisInExtensionProperty.kt");
       }
     }
 
@@ -28665,6 +28737,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("disambiguateByNumberOfLambdaArgument.kt")
+      public void testDisambiguateByNumberOfLambdaArgument() {
+        runTest("compiler/testData/diagnostics/tests/overload/disambiguateByNumberOfLambdaArgument.kt");
+      }
+
+      @Test
       @TestMetadata("doubleWinsOverFloat.kt")
       public void testDoubleWinsOverFloat() {
         runTest("compiler/testData/diagnostics/tests/overload/doubleWinsOverFloat.kt");
@@ -32284,6 +32362,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       @TestMetadata("anonymousObjectFromTopLevelMember.kt")
       public void testAnonymousObjectFromTopLevelMember() {
         runTest("compiler/testData/diagnostics/tests/resolve/anonymousObjectFromTopLevelMember.kt");
+      }
+
+      @Test
+      @TestMetadata("callToProtectedOnSmartcast.kt")
+      public void testCallToProtectedOnSmartcast() {
+        runTest("compiler/testData/diagnostics/tests/resolve/callToProtectedOnSmartcast.kt");
       }
 
       @Test
@@ -36047,6 +36131,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("smartcastBetweenClassAndTypeParameter.kt")
+      public void testSmartcastBetweenClassAndTypeParameter() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/smartcastBetweenClassAndTypeParameter.kt");
+      }
+
+      @Test
       @TestMetadata("smartcastInFriendModule.kt")
       public void testSmartcastInFriendModule() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/smartcastInFriendModule.kt");
@@ -36080,6 +36170,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       @TestMetadata("smartcastToStarProjection.kt")
       public void testSmartcastToStarProjection() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/smartcastToStarProjection.kt");
+      }
+
+      @Test
+      @TestMetadata("syntheticAccessorOnSmartcastedReceiver.kt")
+      public void testSyntheticAccessorOnSmartcastedReceiver() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/syntheticAccessorOnSmartcastedReceiver.kt");
       }
 
       @Test
@@ -37403,6 +37499,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         @TestMetadata("propertyNotNeeded.kt")
         public void testPropertyNotNeeded() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/variables/propertyNotNeeded.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyOfLocalClass.kt")
+        public void testPropertyOfLocalClass() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/variables/propertyOfLocalClass.kt");
         }
 
         @Test
@@ -41968,6 +42070,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("unnamedSubject.kt")
+        public void testUnnamedSubject() {
+          runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/unnamedSubject.kt");
+        }
+
+        @Test
         @TestMetadata("unsupportedFeature.kt")
         public void testUnsupportedFeature() {
           runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/unsupportedFeature.kt");
@@ -44028,6 +44136,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("smartcastOnReceiverInComplexCondition.kt")
+        public void testSmartcastOnReceiverInComplexCondition() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/smartcastOnReceiverInComplexCondition.kt");
+        }
+
+        @Test
         @TestMetadata("throwsEffect.kt")
         public void testThrowsEffect() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/throwsEffect.kt");
@@ -44967,6 +45081,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         @TestMetadata("allMembersAllowed.kt")
         public void testAllMembersAllowed() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/allMembersAllowed.kt");
+        }
+
+        @Test
+        @TestMetadata("callableReference.kt")
+        public void testCallableReference() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/callableReference.kt");
         }
 
         @Test
