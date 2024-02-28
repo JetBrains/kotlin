@@ -45,10 +45,9 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         }
     }
 
-    // IDE doesn't care this function is referenced as :: and then used polymorphicly
-    @Suppress("UNUSED_PARAMETER")
     private fun checkIsApplicability(l: TypeInfo, r: TypeInfo, expression: FirTypeOperatorCall, context: CheckerContext): Applicability {
         return when {
+            isRefinementUseless(context, l.directType.upperBoundIfFlexible(), r.directType, expression) -> Applicability.USELESS_IS_CHECK
             isCastErased(l.directType, r.directType, context) -> Applicability.CAST_ERASED
             else -> Applicability.APPLICABLE
         }
@@ -61,11 +60,12 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
                 || l.type.isNullableNothing && !r.type.isNullable
 
         return when {
+            isRefinementUseless(context, l.directType.upperBoundIfFlexible(), r.directType, expression) -> Applicability.USELESS_CAST
             l.type.isNothing && r.type.isNothingOrNullableNothing -> Applicability.APPLICABLE
             r.type.isNothing -> Applicability.IMPOSSIBLE
             isNullableNothingWithNotNull -> when (expression.operation) {
                 // (null as? WhatEver) == null
-                FirOperation.SAFE_AS -> Applicability.USELESS
+                FirOperation.SAFE_AS -> Applicability.USELESS_CAST
                 else -> Applicability.IMPOSSIBLE
             }
             oneIsNotNull && oneIsFinal && areUnrelated(l, r, context) -> Applicability.IMPOSSIBLE
@@ -92,7 +92,8 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
     private enum class Applicability {
         APPLICABLE,
         IMPOSSIBLE,
-        USELESS,
+        USELESS_CAST,
+        USELESS_IS_CHECK,
         CAST_ERASED,
     }
 
@@ -114,9 +115,12 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             Applicability.IMPOSSIBLE -> getImpossibilityDiagnostic(l, r, context)?.let {
                 reportOn(expression.source, it, context)
             }
-            Applicability.USELESS -> getUselessnessDiagnostic(context)?.let {
+            Applicability.USELESS_CAST -> getUselessCastDiagnostic(context)?.let {
                 reportOn(expression.source, it, context)
             }
+            Applicability.USELESS_IS_CHECK -> reportOn(
+                expression.source, FirErrors.USELESS_IS_CHECK, expression.operation == FirOperation.IS, context,
+            )
             Applicability.CAST_ERASED -> when {
                 expression.operation == FirOperation.AS || expression.operation == FirOperation.SAFE_AS -> {
                     reportOn(expression.source, FirErrors.UNCHECKED_CAST, lUserType, rUserType, context)
@@ -133,7 +137,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         else -> FirErrors.CAST_NEVER_SUCCEEDS
     }
 
-    private fun getUselessnessDiagnostic(context: CheckerContext) = when {
+    private fun getUselessCastDiagnostic(context: CheckerContext) = when {
         !context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2) -> null
         else -> FirErrors.USELESS_CAST
     }

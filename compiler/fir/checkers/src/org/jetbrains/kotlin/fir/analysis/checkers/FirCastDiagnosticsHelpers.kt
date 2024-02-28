@@ -182,11 +182,16 @@ fun isUpcast(context: CheckerContext, candidateType: ConeKotlinType, targetType:
 
 internal fun isRefinementUseless(
     context: CheckerContext,
-    lhsType: ConeSimpleKotlinType,
+    lhsType: ConeKotlinType,
     targetType: ConeKotlinType,
     expression: FirTypeOperatorCall,
-    arg: FirExpression,
 ): Boolean {
+    if (lhsType is ConeErrorType || targetType is ConeErrorType) {
+        return false
+    }
+
+    val arg = expression.argument
+
     return when (expression.operation) {
         FirOperation.AS, FirOperation.SAFE_AS -> {
             if (arg is FirFunctionCall) {
@@ -211,7 +216,7 @@ internal fun isRefinementUseless(
     }
 }
 
-private fun isExactTypeCast(context: CheckerContext, lhsType: ConeSimpleKotlinType, targetType: ConeKotlinType): Boolean {
+private fun isExactTypeCast(context: CheckerContext, lhsType: ConeKotlinType, targetType: ConeKotlinType): Boolean {
     if (!AbstractTypeChecker.equalTypes(context.session.typeContext, lhsType, targetType, stubTypesEqualToAnything = false))
         return false
     // See comments at [isUpcast] why we need to check the existence of @ExtensionFunctionType
