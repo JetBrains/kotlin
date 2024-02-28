@@ -32,6 +32,12 @@ public abstract class KotlinModuleDependentsProvider {
      */
     public abstract fun getTransitiveDependents(module: KtModule): Set<KtModule>
 
+    /**
+     * Returns all refinement/depends-on dependents of [module], excluding [module] itself. The result is transitive because refinement
+     * dependencies are implicitly transitive.
+     */
+    public abstract fun getRefinementDependents(module: KtModule): Set<KtModule>
+
     public companion object {
         public fun getInstance(project: Project): KotlinModuleDependentsProvider =
             project.getService(KotlinModuleDependentsProvider::class.java)
