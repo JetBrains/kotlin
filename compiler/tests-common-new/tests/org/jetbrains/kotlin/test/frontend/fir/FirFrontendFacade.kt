@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.container.topologicalSort
 import org.jetbrains.kotlin.fir.*
@@ -367,6 +368,8 @@ open class FirFrontendFacade(
                     createIncrementalCompilationSymbolProviders = { null },
                     extensionRegistrars,
                     languageVersionSettings,
+                    jvmTarget = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+                        .get(JVMConfigurationKeys.JVM_TARGET, JvmTarget.DEFAULT),
                     lookupTracker = null,
                     enumWhenTracker = null,
                     importTracker = null,

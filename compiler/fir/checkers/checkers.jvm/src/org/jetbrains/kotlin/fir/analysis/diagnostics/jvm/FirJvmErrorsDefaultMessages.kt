@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ILLEGAL_JV
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INAPPLICABLE_JVM_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INAPPLICABLE_JVM_FIELD_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INAPPLICABLE_JVM_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INLINE_FROM_HIGHER_PLATFORM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INNER_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE
@@ -302,6 +303,12 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SUSPENSION_POINT_INSIDE_CRITICAL_SECTION,
             "The ''{0}'' suspension point is inside a critical section.",
             DECLARATION_NAME
+        )
+        map.put(
+            INLINE_FROM_HIGHER_PLATFORM,
+            "Cannot inline bytecode built with {0} into bytecode that is being built with {1}. Please specify proper ''-jvm-target'' option.",
+            STRING,
+            STRING
         )
         map.put(
             CONCURRENT_HASH_MAP_CONTAINS_OPERATOR,
