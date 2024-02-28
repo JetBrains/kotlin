@@ -150,23 +150,23 @@ abstract class A : Java1 {
   //   Mangled name: A{}entries
   //   Public signature: /A.entries|-586096469347622282[0]
   //   Public signature debug description: {}entries
-  /* fake */ override val entries: MutableSet<MutableEntry<Void?, Void?>?>?
+  /* fake */ override val entries: @EnhancedNullability MutableSet<@EnhancedNullability MutableEntry<@EnhancedNullability Void?, @EnhancedNullability Void?>>
     // CHECK JVM_IR:
-    //   Mangled name: A#<get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<java.lang.Void?,java.lang.Void?>?>?
-    //   Public signature: /A.entries.<get-entries>|-6070695281271194003[0]
-    //   Public signature debug description: <get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<java.lang.Void?,java.lang.Void?>?>?
-    /* fake */ override get(): MutableSet<MutableEntry<Void?, Void?>?>?
+    //   Mangled name: A#<get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<java.lang.Void?{EnhancedNullability},java.lang.Void?{EnhancedNullability}>{EnhancedNullability}>{EnhancedNullability}
+    //   Public signature: /A.entries.<get-entries>|-1449002387372962939[0]
+    //   Public signature debug description: <get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<java.lang.Void?{EnhancedNullability},java.lang.Void?{EnhancedNullability}>{EnhancedNullability}>{EnhancedNullability}
+    /* fake */ override get(): @EnhancedNullability MutableSet<@EnhancedNullability MutableEntry<@EnhancedNullability Void?, @EnhancedNullability Void?>>
 
   // CHECK:
   //   Mangled name: A{}keys
   //   Public signature: /A.keys|-1539062068328255324[0]
   //   Public signature debug description: {}keys
-  /* fake */ override val keys: MutableSet<Void?>?
+  /* fake */ override val keys: @EnhancedNullability MutableSet<@EnhancedNullability Void?>
     // CHECK JVM_IR:
-    //   Mangled name: A#<get-keys>(){}kotlin.collections.MutableSet<java.lang.Void?>?
-    //   Public signature: /A.keys.<get-keys>|6556245738399573293[0]
-    //   Public signature debug description: <get-keys>(){}kotlin.collections.MutableSet<java.lang.Void?>?
-    /* fake */ override get(): MutableSet<Void?>?
+    //   Mangled name: A#<get-keys>(){}kotlin.collections.MutableSet<java.lang.Void?{EnhancedNullability}>{EnhancedNullability}
+    //   Public signature: /A.keys.<get-keys>|6266223291892564583[0]
+    //   Public signature debug description: <get-keys>(){}kotlin.collections.MutableSet<java.lang.Void?{EnhancedNullability}>{EnhancedNullability}
+    /* fake */ override get(): @EnhancedNullability MutableSet<@EnhancedNullability Void?>
 
   // CHECK:
   //   Mangled name: A{}size
@@ -183,12 +183,12 @@ abstract class A : Java1 {
   //   Mangled name: A{}values
   //   Public signature: /A.values|-764749005844117249[0]
   //   Public signature debug description: {}values
-  /* fake */ override val values: MutableCollection<Void?>?
+  /* fake */ override val values: @EnhancedNullability MutableCollection<@EnhancedNullability Void?>
     // CHECK JVM_IR:
-    //   Mangled name: A#<get-values>(){}kotlin.collections.MutableCollection<java.lang.Void?>?
-    //   Public signature: /A.values.<get-values>|3365463410528719249[0]
-    //   Public signature debug description: <get-values>(){}kotlin.collections.MutableCollection<java.lang.Void?>?
-    /* fake */ override get(): MutableCollection<Void?>?
+    //   Mangled name: A#<get-values>(){}kotlin.collections.MutableCollection<java.lang.Void?{EnhancedNullability}>{EnhancedNullability}
+    //   Public signature: /A.values.<get-values>|-4884439515124608116[0]
+    //   Public signature debug description: <get-values>(){}kotlin.collections.MutableCollection<java.lang.Void?{EnhancedNullability}>{EnhancedNullability}
+    /* fake */ override get(): @EnhancedNullability MutableCollection<@EnhancedNullability Void?>
 
 }
 
@@ -355,34 +355,34 @@ class B : Java1 {
   //   Mangled name: B{}entries
   //   Public signature: /B.entries|-586096469347622282[0]
   //   Public signature debug description: {}entries
-  /* fake */ override val entries: MutableSet<MutableEntry<Void?, Void?>?>?
+  /* fake */ override val entries: @EnhancedNullability MutableSet<@EnhancedNullability MutableEntry<@EnhancedNullability Void?, @EnhancedNullability Void?>>
     // CHECK JVM_IR:
-    //   Mangled name: B#<get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<java.lang.Void?,java.lang.Void?>?>?
-    //   Public signature: /B.entries.<get-entries>|-6070695281271194003[0]
-    //   Public signature debug description: <get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<java.lang.Void?,java.lang.Void?>?>?
-    /* fake */ override get(): MutableSet<MutableEntry<Void?, Void?>?>?
+    //   Mangled name: B#<get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<java.lang.Void?{EnhancedNullability},java.lang.Void?{EnhancedNullability}>{EnhancedNullability}>{EnhancedNullability}
+    //   Public signature: /B.entries.<get-entries>|-1449002387372962939[0]
+    //   Public signature debug description: <get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<java.lang.Void?{EnhancedNullability},java.lang.Void?{EnhancedNullability}>{EnhancedNullability}>{EnhancedNullability}
+    /* fake */ override get(): @EnhancedNullability MutableSet<@EnhancedNullability MutableEntry<@EnhancedNullability Void?, @EnhancedNullability Void?>>
 
   // CHECK:
   //   Mangled name: B{}keys
   //   Public signature: /B.keys|-1539062068328255324[0]
   //   Public signature debug description: {}keys
-  /* fake */ override val keys: MutableSet<Void?>?
+  /* fake */ override val keys: @EnhancedNullability MutableSet<@EnhancedNullability Void?>
     // CHECK JVM_IR:
-    //   Mangled name: B#<get-keys>(){}kotlin.collections.MutableSet<java.lang.Void?>?
-    //   Public signature: /B.keys.<get-keys>|6556245738399573293[0]
-    //   Public signature debug description: <get-keys>(){}kotlin.collections.MutableSet<java.lang.Void?>?
-    /* fake */ override get(): MutableSet<Void?>?
+    //   Mangled name: B#<get-keys>(){}kotlin.collections.MutableSet<java.lang.Void?{EnhancedNullability}>{EnhancedNullability}
+    //   Public signature: /B.keys.<get-keys>|6266223291892564583[0]
+    //   Public signature debug description: <get-keys>(){}kotlin.collections.MutableSet<java.lang.Void?{EnhancedNullability}>{EnhancedNullability}
+    /* fake */ override get(): @EnhancedNullability MutableSet<@EnhancedNullability Void?>
 
   // CHECK:
   //   Mangled name: B{}values
   //   Public signature: /B.values|-764749005844117249[0]
   //   Public signature debug description: {}values
-  /* fake */ override val values: MutableCollection<Void?>?
+  /* fake */ override val values: @EnhancedNullability MutableCollection<@EnhancedNullability Void?>
     // CHECK JVM_IR:
-    //   Mangled name: B#<get-values>(){}kotlin.collections.MutableCollection<java.lang.Void?>?
-    //   Public signature: /B.values.<get-values>|3365463410528719249[0]
-    //   Public signature debug description: <get-values>(){}kotlin.collections.MutableCollection<java.lang.Void?>?
-    /* fake */ override get(): MutableCollection<Void?>?
+    //   Mangled name: B#<get-values>(){}kotlin.collections.MutableCollection<java.lang.Void?{EnhancedNullability}>{EnhancedNullability}
+    //   Public signature: /B.values.<get-values>|-4884439515124608116[0]
+    //   Public signature debug description: <get-values>(){}kotlin.collections.MutableCollection<java.lang.Void?{EnhancedNullability}>{EnhancedNullability}
+    /* fake */ override get(): @EnhancedNullability MutableCollection<@EnhancedNullability Void?>
 
 }
 
@@ -391,3 +391,4 @@ class B : Java1 {
 //   Public signature: /test|-2533013708701322011[0]
 //   Public signature debug description: test(A;B){}
 fun test(a: A, b: B): Unit
+

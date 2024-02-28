@@ -133,28 +133,28 @@ class C : Java2 {
   //   Mangled name: C{}a
   //   Public signature: /C.a|-1200697420457237799[0]
   //   Public signature debug description: {}a
-  /* fake */ override val a: String?
+  /* fake */ override val a: @EnhancedNullability String
     // CHECK JVM_IR:
-    //   Mangled name: C#<get-a>(){}kotlin.String?
-    //   Public signature: /C.a.<get-a>|-3827020536169281094[0]
-    //   Public signature debug description: <get-a>(){}kotlin.String?
-    /* fake */ override get(): String?
+    //   Mangled name: C#<get-a>(){}kotlin.String{EnhancedNullability}
+    //   Public signature: /C.a.<get-a>|-7145393266243152488[0]
+    //   Public signature debug description: <get-a>(){}kotlin.String{EnhancedNullability}
+    /* fake */ override get(): @EnhancedNullability String
 
   // CHECK:
   //   Mangled name: C{}c
   //   Public signature: /C.c|-4416962153448040627[0]
   //   Public signature debug description: {}c
-  /* fake */ override var c: String?
+  /* fake */ override var c: @EnhancedNullability String
     // CHECK JVM_IR:
-    //   Mangled name: C#<get-c>(){}kotlin.String?
-    //   Public signature: /C.c.<get-c>|-6320399562288171885[0]
-    //   Public signature debug description: <get-c>(){}kotlin.String?
-    /* fake */ override get(): String?
+    //   Mangled name: C#<get-c>(){}kotlin.String{EnhancedNullability}
+    //   Public signature: /C.c.<get-c>|-2824529966014301292[0]
+    //   Public signature debug description: <get-c>(){}kotlin.String{EnhancedNullability}
+    /* fake */ override get(): @EnhancedNullability String
     // CHECK:
-    //   Mangled name: C#<set-c>(kotlin.String?){}
-    //   Public signature: /C.c.<set-c>|7821982893837257305[0]
-    //   Public signature debug description: <set-c>(kotlin.String?){}
-    /* fake */ override set(text: String?): Unit
+    //   Mangled name: C#<set-c>(kotlin.String{EnhancedNullability}){}
+    //   Public signature: /C.c.<set-c>|163997591642030389[0]
+    //   Public signature debug description: <set-c>(kotlin.String{EnhancedNullability}){}
+    /* fake */ override set(text: @EnhancedNullability String): Unit
 
 }
 
@@ -184,17 +184,17 @@ class D : Java2 {
   //   Mangled name: D{}c
   //   Public signature: /D.c|-4416962153448040627[0]
   //   Public signature debug description: {}c
-  /* fake */ override var c: String?
+  /* fake */ override var c: @EnhancedNullability String
     // CHECK JVM_IR:
-    //   Mangled name: D#<get-c>(){}kotlin.String?
-    //   Public signature: /D.c.<get-c>|-6320399562288171885[0]
-    //   Public signature debug description: <get-c>(){}kotlin.String?
-    /* fake */ override get(): String?
+    //   Mangled name: D#<get-c>(){}kotlin.String{EnhancedNullability}
+    //   Public signature: /D.c.<get-c>|-2824529966014301292[0]
+    //   Public signature debug description: <get-c>(){}kotlin.String{EnhancedNullability}
+    /* fake */ override get(): @EnhancedNullability String
     // CHECK:
-    //   Mangled name: D#<set-c>(kotlin.String?){}
-    //   Public signature: /D.c.<set-c>|7821982893837257305[0]
-    //   Public signature debug description: <set-c>(kotlin.String?){}
-    /* fake */ override set(text: String?): Unit
+    //   Mangled name: D#<set-c>(kotlin.String{EnhancedNullability}){}
+    //   Public signature: /D.c.<set-c>|163997591642030389[0]
+    //   Public signature debug description: <set-c>(kotlin.String{EnhancedNullability}){}
+    /* fake */ override set(text: @EnhancedNullability String): Unit
 
   // CHECK:
   //   Mangled name: D{}a
@@ -658,3 +658,4 @@ interface KotlinInterface {
 //   Public signature: /test|-2663909601123444132[0]
 //   Public signature debug description: test(A;B;C;D;E;F;G;H){}
 fun test(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H): Unit
+

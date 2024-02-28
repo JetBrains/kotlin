@@ -150,23 +150,23 @@ abstract class A : Java1 {
   //   Mangled name: A{}entries
   //   Public signature: /A.entries|-586096469347622282[0]
   //   Public signature debug description: {}entries
-  abstract /* fake */ override val entries: MutableSet<MutableEntry<Boolean?, Boolean?>?>?
+  abstract /* fake */ override val entries: @EnhancedNullability MutableSet<@EnhancedNullability MutableEntry<Boolean?, Boolean?>>
     // CHECK JVM_IR:
-    //   Mangled name: A#<get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean?,kotlin.Boolean?>?>?
-    //   Public signature: /A.entries.<get-entries>|7599268606377074279[0]
-    //   Public signature debug description: <get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean?,kotlin.Boolean?>?>?
-    abstract /* fake */ override get(): MutableSet<MutableEntry<Boolean?, Boolean?>?>?
+    //   Mangled name: A#<get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean?,kotlin.Boolean?>{EnhancedNullability}>{EnhancedNullability}
+    //   Public signature: /A.entries.<get-entries>|5073510598625478346[0]
+    //   Public signature debug description: <get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean?,kotlin.Boolean?>{EnhancedNullability}>{EnhancedNullability}
+    abstract /* fake */ override get(): @EnhancedNullability MutableSet<@EnhancedNullability MutableEntry<Boolean?, Boolean?>>
 
   // CHECK:
   //   Mangled name: A{}keys
   //   Public signature: /A.keys|-1539062068328255324[0]
   //   Public signature debug description: {}keys
-  abstract /* fake */ override val keys: MutableSet<Boolean?>?
+  abstract /* fake */ override val keys: @EnhancedNullability MutableSet<Boolean?>
     // CHECK JVM_IR:
-    //   Mangled name: A#<get-keys>(){}kotlin.collections.MutableSet<kotlin.Boolean?>?
-    //   Public signature: /A.keys.<get-keys>|483538289598228229[0]
-    //   Public signature debug description: <get-keys>(){}kotlin.collections.MutableSet<kotlin.Boolean?>?
-    abstract /* fake */ override get(): MutableSet<Boolean?>?
+    //   Mangled name: A#<get-keys>(){}kotlin.collections.MutableSet<kotlin.Boolean?>{EnhancedNullability}
+    //   Public signature: /A.keys.<get-keys>|-3437886487554544497[0]
+    //   Public signature debug description: <get-keys>(){}kotlin.collections.MutableSet<kotlin.Boolean?>{EnhancedNullability}
+    abstract /* fake */ override get(): @EnhancedNullability MutableSet<Boolean?>
 
   // CHECK:
   //   Mangled name: A{}size
@@ -183,12 +183,12 @@ abstract class A : Java1 {
   //   Mangled name: A{}values
   //   Public signature: /A.values|-764749005844117249[0]
   //   Public signature debug description: {}values
-  abstract /* fake */ override val values: MutableCollection<Boolean?>?
+  abstract /* fake */ override val values: @EnhancedNullability MutableCollection<Boolean?>
     // CHECK JVM_IR:
-    //   Mangled name: A#<get-values>(){}kotlin.collections.MutableCollection<kotlin.Boolean?>?
-    //   Public signature: /A.values.<get-values>|-410492473446277716[0]
-    //   Public signature debug description: <get-values>(){}kotlin.collections.MutableCollection<kotlin.Boolean?>?
-    abstract /* fake */ override get(): MutableCollection<Boolean?>?
+    //   Mangled name: A#<get-values>(){}kotlin.collections.MutableCollection<kotlin.Boolean?>{EnhancedNullability}
+    //   Public signature: /A.values.<get-values>|2965564880775457094[0]
+    //   Public signature debug description: <get-values>(){}kotlin.collections.MutableCollection<kotlin.Boolean?>{EnhancedNullability}
+    abstract /* fake */ override get(): @EnhancedNullability MutableCollection<Boolean?>
 
 }
 
@@ -344,34 +344,34 @@ abstract class B : Java1 {
   //   Mangled name: B{}entries
   //   Public signature: /B.entries|-586096469347622282[0]
   //   Public signature debug description: {}entries
-  abstract /* fake */ override val entries: MutableSet<MutableEntry<Boolean?, Boolean?>?>?
+  abstract /* fake */ override val entries: @EnhancedNullability MutableSet<@EnhancedNullability MutableEntry<Boolean?, Boolean?>>
     // CHECK JVM_IR:
-    //   Mangled name: B#<get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean?,kotlin.Boolean?>?>?
-    //   Public signature: /B.entries.<get-entries>|7599268606377074279[0]
-    //   Public signature debug description: <get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean?,kotlin.Boolean?>?>?
-    abstract /* fake */ override get(): MutableSet<MutableEntry<Boolean?, Boolean?>?>?
+    //   Mangled name: B#<get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean?,kotlin.Boolean?>{EnhancedNullability}>{EnhancedNullability}
+    //   Public signature: /B.entries.<get-entries>|5073510598625478346[0]
+    //   Public signature debug description: <get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean?,kotlin.Boolean?>{EnhancedNullability}>{EnhancedNullability}
+    abstract /* fake */ override get(): @EnhancedNullability MutableSet<@EnhancedNullability MutableEntry<Boolean?, Boolean?>>
 
   // CHECK:
   //   Mangled name: B{}keys
   //   Public signature: /B.keys|-1539062068328255324[0]
   //   Public signature debug description: {}keys
-  abstract /* fake */ override val keys: MutableSet<Boolean?>?
+  abstract /* fake */ override val keys: @EnhancedNullability MutableSet<Boolean?>
     // CHECK JVM_IR:
-    //   Mangled name: B#<get-keys>(){}kotlin.collections.MutableSet<kotlin.Boolean?>?
-    //   Public signature: /B.keys.<get-keys>|483538289598228229[0]
-    //   Public signature debug description: <get-keys>(){}kotlin.collections.MutableSet<kotlin.Boolean?>?
-    abstract /* fake */ override get(): MutableSet<Boolean?>?
+    //   Mangled name: B#<get-keys>(){}kotlin.collections.MutableSet<kotlin.Boolean?>{EnhancedNullability}
+    //   Public signature: /B.keys.<get-keys>|-3437886487554544497[0]
+    //   Public signature debug description: <get-keys>(){}kotlin.collections.MutableSet<kotlin.Boolean?>{EnhancedNullability}
+    abstract /* fake */ override get(): @EnhancedNullability MutableSet<Boolean?>
 
   // CHECK:
   //   Mangled name: B{}values
   //   Public signature: /B.values|-764749005844117249[0]
   //   Public signature debug description: {}values
-  abstract /* fake */ override val values: MutableCollection<Boolean?>?
+  abstract /* fake */ override val values: @EnhancedNullability MutableCollection<Boolean?>
     // CHECK JVM_IR:
-    //   Mangled name: B#<get-values>(){}kotlin.collections.MutableCollection<kotlin.Boolean?>?
-    //   Public signature: /B.values.<get-values>|-410492473446277716[0]
-    //   Public signature debug description: <get-values>(){}kotlin.collections.MutableCollection<kotlin.Boolean?>?
-    abstract /* fake */ override get(): MutableCollection<Boolean?>?
+    //   Mangled name: B#<get-values>(){}kotlin.collections.MutableCollection<kotlin.Boolean?>{EnhancedNullability}
+    //   Public signature: /B.values.<get-values>|2965564880775457094[0]
+    //   Public signature debug description: <get-values>(){}kotlin.collections.MutableCollection<kotlin.Boolean?>{EnhancedNullability}
+    abstract /* fake */ override get(): @EnhancedNullability MutableCollection<Boolean?>
 
   // CHECK:
   //   Mangled name: B{}size
@@ -538,23 +538,23 @@ abstract class KotlinClass : SortedMap<Boolean, Boolean> {
   //   Mangled name: KotlinClass{}entries
   //   Public signature: /KotlinClass.entries|-586096469347622282[0]
   //   Public signature debug description: {}entries
-  abstract /* fake */ override val entries: MutableSet<MutableEntry<Boolean?, Boolean?>?>?
+  abstract /* fake */ override val entries: @EnhancedNullability MutableSet<@EnhancedNullability MutableEntry<Boolean?, Boolean?>>
     // CHECK JVM_IR:
-    //   Mangled name: KotlinClass#<get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean?,kotlin.Boolean?>?>?
-    //   Public signature: /KotlinClass.entries.<get-entries>|7599268606377074279[0]
-    //   Public signature debug description: <get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean?,kotlin.Boolean?>?>?
-    abstract /* fake */ override get(): MutableSet<MutableEntry<Boolean?, Boolean?>?>?
+    //   Mangled name: KotlinClass#<get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean?,kotlin.Boolean?>{EnhancedNullability}>{EnhancedNullability}
+    //   Public signature: /KotlinClass.entries.<get-entries>|5073510598625478346[0]
+    //   Public signature debug description: <get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean?,kotlin.Boolean?>{EnhancedNullability}>{EnhancedNullability}
+    abstract /* fake */ override get(): @EnhancedNullability MutableSet<@EnhancedNullability MutableEntry<Boolean?, Boolean?>>
 
   // CHECK:
   //   Mangled name: KotlinClass{}keys
   //   Public signature: /KotlinClass.keys|-1539062068328255324[0]
   //   Public signature debug description: {}keys
-  abstract /* fake */ override val keys: MutableSet<Boolean?>?
+  abstract /* fake */ override val keys: @EnhancedNullability MutableSet<Boolean?>
     // CHECK JVM_IR:
-    //   Mangled name: KotlinClass#<get-keys>(){}kotlin.collections.MutableSet<kotlin.Boolean?>?
-    //   Public signature: /KotlinClass.keys.<get-keys>|483538289598228229[0]
-    //   Public signature debug description: <get-keys>(){}kotlin.collections.MutableSet<kotlin.Boolean?>?
-    abstract /* fake */ override get(): MutableSet<Boolean?>?
+    //   Mangled name: KotlinClass#<get-keys>(){}kotlin.collections.MutableSet<kotlin.Boolean?>{EnhancedNullability}
+    //   Public signature: /KotlinClass.keys.<get-keys>|-3437886487554544497[0]
+    //   Public signature debug description: <get-keys>(){}kotlin.collections.MutableSet<kotlin.Boolean?>{EnhancedNullability}
+    abstract /* fake */ override get(): @EnhancedNullability MutableSet<Boolean?>
 
   // CHECK:
   //   Mangled name: KotlinClass{}size
@@ -571,12 +571,12 @@ abstract class KotlinClass : SortedMap<Boolean, Boolean> {
   //   Mangled name: KotlinClass{}values
   //   Public signature: /KotlinClass.values|-764749005844117249[0]
   //   Public signature debug description: {}values
-  abstract /* fake */ override val values: MutableCollection<Boolean?>?
+  abstract /* fake */ override val values: @EnhancedNullability MutableCollection<Boolean?>
     // CHECK JVM_IR:
-    //   Mangled name: KotlinClass#<get-values>(){}kotlin.collections.MutableCollection<kotlin.Boolean?>?
-    //   Public signature: /KotlinClass.values.<get-values>|-410492473446277716[0]
-    //   Public signature debug description: <get-values>(){}kotlin.collections.MutableCollection<kotlin.Boolean?>?
-    abstract /* fake */ override get(): MutableCollection<Boolean?>?
+    //   Mangled name: KotlinClass#<get-values>(){}kotlin.collections.MutableCollection<kotlin.Boolean?>{EnhancedNullability}
+    //   Public signature: /KotlinClass.values.<get-values>|2965564880775457094[0]
+    //   Public signature debug description: <get-values>(){}kotlin.collections.MutableCollection<kotlin.Boolean?>{EnhancedNullability}
+    abstract /* fake */ override get(): @EnhancedNullability MutableCollection<Boolean?>
 
 }
 
@@ -585,3 +585,4 @@ abstract class KotlinClass : SortedMap<Boolean, Boolean> {
 //   Public signature: /test|-2533013708701322011[0]
 //   Public signature debug description: test(A;B){}
 fun test(a: A, b: B): Unit
+

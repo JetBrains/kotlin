@@ -22589,6 +22589,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("kt62118.kt")
+      public void testKt62118() {
+        runTest("compiler/testData/diagnostics/tests/j+k/kt62118.kt");
+      }
+
+      @Test
       @TestMetadata("kt62197.kt")
       public void testKt62197() {
         runTest("compiler/testData/diagnostics/tests/j+k/kt62197.kt");

@@ -160,19 +160,19 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract entries: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] K of java.util.SortedMap?, @[FlexibleNullability] V of java.util.SortedMap?>?>?
-      FUN FAKE_OVERRIDE name:<get-entries> visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<T of <root>.C, T of <root>.C>) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] T of <root>.C?, @[FlexibleNullability] T of <root>.C?>?>? [fake_override]
+        public abstract entries: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] K of java.util.SortedMap?, @[FlexibleNullability] V of java.util.SortedMap?>>
+      FUN FAKE_OVERRIDE name:<get-entries> visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<T of <root>.C, T of <root>.C>) returnType:@[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] T of <root>.C?, @[FlexibleNullability] T of <root>.C?>> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
-          public abstract fun <get-entries> (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] K of java.util.SortedMap?, @[FlexibleNullability] V of java.util.SortedMap?>?>? declared in java.util.SortedMap
+          public abstract fun <get-entries> (): @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] K of java.util.SortedMap?, @[FlexibleNullability] V of java.util.SortedMap?>> declared in java.util.SortedMap
         $this: VALUE_PARAMETER name:<this> type:java.util.SortedMap<T of <root>.C, T of <root>.C>
     PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract keys: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] K of java.util.SortedMap?>?
-      FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<T of <root>.C, T of <root>.C>) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] T of <root>.C?>? [fake_override]
+        public abstract keys: @[EnhancedNullability] kotlin.collections.MutableSet<@[FlexibleNullability] K of java.util.SortedMap?>
+      FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<T of <root>.C, T of <root>.C>) returnType:@[EnhancedNullability] kotlin.collections.MutableSet<@[FlexibleNullability] T of <root>.C?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
-          public abstract fun <get-keys> (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] K of java.util.SortedMap?>? declared in java.util.SortedMap
+          public abstract fun <get-keys> (): @[EnhancedNullability] kotlin.collections.MutableSet<@[FlexibleNullability] K of java.util.SortedMap?> declared in java.util.SortedMap
         $this: VALUE_PARAMETER name:<this> type:java.util.SortedMap<T of <root>.C, T of <root>.C>
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
@@ -184,11 +184,11 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:java.util.SortedMap<T of <root>.C, T of <root>.C>
     PROPERTY FAKE_OVERRIDE name:values visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract values: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] V of java.util.SortedMap?>?
-      FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<T of <root>.C, T of <root>.C>) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] T of <root>.C?>? [fake_override]
+        public abstract values: @[EnhancedNullability] kotlin.collections.MutableCollection<@[FlexibleNullability] V of java.util.SortedMap?>
+      FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<T of <root>.C, T of <root>.C>) returnType:@[EnhancedNullability] kotlin.collections.MutableCollection<@[FlexibleNullability] T of <root>.C?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
-          public abstract fun <get-values> (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] V of java.util.SortedMap?>? declared in java.util.SortedMap
+          public abstract fun <get-values> (): @[EnhancedNullability] kotlin.collections.MutableCollection<@[FlexibleNullability] V of java.util.SortedMap?> declared in java.util.SortedMap
         $this: VALUE_PARAMETER name:<this> type:java.util.SortedMap<T of <root>.C, T of <root>.C>
   CLASS CLASS name:D modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<T of <root>.D, T of <root>.D>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D<T of <root>.D>
@@ -370,27 +370,27 @@ FILE fqName:<root> fileName:/1.kt
           CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract entries: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] K of java.util.SortedMap?, @[FlexibleNullability] V of java.util.SortedMap?>?>?
-      FUN FAKE_OVERRIDE name:<get-entries> visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<T of <root>.D, T of <root>.D>) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] T of <root>.D?, @[FlexibleNullability] T of <root>.D?>?>? [fake_override]
+        public abstract entries: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] K of java.util.SortedMap?, @[FlexibleNullability] V of java.util.SortedMap?>>
+      FUN FAKE_OVERRIDE name:<get-entries> visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<T of <root>.D, T of <root>.D>) returnType:@[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] T of <root>.D?, @[FlexibleNullability] T of <root>.D?>> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
-          public abstract fun <get-entries> (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] K of java.util.SortedMap?, @[FlexibleNullability] V of java.util.SortedMap?>?>? declared in java.util.SortedMap
+          public abstract fun <get-entries> (): @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] K of java.util.SortedMap?, @[FlexibleNullability] V of java.util.SortedMap?>> declared in java.util.SortedMap
         $this: VALUE_PARAMETER name:<this> type:java.util.SortedMap<T of <root>.D, T of <root>.D>
     PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract keys: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] K of java.util.SortedMap?>?
-      FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<T of <root>.D, T of <root>.D>) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] T of <root>.D?>? [fake_override]
+        public abstract keys: @[EnhancedNullability] kotlin.collections.MutableSet<@[FlexibleNullability] K of java.util.SortedMap?>
+      FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<T of <root>.D, T of <root>.D>) returnType:@[EnhancedNullability] kotlin.collections.MutableSet<@[FlexibleNullability] T of <root>.D?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
-          public abstract fun <get-keys> (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] K of java.util.SortedMap?>? declared in java.util.SortedMap
+          public abstract fun <get-keys> (): @[EnhancedNullability] kotlin.collections.MutableSet<@[FlexibleNullability] K of java.util.SortedMap?> declared in java.util.SortedMap
         $this: VALUE_PARAMETER name:<this> type:java.util.SortedMap<T of <root>.D, T of <root>.D>
     PROPERTY FAKE_OVERRIDE name:values visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract values: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] V of java.util.SortedMap?>?
-      FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<T of <root>.D, T of <root>.D>) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] T of <root>.D?>? [fake_override]
+        public abstract values: @[EnhancedNullability] kotlin.collections.MutableCollection<@[FlexibleNullability] V of java.util.SortedMap?>
+      FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<T of <root>.D, T of <root>.D>) returnType:@[EnhancedNullability] kotlin.collections.MutableCollection<@[FlexibleNullability] T of <root>.D?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
-          public abstract fun <get-values> (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] V of java.util.SortedMap?>? declared in java.util.SortedMap
+          public abstract fun <get-values> (): @[EnhancedNullability] kotlin.collections.MutableCollection<@[FlexibleNullability] V of java.util.SortedMap?> declared in java.util.SortedMap
         $this: VALUE_PARAMETER name:<this> type:java.util.SortedMap<T of <root>.D, T of <root>.D>
   FUN name:test visibility:public modality:FINAL <> (c:<root>.C<kotlin.Boolean>, d:<root>.D<kotlin.Boolean>) returnType:kotlin.Unit
     VALUE_PARAMETER name:c index:0 type:<root>.C<kotlin.Boolean>

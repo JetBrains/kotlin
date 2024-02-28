@@ -159,19 +159,19 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract entries: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>?>?
-      FUN FAKE_OVERRIDE name:<get-entries> visibility:public modality:ABSTRACT <> ($this:<root>.Java1) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>?>? [fake_override]
+        public abstract entries: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>>
+      FUN FAKE_OVERRIDE name:<get-entries> visibility:public modality:ABSTRACT <> ($this:<root>.Java1) returnType:@[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
-          public abstract fun <get-entries> (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>?>? declared in <root>.Java1
+          public abstract fun <get-entries> (): @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>> declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
     PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract keys: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>?
-      FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:ABSTRACT <> ($this:<root>.Java1) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? [fake_override]
+        public abstract keys: @[EnhancedNullability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>
+      FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:ABSTRACT <> ($this:<root>.Java1) returnType:@[EnhancedNullability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
-          public abstract fun <get-keys> (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? declared in <root>.Java1
+          public abstract fun <get-keys> (): @[EnhancedNullability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
@@ -183,11 +183,11 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
     PROPERTY FAKE_OVERRIDE name:values visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract values: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?>?
-      FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:ABSTRACT <> ($this:<root>.Java1) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?>? [fake_override]
+        public abstract values: @[EnhancedNullability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?>
+      FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:ABSTRACT <> ($this:<root>.Java1) returnType:@[EnhancedNullability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
-          public abstract fun <get-values> (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?>? declared in <root>.Java1
+          public abstract fun <get-values> (): @[EnhancedNullability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
   CLASS CLASS name:B modality:ABSTRACT visibility:public superTypes:[<root>.Java1]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
@@ -371,27 +371,27 @@ FILE fqName:<root> fileName:/1.kt
           CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract entries: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>?>?
-      FUN FAKE_OVERRIDE name:<get-entries> visibility:public modality:ABSTRACT <> ($this:<root>.Java1) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>?>? [fake_override]
+        public abstract entries: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>>
+      FUN FAKE_OVERRIDE name:<get-entries> visibility:public modality:ABSTRACT <> ($this:<root>.Java1) returnType:@[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
-          public abstract fun <get-entries> (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>?>? declared in <root>.Java1
+          public abstract fun <get-entries> (): @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>> declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
     PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract keys: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>?
-      FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:ABSTRACT <> ($this:<root>.Java1) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? [fake_override]
+        public abstract keys: @[EnhancedNullability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>
+      FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:ABSTRACT <> ($this:<root>.Java1) returnType:@[EnhancedNullability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
-          public abstract fun <get-keys> (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? declared in <root>.Java1
+          public abstract fun <get-keys> (): @[EnhancedNullability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
     PROPERTY FAKE_OVERRIDE name:values visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract values: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?>?
-      FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:ABSTRACT <> ($this:<root>.Java1) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?>? [fake_override]
+        public abstract values: @[EnhancedNullability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?>
+      FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:ABSTRACT <> ($this:<root>.Java1) returnType:@[EnhancedNullability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
-          public abstract fun <get-values> (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?>? declared in <root>.Java1
+          public abstract fun <get-values> (): @[EnhancedNullability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
   FUN name:test visibility:public modality:FINAL <> (a:<root>.A, b:<root>.B) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A

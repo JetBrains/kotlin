@@ -47,15 +47,15 @@ FILE fqName:<root> fileName:/kt45853.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.B
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun getA (): <root>.X? declared in <root>.B'
-          CALL 'public open fun <get-a> (): @[FlexibleNullability] <root>.AX? declared in <root>.AX' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:AX modality:ABSTRACT visibility:public superTypes:[<root>.A; <root>.X]' type=@[FlexibleNullability] <root>.AX? origin=GET_PROPERTY
+          CALL 'public open fun <get-a> (): @[EnhancedNullability] <root>.AX? declared in <root>.AX' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:AX modality:ABSTRACT visibility:public superTypes:[<root>.A; <root>.X]' type=@[EnhancedNullability] <root>.AX? origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.B declared in <root>.B.getA' type=<root>.B origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: @[FlexibleNullability] <root>.AX?
-      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.AX) returnType:@[FlexibleNullability] <root>.AX? [fake_override]
+        public open a: @[EnhancedNullability] <root>.AX?
+      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.AX) returnType:@[EnhancedNullability] <root>.AX? [fake_override]
         annotations:
           Override
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public open fun <get-a> (): @[FlexibleNullability] <root>.AX? declared in <root>.AX
+          public open fun <get-a> (): @[EnhancedNullability] <root>.AX? declared in <root>.AX
         $this: VALUE_PARAMETER name:<this> type:<root>.AX

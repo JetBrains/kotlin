@@ -72,7 +72,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 class FirSignatureEnhancement(
     private val owner: FirRegularClass,
     private val session: FirSession,
-    private val overridden: FirSimpleFunction.() -> List<FirCallableDeclaration>
+    private val overridden: FirCallableDeclaration.() -> List<FirCallableDeclaration>
 ) {
     /*
      * FirSignatureEnhancement may be created with library session which doesn't have single module data,
@@ -94,8 +94,8 @@ class FirSignatureEnhancement(
 
     private val enhancementsCache = session.enhancedSymbolStorage.cacheByOwner.getValue(owner.symbol, null)
 
-    fun enhancedFunction(function: FirFunctionSymbol<*>, name: Name?): FirFunctionSymbol<*> {
-        return enhancementsCache.enhancedFunctions.getValue(function, this to name)
+    fun enhancedFunction(function: FirFunctionSymbol<*>, name: Name?, precomputedOverridden: List<FirCallableDeclaration>? = null): FirFunctionSymbol<*> {
+        return enhancementsCache.enhancedFunctions.getValue(function, FirEnhancedSymbolsStorage.FunctionEnhancementContext(this, name, precomputedOverridden))
     }
 
     fun enhancedProperty(property: FirVariableSymbol<*>, name: Name): FirVariableSymbol<*> {
@@ -174,9 +174,10 @@ class FirSignatureEnhancement(
             is FirSyntheticProperty -> {
                 val accessorSymbol = firElement.symbol
                 val getterDelegate = firElement.getter.delegate
-                val enhancedGetterSymbol = getterDelegate.enhanceAccessorOrNull()
+                val overridden = firElement.overridden()
+                val enhancedGetterSymbol = getterDelegate.enhanceAccessorOrNull(overridden)
                 val setterDelegate = firElement.setter?.delegate
-                val enhancedSetterSymbol = setterDelegate?.enhanceAccessorOrNull()
+                val enhancedSetterSymbol = setterDelegate?.enhanceAccessorOrNull(overridden)
                 if (enhancedGetterSymbol == null && enhancedSetterSymbol == null) {
                     return original
                 }
@@ -199,15 +200,16 @@ class FirSignatureEnhancement(
         }
     }
 
-    private fun FirSimpleFunction.enhanceAccessorOrNull(): FirFunctionSymbol<*>? {
+    private fun FirSimpleFunction.enhanceAccessorOrNull(overriddenProperties: List<FirCallableDeclaration>): FirFunctionSymbol<*>? {
         if (!symbol.isEnhanceable()) return null
-        return enhancedFunction(symbol, name)
+        return enhancedFunction(symbol, name, overriddenProperties)
     }
 
     @PrivateForInline
     internal fun enhance(
         original: FirFunctionSymbol<*>,
         name: Name?,
+        precomputedOverridden: List<FirCallableDeclaration>?,
     ): FirFunctionSymbol<*> {
         if (!original.isEnhanceable()) {
             return original
@@ -215,7 +217,7 @@ class FirSignatureEnhancement(
 
         val firMethod = original.fir
         val enhancedParameters = enhanceTypeParameterBoundsForMethod(firMethod)
-        return enhanceMethod(firMethod, original.callableId, name, enhancedParameters, original is FirIntersectionOverrideFunctionSymbol)
+        return enhanceMethod(firMethod, original.callableId, name, enhancedParameters, original is FirIntersectionOverrideFunctionSymbol, precomputedOverridden)
     }
 
     private fun FirCallableSymbol<*>.isEnhanceable(): Boolean {
@@ -248,6 +250,7 @@ class FirSignatureEnhancement(
         name: Name?,
         enhancedTypeParameters: List<FirTypeParameterRef>?,
         isIntersectionOverride: Boolean,
+        precomputedOverridden: List<FirCallableDeclaration>?,
     ): FirFunctionSymbol<*> {
         val predefinedEnhancementInfo =
             SignatureBuildingComponents.signature(
@@ -264,7 +267,7 @@ class FirSignatureEnhancement(
         }
 
         val defaultQualifiers = firMethod.computeDefaultQualifiers()
-        val overriddenMembers = (firMethod as? FirSimpleFunction)?.overridden().orEmpty()
+        val overriddenMembers = precomputedOverridden ?: (firMethod as? FirSimpleFunction)?.overridden().orEmpty()
         val hasReceiver = overriddenMembers.any { it.receiverParameter != null }
 
         val newReceiverTypeRef = if (firMethod is FirSimpleFunction && hasReceiver) {
@@ -749,6 +752,10 @@ class FirSignatureEnhancement(
 
         class ValueParameter(val hasReceiver: Boolean, val index: Int) : TypeInSignature() {
             override fun getTypeRef(member: FirCallableDeclaration): FirTypeRef {
+                // When we enhance a setter override, the overridden property's return type corresponds to the setter's value parameter.
+                if (member is FirProperty) {
+                    return member.returnTypeRef
+                }
                 if (hasReceiver && member is FirSimpleFunction && member.isJava) {
                     return member.valueParameters[index + 1].returnTypeRef
                 }
@@ -895,17 +902,23 @@ class FirEnhancedSymbolsStorage(private val cachesFactory: FirCachesFactory) : F
     val cacheByOwner: FirCache<FirRegularClassSymbol, EnhancementSymbolsCache, Nothing?> =
         cachesFactory.createCache { _ -> EnhancementSymbolsCache(cachesFactory) }
 
+    class FunctionEnhancementContext(
+        val enhancement: FirSignatureEnhancement,
+        val name: Name?,
+        val precomputedOverridden: List<FirCallableDeclaration>?,
+    )
+
     class EnhancementSymbolsCache(cachesFactory: FirCachesFactory) {
         @OptIn(PrivateForInline::class)
-        val enhancedFunctions: FirCache<FirFunctionSymbol<*>, FirFunctionSymbol<*>, Pair<FirSignatureEnhancement, Name?>> =
+        val enhancedFunctions: FirCache<FirFunctionSymbol<*>, FirFunctionSymbol<*>, FunctionEnhancementContext> =
             cachesFactory.createCacheWithPostCompute(
-                createValue = { original, (enhancement, name) ->
-                    enhancement.enhance(original, name) to enhancement
+                createValue = { original, context ->
+                    context.enhancement.enhance(original, context.name, context.precomputedOverridden) to context.enhancement
                 },
                 postCompute = { _, enhancedVersion, enhancement ->
                     val enhancedVersionFir = enhancedVersion.fir
                     (enhancedVersionFir.initialSignatureAttr as? FirSimpleFunction)?.let {
-                        enhancedVersionFir.initialSignatureAttr = enhancement.enhancedFunction(it.symbol, it.name).fir
+                        enhancedVersionFir.initialSignatureAttr = enhancement.enhancedFunction(it.symbol, it.name,).fir
                     }
                 }
             )
