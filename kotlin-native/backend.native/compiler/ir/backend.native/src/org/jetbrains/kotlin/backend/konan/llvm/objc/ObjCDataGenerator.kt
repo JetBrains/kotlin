@@ -44,8 +44,9 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
         global.pointer
     }
 
-    fun genClassRef(name: String): ConstPointer = classRefs.getOrPut(name) {
-        val classGlobal = getClassGlobal(name, isMetaclass = false)
+    fun genClassRef(name: String, isMetaclass: Boolean = false): ConstPointer = classRefs.getOrPut(name) {
+        // Need to distinguish between _OBJC_CLASS_$_ and _OBJC_METACLASS_$_
+        val classGlobal = getClassGlobal(name, isMetaclass)
         val global = codegen.staticData.placeGlobal("OBJC_CLASSLIST_REFERENCES_\$_", classGlobal).also {
             it.setLinkage(LLVMLinkage.LLVMPrivateLinkage)
             it.setSection("__DATA,__objc_classrefs,regular,no_dead_strip")
