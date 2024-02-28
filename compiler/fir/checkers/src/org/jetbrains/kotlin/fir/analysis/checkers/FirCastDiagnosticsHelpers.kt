@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.getClassAndItsOuterClassesWhenLocal
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -176,4 +178,42 @@ fun isUpcast(context: CheckerContext, candidateType: ConeKotlinType, targetType:
     //   which indicates that the annotated type represents an extension function.
     // If one casts p1 to p2 (or vice versa), it is _not_ up cast, i.e., not redundant, yet meaningful.
     return candidateType.isExtensionFunctionType == targetType.isExtensionFunctionType
+}
+
+internal fun isRefinementUseless(
+    context: CheckerContext,
+    lhsType: ConeSimpleKotlinType,
+    targetType: ConeKotlinType,
+    expression: FirTypeOperatorCall,
+    arg: FirExpression,
+): Boolean {
+    return when (expression.operation) {
+        FirOperation.AS, FirOperation.SAFE_AS -> {
+            if (arg is FirFunctionCall) {
+                val functionSymbol = arg.toResolvedCallableSymbol(context.session) as? FirFunctionSymbol<*>
+                if (functionSymbol != null && functionSymbol.isFunctionForExpectTypeFromCastFeature()) return false
+            }
+
+            // Normalize `targetType` for cases like the following:
+            // fun f(x: Int?) { x as? Int } // USELESS_CAST is reasonable here
+            val refinedTargetType =
+                if (expression.operation == FirOperation.SAFE_AS && lhsType.isNullable) {
+                    targetType.withNullability(ConeNullability.NULLABLE, context.session.typeContext)
+                } else {
+                    targetType
+                }
+            isExactTypeCast(context, lhsType, refinedTargetType)
+        }
+        FirOperation.IS, FirOperation.NOT_IS -> {
+            isUpcast(context, lhsType, targetType)
+        }
+        else -> throw AssertionError("Should not be here: ${expression.operation}")
+    }
+}
+
+private fun isExactTypeCast(context: CheckerContext, lhsType: ConeSimpleKotlinType, targetType: ConeKotlinType): Boolean {
+    if (!AbstractTypeChecker.equalTypes(context.session.typeContext, lhsType, targetType, stubTypesEqualToAnything = false))
+        return false
+    // See comments at [isUpcast] why we need to check the existence of @ExtensionFunctionType
+    return lhsType.isExtensionFunctionType == targetType.isExtensionFunctionType
 }
