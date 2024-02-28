@@ -114,6 +114,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirSupertypesChecker,
             FirPrimaryConstructorSuperTypeChecker,
             FirDynamicSupertypeChecker,
+            FirDataClassSafeCopyAnnotationChecker,
             FirEnumCompanionInEnumConstructorCallChecker,
             FirBadInheritedJavaSignaturesChecker,
             FirSealedInterfaceAllowedChecker,

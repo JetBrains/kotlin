@@ -635,6 +635,18 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = SealedClassConstructorCall::class
     }
 
+    interface DataClassSafeCopyAndUnsafeCopyAreIncompatibleAnnotations : KtFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = DataClassSafeCopyAndUnsafeCopyAreIncompatibleAnnotations::class
+    }
+
+    interface DataClassSafeCopyRedundantAnnotation : KtFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = DataClassSafeCopyRedundantAnnotation::class
+    }
+
+    interface DataClassSafeCopyWrongAnnotationTarget : KtFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = DataClassSafeCopyWrongAnnotationTarget::class
+    }
+
     interface DataClassCopyVisibilityWillBeChangedWarning : KtFirDiagnostic<KtPrimaryConstructor> {
         override val diagnosticClass get() = DataClassCopyVisibilityWillBeChangedWarning::class
     }

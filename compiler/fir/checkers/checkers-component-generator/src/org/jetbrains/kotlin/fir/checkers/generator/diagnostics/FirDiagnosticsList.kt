@@ -314,6 +314,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val EXPLICIT_DELEGATION_CALL_REQUIRED by error<PsiElement>(PositioningStrategy.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
         val SEALED_CLASS_CONSTRUCTOR_CALL by error<PsiElement>()
 
+        val DATA_CLASS_SAFE_COPY_AND_UNSAFE_COPY_ARE_INCOMPATIBLE_ANNOTATIONS by error<KtAnnotationEntry>()
+        val DATA_CLASS_SAFE_COPY_REDUNDANT_ANNOTATION by warning<KtAnnotationEntry>()
+        val DATA_CLASS_SAFE_COPY_WRONG_ANNOTATION_TARGET by error<KtAnnotationEntry>()
+
         val DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING by warning<KtPrimaryConstructor>(PositioningStrategy.VISIBILITY_MODIFIER)
         val DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_ERROR by error<KtPrimaryConstructor>(PositioningStrategy.VISIBILITY_MODIFIER)
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -19,9 +20,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.name.FqName
-
-private val safeCopyAnnotation = FqName("kotlin.SafeCopy")
-private val unsafeCopyAnnotation = FqName("kotlin.UnsafeCopy")
 
 object FirDataClassNonPublicConstructorChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -38,7 +36,7 @@ object FirDataClassNonPublicConstructorChecker : FirRegularClassChecker(MppCheck
         }
         val isAlreadyAnnotated = declaration.annotations.any {
             val fqName = it.fqName(context.session)
-            fqName == safeCopyAnnotation || fqName == unsafeCopyAnnotation
+            fqName == StandardNames.SAFE_COPY_ANNOTATION || fqName == StandardNames.UNSAFE_COPY_ANNOTATION
         }
         if (isAlreadyAnnotated) {
             return

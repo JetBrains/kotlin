@@ -751,6 +751,21 @@ internal class SealedClassConstructorCallImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.SealedClassConstructorCall
 
+internal class DataClassSafeCopyAndUnsafeCopyAreIncompatibleAnnotationsImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KtFirDiagnostic.DataClassSafeCopyAndUnsafeCopyAreIncompatibleAnnotations
+
+internal class DataClassSafeCopyRedundantAnnotationImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KtFirDiagnostic.DataClassSafeCopyRedundantAnnotation
+
+internal class DataClassSafeCopyWrongAnnotationTargetImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KtFirDiagnostic.DataClassSafeCopyWrongAnnotationTarget
+
 internal class DataClassCopyVisibilityWillBeChangedWarningImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

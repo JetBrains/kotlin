@@ -854,6 +854,24 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.DATA_CLASS_SAFE_COPY_AND_UNSAFE_COPY_ARE_INCOMPATIBLE_ANNOTATIONS) { firDiagnostic ->
+        DataClassSafeCopyAndUnsafeCopyAreIncompatibleAnnotationsImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.DATA_CLASS_SAFE_COPY_REDUNDANT_ANNOTATION) { firDiagnostic ->
+        DataClassSafeCopyRedundantAnnotationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.DATA_CLASS_SAFE_COPY_WRONG_ANNOTATION_TARGET) { firDiagnostic ->
+        DataClassSafeCopyWrongAnnotationTargetImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING) { firDiagnostic ->
         DataClassCopyVisibilityWillBeChangedWarningImpl(
             firDiagnostic as KtPsiDiagnostic,

@@ -89,6 +89,9 @@ object StandardNames {
 
     val NON_EXISTENT_CLASS = FqName("error.NonExistentClass")
 
+    @JvmField val SAFE_COPY_ANNOTATION = FqName("kotlin.SafeCopy")
+    @JvmField val UNSAFE_COPY_ANNOTATION = FqName("kotlin.UnsafeCopy")
+
     @JvmField
     val BUILT_INS_PACKAGE_FQ_NAMES = setOf(
         BUILT_INS_PACKAGE_FQ_NAME,

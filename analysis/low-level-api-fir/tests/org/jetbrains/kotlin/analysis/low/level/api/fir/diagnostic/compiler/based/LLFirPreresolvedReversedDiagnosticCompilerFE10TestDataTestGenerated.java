@@ -9363,6 +9363,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("safeCopyAndUnsafeCopyAnnotations.kt")
+      public void testSafeCopyAndUnsafeCopyAnnotations() {
+        runTest("compiler/testData/diagnostics/tests/dataClassPrivateConstructor/safeCopyAndUnsafeCopyAnnotations.kt");
+      }
+
+      @Test
       @TestMetadata("unsafeCopy.kt")
       public void testUnsafeCopy() {
         runTest("compiler/testData/diagnostics/tests/dataClassPrivateConstructor/unsafeCopy.kt");
