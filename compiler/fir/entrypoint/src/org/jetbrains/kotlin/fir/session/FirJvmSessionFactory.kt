@@ -40,7 +40,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         scope: AbstractProjectFileSearchScope,
         packagePartProvider: PackagePartProvider,
         languageVersionSettings: LanguageVersionSettings,
-        predefinedJavaComponents: FirSharableJavaComponents? = null,
+        predefinedJavaComponents: FirSharableJavaComponents?,
         registerExtraComponents: ((FirSession) -> Unit),
     ): FirSession {
         return createLibrarySession(
@@ -87,14 +87,14 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         projectEnvironment: AbstractProjectEnvironment,
         createIncrementalCompilationSymbolProviders: (FirSession) -> FirJvmIncrementalCompilationSymbolProviders?,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-        lookupTracker: LookupTracker? = null,
-        enumWhenTracker: EnumWhenTracker? = null,
-        importTracker: ImportTracker? = null,
-        predefinedJavaComponents: FirSharableJavaComponents? = null,
+        languageVersionSettings: LanguageVersionSettings,
+        lookupTracker: LookupTracker?,
+        enumWhenTracker: EnumWhenTracker?,
+        importTracker: ImportTracker?,
+        predefinedJavaComponents: FirSharableJavaComponents?,
         needRegisterJavaElementFinder: Boolean,
-        registerExtraComponents: ((FirSession) -> Unit) = {},
-        init: FirSessionConfigurator.() -> Unit = {}
+        registerExtraComponents: ((FirSession) -> Unit),
+        init: FirSessionConfigurator.() -> Unit,
     ): FirSession {
         return createModuleBasedSession(
             moduleData,

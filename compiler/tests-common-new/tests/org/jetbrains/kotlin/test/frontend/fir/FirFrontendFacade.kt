@@ -85,7 +85,7 @@ open class FirFrontendFacade(
         }
     }
 
-    fun registerExtraComponents(session: FirSession) {
+    private fun registerExtraComponents(session: FirSession) {
         testServices.firSessionComponentRegistrar?.registerAdditionalComponent(session)
     }
 
@@ -214,7 +214,7 @@ open class FirFrontendFacade(
                         projectFileSearchScope,
                         packagePartProvider,
                         languageVersionSettings,
-                        predefinedJavaComponents = predefinedJavaComponents,
+                        predefinedJavaComponents,
                         registerExtraComponents = ::registerExtraComponents,
                     )
                 }
@@ -367,7 +367,10 @@ open class FirFrontendFacade(
                     createIncrementalCompilationSymbolProviders = { null },
                     extensionRegistrars,
                     languageVersionSettings,
-                    predefinedJavaComponents = predefinedJavaComponents,
+                    lookupTracker = null,
+                    enumWhenTracker = null,
+                    importTracker = null,
+                    predefinedJavaComponents,
                     needRegisterJavaElementFinder = true,
                     registerExtraComponents = ::registerExtraComponents,
                     init = sessionConfigurator,
