@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy.Companion.dsymFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.registerSwiftExportTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
@@ -29,8 +28,6 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.mapToFile
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -43,66 +40,10 @@ internal object AppleXcodeTasks {
     const val checkSandboxAndWriteProtection = "checkSandboxAndWriteProtection"
 }
 
-private object XcodeEnvironment {
-    val buildType: NativeBuildType?
-        get() {
-            val configuration = System.getenv("CONFIGURATION") ?: return null
+private fun Project.registerAssembleAppleFrameworkTask(framework: Framework, environment: XcodeEnvironment): TaskProvider<out Task>? {
+    if (!framework.konanTarget.family.isAppleFamily || !framework.konanTarget.enabledOnCurrentHost) return null
 
-            fun String.toNativeBuildType() = when (this.toLowerCaseAsciiOnly()) {
-                "debug" -> NativeBuildType.DEBUG
-                "release" -> NativeBuildType.RELEASE
-                else -> null
-            }
-
-            return configuration.toNativeBuildType()
-                ?: System.getenv("KOTLIN_FRAMEWORK_BUILD_TYPE")?.toNativeBuildType()
-        }
-
-
-    val targets: List<KonanTarget>
-        get() {
-            val sdk = System.getenv("SDK_NAME") ?: return emptyList()
-            val archs = System.getenv("ARCHS")?.split(" ") ?: return emptyList()
-            return AppleSdk.defineNativeTargets(sdk, archs)
-        }
-
-    val frameworkSearchDir: File?
-        get() {
-            val configuration = System.getenv("CONFIGURATION") ?: return null
-            val sdk = System.getenv("SDK_NAME") ?: return null
-            return File(configuration, sdk)
-        }
-
-    val builtProductsDir: File?
-        get() = System.getenv("BUILT_PRODUCTS_DIR")?.let(::File)
-
-    val embeddedFrameworksDir: File?
-        get() {
-            val xcodeTargetBuildDir = System.getenv("TARGET_BUILD_DIR") ?: return null
-            val xcodeFrameworksFolderPath = System.getenv("FRAMEWORKS_FOLDER_PATH") ?: return null
-            return File(xcodeTargetBuildDir, xcodeFrameworksFolderPath).absoluteFile
-        }
-
-    val sign: String? get() = System.getenv("EXPANDED_CODE_SIGN_IDENTITY")
-
-    val userScriptSandboxingEnabled: Boolean get() = System.getenv("ENABLE_USER_SCRIPT_SANDBOXING") == "YES"
-
-    override fun toString() = """
-        XcodeEnvironment:
-          buildType=$buildType
-          targets=$targets
-          frameworkSearchDir=$frameworkSearchDir
-          builtProductDir=$builtProductsDir
-          embeddedFrameworksDir=$embeddedFrameworksDir
-          sign=$sign
-          userScriptSandboxingEnabled=$userScriptSandboxingEnabled
-    """.trimIndent()
-}
-
-private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): TaskProvider<out Task>? {
-    if (!framework.konanTarget.family.isAppleFamily || !framework.konanTarget.enabledOnCurrentHostForBinariesCompilation()) return null
-
-    val envTargets = XcodeEnvironment.targets
+    val envTargets = environment.targets
     val needFatFramework = envTargets.size > 1
 
     val frameworkBuildType = framework.buildType
@@ -117,9 +58,9 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): Ta
         if (isRequestedFramework && needFatFramework) null else frameworkTarget.name //for fat framework we need common name
     )
 
-    val envBuildType = XcodeEnvironment.buildType
+    val envBuildType = environment.buildType
 
-    if (envBuildType == null || envTargets.isEmpty() || XcodeEnvironment.builtProductsDir == null) {
+    if (envBuildType == null || envTargets.isEmpty() || environment.builtProductsDir == null) {
         val envConfiguration = System.getenv("CONFIGURATION")
         if (envTargets.isNotEmpty() && envConfiguration != null) {
             project.reportDiagnostic(KotlinToolingDiagnostics.UnknownAppleFrameworkBuildType(envConfiguration))
@@ -137,7 +78,7 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): Ta
         needFatFramework -> locateOrRegisterTask<FatFrameworkTask>(frameworkTaskName) { task ->
             task.description = "Packs $frameworkBuildType fat framework for Xcode"
             task.baseName = framework.baseName
-            task.destinationDirProperty.fileProvider(appleFrameworkDir(frameworkTaskName))
+            task.destinationDirProperty.fileProvider(appleFrameworkDir(frameworkTaskName, environment))
             task.isEnabled = !project.kotlinPropertiesProvider.swiftExportEnabled && frameworkBuildType == envBuildType
         }.also {
             it.configure { task -> task.from(framework) }
@@ -148,31 +89,30 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): Ta
             task.sourceFramework.fileProvider(framework.linkTaskProvider.flatMap { it.outputFile })
             task.sourceDsym.fileProvider(dsymFile(task.sourceFramework.mapToFile()))
             task.dependsOn(framework.linkTaskProvider)
-            task.destinationDirectory.fileProvider(appleFrameworkDir(frameworkTaskName))
+            task.destinationDirectory.fileProvider(appleFrameworkDir(frameworkTaskName, environment))
         }
     }
 }
 
-private fun fireEnvException(frameworkTaskName: String): Nothing {
-    val envBuildType = XcodeEnvironment.buildType
+private fun fireEnvException(frameworkTaskName: String, environment: XcodeEnvironment): Nothing {
+    val envBuildType = environment.buildType
     val envConfiguration = System.getenv("CONFIGURATION")
     if (envConfiguration != null && envBuildType == null) {
         throw IllegalStateException(
             "Unable to detect Kotlin framework build type for CONFIGURATION=$envConfiguration automatically. " +
                     "Specify 'KOTLIN_FRAMEWORK_BUILD_TYPE' to 'debug' or 'release'" +
-                    "\n$XcodeEnvironment"
+                    "\n$environment"
         )
     } else {
         throw IllegalStateException(
             "Please run the $frameworkTaskName task from Xcode " +
                     "('SDK_NAME', 'CONFIGURATION', 'TARGET_BUILD_DIR', 'ARCHS' and 'FRAMEWORKS_FOLDER_PATH' not provided)" +
-                    "\n$XcodeEnvironment"
+                    "\n$environment"
         )
     }
 }
 
-private fun fireSandboxException(frameworkTaskName: String) {
-    val userScriptSandboxingEnabled = XcodeEnvironment.userScriptSandboxingEnabled
+private fun fireSandboxException(frameworkTaskName: String, userScriptSandboxingEnabled: Boolean) {
     val message = if (userScriptSandboxingEnabled) "You " else "BUILT_PRODUCTS_DIR is not accessible, probably you "
     throw IllegalStateException(
         message +
@@ -191,9 +131,7 @@ private enum class DirAccessibility {
     DOES_NOT_EXIST
 }
 
-private fun builtProductsDirAccessibility(): DirAccessibility {
-    val builtProductsDir = XcodeEnvironment.builtProductsDir
-
+private fun builtProductsDirAccessibility(builtProductsDir: File?): DirAccessibility {
     return if (builtProductsDir != null) {
         try {
             Files.createDirectories(builtProductsDir.toPath())
@@ -210,17 +148,17 @@ private fun builtProductsDirAccessibility(): DirAccessibility {
     }
 }
 
-internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework) {
-    val envBuildType = XcodeEnvironment.buildType
-    val envTargets = XcodeEnvironment.targets
-    val envEmbeddedFrameworksDir = XcodeEnvironment.embeddedFrameworksDir
-    val envSign = XcodeEnvironment.sign
-    val userScriptSandboxingEnabled = XcodeEnvironment.userScriptSandboxingEnabled
+internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework, environment: XcodeEnvironment) {
+    val envBuildType = environment.buildType
+    val envTargets = environment.targets
+    val envEmbeddedFrameworksDir = environment.embeddedFrameworksDir
+    val envSign = environment.sign
+    val userScriptSandboxingEnabled = environment.userScriptSandboxingEnabled
 
     val frameworkTaskName = framework.embedAndSignTaskName()
 
     val swiftExportTask: TaskProvider<*>? =
-        if (project.kotlinPropertiesProvider.swiftExportEnabled && XcodeEnvironment.targets.contains(framework.target.konanTarget)) {
+        if (project.kotlinPropertiesProvider.swiftExportEnabled && environment.targets.contains(framework.target.konanTarget)) {
             registerSwiftExportTask(framework)
         } else {
             null
@@ -231,7 +169,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
             task.group = BasePlugin.BUILD_GROUP
             task.description = "Embed and sign ${framework.namePrefix} framework as requested by Xcode's environment variables"
             task.doFirst {
-                fireEnvException(frameworkTaskName)
+                fireEnvException(frameworkTaskName, environment)
             }
         }
         return
@@ -241,13 +179,13 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
         task.group = BasePlugin.BUILD_GROUP
         task.description = "Check BUILT_PRODUCTS_DIR accessible and ENABLE_USER_SCRIPT_SANDBOXING not enabled"
         task.doFirst {
-            val dirAccessible = builtProductsDirAccessibility()
+            val dirAccessible = builtProductsDirAccessibility(environment.builtProductsDir)
             when (dirAccessible) {
-                DirAccessibility.NOT_ACCESSIBLE -> fireSandboxException(frameworkTaskName)
+                DirAccessibility.NOT_ACCESSIBLE -> fireSandboxException(frameworkTaskName, environment.userScriptSandboxingEnabled)
                 DirAccessibility.DOES_NOT_EXIST,
                 DirAccessibility.ACCESSIBLE
                 -> if (userScriptSandboxingEnabled) {
-                    fireSandboxException(frameworkTaskName)
+                    fireSandboxException(frameworkTaskName, environment.userScriptSandboxingEnabled)
                 }
             }
         }
@@ -268,7 +206,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
         }
     }
 
-    val assembleTask = registerAssembleAppleFrameworkTask(framework) ?: return
+    val assembleTask = registerAssembleAppleFrameworkTask(framework, environment) ?: return
     assembleTask.dependsOn(checkSandboxAndWriteProtectionTask)
 
     if (framework.buildType != envBuildType || !envTargets.contains(framework.konanTarget)) return
@@ -279,7 +217,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
         if (swiftExportTask != null) {
             task.dependsOn(swiftExportTask)
         }
-        task.sourceFramework.fileProvider(appleFrameworkDir(frameworkTaskName).map { it.resolve(frameworkFile.name) })
+        task.sourceFramework.fileProvider(appleFrameworkDir(frameworkTaskName, environment).map { it.resolve(frameworkFile.name) })
         task.destinationDirectory.set(envEmbeddedFrameworksDir)
         if (envSign != null) {
             task.doLast {
@@ -312,12 +250,12 @@ private val Framework.namePrefix: String
  *
  * Or if [XcodeEnvironment.frameworkSearchDir] is absolute use it, otherwise make it relative to buildDir/xcode-frameworks
  */
-private fun Project.appleFrameworkDir(frameworkTaskName: String): Provider<File> {
+private fun Project.appleFrameworkDir(frameworkTaskName: String, environment: XcodeEnvironment): Provider<File> {
     return if (project.kotlinPropertiesProvider.appleCopyFrameworkToBuiltProductsDir) {
-        project.provider { XcodeEnvironment.builtProductsDir ?: fireEnvException(frameworkTaskName) }
+        project.provider { environment.builtProductsDir ?: fireEnvException(frameworkTaskName, environment) }
     } else {
         layout.buildDirectory.dir("xcode-frameworks").map {
-            it.asFile.resolve(XcodeEnvironment.frameworkSearchDir ?: fireEnvException(frameworkTaskName))
+            it.asFile.resolve(environment.frameworkSearchDir ?: fireEnvException(frameworkTaskName, environment))
         }
     }
 }
