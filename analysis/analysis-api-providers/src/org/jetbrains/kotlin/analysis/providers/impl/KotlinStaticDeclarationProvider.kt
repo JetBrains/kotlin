@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
@@ -203,7 +204,7 @@ public class KotlinStaticDeclarationProviderFactory(
         }
 
         override fun visitClassOrObject(classOrObject: KtClassOrObject) {
-            addToClassMap(classOrObject)
+            indexClassOrObject(classOrObject)
             super.visitClassOrObject(classOrObject)
         }
 
@@ -236,11 +237,24 @@ public class KotlinStaticDeclarationProviderFactory(
         }.add(script)
     }
 
+    private fun indexClassOrObject(classOrObject: KtClassOrObject) {
+        addToClassMap(classOrObject)
+        indexSupertypeNames(classOrObject)
+    }
+
     private fun addToClassMap(classOrObject: KtClassOrObject) {
         classOrObject.getClassId()?.let { classId ->
             index.classMap.computeIfAbsent(classId.packageFqName) {
                 mutableSetOf()
             }.add(classOrObject)
+        }
+    }
+
+    private fun indexSupertypeNames(classOrObject: KtClassOrObject) {
+        classOrObject.getSuperNames().forEach { superName ->
+            index.classesBySupertypeName
+                .computeIfAbsent(Name.identifier(superName)) { mutableSetOf() }
+                .add(classOrObject)
         }
     }
 
@@ -307,12 +321,12 @@ public class KotlinStaticDeclarationProviderFactory(
     private fun indexStub(stub: StubElement<*>) {
         when (stub) {
             is KotlinClassStubImpl -> {
-                addToClassMap(stub.psi)
+                indexClassOrObject(stub.psi)
                 // member functions and properties
                 stub.childrenStubs.forEach(::indexStub)
             }
             is KotlinObjectStubImpl -> {
-                addToClassMap(stub.psi)
+                indexClassOrObject(stub.psi)
                 // member functions and properties
                 stub.childrenStubs.forEach(::indexStub)
             }
@@ -399,6 +413,9 @@ public class KotlinStaticDeclarationProviderFactory(
     }
 
     public fun getAllKtClasses(): List<KtClassOrObject> = index.classMap.values.flattenTo(mutableListOf())
+
+    public fun getDirectInheritorCandidates(baseClassName: Name): Set<KtClassOrObject> =
+        index.classesBySupertypeName[baseClassName].orEmpty()
 }
 
 /**

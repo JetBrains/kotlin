@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.fir.references.ReadWriteAccessCheckerFirImpl
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.api.standalone.base.providers.KotlinStandaloneDirectInheritorsProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCach
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.LLStubBasedLibrarySymbolProviderFactory
+import org.jetbrains.kotlin.analysis.providers.KotlinDirectInheritorsProvider
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
@@ -63,6 +65,8 @@ object FirStandaloneServiceRegistrar : AnalysisApiStandaloneServiceRegistrar {
             LLFirSessionInvalidationService.getInstance(project).subscribeToModificationEvents()
 
             registerService(LLFirDeclarationModificationService::class.java)
+
+            registerService(KotlinDirectInheritorsProvider::class.java, KotlinStandaloneDirectInheritorsProvider(project))
         }
     }
 

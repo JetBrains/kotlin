@@ -19,13 +19,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
+import org.jetbrains.kotlin.analysis.api.fir.utils.isSubClassOf
 
 internal class KtFirSymbolDeclarationOverridesProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -168,37 +167,23 @@ internal class KtFirSymbolDeclarationOverridesProvider(
     }
 
     override fun isSubClassOf(subClass: KtClassOrObjectSymbol, superClass: KtClassOrObjectSymbol): Boolean {
-        return isSubClassOf(subClass, superClass, checkDeep = true)
+        return isSubClassOf(subClass, superClass, allowIndirectSubtyping = true)
     }
 
     override fun isDirectSubClassOf(subClass: KtClassOrObjectSymbol, superClass: KtClassOrObjectSymbol): Boolean {
-        return isSubClassOf(subClass, superClass, checkDeep = false)
+        return isSubClassOf(subClass, superClass, allowIndirectSubtyping = false)
     }
 
-    private fun isSubClassOf(subClass: KtClassOrObjectSymbol, superClass: KtClassOrObjectSymbol, checkDeep: Boolean): Boolean {
+    private fun isSubClassOf(subClass: KtClassOrObjectSymbol, superClass: KtClassOrObjectSymbol, allowIndirectSubtyping: Boolean): Boolean {
         require(subClass is KtFirSymbol<*>)
         require(superClass is KtFirSymbol<*>)
 
         if (subClass == superClass) return false
-        subClass.firSymbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
         return isSubClassOf(
             subClass = subClass.firSymbol.fir as FirClass,
             superClass = superClass.firSymbol.fir as FirClass,
-            checkDeep
+            allowIndirectSubtyping,
         )
-
-
-    }
-
-    private fun isSubClassOf(subClass: FirClass, superClass: FirClass, checkDeep: Boolean): Boolean {
-        if (subClass.superConeTypes.any { it.toRegularClassSymbol(rootModuleSession) == superClass.symbol }) return true
-        if (!checkDeep) return false
-        subClass.superConeTypes.forEach { superType ->
-            val superOfSub = superType.toRegularClassSymbol(rootModuleSession) ?: return@forEach
-            superOfSub.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
-            if (isSubClassOf(superOfSub.fir, superClass, checkDeep = true)) return true
-        }
-        return false
     }
 
     override fun getIntersectionOverriddenSymbols(symbol: KtCallableSymbol): List<KtCallableSymbol> {
