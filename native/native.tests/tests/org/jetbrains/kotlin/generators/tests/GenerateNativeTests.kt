@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
 import org.jetbrains.kotlin.konan.test.diagnostics.AbstractDiagnosticsNativeTest
 import org.jetbrains.kotlin.konan.test.diagnostics.AbstractFirLightTreeNativeDiagnosticsTest
 import org.jetbrains.kotlin.konan.test.diagnostics.AbstractFirPsiNativeDiagnosticsTest
+import org.jetbrains.kotlin.konan.test.diagnostics.AbstractFirPsiNativeDiagnosticsWithBackendTestBase
 import org.jetbrains.kotlin.konan.test.irtext.AbstractClassicNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.irtext.AbstractFirLightTreeNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.irtext.AbstractFirPsiNativeIrTextTest
@@ -357,6 +358,13 @@ fun main() {
             ) {
                 model("diagnostics/nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
+
+            testClass<AbstractFirPsiNativeDiagnosticsWithBackendTestBase>(
+                suiteTestClassName = "FirPsiNativeKlibDiagnosticsTestGenerated",
+                annotations = listOf(*frontendFir(), klib())
+            ) {
+                model("diagnostics/klibSerializationTests")
+            }
         }
 
         // Atomicfu compiler plugin native tests.
@@ -555,10 +563,9 @@ private fun frontendFir() = arrayOf(
     annotation(FirPipeline::class.java)
 )
 
+private fun klib() = annotation(Tag::class.java, "klib")
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
-private fun k1libContents() = annotation(Tag::class.java, "k1libContents")
-private fun k2libContents() = annotation(Tag::class.java, "k2libContents")
 private fun atomicfuNative() = arrayOf(
     annotation(Tag::class.java, "atomicfu-native"),
     annotation(EnforcedHostTarget::class.java), // TODO(KT-65977): Make atomicfu tests run on all targets.
