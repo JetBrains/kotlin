@@ -90,7 +90,7 @@ fun AbstractKtSourceElement?.startOffsetSkippingComments(): Int? {
     }
 }
 
-internal fun FirDeclaration.getStartOffsetOfFunctionDeclarationKeywordOrNull(): Pair<Int, Int>? =
+internal fun FirDeclaration.getStartOffsetOfFunctionDeclarationKeywordOrNull(): Int? =
     when (this) {
         is FirSimpleFunction -> source.getChildTokenStartOffsetOrNull(FUNCTION_DECL_TOKENS)
         is FirPropertyAccessor -> source.getChildTokenStartOffsetOrNull(ACCESSOR_DECL_TOKENS)
@@ -100,13 +100,13 @@ internal fun FirDeclaration.getStartOffsetOfFunctionDeclarationKeywordOrNull(): 
         else -> null
     }
 
-internal fun AbstractKtSourceElement?.getChildTokenStartOffsetOrNull(tokenSet: TokenSet): Pair<Int, Int>? {
+internal fun AbstractKtSourceElement?.getChildTokenStartOffsetOrNull(tokenSet: TokenSet): Int? {
     return when (this) {
-        is KtPsiSourceElement -> psi.node?.findChildByType(tokenSet)?.run { startOffset to endOffset }
+        is KtPsiSourceElement -> psi.node?.findChildByType(tokenSet)?.startOffset
         is KtLightSourceElement -> lighterASTNode
             .getChildren(treeStructure)
             .firstOrNull { it.tokenType in tokenSet }
-            ?.run { startOffset to endOffset }
+            ?.startOffset
         else -> null
     }
 }
@@ -123,9 +123,9 @@ internal inline fun <T : IrElement> FirDeclaration.convertWithOffsets(f: (startO
         startOffset = UNDEFINED_OFFSET
         endOffset = UNDEFINED_OFFSET
     } else {
-        val (declarationSpecificStartOffset, declarationSpecificEndOffset) = getStartOffsetOfFunctionDeclarationKeywordOrNull() ?: null to null
+        val declarationSpecificStartOffset = getStartOffsetOfFunctionDeclarationKeywordOrNull()
         startOffset = declarationSpecificStartOffset ?: source.startOffsetSkippingComments() ?: source?.startOffset ?: UNDEFINED_OFFSET
-        endOffset = declarationSpecificEndOffset ?: source?.endOffset ?: UNDEFINED_OFFSET
+        endOffset = source?.endOffset ?: UNDEFINED_OFFSET
     }
 
     return f(startOffset, endOffset)
