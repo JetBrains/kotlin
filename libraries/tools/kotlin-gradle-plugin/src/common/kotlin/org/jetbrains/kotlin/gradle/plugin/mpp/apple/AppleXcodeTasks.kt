@@ -41,7 +41,7 @@ internal object AppleXcodeTasks {
 }
 
 private fun Project.registerAssembleAppleFrameworkTask(framework: Framework, environment: XcodeEnvironment): TaskProvider<out Task>? {
-    if (!framework.konanTarget.family.isAppleFamily || !framework.konanTarget.enabledOnCurrentHost) return null
+    if (!framework.konanTarget.family.isAppleFamily || !framework.konanTarget.enabledOnCurrentHostForBinariesCompilation()) return null
 
     val envTargets = environment.targets
     val needFatFramework = envTargets.size > 1
