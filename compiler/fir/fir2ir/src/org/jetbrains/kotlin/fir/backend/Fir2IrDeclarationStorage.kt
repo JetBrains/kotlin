@@ -599,12 +599,14 @@ class Fir2IrDeclarationStorage(
             return createFakeOverridePropertySymbols(property, fakeOverrideOwnerLookupTag)
         }
 
-        val isJavaOrigin = property.origin is FirDeclarationOrigin.Java
         val propertySymbol = IrPropertySymbolImpl()
-        val getterSymbol = runIf(!isJavaOrigin) { createFunctionSymbol(signature = null) }
-        val setterSymbol = runIf(!isJavaOrigin && property.isVar) { createFunctionSymbol(signature = null) }
+        val getterSymbol = createFunctionSymbol(signature = null)
 
-        val backingFieldSymbol = runIf(isJavaOrigin || property.delegate != null || property.hasBackingField) {
+        val setterSymbol = runIf(property.isVar) {
+            createFunctionSymbol(signature = null)
+        }
+
+        val backingFieldSymbol = runIf(property.delegate != null || property.hasBackingField) {
             createFieldSymbol()
         }
 
@@ -623,9 +625,7 @@ class Fir2IrDeclarationStorage(
 
         val containingClassSymbol = findContainingIrClassSymbol(property, fakeOverrideOwnerLookupTag)
         val propertySymbol = IrPropertyFakeOverrideSymbol(originalSymbols.propertySymbol, containingClassSymbol, idSignature = null)
-        val getterSymbol = originalSymbols.getterSymbol?.let {
-            IrFunctionFakeOverrideSymbol(it, containingClassSymbol, idSignature = null)
-        }
+        val getterSymbol = IrFunctionFakeOverrideSymbol(originalSymbols.getterSymbol, containingClassSymbol, idSignature = null)
 
         val setterSymbol = runIf(property.isVar) {
             val setterIsVisible = property.setter?.let { setter ->
@@ -648,7 +648,7 @@ class Fir2IrDeclarationStorage(
             backingFieldForPropertyCache[irPropertySymbol] = it
             propertyForBackingFieldCache[it] = irPropertySymbol
         }
-        symbols.getterSymbol?.let {
+        symbols.getterSymbol.let {
             getterForPropertyCache[irPropertySymbol] = it
         }
         symbols.setterSymbol?.let {
@@ -1562,7 +1562,7 @@ internal fun <D : IrDeclaration> IrBindableSymbol<*, D>.ownerIfBound(): D? {
 
 data class PropertySymbols(
     val propertySymbol: IrPropertySymbol,
-    val getterSymbol: IrSimpleFunctionSymbol?,
+    val getterSymbol: IrSimpleFunctionSymbol,
     val setterSymbol: IrSimpleFunctionSymbol?,
     val backingFieldSymbol: IrFieldSymbol?,
 )
