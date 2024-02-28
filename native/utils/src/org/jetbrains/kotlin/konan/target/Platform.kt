@@ -65,4 +65,3 @@ class PlatformManager private constructor(private val serialized: Serialized) :
         private fun readResolve(): Any = PlatformManager(this)
     }
 }
-
