@@ -305,3 +305,43 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         dependsOn("functionalTest")
     }
 }
+
+fun copyConfigurationOverridingAndroidLibraries(
+    configuration: Configuration,
+    androidVersion: String,
+): Configuration {
+    val copy = configuration.copyRecursive()
+    copy.resolutionStrategy.disableDependencyVerification()
+    copy.resolutionStrategy {
+        force(
+            "com.android.tools.build:gradle-api:$androidVersion",
+            "com.android.tools.build:gradle:$androidVersion",
+            "com.android.tools.build:builder:$androidVersion",
+            "com.android.tools.build:builder-model:$androidVersion",
+        )
+    }
+    return copy
+}
+
+val oldAndroidLibraries = configurations.commonCompileClasspath.map {
+    copyConfigurationOverridingAndroidLibraries(it, "7.1.3")
+}
+val newAndroidLibraries = configurations.commonCompileClasspath.map {
+    val newAndroidLibrariesConf = copyConfigurationOverridingAndroidLibraries(it, "8.2.2")
+    newAndroidLibrariesConf.attributes.attribute(
+        Attribute.of("org.gradle.jvm.version", Integer::class.java),
+        @Suppress("DEPRECATION")
+        Integer(11),
+    )
+    newAndroidLibrariesConf
+}
+val validationTask = validateRuntimeAPIsUsage(
+    oldApis = project.files(oldAndroidLibraries),
+    newApis = project.files(newAndroidLibraries),
+    filesToValidate = project.files(kotlin.target.compilations.getByName("common").compileTaskProvider),
+    sourcesPath = layout.projectDirectory.dir("src/common").asFile,
+    unsafeApisUsageAnnotationFqn = "org.jetbrains.kotlin.gradle.utils.UnsafeAtRuntime",
+)
+tasks.named("check").configure {
+    dependsOn(validationTask)
+}
