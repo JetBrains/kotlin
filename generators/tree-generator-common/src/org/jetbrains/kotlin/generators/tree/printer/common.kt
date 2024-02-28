@@ -92,8 +92,7 @@ fun <Element, Implementation, ElementField, ImplementationField> generateTree(
 ) where Element : AbstractElement<Element, ElementField, Implementation>,
         Implementation : AbstractImplementation<Implementation, Element, ImplementationField>,
         ElementField : AbstractField<ElementField>,
-        ImplementationField : AbstractField<*>,
-        ImplementationField : AbstractFieldWithDefaultValue<ElementField> {
+        ImplementationField : AbstractField<ElementField> {
     if (enableBaseTransformerTypeDetection) {
         detectBaseTransformerTypes(model)
     }

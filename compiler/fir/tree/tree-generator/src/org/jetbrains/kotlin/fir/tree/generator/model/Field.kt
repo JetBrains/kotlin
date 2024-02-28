@@ -24,6 +24,15 @@ sealed class Field : AbstractField<Field>() {
 
     var withBindThis = true
 
+    override val origin: Field
+        get() = this
+
+    override var withGetter: Boolean = false
+    override var defaultValueInImplementation: String? = null
+    override var defaultValueInBuilder: String? = null
+
+    override var customSetter: String? = null
+
     abstract override var isVolatile: Boolean
 
     abstract override var isFinal: Boolean
