@@ -32,11 +32,13 @@ internal fun FirExpression.unwrapToMoreUsefulExpression() = when (this) {
 internal class TypeInfo(
     val type: ConeKotlinType,
     val notNullType: ConeKotlinType,
+    val directType: ConeKotlinType,
     val isEnumClass: Boolean,
     val isPrimitive: Boolean,
     val isBuiltin: Boolean,
     val isValueClass: Boolean,
     val isFinal: Boolean,
+    val isClass: Boolean,
     val canHaveSubtypesAccordingToK1: Boolean,
 ) {
     override fun toString() = "$type"
@@ -64,20 +66,22 @@ internal fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
     val type = bounds.ifNotEmpty { ConeTypeIntersector.intersectTypes(session.typeContext, this) }
         ?: session.builtinTypes.nullableAnyType.type
     val notNullType = type.withNullability(ConeNullability.NOT_NULL, session.typeContext)
+    val boundsSymbols = bounds.mapNotNull { it.toClassSymbol(session) }
 
     return TypeInfo(
-        type, notNullType,
-        isEnumClass = bounds.any { it.isEnum(session) },
+        type, notNullType, directType = this,
+        isEnumClass = boundsSymbols.any { it.isEnumClass },
         isPrimitive = bounds.any { it.isPrimitiveOrNullablePrimitive },
-        isBuiltin = bounds.any { it.toClassSymbol(session)?.isBuiltin == true },
-        isValueClass = bounds.any { it.toClassSymbol(session)?.isInline == true },
-        isFinal = bounds.any { it.toClassSymbol(session)?.isFinalClass == true },
+        isBuiltin = boundsSymbols.any { it.isBuiltin },
+        isValueClass = boundsSymbols.any { it.isInline },
+        isFinal = boundsSymbols.any { it.isFinalClass },
+        isClass = boundsSymbols.any { it.isClass },
         // In K1's intersector, `canHaveSubtypes()` is called for `nullabilityStripped`.
         withNullability(ConeNullability.NOT_NULL, session.typeContext).canHaveSubtypesAccordingToK1(session),
     )
 }
 
-private fun ConeClassLikeType.toKotlinTypeIfPlatform(session: FirSession): ConeClassLikeType {
+internal fun ConeClassLikeType.toKotlinTypeIfPlatform(session: FirSession): ConeClassLikeType {
     val kotlinClassId = session.platformClassMapper.getCorrespondingKotlinClass(lookupTag.classId)
     return kotlinClassId?.constructClassLikeType(typeArguments, isNullable, attributes) ?: this
 }

@@ -11,7 +11,7 @@ fun test(
   jcs: JCS
 ) {
   // js as CharSequence // - this case is not supported due to limitation in PlatformToKotlinClassMap
-  js as JCS
+  js <!CAST_NEVER_SUCCEEDS!>as<!> JCS
 
   s as CharSequence
   s as JCS

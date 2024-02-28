@@ -18,7 +18,7 @@ fun <TP1: OClass1, TP2: OClass2> test(
   t1 as TP2
 
   oc1 as Trait2
-  oc1 <!CAST_NEVER_SUCCEEDS!>as<!> OClass2
+  oc1 as OClass2
   oc1 <!CAST_NEVER_SUCCEEDS!>as<!> FClass2
   oc1 as TP2
 
@@ -29,6 +29,6 @@ fun <TP1: OClass1, TP2: OClass2> test(
 
   tp1 as Trait2
   tp1 as OClass2
-  tp1 as FClass2
+  tp1 <!CAST_NEVER_SUCCEEDS!>as<!> FClass2
   tp1 as TP2
 }

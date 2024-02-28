@@ -37,7 +37,7 @@ fun <E> foo(x: Any, y: Any) : Any {
     y <!UNCHECKED_CAST!>as Outer<*><!>
     y as <!NO_TYPE_ARGUMENTS_ON_RHS!>Outer<!>
 
-    y <!UNCHECKED_CAST!>as Outer<*>.Inner<!>
+    y <!CAST_NEVER_SUCCEEDS!>as<!> Outer<*>.Inner
     y as <!NO_TYPE_ARGUMENTS_ON_RHS!>Outer.Inner<!>
 
     return C()
