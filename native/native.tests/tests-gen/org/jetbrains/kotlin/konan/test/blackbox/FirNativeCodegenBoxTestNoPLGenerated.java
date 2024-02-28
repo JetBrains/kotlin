@@ -46868,6 +46868,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
+      @TestMetadata("capturedLocalFunTwice.kt")
+      public void testCapturedLocalFunTwice() {
+        runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLocalFunTwice.kt");
+      }
+
+      @Test
       @TestMetadata("changingReturnType.kt")
       public void testChangingReturnType() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/changingReturnType.kt");
@@ -47171,6 +47177,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @TestMetadata("superConstructorWithObjectParameter.kt")
       public void testSuperConstructorWithObjectParameter() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/superConstructorWithObjectParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("twoAnonymousObjects.kt")
+      public void testTwoAnonymousObjects() {
+        runTest("compiler/testData/codegen/boxInline/anonymousObject/twoAnonymousObjects.kt");
       }
 
       @Test
