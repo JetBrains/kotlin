@@ -52,8 +52,8 @@ MODULE_FRAGMENT
     CLASS CLASS name:Operation modality:SEALED visibility:public superTypes:[kotlin.Any]
       sealedSubclasses:
         CLASS CLASS name:Add modality:FINAL visibility:public superTypes:[<root>.Operation]
-        CLASS CLASS name:Subtract modality:FINAL visibility:public superTypes:[<root>.Operation]
         CLASS CLASS name:Negate modality:FINAL visibility:public superTypes:[<root>.Operation]
+        CLASS CLASS name:Subtract modality:FINAL visibility:public superTypes:[<root>.Operation]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Operation
       CLASS CLASS name:Add modality:FINAL visibility:public superTypes:[<root>.Operation]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Operation.Add

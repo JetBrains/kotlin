@@ -1,5 +1,4 @@
 // SKIP_WHEN_OUT_OF_CONTENT_ROOT
-// DISABLE_SEALED_INHERITOR_CALCULATOR
 // MODULE: lib1
 // FILE: dependency.kt
 package usage

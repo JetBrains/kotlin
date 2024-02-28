@@ -1,5 +1,4 @@
 // SKIP_WHEN_OUT_OF_CONTENT_ROOT
-// DISABLE_SEALED_INHERITOR_CALCULATOR
 // FILE: main.kt
 fun resol<caret>veMe(i: JavaInterface) = i.id
 

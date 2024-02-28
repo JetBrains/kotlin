@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiLibraryBaseTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.SealedClassesInheritorsCalculatorPreAnalysisHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibrarySourceTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
@@ -40,8 +39,6 @@ object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator
             useAdditionalService<KtTestModuleFactory> { KtLibrarySourceTestModuleFactory }
             useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler() }
             useAdditionalService { AnalysisApiIndexingConfiguration(AnalysisApiBinaryLibraryIndexingMode.INDEX_STUBS) }
-            useDirectives(SealedClassesInheritorsCalculatorPreAnalysisHandler.Directives)
-            usePreAnalysisHandlers(::SealedClassesInheritorsCalculatorPreAnalysisHandler)
             useConfigurators(
                 ::AnalysisApiJvmEnvironmentConfigurator,
                 ::JsEnvironmentConfigurator,
