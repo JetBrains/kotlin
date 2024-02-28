@@ -10,8 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
-import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -201,9 +200,11 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                     returnVariable.provenInvariants() +
                     returnVariable.accessInvariants() +
                     contractVisitor.getPostconditions(ContractVisitorContext(returnVariable, symbol)) +
-                    subSignature.stdLibPostConditions(returnVariable)
+                    subSignature.stdLibPostConditions(returnVariable) +
+                    primaryConstructorInvariants(returnVariable)
 
             override val declarationSource: KtSourceElement? = symbol.source
+            override val isPrimaryConstructor = symbol is FirConstructorSymbol && symbol.isPrimary
         }
     }
 
@@ -224,11 +225,12 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         // This field is already registered in the supertype: we don't need to know about it.
         if (embedding.findAncestorField(unscopedName) != null) return null
         val name = symbol.callableId.embedMemberPropertyName()
+
         val backingField = name.specialEmbedding() ?: symbol.hasBackingField.ifTrue {
             UserFieldEmbedding(
                 name,
                 embedType(symbol.resolvedReturnType),
-                symbol.isVal
+                symbol
             )
         }
         return backingField?.let { unscopedName to it }

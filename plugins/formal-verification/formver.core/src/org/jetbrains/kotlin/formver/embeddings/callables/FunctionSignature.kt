@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.formver.embeddings.callables
 
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.expression.FirVariableEmbedding
 import org.jetbrains.kotlin.formver.embeddings.expression.VariableEmbedding
 
 interface FunctionSignature : CallableSignature {
     val receiver: VariableEmbedding?
-    val params: List<VariableEmbedding>
+    val params: List<FirVariableEmbedding>
+
     val sourceName: String?
         get() = null
 
@@ -22,3 +25,5 @@ interface FunctionSignature : CallableSignature {
     override val paramTypes: List<TypeEmbedding>
         get() = params.map { it.type }
 }
+
+fun FunctionSignature.parametersByFirSymbols(): Map<FirBasedSymbol<*>, FirVariableEmbedding> = params.associateBy { it.symbol }

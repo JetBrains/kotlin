@@ -63,6 +63,7 @@ method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(loca
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
   ensures acc(ret.class_Foo$member_x, wildcard)
+  ensures ret.class_Foo$member_x == old(local$x)
 
 
 method class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)

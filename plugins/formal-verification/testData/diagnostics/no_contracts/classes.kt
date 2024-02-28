@@ -12,3 +12,13 @@ class Bar(val a: Bar?)
 fun <!VIPER_TEXT!>createBar<!>() {
     val b: Bar = Bar(null)
 }
+
+class Baz(val c: Int) {
+    val a = 5
+}
+
+fun <!VIPER_TEXT!>createBaz<!>() {
+    val b: Baz = Baz(10)
+    val ba = b.a
+    val bc = b.c
+}
