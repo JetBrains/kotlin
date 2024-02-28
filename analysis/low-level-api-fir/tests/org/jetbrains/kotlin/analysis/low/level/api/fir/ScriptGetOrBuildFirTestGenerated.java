@@ -844,6 +844,12 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("fileAnnotationScript.kts")
+    public void testFileAnnotationScript() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/fileAnnotationScript.kts");
+    }
+
+    @Test
     @TestMetadata("function.kts")
     public void testFunction() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/function.kts");

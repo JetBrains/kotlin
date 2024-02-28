@@ -1306,6 +1306,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("fileAnnotation.kt")
+    public void testFileAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/fileAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("fileAnnotationList.kt")
     public void testFileAnnotationList() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/fileAnnotationList.kt");
