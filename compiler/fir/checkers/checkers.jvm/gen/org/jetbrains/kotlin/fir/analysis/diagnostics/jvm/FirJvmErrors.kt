@@ -127,6 +127,9 @@ object FirJvmErrors {
     // Suspension Point
     val SUSPENSION_POINT_INSIDE_CRITICAL_SECTION: KtDiagnosticFactory1<FirCallableSymbol<*>> by error1<PsiElement, FirCallableSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
 
+    // Inline
+    val INLINE_FROM_HIGHER_PLATFORM: KtDiagnosticFactory2<String, String> by error2<PsiElement, String, String>()
+
     // Misc
     val INAPPLICABLE_JVM_FIELD: KtDiagnosticFactory1<String> by error1<KtAnnotationEntry, String>()
     val INAPPLICABLE_JVM_FIELD_WARNING: KtDiagnosticFactory1<String> by warning1<KtAnnotationEntry, String>()

@@ -4100,6 +4100,13 @@ internal class InefficientEqualsOverridingInValueClassImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KtFirDiagnostic.InefficientEqualsOverridingInValueClass
 
+internal class InlineFromHigherPlatformImpl(
+    override val inlinedBytecodeVersion: String,
+    override val currentModuleBytecodeVersion: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.InlineFromHigherPlatform
+
 internal class CannotAllUnderImportFromSingletonImpl(
     override val objectName: Name,
     firDiagnostic: KtPsiDiagnostic,

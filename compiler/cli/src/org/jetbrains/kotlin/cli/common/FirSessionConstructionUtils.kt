@@ -115,6 +115,7 @@ fun <F> prepareJvmSessions(
             },
             extensionRegistrars,
             configuration.languageVersionSettings,
+            configuration.get(JVMConfigurationKeys.JVM_TARGET, JvmTarget.DEFAULT),
             configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
             configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
             configuration.get(CommonConfigurationKeys.IMPORT_TRACKER),

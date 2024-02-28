@@ -3401,6 +3401,12 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val type: KtType
     }
 
+    interface InlineFromHigherPlatform : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InlineFromHigherPlatform::class
+        val inlinedBytecodeVersion: String
+        val currentModuleBytecodeVersion: String
+    }
+
     interface CannotAllUnderImportFromSingleton : KtFirDiagnostic<KtImportDirective> {
         override val diagnosticClass get() = CannotAllUnderImportFromSingleton::class
         val objectName: Name

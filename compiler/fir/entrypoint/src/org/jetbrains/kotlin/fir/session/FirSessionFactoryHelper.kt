@@ -79,6 +79,7 @@ object FirSessionFactoryHelper {
             { incrementalCompilationContext?.createSymbolProviders(it, mainModuleData, projectEnvironment) },
             extensionRegistrars,
             languageVersionSettings,
+            JvmTarget.DEFAULT,
             lookupTracker,
             enumWhenTracker,
             importTracker,
