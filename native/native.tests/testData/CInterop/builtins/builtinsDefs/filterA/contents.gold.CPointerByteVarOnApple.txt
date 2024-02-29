@@ -21,14 +21,6 @@ library {
       public typealias __builtin_va_list = kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVar^> /* = kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> */
 
       public typealias __builtin_va_listVar = kotlinx/cinterop/CPointerVarOf<pod1/__builtin_va_list^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/__builtin_va_list^ */> */
-
-      public typealias __gnuc_va_list = pod1/__builtin_va_list^ /* = kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/__builtin_va_list^ */ */
-
-      public typealias __gnuc_va_listVar = kotlinx/cinterop/CPointerVarOf<pod1/__gnuc_va_list^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/__gnuc_va_list^ */> */
-
-      public typealias va_list = pod1/__builtin_va_list^ /* = kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/__builtin_va_list^ */ */
-
-      public typealias va_listVar = kotlinx/cinterop/CPointerVarOf<pod1/va_list^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/va_list^ */> */
     }
   }
 }
