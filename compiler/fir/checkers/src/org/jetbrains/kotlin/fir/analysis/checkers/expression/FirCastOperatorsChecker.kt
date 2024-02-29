@@ -46,9 +46,13 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
     }
 
     private fun checkIsApplicability(l: TypeInfo, r: TypeInfo, expression: FirTypeOperatorCall, context: CheckerContext): Applicability {
+        val oneIsFinal = l.isFinal || r.isFinal
+        val oneIsNotNull = !l.type.isNullable || !r.type.isNullable
+
         return when {
             isRefinementUseless(context, l.directType.upperBoundIfFlexible(), r.directType, expression) -> Applicability.USELESS_IS_CHECK
             isCastErased(l.directType, r.directType, context) -> Applicability.CAST_ERASED
+            oneIsNotNull && oneIsFinal && areUnrelated(l, r, context) -> Applicability.IMPOSSIBLE_IS_CHECK
             else -> Applicability.APPLICABLE
         }
     }
@@ -62,13 +66,13 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         return when {
             isRefinementUseless(context, l.directType.upperBoundIfFlexible(), r.directType, expression) -> Applicability.USELESS_CAST
             l.type.isNothing && r.type.isNothingOrNullableNothing -> Applicability.APPLICABLE
-            r.type.isNothing -> Applicability.IMPOSSIBLE
+            r.type.isNothing -> Applicability.IMPOSSIBLE_CAST
             isNullableNothingWithNotNull -> when (expression.operation) {
                 // (null as? WhatEver) == null
                 FirOperation.SAFE_AS -> Applicability.USELESS_CAST
-                else -> Applicability.IMPOSSIBLE
+                else -> Applicability.IMPOSSIBLE_CAST
             }
-            oneIsNotNull && oneIsFinal && areUnrelated(l, r, context) -> Applicability.IMPOSSIBLE
+            oneIsNotNull && oneIsFinal && areUnrelated(l, r, context) -> Applicability.IMPOSSIBLE_CAST
             isCastErased(l.directType, r.directType, context) -> Applicability.CAST_ERASED
             else -> Applicability.APPLICABLE
         }
@@ -91,7 +95,8 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
      */
     private enum class Applicability {
         APPLICABLE,
-        IMPOSSIBLE,
+        IMPOSSIBLE_CAST,
+        IMPOSSIBLE_IS_CHECK,
         USELESS_CAST,
         USELESS_IS_CHECK,
         CAST_ERASED,
@@ -112,12 +117,15 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         context: CheckerContext,
     ) {
         when (applicability) {
-            Applicability.IMPOSSIBLE -> getImpossibilityDiagnostic(l, r, context)?.let {
+            Applicability.IMPOSSIBLE_CAST -> getImpossibilityDiagnostic(l, r, context)?.let {
                 reportOn(expression.source, it, context)
             }
             Applicability.USELESS_CAST -> getUselessCastDiagnostic(context)?.let {
                 reportOn(expression.source, it, context)
             }
+            Applicability.IMPOSSIBLE_IS_CHECK -> reportOn(
+                expression.source, FirErrors.USELESS_IS_CHECK, expression.operation != FirOperation.IS, context,
+            )
             Applicability.USELESS_IS_CHECK -> reportOn(
                 expression.source, FirErrors.USELESS_IS_CHECK, expression.operation == FirOperation.IS, context,
             )

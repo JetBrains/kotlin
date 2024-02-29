@@ -13,7 +13,7 @@ fun test1(x: String?): Int? {
 @OptIn(ExperimentalContracts::class)
 fun test2(x: String?): Int? {
     <!WRONG_IMPLIES_CONDITION!>contract {
-        returnsNotNull() implies (x is Boolean)
+        returnsNotNull() implies (<!USELESS_IS_CHECK!>x is Boolean<!>)
     }<!>
 
     return x?.length

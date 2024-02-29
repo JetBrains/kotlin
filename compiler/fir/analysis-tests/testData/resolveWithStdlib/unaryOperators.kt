@@ -14,5 +14,5 @@ fun foo(u: U) {
     val w = +i
 
     val g = "" !in u
-    val f = "" !is Boolean
+    val f = <!USELESS_IS_CHECK!>"" !is Boolean<!>
 }

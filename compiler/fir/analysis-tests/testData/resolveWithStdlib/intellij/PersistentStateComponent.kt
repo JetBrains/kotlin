@@ -20,7 +20,7 @@ fun <T> deserializeAndLoadState(
 ) {}
 
 fun use(beforeRunTask: BeforeRunTask<*>) {
-    if (beforeRunTask is PersistentStateComponent<*>) {
+    if (<!USELESS_IS_CHECK!>beforeRunTask is PersistentStateComponent<*><!>) {
         deserializeAndLoadState(beforeRunTask)
     }
 }
