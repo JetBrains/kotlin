@@ -73,17 +73,22 @@ FILE: implicitReceivers.kt
                 this@R|/test_4|.<Unresolved name: bar>#()
                 <Unresolved name: bar>#()
             }
-            (this@R|/test_4| !is R|B|) ->  {
-                this@R|/test_4|.<Unresolved name: bar>#()
-                <Unresolved name: bar>#()
-                this@R|/test_4|.R|/A.foo|()
-                this@R|/test_4|.R|/A.foo|()
-            }
             else ->  {
-                this@R|/test_4|.R|/A.foo|()
-                this@R|/test_4|.R|/A.foo|()
-                this@R|/test_4|.R|/B.bar|()
-                this@R|/test_4|.R|/B.bar|()
+                when () {
+                    (this@R|/test_4| !is R|B|) ->  {
+                        this@R|/test_4|.<Unresolved name: bar>#()
+                        <Unresolved name: bar>#()
+                        this@R|/test_4|.R|/A.foo|()
+                        this@R|/test_4|.R|/A.foo|()
+                    }
+                    else ->  {
+                        this@R|/test_4|.R|/A.foo|()
+                        this@R|/test_4|.R|/A.foo|()
+                        this@R|/test_4|.R|/B.bar|()
+                        this@R|/test_4|.R|/B.bar|()
+                    }
+                }
+
             }
         }
 

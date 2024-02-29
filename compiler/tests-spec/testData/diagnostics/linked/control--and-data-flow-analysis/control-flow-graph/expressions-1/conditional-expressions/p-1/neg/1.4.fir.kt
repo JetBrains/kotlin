@@ -43,5 +43,5 @@ fun case4(nothing: Nothing) {
 // TESTCASE NUMBER: 5
 
 fun case5(nothing: Nothing) {
-    val x = <!INVALID_IF_AS_EXPRESSION!>if<!> (false) else if (nothing) { "foo"} else ;
+    val x = <!INVALID_IF_AS_EXPRESSION!>if<!> (false) else <!INVALID_IF_AS_EXPRESSION!>if<!> (nothing) { "foo"} else ;
 }
