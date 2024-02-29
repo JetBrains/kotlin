@@ -36,17 +36,12 @@ import java.io.File
  */
 sealed class NativeBinary(
     private val name: String,
-    baseNameProvided: String,
+    open var baseName: String,
     val buildType: NativeBuildType,
     @Transient
     var compilation: KotlinNativeCompilation
 ) : Named {
-    open var baseName: String
-        get() = baseNameProvider.get()
-        set(value) {
-            baseNameProvider = project.provider { value }
-        }
-    internal var baseNameProvider: Provider<String> = project.provider { baseNameProvided }
+    internal val baseNameProvider: Provider<String> = project.provider { baseName }
 
     internal val konanTarget: KonanTarget
         get() = compilation.konanTarget

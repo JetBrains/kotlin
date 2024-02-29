@@ -30,7 +30,7 @@ fun Project.registerSwiftExportTask(
     framework: Framework,
 ): TaskProvider<*> {
     return registerSwiftExportTask(
-        swiftApiModuleName = provider { framework.baseName },
+        swiftApiModuleName = framework.baseNameProvider,
         target = framework.target,
         buildType = framework.buildType,
     )
