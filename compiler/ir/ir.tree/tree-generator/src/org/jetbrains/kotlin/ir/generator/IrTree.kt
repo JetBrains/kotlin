@@ -612,17 +612,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(symbolOwner)
 
         +symbol(packageFragmentSymbolType)
-        +field("packageFragmentDescriptor", type(Packages.descriptors, "PackageFragmentDescriptor"), mutable = false) {
-            optInAnnotation = obsoleteDescriptorBasedApiAnnotation
-        }
-        +field("moduleDescriptor", type(Packages.descriptors, "ModuleDescriptor"), mutable = false) {
-            kDoc = """
-            This should be a link to [IrModuleFragment] instead. 
-               
-            Unfortunately, some package fragments (e.g. some synthetic ones and [IrExternalPackageFragment])
-            are not located in any IR module, but still have a module descriptor. 
-            """.trimIndent()
-        }
         +field("packageFqName", type<FqName>())
         +field("fqName", type<FqName>()) {
             defaultValueInBase = "packageFqName"
@@ -660,7 +649,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(packageFragment)
 
         +symbol(externalPackageFragmentSymbolType)
-        +field("containerSource", type<DeserializedContainerSource>(), nullable = true, mutable = false)
     }
     val file: Element by element(Declaration) {
         needTransformMethod()
