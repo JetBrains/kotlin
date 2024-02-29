@@ -202,10 +202,9 @@ abstract class LlvmOptimizationPipeline(
         try {
             initLLVMOnce()
             options = LLVMCreatePassBuilderOptions()
-            // InlinerThreshold is not supported by new PM until LLVM 16, and the interface to set it is not available until LLVM-17
-            // config.inlineThreshold?.let { threshold ->
-            //     LLVMPassBuilderOptionsSetInlinerThreshold(options, threshold)
-            // }
+            config.inlineThreshold?.let { threshold ->
+                LLVMPassBuilderOptionsSetInlinerThreshold(options, threshold)
+            }
             if (config.timePasses) {
                 LLVMSetTimePasses(1)
             }
