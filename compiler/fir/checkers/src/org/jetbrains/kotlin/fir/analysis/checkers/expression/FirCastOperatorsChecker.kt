@@ -45,26 +45,14 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         }
     }
 
-    private fun checkIsApplicability(l: TypeInfo, r: TypeInfo, expression: FirTypeOperatorCall, context: CheckerContext): Applicability {
-        val oneIsFinal = l.isFinal || r.isFinal
-        val oneIsNotNull = !l.type.isNullable || !r.type.isNullable
-
-        return when {
-            isRefinementUseless(context, l.directType.upperBoundIfFlexible(), r.directType, expression) -> Applicability.USELESS_IS_CHECK
-            isCastErased(l.directType, r.directType, context) -> Applicability.CAST_ERASED
-            oneIsNotNull && oneIsFinal && areUnrelated(l, r, context) -> Applicability.IMPOSSIBLE_IS_CHECK
-            else -> Applicability.APPLICABLE
-        }
-    }
+    private fun checkIsApplicability(l: TypeInfo, r: TypeInfo, expression: FirTypeOperatorCall, context: CheckerContext): Applicability =
+        checkAnyApplicability(l, r, expression, Applicability.IMPOSSIBLE_IS_CHECK, Applicability.USELESS_IS_CHECK, context)
 
     private fun checkAsApplicability(l: TypeInfo, r: TypeInfo, expression: FirTypeOperatorCall, context: CheckerContext): Applicability {
-        val oneIsFinal = l.isFinal || r.isFinal
-        val oneIsNotNull = !l.type.isNullable || !r.type.isNullable
         val isNullableNothingWithNotNull = !l.type.isNullable && r.type.isNullableNothing
                 || l.type.isNullableNothing && !r.type.isNullable
 
         return when {
-            isRefinementUseless(context, l.directType.upperBoundIfFlexible(), r.directType, expression) -> Applicability.USELESS_CAST
             l.type.isNothing && r.type.isNothingOrNullableNothing -> Applicability.APPLICABLE
             r.type.isNothing -> Applicability.IMPOSSIBLE_CAST
             isNullableNothingWithNotNull -> when (expression.operation) {
@@ -72,7 +60,23 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
                 FirOperation.SAFE_AS -> Applicability.USELESS_CAST
                 else -> Applicability.IMPOSSIBLE_CAST
             }
-            oneIsNotNull && oneIsFinal && areUnrelated(l, r, context) -> Applicability.IMPOSSIBLE_CAST
+            else -> checkAnyApplicability(l, r, expression, Applicability.IMPOSSIBLE_CAST, Applicability.USELESS_CAST, context)
+        }
+    }
+
+    private fun checkAnyApplicability(
+        l: TypeInfo, r: TypeInfo,
+        expression: FirTypeOperatorCall,
+        impossible: Applicability,
+        useless: Applicability,
+        context: CheckerContext,
+    ): Applicability {
+        val oneIsFinal = l.isFinal || r.isFinal
+        val oneIsNotNull = !l.type.isNullable || !r.type.isNullable
+
+        return when {
+            isRefinementUseless(context, l.directType.upperBoundIfFlexible(), r.directType, expression) -> useless
+            oneIsNotNull && oneIsFinal && areUnrelated(l, r, context) -> impossible
             isCastErased(l.directType, r.directType, context) -> Applicability.CAST_ERASED
             else -> Applicability.APPLICABLE
         }
