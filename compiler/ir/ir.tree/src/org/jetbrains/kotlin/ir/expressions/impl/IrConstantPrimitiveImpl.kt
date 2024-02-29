@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstantPrimitive
-import org.jetbrains.kotlin.ir.expressions.IrConstantValue
 
 class IrConstantPrimitiveImpl(
     override val startOffset: Int,
@@ -17,21 +16,5 @@ class IrConstantPrimitiveImpl(
 ) : IrConstantPrimitive() {
     override var attributeOwnerId: IrAttributeContainer = this
     override var originalBeforeInline: IrAttributeContainer? = null
-
-    override fun contentEquals(other: IrConstantValue) =
-        other is IrConstantPrimitive &&
-                type == other.type &&
-                value.type == other.value.type &&
-                value.kind == other.value.kind &&
-                value.value == other.value.value
-
-    override fun contentHashCode(): Int {
-        var result = type.hashCode()
-        result = result * 31 + value.type.hashCode()
-        result = result * 31 + value.kind.hashCode()
-        result = result * 31 + value.value.hashCode()
-        return result
-    }
-
     override var type = value.type
 }

@@ -21,18 +21,4 @@ class IrConstantArrayImpl(
 
     override var attributeOwnerId: IrAttributeContainer = this
     override var originalBeforeInline: IrAttributeContainer? = null
-
-    override fun contentEquals(other: IrConstantValue): Boolean =
-        other is IrConstantArray &&
-                other.type == type &&
-                elements.size == other.elements.size &&
-                elements.indices.all { elements[it].contentEquals(other.elements[it]) }
-
-    override fun contentHashCode(): Int {
-        var res = type.hashCode()
-        for (value in elements) {
-            res = res * 31 + value.contentHashCode()
-        }
-        return res
-    }
 }

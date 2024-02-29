@@ -951,27 +951,9 @@ object IrTree : AbstractTreeBuilder() {
     }
     val constantValue: Element by element(Expression) {
         transformByChildren = true
+        kind = ImplementationKind.SealedClass
 
         parent(expression)
-
-        generationCallback = {
-            println()
-            printFunctionDeclaration(
-                name = "contentEquals",
-                parameters = listOf(FunctionParameter("other", constantValue)),
-                returnType = StandardTypes.boolean,
-                modality = Modality.ABSTRACT,
-            )
-            println()
-            println()
-            printFunctionDeclaration(
-                name = "contentHashCode",
-                parameters = emptyList(),
-                returnType = StandardTypes.int,
-                modality = Modality.ABSTRACT,
-            )
-            println()
-        }
     }
     val constantPrimitive: Element by element(Expression) {
         parent(constantValue)
