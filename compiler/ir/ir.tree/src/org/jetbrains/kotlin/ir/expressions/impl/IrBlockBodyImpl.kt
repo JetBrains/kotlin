@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 
 class IrBlockBodyImpl @IrImplementationDetail constructor(
@@ -16,7 +14,4 @@ class IrBlockBodyImpl @IrImplementationDetail constructor(
     override val endOffset: Int
 ) : IrBlockBody() {
     override val statements: MutableList<IrStatement> = ArrayList(2)
-
-    override val factory: IrFactory
-        get() = IrFactoryImpl
 }

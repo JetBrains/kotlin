@@ -8,7 +8,6 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -16,8 +15,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.expressionBody]
  */
 abstract class IrExpressionBody : IrBody() {
-    abstract val factory: IrFactory
-
     abstract var expression: IrExpression
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

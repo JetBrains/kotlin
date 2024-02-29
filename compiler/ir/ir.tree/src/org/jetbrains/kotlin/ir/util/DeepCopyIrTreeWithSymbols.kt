@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -417,10 +417,10 @@ open class DeepCopyIrTreeWithSymbols(
         throw IllegalArgumentException("Unsupported body type: $body")
 
     override fun visitExpressionBody(body: IrExpressionBody): IrExpressionBody =
-        body.factory.createExpressionBody(body.expression.transform())
+        IrFactoryImpl.createExpressionBody(body.expression.transform())
 
     override fun visitBlockBody(body: IrBlockBody): IrBlockBody =
-        body.factory.createBlockBody(
+        IrFactoryImpl.createBlockBody(
             body.startOffset, body.endOffset,
             body.statements.memoryOptimizedMap { it.transform() }
         )
