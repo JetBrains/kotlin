@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -925,7 +925,7 @@ class CallAndReferenceGenerator(
                         "Cannot bind $argumentsCount arguments to '$description' call with $valueArgumentsCount parameters"
                     ).apply {
                         for (argument in call.arguments) {
-                            addArgument(visitor.convertToIrExpression(argument))
+                            arguments.add(visitor.convertToIrExpression(argument))
                         }
                     }
                 }
@@ -948,7 +948,7 @@ class CallAndReferenceGenerator(
 
             is IrErrorCallExpressionImpl -> apply {
                 for (argument in call?.arguments.orEmpty()) {
-                    addArgument(visitor.convertToIrExpression(argument))
+                    arguments.add(visitor.convertToIrExpression(argument))
                 }
             }
 
