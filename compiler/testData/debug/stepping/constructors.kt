@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: WASM
+
 // FILE: test.kt
 
 fun box() {
@@ -194,7 +194,6 @@ class O<T>(i: T) {
 // test.kt:18 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:5 $box (4, 4, 4)
 // test.kt:20 $B.<init>
 // test.kt:6 $box (4, 6, 4, 4)
@@ -219,9 +218,8 @@ class O<T>(i: T) {
 // test.kt:40 $J.<init> (16, 8)
 // test.kt:42 $J.<init>
 // test.kt:12 $box (4, 6, 4, 4)
-// test.kt:43 $K.<init>
+// test.kt:43 $K.<init> (8, 19)
 // test.kt:45 $K.<init> (16, 8)
-// test.kt:47 $K.<init>
 // test.kt:13 $box (4, 4, 4)
 // test.kt:49 $L.<init> (4, 4)
 // test.kt:54 $L.<init> (16, 8)
@@ -243,7 +241,7 @@ class O<T>(i: T) {
 // test.kt:67 $N.<init> (16, 8)
 // test.kt:68 $N.<init>
 // test.kt:16 $box (4, 6, 6, 6, 6, 4, 4)
-// test.kt:76 $O.<init> (1, 1)
+// test.kt:73 $O.<init> (16, 16)
 // test.kt:17 $box (4, 6, 9, 9, 9, 9, 4, 4)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17)
 // Array.kt:59 $kotlin.Array.get (19, 26, 34, 8)

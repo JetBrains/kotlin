@@ -69,7 +69,7 @@ open class AbstractK1WasmJsTranslatorTest : AbstractK1WasmTest(
 
 open class AbstractK1WasmSteppingTest : AbstractK1WasmTest(
     "compiler/testData/debug/stepping/",
-    "debug/stepping/"
+    "debug/stepping/k1Box"
 ) {
 
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>

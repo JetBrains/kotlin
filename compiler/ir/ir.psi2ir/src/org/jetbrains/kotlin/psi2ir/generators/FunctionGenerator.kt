@@ -244,7 +244,6 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
         ktClassOrObject: KtPureClassOrObject
     ): IrConstructor =
         declareConstructor(
-            ktClassOrObject,
             ktClassOrObject.primaryConstructor ?: ktClassOrObject,
             ktClassOrObject.contextReceivers.mapNotNull { it.typeReference() },
             primaryConstructorDescriptor
@@ -262,7 +261,6 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
     fun generateSecondaryConstructor(ktConstructor: KtSecondaryConstructor, ktClassOrObject: KtPureClassOrObject): IrConstructor {
         val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor) as ClassConstructorDescriptor
         return declareConstructor(
-            ktConstructor,
             ktConstructor,
             ktClassOrObject.contextReceivers.mapNotNull { it.typeReference() },
             constructorDescriptor
@@ -282,7 +280,6 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
 
     private inline fun declareConstructor(
         ktConstructorElement: KtPureElement,
-        ktParametersElement: KtPureElement,
         ktContextReceiversElements: List<KtPureElement>,
         constructorDescriptor: ClassConstructorDescriptor,
         generateBody: BodyGenerator.(IrConstructor) -> IrBody?
@@ -310,7 +307,7 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
                 contextReceiverParametersCount = ktContextReceiversElements.size
             }
         }.buildWithScope { irConstructor ->
-            generateValueParameterDeclarations(irConstructor, ktParametersElement, null, ktContextReceiversElements)
+            generateValueParameterDeclarations(irConstructor, ktConstructorElement, null, ktContextReceiversElements)
             if (context.configuration.generateBodies) {
                 irConstructor.body = createBodyGenerator(irConstructor.symbol).generateBody(irConstructor)
             }

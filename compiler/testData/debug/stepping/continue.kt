@@ -81,7 +81,6 @@ fun box() {
 // Array.kt:76 $kotlin.Array.set (5, 5, 5, 5)
 // String.kt:149 $kotlin.stringLiteral (11, 4, 11, 4, 11, 4, 11, 4)
 // Library.kt:39 $<init properties test.kt> (62, 82)
-// test.kt:1 $box
 // test.kt:8 $box (14, 14, 14, 14, 14, 4, 14, 4, 4, 4, 14, 9, 14, 4, 14, 4, 4, 4, 14, 9, 14, 4, 14, 4, 4, 4, 14, 9, 14, 4, 14, 4, 4, 4, 14, 9, 14, 4, 14, 4, 4, 4)
 // test.kt:5 $<get-strings>
 // Array.kt:82 $kotlin.Array.<get-size> (16, 24, 29)

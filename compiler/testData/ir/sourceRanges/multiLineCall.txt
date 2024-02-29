@@ -43,7 +43,7 @@
           @35:4..6 CONST String type=kotlin.String value=""
   @39:0..41:1 CLASS ENUM_CLASS name:E modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.E>]
     @39:5..41:1 CONSTRUCTOR visibility:private <> () returnType:<root>.E [primary]
-      @39:0..41:1 BLOCK_BODY
+      @39:5..41:1 BLOCK_BODY
         @39:0..41:1 ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
         @39:0..41:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.E>]'
     @40:4..10 ENUM_ENTRY name:SINGLE

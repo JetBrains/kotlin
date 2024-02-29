@@ -22,7 +22,6 @@ fun box(): String {
 // test.kt:9 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box__JsExportAdapter
 // test.kt:5 $box
 // Standard.kt:41 $box (4, 4)
 // Standard.kt:44 $box (11, 11, 11, 4, 11, 11, 11, 4)

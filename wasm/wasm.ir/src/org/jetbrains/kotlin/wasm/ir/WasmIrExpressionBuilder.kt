@@ -75,6 +75,7 @@ class WasmIrExpressionBuilder(
         // droppable instructions + drop/unreachable -> nothing
         if ((op == WasmOp.DROP || op == WasmOp.UNREACHABLE) && lastOperator.pureStacklessInstruction()) {
             trimInstructionsUntil(lastInstructionIndex)
+            (lastInstruction.location as? SourceLocation.Location)?.let(::buildNop)
             return
         }
 

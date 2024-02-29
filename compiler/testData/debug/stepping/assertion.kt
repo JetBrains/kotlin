@@ -54,7 +54,6 @@ fun box(): String {
 // test.kt:31 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box__JsExportAdapter
 // test.kt:26 $box (4, 12, 4)
 // test.kt:17 $box (57, 57, 57, 57)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17, 17, 28, 17)

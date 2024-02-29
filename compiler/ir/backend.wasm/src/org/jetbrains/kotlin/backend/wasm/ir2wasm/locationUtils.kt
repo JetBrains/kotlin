@@ -8,8 +8,14 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.LineAndColumn
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.wasm.ir.WasmExpressionBuilder
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
+
+private val IrElement.hasSyntheticOrUndefinedLocation: Boolean
+    get() = startOffset in SYNTHETIC_OFFSET..UNDEFINED_OFFSET ||
+            endOffset in SYNTHETIC_OFFSET..UNDEFINED_OFFSET
 
 enum class LocationType {
     START {
@@ -26,6 +32,7 @@ enum class LocationType {
 
 fun IrElement.getSourceLocation(fileEntry: IrFileEntry?, type: LocationType = LocationType.START): SourceLocation {
     if (fileEntry == null) return SourceLocation.NoLocation("fileEntry is null")
+    if (hasSyntheticOrUndefinedLocation) return SourceLocation.NoLocation("Synthetic declaration")
 
     val path = fileEntry.name
     val (line, column) = type.getLineAndColumnNumberFor(this, fileEntry)

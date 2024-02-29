@@ -208,7 +208,7 @@ internal class BodyGenerator(
     }
 
     fun generatePrimaryConstructorBody(ktClassOrObject: KtPureClassOrObject, irConstructor: IrConstructor): IrBody {
-        val irBlockBody = context.irFactory.createBlockBody(ktClassOrObject.pureStartOffset, ktClassOrObject.pureEndOffset)
+        val irBlockBody = context.irFactory.createBlockBody(irConstructor.startOffset, irConstructor.endOffset)
 
         generateSuperConstructorCall(irBlockBody, ktClassOrObject)
 

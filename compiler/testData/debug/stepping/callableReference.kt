@@ -38,7 +38,6 @@ fun f(block: () -> Unit) {
 // test.kt:8 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:4 $box (12, 12, 4)
 // Runtime.kt:70 $kotlin.wasm.internal.getBoxedBoolean (8, 8)
 // Runtime.kt:73 $kotlin.wasm.internal.getBoxedBoolean (8, 35)

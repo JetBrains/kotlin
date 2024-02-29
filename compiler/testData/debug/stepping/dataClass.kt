@@ -360,11 +360,9 @@ fun box() {
 // String.kt:57 $kotlin.text.unsafeStringFromCharArray
 // String.kt:138 $kotlin.text.unsafeStringFromCharArray (4, 4, 4, 4, 11, 17, 22, 29, 4, 34)
 // test.kt:18 $box (17, 9, 9, 17, 12, 12)
-// test.kt:1 $D.component1
 // test.kt:19 $box (4, 6, 6, 6, 6, 6, 6)
 // test.kt:20 $box (12, 14, 17, 17, 17, 17, 12)
-// test.kt:6 $E.<init> (13, 25, 13, 25, 13, 25)
-// test.kt:11 $E.<init> (1, 1, 1)
+// test.kt:6 $E.<init> (13, 25, 39, 13, 25, 39, 13, 25, 39)
 // test.kt:21 $box (4, 13, 15, 18, 18, 18, 18, 13, 6, 6)
 // test.kt:8 $E.equals (39, 44)
 // test.kt:22 $box (4, 6, 6)
@@ -372,7 +370,6 @@ fun box() {
 // test.kt:23 $box (4, 6, 6)
 // test.kt:7 $E.toString (30, 30, 30, 30, 34)
 // test.kt:24 $box (19, 9, 9, 19, 13, 13)
-// test.kt:1 $E.component1
 // test.kt:25 $box (4, 6, 6)
 // test.kt:10 $E.copy (17, 19, 22, 17, 24)
 // test.kt:26 $box

@@ -33,7 +33,6 @@ fun box() {
 // test.kt:17 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:15 $box (4, 4)
 // a.kt:5 $a (10, 10, 10, 10, 13)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17, 17, 28, 17)

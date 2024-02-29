@@ -112,7 +112,7 @@ open class AbstractFirWasmJsTranslatorTest : AbstractFirWasmJsTest(
 
 open class AbstractFirWasmJsSteppingTest : AbstractFirWasmJsTest(
     "compiler/testData/debug/stepping/",
-    "debug/stepping/"
+    "debug/stepping/firBox"
 ) {
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
         get() = ::WasmDebugRunner

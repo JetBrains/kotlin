@@ -51,7 +51,6 @@ fun box() {
 // test.kt:19 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:5 $box (12, 4)
 // test.kt:6 $box (4, 6)
 // Primitives.kt:2 $box

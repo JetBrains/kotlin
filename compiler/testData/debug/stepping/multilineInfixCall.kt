@@ -22,7 +22,6 @@ infix fun Int.foo(i: Int) {
 // test.kt:7 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:5 $box (4, 4)
 // test.kt:6 $box
 // test.kt:10 $foo

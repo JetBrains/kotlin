@@ -1045,7 +1045,10 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                             val parameterDescriptor = valueParametersFromDescriptor[index - offset]
                             val sourceElement = when {
                                 psiElement is KtFunction -> psiElement
-                                descriptor is ConstructorDescriptor && descriptor.isPrimary -> (psiElement as? KtClassOrObject)?.primaryConstructor
+                                descriptor is ConstructorDescriptor && descriptor.isPrimary -> {
+                                    (psiElement as? KtClassOrObject)?.primaryConstructor
+                                        ?: ((psiElement as? KtParameterList)?.parent as? KtFunction)
+                                }
                                 else -> null
                             }
                             getNonErrorMethodParameterType(parameterDescriptor) {

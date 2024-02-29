@@ -27,7 +27,6 @@ fun test(a: Boolean, b: Boolean, c: Boolean): Boolean {
 // test.kt:7 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:6 $box (9, 15, 21, 4, 4)
 // test.kt:10 $test (11, 4)
 // test.kt:11 $test

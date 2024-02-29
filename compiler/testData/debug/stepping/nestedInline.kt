@@ -74,7 +74,6 @@ inline fun html(init: () -> Unit) {
 // test.kt:22 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box__JsExportAdapter
 // test.kt:20 $box
 // test.kt:8 $box (14, 14, 14, 14, 4, 18, 10)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17, 17, 28, 17)

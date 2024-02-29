@@ -27,7 +27,6 @@ fun box() {
 // test.kt:13 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:6 $box (4, 4, 4, 4)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17)
 // Array.kt:59 $kotlin.Array.get (19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8)

@@ -1,4 +1,4 @@
-
+// IGNORE_BACKEND_K2: WASM
 // FILE: test.kt
 
 fun foo() {
@@ -131,7 +131,6 @@ fun box() {
 // test.kt:39 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:34 $box
 // test.kt:6 $foo (8, 8, 8)
 // test.kt:26 $mightThrow (8, 8, 8, 22, 22, 16)

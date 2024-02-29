@@ -156,7 +156,6 @@ fun box() {
 // test.kt:49 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:42 $box
 // test.kt:6 $foo (8, 8, 8, 8)
 // test.kt:29 $mightThrow (8, 8, 8, 8, 22, 22, 16)
