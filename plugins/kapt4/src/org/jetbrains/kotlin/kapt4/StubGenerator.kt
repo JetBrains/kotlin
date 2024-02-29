@@ -218,33 +218,40 @@ private class StubGenerator(
 
                 printComment(psiClass)
 
+                calculateMetadata(psiClass)?.let { printMetadata(it) }
+                printModifiers(psiClass)
                 val classWord = when {
                     psiClass.isAnnotationType -> "@interface"
                     psiClass.isInterface -> "interface"
                     psiClass.isEnum -> "enum"
+                    psiClass.isRecord -> "record"
                     else -> "class"
                 }
-                calculateMetadata(psiClass)?.let { printMetadata(it) }
-                printModifiers(psiClass)
                 printWithNoIndent(classWord, " ", simpleName)
                 printTypeParams(psiClass.typeParameters)
 
-                psiClass.extendsList
-                    ?.referencedTypes
-                    ?.asList()
-                    ?.let { if (!psiClass.isInterface) it.take(1) else it }
-                    ?.takeIf { it.isNotEmpty() }
-                    ?.let { superClasses ->
-                        printWithNoIndent(" extends ")
-                        superClasses.forEachIndexed { index, type ->
-                            if (index > 0) printWithNoIndent(", ")
-                            printType(type)
+                if (psiClass.isRecord) {
+                    printParameters(psiClass.constructors.first())
+                }
+
+                if (!psiClass.isRecord) {
+                    psiClass.extendsList
+                        ?.referencedTypes
+                        ?.asList()
+                        ?.let { if (!psiClass.isInterface) it.take(1) else it }
+                        ?.takeIf { it.isNotEmpty() }
+                        ?.let { superClasses ->
+                            printWithNoIndent(" extends ")
+                            superClasses.forEachIndexed { index, type ->
+                                if (index > 0) printWithNoIndent(", ")
+                                printType(type)
+                            }
                         }
-                    }
+                }
 
                 psiClass.implementsList
                     ?.referencedTypes
-                    ?.filterNot { it.canonicalText.startsWith("kotlin.collections.") }
+                    ?.filterNot { it.qualifiedName.startsWith("kotlin.collections.") || it.qualifiedName == "java.lang.Record" }
                     ?.takeIf { it.isNotEmpty() }
                     ?.let { interfaces ->
                         printWithNoIndent(" implements ")
@@ -253,6 +260,7 @@ private class StubGenerator(
                             printType(type)
                         }
                     }
+
                 printlnWithNoIndent(" {")
                 pushIndent()
 
@@ -278,9 +286,12 @@ private class StubGenerator(
                     .onEach { lineMappings.registerField(psiClass, it) }
                     .associateWith { MemberData(it.name, it.signature, lineMappings.getPosition(psiClass, it)) }
 
-                fieldsPositions.keys.sortedWith(MembersPositionComparator(classPosition, fieldsPositions)).forEachIndexed { index, field ->
-                    if (index > 0) printlnWithNoIndent()
-                    printField(field)
+                if (!psiClass.isRecord) {
+                    fieldsPositions.keys.sortedWith(MembersPositionComparator(classPosition, fieldsPositions))
+                        .forEachIndexed { index, field ->
+                            if (index > 0) printlnWithNoIndent()
+                            printField(field)
+                        }
                 }
 
                 val methodsPositions = psiClass.methods
@@ -292,12 +303,13 @@ private class StubGenerator(
                     .onEach { lineMappings.registerMethod(psiClass, it) }
                     .associateWith { MemberData(it.name, it.signature, lineMappings.getPosition(psiClass, it)) }
 
-                if (methodsPositions.isNotEmpty()) printlnWithNoIndent()
                 methodsPositions.keys.sortedWith(MembersPositionComparator(classPosition, methodsPositions))
-                    .forEachIndexed { index, method ->
+                    .forEach { method ->
                         lineMappings.registerSignature(javacSignature(method), method)
-                        if (index > 0) printlnWithNoIndent()
-                        printMethod(method)
+                        if (!psiClass.isRecord || method != psiClass.constructors.firstOrNull()) {
+                            printlnWithNoIndent()
+                            printMethod(method)
+                        }
                     }
 
                 if (psiClass.innerClasses.isNotEmpty() && (fieldsPositions.isNotEmpty() || methodsPositions.isNotEmpty())) println()
@@ -350,14 +362,8 @@ private class StubGenerator(
                     printType(it)
                     printWithNoIndent(" ")
                 }
-                printWithNoIndent(method.name, "(")
-                method.parameterList.parameters.filter { isValidIdentifier(paramName(it)) }.forEachIndexed { index, param ->
-                    if (index > 0) printWithNoIndent(", ")
-                    printModifiers(param)
-                    printType(param.type)
-                    printWithNoIndent(" ", paramName(param))
-                }
-                printWithNoIndent(")")
+                printWithNoIndent(method.name)
+                printParameters(method)
                 (method as? PsiAnnotationMethod)?.defaultValue?.let {
                     printWithNoIndent(" default ")
                     printAnnotationMemberValue(it)
@@ -378,10 +384,10 @@ private class StubGenerator(
                     pushIndent()
 
                     if (method.isConstructor && !psiClass.isEnum) {
-                        val superConstructor = method.containingClass?.superClass?.constructors?.firstOrNull { !it.isPrivate }
-                        if (superConstructor != null) {
-                            print("super(")
-                            val args = superConstructor.parameterList.parameters.map { defaultValue(it.type) }
+                        val delegateTo = (if (psiClass.isRecord) psiClass else psiClass.superClass)?.constructors?.firstOrNull { !it.isPrivate }
+                        if (delegateTo != null) {
+                            print(if (psiClass.isRecord) "this(" else "super(")
+                            val args = delegateTo.parameterList.parameters.map { defaultValue(it.type) }
                             args.forEachIndexed { index, arg ->
                                 if (index > 0) printWithNoIndent(", ")
                                 printWithNoIndent(arg)
@@ -394,6 +400,17 @@ private class StubGenerator(
                     popIndent()
                     println("}")
                 }
+            }
+
+            private fun Printer.printParameters(method: PsiMethod) {
+                printWithNoIndent("(")
+                method.parameterList.parameters.filter { isValidIdentifier(paramName(it)) }.forEachIndexed { index, param ->
+                    if (index > 0) printWithNoIndent(", ")
+                    printModifiers(param)
+                    printType(param.type)
+                    printWithNoIndent(" ", paramName(param))
+                }
+                printWithNoIndent(")")
             }
 
             private fun javacSignature(method: PsiMethod) = printToString {
@@ -525,6 +542,7 @@ private class StubGenerator(
                             onError("Support for interface methods with bodies in Kapt requires -Xjvm-default=all or -Xjvm-default=all-compatibility compiler option")
                         }
 
+                        if (modifier == PsiModifier.FINAL && modifierListOwner is PsiClass && modifierListOwner.isRecord) continue
                         if ((modifier != PsiModifier.FINAL && modifier != PsiModifier.ABSTRACT) || !(modifierListOwner is PsiClass && modifierListOwner.isEnum)) {
                             printWithNoIndent(modifier, " ")
                         }

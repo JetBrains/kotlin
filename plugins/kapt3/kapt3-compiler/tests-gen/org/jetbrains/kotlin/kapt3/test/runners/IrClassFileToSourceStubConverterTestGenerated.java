@@ -390,6 +390,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
   }
 
   @Test
+  @TestMetadata("jvmRecord.kt")
+  public void testJvmRecord() {
+    runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmRecord.kt");
+  }
+
+  @Test
   @TestMetadata("jvmRepeatableAnnotation.kt")
   public void testJvmRepeatableAnnotation() {
     runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmRepeatableAnnotation.kt");

@@ -41,26 +41,24 @@ internal class Kapt4Handler(testServices: TestServices) : AnalysisHandler<Kapt4C
         get() = Kapt4ContextBinaryArtifact.Kind
 
     override fun processModule(module: TestModule, info: Kapt4ContextBinaryArtifact) {
-        val validate = KaptTestDirectives.NO_VALIDATION !in module.directives
-
-        val (kaptContext) = info
-        val convertedFiles = getJavaFiles(info)
-        kaptContext.javaLog.interceptorData.files = convertedFiles.associateBy { it.sourceFile }
-        if (validate) kaptContext.compiler.enterTrees(convertedFiles)
-
-        val actualRaw = convertedFiles
-            .sortedBy { it.sourceFile.name }
-            .joinToString(ClassFileToSourceKaptStubHandler.FILE_SEPARATOR) { (it.sourceFile as KaptJavaFileObject).file!!.readText() }
-
+        val stubs = info.kaptStubs.map { it.source }
+        val actualRaw = stubs.joinToString(ClassFileToSourceKaptStubHandler.FILE_SEPARATOR)
         val actual = StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' })
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
             .let { removeMetadataAnnotationContents(it) }
 
+        val validate = KaptTestDirectives.NO_VALIDATION !in module.directives
+        if (validate) {
+            val (kaptContext) = info
+            val convertedFiles = getJavaFiles(info)
+            kaptContext.javaLog.interceptorData.files = convertedFiles.associateBy { it.sourceFile }
+            kaptContext.compiler.enterTrees(convertedFiles)
+        }
         assertions.assertAll(
             { assertions.checkTxt(module, actual) },
             {
-                if (kaptContext.compiler.shouldStop(CompileStates.CompileState.ENTER)) {
-                    checkJavaCompilerErrors(module, kaptContext, actual)
+                if (info.kaptContext.compiler.shouldStop(CompileStates.CompileState.ENTER)) {
+                    checkJavaCompilerErrors(module, info.kaptContext, actual)
                 }
             }
         )

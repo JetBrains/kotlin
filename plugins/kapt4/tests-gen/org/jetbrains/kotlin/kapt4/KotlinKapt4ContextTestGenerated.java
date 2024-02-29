@@ -390,6 +390,12 @@ public class KotlinKapt4ContextTestGenerated extends AbstractKotlinKapt4ContextT
   }
 
   @Test
+  @TestMetadata("jvmRecord.kt")
+  public void testJvmRecord() {
+    runTest("plugins/kapt4/../kapt3/kapt3-compiler/testData/converter/jvmRecord.kt");
+  }
+
+  @Test
   @TestMetadata("jvmRepeatableAnnotation.kt")
   public void testJvmRepeatableAnnotation() {
     runTest("plugins/kapt4/../kapt3/kapt3-compiler/testData/converter/jvmRepeatableAnnotation.kt");
