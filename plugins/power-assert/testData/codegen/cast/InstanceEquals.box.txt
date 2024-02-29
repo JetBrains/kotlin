@@ -5,8 +5,8 @@ assert(null is String)
 
 Assertion failed
 assert(!(" is " is String))
-       |   |
-       |   true
+       |        |
+       |        true
        false
 
 Assertion failed
@@ -14,22 +14,22 @@ assert(!(
        |
        false
     " is "
-      |
-      true
 
             is
+            |
+            true
 
             String
 ))
 
 Assertion failed
 assert(null/*is*/is/*is*/String)
-       |
-       false
+            |
+            false
 
 Assertion failed
 assert(!((null is String) is Boolean))
-       |       |
-       |       true
+       |       |          |
+       |       |          true
        |       false
        false

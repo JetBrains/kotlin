@@ -154,7 +154,7 @@ private fun findDisplayOffset(
 ): Int {
     return when (expression) {
         is IrMemberAccessExpression<*> -> memberAccessOffset(expression, sourceRangeInfo, source)
-        is IrTypeOperatorCall -> typeOperatorOffset(expression, source)
+        is IrTypeOperatorCall -> typeOperatorOffset(expression, sourceRangeInfo, source)
         else -> 0
     }
 }
@@ -164,38 +164,12 @@ private fun memberAccessOffset(
     sourceRangeInfo: SourceRangeInfo,
     source: String,
 ): Int {
-    when (expression.origin) {
-        // special case to handle `value != null`
-        IrStatementOrigin.EXCLEQ, IrStatementOrigin.EXCLEQEQ -> return source.indexOf("!=")
-        // special case to handle `in` operator
-        IrStatementOrigin.IN -> return source.indexOf(" in ") + 1
-        // special case to handle `in` operator
-        IrStatementOrigin.NOT_IN -> return source.indexOf(" !in ") + 1
-        else -> Unit
-    }
-
     val owner = expression.symbol.owner
     if (owner !is IrSimpleFunction) return 0
 
     if (owner.isInfix || owner.isOperator || owner.origin == IrBuiltIns.BUILTIN_OPERATOR) {
-        // Ignore single value operators
-        val singleReceiver = (expression.dispatchReceiver != null) xor (expression.extensionReceiver != null)
-        if (singleReceiver && expression.valueArgumentsCount == 0) return 0
-
-        // Start after the dispatcher or first argument
-        val receiver = expression.dispatchReceiver
-            ?: expression.extensionReceiver
-            ?: expression.getValueArgument(0).takeIf { owner.origin == IrBuiltIns.BUILTIN_OPERATOR }
-            ?: return 0
-        var offset = receiver.endOffset - sourceRangeInfo.startOffset + 1
-        if (offset < 0 || offset >= source.length) return 0 // infix function called using non-infix syntax
-
-        // Continue until there is a non-whitespace character
-        while (source[offset].isWhitespace() || source[offset] == '.') {
-            offset++
-            if (offset >= source.length) return 0
-        }
-        return offset
+        val lhs = expression.binaryOperatorLhs() ?: return 0
+        return binaryOperatorOffset(lhs, sourceRangeInfo, source)
     }
 
     return 0
@@ -203,12 +177,70 @@ private fun memberAccessOffset(
 
 private fun typeOperatorOffset(
     expression: IrTypeOperatorCall,
+    sourceRangeInfo: SourceRangeInfo,
     source: String,
 ): Int {
     return when (expression.operator) {
-        IrTypeOperator.INSTANCEOF -> source.indexOf(" is ") + 1
-        IrTypeOperator.NOT_INSTANCEOF -> source.indexOf(" !is ") + 1
+        IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF -> binaryOperatorOffset(expression.argument, sourceRangeInfo, source)
         else -> 0
+    }
+}
+
+/**
+ * The offset of the infix operator/function itself.
+ *
+ * @param lhs The left-hand side expression of the operator.
+ * @param wholeOperatorSourceRangeInfo The source range of the whole operator expression.
+ * @param wholeOperatorSource The source text of the whole operator expression.
+ */
+private fun binaryOperatorOffset(lhs: IrExpression, wholeOperatorSourceRangeInfo: SourceRangeInfo, wholeOperatorSource: String): Int {
+    var offset = lhs.endOffset - wholeOperatorSourceRangeInfo.startOffset + 1
+    if (offset < 0 || offset >= wholeOperatorSource.length) return 0 // infix function called using non-infix syntax
+
+    // Continue until there is a non-whitespace character
+    while (wholeOperatorSource[offset].isWhitespace() || wholeOperatorSource[offset] == '.') {
+        offset++
+        if (offset >= wholeOperatorSource.length) return 0
+    }
+    return offset
+}
+
+/**
+ * The left-hand side expression of an infix operator/function that takes into account special cases like `in`, `!in` and `!=` operators
+ * that have a more complex structure than just a single call with two arguments.
+ */
+private fun IrMemberAccessExpression<*>.binaryOperatorLhs(): IrExpression? = when (origin) {
+    IrStatementOrigin.EXCLEQ -> {
+        // The `!=` operator call is actually a sugar for `lhs.equals(rhs).not()`.
+        (dispatchReceiver as? IrCall)?.simpleBinaryOperatorLhs()
+    }
+    IrStatementOrigin.EXCLEQEQ -> {
+        // The `!==` operator call is actually a sugar for `(lhs === rhs).not()`.
+        (dispatchReceiver as? IrCall)?.simpleBinaryOperatorLhs()
+    }
+    IrStatementOrigin.IN -> {
+        // The `in` operator call is actually a sugar for `rhs.contains(lhs)`.
+        getValueArgument(0)
+    }
+    IrStatementOrigin.NOT_IN -> {
+        // The `!in` operator call is actually a sugar for `rhs.contains(lhs).not()`.
+        (dispatchReceiver as? IrCall)?.getValueArgument(0)
+    }
+    else -> simpleBinaryOperatorLhs()
+}
+
+/**
+ * The left-hand side expression of an infix operator/function.
+ * For single-value operators returns `null`, for all other infix operators/functions, returns the receiver or the first value argument.
+ */
+private fun IrMemberAccessExpression<*>.simpleBinaryOperatorLhs(): IrExpression? {
+    val singleReceiver = (dispatchReceiver != null) xor (extensionReceiver != null)
+    return if (singleReceiver && valueArgumentsCount == 0) {
+        null
+    } else {
+        dispatchReceiver
+            ?: extensionReceiver
+            ?: getValueArgument(0).takeIf { (symbol.owner as? IrSimpleFunction)?.origin == IrBuiltIns.BUILTIN_OPERATOR }
     }
 }
 
