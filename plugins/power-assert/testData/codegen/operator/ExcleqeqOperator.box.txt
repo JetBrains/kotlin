@@ -2,36 +2,30 @@ Assertion failed
 assert(1 !== 1)
          |
          false
-         true
 
 Assertion failed
 assert(" !== " !== " !== ")
-         |
-         false
-         true
+               |
+               false
 
 Assertion failed
 assert(
     " !== "
-      |
-      false
-      true
 
             !==
+            |
+            false
 
             " !== "
 )
 
 Assertion failed
 assert(1/*!==*/!==/*!==*/1)
-          |
-          false
-          true
+         |
+         false
 
 Assertion failed
 assert((1 !== 1) !== false)
-          |
+          |      |
+          |      false
           false
-          true
-          false
-          true

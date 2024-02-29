@@ -19,6 +19,7 @@
 
 package org.jetbrains.kotlin.powerassert.diagram
 
+import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
@@ -105,8 +106,12 @@ fun buildTree(expression: IrExpression): Node? {
             }
 
             override fun visitCall(expression: IrCall, data: Node) {
-                if (expression.symbol.owner.name.asString() == "EQEQ" && expression.origin == IrStatementOrigin.EXCLEQ) {
-                    // Skip the EQEQ part of a EXCLEQ call
+                val isExcleq = expression.symbol.owner.name.asString() == BuiltInOperatorNames.EQEQ
+                        && expression.origin == IrStatementOrigin.EXCLEQ
+                val isExcleqeq = expression.symbol.owner.name.asString() == BuiltInOperatorNames.EQEQEQ
+                        && expression.origin == IrStatementOrigin.EXCLEQEQ
+                if (isExcleq || isExcleqeq) {
+                    // Skip the EQEQ/EQEQEQ part of a EXCLEQ/EXCLEQEQ call
                     expression.acceptChildren(this, data)
                 } else if (expression.origin == IrStatementOrigin.NOT_IN) {
                     // Exclude the wrapped "contains" call for `!in` operator expressions and only display the final result
