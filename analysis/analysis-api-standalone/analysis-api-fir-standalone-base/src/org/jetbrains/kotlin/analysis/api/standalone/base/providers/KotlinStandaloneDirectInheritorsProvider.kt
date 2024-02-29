@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.contains
@@ -42,7 +43,11 @@ class KotlinStandaloneDirectInheritorsProvider(private val project: Project) : K
         includeLocalInheritors: Boolean,
     ): Iterable<KtClassOrObject> {
         val classId = ktClass.getClassId() ?: return emptyList()
-        val possibleInheritors = staticDeclarationProviderFactory.getDirectInheritorCandidates(classId.shortClassName)
+
+        val aliases = mutableSetOf(classId.shortClassName)
+        calculateAliases(classId.shortClassName, aliases)
+
+        val possibleInheritors = aliases.flatMap { staticDeclarationProviderFactory.getDirectInheritorCandidates(it) }
 
         if (possibleInheritors.isEmpty()) {
             return emptyList()
@@ -63,6 +68,16 @@ class KotlinStandaloneDirectInheritorsProvider(private val project: Project) : K
 
         val baseFirClass = ktClass.toFirSymbol(classId, baseKtModule)?.fir as? FirClass ?: return emptyList()
         return possibleInheritors.filter { isValidInheritor(it, baseFirClass, scope, includeLocalInheritors) }
+    }
+
+    private fun calculateAliases(aliasedName: Name, aliases: MutableSet<Name>) {
+        staticDeclarationProviderFactory.getInheritableTypeAliases(aliasedName).forEach { alias ->
+            val aliasName = alias.nameAsSafeName
+            val isNewAliasName = aliases.add(aliasName)
+            if (isNewAliasName) {
+                calculateAliases(aliasName, aliases)
+            }
+        }
     }
 
     private fun isValidInheritor(

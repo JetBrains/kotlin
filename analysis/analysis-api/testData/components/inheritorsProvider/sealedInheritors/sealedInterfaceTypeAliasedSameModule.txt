@@ -1,2 +1,8 @@
 /OneSealedChild
 class OneSealedChild : MySealedInterface
+
+/ThreeSealedChild
+class ThreeSealedChild : T2
+
+/TwoSealedChild
+class TwoSealedChild : T1
