@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
@@ -141,9 +142,11 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         IrErrorDeclarationImpl(
             startOffset = startOffset,
             endOffset = endOffset,
-            _descriptor = descriptor,
-            factory = this
-        )
+            factory = this,
+            origin = IrDeclarationOrigin.DEFINED,
+        ).apply {
+            this.descriptor = descriptor ?: this.toIrBasedDescriptor()
+        }
 
     override fun createField(
         startOffset: Int,
