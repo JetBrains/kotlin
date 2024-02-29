@@ -204,7 +204,6 @@ context(KtAnalysisSession)
 private fun KtNamedClassOrObjectSymbol.isConsumableBySirBuilder(): Boolean =
     classKind == KtClassKind.CLASS
             && (superTypes.count() == 1 && superTypes.first().isAny) // Every class has Any as a superclass
-            && classIdIfNonLocal?.packageFqName?.isRoot != false
             && !isData
             && !isInline
             && modality == Modality.FINAL
