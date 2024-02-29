@@ -80,7 +80,7 @@ abstract class ExecClang @Inject constructor(
     // (nullable, which means host) target name.
 
     // FIXME: See KT-65542 for details
-    private fun fixBrokenMacroExpansionInXcode15_3(target: String?) = macroForXcode153(platformManager.targetManager(target).target)
+    private fun fixBrokenMacroExpansionInXcode15_3(target: String?) = fixBrokenMacroExpansionInXcode15_3(platformManager.targetManager(target).target)
 
     private fun fixBrokenMacroExpansionInXcode15_3(target: KonanTarget): List<String> {
         return when (target) {
