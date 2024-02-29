@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.builder.buildFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.builder.buildPackageDirective
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildFile
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isJava
@@ -90,9 +91,10 @@ fun AbstractKtSourceElement?.startOffsetSkippingComments(): Int? {
     }
 }
 
-internal fun FirDeclaration.getStartOffsetOfFunctionDeclarationKeywordOrNull(): Int? =
+internal fun FirElement.getStartOffsetOfFunctionDeclarationKeywordOrNull(): Int? =
     when (this) {
         is FirSimpleFunction -> source.getChildTokenStartOffsetOrNull(FUNCTION_DECL_TOKENS)
+        is FirDefaultPropertyAccessor -> propertySymbol.fir.getStartOffsetOfFunctionDeclarationKeywordOrNull()
         is FirPropertyAccessor -> source.getChildTokenStartOffsetOrNull(ACCESSOR_DECL_TOKENS)
         is FirProperty, is FirValueParameter -> source.getChildTokenStartOffsetOrNull(PROPERTY_DECL_TOKENS)
         is FirClass -> source.getChildTokenStartOffsetOrNull(CLASS_DECL_TOKENS)
@@ -112,10 +114,6 @@ internal fun AbstractKtSourceElement?.getChildTokenStartOffsetOrNull(tokenSet: T
 }
 
 internal inline fun <T : IrElement> FirElement.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
-    return source.convertWithOffsets(f)
-}
-
-internal inline fun <T : IrElement> FirDeclaration.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
     val startOffset: Int
     val endOffset: Int
 
@@ -123,8 +121,10 @@ internal inline fun <T : IrElement> FirDeclaration.convertWithOffsets(f: (startO
         startOffset = UNDEFINED_OFFSET
         endOffset = UNDEFINED_OFFSET
     } else {
-        val declarationSpecificStartOffset = getStartOffsetOfFunctionDeclarationKeywordOrNull()
-        startOffset = declarationSpecificStartOffset ?: source.startOffsetSkippingComments() ?: source?.startOffset ?: UNDEFINED_OFFSET
+        startOffset = getStartOffsetOfFunctionDeclarationKeywordOrNull()
+            ?: source.startOffsetSkippingComments()
+                    ?: source?.startOffset
+                    ?: UNDEFINED_OFFSET
         endOffset = source?.endOffset ?: UNDEFINED_OFFSET
     }
 
@@ -132,9 +132,9 @@ internal inline fun <T : IrElement> FirDeclaration.convertWithOffsets(f: (startO
 }
 
 internal fun <T : IrElement> FirPropertyAccessor?.convertWithOffsets(
-    defaultStartOffset: Int, defaultEndOffset: Int, f: (startOffset: Int, endOffset: Int) -> T
+    defaultStartOffset: Int, defaultEndOffset: Int, f: (startOffset: Int, endOffset: Int) -> T,
 ): T {
-    return if (this == null) return f(defaultStartOffset, defaultEndOffset) else source.convertWithOffsets(f)
+    return this?.convertWithOffsets(f) ?: f(defaultStartOffset, defaultEndOffset)
 }
 
 internal inline fun <T : IrElement> KtSourceElement?.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
@@ -184,7 +184,7 @@ internal inline fun <T : IrElement> FirThisReceiverExpression.convertWithOffsets
 
 internal inline fun <T : IrElement> FirStatement.convertWithOffsets(
     calleeReference: FirReference,
-    f: (startOffset: Int, endOffset: Int) -> T
+    f: (startOffset: Int, endOffset: Int) -> T,
 ): T {
     val startOffset: Int
     val endOffset: Int
@@ -221,7 +221,7 @@ enum class ConversionTypeOrigin(val forSetter: Boolean) {
 context(Fir2IrComponents)
 fun FirClassifierSymbol<*>.toSymbol(
     typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
-    handleAnnotations: ((List<FirAnnotation>) -> Unit)? = null
+    handleAnnotations: ((List<FirAnnotation>) -> Unit)? = null,
 ): IrClassifierSymbol {
     return when (this) {
         is FirTypeParameterSymbol -> {
@@ -250,7 +250,7 @@ private fun FirBasedSymbol<*>.toSymbolForCall(
     preferGetter: Boolean,
     explicitReceiver: FirExpression? = null,
     isDelegate: Boolean = false,
-    isReference: Boolean = false
+    isReference: Boolean = false,
 ): IrSymbol? = when (this) {
     is FirCallableSymbol<*> -> toSymbolForCall(
         dispatchReceiver,
@@ -317,7 +317,7 @@ fun FirCallableSymbol<*>.toSymbolForCall(
     // Note: in fact LHS for callable references and explicit receiver for normal qualified accesses
     explicitReceiver: FirExpression? = null,
     isDelegate: Boolean = false,
-    isReference: Boolean = false
+    isReference: Boolean = false,
 ): IrSymbol? {
     val fakeOverrideOwnerLookupTag = when {
         // Static fake overrides
@@ -448,7 +448,7 @@ internal tailrec fun FirCallableSymbol<*>.unwrapSubstitutionAndIntersectionOverr
 
 context(Fir2IrComponents)
 internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(
-    owner: ConeClassLikeLookupTag? = containingClassLookupTag()
+    owner: ConeClassLikeLookupTag? = containingClassLookupTag(),
 ): FirCallableSymbol<*> {
     val fir = fir
 
@@ -483,7 +483,7 @@ internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(
 context(Fir2IrComponents)
 internal fun FirSimpleFunction.processOverriddenFunctionSymbols(
     containingClass: FirClass,
-    processor: (FirNamedFunctionSymbol) -> Unit
+    processor: (FirNamedFunctionSymbol) -> Unit,
 ) {
     val scope = containingClass.unsubstitutedScope()
     scope.processFunctionsByName(name) {}
@@ -503,7 +503,7 @@ internal fun FirSimpleFunction.processOverriddenFunctionSymbols(
 fun FirTypeScope.processOverriddenFunctionsFromSuperClasses(
     functionSymbol: FirNamedFunctionSymbol,
     containingClass: FirClass,
-    processor: (FirNamedFunctionSymbol) -> ProcessorAction
+    processor: (FirNamedFunctionSymbol) -> ProcessorAction,
 ): ProcessorAction {
     val ownerTag = containingClass.symbol.toLookupTag()
     return processDirectOverriddenFunctionsWithBaseScope(functionSymbol) { overridden, _ ->
@@ -519,7 +519,7 @@ fun FirTypeScope.processOverriddenFunctionsFromSuperClasses(
 fun FirTypeScope.processOverriddenPropertiesFromSuperClasses(
     propertySymbol: FirPropertySymbol,
     containingClass: FirClass,
-    processor: (FirPropertySymbol) -> ProcessorAction
+    processor: (FirPropertySymbol) -> ProcessorAction,
 ): ProcessorAction {
     val ownerTag = containingClass.symbol.toLookupTag()
     return processDirectOverriddenPropertiesWithBaseScope(propertySymbol) { overridden, _ ->
@@ -535,7 +535,7 @@ fun FirTypeScope.processOverriddenPropertiesFromSuperClasses(
 context(Fir2IrComponents)
 internal fun FirProperty.processOverriddenPropertySymbols(
     containingClass: FirClass,
-    processor: (FirPropertySymbol) -> Unit
+    processor: (FirPropertySymbol) -> Unit,
 ) {
     val scope = containingClass.unsubstitutedScope()
     scope.processPropertiesByName(name) {}
@@ -599,7 +599,8 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? = when (this) {
                 OperatorNameConventions.TIMES_ASSIGN, OperatorNameConventions.TIMES -> IrStatementOrigin.MULTEQ
                 OperatorNameConventions.DIV_ASSIGN, OperatorNameConventions.DIV -> IrStatementOrigin.DIVEQ
                 OperatorNameConventions.MOD_ASSIGN, OperatorNameConventions.MOD,
-                OperatorNameConventions.REM_ASSIGN, OperatorNameConventions.REM -> IrStatementOrigin.PERCEQ
+                OperatorNameConventions.REM_ASSIGN, OperatorNameConventions.REM,
+                -> IrStatementOrigin.PERCEQ
                 else -> null
             }
 
@@ -629,7 +630,7 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
     endOffset: Int = this.endOffset,
     name: Name = SpecialNames.THIS,
     explicitReceiver: FirReceiverParameter? = null,
-    isAssignable: Boolean = false
+    isAssignable: Boolean = false,
 ): IrValueParameter {
     return irFactory.createValueParameter(
         startOffset = startOffset,
@@ -696,7 +697,7 @@ fun Fir2IrComponents.createSafeCallConstruction(
 fun Fir2IrComponents.createTemporaryVariable(
     receiverExpression: IrExpression,
     conversionScope: Fir2IrConversionScope,
-    nameHint: String? = null
+    nameHint: String? = null,
 ): Pair<IrVariable, IrValueSymbol> {
     val receiverVariable = callablesGenerator.declareTemporaryVariable(receiverExpression, nameHint).apply {
         parent = conversionScope.parentFromStack()
@@ -708,7 +709,7 @@ fun Fir2IrComponents.createTemporaryVariable(
 
 fun Fir2IrComponents.createTemporaryVariableForSafeCallConstruction(
     receiverExpression: IrExpression,
-    conversionScope: Fir2IrConversionScope
+    conversionScope: Fir2IrConversionScope,
 ): Pair<IrVariable, IrValueSymbol> =
     createTemporaryVariable(receiverExpression, conversionScope, "safe_receiver")
 
@@ -765,7 +766,7 @@ fun FirSession.createFilesWithGeneratedDeclarations(): List<FirFile> {
 fun FirDeclaration?.computeIrOrigin(
     predefinedOrigin: IrDeclarationOrigin? = null,
     parentOrigin: IrDeclarationOrigin? = null,
-    fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
+    fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
 ): IrDeclarationOrigin {
     if (this == null) {
         return predefinedOrigin ?: parentOrigin ?: IrDeclarationOrigin.DEFINED
