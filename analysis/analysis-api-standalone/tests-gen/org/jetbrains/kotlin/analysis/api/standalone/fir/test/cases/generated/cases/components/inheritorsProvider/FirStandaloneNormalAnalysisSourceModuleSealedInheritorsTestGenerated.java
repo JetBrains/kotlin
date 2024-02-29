@@ -64,6 +64,24 @@ public class FirStandaloneNormalAnalysisSourceModuleSealedInheritorsTestGenerate
   }
 
   @Test
+  @TestMetadata("sealedClassTypeAliasedFromDependency.kt")
+  public void testSealedClassTypeAliasedFromDependency() {
+    runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedClassTypeAliasedFromDependency.kt");
+  }
+
+  @Test
+  @TestMetadata("sealedClassTypeAliasedFromLibrary.kt")
+  public void testSealedClassTypeAliasedFromLibrary() {
+    runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedClassTypeAliasedFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("sealedClassTypeAliasedSameModule.kt")
+  public void testSealedClassTypeAliasedSameModule() {
+    runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedClassTypeAliasedSameModule.kt");
+  }
+
+  @Test
   @TestMetadata("sealedInterfaceFromDependency.kt")
   public void testSealedInterfaceFromDependency() {
     runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedInterfaceFromDependency.kt");
@@ -79,5 +97,23 @@ public class FirStandaloneNormalAnalysisSourceModuleSealedInheritorsTestGenerate
   @TestMetadata("sealedInterfaceSameModule.kt")
   public void testSealedInterfaceSameModule() {
     runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedInterfaceSameModule.kt");
+  }
+
+  @Test
+  @TestMetadata("sealedInterfaceTypeAliasedFromDependency.kt")
+  public void testSealedInterfaceTypeAliasedFromDependency() {
+    runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedInterfaceTypeAliasedFromDependency.kt");
+  }
+
+  @Test
+  @TestMetadata("sealedInterfaceTypeAliasedFromLibrary.kt")
+  public void testSealedInterfaceTypeAliasedFromLibrary() {
+    runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedInterfaceTypeAliasedFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("sealedInterfaceTypeAliasedSameModule.kt")
+  public void testSealedInterfaceTypeAliasedSameModule() {
+    runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedInterfaceTypeAliasedSameModule.kt");
   }
 }

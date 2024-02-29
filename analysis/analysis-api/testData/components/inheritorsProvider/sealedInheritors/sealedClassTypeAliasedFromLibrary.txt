@@ -1,0 +1,8 @@
+/OneSealedChild
+class OneSealedChild : MySealedClass()
+
+/ThreeSealedChild
+class ThreeSealedChild : MySealedClass()
+
+/TwoSealedChild
+class TwoSealedChild : MySealedClass()
