@@ -145,7 +145,11 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
             KonanTarget.WATCHOS_SIMULATOR_ARM64 -> "CPointerByteVar"
             KonanTarget.WATCHOS_X64 -> "X64"
         }
-        return testPathFull.resolve("contents.gold.${goldenFilePart}.txt")
+        // Apple's LLVM-16 branch does not contain the commit
+        // https://github.com/llvm/llvm-project/commit/9e956995db1fc7e792e3dfb3a465a52626195557
+        // meaning that if host is apple, __GNUC_VA_LIST shows up in golden file.
+        val hostSuffix = if (targets.hostTarget.family.isAppleFamily) "OnApple" else ""
+        return testPathFull.resolve("contents.gold.${goldenFilePart}${hostSuffix}.txt")
     }
 }
 
