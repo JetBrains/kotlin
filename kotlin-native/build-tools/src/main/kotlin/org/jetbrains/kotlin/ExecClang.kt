@@ -79,12 +79,38 @@ abstract class ExecClang @Inject constructor(
     // The target can be specified as KonanTarget or as a
     // (nullable, which means host) target name.
 
+    private fun macroForXcode153(target: String?) = macroForXcode153(platformManager.targetManager(target).target)
+
+    private fun macroForXcode153(target: KonanTarget): List<String> {
+        return when (target) {
+            KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> hashMapOf(
+                    "TARGET_OS_OSX" to "1",
+            )
+            KonanTarget.IOS_ARM64 -> hashMapOf(
+                    "TARGET_OS_EMBEDDED" to "1",
+                    "TARGET_OS_IPHONE" to "1",
+                    "TARGET_OS_IOS" to "1",
+            )
+            KonanTarget.TVOS_ARM64 -> hashMapOf(
+                    "TARGET_OS_EMBEDDED" to "1",
+                    "TARGET_OS_IPHONE" to "1",
+                    "TARGET_OS_TV" to "1",
+            )
+            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_DEVICE_ARM64 -> hashMapOf(
+                    "TARGET_OS_EMBEDDED" to "1",
+                    "TARGET_OS_IPHONE" to "1",
+                    "TARGET_OS_WATCH" to "1",
+            )
+            else -> emptyMap()
+        }.map { "-D${it.key}=${it.value}" }
+    }
+
     fun execKonanClang(target: String?, action: Action<in ExecSpec>): ExecResult {
-        return this.execClang(clangArgsForCppRuntime(target), action)
+        return this.execClang(clangArgsForCppRuntime(target) + macroForXcode153(target), action)
     }
 
     fun execKonanClang(target: KonanTarget, action: Action<in ExecSpec>): ExecResult {
-        return this.execClang(clangArgsForCppRuntime(target), action)
+        return this.execClang(clangArgsForCppRuntime(target) + macroForXcode153(target), action)
     }
 
     /**
