@@ -1,14 +1,10 @@
 package org.jetbrains.kotlin.gradle.mpp.resources
 
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectoriesIgnoringDotFiles
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
-import java.util.zip.ZipFile
 import kotlin.io.path.name
 import kotlin.io.path.writeText
 
@@ -19,47 +15,48 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
 
     @DisplayName("Multiplatform resources publication for Android target with release build type")
     @GradleAndroidTest
-    fun testAndroidReleaseResourcesPublication(
+    fun testAndroidReleaseResourcesPublicationInNewerAgpVersions(
         gradleVersion: GradleVersion,
         androidVersion: String,
         providedJdk: JdkVersions.ProvidedJdk,
-    ) {
-        project(
-            "multiplatformResources/publication",
-            gradleVersion,
-            buildJdk = providedJdk.location,
-        ) {
-            buildWithAGPVersion(
-                ":publishAndroidReleasePublicationToMavenRepository",
-                androidVersion = androidVersion,
-                defaultBuildOptions = defaultBuildOptions,
-            )
-            val publishedAarPath = "build/repo/test/publication-android/1.0/publication-android-1.0.aar"
-            val classesInAar = projectPath.resolve("classesInAar")
-            val classesJar = "classes.jar"
-            unzip(
-                projectPath.resolve(publishedAarPath),
-                classesInAar,
-                filesStartingWith = classesJar
-            )
+    ) = testAndroidReleaseResourcesPublication(
+        gradleVersion, androidVersion, providedJdk,
+        assertEmbeddedResources = { classesJar ->
             compareEmbeddedResources(
-                inputZip = classesInAar.resolve(classesJar),
+                inputZip = classesJar,
                 reference = reference("androidMain")
             )
-
-            val assetsInAar = projectPath.resolve("assetsInAar")
-            unzip(
-                projectPath.resolve(publishedAarPath),
-                assetsInAar,
-                filesStartingWith = "assets"
-            )
+        },
+        assertAssets = { assetsInAar ->
             assertEqualDirectoriesIgnoringDotFiles(
                 assetsInAar.toFile(),
                 reference("androidFonts").toFile(),
                 forgiveOtherExtraFiles = false,
             )
-        }
-    }
+        },
+    )
+
+    @DisplayName("Multiplatform resources publication for Android target in AGP 7.1.3")
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_71, maxVersion = TestVersions.AGP.AGP_71)
+    @GradleAndroidTest
+    fun testAndroidReleaseResourcesPublicationInAgp71(
+        gradleVersion: GradleVersion,
+        androidVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk,
+    ) = testAndroidReleaseResourcesPublication(
+        gradleVersion, androidVersion, providedJdk,
+        assertEmbeddedResources = { classesJar ->
+            val embeddedResources = projectPath.resolve("embeddedResources")
+            unzipEmbeddedResources(
+                inputZip = classesJar,
+                outputDir = embeddedResources,
+            )
+            assertDirectoryDoesNotExist(embeddedResources)
+        },
+        assertAssets = { assetsInAar ->
+            assertDirectoryDoesNotExist(assetsInAar)
+        },
+    )
 
     @DisplayName("Multiplatform resources publication for jvm target")
     @GradleAndroidTest
@@ -191,6 +188,44 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
         }
     }
 
+    private fun testAndroidReleaseResourcesPublication(
+        gradleVersion: GradleVersion,
+        androidVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk,
+        assertEmbeddedResources: TestProject.(classesJar: Path) -> (Unit),
+        assertAssets: TestProject.(assetsInAar: Path) -> (Unit),
+    ) {
+        project(
+            "multiplatformResources/publication",
+            gradleVersion,
+            buildJdk = providedJdk.location,
+        ) {
+            buildWithAGPVersion(
+                ":publishAndroidReleasePublicationToMavenRepository",
+                androidVersion = androidVersion,
+                defaultBuildOptions = defaultBuildOptions,
+            )
+            val publishedAarPath = "build/repo/test/publication-android/1.0/publication-android-1.0.aar"
+            val classesInAar = projectPath.resolve("classesInAar")
+            val classesJar = "classes.jar"
+            unzip(
+                projectPath.resolve(publishedAarPath),
+                classesInAar,
+                filesStartingWith = classesJar
+            )
+            assertEmbeddedResources(classesInAar.resolve(classesJar))
+
+            val assetsInAar = projectPath.resolve("assetsInAar")
+            unzip(
+                projectPath.resolve(publishedAarPath),
+                assetsInAar,
+                filesStartingWith = "assets"
+            )
+            assertAssets(assetsInAar)
+        }
+    }
+
+
     private fun testEmbeddedResources(
         gradleVersion: GradleVersion,
         androidVersion: String,
@@ -225,10 +260,9 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
         reference: Path,
     ) {
         val publishedResources = projectPath.resolve("published/${reference.name}")
-        unzip(
+        unzipEmbeddedResources(
             inputZip = inputZip,
             outputDir = publishedResources,
-            filesStartingWith = "embed",
         )
         assertDirectoryExists(publishedResources)
         assertDirectoryExists(reference)
@@ -238,5 +272,14 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
             forgiveOtherExtraFiles = false,
         )
     }
+
+    private fun unzipEmbeddedResources(
+        inputZip: Path,
+        outputDir: Path
+    ) = unzip(
+        inputZip = inputZip,
+        outputDir = outputDir,
+        filesStartingWith = "embed",
+    )
 
 }
