@@ -6,17 +6,17 @@ assert("Hello" !in listOf("Hello", "World"))
 
 Assertion failed
 assert(" !in " !in listOf(" !in "))
-         |         |
-         |         [ !in ]
-         false
+               |   |
+               |   [ !in ]
+               false
 
 Assertion failed
 assert(
     " !in "
-      |
-      false
 
             !in
+            |
+            false
 
             listOf(" !in ")
             |
@@ -25,14 +25,14 @@ assert(
 
 Assertion failed
 assert("Hello"/*!in*/!in/*!in*/listOf("Hello", "World"))
-       |                       |
-       |                       [Hello, World]
-       false
+               |               |
+               |               [Hello, World]
+               false
 
 Assertion failed
 assert(("Hello" !in listOf("Hello", "World")) !in listOf(false))
-                |   |                             |
-                |   |                             [false]
+                |   |                         |   |
+                |   |                         |   [false]
+                |   |                         false
                 |   [Hello, World]
-                false
                 false
