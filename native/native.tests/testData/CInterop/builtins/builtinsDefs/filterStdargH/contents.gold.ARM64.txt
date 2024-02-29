@@ -56,9 +56,6 @@ library {
 
     package {
 
-      public final const val __GNUC_VA_LIST: kotlin/Int /* = 1 */
-        public final get
-
       public typealias __builtin_va_list = pod1/__va_list /* = pod1/__va_list */
 
       public typealias __gnuc_va_list = pod1/__builtin_va_list^ /* = pod1/__va_list /* = pod1/__builtin_va_list^ */ */
