@@ -25,9 +25,9 @@ assert(
 
 Assertion failed
 assert("Hello"/*!in*/!in/*!in*/listOf("Hello", "World"))
-               |               |
-               |               [Hello, World]
-               false
+                     |         |
+                     |         [Hello, World]
+                     false
 
 Assertion failed
 assert(("Hello" !in listOf("Hello", "World")) !in listOf(false))
