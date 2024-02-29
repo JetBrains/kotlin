@@ -36,7 +36,7 @@ fun case4() {
 
     val x2 = <!INVALID_IF_AS_EXPRESSION!>if<!> (TODO()) true
 
-    val x0 = <!INVALID_IF_AS_EXPRESSION!>if<!> (false) true else if (throw Exception()) ;
+    val x0 = if (false) true else <!INVALID_IF_AS_EXPRESSION!>if<!> (throw Exception()) ;
 
 }
 
