@@ -64,3 +64,14 @@ fun createNested2(): Parent.Nested1.Nested2 {
 fun createNested3(): Parent.Nested1.Nested2.Companion.Nested3 {
     return Parent.Nested1.Nested2.Companion.Nested3()
 }
+
+
+abstract class BaseWithCompanion {
+    companion object {
+        val any: String = "ANYTHING"
+    }
+}
+
+class ChildWithCompanion : BaseWithCompanion() {
+    companion object
+}

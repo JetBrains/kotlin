@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.export
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6PrimaryConstructorReplacement
-import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
-import org.jetbrains.kotlin.ir.backend.js.utils.getFqNameWithJsNameWhenAvailable
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
-import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.*
@@ -323,7 +320,13 @@ class ExportModelToTsDeclarations {
         val realNestedClasses = nonInnerClasses + innerClasses.map { it.withProtectedConstructors() }
         val tsIgnoreForPrivateConstructorInheritance = if (hasSuperClassWithPrivateConstructor()) {
             tsIgnore("extends class with private primary constructor") + "\n$indent"
-        } else ""
+        } else null
+
+        val tsIgnoreForCompanionInheritance = if (hasSuperClassAndCompanion()) {
+            tsIgnore("https://github.com/microsoft/TypeScript/issues/4628") + "\n$indent"
+        } else null
+
+        val tsIgnore = tsIgnoreForPrivateConstructorInheritance ?: tsIgnoreForCompanionInheritance ?: ""
 
         val klassExport =
             "$prefix$modifiers$keyword $name$renderedTypeParameters$superClassClause$superInterfacesClause {\n$bodyString}"
@@ -338,13 +341,18 @@ class ExportModelToTsDeclarations {
             )
         } else ""
 
-        return if (name.isValidES5Identifier()) tsIgnoreForPrivateConstructorInheritance + klassExport + staticsExport + interfaceCompanionsString else ""
+        return if (name.isValidES5Identifier()) tsIgnore + klassExport + staticsExport + interfaceCompanionsString else ""
     }
 
     private fun ExportedRegularClass.hasSuperClassWithPrivateConstructor(): Boolean {
         val superClass = superClasses.firstIsInstanceOrNull<ExportedType.ClassType>()?.ir?.takeIf { !it.isObject } ?: return false
         val exportedConstructor = superClass.primaryConstructor ?: superClass.declarations.findIsInstanceAnd<IrFunction> { it.isEs6PrimaryConstructorReplacement }
         return exportedConstructor?.let { it.visibility == DescriptorVisibilities.PRIVATE || it.hasAnnotation(JsAnnotations.jsExportIgnoreFqn) } ?: true
+    }
+
+    private fun ExportedRegularClass.hasSuperClassAndCompanion(): Boolean {
+        val superClass = superClasses.firstIsInstanceOrNull<ExportedType.ClassType>()?.ir?.takeIf { !it.isObject }
+        return superClass != null && ir.companionObject()?.isJsExportIgnore() == false
     }
 
     private fun List<ExportedType>.toExtendsClause(indent: String): String {
