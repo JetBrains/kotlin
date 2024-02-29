@@ -542,7 +542,7 @@ class ComposerLambdaMemoization(
     ): IrExpression {
         // Get the local captures for local function ref, to make sure we invalidate memoized
         // reference if its capture is different.
-        val localCaptures = if (reference.symbol.owner.isLocal) {
+        val localCaptures = if (reference.symbol.owner.visibility == DescriptorVisibilities.LOCAL) {
             declarationContextStack.recordLocalCapture(reference.symbol.owner)
         } else {
             null

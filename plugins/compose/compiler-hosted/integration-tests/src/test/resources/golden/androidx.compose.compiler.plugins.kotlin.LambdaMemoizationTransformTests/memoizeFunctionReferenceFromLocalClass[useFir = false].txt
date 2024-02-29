@@ -1,0 +1,61 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+class MainActivity {
+  private val test = object : Test {
+    override fun go() {
+      this@MainActivity
+    }
+  }
+
+  @Composable fun Test() {
+    test::go
+  }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+class MainActivity {
+  val test: <no name provided> = object : Test {
+    override fun go() {
+      <this>
+    }
+  }
+  @Composable
+  fun Test(%composer: Composer?, %changed: Int) {
+    %composer = %composer.startRestartGroup(<>)
+    sourceInformation(%composer, "C(Test)<test::...>:Test.kt")
+    val %dirty = %changed
+    if (%changed and 0b1110 == 0) {
+      %dirty = %dirty or if (%composer.changed(<this>)) 0b0100 else 0b0010
+    }
+    if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %dirty, -1, <>)
+      }
+      val tmp0 = test
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(%composer.changed(tmp0)) {
+        tmp0::go
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+    val tmp1_rcvr = <this>
+    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+      tmp1_rcvr.Test(%composer, updateChangedFlags(%changed or 0b0001))
+    }
+  }
+  static val %stable: Int = 0
+}
