@@ -41,7 +41,7 @@ kotlin {
         wasmJs(),
         wasmWasi(),
         js(),
-    ).forEach { target ->
+    ).filter { publication.canPublishResources(it) }.forEach { target ->
         val fontsFilter = if (target is KotlinAndroidTarget) listOf("fonts/*") else emptyList()
         val relativeResourcePlacement = provider { File("embed/${project.name}") }
         val sourceSetPathProvider: (KotlinSourceSet) -> (Provider<File>) = { sourceSet ->
