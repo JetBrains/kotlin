@@ -24,8 +24,8 @@ assert(!(
 
 Assertion failed
 assert(null/*is*/is/*is*/String)
-            |
-            false
+                 |
+                 false
 
 Assertion failed
 assert(!((null is String) is Boolean))

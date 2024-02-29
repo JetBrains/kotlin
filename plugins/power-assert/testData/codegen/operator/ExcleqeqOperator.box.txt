@@ -21,8 +21,8 @@ assert(
 
 Assertion failed
 assert(1/*!==*/!==/*!==*/1)
-         |
-         false
+               |
+               false
 
 Assertion failed
 assert((1 !== 1) !== false)

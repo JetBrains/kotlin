@@ -21,8 +21,8 @@ assert(
 
 Assertion failed
 assert("Hello, world!"/*!is*/!is/*!is*/String)
-                       |
-                       false
+                             |
+                             false
 
 Assertion failed
 assert(("Hello, world!" !is String) !is Boolean)

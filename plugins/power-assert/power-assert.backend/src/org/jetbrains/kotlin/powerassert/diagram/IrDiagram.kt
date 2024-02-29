@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.lexer.KotlinLexer
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.powerassert.irString
 
 fun IrBuilderWithScope.irDiagramString(
@@ -187,22 +189,24 @@ private fun typeOperatorOffset(
 }
 
 /**
- * The offset of the infix operator/function itself.
+ * The offset of the infix operator/function token itself.
  *
  * @param lhs The left-hand side expression of the operator.
  * @param wholeOperatorSourceRangeInfo The source range of the whole operator expression.
  * @param wholeOperatorSource The source text of the whole operator expression.
  */
 private fun binaryOperatorOffset(lhs: IrExpression, wholeOperatorSourceRangeInfo: SourceRangeInfo, wholeOperatorSource: String): Int {
-    var offset = lhs.endOffset - wholeOperatorSourceRangeInfo.startOffset + 1
+    val offset = lhs.endOffset - wholeOperatorSourceRangeInfo.startOffset
     if (offset < 0 || offset >= wholeOperatorSource.length) return 0 // infix function called using non-infix syntax
 
-    // Continue until there is a non-whitespace character
-    while (wholeOperatorSource[offset].isWhitespace() || wholeOperatorSource[offset] == '.') {
-        offset++
-        if (offset >= wholeOperatorSource.length) return 0
+    KotlinLexer().run {
+        start(wholeOperatorSource, offset, wholeOperatorSource.length)
+        while (tokenType != null && tokenType != KtTokens.EOF && (tokenType == KtTokens.DOT || tokenType !in KtTokens.OPERATIONS)) {
+            advance()
+        }
+        if (tokenStart >= wholeOperatorSource.length) return 0
+        return tokenStart
     }
-    return offset
 }
 
 /**
