@@ -76,13 +76,14 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
 
     val callable by sealedElement {
         parent(declaration)
+
+        +field("kind", callableKind)
     }
 
     val function by element {
         customParentInVisitor = callable
         parent(callable)
 
-        +field("isStatic", boolean) // todo: KT-65046 Method|function distinction in SIR
         +field("name", string)
         +listField("parameters", parameterType)
         +field("returnType", typeType)
@@ -118,8 +119,6 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
 
         +field("getter", getter)
         +field("setter", setter, nullable = true)
-
-        +field("isStatic", boolean) // todo: KT-65046 Method|function distinction in SIR
     }
 
     val import by element {

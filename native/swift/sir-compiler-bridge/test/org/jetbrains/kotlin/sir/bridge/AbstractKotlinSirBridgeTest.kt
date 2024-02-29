@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.sir.bridge
 
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.sir.SirCallableKind
 import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirType
@@ -97,30 +98,34 @@ private fun readRequestFromFile(file: File): BridgeRequest {
             this.name = fqName.last()
             this.returnType = returnType
             this.parameters += parameters
-            this.isStatic = false
+            this.kind = SirCallableKind.FUNCTION
         }
         BridgeRequestKind.PROPERTY_GETTER -> {
-            val getter = buildGetter()
+            val getter = buildGetter {
+                this.kind = SirCallableKind.FUNCTION
+            }
 
             getter.parent = buildVariable {
                 this.name = fqName.last()
                 this.type = returnType
                 check(parameters.isEmpty())
-                this.isStatic = false
                 this.getter = getter
             }
 
             getter
         }
         BridgeRequestKind.PROPERTY_SETTER -> {
-            val setter = buildSetter()
+            val setter = buildSetter {
+                this.kind = SirCallableKind.FUNCTION
+            }
 
             setter.parent = buildVariable {
                 this.name = fqName.last()
                 this.type = returnType
                 check(parameters.isEmpty())
-                this.isStatic = false
-                this.getter = buildGetter()
+                this.getter = buildGetter {
+                    this.kind = SirCallableKind.FUNCTION
+                }
                 this.setter = setter
             }
 

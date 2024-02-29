@@ -21,7 +21,6 @@ internal class SirVariableImpl(
     override val type: SirType,
     override val getter: SirGetter,
     override val setter: SirSetter?,
-    override val isStatic: Boolean,
 ) : SirVariable() {
     override lateinit var parent: SirDeclarationParent
 

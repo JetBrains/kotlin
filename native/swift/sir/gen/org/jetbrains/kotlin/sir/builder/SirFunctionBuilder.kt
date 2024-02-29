@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.sir.impl.SirFunctionImpl
 class SirFunctionBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
-    var isStatic: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    lateinit var kind: SirCallableKind
     lateinit var name: String
     val parameters: MutableList<SirParameter> = mutableListOf()
     lateinit var returnType: SirType
@@ -29,7 +29,7 @@ class SirFunctionBuilder {
         return SirFunctionImpl(
             origin,
             visibility,
-            isStatic,
+            kind,
             name,
             parameters,
             returnType,
@@ -56,7 +56,7 @@ inline fun buildFunctionCopy(original: SirFunction, init: SirFunctionBuilder.() 
     val copyBuilder = SirFunctionBuilder()
     copyBuilder.origin = original.origin
     copyBuilder.visibility = original.visibility
-    copyBuilder.isStatic = original.isStatic
+    copyBuilder.kind = original.kind
     copyBuilder.name = original.name
     copyBuilder.parameters.addAll(original.parameters)
     copyBuilder.returnType = original.returnType

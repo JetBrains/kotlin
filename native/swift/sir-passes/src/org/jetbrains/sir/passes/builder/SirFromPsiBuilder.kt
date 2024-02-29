@@ -5,13 +5,13 @@
 
 package org.jetbrains.sir.passes.builder
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isPublic
 import org.jetbrains.kotlin.sir.*
@@ -124,14 +124,7 @@ internal fun buildSirFunctionFromPsi(function: KtNamedFunction): SirFunction = b
     val callableId = symbol.callableIdIfNonLocal
     origin = KotlinSource(symbol)
 
-    // this check is not ideal. We assume that there will be no further moves of the declaration,
-    // especially that there will be no changes in "static" quality.
-    // That is not fully true. For example, during KT-65127
-    // we may end up removing the whole enum structure at top of the declaration, and that will
-    // lift the need to keep it static.
-    // this problem will be addressed somewhere in the future
-    val isRootPackage = callableId?.packageName?.isRoot
-    isStatic = if (isRootPackage == true) false else function.isTopLevel
+    kind = symbol.sirCallableKind
 
     name = callableId?.callableName?.asString() ?: "UNKNOWN_FUNCTION_NAME"
 
@@ -151,21 +144,18 @@ internal fun buildSirVariableFromPsi(variable: KtProperty): SirVariable = buildV
     val callableId = symbol.callableIdIfNonLocal
     origin = KotlinSource(symbol)
 
-    // this check is not ideal. We assume that there will be no further moves of the declaration,
-    // especially that there will be no changes in "static" quality.
-    // That is not fully true. For example, during KT-65127
-    // we may end up removing the whole enum structure at top of the declaration, and that will
-    // lift the need to keep it static.
-    // this problem will be addressed somewhere in the future
-    val isRootPackage = callableId?.packageName?.isRoot
-    isStatic = if (isRootPackage == true) false else variable.isTopLevel
+    val accessorKind = symbol.sirCallableKind
 
     name = callableId?.callableName?.asString() ?: "UNKNOWN_VARIABLE_NAME"
 
     type = buildSirNominalType(symbol.returnType)
 
-    getter = buildGetter {}
-    setter = if (variable.isVar) buildSetter {} else null
+    getter = buildGetter {
+        kind = accessorKind
+    }
+    setter = if (variable.isVar) buildSetter {
+        kind = accessorKind
+    } else null
 }.also {
     it.getter.parent = it
     it.setter?.parent = it
@@ -207,3 +197,19 @@ private fun KtNamedClassOrObjectSymbol.isConsumableBySirBuilder(): Boolean =
             && !isData
             && !isInline
             && modality == Modality.FINAL
+
+private val KtCallableSymbol.sirCallableKind: SirCallableKind
+    get() = when (symbolKind) {
+        KtSymbolKind.TOP_LEVEL -> {
+            val isRootPackage = callableIdIfNonLocal?.packageName?.isRoot
+            if (isRootPackage == true) {
+                SirCallableKind.FUNCTION
+            } else {
+                SirCallableKind.STATIC_METHOD
+            }
+        }
+        KtSymbolKind.CLASS_MEMBER, KtSymbolKind.ACCESSOR -> SirCallableKind.INSTANCE_METHOD
+        KtSymbolKind.LOCAL,
+        KtSymbolKind.SAM_CONSTRUCTOR ->
+            TODO("encountered callable kind($symbolKind) that is not translatable currently. Fix this crash during KT-65980.")
+    }

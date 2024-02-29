@@ -18,6 +18,7 @@ sealed class SirAccessor : SirCallable() {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override var parent: SirDeclarationParent
+    abstract override val kind: SirCallableKind
     abstract var body: SirFunctionBody?
 
     override fun <R, D> accept(visitor: SirVisitor<R, D>, data: D): R =

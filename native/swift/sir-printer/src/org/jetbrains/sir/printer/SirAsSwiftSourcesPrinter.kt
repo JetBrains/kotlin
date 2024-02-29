@@ -56,8 +56,8 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
 
     override fun visitVariable(variable: SirVariable): Unit = with(printer) {
         printVisibility(variable)
+        printCallableKind(variable.kind)
         print(
-            if (variable.isStatic) "static " else "",
             "var ",
             variable.name.swiftIdentifier,
             ": ",
@@ -96,12 +96,8 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
     override fun visitFunction(function: SirFunction): Unit = with(printer) {
         function.documentation?.let { println(it) }
         printVisibility(function)
+        printCallableKind(function.kind)
         print(
-            if (function.isStatic) {
-                "static "
-            } else {
-                ""
-            },
             "func ",
             function.name.swiftIdentifier,
             "("
@@ -185,5 +181,16 @@ private val String.swiftIdentifier get() = if (simpleIdentifierRegex.matches(thi
 internal fun SmartPrinter.printVisibility(decl: SirDeclaration) {
     print(
         decl.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " } ?: ""
+    )
+}
+
+internal fun SmartPrinter.printCallableKind(callableKind: SirCallableKind) {
+    print(
+        when (callableKind) {
+            SirCallableKind.FUNCTION -> ""
+            SirCallableKind.INSTANCE_METHOD -> ""
+            SirCallableKind.CLASS_METHOD -> "class "
+            SirCallableKind.STATIC_METHOD -> "static "
+        }
     )
 }

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.sir.impl.SirSetterImpl
 class SirSetterBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
+    lateinit var kind: SirCallableKind
     var body: SirFunctionBody? = null
     var parameterName: String = "newValue"
 
@@ -25,6 +26,7 @@ class SirSetterBuilder {
         return SirSetterImpl(
             origin,
             visibility,
+            kind,
             body,
             parameterName,
         )
@@ -33,7 +35,7 @@ class SirSetterBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildSetter(init: SirSetterBuilder.() -> Unit = {}): SirSetter {
+inline fun buildSetter(init: SirSetterBuilder.() -> Unit): SirSetter {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
@@ -41,13 +43,14 @@ inline fun buildSetter(init: SirSetterBuilder.() -> Unit = {}): SirSetter {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildSetterCopy(original: SirSetter, init: SirSetterBuilder.() -> Unit = {}): SirSetter {
+inline fun buildSetterCopy(original: SirSetter, init: SirSetterBuilder.() -> Unit): SirSetter {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = SirSetterBuilder()
     copyBuilder.origin = original.origin
     copyBuilder.visibility = original.visibility
+    copyBuilder.kind = original.kind
     copyBuilder.body = original.body
     copyBuilder.parameterName = original.parameterName
     return copyBuilder.apply(init).build()

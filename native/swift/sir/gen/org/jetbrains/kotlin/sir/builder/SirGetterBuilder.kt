@@ -18,12 +18,14 @@ import org.jetbrains.kotlin.sir.impl.SirGetterImpl
 class SirGetterBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
+    lateinit var kind: SirCallableKind
     var body: SirFunctionBody? = null
 
     fun build(): SirGetter {
         return SirGetterImpl(
             origin,
             visibility,
+            kind,
             body,
         )
     }
@@ -31,7 +33,7 @@ class SirGetterBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildGetter(init: SirGetterBuilder.() -> Unit = {}): SirGetter {
+inline fun buildGetter(init: SirGetterBuilder.() -> Unit): SirGetter {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
@@ -39,13 +41,14 @@ inline fun buildGetter(init: SirGetterBuilder.() -> Unit = {}): SirGetter {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildGetterCopy(original: SirGetter, init: SirGetterBuilder.() -> Unit = {}): SirGetter {
+inline fun buildGetterCopy(original: SirGetter, init: SirGetterBuilder.() -> Unit): SirGetter {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = SirGetterBuilder()
     copyBuilder.origin = original.origin
     copyBuilder.visibility = original.visibility
+    copyBuilder.kind = original.kind
     copyBuilder.body = original.body
     return copyBuilder.apply(init).build()
 }
