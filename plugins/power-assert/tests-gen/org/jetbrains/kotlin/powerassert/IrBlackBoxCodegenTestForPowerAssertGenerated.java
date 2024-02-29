@@ -587,6 +587,18 @@ public class IrBlackBoxCodegenTestForPowerAssertGenerated extends AbstractIrBlac
     }
 
     @Test
+    @TestMetadata("ExcleqOperator.kt")
+    public void testExcleqOperator() {
+      runTest("plugins/power-assert/testData/codegen/operator/ExcleqOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("ExcleqeqOperator.kt")
+    public void testExcleqeqOperator() {
+      runTest("plugins/power-assert/testData/codegen/operator/ExcleqeqOperator.kt");
+    }
+
+    @Test
     @TestMetadata("NegativeContainsFunction.kt")
     public void testNegativeContainsFunction() {
       runTest("plugins/power-assert/testData/codegen/operator/NegativeContainsFunction.kt");
