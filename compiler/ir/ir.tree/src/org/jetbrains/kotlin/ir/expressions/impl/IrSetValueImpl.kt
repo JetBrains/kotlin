@@ -25,12 +25,6 @@ class IrSetValueImpl internal constructor(
 ) : IrSetValue() {
     override var attributeOwnerId: IrAttributeContainer = this
     override var originalBeforeInline: IrAttributeContainer? = null
-
-    init {
-        if (symbol.isBound) {
-            assert(symbol.owner.isAssignable) { "Only assignable IrValues can be set" }
-        }
-    }
 }
 
 fun IrSetValueImpl(
@@ -40,12 +34,17 @@ fun IrSetValueImpl(
     symbol: IrValueSymbol,
     value: IrExpression,
     origin: IrStatementOrigin?,
-) = IrSetValueImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    symbol = symbol,
-    value = value,
-    origin = origin,
-)
+): IrSetValueImpl {
+    if (symbol.isBound) {
+        assert(symbol.owner.isAssignable) { "Only assignable IrValues can be set" }
+    }
+    return IrSetValueImpl(
+        constructorIndicator = null,
+        startOffset = startOffset,
+        endOffset = endOffset,
+        type = type,
+        symbol = symbol,
+        value = value,
+        origin = origin,
+    )
+}
