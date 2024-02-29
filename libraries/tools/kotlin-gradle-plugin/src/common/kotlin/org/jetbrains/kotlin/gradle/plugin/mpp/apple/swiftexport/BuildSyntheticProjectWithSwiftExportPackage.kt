@@ -99,8 +99,8 @@ internal abstract class BuildSyntheticProjectWithSwiftExportPackage : DefaultTas
             "BUILT_PRODUCTS_DIR" to syntheticInterfacesPath.get().asFile.canonicalPath
         )
         val inheritedBuildSettings = inheritedBuildSettingsFromEnvironment.mapValues {
-            it.value.get()
-        }
+            it.value.getOrElse("")
+        }.filterValues { it.isNotBlank() }
 
         // FIXME: This will not work with dynamic libraries
         runCommand(
@@ -111,7 +111,8 @@ internal abstract class BuildSyntheticProjectWithSwiftExportPackage : DefaultTas
                 "-project", syntheticProjectPath.canonicalPath,
                 "-scheme", swiftLibraryName.get(),
                 "-destination", destination(),
-            ) + (inheritedBuildSettings + intermediatesDestination).map { (k, v) -> "$k=$v" }
+            ) + (inheritedBuildSettings + intermediatesDestination).map { (k, v) -> "$k=$v" },
+            logger
         )
         return syntheticObjectFilesDirectory
     }
@@ -129,6 +130,7 @@ internal abstract class BuildSyntheticProjectWithSwiftExportPackage : DefaultTas
                 "libtool", "-static",
                 "-o", syntheticLibraryPath.get().asFile.canonicalPath,
             ) + objectFilePaths,
+            logger
         )
     }
 
