@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.KtExpressionTypeProvider
+import org.jetbrains.kotlin.analysis.api.components.buildClassType
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.unwrapSafeCall
+import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtFunctionalType
 import org.jetbrains.kotlin.analysis.api.types.KtType
@@ -30,6 +33,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getOutermostParenthesizerOrThis
@@ -196,8 +200,10 @@ internal class KtFirExpressionTypeProvider(
         val unwrapped = expression.unwrap()
         val expectedType = getExpectedTypeByReturnExpression(unwrapped)
             ?: getExpressionTypeByIfOrBooleanCondition(unwrapped)
+            ?: getExpressionTypeByPrefixExpression(unwrapped)
             ?: getExpectedTypeByTypeCast(unwrapped)
             ?: getExpectedTypeOfFunctionParameter(unwrapped)
+            ?: getExpectedTypeByAnonymousFunction(unwrapped)
             ?: getExpectedTypeOfIndexingParameter(unwrapped)
             ?: getExpectedTypeOfInfixFunctionParameter(unwrapped)
             ?: getExpectedTypeByVariableAssignment(unwrapped)
@@ -209,6 +215,8 @@ internal class KtFirExpressionTypeProvider(
             ?: getExpectedTypeByTryExpression(unwrapped)
             ?: getExpectedTypeOfElvisOperand(unwrapped)
             ?: getExpectedTypeByWhenEntryValue(unwrapped)
+            ?: getExpectedTypeByStringExpression(unwrapped)
+            ?: getExpectedTypeByPropertyDelegate(unwrapped)
         return expectedType
     }
 
@@ -221,6 +229,8 @@ internal class KtFirExpressionTypeProvider(
     private fun getExpectedTypeOfFunctionParameter(expression: PsiElement): KtType? {
         val (ktCallElement, argumentExpression) = expression.getFunctionCallAsWithThisAsParameter() ?: return null
         val firCall = ktCallElement.getOrBuildFir(firResolveSession)?.unwrapSafeCall() as? FirCall ?: return null
+
+        if ((firCall as? FirFunctionCall)?.resolvedType is ConeErrorType) return null
 
         val callee = (firCall.toReference(firResolveSession.useSiteFirSession) as? FirResolvedNamedReference)?.resolvedSymbol
         if (callee?.fir?.origin == FirDeclarationOrigin.SamConstructor) {
@@ -304,6 +314,14 @@ internal class KtFirExpressionTypeProvider(
         else -> null
     }
 
+    private fun getExpressionTypeByPrefixExpression(expression: PsiElement): KtType? {
+        val parent = expression.parent
+        return when {
+            parent is KtPrefixExpression && parent.operationToken == KtTokens.EXCL -> with(analysisSession) { builtinTypes.BOOLEAN }
+            else -> null
+        }
+    }
+
     private fun getExpectedTypeByVariableAssignment(expression: PsiElement): KtType? {
         // Given: `x = expression`
         // Expected type of `expression` is type of `x`
@@ -333,6 +351,41 @@ internal class KtFirExpressionTypeProvider(
         }
         if (function.typeReference == null) return null
         return getReturnTypeForKtDeclaration(function).nonErrorTypeOrNull()
+    }
+
+    fun getExpectedTypeByAnonymousFunction(expression: PsiElement): KtType? {
+        val parent = expression.parent
+        if (parent is KtFunction && parent.bodyExpression == expression && parent.parent is KtValueArgument) {
+            return (getExpectedType(parent) as? KtFunctionalType)?.returnType
+        }
+        return null
+    }
+
+    fun getExpectedTypeByStringExpression(expression: PsiElement): KtType? {
+        val parent = expression.parent
+        if (parent is KtStringTemplateEntryWithExpression) {
+            return with(analysisSession) { builtinTypes.STRING }
+        }
+        return null
+    }
+
+    fun getExpectedTypeByPropertyDelegate(expression: PsiElement): KtType? {
+        val parent = expression.parent
+        if (parent is KtPropertyDelegate) {
+            val variable = parent.parent as KtProperty
+            val delegateClassName = if (variable.isVar) "ReadWriteProperty" else "ReadOnlyProperty"
+            return with(analysisSession) {
+                val ktType = variable.getReturnKtType()
+                val symbol = variable.getSymbol() as? KtCallableSymbol ?: return@with null
+                val parameterType = symbol.receiverParameter?.type
+                    ?: symbol.firSymbol.dispatchReceiverType?.asKtType() ?: return@with null
+                buildClassType(ClassId.fromString("kotlin/properties/$delegateClassName")) {
+                    argument(parameterType)
+                    argument(ktType)
+                }
+            }
+        }
+        return null
     }
 
     private fun getExpectedTypeOfLastStatementInBlock(expression: PsiElement): KtType? {

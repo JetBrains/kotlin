@@ -1,0 +1,23 @@
+expression: foo
+expected type: KtUsualClassType:
+  annotationsList: []
+  ownTypeArguments: [
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: [
+        KtTypeParameterType:
+          annotationsList: []
+          type: T
+      ]
+      type: A<T>
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: [
+        KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Int
+      ]
+      type: A<kotlin/Int>
+  ]
+  type: kotlin/properties/ReadWriteProperty<A<T>, A<kotlin/Int>>

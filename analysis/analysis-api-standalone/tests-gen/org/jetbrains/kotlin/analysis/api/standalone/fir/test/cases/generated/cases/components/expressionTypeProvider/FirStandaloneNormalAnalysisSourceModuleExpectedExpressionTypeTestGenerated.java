@@ -58,6 +58,12 @@ public class FirStandaloneNormalAnalysisSourceModuleExpectedExpressionTypeTestGe
   }
 
   @Test
+  @TestMetadata("anonymousFunction.kt")
+  public void testAnonymousFunction() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/anonymousFunction.kt");
+  }
+
+  @Test
   @TestMetadata("arrayAccessExpressionGet.kt")
   public void testArrayAccessExpressionGet() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/arrayAccessExpressionGet.kt");
@@ -91,6 +97,18 @@ public class FirStandaloneNormalAnalysisSourceModuleExpectedExpressionTypeTestGe
   @TestMetadata("conditionInWhenWithoutSubject.kt")
   public void testConditionInWhenWithoutSubject() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/conditionInWhenWithoutSubject.kt");
+  }
+
+  @Test
+  @TestMetadata("delegateProperty.kt")
+  public void testDelegateProperty() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/delegateProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("delegatePropertyWritable.kt")
+  public void testDelegatePropertyWritable() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/delegatePropertyWritable.kt");
   }
 
   @Test
@@ -202,6 +220,12 @@ public class FirStandaloneNormalAnalysisSourceModuleExpectedExpressionTypeTestGe
   }
 
   @Test
+  @TestMetadata("inString.kt")
+  public void testInString() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/inString.kt");
+  }
+
+  @Test
   @TestMetadata("infixFunctionAsRegularCallParam.kt")
   public void testInfixFunctionAsRegularCallParam() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/infixFunctionAsRegularCallParam.kt");
@@ -247,6 +271,12 @@ public class FirStandaloneNormalAnalysisSourceModuleExpectedExpressionTypeTestGe
   @TestMetadata("lastStatementInLambda.kt")
   public void testLastStatementInLambda() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lastStatementInLambda.kt");
+  }
+
+  @Test
+  @TestMetadata("lastStatementInLambda1.kt")
+  public void testLastStatementInLambda1() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lastStatementInLambda1.kt");
   }
 
   @Test

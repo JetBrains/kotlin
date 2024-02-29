@@ -267,6 +267,14 @@ class KtFe10ExpressionTypeProvider(
                     }
                 }
             }
+
+            is KtPrefixExpression -> {
+                if (parentExpression.operationToken == KtTokens.EXCL) {
+                    return with(analysisSession) { builtinTypes.BOOLEAN }
+                }
+            }
+
+            is KtStringTemplateEntryWithExpression -> return with(analysisSession) { builtinTypes.STRING }
         }
 
         val bindingContext = analysisContext.analyze(ktExpression)

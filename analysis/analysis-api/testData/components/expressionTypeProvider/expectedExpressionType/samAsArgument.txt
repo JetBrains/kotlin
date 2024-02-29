@@ -1,5 +1,10 @@
 expression: { /* Argument */ }
-expected type: KtUsualClassType:
+expected type: KtFunctionalType:
   annotationsList: []
-  ownTypeArguments: []
-  type: java/lang/Runnable
+  ownTypeArguments: [
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Unit
+  ]
+  type: kotlin/Function0<kotlin/Unit>

@@ -1,4 +1,4 @@
-fun <T, R> foo(p: T, mapper : (T) -> R): R {
+fun <T> foo(p: T, mapper : (T) -> String): String {
     mapper(p)
 }
 

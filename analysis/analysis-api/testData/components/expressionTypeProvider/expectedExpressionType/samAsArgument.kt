@@ -1,4 +1,4 @@
-fun runRunnable(r: java.lang.Runnable) = r()
+fun runRunnable(r: () -> Unit) = r()
 
 fun foo() {
     runRunnable {<caret> /* Argument */ }
