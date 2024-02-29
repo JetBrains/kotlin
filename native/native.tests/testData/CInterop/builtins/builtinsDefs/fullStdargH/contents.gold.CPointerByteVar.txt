@@ -6,9 +6,6 @@ library {
 
     package {
 
-      public final const val __GNUC_VA_LIST: kotlin/Int /* = 1 */
-        public final get
-
       public typealias __builtin_va_list = kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVar^> /* = kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> */
 
       public typealias __builtin_va_listVar = kotlinx/cinterop/CPointerVarOf<pod1/__builtin_va_list^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/__builtin_va_list^ */> */
