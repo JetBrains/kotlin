@@ -1,0 +1,37 @@
+Assertion failed
+assert(1 !== 1)
+         |
+         false
+         true
+
+Assertion failed
+assert(" !== " !== " !== ")
+         |
+         false
+         true
+
+Assertion failed
+assert(
+    " !== "
+      |
+      false
+      true
+
+            !==
+
+            " !== "
+)
+
+Assertion failed
+assert(1/*!==*/!==/*!==*/1)
+          |
+          false
+          true
+
+Assertion failed
+assert((1 !== 1) !== false)
+          |
+          false
+          true
+          false
+          true
