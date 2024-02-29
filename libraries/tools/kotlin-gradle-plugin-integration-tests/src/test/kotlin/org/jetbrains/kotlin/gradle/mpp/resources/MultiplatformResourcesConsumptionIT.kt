@@ -60,7 +60,7 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
                 settingsGradleKts.append(
                     """
                         include(":${it.name}")
-                        project(":${it.name}").projectDir = File("${it.pathString}")
+                        project(":${it.name}").projectDir = File("${it.escapedPathString}")
                     """.trimIndent()
                 )
             }
@@ -204,7 +204,7 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
                 mavenCentral()
                 mavenLocal()
                 maven {
-                    url = uri("${publicationRepository.pathString}")
+                    url = uri("${publicationRepository.escapedPathString}")
                 }
             }
         """.trimIndent()
@@ -216,12 +216,14 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
                 publishing {
                     repositories {
                         maven {
-                            url = uri("${publicationRepository.pathString}")
+                            url = uri("${publicationRepository.escapedPathString}")
                         }
                     }
                 }
             """.trimIndent()
         )
     }
+
+    private val Path.escapedPathString: String get() = pathString.replace("\\", "\\\\")
 
 }
