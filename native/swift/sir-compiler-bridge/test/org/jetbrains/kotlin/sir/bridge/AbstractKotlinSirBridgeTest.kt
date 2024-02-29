@@ -33,9 +33,10 @@ abstract class AbstractKotlinSirBridgeTest {
         val cBridgePrinter = createCBridgePrinter()
 
         requests.forEach { request ->
-            val bridge = generator.generate(request)
-            kotlinBridgePrinter.add(bridge)
-            cBridgePrinter.add(bridge)
+            generator.generate(request)?.let {
+                kotlinBridgePrinter.add(it)
+                cBridgePrinter.add(it)
+            }
         }
 
         val actualKotlinSrc = kotlinBridgePrinter.print().joinToString(separator = lineSeparator)

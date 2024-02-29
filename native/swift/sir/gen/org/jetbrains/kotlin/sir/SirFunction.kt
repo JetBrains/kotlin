@@ -19,10 +19,10 @@ abstract class SirFunction : SirCallable() {
     abstract override val visibility: SirVisibility
     abstract override var parent: SirDeclarationParent
     abstract override val kind: SirCallableKind
+    abstract override var body: SirFunctionBody?
     abstract val name: String
     abstract val parameters: List<SirParameter>
     abstract val returnType: SirType
-    abstract var body: SirFunctionBody?
     abstract var documentation: String?
 
     override fun <R, D> accept(visitor: SirVisitor<R, D>, data: D): R =

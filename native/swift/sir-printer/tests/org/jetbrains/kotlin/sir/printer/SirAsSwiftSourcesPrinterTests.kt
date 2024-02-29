@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.sir.printer
 
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.builder.buildClass
-import org.jetbrains.kotlin.sir.builder.buildEnum
-import org.jetbrains.kotlin.sir.builder.buildFunction
-import org.jetbrains.kotlin.sir.builder.buildModule
+import org.jetbrains.kotlin.sir.builder.*
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -369,6 +366,136 @@ class SirAsSwiftSourcesPrinterTests {
         runTest(
             module,
             "testData/empty_class_inside_class"
+        )
+    }
+
+    @Test
+    fun `should print class with function`() {
+
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildClass {
+                    origin = SirOrigin.Unknown
+                    name = "Foo"
+
+                    declarations.add(
+                        buildFunction {
+                            origin = SirOrigin.Unknown
+                            kind = SirCallableKind.INSTANCE_METHOD
+                            visibility = SirVisibility.PUBLIC
+                            name = "foo"
+                            parameters.addAll(
+                                listOf(
+                                    SirParameter(
+                                        argumentName = "arg1",
+                                        type = SirNominalType(SirSwiftModule.bool)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg2",
+                                        type = SirNominalType(SirSwiftModule.int8)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg3",
+                                        type = SirNominalType(SirSwiftModule.int16)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg4",
+                                        type = SirNominalType(SirSwiftModule.int32)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg5",
+                                        type = SirNominalType(SirSwiftModule.int64)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg6",
+                                        type = SirNominalType(SirSwiftModule.double)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg7",
+                                        type = SirNominalType(SirSwiftModule.float)
+                                    ),
+                                )
+                            )
+                            returnType = SirNominalType(SirSwiftModule.bool)
+                        }
+                    )
+
+                    declarations.add(
+                        buildFunction {
+                            origin = SirOrigin.Unknown
+                            kind = SirCallableKind.INSTANCE_METHOD
+                            visibility = SirVisibility.PUBLIC
+                            name = "bar"
+                            parameters.addAll(
+                                listOf(
+                                    SirParameter(
+                                        argumentName = "arg1",
+                                        type = SirNominalType(SirSwiftModule.uint8)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg2",
+                                        type = SirNominalType(SirSwiftModule.uint16)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg3",
+                                        type = SirNominalType(SirSwiftModule.uint32)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg4",
+                                        type = SirNominalType(SirSwiftModule.uint64)
+                                    ),
+                                )
+                            )
+                            returnType = SirNominalType(SirSwiftModule.bool)
+                        }
+                    )
+                }
+            )
+        }
+
+        runTest(
+            module,
+            "testData/class_with_function"
+        )
+    }
+
+    @Test
+    fun `should print class with variable`() {
+
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildClass {
+                    origin = SirOrigin.Unknown
+                    name = "Foo"
+
+                    declarations.add(
+                        buildVariable {
+                            name = "my_variable1"
+                            type = SirNominalType(SirSwiftModule.bool)
+                            getter = buildGetter {
+                                kind = SirCallableKind.INSTANCE_METHOD
+                            }
+                        }
+                    )
+
+                    declarations.add(
+                        buildVariable {
+                            name = "my_variable2"
+                            type = SirNominalType(SirSwiftModule.int8)
+                            getter = buildGetter {
+                                kind = SirCallableKind.INSTANCE_METHOD
+                            }
+                        }
+                    )
+                }
+            )
+        }
+
+        runTest(
+            module,
+            "testData/class_with_variable"
         )
     }
 

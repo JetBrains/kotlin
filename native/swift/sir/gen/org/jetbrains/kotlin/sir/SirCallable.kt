@@ -19,6 +19,7 @@ sealed class SirCallable : SirElementBase(), SirDeclaration {
     abstract override val visibility: SirVisibility
     abstract override var parent: SirDeclarationParent
     abstract val kind: SirCallableKind
+    abstract var body: SirFunctionBody?
 
     override fun <R, D> accept(visitor: SirVisitor<R, D>, data: D): R =
         visitor.visitCallable(this, data)

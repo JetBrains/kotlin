@@ -18,10 +18,10 @@ internal class SirFunctionImpl(
     override val origin: SirOrigin,
     override val visibility: SirVisibility,
     override val kind: SirCallableKind,
+    override var body: SirFunctionBody?,
     override val name: String,
     override val parameters: MutableList<SirParameter>,
     override val returnType: SirType,
-    override var body: SirFunctionBody?,
     override var documentation: String?,
 ) : SirFunction() {
     override lateinit var parent: SirDeclarationParent

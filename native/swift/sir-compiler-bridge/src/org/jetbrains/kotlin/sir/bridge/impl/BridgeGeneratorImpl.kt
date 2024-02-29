@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.sir.bridge.impl
 
-import org.jetbrains.kotlin.sir.SirNominalType
-import org.jetbrains.kotlin.sir.SirParameter
-import org.jetbrains.kotlin.sir.SirType
+import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.*
 import org.jetbrains.kotlin.sir.util.*
 
@@ -181,4 +179,3 @@ internal enum class KotlinType(val repr: String) {
     Float("Float"),
     Double("Double"),
 }
-

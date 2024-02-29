@@ -25,7 +25,7 @@ public fun KtAnalysisSession.buildSirDeclarationList(from: KtElement): List<SirD
         PsiToSirTranslationCollector(
             res,
             PsiToSirTranslatableChecker(this),
-            PsiToSirElementTranslation(this)
+            PsiToSirElementTranslation(this),
         )
     )
     return res.toList()
@@ -43,10 +43,13 @@ private class PsiToSirTranslationCollector(
     private val res: MutableList<SirDeclaration>,
     private val checker: PsiToSirTranslation<Boolean>,
     private val translator: PsiToSirTranslation<SirDeclaration>,
+    private val isFirstLevel: Boolean = true,
 ) : KtTreeVisitorVoid() {
 
     override fun visitClassOrObject(classOrObject: KtClassOrObject) {
-        classOrObject.checkAndTranslate(null)
+        if (isFirstLevel) {
+            classOrObject.checkAndTranslate(null)
+        }
     }
 
     override fun visitNamedFunction(function: KtNamedFunction) {
@@ -72,7 +75,6 @@ private class PsiToSirTranslatableChecker(
 
     override fun visitNamedFunction(function: KtNamedFunction, data: Unit?): Boolean = with(analysisSession) {
         val functionIsPublicAndTopLevel = function.isPublic
-                && function.isTopLevel
                 && !function.isAnonymous
         val functionSymbolIsTranslatable = (function.getFunctionLikeSymbol() as? KtFunctionSymbol)
             ?.let { symbol ->
@@ -87,7 +89,6 @@ private class PsiToSirTranslatableChecker(
 
     override fun visitProperty(property: KtProperty, data: Unit?): Boolean {
         return property.isPublic
-                && property.isTopLevel
     }
 }
 
@@ -110,11 +111,21 @@ private class PsiToSirElementTranslation(
 
 context(KtAnalysisSession)
 internal fun buildSirClassFromPsi(classOrObject: KtClassOrObject): SirNamedDeclaration {
-    // if there is no symbol - it will be handled by `PsiToSirTranslatableChecker`
     val symbol = classOrObject.getNamedClassOrObjectSymbol()!!
     return buildClass {
         name = classOrObject.name ?: "UNKNOWN_CLASS" // todo: error handling strategy: KT-65980
         origin = KotlinSource(symbol)
+
+        classOrObject.acceptChildren(
+            PsiToSirTranslationCollector(
+                declarations,
+                PsiToSirTranslatableChecker(analysisSession),
+                PsiToSirElementTranslation(analysisSession),
+                false
+            )
+        )
+    }.also { resultedClass ->
+        resultedClass.declarations.forEach { decl -> decl.parent = resultedClass }
     }
 }
 

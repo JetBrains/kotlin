@@ -78,6 +78,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(declaration)
 
         +field("kind", callableKind)
+        +field("body", functionBodyType, nullable = true, mutable = true)
     }
 
     val function by element {
@@ -87,7 +88,6 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +field("name", string)
         +listField("parameters", parameterType)
         +field("returnType", typeType)
-        +field("body", functionBodyType, nullable = true, mutable = true)
 
         +field(name = "documentation", string, nullable = true, mutable = true)
     }
@@ -95,8 +95,6 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
     val accessor by sealedElement {
         customParentInVisitor = callable
         parent(callable)
-
-        +field("body", functionBodyType, nullable = true, mutable = true)
     }
 
     val getter by element {
