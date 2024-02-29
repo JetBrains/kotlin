@@ -66,6 +66,12 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
             }
             preparePublishedDependencies(gradleVersion, providedJdk, androidVersion, sharedRepo)
 
+            buildGradleKts.setDependencies(
+                """
+                implementation("test:publishedA:+")
+                implementation(project(":projectA"))
+                """.trimIndent()
+            )
             // Gradle 7.4.2 doesn't pick up sharedRepo from build.gradle.kts and Gradle 8.5 doesn't pick it up from settings.gradle.kts
             buildGradleKts.setUpRepositoriesInBuildGradleKts(sharedRepo)
             settingsGradleKts.setUpRepositoriesInSettingGradleKts(sharedRepo)
@@ -100,42 +106,42 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
         }
     }
 
+    data class Project(
+        val name: String,
+        val dependsOn: String?,
+        val hasResources: Boolean,
+    )
+
+    private val dependencies: List<Project> = listOf(
+        Project("A", dependsOn = "B", hasResources = false),
+        Project("B", dependsOn = "C", hasResources = true),
+        Project("C", dependsOn = "D", hasResources = false),
+        Project("D", dependsOn = null, hasResources = true),
+    )
+
     private fun prepareProjectDependencies(
         gradleVersion: GradleVersion,
         providedJdk: JdkVersions.ProvidedJdk,
         publicationRepository: Path,
     ): List<Path> {
-        val projectWithoutResources = project(
-            "multiplatformResources/consumption/dependency",
-            gradleVersion,
-            buildJdk = providedJdk.location,
-            projectPathAdditionalSuffix = "projectWithoutResources",
-        ) {
-            buildGradleKts.replaceText("<dependencies>", "implementation(project(\":projectWithResources\"))")
-            buildGradleKts.replaceText("<enablePublication>", "false")
-            buildGradleKts.setUpRepositoriesInBuildGradleKts(publicationRepository)
+        val projectPaths = mutableListOf<Path>()
+        dependencies.forEach { dependencyProject ->
+            projectPaths.add(
+                project(
+                    "multiplatformResources/consumption/dependency",
+                    gradleVersion,
+                    buildJdk = providedJdk.location,
+                    projectPathAdditionalSuffix = "project${dependencyProject.name}",
+                ) {
+                    buildGradleKts.setDependencies(
+                        dependencyProject.dependsOn?.let { "implementation(project(\":project${it}\"))" } ?: ""
+                    )
+                    buildGradleKts.enableResourcesPublication(dependencyProject.hasResources)
+                    buildGradleKts.setUpRepositoriesInBuildGradleKts(publicationRepository)
+                }.projectPath
+            )
         }
-        val projectWithResources = project(
-            "multiplatformResources/consumption/dependency",
-            gradleVersion,
-            buildJdk = providedJdk.location,
-            projectPathAdditionalSuffix = "projectWithResources",
-        ) {
-            buildGradleKts.replaceText("<dependencies>", "implementation(project(\":projectWithResourcesTransitive\"))")
-            buildGradleKts.replaceText("<enablePublication>", "true")
-            buildGradleKts.setUpRepositoriesInBuildGradleKts(publicationRepository)
-        }
-        val projectWithResourcesTransitive = project(
-            "multiplatformResources/consumption/dependency",
-            gradleVersion,
-            buildJdk = providedJdk.location,
-            projectPathAdditionalSuffix = "projectWithResourcesTransitive",
-        ) {
-            buildGradleKts.replaceText("<dependencies>", "")
-            buildGradleKts.replaceText("<enablePublication>", "true")
-            buildGradleKts.setUpRepositoriesInBuildGradleKts(publicationRepository)
-        }
-        return listOf(projectWithoutResources, projectWithResources, projectWithResourcesTransitive).map { it.projectPath }
+        return projectPaths
     }
 
     private fun preparePublishedDependencies(
@@ -144,43 +150,26 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
         androidVersion: String,
         publicationRepository: Path,
     ) {
-        val publishedWithoutResources = project(
-            "multiplatformResources/consumption/dependency",
-            gradleVersion,
-            buildJdk = providedJdk.location,
-            projectPathAdditionalSuffix = "publishedWithoutResources",
-            localRepoDir = publicationRepository,
-        ) {
-            buildGradleKts.replaceText("<dependencies>", "implementation(\"test:publishedWithResources:+\")")
-            buildGradleKts.replaceText("<enablePublication>", "false")
-            buildGradleKts.setUpPublishing(publicationRepository)
-            buildGradleKts.setUpRepositoriesInBuildGradleKts(publicationRepository)
+        val projectToPublish = mutableListOf<TestProject>()
+        dependencies.forEach { dependencyProject ->
+            projectToPublish.add(
+                project(
+                    "multiplatformResources/consumption/dependency",
+                    gradleVersion,
+                    buildJdk = providedJdk.location,
+                    projectPathAdditionalSuffix = "published${dependencyProject.name}",
+                    localRepoDir = publicationRepository,
+                ) {
+                    buildGradleKts.setDependencies(
+                        dependencyProject.dependsOn?.let { "implementation(\"test:published${it}:+\")" } ?: ""
+                    )
+                    buildGradleKts.enableResourcesPublication(dependencyProject.hasResources)
+                    buildGradleKts.setUpPublishing(publicationRepository)
+                    buildGradleKts.setUpRepositoriesInBuildGradleKts(publicationRepository)
+                }
+            )
         }
-        val publishedWithResources = project(
-            "multiplatformResources/consumption/dependency",
-            gradleVersion,
-            buildJdk = providedJdk.location,
-            projectPathAdditionalSuffix = "publishedWithResources",
-            localRepoDir = publicationRepository,
-        ) {
-            buildGradleKts.replaceText("<dependencies>", "implementation(\"test:publishedWithResourcesTransitive:+\")")
-            buildGradleKts.replaceText("<enablePublication>", "true")
-            buildGradleKts.setUpPublishing(publicationRepository)
-            buildGradleKts.setUpRepositoriesInBuildGradleKts(publicationRepository)
-        }
-        val publishedWithResourcesTransitive = project(
-            "multiplatformResources/consumption/dependency",
-            gradleVersion,
-            buildJdk = providedJdk.location,
-            projectPathAdditionalSuffix = "publishedWithResourcesTransitive",
-            localRepoDir = publicationRepository,
-        ) {
-            buildGradleKts.replaceText("<dependencies>", "")
-            buildGradleKts.replaceText("<enablePublication>", "true")
-            buildGradleKts.setUpPublishing(publicationRepository)
-            buildGradleKts.setUpRepositoriesInBuildGradleKts(publicationRepository)
-        }
-        listOf(publishedWithResourcesTransitive, publishedWithResources, publishedWithoutResources).forEach {
+        projectToPublish.reversed().forEach {
             it.buildWithAGPVersion(
                 ":publishAllPublicationsToMavenRepository",
                 androidVersion = androidVersion,
@@ -188,6 +177,9 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
             )
         }
     }
+
+    private fun Path.setDependencies(dependencies: String) = replaceText("<dependencies>", dependencies)
+    private fun Path.enableResourcesPublication(publish: Boolean) = replaceText("<enablePublication>", if (publish) "true" else "false")
 
     private fun Path.setUpRepositoriesInBuildGradleKts(publicationRepository: Path) = append(repositories(publicationRepository))
     private fun Path.setUpRepositoriesInSettingGradleKts(publicationRepository: Path) = append(

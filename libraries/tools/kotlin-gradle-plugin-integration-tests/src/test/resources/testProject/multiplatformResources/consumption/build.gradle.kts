@@ -33,8 +33,7 @@ kotlin {
 
     sourceSets.commonMain {
         dependencies {
-            implementation("test:publishedWithoutResources:+")
-            implementation(project(":projectWithoutResources"))
+            <dependencies>
         }
     }
 }
