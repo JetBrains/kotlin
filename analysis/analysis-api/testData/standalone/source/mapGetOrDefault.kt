@@ -1,3 +1,5 @@
+// WITH_STDLIB
+
 fun box(map: MutableMap<String, String>) {
-    map.g<caret>et("key")
+    map.get<caret>OrDefault("key", "value")
 }
