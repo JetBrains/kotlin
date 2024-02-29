@@ -1335,42 +1335,28 @@ class LightTreeRawFirExpressionBuilder(
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitIfExpression
      */
     private fun convertIfExpression(ifExpression: LighterASTNode): FirExpression {
-        var components = parseIfExpression(ifExpression)
-
         return buildWhenExpression {
             source = ifExpression.toFirSourceElement()
-            whenBranches@ while (true) {
-                with(components) {
-                    val trueBranch = convertLoopBody(thenBlock)
-                    branches += buildWhenBranch {
-                        source = firCondition?.source
-                        condition = firCondition ?: buildErrorExpression(
-                            null,
-                            ConeSyntaxDiagnostic("If statement should have condition")
-                        )
-                        result = trueBranch
-                    }
+            with(parseIfExpression(ifExpression)) {
+                val trueBranch = convertLoopBody(thenBlock)
+                branches += buildWhenBranch {
+                    source = firCondition?.source
+                    condition = firCondition ?: buildErrorExpression(
+                        null,
+                        ConeSyntaxDiagnostic("If statement should have condition")
+                    )
+                    result = trueBranch
                 }
-                if (components.elseBlock == null) break@whenBranches
-                var cascadeIf = false
-                components.elseBlock?.forEachChildren {
-                    if (it.tokenType == IF) {
-                        cascadeIf = true
-                        components = parseIfExpression(it)
-                    }
-                }
-                if (!cascadeIf) {
-                    with(components) {
-                        val elseBranch = convertLoopOrIfBody(elseBlock)
-                        if (elseBranch != null) {
-                            branches += buildWhenBranch {
-                                source = elseBlock?.toFirSourceElement()
-                                condition = buildElseIfTrueCondition()
-                                result = elseBranch
-                            }
+
+                if (elseBlock != null) {
+                    val elseBranch = convertLoopOrIfBody(elseBlock)
+                    if (elseBranch != null) {
+                        branches += buildWhenBranch {
+                            source = elseBlock.toFirSourceElement()
+                            condition = buildElseIfTrueCondition()
+                            result = elseBranch
                         }
                     }
-                    break@whenBranches
                 }
             }
             usedAsExpression = ifExpression.usedAsExpression

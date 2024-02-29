@@ -1248,14 +1248,17 @@ class Fir2IrVisitor(
                 if (whenExpression.branches.isEmpty()) {
                     return@convertWithOffsets IrBlockImpl(startOffset, endOffset, irBuiltIns.unitType, origin)
                 }
+                val isProperlyExhaustive = whenExpression.isDeeplyProperlyExhaustive()
                 val whenExpressionType =
-                    if (whenExpression.isProperlyExhaustive && whenExpression.branches.none {
+                    if (isProperlyExhaustive && whenExpression.branches.none {
                             it.condition is FirElseIfTrueCondition && it.result.statements.isEmpty()
                         }) whenExpression.resolvedType else session.builtinTypes.unitType.type
-                val irBranches = whenExpression.branches.mapTo(mutableListOf()) { branch ->
-                    branch.toIrWhenBranch(whenExpressionType)
-                }
-                if (whenExpression.isProperlyExhaustive && whenExpression.branches.none { it.condition is FirElseIfTrueCondition }) {
+                val irBranches = whenExpression.convertWhenBranchesTo(
+                    mutableListOf(),
+                    whenExpressionType,
+                    flattenElse = origin == IrStatementOrigin.IF,
+                )
+                if (isProperlyExhaustive && whenExpression.branches.none { it.condition is FirElseIfTrueCondition }) {
                     val irResult = IrCallImpl(
                         startOffset, endOffset, irBuiltIns.nothingType,
                         irBuiltIns.noWhenBranchMatchedExceptionSymbol,
@@ -1271,6 +1274,57 @@ class Fir2IrVisitor(
         }.also {
             whenExpression.accept(implicitCastInserter, it)
         }
+    }
+
+    /**
+     * TODO this shouldn't be required anymore once KT-65997 is fixed.
+     */
+    private fun FirWhenExpression.isDeeplyProperlyExhaustive(): Boolean {
+        if (!isProperlyExhaustive) {
+            return false
+        }
+
+        val nestedElseIfExpression = branches.lastOrNull()?.nestedElseIfOrNull() ?: return true
+        return nestedElseIfExpression.isDeeplyProperlyExhaustive()
+    }
+
+    /**
+     * Converts the branches to [IrBranch]es.
+     *
+     * If [flattenElse] is `true` and the else branch contains another [FirWhenExpression] that's built from an `if`,
+     * its branches will be added directly to the [result] list instead.
+     *
+     * TODO this shouldn't be required anymore once KT-65997 is fixed.
+     */
+    private fun FirWhenExpression.convertWhenBranchesTo(
+        result: MutableList<IrBranch>,
+        whenExpressionType: ConeKotlinType,
+        flattenElse: Boolean,
+    ): MutableList<IrBranch> {
+        for (branch in branches) {
+            if (flattenElse) {
+                val elseIfExpression = branch.nestedElseIfOrNull()
+                if (elseIfExpression != null) {
+                    elseIfExpression.convertWhenBranchesTo(result, whenExpressionType, flattenElse = true)
+                    break
+                }
+            }
+
+            result.add(branch.toIrWhenBranch(whenExpressionType))
+        }
+
+        return result
+    }
+
+    private fun FirWhenBranch.nestedElseIfOrNull(): FirWhenExpression? {
+        if (condition is FirElseIfTrueCondition) {
+            val elseWhenExpression = (result as? FirSingleExpressionBlock)?.statement as? FirWhenExpression
+            if (elseWhenExpression != null && elseWhenExpression.source?.elementType == KtNodeTypes.IF) {
+                return elseWhenExpression
+            }
+        }
+
+        return null
     }
 
     private fun generateWhen(

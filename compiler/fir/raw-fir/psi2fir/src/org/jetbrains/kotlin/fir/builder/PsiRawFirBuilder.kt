@@ -2555,26 +2555,18 @@ open class PsiRawFirBuilder(
             return buildWhenExpression {
                 source = expression.toFirSourceElement()
 
-                var ktLastIf: KtIfExpression = expression
-                whenBranches@ while (true) {
-                    val ktCondition = ktLastIf.condition
-                    branches += buildWhenBranch {
-                        source = ktCondition?.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
-                        condition = ktCondition.toFirExpression("If statement should have condition")
-                        result = ktLastIf.then.toFirBlock()
-                    }
+                val ktCondition = expression.condition
+                branches += buildWhenBranch {
+                    source = ktCondition?.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
+                    condition = ktCondition.toFirExpression("If statement should have condition")
+                    result = expression.then.toFirBlock()
+                }
 
-                    when (val ktElse = ktLastIf.`else`) {
-                        null -> break@whenBranches
-                        is KtIfExpression -> ktLastIf = ktElse
-                        else -> {
-                            branches += buildWhenBranch {
-                                source = ktLastIf.elseKeyword?.toKtPsiSourceElement()
-                                condition = buildElseIfTrueCondition()
-                                result = ktLastIf.`else`.toFirBlock()
-                            }
-                            break@whenBranches
-                        }
+                if (expression.`else` != null) {
+                    branches += buildWhenBranch {
+                        source = expression.elseKeyword?.toKtPsiSourceElement()
+                        condition = buildElseIfTrueCondition()
+                        result = expression.`else`.toFirBlock()
                     }
                 }
 
