@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration
 
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -124,7 +125,10 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
         declaration.checkBody(context, reporter)
         declaration.checkDelegation(context, reporter)
         declaration.checkAnonymousInitializer(context, reporter)
-        declaration.checkConstructorPropertyParam(context, reporter)
+
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.JsExternalPropertyParameters)) {
+            declaration.checkConstructorPropertyParam(context, reporter)
+        }
 
         additionalCheck(declaration, context, reporter)
     }

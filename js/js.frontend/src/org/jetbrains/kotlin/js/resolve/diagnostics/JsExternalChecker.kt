@@ -157,7 +157,10 @@ class JsExternalChecker(private val allowCompanionInInterface: Boolean) : Declar
         checkDelegation(declaration, descriptor, trace)
         checkAnonymousInitializer(declaration, trace)
         checkEnumEntry(declaration, trace)
-        checkConstructorPropertyParam(declaration, descriptor, trace)
+
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.JsExternalPropertyParameters)) {
+            checkConstructorPropertyParam(declaration, descriptor, trace)
+        }
     }
 
     private fun checkBody(
