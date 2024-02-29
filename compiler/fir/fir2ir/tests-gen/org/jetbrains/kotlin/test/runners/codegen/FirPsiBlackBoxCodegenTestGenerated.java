@@ -38141,6 +38141,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("mergedOverrides.kt")
+      public void testMergedOverrides() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/mergedOverrides.kt");
+      }
+
+      @Test
       @TestMetadata("staticjavaFieldInCommonCode.kt")
       public void testStaticjavaFieldInCommonCode() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/staticjavaFieldInCommonCode.kt");

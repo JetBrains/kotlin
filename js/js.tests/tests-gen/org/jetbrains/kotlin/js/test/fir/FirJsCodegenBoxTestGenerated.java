@@ -27394,6 +27394,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
         runTest("compiler/testData/codegen/box/multiplatform/k2/internalOverride2.kt");
       }
 
+      @Test
+      @TestMetadata("mergedOverrides.kt")
+      public void testMergedOverrides() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/mergedOverrides.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/annotations")
       @TestDataPath("$PROJECT_ROOT")
