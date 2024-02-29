@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
  * - [EXPECT_ACTUAL_MATCHING][FirResolvePhase.EXPECT_ACTUAL_MATCHING] – [LLFirExpectActualMatchingTargetResolver]
  * - [CONTRACTS][FirResolvePhase.CONTRACTS] – [LLFirContractsTargetResolver]
  * - [IMPLICIT_TYPES_BODY_RESOLVE][FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE] – [LLFirImplicitBodyTargetResolver]
+ * - [CONSTANT_EVALUATION][FirResolvePhase.CONSTANT_EVALUATION] - [LLFirConstantEvaluationTargetResolver]
  * - [ANNOTATION_ARGUMENTS][FirResolvePhase.ANNOTATION_ARGUMENTS] – [LLFirAnnotationArgumentsTargetResolver]
  * - [BODY_RESOLVE][FirResolvePhase.BODY_RESOLVE] – [LLFirBodyTargetResolver]
  *
