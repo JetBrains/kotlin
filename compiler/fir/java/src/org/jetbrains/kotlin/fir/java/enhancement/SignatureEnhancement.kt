@@ -223,12 +223,12 @@ class FirSignatureEnhancement(
         }
 
         val firMethod = original.fir
-        val enhancedParameters = enhanceTypeParameterBoundsForMethod(firMethod)
+        val enhancedTypeParameters = performBoundsResolution(firMethod.typeParameters, firMethod.source)
         return enhanceMethod(
             firMethod,
             original.callableId,
             name,
-            enhancedParameters,
+            enhancedTypeParameters,
             original is FirIntersectionOverrideFunctionSymbol,
             precomputedOverridden
         )
@@ -262,7 +262,7 @@ class FirSignatureEnhancement(
         firMethod: FirFunction,
         methodId: CallableId,
         name: Name?,
-        enhancedTypeParameters: List<FirTypeParameterRef>?,
+        enhancedTypeParameters: List<FirTypeParameterRef>,
         isIntersectionOverride: Boolean,
         precomputedOverridden: List<FirCallableDeclaration>?,
     ): FirFunctionSymbol<*> {
@@ -353,7 +353,7 @@ class FirSignatureEnhancement(
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     origin = declarationOrigin
                     // TODO: we should set a new origin / containing declaration to type parameters (KT-60440)
-                    this.typeParameters += (enhancedTypeParameters ?: firMethod.typeParameters)
+                    this.typeParameters += enhancedTypeParameters
                 }
             }
             is FirSimpleFunction -> {
@@ -374,7 +374,7 @@ class FirSignatureEnhancement(
                         FirNamedFunctionSymbol(methodId)
                     }.also { functionSymbol = it }
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                    typeParameters += (enhancedTypeParameters ?: firMethod.typeParameters).map { typeParameter ->
+                    typeParameters += enhancedTypeParameters.map { typeParameter ->
                         // FirJavaMethod contains only FirTypeParameter so [enhancedTypeParameters] must have the same type
                         require(typeParameter is FirTypeParameter) {
                             "Unexpected type parameter type: ${typeParameter::class.simpleName}"
@@ -477,6 +477,12 @@ class FirSignatureEnhancement(
         function.replaceStatus(newStatus)
     }
 
+    fun performBoundsResolution(typeParameters: List<FirTypeParameterRef>, source: KtSourceElement?): List<FirTypeParameterRef> {
+        val (initialBounds, enhancedTypeParameters) = performFirstRoundOfBoundsResolution(typeParameters, source)
+        enhanceTypeParameterBoundsAfterFirstRound(enhancedTypeParameters, initialBounds, source)
+        return enhancedTypeParameters
+    }
+
     /**
      * Perform first time initialization of bounds with FirResolvedTypeRef instances
      * But after that bounds are still not enhanced and more over might have not totally correct raw types bounds
@@ -490,7 +496,7 @@ class FirSignatureEnhancement(
      *
      * See the usages of FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND
      */
-    fun performFirstRoundOfBoundsResolution(
+    private fun performFirstRoundOfBoundsResolution(
         typeParameters: List<FirTypeParameterRef>,
         source: KtSourceElement?,
     ): Pair<List<List<FirTypeRef>>, List<FirTypeParameterRef>> {
@@ -547,13 +553,13 @@ class FirSignatureEnhancement(
     /**
      * There are four rounds of bounds resolution for Java type parameters
      * 1. Plain conversion of Java types without any enhancement (with approximated raw types)
-     * 2. The same conversion, but raw types are not computed precisely
+     * 2. The same conversion, but raw types are now computed precisely
      * 3. Enhancement for top-level types (no enhancement for arguments)
      * 4. Enhancement for the whole types (with arguments)
      *
      * This method requires type parameters that have already been run through the first round
      */
-    fun enhanceTypeParameterBoundsAfterFirstRound(
+    private fun enhanceTypeParameterBoundsAfterFirstRound(
         typeParameters: List<FirTypeParameterRef>,
         // The state of bounds before the first round
         initialBounds: List<List<FirTypeRef>>,
@@ -571,12 +577,6 @@ class FirSignatureEnhancement(
         typeParameters.replaceBounds { typeParameter, bound ->
             enhanceTypeParameterBound(typeParameter, bound, forceOnlyHeadTypeConstructor = false)
         }
-    }
-
-    private fun enhanceTypeParameterBoundsForMethod(firMethod: FirFunction): List<FirTypeParameterRef> {
-        val (initialBounds, copiedParameters) = performFirstRoundOfBoundsResolution(firMethod.typeParameters, firMethod.source)
-        enhanceTypeParameterBoundsAfterFirstRound(copiedParameters, initialBounds, firMethod.source)
-        return copiedParameters
     }
 
     private inline fun List<FirTypeParameterRef>.replaceBounds(block: (FirTypeParameter, FirTypeRef) -> FirTypeRef) {
