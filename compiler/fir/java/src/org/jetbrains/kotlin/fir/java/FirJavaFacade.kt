@@ -185,14 +185,15 @@ abstract class FirJavaFacade(
         val (initialBounds, enhancedTypeParameters) = enhancement.performFirstRoundOfBoundsResolution(
             firJavaClass.typeParameters, fakeSource
         )
-        firJavaClass.typeParameters.clear()
-        firJavaClass.typeParameters += enhancedTypeParameters
 
         // 1. (will happen lazily in FirJavaClass.annotations) Resolve annotations
         // 2. Enhance type parameter bounds - may refer to each other, take default nullability from annotations
         // 3. (will happen lazily in FirJavaClass.superTypeRefs) Enhance super types - may refer to type parameter bounds, take default nullability from annotations
 
-        enhancement.enhanceTypeParameterBoundsAfterFirstRound(firJavaClass.typeParameters, initialBounds, fakeSource)
+        enhancement.enhanceTypeParameterBoundsAfterFirstRound(enhancedTypeParameters, initialBounds, fakeSource)
+
+        firJavaClass.typeParameters.clear()
+        firJavaClass.typeParameters += enhancedTypeParameters
 
         updateStatuses(firJavaClass, parentClassSymbol)
 
