@@ -152,7 +152,7 @@ public class KotlinStaticDeclarationProvider internal constructor(
  */
 public class KotlinStaticDeclarationProviderFactory(
     private val project: Project,
-    testKtFiles: Collection<KtFile>,
+    sourceKtFiles: Collection<KtFile>,
     binaryRoots: List<VirtualFile> = emptyList(),
     sharedBinaryRoots: List<VirtualFile> = emptyList(),
     skipBuiltins: Boolean = false,
@@ -358,7 +358,7 @@ public class KotlinStaticDeclarationProviderFactory(
                 .forEach { processCollectedStubs(it) }
         }
 
-        testKtFiles.forEach { file ->
+        sourceKtFiles.forEach { file ->
             file.accept(recorder)
         }
     }
