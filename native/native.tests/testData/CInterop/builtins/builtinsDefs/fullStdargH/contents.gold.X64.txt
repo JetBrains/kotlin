@@ -50,9 +50,6 @@ library {
 
     package {
 
-      public final const val __GNUC_VA_LIST: kotlin/Int /* = 1 */
-        public final get
-
       public typealias __builtin_va_list = kotlinx/cinterop/CArrayPointer^<pod1/__va_list_tag> /* = kotlinx/cinterop/CPointer<pod1/__va_list_tag> /* = kotlinx/cinterop/CArrayPointer^<pod1/__va_list_tag> */ */
 
       public typealias __builtin_va_listVar = kotlinx/cinterop/CPointerVarOf<pod1/__builtin_va_list^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<pod1/__va_list_tag> /* = pod1/__builtin_va_list^ */> */
