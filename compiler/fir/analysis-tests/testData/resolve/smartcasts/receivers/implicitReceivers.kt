@@ -53,7 +53,7 @@ fun Any?.test_4() {
         <!UNRESOLVED_REFERENCE!>foo<!>()
         this.<!UNRESOLVED_REFERENCE!>bar<!>()
         <!UNRESOLVED_REFERENCE!>bar<!>()
-    } else if (this !is B) {
+    } else if (<!USELESS_IS_CHECK!>this !is B<!>) {
         this.<!UNRESOLVED_REFERENCE!>bar<!>()
         <!UNRESOLVED_REFERENCE!>bar<!>()
         this.foo()

@@ -10,7 +10,7 @@ sealed class Sealed(val x: Int) {
 fun foo(s: Sealed): Int {
     return when(s) {
         !is Sealed.First -> 1
-        !is Sealed.Last -> 0
+        <!USELESS_IS_CHECK!>!is Sealed.Last<!> -> 0
         // no else required
     }
 }
