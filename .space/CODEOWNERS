@@ -183,7 +183,6 @@
 /compiler/testData/resolveConstructorDelegationCalls/ "Kotlin Compiler Core"
 /compiler/testData/resolvedCalls/ "Kotlin Compiler Core"
 /compiler/testData/serialization/builtinsSerializer/ "Kotlin Compiler Core"
-/compiler/testData/serialization/js/ "Kotlin JS"
 /compiler/testData/serialization/nonStableParameterNames/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/testData/serialization/klib/ "Kotlin Common Backend"
 /compiler/testData/type/ "Kotlin Compiler Core"
