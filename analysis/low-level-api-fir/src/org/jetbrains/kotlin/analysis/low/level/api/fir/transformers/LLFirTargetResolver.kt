@@ -164,6 +164,9 @@ internal sealed class LLFirTargetResolver(
             target is FirField && target.origin == FirDeclarationOrigin.Synthetic.DelegateField || target is FirConstructor -> {
                 containingClass(target).lazyResolveToPhase(resolverPhase)
             }
+
+            // We should resolve all script parameters for consistency as they are part of the script and visible from the beginning
+            target is FirScript -> target.parameters.forEach { it.lazyResolveToPhase(resolverPhase) }
         }
     }
 

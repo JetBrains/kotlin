@@ -218,7 +218,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationWithTargetScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] annotation class ResolveMe : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ResolveMe.value] value: Int): R|ResolveMe| {
@@ -245,7 +245,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationWithTargetScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class ResolveMe : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ResolveMe.value] value: Int): R|ResolveMe| {
@@ -272,7 +272,7 @@ CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationWithTargetScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class ResolveMe : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ResolveMe.value] value: Int): R|ResolveMe| {
@@ -299,7 +299,7 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationWithTargetScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)) @R|Anno|[Types](s = String(string)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class ResolveMe : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ResolveMe.value] value: Int): R|ResolveMe| {
@@ -326,7 +326,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationWithTargetScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)) @R|Anno|[Types](s = String(string)) public final [ResolvedTo(BODY_RESOLVE)] annotation class ResolveMe : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/ResolveMe.value] value: R|kotlin/Int|): R|ResolveMe| {

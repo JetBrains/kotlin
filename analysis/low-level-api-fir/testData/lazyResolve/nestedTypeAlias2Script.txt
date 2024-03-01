@@ -202,7 +202,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedTypeAlias2Script.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] class OuterClass<[ResolvedTo(SUPER_TYPES)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(SUPER_TYPES)] T1>(): R|OuterClass<T1>| {
@@ -227,7 +227,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedTypeAlias2Script.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] class OuterClass<[ResolvedTo(SUPER_TYPES)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(SUPER_TYPES)] T1>(): R|OuterClass<T1>| {
@@ -252,7 +252,7 @@ CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedTypeAlias2Script.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] class OuterClass<[ResolvedTo(SUPER_TYPES)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(SUPER_TYPES)] T1>(): R|OuterClass<T1>| {
@@ -277,7 +277,7 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedTypeAlias2Script.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] class OuterClass<[ResolvedTo(SUPER_TYPES)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(SUPER_TYPES)] T1>(): R|OuterClass<T1>| {
@@ -302,7 +302,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedTypeAlias2Script.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] class OuterClass<[ResolvedTo(SUPER_TYPES)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(SUPER_TYPES)] T1>(): R|OuterClass<T1>| {

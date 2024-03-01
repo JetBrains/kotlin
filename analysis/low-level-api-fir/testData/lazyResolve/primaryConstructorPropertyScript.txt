@@ -154,7 +154,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-primaryConstructorPropertyScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] class A : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] constructor([ResolvedTo(CONTRACTS)] a: R|kotlin/Boolean|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION): R|A| {
@@ -173,7 +173,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-primaryConstructorPropertyScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class A : R|kotlin/Any| {
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] a: R|kotlin/Boolean|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION): R|A| {
@@ -192,7 +192,7 @@ CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-primaryConstructorPropertyScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] class A : R|kotlin/Any| {
             public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=A] constructor([ResolvedTo(CONSTANT_EVALUATION)] a: R|kotlin/Boolean|, [ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION): R|A| {
@@ -211,7 +211,7 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-primaryConstructorPropertyScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/Boolean|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION): R|A| {
@@ -230,7 +230,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-primaryConstructorPropertyScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Boolean|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = Int(42)): R|A| {

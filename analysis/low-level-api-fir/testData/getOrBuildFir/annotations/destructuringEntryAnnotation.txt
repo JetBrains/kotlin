@@ -9,7 +9,7 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] destructuringEntryAnnotation.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-destructuringEntryAnnotation.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final data [ResolvedTo(CONTRACTS)] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/MyPair.a] a: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/MyPair.b] b: R|kotlin/Int|): R|MyPair| {

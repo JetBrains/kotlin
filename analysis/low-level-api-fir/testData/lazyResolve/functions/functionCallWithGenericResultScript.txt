@@ -146,7 +146,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-functionCallWithGenericResultScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
@@ -166,7 +166,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-functionCallWithGenericResultScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
@@ -186,7 +186,7 @@ CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-functionCallWithGenericResultScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
@@ -206,7 +206,7 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-functionCallWithGenericResultScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
@@ -226,7 +226,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-functionCallWithGenericResultScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {

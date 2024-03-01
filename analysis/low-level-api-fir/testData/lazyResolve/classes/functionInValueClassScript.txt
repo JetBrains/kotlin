@@ -154,7 +154,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-functionInValueClassScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
@@ -174,7 +174,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-functionInValueClassScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
@@ -194,7 +194,7 @@ CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-functionInValueClassScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
@@ -214,7 +214,7 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-functionInValueClassScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
@@ -234,7 +234,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-functionInValueClassScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {

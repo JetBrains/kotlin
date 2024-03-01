@@ -130,7 +130,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfNonLocalFunctionScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
@@ -147,7 +147,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfNonLocalFunctionScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
@@ -164,7 +164,7 @@ CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfNonLocalFunctionScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
@@ -181,7 +181,7 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfNonLocalFunctionScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
@@ -198,7 +198,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfNonLocalFunctionScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {

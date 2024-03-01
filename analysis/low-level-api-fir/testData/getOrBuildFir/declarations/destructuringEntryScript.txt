@@ -9,7 +9,7 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] destructuringEntryScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-destructuringEntryScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = Int(1).R|kotlin/to|<R|kotlin/Int|, R|kotlin/Int|>(Int(2))
         public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()

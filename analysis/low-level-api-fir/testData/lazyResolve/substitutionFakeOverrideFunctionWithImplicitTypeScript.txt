@@ -58,7 +58,7 @@ TARGET: public final override [ResolvedTo(CONTRACTS)] [CallableCopyDeferredRetur
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
@@ -85,7 +85,7 @@ TARGET: public final override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [Substit
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
@@ -116,7 +116,7 @@ TARGET: public final override [ResolvedTo(CONSTANT_EVALUATION)] [SubstitutedOver
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
@@ -147,7 +147,7 @@ TARGET: public final override [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOve
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
@@ -178,7 +178,7 @@ TARGET: public final override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOri
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {

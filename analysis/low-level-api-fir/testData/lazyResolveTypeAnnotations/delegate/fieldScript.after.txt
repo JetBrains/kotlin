@@ -13,7 +13,7 @@
 FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-fieldScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.position] position: R|kotlin/String|): R|one/Anno| {
@@ -36,4 +36,3 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
             private final [ResolvedTo(TYPES)] field $$delegate_0: R|@R|one/Anno|(position = <strcat>(String(super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|))  kotlin/Int>>| = LAZY_EXPRESSION
 
         }
-

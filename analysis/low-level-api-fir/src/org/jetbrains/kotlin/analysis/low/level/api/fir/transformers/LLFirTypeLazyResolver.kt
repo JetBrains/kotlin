@@ -175,8 +175,8 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
     }
 
     private fun resolveScriptTypes(firScript: FirScript) {
-        firScript.annotations.forEach { it.accept(transformer, null) }
-        firScript.contextReceivers.forEach { it.accept(transformer, null) }
+        firScript.transformAnnotations(transformer, null)
+        firScript.transformContextReceivers(transformer, null)
     }
 
     private fun resolveClassTypes(firClass: FirRegularClass) {

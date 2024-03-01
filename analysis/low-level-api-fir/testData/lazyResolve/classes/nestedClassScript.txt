@@ -282,7 +282,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedClassScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
@@ -317,7 +317,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedClassScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
@@ -352,7 +352,7 @@ CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedClassScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
@@ -387,7 +387,7 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedClassScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
@@ -422,7 +422,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedClassScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {

@@ -9,7 +9,7 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] arrayIndexExpressionWithIncScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-arrayIndexExpressionWithIncScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun main([ResolvedTo(BODY_RESOLVE)] args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
             [ResolvedTo(BODY_RESOLVE)] lval a: R|java/util/ArrayList<kotlin/String>| = R|java/util/ArrayList.ArrayList|<R|kotlin/String|>()

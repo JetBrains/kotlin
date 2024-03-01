@@ -10,7 +10,7 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] topLevelPropertyScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-topLevelPropertyScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int| = Int(1)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

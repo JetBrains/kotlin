@@ -50,7 +50,7 @@ TARGET: public open override [ResolvedTo(CONTRACTS)] [CallableCopyDeferredReturn
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegateWithImplicitTypeScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
@@ -73,7 +73,7 @@ TARGET: public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [Delegate
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegateWithImplicitTypeScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
@@ -98,7 +98,7 @@ TARGET: public open override [ResolvedTo(CONSTANT_EVALUATION)] [DelegatedWrapper
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegateWithImplicitTypeScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
@@ -123,7 +123,7 @@ TARGET: public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegatedWrappe
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegateWithImplicitTypeScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
@@ -148,7 +148,7 @@ TARGET: public open override [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegateWithImplicitTypeScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {

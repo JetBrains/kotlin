@@ -194,7 +194,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-enumValueOfScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
@@ -218,7 +218,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-enumValueOfScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
@@ -242,7 +242,7 @@ CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-enumValueOfScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
@@ -266,7 +266,7 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-enumValueOfScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
@@ -290,7 +290,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-enumValueOfScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {

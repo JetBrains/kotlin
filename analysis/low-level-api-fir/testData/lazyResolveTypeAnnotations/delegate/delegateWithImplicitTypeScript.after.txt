@@ -51,7 +51,7 @@ TARGET: @R|Anno|[Types](position = <strcat>(String(implicitType ), R|/prop|)) pu
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegateWithImplicitTypeScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
@@ -85,4 +85,3 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|Anno|(position = <strcat>(String(explicitType return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|))  kotlin/Int>>| {
             ^explicitType IntegerLiteral(1)
         }
-

@@ -2,7 +2,7 @@ RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -28,7 +28,7 @@ IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -54,7 +54,7 @@ COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -80,7 +80,7 @@ COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -106,7 +106,7 @@ SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -132,7 +132,7 @@ TYPES:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -158,7 +158,7 @@ STATUS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -184,7 +184,7 @@ EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -210,7 +210,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -236,7 +236,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -262,7 +262,7 @@ CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -288,7 +288,7 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -314,7 +314,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {

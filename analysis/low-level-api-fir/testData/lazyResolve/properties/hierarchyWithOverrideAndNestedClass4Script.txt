@@ -674,7 +674,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-hierarchyWithOverrideAndNestedClass4Script.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
@@ -758,7 +758,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-hierarchyWithOverrideAndNestedClass4Script.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
@@ -842,7 +842,7 @@ CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-hierarchyWithOverrideAndNestedClass4Script.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
@@ -926,7 +926,7 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-hierarchyWithOverrideAndNestedClass4Script.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
@@ -1010,7 +1010,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-hierarchyWithOverrideAndNestedClass4Script.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|

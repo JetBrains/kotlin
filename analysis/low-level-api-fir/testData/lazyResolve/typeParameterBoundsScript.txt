@@ -138,7 +138,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterBoundsScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] fun resolveMe([ResolvedTo(CONTRACTS)] foo: R|Foo|): R|kotlin/Unit| {
             foo#.util#()
@@ -157,7 +157,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterBoundsScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] foo: R|Foo|): R|kotlin/Unit| {
             foo#.util#()
@@ -176,7 +176,7 @@ CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterBoundsScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe([ResolvedTo(CONSTANT_EVALUATION)] foo: R|Foo|): R|kotlin/Unit| {
             foo#.util#()
@@ -195,7 +195,7 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterBoundsScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe([ResolvedTo(ANNOTATION_ARGUMENTS)] foo: R|Foo|): R|kotlin/Unit| {
             foo#.util#()
@@ -214,7 +214,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterBoundsScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe([ResolvedTo(BODY_RESOLVE)] foo: R|Foo|): R|kotlin/Unit| {
             R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()

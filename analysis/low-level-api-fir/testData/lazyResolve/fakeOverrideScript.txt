@@ -362,7 +362,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-fakeOverrideScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] fun expression([ResolvedTo(CONTRACTS)] expression: R|IrConst<*>|): R|kotlin/Unit| {
             when ([ResolvedTo(RAW_FIR)] lval kind: <implicit> = expression#.kind#) {
@@ -416,7 +416,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-fakeOverrideScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun expression([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] expression: R|IrConst<*>|): R|kotlin/Unit| {
             when ([ResolvedTo(RAW_FIR)] lval kind: <implicit> = expression#.kind#) {
@@ -470,7 +470,7 @@ CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-fakeOverrideScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] fun expression([ResolvedTo(CONSTANT_EVALUATION)] expression: R|IrConst<*>|): R|kotlin/Unit| {
             when ([ResolvedTo(RAW_FIR)] lval kind: <implicit> = expression#.kind#) {
@@ -524,7 +524,7 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-fakeOverrideScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expression([ResolvedTo(ANNOTATION_ARGUMENTS)] expression: R|IrConst<*>|): R|kotlin/Unit| {
             when ([ResolvedTo(RAW_FIR)] lval kind: <implicit> = expression#.kind#) {
@@ -578,7 +578,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-fakeOverrideScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun expression([ResolvedTo(BODY_RESOLVE)] expression: R|IrConst<*>|): R|kotlin/Unit| {
             when ([ResolvedTo(BODY_RESOLVE)] lval kind: R|Kind<out kotlin/Any?>| = R|<local>/expression|.R|SubstitutionOverride</IrConst.kind: R|Kind<CapturedType(*)>|>|) {

@@ -98,7 +98,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-syntheticResultDeclarationWithBigBody.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
 
@@ -110,7 +110,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-syntheticResultDeclarationWithBigBody.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> foo([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| {
             ^foo action#()
@@ -132,7 +132,7 @@ CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-syntheticResultDeclarationWithBigBody.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> foo([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| {
             ^foo action#()
@@ -154,7 +154,7 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-syntheticResultDeclarationWithBigBody.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> foo([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| {
             ^foo action#()
@@ -176,7 +176,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-syntheticResultDeclarationWithBigBody.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> foo([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| {
             ^foo action#()
