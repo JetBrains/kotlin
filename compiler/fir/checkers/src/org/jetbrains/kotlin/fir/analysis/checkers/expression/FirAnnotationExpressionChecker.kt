@@ -50,7 +50,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         val annotationClassId = expression.toAnnotationClassId(context.session)
         val fqName = annotationClassId?.asSingleFqName()
         for (arg in argumentMapping.values) {
-            val argExpression = (arg as? FirNamedArgumentExpression)?.expression ?: (arg as? FirErrorExpression)?.expression ?: arg
+            val argExpression = (arg as? FirErrorExpression)?.expression ?: arg
             checkAnnotationArgumentWithSubElements(argExpression, context.session, reporter, context)
                 ?.let { reporter.reportOn(argExpression.source, it, context) }
         }
@@ -123,8 +123,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         context: CheckerContext,
         reporter: DiagnosticReporter
     ): ApiVersion? {
-        val constantExpression = (expression as? FirLiteralExpression<*>)
-            ?: ((expression as? FirNamedArgumentExpression)?.expression as? FirLiteralExpression<*>) ?: return null
+        val constantExpression = (expression as? FirLiteralExpression<*>) ?: return null
         val stringValue = constantExpression.value as? String ?: return null
         if (!stringValue.matches(RequireKotlinConstants.VERSION_REGEX)) {
             reporter.reportOn(expression.source, FirErrors.ILLEGAL_KOTLIN_VERSION_STRING_VALUE, context)

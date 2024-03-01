@@ -5,7 +5,7 @@ FILE: a.kt
 Module: b
 FILE: b.kt
     public final fun bar(onClick: R|(() -> kotlin/Unit)?| = Null(null)): R|kotlin/Unit| {
-        R|/RMenuItem|(onClick = R|<local>/onClick|, trailing = R|<local>/onClick|?.{ $subj$.R|kotlin/let|<R|() -> kotlin/Unit|, R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>?|>(<L> = let@fun <anonymous>(it: R|() -> kotlin/Unit|): R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>?| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|/RMenuItem|(R|<local>/onClick|, R|<local>/onClick|?.{ $subj$.R|kotlin/let|<R|() -> kotlin/Unit|, R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>?|>(<L> = let@fun <anonymous>(it: R|() -> kotlin/Unit|): R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>?| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ let@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 ^@let Unit
             }

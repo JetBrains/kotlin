@@ -311,7 +311,7 @@ digraph lambdas_kt {
             }
             104 [label="Postponed exit from lambda"];
             105 [label="Function call: R|/getInt|(...)" style="filled" fillcolor=yellow];
-            106 [label="Jump: ^test_4 R|/getInt|(block = getInt@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+            106 [label="Jump: ^test_4 R|/getInt|(getInt@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
     ^test_4 Int(1)
 }
 )"];

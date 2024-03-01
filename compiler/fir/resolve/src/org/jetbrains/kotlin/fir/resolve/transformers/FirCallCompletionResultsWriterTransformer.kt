@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildSamConversionExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildSpreadArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
@@ -345,16 +347,17 @@ class FirCallCompletionResultsWriterTransformer(
         val calleeReference = functionCall.calleeReference as? FirNamedReferenceWithCandidate
             ?: return functionCall
         val result = prepareQualifiedTransform(functionCall, calleeReference)
+        val originalArgumentList = result.argumentList
         val subCandidate = calleeReference.candidate
         val resultType = result.resolvedType.substituteType(subCandidate)
         if (calleeReference.isError) {
             subCandidate.argumentMapping?.let {
-                result.replaceArgumentList(buildArgumentListForErrorCall(result.argumentList, it))
+                result.replaceArgumentList(buildArgumentListForErrorCall(originalArgumentList, it))
             }
         } else {
             subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
-                val newArgumentList = buildResolvedArgumentList(it, source = functionCall.argumentList.source)
+                val newArgumentList = buildResolvedArgumentList(originalArgumentList, it)
                 val symbol = subCandidate.symbol
                 val functionIsInline =
                     (symbol as? FirNamedFunctionSymbol)?.fir?.isInline == true || symbol.isArrayConstructorWithLambda
@@ -375,7 +378,7 @@ class FirCallCompletionResultsWriterTransformer(
         }
         val expectedArgumentsTypeMapping = runIf(!calleeReference.isError) { subCandidate.createArgumentsMapping() }
 
-        result.transformWithExpectedTypes(expectedArgumentsTypeMapping)
+        result.transformArgumentList(expectedArgumentsTypeMapping)
 
         result.replaceConeTypeOrNull(resultType)
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, functionCall.source, context.file.source)
@@ -398,8 +401,10 @@ class FirCallCompletionResultsWriterTransformer(
         }
     }
 
-    private fun FirCall.transformWithExpectedTypes(expectedArgumentsTypeMapping: ExpectedArgumentType.ArgumentsMap?) {
-        class SamConversionInsertionTransformer : FirTransformer<Nothing?>() {
+    private fun FirCall.transformArgumentList(expectedArgumentsTypeMapping: ExpectedArgumentType.ArgumentsMap?) {
+        val mapping = (argumentList as? FirResolvedArgumentList)?.mapping
+
+        class ArgumentTransformer : FirTransformer<Nothing?>() {
             override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
                 // We want to handle only the most top-level "real" expressions
                 // We only recursively transform named, spread, lambda argument and vararg expressions.
@@ -422,9 +427,27 @@ class FirCallCompletionResultsWriterTransformer(
 
                 return transformed
             }
+
+            override fun transformNamedArgumentExpression(
+                namedArgumentExpression: FirNamedArgumentExpression,
+                data: Nothing?
+            ): FirStatement {
+                val expression = transformElement(namedArgumentExpression.expression, data)
+                val parameter = mapping?.get(namedArgumentExpression)
+                return if (namedArgumentExpression.isSpread || parameter?.isVararg == true) {
+                    buildSpreadArgumentExpression {
+                        this.source = namedArgumentExpression.source
+                        this.expression = expression
+                        this.isNamed = true
+                        this.isFakeSpread = !namedArgumentExpression.isSpread
+                    }
+                } else {
+                    expression
+                }
+            }
         }
 
-        argumentList.transformArguments(SamConversionInsertionTransformer(), null)
+        argumentList.transformArguments(ArgumentTransformer(), null)
     }
 
     private fun FirExpression.wrapInSamExpression(expectedArgumentType: ConeKotlinType): FirExpression {
@@ -468,9 +491,11 @@ class FirCallCompletionResultsWriterTransformer(
         } else {
             subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
-                annotationCall.replaceArgumentList(buildResolvedArgumentList(it, annotationCall.argumentList.source))
+                annotationCall.replaceArgumentList(buildResolvedArgumentList(annotationCall.argumentList, it))
             }
         }
+
+        annotationCall.transformArgumentList(expectedArgumentsTypeMapping = null)
         return annotationCall
     }
 
@@ -673,21 +698,22 @@ class FirCallCompletionResultsWriterTransformer(
             delegatedConstructorCall.calleeReference as? FirNamedReferenceWithCandidate ?: return delegatedConstructorCall
         val subCandidate = calleeReference.candidate
 
+        val originalArgumentList = delegatedConstructorCall.argumentList
         if (calleeReference.isError) {
             subCandidate.argumentMapping?.let {
-                delegatedConstructorCall.replaceArgumentList(buildArgumentListForErrorCall(delegatedConstructorCall.argumentList, it))
+                delegatedConstructorCall.replaceArgumentList(buildArgumentListForErrorCall(originalArgumentList, it))
             }
         } else {
             subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
-                delegatedConstructorCall.replaceArgumentList(buildResolvedArgumentList(it, delegatedConstructorCall.argumentList.source))
+                delegatedConstructorCall.replaceArgumentList(buildResolvedArgumentList(originalArgumentList, it))
             }
         }
 
         runPCLARelatedTasksForCandidate(subCandidate)
 
         val argumentsMapping = runIf(!calleeReference.isError) { subCandidate.createArgumentsMapping() }
-        delegatedConstructorCall.transformWithExpectedTypes(argumentsMapping)
+        delegatedConstructorCall.transformArgumentList(argumentsMapping)
 
         return delegatedConstructorCall.apply {
             replaceCalleeReference(calleeReference.toResolvedReference())

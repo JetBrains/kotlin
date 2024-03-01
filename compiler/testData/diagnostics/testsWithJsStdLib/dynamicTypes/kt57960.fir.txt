@@ -37,7 +37,7 @@ FILE: kt57960.kt
     }
     private final fun buildSchemaNodes1(): R|kotlin/Unit| {
         R|/jso|<R|dynamic|>(<L> = jso@fun R|dynamic|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
-            Q|Foo|.R|/Foo.create2|(toDOM = create2@fun <anonymous>(domNode: R|Baz|): R|kotlin/Any| <inline=NoInline>  {
+            Q|Foo|.R|/Foo.create2|(create2@fun <anonymous>(domNode: R|Baz|): R|kotlin/Any| <inline=NoInline>  {
                 ^ R|<local>/domNode|.R|/Baz.text|
             }
             )

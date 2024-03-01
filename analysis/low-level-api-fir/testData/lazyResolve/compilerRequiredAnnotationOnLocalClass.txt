@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClass.kt
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClass.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
-        @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|kotlin/Any| {
+        @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
                 super<R|kotlin/Any|>()
             }
@@ -128,7 +128,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClass.kt
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationOnLocalClass.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
-        @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|kotlin/Any| {
+        @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
                 super<R|kotlin/Any|>()
             }

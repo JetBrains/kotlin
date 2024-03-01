@@ -26,6 +26,8 @@ internal class FirSpreadArgumentExpressionImpl(
     override val source: KtSourceElement?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var expression: FirExpression,
+    override val isNamed: Boolean,
+    override val isFakeSpread: Boolean,
 ) : FirSpreadArgumentExpression() {
     @OptIn(UnresolvedExpressionTypeAccess::class)
     override val coneTypeOrNull: ConeKotlinType?

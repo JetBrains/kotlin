@@ -8,7 +8,7 @@ FILE: namedArrayInAnnotation.kt
             public get(): R|kotlin/Array<out kotlin/String>|
 
     }
-    @R|Ann|(strings = vararg(strings = <implicitArrayOf>(String(hello)))) public final class A : R|kotlin/Any| {
+    @R|Ann|(strings = vararg(*<implicitArrayOf>(String(hello)))) public final class A : R|kotlin/Any| {
         public constructor(): R|A| {
             super<R|kotlin/Any|>()
         }

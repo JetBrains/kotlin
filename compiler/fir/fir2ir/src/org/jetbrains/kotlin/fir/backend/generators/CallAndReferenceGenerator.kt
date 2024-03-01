@@ -821,7 +821,7 @@ class CallAndReferenceGenerator(
                 val argument = this@toAnnotationCall.argumentMapping.mapping[parameter.name] ?: return@mapNotNull null
                 argument to parameter
             }.toMap(LinkedHashMap())
-            argumentList = buildResolvedArgumentList(argumentToParameterToMapping)
+            argumentList = buildResolvedArgumentList(original = null, argumentToParameterToMapping)
             calleeReference = buildResolvedNamedReference {
                 name = symbol.classId.shortClassName
                 resolvedSymbol = constructorSymbol

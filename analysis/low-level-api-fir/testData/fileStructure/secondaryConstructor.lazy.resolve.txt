@@ -11,7 +11,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] secondaryConstructor.kt
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
         public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|A| {
-            this<R|A|>(x = Int(1), b = R|<local>/i|.R|kotlin/Int.toString|())
+            this<R|A|>(Int(1), R|<local>/i|.R|kotlin/Int.toString|())
         }
 
     }

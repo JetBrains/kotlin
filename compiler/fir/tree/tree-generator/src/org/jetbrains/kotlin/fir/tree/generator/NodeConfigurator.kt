@@ -610,6 +610,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +booleanField("isSpread")
         }
 
+        spreadArgumentExpression.configure {
+            +booleanField("isNamed")
+            +booleanField("isFakeSpread")
+        }
+
         namedArgumentExpression.configure {
             +name
         }

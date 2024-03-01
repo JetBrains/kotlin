@@ -6,7 +6,6 @@
 package org.jetbrains.kotlinx.serialization.compiler.fir
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -267,7 +266,7 @@ fun FirDeclaration.excludeFromJsExport() {
     val jsExportIgnoreConstructor = jsExportIgnoreAnnotation.declarationSymbols.firstIsInstanceOrNull<FirConstructorSymbol>() ?: return
 
     val jsExportIgnoreAnnotationCall = buildAnnotationCall {
-        argumentList = buildResolvedArgumentList(linkedMapOf())
+        argumentList = FirEmptyArgumentList
         annotationTypeRef = buildResolvedTypeRef {
             type = jsExportIgnoreAnnotation.defaultType()
         }

@@ -24,6 +24,8 @@ abstract class FirSpreadArgumentExpression : FirWrappedArgumentExpression() {
     abstract override val annotations: List<FirAnnotation>
     abstract override val expression: FirExpression
     abstract override val isSpread: Boolean
+    abstract val isNamed: Boolean
+    abstract val isFakeSpread: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitSpreadArgumentExpression(this, data)

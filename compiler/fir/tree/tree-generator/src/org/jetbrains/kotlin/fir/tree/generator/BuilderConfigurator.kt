@@ -377,6 +377,10 @@ object BuilderConfigurator : AbstractFirBuilderConfigurator<FirTreeBuilder>(FirT
             default("symbol", "FirAnonymousInitializerSymbol()")
         }
 
+        builder(spreadArgumentExpression) {
+            defaultFalse("isNamed", "isFakeSpread")
+        }
+
         val abstractResolvedQualifierBuilder by builder {
             fields from resolvedQualifier
         }

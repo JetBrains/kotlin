@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnonymousFunctionExpression
@@ -225,7 +226,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
             dispatchReceiver = call.dispatchReceiver
             this.explicitReceiver = call.explicitReceiver
             extensionReceiver = call.extensionReceiver
-            argumentList = buildResolvedArgumentList(linkedMapOf(argument to parameter.fir))
+            argumentList = buildResolvedArgumentList(original = null, linkedMapOf(argument to parameter.fir))
             calleeReference = buildResolvedNamedReference {
                 name = Name.identifier("let")
                 resolvedSymbol = resolvedLet

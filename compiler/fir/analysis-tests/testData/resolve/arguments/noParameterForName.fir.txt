@@ -2,5 +2,5 @@ FILE: noParameterForName.kt
     public final fun foo(x: R|kotlin/Int|): R|kotlin/Unit| {
     }
     public final fun bar(): R|kotlin/Unit| {
-        R|/foo<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /foo>#|(y = Int(1))
+        R|/foo<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /foo>#|(Int(1))
     }

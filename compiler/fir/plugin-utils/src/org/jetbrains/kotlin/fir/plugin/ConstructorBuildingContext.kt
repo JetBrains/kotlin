@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
+import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.getContainingClassLookupTag
@@ -174,7 +174,7 @@ private fun FirConstructor.generateNoArgDelegatingConstructorCall() {
             name = superConstructorSymbol.name
             resolvedSymbol = superConstructorSymbol
         }
-        argumentList = buildResolvedArgumentList(LinkedHashMap())
+        argumentList = FirEmptyArgumentList
         isThis = false
     }
     replaceDelegatedConstructor(delegatingConstructorCall)

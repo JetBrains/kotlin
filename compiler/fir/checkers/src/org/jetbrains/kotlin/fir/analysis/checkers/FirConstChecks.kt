@@ -92,6 +92,10 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
         return namedArgumentExpression.expression.accept(this, data)
     }
 
+    override fun visitSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: Nothing?): ConstantArgumentKind {
+        return spreadArgumentExpression.expression.accept(this, data)
+    }
+
     override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?): ConstantArgumentKind {
         return if (typeOperatorCall.operation == FirOperation.AS) ConstantArgumentKind.NOT_CONST else ConstantArgumentKind.VALID_CONST
     }
