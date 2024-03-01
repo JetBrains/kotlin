@@ -94,7 +94,7 @@ internal class ExecutableBuilder(
 
     // WARNING: compiles in one-stage mode (sources->executable) even when `mode=TWO_STAGE_MULTI_MODULE`
     override fun build(sourcesDir: File, outputDir: File, dependencies: List<TestCompilationArtifact.KLIB>) =
-        test.compileToExecutable(
+        test.compileToExecutableInOneStage(
             sourcesDir,
             tryPassSystemCacheDirectory,
             freeCompilerArgs = if (freeCompilerArgs.isEmpty()) TestCompilerArgs.EMPTY else TestCompilerArgs(freeCompilerArgs),
@@ -164,30 +164,29 @@ internal class CompiledExecutable(
 }
 
 // WARNING: compiles in one-stage mode (sources->executable) even when `mode=TWO_STAGE_MULTI_MODULE`
-internal fun AbstractNativeSimpleTest.compileToExecutable(
+internal fun AbstractNativeSimpleTest.compileToExecutableInOneStage(
     sourcesDir: File,
     tryPassSystemCacheDirectory: Boolean,
     freeCompilerArgs: TestCompilerArgs,
     vararg dependencies: TestCompilationArtifact.KLIB
-) = compileToExecutable(sourcesDir, tryPassSystemCacheDirectory, freeCompilerArgs, dependencies.asList())
+) = compileToExecutableInOneStage(sourcesDir, tryPassSystemCacheDirectory, freeCompilerArgs, dependencies.asList())
 
 // WARNING: compiles in one-stage mode (sources->executable) even when `mode=TWO_STAGE_MULTI_MODULE`
-internal fun AbstractNativeSimpleTest.compileToExecutable(
+internal fun AbstractNativeSimpleTest.compileToExecutableInOneStage(
     sourcesDir: File,
     tryPassSystemCacheDirectory: Boolean,
     freeCompilerArgs: TestCompilerArgs,
     dependencies: List<TestCompilationArtifact.KLIB>
 ): CompiledExecutable {
     val testCase: TestCase = generateTestCaseWithSingleModule(sourcesDir, freeCompilerArgs)
-    val compilationResult = compileToExecutable(testCase, tryPassSystemCacheDirectory, dependencies.map { it.asLibraryDependency() })
+    val compilationResult = compileToExecutableInOneStage(testCase, tryPassSystemCacheDirectory, dependencies.map { it.asLibraryDependency() })
     return CompiledExecutable(testCase, compilationResult.assertSuccess())
 }
 
 // WARNING: compiles in one-stage mode (sources->executable) even when `mode=TWO_STAGE_MULTI_MODULE`
-internal fun AbstractNativeSimpleTest.compileToExecutable(testCase: TestCase, vararg dependencies: TestCompilationDependency<*>) =
-    compileToExecutable(testCase, true, dependencies.asList())
+internal fun AbstractNativeSimpleTest.compileToExecutableInOneStage(testCase: TestCase, vararg dependencies: TestCompilationDependency<*>) =
+    compileToExecutableInOneStage(testCase, true, dependencies.asList())
 
-// WARNING: compiles in one-stage mode (sources->static cache) even when `mode=TWO_STAGE_MULTI_MODULE`
 internal fun AbstractNativeSimpleTest.compileToStaticCache(
     klib: TestCompilationArtifact.KLIB,
     cacheDir: File,
@@ -317,7 +316,7 @@ private fun AbstractNativeSimpleTest.compileToLibrary(
     return compilation.result.assertSuccess()
 }
 
-private fun AbstractNativeSimpleTest.compileToExecutable(
+private fun AbstractNativeSimpleTest.compileToExecutableInOneStage(
     testCase: TestCase,
     tryPassSystemCacheDirectory: Boolean,
     dependencies: List<TestCompilationDependency<*>>

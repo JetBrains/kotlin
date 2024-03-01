@@ -78,9 +78,9 @@ class CInteropPackagesTest : AbstractNativeSimpleTest() {
                 freeCompilerArgs = TestCompilerArgs.EMPTY
             ).assertSuccess().resultingArtifact
 
-            // KT-66014: TODO convert compileToExecutable() to TestCompilationFactory.testCasesToExecutable(),
+            // KT-66014: TODO convert compileToExecutableInOneStage() to TestCompilationFactory.testCasesToExecutable(),
             // to respect possible `mde=TWO_STAGE_MULTI_MODULE`: factory would then add intermediate LibraryCompilation(kt->klib).
-            compileToExecutable(
+            compileToExecutableInOneStage(
                 generateTestCaseWithSingleFile(
                     sourceFile = ktFile,
                     testKind = TestKind.STANDALONE_NO_TR,
