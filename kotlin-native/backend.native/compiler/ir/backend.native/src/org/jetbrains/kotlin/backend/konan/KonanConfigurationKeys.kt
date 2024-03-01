@@ -19,8 +19,6 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("add debug information")
         val FAKE_OVERRIDE_VALIDATOR: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("fake override validator")
-        val BITCODE_EMBEDDING_MODE: CompilerConfigurationKey<BitcodeEmbedding.Mode>
-                = CompilerConfigurationKey.create("bitcode embedding mode")
         val EMIT_LAZY_OBJC_HEADER_FILE: CompilerConfigurationKey<String?> =
                 CompilerConfigurationKey.create("output file to emit lazy Obj-C header")
         val ENABLE_ASSERTIONS: CompilerConfigurationKey<Boolean>
