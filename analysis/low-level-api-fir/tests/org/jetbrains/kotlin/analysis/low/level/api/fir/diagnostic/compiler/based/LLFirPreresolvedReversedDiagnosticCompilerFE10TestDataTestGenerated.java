@@ -24353,6 +24353,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("OpenInterface.kt")
+      public void testOpenInterface() {
+        runTest("compiler/testData/diagnostics/tests/modifiers/OpenInterface.kt");
+      }
+
+      @Test
       @TestMetadata("primaryConstructorMissingBrackets.kt")
       public void testPrimaryConstructorMissingBrackets() {
         runTest("compiler/testData/diagnostics/tests/modifiers/primaryConstructorMissingBrackets.kt");
