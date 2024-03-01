@@ -10,7 +10,7 @@ fun test(
   cs: CharSequence,
   jcs: JCS
 ) {
-  js <!CAST_NEVER_SUCCEEDS!>as<!> CharSequence
+  js as CharSequence
   js as JCS
 
   s as CharSequence
