@@ -63,10 +63,23 @@ interface InterfaceWithCompanion {
     }
 }
 
+// KT-64708
 @JsExport
 external interface ExportedParentInterface
 
 @JsExport
 interface ExportedChildInterface : ExportedParentInterface {
     fun bar()
+}
+
+// KT-63907
+@JsExport
+interface InterfaceWithDefaultArguments {
+    fun foo(x: Int = 0) = x
+    fun bar(x: Int = 0) = x
+}
+
+@JsExport
+class ImplementorOfInterfaceWithDefaultArguments : InterfaceWithDefaultArguments {
+    override fun bar(x: Int) = x + 1
 }

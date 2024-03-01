@@ -53,5 +53,18 @@ declare namespace JS_TESTS {
                 readonly "foo.ExportedChildInterface": unique symbol;
             };
         }
+        interface InterfaceWithDefaultArguments {
+            foo(x?: number): number;
+            bar(x?: number): number;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.InterfaceWithDefaultArguments": unique symbol;
+            };
+        }
+        class ImplementorOfInterfaceWithDefaultArguments implements foo.InterfaceWithDefaultArguments {
+            constructor();
+            bar(x?: number): number;
+            foo(x?: number): number;
+            readonly __doNotUseOrImplementIt: foo.InterfaceWithDefaultArguments["__doNotUseOrImplementIt"];
+        }
     }
 }

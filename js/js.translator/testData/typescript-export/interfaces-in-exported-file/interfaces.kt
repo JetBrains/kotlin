@@ -68,9 +68,20 @@ interface InterfaceWithCompanion {
 }
 
 
+// KT-64708
 external interface ExportedParentInterface
-
 
 interface ExportedChildInterface : ExportedParentInterface {
     fun bar()
+}
+
+// KT-63907
+interface InterfaceWithDefaultArguments {
+    fun foo(x: Int = 0) = x
+    fun bar(x: Int = 0) = x
+}
+
+
+class ImplementorOfInterfaceWithDefaultArguments : InterfaceWithDefaultArguments {
+    override fun bar(x: Int) = x + 1
 }

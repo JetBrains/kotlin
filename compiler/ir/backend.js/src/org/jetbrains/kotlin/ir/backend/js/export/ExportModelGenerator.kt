@@ -85,6 +85,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             is Exportability.Prohibited -> ErrorDeclaration(exportability.reason)
             is Exportability.Allowed -> {
                 val parent = function.parent
+                val realOverrideTarget = function.realOverrideTarget
                 ExportedFunction(
                     function.getExportedIdentifier(),
                     returnType = exportType(function.returnType),
@@ -96,7 +97,13 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                     ir = function,
                     parameters = (listOfNotNull(function.extensionReceiverParameter) + function.valueParameters)
                         .filter { it.shouldBeExported() }
-                        .memoryOptimizedMap { exportParameter(it) },
+                        .memoryOptimizedMapIndexed { i, it ->
+                            exportParameter(
+                                it,
+                                it.hasDefaultValue
+                                        || realOverrideTarget.valueParameters.getOrNull(i)?.hasDefaultValue == true
+                            )
+                        }
                 )
             }
         }
@@ -106,12 +113,14 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         if (!constructor.isPrimary) return null
         val allValueParameters = listOfNotNull(constructor.extensionReceiverParameter) + constructor.valueParameters
         return ExportedConstructor(
-            parameters = allValueParameters.filterNot { it.isBoxParameter }.memoryOptimizedMap { exportParameter(it) },
+            parameters = allValueParameters
+                .filterNot { it.isBoxParameter }
+                .memoryOptimizedMap { exportParameter(it, it.hasDefaultValue) },
             visibility = constructor.visibility.toExportedVisibility()
         )
     }
 
-    private fun exportParameter(parameter: IrValueParameter): ExportedParameter {
+    private fun exportParameter(parameter: IrValueParameter, hasDefaultValue: Boolean): ExportedParameter {
         // Parameter names do not matter in d.ts files. They can be renamed as we like
         var parameterName = sanitizeName(parameter.name.asString(), withHash = false)
         if (parameterName in allReservedWords)
@@ -120,9 +129,12 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         return ExportedParameter(
             parameterName,
             exportType(parameter.type),
-            parameter.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER
+            hasDefaultValue
         )
     }
+
+    private val IrValueParameter.hasDefaultValue: Boolean
+        get() = origin == JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER
 
     private fun exportProperty(property: IrProperty): ExportedDeclaration? {
         for (accessor in listOfNotNull(property.getter, property.setter)) {
