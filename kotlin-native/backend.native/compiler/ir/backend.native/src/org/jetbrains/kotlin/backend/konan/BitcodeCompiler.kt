@@ -66,7 +66,7 @@ internal class BitcodeCompiler(
                 }
         val bitcodePath = bitcodeFile.absoluteFile.normalize().path
         val objectPath = objectFile.absoluteFile.normalize().path
-        if (configurables is AppleConfigurables && config.configuration.get(BinaryOptions.compileBitcodeWithXcodeLlvm) != false) {
+        if (configurables is AppleConfigurables && config.configuration.get(BinaryOptions.compileBitcodeWithXcodeLlvm) == true) {
             targetTool("clang++", *flags.toTypedArray(), bitcodePath, "-o", objectPath)
         } else {
             hostLlvmTool("clang++", *flags.toTypedArray(), bitcodePath, "-o", objectPath)
