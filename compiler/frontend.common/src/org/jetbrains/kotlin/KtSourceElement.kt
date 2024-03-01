@@ -17,6 +17,7 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.getElementTextWithContext
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
 sealed class KtSourceElementKind {
     abstract val shouldSkipErrorTypeReporting: Boolean
@@ -358,6 +359,22 @@ sealed class KtSourceElement : AbstractKtSourceElement() {
 // NB: in certain situations, psi.node could be null (see e.g. KT-44152)
 // Potentially exceptions can be provoked by elementType / lighterASTNode
 sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
+    companion object {
+        @JvmStatic
+        private val lighterASTNodeUpdater = AtomicReferenceFieldUpdater.newUpdater(
+            KtPsiSourceElement::class.java,
+            LighterASTNode::class.java,
+            "_lighterASTNode"
+        )
+
+        @JvmStatic
+        private val treeStructureNodeUpdater = AtomicReferenceFieldUpdater.newUpdater(
+            KtPsiSourceElement::class.java,
+            FlyweightCapableTreeStructure::class.java,
+            "_treeStructure"
+        )
+    }
+
     override val elementType: IElementType?
         get() = psi.node?.elementType
 
@@ -367,13 +384,31 @@ sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
     override val endOffset: Int
         get() = psi.textRange.endOffset
 
-    override val lighterASTNode: LighterASTNode by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        TreeBackedLighterAST.wrap(psi.node)
-    }
+    @Volatile
+    private var _lighterASTNode: LighterASTNode? = null
+    final override val lighterASTNode: LighterASTNode
+        get() {
+            _lighterASTNode?.let { return it }
+            lighterASTNodeUpdater.compareAndSet(
+                /* obj = */ this,
+                /* expect = */ null,
+                /* update = */ TreeBackedLighterAST.wrap(psi.node)
+            )
+            return _lighterASTNode!!
+        }
 
-    override val treeStructure: FlyweightCapableTreeStructure<LighterASTNode> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        WrappedTreeStructure(psi.containingFile)
-    }
+    @Volatile
+    private var _treeStructure: FlyweightCapableTreeStructure<LighterASTNode>? = null
+    final override val treeStructure: FlyweightCapableTreeStructure<LighterASTNode>
+        get() {
+            _treeStructure?.let { return it }
+            treeStructureNodeUpdater.compareAndSet(
+                /* obj = */ this,
+                /* expect = */ null,
+                /* update = */ WrappedTreeStructure(psi.containingFile)
+            )
+            return _treeStructure!!
+        }
 
     override fun getElementTextInContextForDebug(): String {
         return getElementTextWithContext(psi)
