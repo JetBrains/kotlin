@@ -3857,6 +3857,24 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       public void testKt64066() {
         runTest("compiler/testData/codegen/box/builderInference/issues/kt64066.kt");
       }
+
+      @Test
+      @TestMetadata("kt66229.kt")
+      public void testKt66229() {
+        runTest("compiler/testData/codegen/box/builderInference/issues/kt66229.kt");
+      }
+
+      @Test
+      @TestMetadata("kt66243.kt")
+      public void testKt66243() {
+        runTest("compiler/testData/codegen/box/builderInference/issues/kt66243.kt");
+      }
+
+      @Test
+      @TestMetadata("kt66272.kt")
+      public void testKt66272() {
+        runTest("compiler/testData/codegen/box/builderInference/issues/kt66272.kt");
+      }
     }
 
     @Nested
