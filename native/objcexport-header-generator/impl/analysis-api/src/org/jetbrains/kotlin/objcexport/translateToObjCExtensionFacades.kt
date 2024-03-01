@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterfaceImpl
 
@@ -45,27 +44,22 @@ internal val ObjCInterface.isExtensionsFacade: Boolean
  *
  * Where `Foo` would be the "top level interface file extensions facade" returned by this function.
  *
- * See related [getTopLevelFacade]
+ * See related [translateToObjCTopLevelFacade]
  */
 context(KtAnalysisSession, KtObjCExportSession)
-fun KtFileSymbol.getExtensionFacades(): List<ObjCInterface> {
-
-    val extensions = getFileScope()
-        .getCallableSymbols().filter { it.isExtension }
-        .toList()
+fun KtResolvedObjCExportFile.translateToObjCExtensionFacades(): List<ObjCInterface> {
+    val extensions = callableSymbols
+        .filter { it.isExtension }
         .sortedWith(StableCallableOrder)
         .ifEmpty { return emptyList() }
         .groupBy {
             val classSymbol = it.receiverParameter?.type?.expandedClassSymbol
             classSymbol?.getObjCClassOrProtocolName()?.objCName
         }
-        .mapNotNull { (key, value) ->
-            if (key == null) return@mapNotNull null else key to value
-        }
 
-    return extensions.map { (objCName, extensionSymbols) ->
+    return extensions.mapNotNull { (objCName, extensionSymbols) ->
         ObjCInterfaceImpl(
-            name = objCName,
+            name = objCName ?: return@mapNotNull null,
             comment = null,
             origin = null,
             attributes = emptyList(),

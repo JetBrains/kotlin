@@ -14,8 +14,10 @@ dependencies {
     api(project(":analysis:analysis-api"))
     api(project(":compiler:psi"))
     api(project(":native:objcexport-header-generator"))
+
     implementation(project(":core:compiler.common.native"))
     implementation(project(":kotlin-util-klib"))
+    implementation(project(":native:analysis-api-klib-reader"))
 
     testImplementation(projectTests(":native:objcexport-header-generator"))
     testApi(project(":analysis:analysis-api-standalone"))

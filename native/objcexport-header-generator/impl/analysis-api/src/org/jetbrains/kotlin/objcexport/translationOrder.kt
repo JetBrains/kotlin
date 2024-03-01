@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.psi.KtFile
 
-internal val StableFileOrder: Comparator<KtFile>
-    get() = compareBy<KtFile> { file -> file.packageFqName.asString() }
-        .thenComparing { file -> file.name }
+internal val StableFileOrder: Comparator<KtObjCExportFile>
+    get() = compareBy<KtObjCExportFile> { file -> file.packageFqName.asString() }
+        .thenComparing { file -> file.fileName }
 
 internal val StablePropertyOrder: Comparator<KtPropertySymbol> = compareBy { it.name }
 
@@ -54,17 +53,6 @@ internal val StableCallableOrder: Comparator<KtCallableSymbol> = compareBy<KtCal
     .thenComparing(StableConstructorOrder)
     .thenComparing(StablePropertyOrder)
     .thenComparing(StableFunctionOrder)
-
-internal val StableSymbolOrder: Comparator<KtSymbol> = compareBy<KtSymbol> { symbol ->
-    when (symbol) {
-        is KtFileSymbol -> 0
-        is KtClassifierSymbol -> 1
-        is KtCallableSymbol -> 2
-        else -> Int.MAX_VALUE
-    }
-}
-    .thenComparing(StableClassifierOrder)
-    .thenComparing(StableCallableOrder)
 
 private inline fun <T, reified R> Comparator<T>.thenComparing(comparator: Comparator<R>): Comparator<T> where R : T {
     return thenComparing { a, b ->

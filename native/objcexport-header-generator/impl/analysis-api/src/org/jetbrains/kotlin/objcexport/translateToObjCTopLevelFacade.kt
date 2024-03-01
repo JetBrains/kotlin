@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterfaceImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.toNameAttributes
@@ -43,18 +42,17 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrPr
  *
  * Where `FooKt` would be the "top level interface file facade" returned by this function.
  *
- * See related [getExtensionFacades]
+ * See related [translateToObjCExtensionFacades]
  */
 context(KtAnalysisSession, KtObjCExportSession)
-fun KtFileSymbol.getTopLevelFacade(): ObjCInterface? {
-    val extensions = getFileScope().getCallableSymbols()
+fun KtResolvedObjCExportFile.translateToObjCTopLevelFacade(): ObjCInterface? {
+    val extensions = callableSymbols
         .filter { !it.isExtension }
         .toList()
         .sortedWith(StableCallableOrder)
         .ifEmpty { return null }
 
     val fileName = getObjCFileClassOrProtocolName()
-        ?: throw IllegalStateException("File '$this' cannot be translated without file name")
 
     return ObjCInterfaceImpl(
         name = fileName.objCName,
