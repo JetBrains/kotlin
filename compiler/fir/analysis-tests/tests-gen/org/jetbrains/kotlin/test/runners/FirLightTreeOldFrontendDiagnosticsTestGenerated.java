@@ -1090,6 +1090,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("postfixIncSmartCast.kt")
+    public void testPostfixIncSmartCast() {
+      runTest("compiler/testData/diagnostics/tests/postfixIncSmartCast.kt");
+    }
+
+    @Test
     @TestMetadata("prefixIncReturnType.kt")
     public void testPrefixIncReturnType() {
       runTest("compiler/testData/diagnostics/tests/prefixIncReturnType.kt");
@@ -33088,6 +33094,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       @TestMetadata("incDecToNull.kt")
       public void testIncDecToNull() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/incDecToNull.kt");
+      }
+
+      @Test
+      @TestMetadata("incrementAfterAssignment.kt")
+      public void testIncrementAfterAssignment() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/incrementAfterAssignment.kt");
       }
 
       @Test
