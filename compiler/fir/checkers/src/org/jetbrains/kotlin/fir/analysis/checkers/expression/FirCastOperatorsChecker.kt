@@ -82,12 +82,6 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         }
     }
 
-    private fun areUnrelated(a: TypeInfo, b: TypeInfo, context: CheckerContext) =
-        !a.isSubtypeOf(b, context) && !b.isSubtypeOf(a, context)
-
-    private fun TypeInfo.isSubtypeOf(other: TypeInfo, context: CheckerContext) =
-        notNullType.isSubtypeOf(other.notNullType, context.session)
-
     /**
      * K1 reports different diagnostics for different
      * cases, and this enum helps to replicate the K1's

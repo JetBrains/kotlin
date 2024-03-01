@@ -24,6 +24,7 @@ import java.util.*
 open class TypeCheckerState(
     val isErrorTypeEqualsToAnything: Boolean,
     val isStubTypeEqualsToAnything: Boolean,
+    val mapPlatformTypesToKotlin: Boolean,
     val allowedTypeVariable: Boolean,
     val typeSystemContext: TypeSystemContext,
     val kotlinTypePreparator: AbstractTypePreparator,
@@ -629,7 +630,7 @@ object AbstractTypeChecker {
         subType: SimpleTypeMarker,
         superConstructor: TypeConstructorMarker
     ): List<SimpleTypeMarker> = with(state.typeSystemContext) {
-        subType.fastCorrespondingSupertypes(superConstructor)?.let {
+        subType.fastCorrespondingSupertypes(superConstructor, state.mapPlatformTypesToKotlin)?.let {
             return it
         }
 

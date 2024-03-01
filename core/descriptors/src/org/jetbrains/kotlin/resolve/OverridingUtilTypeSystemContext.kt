@@ -28,12 +28,14 @@ class OverridingUtilTypeSystemContext(
 
     override fun newTypeCheckerState(
         errorTypesEqualToAnything: Boolean,
-        stubTypesEqualToAnything: Boolean
+        stubTypesEqualToAnything: Boolean,
+        mapPlatformTypesToKotlin: Boolean
     ): TypeCheckerState {
         if (customSubtype == null) {
             return createClassicTypeCheckerState(
                 errorTypesEqualToAnything,
                 stubTypesEqualToAnything,
+                mapPlatformTypesToKotlin,
                 typeSystemContext = this,
                 kotlinTypeRefiner = kotlinTypeRefiner,
                 kotlinTypePreparator = kotlinTypePreparator,
@@ -41,7 +43,9 @@ class OverridingUtilTypeSystemContext(
         }
 
         return object : TypeCheckerState(
-            errorTypesEqualToAnything, stubTypesEqualToAnything, allowedTypeVariable = true,
+            errorTypesEqualToAnything, stubTypesEqualToAnything,
+            mapPlatformTypesToKotlin = mapPlatformTypesToKotlin,
+            allowedTypeVariable = true,
             typeSystemContext = this,
             kotlinTypePreparator, kotlinTypeRefiner,
         ) {

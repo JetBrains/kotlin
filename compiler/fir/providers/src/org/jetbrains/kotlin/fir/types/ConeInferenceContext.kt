@@ -119,10 +119,12 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun newTypeCheckerState(
         errorTypesEqualToAnything: Boolean,
-        stubTypesEqualToAnything: Boolean
+        stubTypesEqualToAnything: Boolean,
+        mapPlatformTypesToKotlin: Boolean,
     ): TypeCheckerState = TypeCheckerState(
         errorTypesEqualToAnything,
         stubTypesEqualToAnything,
+        mapPlatformTypesToKotlin = mapPlatformTypesToKotlin,
         allowedTypeVariable = true,
         typeSystemContext = this,
         kotlinTypePreparator = ConeTypePreparator(session),

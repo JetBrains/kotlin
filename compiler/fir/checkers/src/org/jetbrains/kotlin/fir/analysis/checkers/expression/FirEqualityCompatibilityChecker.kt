@@ -110,13 +110,10 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
 
         return when {
             l.type.isNothingOrNullableNothing || r.type.isNothingOrNullableNothing -> false
-            oneIsFinal -> !l.isSubtypeOf(r, context) && !r.isSubtypeOf(l, context)
+            oneIsFinal -> areUnrelated(l, r, context)
             else -> false
         }
     }
-
-    private fun TypeInfo.isSubtypeOf(other: TypeInfo, context: CheckerContext) =
-        notNullType.isSubtypeOf(other.notNullType, context.session)
 
     /**
      * K1 reports different diagnostics for different
@@ -155,7 +152,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         val shouldProperlyReportError = context.languageVersionSettings.supportsFeature(LanguageFeature.ReportErrorsForComparisonOperators)
 
         // In this case K1 reports nothing
-        val shouldRelaxDiagnostic = (l.isPrimitive || r.isPrimitive) && (l.isSubtypeOf(r, context) || r.isSubtypeOf(l, context))
+        val shouldRelaxDiagnostic = (l.isPrimitive || r.isPrimitive) && areRelated(l, r, context)
                 && !shouldProperlyReportError
 
         return when {

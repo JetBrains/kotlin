@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @ThreadSafeMutableState
 class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSessionComponent {
@@ -31,29 +33,47 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
 
     fun getCorrespondingSupertypes(
         type: ConeKotlinType,
-        supertypeConstructor: TypeConstructorMarker
+        supertypeConstructor: TypeConstructorMarker,
+        mapPlatformTypesToKotlin: Boolean = false,
     ): List<ConeClassLikeType>? {
         if (type !is ConeClassLikeType || supertypeConstructor !is ConeClassLikeLookupTag) return null
 
         val typeContext = session.typeContext
         val typeCheckerState = typeContext.newTypeCheckerState(
             errorTypesEqualToAnything = false,
-            stubTypesEqualToAnything = true
+            stubTypesEqualToAnything = true,
         )
 
         val lookupTag = type.lookupTag
-        if (lookupTag == supertypeConstructor) return listOf(captureType(type, typeContext))
+        val platformMappedSupertypeConstructor = runIf(mapPlatformTypesToKotlin) { supertypeConstructor.kotlinTypeIfPlatform }
+        if (
+            lookupTag == supertypeConstructor ||
+            platformMappedSupertypeConstructor != null && platformMappedSupertypeConstructor == lookupTag.kotlinTypeIfPlatform
+        ) {
+            return listOf(captureType(type, typeContext))
+        }
 
-        val resultTypes =
-            cache.getValue(lookupTag, typeCheckerState)?.getOrDefault(supertypeConstructor, emptyList()) ?: return null
-        if (type.typeArguments.isEmpty()) return resultTypes
+        val allSupertypes = cache.getValue(lookupTag, typeCheckerState)
+        val matchingSupertypes = allSupertypes?.get(supertypeConstructor)
+            ?: platformMappedSupertypeConstructor?.let { allSupertypes?.getRegardlessPlatformTypes(it) }
+            ?: return null
+
+        if (type.typeArguments.isEmpty()) return matchingSupertypes
 
         val capturedType = captureType(type, typeContext)
         val substitutionSupertypePolicy = typeContext.substitutionSupertypePolicy(capturedType)
-        return resultTypes.map {
+        return matchingSupertypes.map {
             substitutionSupertypePolicy.transformType(typeCheckerState, it) as ConeClassLikeType
         }
     }
+
+    private fun <T> Map<ConeClassLikeLookupTag, T>.getRegardlessPlatformTypes(supertypeConstructor: ConeClassLikeLookupTag): T? =
+        firstNotNullOfOrNull { (lookupTag, value) ->
+            value.takeIf { lookupTag.kotlinTypeIfPlatform == supertypeConstructor }
+        }
+
+    private val ConeClassLikeLookupTag.kotlinTypeIfPlatform: ConeClassLikeLookupTag
+        get() = session.platformClassMapper.getCorrespondingKotlinClass(classId)?.toLookupTag() ?: this
 
     private fun captureType(type: ConeClassLikeType, typeSystemContext: ConeTypeContext): ConeClassLikeType =
         (typeSystemContext.captureFromArguments(type, CaptureStatus.FOR_SUBTYPING) ?: type) as ConeClassLikeType

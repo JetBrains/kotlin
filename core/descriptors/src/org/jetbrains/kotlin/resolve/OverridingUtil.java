@@ -404,7 +404,7 @@ public class OverridingUtil {
         if (firstParameters.isEmpty()) {
             return new OverridingUtilTypeSystemContext(
                     null, equalityAxioms, kotlinTypeRefiner, kotlinTypePreparator, customSubtype
-            ).newTypeCheckerState(true, true);
+            ).newTypeCheckerState(true, true, false);
         }
 
         Map<TypeConstructor, TypeConstructor> matchingTypeConstructors = new HashMap<TypeConstructor, TypeConstructor>();
@@ -414,7 +414,7 @@ public class OverridingUtil {
 
         return new OverridingUtilTypeSystemContext(
                 matchingTypeConstructors, equalityAxioms, kotlinTypeRefiner, kotlinTypePreparator, customSubtype
-        ).newTypeCheckerState(true, true);
+        ).newTypeCheckerState(true, true, false);
     }
 
     @Nullable

@@ -74,9 +74,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return (this as? ConeIntegerLiteralType)?.possibleTypes ?: emptyList()
     }
 
-    override fun SimpleTypeMarker.fastCorrespondingSupertypes(constructor: TypeConstructorMarker): List<SimpleTypeMarker>? {
+    override fun SimpleTypeMarker.fastCorrespondingSupertypes(
+        constructor: TypeConstructorMarker,
+        mapPlatformTypesToKotlin: Boolean,
+    ): List<SimpleTypeMarker>? {
         require(this is ConeKotlinType)
-        return session.correspondingSupertypesCache.getCorrespondingSupertypes(this, constructor)
+        return session.correspondingSupertypesCache.getCorrespondingSupertypes(this, constructor, mapPlatformTypesToKotlin)
     }
 
     override fun SimpleTypeMarker.isIntegerLiteralType(): Boolean {

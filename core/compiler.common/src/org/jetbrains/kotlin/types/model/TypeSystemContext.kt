@@ -100,7 +100,8 @@ interface TypeSystemTypeFactoryContext: TypeSystemBuiltInsContext {
 interface TypeCheckerProviderContext {
     fun newTypeCheckerState(
         errorTypesEqualToAnything: Boolean,
-        stubTypesEqualToAnything: Boolean
+        stubTypesEqualToAnything: Boolean,
+        mapPlatformTypesToKotlin: Boolean = false
     ): TypeCheckerState
 }
 
@@ -481,7 +482,10 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun SimpleTypeMarker.isClassType(): Boolean = typeConstructor().isClassTypeConstructor()
 
-    fun SimpleTypeMarker.fastCorrespondingSupertypes(constructor: TypeConstructorMarker): List<SimpleTypeMarker>? = null
+    fun SimpleTypeMarker.fastCorrespondingSupertypes(
+        constructor: TypeConstructorMarker,
+        mapPlatformTypesToKotlin: Boolean = false,
+    ): List<SimpleTypeMarker>? = null
 
     fun SimpleTypeMarker.isIntegerLiteralType(): Boolean = typeConstructor().isIntegerLiteralTypeConstructor()
 
