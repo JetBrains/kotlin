@@ -10,12 +10,14 @@ import org.gradle.api.logging.Logging
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.jetbrains.kotlin.build.report.metrics.ValueType
 import org.jetbrains.kotlin.build.report.statistics.HttpReportService
-import org.jetbrains.kotlin.build.report.statistics.file.FileReportService
 import org.jetbrains.kotlin.build.report.statistics.formatSize
 import org.jetbrains.kotlin.build.report.statistics.BuildFinishStatisticsData
 import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
 import org.jetbrains.kotlin.build.report.statistics.StatTag
+import org.jetbrains.kotlin.build.report.statistics.*
+import org.jetbrains.kotlin.build.report.statistics.file.ReadableFileReportData
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.plugin.statistics.GradleFileReportService
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.gradle.report.data.GradleCompileStatisticsData
@@ -64,13 +66,16 @@ class BuildReportsService {
             executorService.submit { reportBuildFinish(parameters) }
         }
         reportingSettings.fileReportSettings?.also {
-            FileReportService.reportBuildStatInFile(
+            GradleFileReportService(
                 it.buildReportDir,
                 parameters.projectName,
                 it.includeMetricsInReport,
-                transformOperationRecordsToCompileStatisticsData(buildOperationRecords, parameters, onlyKotlinTask = false),
-                parameters.startParameters,
-                failureMessages.filter { it.isNotEmpty() },
+            ).process(
+                ReadableFileReportData(
+                    transformOperationRecordsToCompileStatisticsData(buildOperationRecords, parameters, onlyKotlinTask = false),
+                    parameters.startParameters,
+                    failureMessages.filter { it.isNotEmpty() },
+                ),
                 loggerAdapter
             )
         }
@@ -81,6 +86,10 @@ class BuildReportsService {
 
         if (reportingSettings.experimentalTryK2ConsoleOutput) {
             reportTryK2ToConsole(buildData)
+        }
+
+        reportingSettings.jsonOutputDir?.also {
+            JsonReportService(it, parameters.projectName).process(buildData, loggerAdapter)
         }
 
         //It's expected that bad internet connection can cause a significant delay for big project

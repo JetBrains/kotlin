@@ -11,11 +11,8 @@ import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.kotlin.build.report.FileReportSettings
 import org.jetbrains.kotlin.build.report.HttpReportSettings
 import org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.build.report.statistics.BuildDataType
-import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
-import org.jetbrains.kotlin.build.report.statistics.HttpReportService
-import org.jetbrains.kotlin.build.report.statistics.StatTag
-import org.jetbrains.kotlin.build.report.statistics.file.FileReportService
+import org.jetbrains.kotlin.build.report.statistics.*
+import org.jetbrains.kotlin.build.report.statistics.file.ReadableFileReportData
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinLogger
 import java.io.File
 import java.net.InetAddress
@@ -192,9 +189,14 @@ class JpsStatisticsReportServiceImpl(
         val compileStatisticsData = finishedModuleBuildMetrics.map { it.flush(context) }
         httpService?.sendData(compileStatisticsData, loggerAdapter)
         fileReportSettings?.also {
-            FileReportService.reportBuildStatInFile(
-                it.buildReportDir, context.projectDescriptor.project.name, true, compileStatisticsData,
-                BuildStartParameters(tasks = listOf(jpsBuildTaskName)), emptyList(), loggerAdapter
+            JpsFileReportService(
+                it.buildReportDir, context.projectDescriptor.project.name, true
+            ).process(
+                ReadableFileReportData(
+                    compileStatisticsData,
+                    BuildStartParameters(tasks = listOf(jpsBuildTaskName)), emptyList()
+                ),
+                loggerAdapter
             )
         }
     }

@@ -9,7 +9,7 @@ import java.io.IOException
 
 private val LINE_SEPARATOR = System.getProperty("line.separator")
 
-internal class Printer(
+class Printer(
     private val out: Appendable,
     private val indentUnit: String = "  ",
     private var indent: String = ""

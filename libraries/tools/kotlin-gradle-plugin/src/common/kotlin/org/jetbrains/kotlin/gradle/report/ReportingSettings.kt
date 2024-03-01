@@ -19,10 +19,11 @@ data class ReportingSettings(
     val buildScanReportSettings: BuildScanSettings? = null,
     val singleOutputFile: File? = null,
     val experimentalTryK2ConsoleOutput: Boolean = false,
+    val jsonOutputDir: File? = null,
     val includeCompilerArguments: Boolean = false,
 ) : Serializable {
     companion object {
-        const val serialVersionUID: Long = 1
+        const val serialVersionUID: Long = 2L
     }
 }
 

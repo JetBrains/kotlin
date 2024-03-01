@@ -5,18 +5,29 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.google.gson.*
+import com.google.gson.stream.JsonReader
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.statistics.StatTag
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.internal.build.metrics.GradleBuildMetricsData
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
+import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.GRADLE_ENTERPRISE_PLUGIN_VERSION
+import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.junit.jupiter.api.DisplayName
 import java.io.ObjectInputStream
+import java.lang.reflect.Type
 import java.nio.file.Path
 import kotlin.io.path.*
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.GRADLE_ENTERPRISE_PLUGIN_VERSION
 
 @DisplayName("Build reports")
 @JvmGradlePluginTests
@@ -92,17 +103,25 @@ class BuildReportsIT : KGPBaseTest() {
     )
     @GradleTest
     fun testBuildMetricsForJsProject(gradleVersion: GradleVersion) {
-        testBuildReportInFile("kotlin-js-plugin-project", "compileKotlinJs", gradleVersion,
-                              languageVersion = KotlinVersion.KOTLIN_1_7.version)
+        testBuildReportInFile(
+            "kotlin-js-plugin-project",
+            "compileKotlinJs",
+            gradleVersion,
+            languageVersion = KotlinVersion.KOTLIN_1_7.version
+        )
     }
 
-    private fun testBuildReportInFile(project: String, task: String, gradleVersion: GradleVersion,
-                                      languageVersion: String = KotlinVersion.KOTLIN_2_0.version) {
+    private fun testBuildReportInFile(
+        project: String,
+        task: String,
+        gradleVersion: GradleVersion,
+        languageVersion: String = KotlinVersion.KOTLIN_2_0.version,
+    ) {
         project(project, gradleVersion) {
             build(task) {
                 assertBuildReportPathIsPrinted()
             }
-            //Should contains build metrics for all compile kotlin tasks
+            //Should contain build metrics for all compile kotlin tasks
             validateBuildReportFile(KotlinVersion.DEFAULT.version)
         }
 
@@ -110,7 +129,7 @@ class BuildReportsIT : KGPBaseTest() {
             build(task, buildOptions = buildOptions.copy(languageVersion = languageVersion)) {
                 assertBuildReportPathIsPrinted()
             }
-            //Should contains build metrics for all compile kotlin tasks
+            //Should contain build metrics for all compile kotlin tasks
             validateBuildReportFile(languageVersion)
         }
     }
@@ -389,4 +408,80 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("json validation")
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+    )
+    @GradleTest
+    fun testJsonBuildMetricsFileValidation(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            buildAndFail(
+                "compileKotlin", "-Pkotlin.build.report.output=JSON",
+            ) {
+                assertOutputContains("Can't configure json report: 'kotlin.build.report.json.directory' property is mandatory")
+            }
+        }
+    }
+
+    @DisplayName("json report")
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+    )
+    @GradleTest
+    fun testJsonBuildReport(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            build(
+                "compileKotlin",
+                "-Pkotlin.build.report.output=JSON",
+                "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}"
+            ) {
+                //TODO: KT-66071 update deserialization
+                val gsonBuilder = GsonBuilder()
+                    .registerTypeAdapter(BuildOperationRecord::class.java, object : JsonDeserializer<BuildOperationRecord> {
+                        override fun deserialize(
+                            json: JsonElement?,
+                            typeOfT: Type?,
+                            context: JsonDeserializationContext?,
+                        ): BuildOperationRecord? {
+                            //workaround to read both TaskRecord and TransformRecord
+                            return context?.deserialize(json, BuildOperationRecordImpl::class.java)
+                        }
+                    }).registerTypeAdapter(ChangedFiles::class.java, object : JsonDeserializer<ChangedFiles> {
+                        override fun deserialize(
+                            json: JsonElement?,
+                            typeOfT: Type?,
+                            context: JsonDeserializationContext,
+                        ): ChangedFiles? {
+                            return null //ignore source changes right now
+                        }
+                    })
+
+                val jsonReport = projectPath.getSingleFileInDir("report")
+                val buildExecutionData = jsonReport.bufferedReader().use {
+                    gsonBuilder.create().fromJson(JsonReader(it), BuildExecutionData::class.java) as BuildExecutionData
+                }
+                val buildOperationRecords =
+                    buildExecutionData.buildOperationRecord.first { it.path == ":compileKotlin" } as BuildOperationRecordImpl
+                assertEquals(KotlinVersion.DEFAULT, buildOperationRecords.kotlinLanguageVersion)
+            }
+        }
+    }
+
 }
+
+data class BuildOperationRecordImpl(
+    override val path: String,
+    override val classFqName: String,
+    override val isFromKotlinPlugin: Boolean,
+    override val startTimeMs: Long, // Measured by System.currentTimeMillis(),
+    override val totalTimeMs: Long,
+    override val buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>,
+    override val didWork: Boolean,
+    override val skipMessage: String?,
+    override val icLogLines: List<String>,
+    //taskRecords
+    val kotlinLanguageVersion: KotlinVersion?,
+    val changedFiles: ChangedFiles? = null,
+    val compilerArguments: Array<String> = emptyArray(),
+    val statTags: Set<StatTag> = emptySet(),
+) : BuildOperationRecord
