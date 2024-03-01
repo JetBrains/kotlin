@@ -236,7 +236,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         require(newType is ConeKotlinType)
         return when (this) {
             is ConeKotlinType -> newType
-            is ConeStarProjection -> ConeStarProjection
             is ConeKotlinTypeProjectionOut -> ConeKotlinTypeProjectionOut(newType)
             is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(newType)
             is ConeKotlinTypeConflictingProjection -> ConeKotlinTypeConflictingProjection(newType)
