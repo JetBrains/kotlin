@@ -62,6 +62,24 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
     }
 
+CONSTANT_EVALUATION:
+TARGET: public open override [<synthetic> CONSTANT_EVALUATION] val something: R|kotlin/String|
+    public [<synthetic> ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/String| {
+        ^getSomething String(42)
+    }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(CONSTANT_EVALUATION)] fun getSomething(): R|kotlin/String| {
+            ^getSomething String(42)
+        }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 TARGET: public open override [<synthetic> ANNOTATION_ARGUMENTS] val something: R|kotlin/String|
     public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {

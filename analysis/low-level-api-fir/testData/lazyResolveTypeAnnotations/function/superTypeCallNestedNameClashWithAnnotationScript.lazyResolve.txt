@@ -568,6 +568,63 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotationScript.kts
         }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotationScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-superTypeCallNestedNameClashWithAnnotationScript.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+        }
+
+        public open [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|second/Base<T>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClass : R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  kotlin/Int>>| {
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
+                LAZY_super<R|@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  kotlin/Int>>|>
+            }
+
+            public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+            public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+                private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final const [ResolvedTo(STATUS)] val outer: <implicit> = LAZY_EXPRESSION
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+                public final const [ResolvedTo(STATUS)] val inner: <implicit> = LAZY_EXPRESSION
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            }
+
+        }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotationScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -737,4 +794,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superTypeCallNestedNameClashWithAnnotationScrip
             }
 
         }
-

@@ -278,6 +278,34 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
         }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-superTypeCallNameClashScript.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public open [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor(): R|second/Base| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClass : R|second/Base| {
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
+                LAZY_super<R|second/Base|>
+            }
+
+            public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/MyClass.Base| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -360,4 +388,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superTypeCallNameClashScript.kts
             }
 
         }
-

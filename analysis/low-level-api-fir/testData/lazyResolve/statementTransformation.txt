@@ -138,6 +138,20 @@ FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(CONSTANT_EVALUATION)] <script-statementTransformation.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)

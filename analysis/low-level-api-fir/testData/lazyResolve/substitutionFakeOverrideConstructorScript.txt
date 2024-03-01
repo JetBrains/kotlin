@@ -208,6 +208,27 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideConstructorScript.kts
         }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideConstructorScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideConstructorScript.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public abstract [ResolvedTo(CONSTANT_EVALUATION)] class SubClass : R|second/AbstractClass<kotlin/Int>| {
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
+                LAZY_super<R|second/AbstractClass<kotlin/Int>|>
+            }
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] t: R|T|): R|second/AbstractClass<T>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideConstructorScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -269,4 +290,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] substitutionFakeOverrideConstructorScript.kts
             }
 
         }
-

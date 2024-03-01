@@ -118,6 +118,18 @@ FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val a: String = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] get(): String
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Ann : R|kotlin/Annotation| {

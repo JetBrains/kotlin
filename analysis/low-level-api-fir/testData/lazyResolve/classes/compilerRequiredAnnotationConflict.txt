@@ -328,6 +328,39 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
+    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
+                LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] enum entry CLASS: R|Some.AnnotationTarget|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun values(): R|kotlin/Array<Some.AnnotationTarget>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+
+        }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
     public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {

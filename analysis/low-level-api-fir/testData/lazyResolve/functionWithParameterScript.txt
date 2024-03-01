@@ -120,6 +120,20 @@ FILE: [ResolvedTo(IMPORTS)] functionWithParameterScript.kts
         }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] functionWithParameterScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-functionWithParameterScript.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] interface I : R|kotlin/Any| {
+        }
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe([ResolvedTo(CONSTANT_EVALUATION)] param: R|I|): R|kotlin/Unit| {
+            ^resolveMe Q|kotlin/Unit|
+        }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithParameterScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -160,4 +174,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] functionWithParameterScript.kts
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe([ResolvedTo(BODY_RESOLVE)] param: R|I|): R|kotlin/Unit| {
             ^resolveMe Q|kotlin/Unit|
         }
-

@@ -130,6 +130,20 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
     @R|Foo<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Foo.s] s: String): R|Foo<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): String
+
+    }
+    @R|Foo<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| {
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
     public final [ResolvedTo(STATUS)] annotation class Foo<[ResolvedTo(STATUS)] T> : R|kotlin/Annotation| {

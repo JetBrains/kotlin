@@ -172,6 +172,25 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterBoundsScript.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe([ResolvedTo(CONSTANT_EVALUATION)] foo: R|Foo|): R|kotlin/Unit| {
+            foo#.util#()
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -231,4 +250,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterBoundsScript.kts
         public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] F : R|Foo|, [ResolvedTo(BODY_RESOLVE)] B : R|Bar<F>|> R|F|.util(): R|B| {
             ^util Null(null)!!
         }
-

@@ -208,6 +208,27 @@ FILE: [ResolvedTo(IMPORTS)] superTypes.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] superTypes.kt
+    public open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public open [ResolvedTo(RAW_FIR)] class B : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<A>
+        }
+
+    }
+    public open [ResolvedTo(CONSTANT_EVALUATION)] class resolveMe : R|A| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            LAZY_super<A>
+        }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] superTypes.kt
     public open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {

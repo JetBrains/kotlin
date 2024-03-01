@@ -252,6 +252,35 @@ FILE: [ResolvedTo(IMPORTS)] resultBodyAnnotation.kts
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Unit|
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] resultBodyAnnotation.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-resultBodyAnnotation.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=foo/Anno.position] position: R|kotlin/String|): R|foo/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+        }
+
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        }
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] val $$result: R|kotlin/Unit| = @R|foo/Anno|[Types](position = <strcat>(String(call ), R|foo/constant|)) R|foo/foo|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            @R|foo/Anno|[Types](position = <strcat>(String(property ), R|foo/constant|)) [ResolvedTo(RAW_FIR)] lval i: R|@R|foo/Anno|(position = <strcat>(String(local type ), R|foo/constant|))  kotlin/Int|
+        }
+        )
+            public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Unit|
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] resultBodyAnnotation.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)

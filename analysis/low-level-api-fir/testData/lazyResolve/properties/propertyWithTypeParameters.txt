@@ -52,6 +52,13 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParameters.kt
             ^ TODO#()
         }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParameters.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] val <[ResolvedTo(CONSTANT_EVALUATION)] T : R|kotlin/Int|, [ResolvedTo(CONSTANT_EVALUATION)] K> R|T|.resolveMe: R|K|
+        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|K| {
+            ^ TODO#()
+        }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParameters.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] K> R|T|.resolveMe: R|K|

@@ -102,6 +102,18 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
             }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-propertyGetterWithImplicitTypeScript.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] val prop: R|kotlin/Int|
+            public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int| {
+                ^ Int(42)
+            }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)

@@ -88,6 +88,15 @@ FILE: [ResolvedTo(IMPORTS)] contractScript2.kts
         public? final? inline [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] block: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] contractScript2.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(CONSTANT_EVALUATION)] <script-contractScript2.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? inline [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] block: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] contractScript2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)

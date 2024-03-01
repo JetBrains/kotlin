@@ -156,6 +156,25 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithExplicitType.kt
         @Anno[Unresolved](<strcat>(String(setter ), prop#)) set#(@Anno[Unresolved](<strcat>(String(setter parameter ), prop#)) value#) = Unit#
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] localPropertyWithExplicitType.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=myPack/Anno.position] position: String): R|myPack/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun ttt(): R|kotlin/Unit| {
+        @Anno[Unresolved](<strcat>(String(property ), prop#)) [ResolvedTo(RAW_FIR)] lvar <@Anno[Unresolved](<strcat>(String(type parameter ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), prop#)) String>> @RECEIVER:Anno[Unresolved](<strcat>(String(receiver ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested receiver type ), prop#)) <ERROR TYPE REF: Incomplete code>>.variableToResolve: @Anno[Unresolved](<strcat>(String(return type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested return type ), prop#)) Int>>
+        @Anno[Unresolved](<strcat>(String(getter ), prop#)) get#() = String(str)
+        @Anno[Unresolved](<strcat>(String(setter ), prop#)) set#(@Anno[Unresolved](<strcat>(String(setter parameter ), prop#)) value#) = Unit#
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localPropertyWithExplicitType.kt
     @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {

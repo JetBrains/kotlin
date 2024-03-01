@@ -120,6 +120,20 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultVa
         }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? const [ResolvedTo(RAW_FIR)] val myNumber: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun topLevelFunction([ResolvedTo(CONSTANT_EVALUATION)] firstParam: R|kotlin/Int|, [ResolvedTo(CONSTANT_EVALUATION)] secondParam: R|kotlin/String| = <strcat>(String(My str ), firstParam#.plus#(myNumber#).toString#())): R|kotlin/Int| {
+            ^topLevelFunction Int(42)
+        }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)

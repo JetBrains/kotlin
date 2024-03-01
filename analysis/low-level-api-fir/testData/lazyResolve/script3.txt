@@ -378,6 +378,44 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
         }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] script3.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(CONSTANT_EVALUATION)] <script-script3.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] get(): String
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
+
+            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            variable# = String(1)
+        }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] script3.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -524,4 +562,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script3.kts
         [ResolvedTo(BODY_RESOLVE)] init {
             R|/variable| = String(1)
         }
-

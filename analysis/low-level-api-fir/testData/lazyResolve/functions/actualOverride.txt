@@ -450,6 +450,52 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] common.kt
+    public open expect [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>|
+
+        public open expect [ResolvedTo(STATUS)] fun existingMethodInBase([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Unit|
+
+    }
+    public open [ResolvedTo(STATUS)] class Transitive : R|Base<kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Transitive] constructor(): R|Transitive| {
+            LAZY_super<R|Base<kotlin/String>|>
+        }
+
+    }
+    public open expect [ResolvedTo(RAW_FIR)] class Foo : Transitive {
+        public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethod(): R|kotlin/Unit|
+
+        public? final? expect [ResolvedTo(RAW_FIR)] val existingParam: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): Int
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] jvm.kt
+    public open actual [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public open actual [ResolvedTo(STATUS)] fun existingMethodInBase([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public open actual [ResolvedTo(STATUS)] class Foo : R|Transitive| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|Transitive|>
+        }
+
+        public final actual [ResolvedTo(STATUS)] fun existingMethod(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final actual [ResolvedTo(STATUS)] val existingParam: R|kotlin/Int| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/Int|
+
+        public open override [ResolvedTo(CONSTANT_EVALUATION)] fun existingMethodInBase([ResolvedTo(CONSTANT_EVALUATION)] param: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] common.kt
     public open expect [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {

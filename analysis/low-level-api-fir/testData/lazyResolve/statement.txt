@@ -328,6 +328,39 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
         }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] statement.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-statement.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
+
+            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+
+        [ResolvedTo(CONSTANT_EVALUATION)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -470,4 +503,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] statement.kts
         [ResolvedTo(BODY_RESOLVE)] init {
             R|/builder|.R|/Builder.version| = String()
         }
-

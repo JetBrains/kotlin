@@ -220,6 +220,29 @@ FILE: [ResolvedTo(IMPORTS)] errorTypeScript.kts
         }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] errorTypeScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-errorTypeScript.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=lowlevel/Anno.position] position: String): R|lowlevel/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] F : @R|lowlevel/Anno|[Unresolved](<strcat>(String(bound ), prop#)) <ERROR TYPE REF: Symbol not found for ASF>> @R|lowlevel/Anno|[Unresolved](<strcat>(String(receiver ), prop#)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(CONSTANT_EVALUATION)] param: @R|lowlevel/Anno|[Unresolved](<strcat>(String(param ), prop#)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Unresolved](<strcat>(String(return ), prop#)) <ERROR TYPE REF: Symbol not found for Type3> {
+        }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] errorTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -287,4 +310,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] errorTypeScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] F : @R|lowlevel/Anno|[Types](position = <strcat>(String(bound ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for ASF>> @R|lowlevel/Anno|[Types](position = <strcat>(String(receiver ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(BODY_RESOLVE)] param: @R|lowlevel/Anno|[Types](position = <strcat>(String(param ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Types](position = <strcat>(String(return ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Type3> {
         }
-

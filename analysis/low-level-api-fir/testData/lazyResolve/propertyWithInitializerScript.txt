@@ -122,6 +122,20 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-propertyWithInitializerScript.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(property#)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): Int
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)

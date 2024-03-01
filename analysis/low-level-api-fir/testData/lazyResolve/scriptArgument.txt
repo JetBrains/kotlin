@@ -68,6 +68,13 @@ FILE: [ResolvedTo(IMPORTS)] scriptArgument.kts
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] scriptArgument.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptArgument.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] scriptArgument.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
@@ -87,4 +94,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] scriptArgument.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-scriptArgument.kts>
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
-

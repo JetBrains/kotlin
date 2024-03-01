@@ -52,6 +52,13 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeAndBody.kt
             ^ IntegerLiteral(42)
         }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeAndBody.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] val prop: R|kotlin/Int|
+        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int| {
+            ^ IntegerLiteral(42)
+        }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeAndBody.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: R|kotlin/Int|

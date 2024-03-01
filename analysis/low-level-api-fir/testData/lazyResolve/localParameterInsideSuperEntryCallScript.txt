@@ -348,6 +348,41 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
         }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-localParameterInsideSuperEntryCallScript.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+
+        }
+
+        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+                super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+                    private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|one/<anonymous>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                    }
+
+                }
+                )
+            }
+
+        }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)

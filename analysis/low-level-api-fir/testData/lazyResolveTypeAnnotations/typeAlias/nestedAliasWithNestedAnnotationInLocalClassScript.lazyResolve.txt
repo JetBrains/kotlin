@@ -214,6 +214,38 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClassScript.kt
         }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClassScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-nestedAliasWithNestedAnnotationInLocalClassScript.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] class OriginalClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] constructor<[ResolvedTo(RAW_FIR)] T>(): R|<local>/OriginalClass<T>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
+
+                @Anno[Unresolved](<strcat>(String(alias ), prop#)) local final [ResolvedTo(RAW_FIR)] typealias NestedTypeAlias<@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] A : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> = @Anno[Unresolved](<strcat>(String(type ), prop#)) OriginalClass<A>
+
+            }
+
+        }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -308,4 +340,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedAliasWithNestedAnnotationInLocalClassScri
             }
 
         }
-

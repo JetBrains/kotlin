@@ -42,6 +42,12 @@ FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
         IntegerLiteral(1).toInt#()
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| {
+        IntegerLiteral(1).toInt#()
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| {

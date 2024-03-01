@@ -188,6 +188,25 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
+    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[Types](R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final const [ResolvedTo(STATUS)] val FIELD: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Some] get(): <implicit>
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
     public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {

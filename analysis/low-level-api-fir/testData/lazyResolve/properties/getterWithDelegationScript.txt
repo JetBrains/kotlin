@@ -188,6 +188,25 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
         }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-getterWithDelegationScript.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] val one: R|kotlin/Int|by LAZY_EXPRESSION
+            @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+        public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> { LAZY_BLOCK }
+
+        }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -251,4 +270,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] getterWithDelegationScript.kts
             }
 
         }
-

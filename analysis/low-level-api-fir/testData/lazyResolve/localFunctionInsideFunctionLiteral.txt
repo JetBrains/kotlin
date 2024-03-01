@@ -198,6 +198,26 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                }
+
+            }
+            )
+        }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {

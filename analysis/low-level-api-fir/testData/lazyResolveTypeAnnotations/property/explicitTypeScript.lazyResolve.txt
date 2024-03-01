@@ -246,6 +246,34 @@ FILE: [ResolvedTo(IMPORTS)] explicitTypeScript.kts
             }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] explicitTypeScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-explicitTypeScript.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=myPack/Anno.position] position: String): R|myPack/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] var <@R|myPack/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONSTANT_EVALUATION)] T : R|@R|myPack/Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested bound ), prop#))  kotlin/String>|> @RECEIVER:R|myPack/Anno|[Types](LAZY_EXPRESSION) R|@R|myPack/Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<ERROR CLASS: Incomplete code>|.variableToResolve: R|@R|myPack/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/Collection<@R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>|
+            @R|myPack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|@R|myPack/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/Collection<@R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>| {
+                ^ String(str)
+            }
+            @R|myPack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) value: R|@R|myPack/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/Collection<@R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>|): R|kotlin/Unit| {
+                ^ Unit#
+            }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] explicitTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -328,4 +356,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] explicitTypeScript.kts
             @R|myPack/Anno|[Types](position = <strcat>(String(setter ), R|myPack/prop|)) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](position = <strcat>(String(setter parameter ), R|myPack/prop|)) value: R|@R|myPack/Anno|(position = <strcat>(String(return type ), R|myPack/prop|))  kotlin/collections/Collection<@R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>>|): R|kotlin/Unit| {
                 ^ Q|kotlin/Unit|
             }
-

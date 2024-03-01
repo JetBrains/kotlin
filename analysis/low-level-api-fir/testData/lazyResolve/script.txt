@@ -598,6 +598,66 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
         }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] script.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(CONSTANT_EVALUATION)] <script-script.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class En : R|kotlin/Enum<En>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] constructor(): R|En| {
+                LAZY_super<R|kotlin/Enum<En>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] enum entry Entry: R|En|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun values(): R|kotlin/Array<En>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|En| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] val entries: R|kotlin/enums/EnumEntries<En>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<En>|
+
+        }
+
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: En): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: En = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): En
+
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -826,4 +886,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script.kts
         [ResolvedTo(BODY_RESOLVE)] init {
             R|/builder|.R|/Builder.version| = String()
         }
-

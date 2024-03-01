@@ -200,6 +200,35 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe(): R|kotlin/Unit| {
+        local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        local final? [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: UsedClass, [ResolvedTo(RAW_FIR)] local: Local): R|kotlin/Unit| {
+        }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
     public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {

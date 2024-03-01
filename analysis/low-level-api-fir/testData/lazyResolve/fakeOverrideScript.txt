@@ -466,6 +466,60 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
         }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-fakeOverrideScript.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun expression([ResolvedTo(CONSTANT_EVALUATION)] expression: R|IrConst<*>|): R|kotlin/Unit| {
+            when ([ResolvedTo(RAW_FIR)] lval kind: <implicit> = expression#.kind#) {
+                ($subj$ is Kind.Null) ->  {
+                    kind#.valueOf#(expression#)
+                }
+                else ->  {
+                }
+            }
+
+        }
+
+        public sealed [ResolvedTo(RAW_FIR)] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val asString: String = R|<local>/asString|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] get(): String
+
+            @Suppress[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun valueOf([ResolvedTo(RAW_FIR)] aConst: IrConst<*>): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] object Null : Kind<Nothing?> {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Null] constructor(): R|Kind.Null| {
+                    LAZY_super<Kind<Nothing?>>
+                }
+
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun toString(): <implicit> { LAZY_BLOCK }
+
+        }
+
+        public abstract [ResolvedTo(RAW_FIR)] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] constructor<[ResolvedTo(RAW_FIR)] T>(): R|IrConst<T>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? abstract [ResolvedTo(RAW_FIR)] var kind: Kind<T>
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): Kind<T>
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: Kind<T>): R|kotlin/Unit|
+
+            public? abstract [ResolvedTo(RAW_FIR)] var value: T
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): T
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: T): R|kotlin/Unit|
+
+        }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -632,4 +686,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] fakeOverrideScript.kts
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IrConst] set([ResolvedTo(BODY_RESOLVE)] value: R|T|): R|kotlin/Unit|
 
         }
-
