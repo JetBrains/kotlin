@@ -19,20 +19,20 @@ val expectedMyUnitEmptyReturnUnitAndString: () -> Unit = l@ {
     ""
 }
 
-val expectedUnitExplicitReturnUnitAndString: () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>l@ {
+val expectedUnitExplicitReturnUnitAndString: () -> Unit = l@ {
     if ("0".hashCode() == 42) return@l Unit
     ""
-}<!>
+}
 
-val expectedUnitExplicitReturnMyUniAndString: () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>l@ {
+val expectedUnitExplicitReturnMyUniAndString: () -> Unit = l@ {
     if ("0".hashCode() == 42) return@l MyUnit
     ""
-}<!>
+}
 
-val expectedUnitExplicitReturnFooAndString: () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>l@ {
+val expectedUnitExplicitReturnFooAndString: () -> Unit = l@ {
     if ("0".hashCode() == 42) return@l foo()
     ""
-}<!>
+}
 
 val expectedUnitEmptyReturnOnly: () -> Unit = l@ {
     if ("0".hashCode() == 42) return@l
@@ -50,12 +50,12 @@ val expectedUnitEmptyReturnAndExplicitReturnFoo: () -> Unit = l@ {
 }
 
 val expectedMyUnitEmptyReturnOnly: () -> MyUnit = l@ {
-    if ("0".hashCode() == 42) return@l
-    return@l
+    if ("0".hashCode() == 42) <!RETURN_TYPE_MISMATCH!>return@l<!>
+    <!RETURN_TYPE_MISMATCH!>return@l<!>
 }
 
 val expectedMyUnitEmptyReturnAndExplicitReturnMyUnit: () -> MyUnit = l@ {
-    if ("0".hashCode() == 42) return@l
+    if ("0".hashCode() == 42) <!RETURN_TYPE_MISMATCH!>return@l<!>
     return@l Unit
 }
 

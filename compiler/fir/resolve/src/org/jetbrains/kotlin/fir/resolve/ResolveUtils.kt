@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.dfa.PropertyStability
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirAnonymousFunctionReturnExpressionInfo
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -56,6 +57,82 @@ import kotlin.contracts.contract
 
 fun FirAnonymousFunction.shouldReturnUnit(returnStatements: Collection<FirExpression>): Boolean =
     isLambda && returnStatements.any { it is FirUnitExpression }
+
+/**
+ * Infers the return type of an anonymous function from return expressions in its body.
+ *
+ * Note: this logic affects not only diagnostics, but also the runtime types of generated lambda classes (at least on JVM).
+ * See [KT-62550](https://youtrack.jetbrains.com/issue/KT-62550) and `compiler/testData/codegen/box/callableReference/kt62550.kt`
+ * for reference.
+ * Namely, this code basically decides what `T` should be in the `FunctionN<T>` interface that the lambda class will implement.
+ * This can be observed through reflection.
+ *
+ * It's important to understand that the logic is a bit different for lambdas passed to functions and for all other lambdas:
+ * - the return type of a lambda passed to a function is always inferred to [expectedReturnType],
+ *   except when the lambda's body implies that it's `Unit` — in that case, the return type is inferred to `Unit`;
+ * - the return type of other lambda expressions (e.g., assigned to a variable) is generally computed as a common supertype of
+ *   the expressions in its `return` statements.
+ */
+internal fun FirAnonymousFunction.computeReturnType(
+    session: FirSession,
+    expectedReturnType: ConeKotlinType?,
+    isPassedAsFunctionArgument: Boolean,
+    returnExpressions: Collection<FirAnonymousFunctionReturnExpressionInfo>,
+): ConeKotlinType {
+    val expandedExpectedReturnType = expectedReturnType?.fullyExpandedType(session)
+    val unitType = session.builtinTypes.unitType.type
+    if (isLambda) {
+        if (expandedExpectedReturnType?.isUnit == true) {
+            // If the expected type is Unit, always infer the lambda's type to the expected type.
+            // If a return statement in a lambda has a different type, RETURN_TYPE_MISMATCH will be reported for that return statement
+            // by FirFunctionReturnTypeMismatchChecker.
+            //
+            // For example:
+            // val f: () -> Unit = l@ {
+            //     return@l "" // RETURN_TYPE_MISMATCH reported here
+            // }
+            //
+            // Without this check, INITIALIZER_TYPE_MISMATCH would be reported on the whole lambda expression,
+            // because the return type of the lambda would be inferred to String.
+            return unitType
+        }
+
+        if (returnExpressions.any { it.isExplicit && it.expression is FirUnitExpression }) {
+            // If the expected type is not Unit, and we have an explicit expressionless return, don't infer the return type to Unit.
+            // For this situation, RETURN_TYPE_MISMATCH will be reported later in FirFunctionReturnTypeMismatchChecker.
+            //
+            // For example:
+            // val f: () -> Any = l@ {
+            //    if ("".hashCode() == 42) return@l // RETURN_TYPE_MISMATCH reported here
+            //    return@l Unit
+            // }
+            //
+            // Without this check, INITIALIZER_TYPE_MISMATCH would be reported on the whole lambda expression,
+            // because the return type of the lambda would be inferred to Unit.
+            //
+            // The only exception is when the expected type is flexible Unit (Unit!).
+            // In that case, the presence of an expressionless return forces the return type of the lambda to be inferred to plain Unit.
+            // Any attempt to return null from that lambda should be reported as an error.
+            return if (expandedExpectedReturnType != null && !expandedExpectedReturnType.isUnitOrFlexibleUnit) {
+                expectedReturnType
+            } else {
+                unitType
+            }
+        }
+    }
+
+    // Here is a questionable moment where we could prefer the expected type over an inferred one.
+    // In correct code this doesn't matter, as all return expression types should be subtypes of the expected type.
+    // In incorrect code, this would change diagnostics: we can get errors either on the entire lambda, or only on its
+    // return statements. The former kind of makes more sense, but the latter is more readable.
+    val commonSuperType = session.typeContext.commonSuperTypeOrNull(returnExpressions.map { it.expression.resolvedType })
+        ?: unitType
+    return if (isPassedAsFunctionArgument && !commonSuperType.fullyExpandedType(session).isUnit) {
+        expectedReturnType ?: commonSuperType
+    } else {
+        commonSuperType
+    }
+}
 
 fun FirAnonymousFunction.addReturnToLastStatementIfNeeded(session: FirSession) {
     // If this lambda's resolved, expected return type is Unit, we don't need an explicit return statement.

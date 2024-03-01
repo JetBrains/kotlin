@@ -787,7 +787,7 @@ class FirCallCompletionResultsWriterTransformer(
         // The case where we can't find any return expressions not common, and happens when there are anonymous function arguments
         // that aren't mapped to any parameter in the call. So, we don't run body resolve transformation for them, thus there's
         // no control flow info either. Example: second lambda in the call like list.filter({}, {})
-        val returnExpressions = dataFlowAnalyzer.returnExpressionsOfAnonymousFunctionOrNull(anonymousFunction)?.map { it.expression }
+        val returnExpressions = dataFlowAnalyzer.returnExpressionsOfAnonymousFunctionOrNull(anonymousFunction)
             ?: return transformImplicitTypeRefInAnonymousFunction(anonymousFunction)
 
         val expectedType = data?.getExpectedType(anonymousFunction)?.let { expectedArgumentType ->
@@ -816,22 +816,23 @@ class FirCallCompletionResultsWriterTransformer(
 
         val initialReturnType = anonymousFunction.returnTypeRef.coneTypeSafe<ConeKotlinType>()
         val expectedReturnType = initialReturnType?.let { finallySubstituteOrSelf(it) }
-            ?: runIf(returnExpressions.any { it.source?.kind is KtFakeSourceElementKind.ImplicitUnit.Return })
+            ?: runIf(returnExpressions.any { it.expression.source?.kind is KtFakeSourceElementKind.ImplicitUnit.Return })
             { session.builtinTypes.unitType.coneType }
             ?: expectedType?.returnType(session) as? ConeClassLikeType
             ?: (data as? ExpectedArgumentType.ArgumentsMap)?.lambdasReturnTypes?.get(anonymousFunction)
 
         val newData = expectedReturnType?.toExpectedType()
         val result = transformElement(anonymousFunction, newData)
-        for (expression in returnExpressions) {
+        for ((expression, _) in returnExpressions) {
             expression.transformSingle(this, newData)
         }
 
-        // Prefer the expected type over the inferred one - the latter is a subtype of the former in valid code,
-        // and there will be ARGUMENT_TYPE_MISMATCH errors on the lambda's return expressions in invalid code.
-        val resultReturnType = expectedReturnType
-            ?: session.typeContext.commonSuperTypeOrNull(returnExpressions.map { it.resolvedType })
-            ?: session.builtinTypes.unitType.type
+        val resultReturnType = anonymousFunction.computeReturnType(
+            session,
+            expectedReturnType,
+            isPassedAsFunctionArgument = true,
+            returnExpressions,
+        )
 
         if (initialReturnType != resultReturnType) {
             result.replaceReturnTypeRef(result.returnTypeRef.resolvedTypeFromPrototype(resultReturnType))

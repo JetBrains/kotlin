@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM
 // ISSUE: KT-65341
-// JVM_ABI_K1_K2_DIFF: KT-65386
 
 val nodeTransformer =
     single {

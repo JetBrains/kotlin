@@ -1,0 +1,345 @@
+FILE fqName:<root> fileName:/main.kt
+  PROPERTY name:lambdaEmpty visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:lambdaEmpty type:kotlin.Function0<kotlin.Any> visibility:private [final,static]
+      EXPRESSION_BODY
+        FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.lambdaEmpty'
+                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lambdaEmpty> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Any>
+      correspondingProperty: PROPERTY name:lambdaEmpty visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-lambdaEmpty> (): kotlin.Function0<kotlin.Any> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lambdaEmpty type:kotlin.Function0<kotlin.Any> visibility:private [final,static]' type=kotlin.Function0<kotlin.Any> origin=null
+  PROPERTY name:lambdaUnit visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:lambdaUnit type:kotlin.Function0<kotlin.Any> visibility:private [final,static]
+      EXPRESSION_BODY
+        FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+            BLOCK_BODY
+              CALL 'public final fun foo (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lambdaUnit> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Any>
+      correspondingProperty: PROPERTY name:lambdaUnit visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-lambdaUnit> (): kotlin.Function0<kotlin.Any> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lambdaUnit type:kotlin.Function0<kotlin.Any> visibility:private [final,static]' type=kotlin.Function0<kotlin.Any> origin=null
+  PROPERTY name:lambdaMyUnit visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:lambdaMyUnit type:kotlin.Function0<kotlin.Any> visibility:private [final,static]
+      EXPRESSION_BODY
+        FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+            BLOCK_BODY
+              CALL 'public final fun myUnit (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lambdaMyUnit> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Any>
+      correspondingProperty: PROPERTY name:lambdaMyUnit visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-lambdaMyUnit> (): kotlin.Function0<kotlin.Any> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lambdaMyUnit type:kotlin.Function0<kotlin.Any> visibility:private [final,static]' type=kotlin.Function0<kotlin.Any> origin=null
+  PROPERTY name:lambdaExplicitUnit visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:lambdaExplicitUnit type:kotlin.Function0<kotlin.Any> visibility:private [final,static]
+      EXPRESSION_BODY
+        FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.lambdaExplicitUnit'
+                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lambdaExplicitUnit> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Any>
+      correspondingProperty: PROPERTY name:lambdaExplicitUnit visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-lambdaExplicitUnit> (): kotlin.Function0<kotlin.Any> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lambdaExplicitUnit type:kotlin.Function0<kotlin.Any> visibility:private [final,static]' type=kotlin.Function0<kotlin.Any> origin=null
+  PROPERTY name:lambdaExplicitUnitOrString visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:lambdaExplicitUnitOrString type:kotlin.Function0<kotlin.Any> visibility:private [final,static]
+      EXPRESSION_BODY
+        FUN_EXPR type=kotlin.Function0<kotlin.Any> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any
+            BLOCK_BODY
+              WHEN type=kotlin.Unit origin=IF
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    arg0: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
+                      $this: CONST String type=kotlin.String value="0"
+                    arg1: CONST Int type=kotlin.Int value=42
+                  then: RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in <root>.lambdaExplicitUnitOrString'
+                    GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in <root>.lambdaExplicitUnitOrString'
+                CONST String type=kotlin.String value=""
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lambdaExplicitUnitOrString> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Any>
+      correspondingProperty: PROPERTY name:lambdaExplicitUnitOrString visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-lambdaExplicitUnitOrString> (): kotlin.Function0<kotlin.Any> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lambdaExplicitUnitOrString type:kotlin.Function0<kotlin.Any> visibility:private [final,static]' type=kotlin.Function0<kotlin.Any> origin=null
+  PROPERTY name:lambdaString visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:lambdaString type:kotlin.Function0<kotlin.Any> visibility:private [final,static]
+      EXPRESSION_BODY
+        FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.lambdaString'
+                CONST String type=kotlin.String value="propertyAssignment"
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lambdaString> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Any>
+      correspondingProperty: PROPERTY name:lambdaString visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-lambdaString> (): kotlin.Function0<kotlin.Any> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lambdaString type:kotlin.Function0<kotlin.Any> visibility:private [final,static]' type=kotlin.Function0<kotlin.Any> origin=null
+  PROPERTY name:lambdaInt visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:lambdaInt type:kotlin.Function0<kotlin.Any> visibility:private [final,static]
+      EXPRESSION_BODY
+        FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Int
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.lambdaInt'
+                CONST Int type=kotlin.Int value=42
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lambdaInt> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Any>
+      correspondingProperty: PROPERTY name:lambdaInt visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-lambdaInt> (): kotlin.Function0<kotlin.Any> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lambdaInt type:kotlin.Function0<kotlin.Any> visibility:private [final,static]' type=kotlin.Function0<kotlin.Any> origin=null
+  PROPERTY name:lambdaNothing visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:lambdaNothing type:kotlin.Function0<kotlin.Any?> visibility:private [final,static]
+      EXPRESSION_BODY
+        FUN_EXPR type=kotlin.Function0<kotlin.Nothing?> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing?
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Nothing? declared in <root>.lambdaNothing'
+                TYPE_OP type=kotlin.Nothing? origin=CAST typeOperand=kotlin.Nothing?
+                  CONST Null type=kotlin.Nothing? value=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lambdaNothing> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Any?>
+      correspondingProperty: PROPERTY name:lambdaNothing visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-lambdaNothing> (): kotlin.Function0<kotlin.Any?> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lambdaNothing type:kotlin.Function0<kotlin.Any?> visibility:private [final,static]' type=kotlin.Function0<kotlin.Any?> origin=null
+  PROPERTY name:lambdaTypeVariableConstructor visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:lambdaTypeVariableConstructor type:kotlin.Function0<kotlin.Any?> visibility:private [final,static]
+      EXPRESSION_BODY
+        FUN_EXPR type=kotlin.Function0<kotlin.Any?> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any?
+            BLOCK_BODY
+              WHEN type=kotlin.Unit origin=IF
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    arg0: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
+                      $this: CONST String type=kotlin.String value="0"
+                    arg1: CONST Int type=kotlin.Int value=42
+                  then: RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.lambdaTypeVariableConstructor'
+                    CALL 'public final fun materialize <E> (): E of <root>.materialize declared in <root>' type=kotlin.Any? origin=null
+                      <E>: kotlin.Any?
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.lambdaTypeVariableConstructor'
+                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lambdaTypeVariableConstructor> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Any?>
+      correspondingProperty: PROPERTY name:lambdaTypeVariableConstructor visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-lambdaTypeVariableConstructor> (): kotlin.Function0<kotlin.Any?> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lambdaTypeVariableConstructor type:kotlin.Function0<kotlin.Any?> visibility:private [final,static]' type=kotlin.Function0<kotlin.Any?> origin=null
+  FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<kotlin.Unit>"
+        actual: CALL 'public final fun getSuperInterface (block: kotlin.Function0<kotlin.Any?>): kotlin.String declared in <root>' type=kotlin.String origin=null
+          block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.box'
+                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<kotlin.Unit>"
+        actual: CALL 'public final fun getSuperInterface (block: kotlin.Function0<kotlin.Any?>): kotlin.String declared in <root>' type=kotlin.String origin=null
+          block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+              BLOCK_BODY
+                CALL 'public final fun bar (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<java.lang.Object>"
+        actual: CALL 'public final fun getSuperInterface (block: kotlin.Function0<kotlin.Any?>): kotlin.String declared in <root>' type=kotlin.String origin=null
+          block: FUN_EXPR type=kotlin.Function0<kotlin.Any?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any?
+              BLOCK_BODY
+                WHEN type=kotlin.Unit origin=IF
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                      arg0: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
+                        $this: CONST String type=kotlin.String value="0"
+                      arg1: CONST Int type=kotlin.Int value=42
+                    then: RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.box'
+                      GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.box'
+                  CONST String type=kotlin.String value=""
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<java.lang.Object>"
+        actual: CALL 'public final fun getSuperInterface (block: kotlin.Function0<kotlin.Any?>): kotlin.String declared in <root>' type=kotlin.String origin=null
+          block: FUN_EXPR type=kotlin.Function0<kotlin.Any?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any?
+              BLOCK_BODY
+                WHEN type=kotlin.Unit origin=IF
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                      arg0: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
+                        $this: CONST String type=kotlin.String value="0"
+                      arg1: CONST Int type=kotlin.Int value=42
+                    then: RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.box'
+                      CALL 'public final fun materialize <E> (): E of <root>.materialize declared in <root>' type=kotlin.Any? origin=null
+                        <E>: kotlin.Any?
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.box'
+                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<kotlin.Unit>"
+        actual: CALL 'public final fun getSuperInterface (block: kotlin.Function0<kotlin.Any?>): kotlin.String declared in <root>' type=kotlin.String origin=null
+          block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.box'
+                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<kotlin.Unit>"
+        actual: CALL 'public final fun getSuperInterface (block: kotlin.Function0<kotlin.Any?>): kotlin.String declared in <root>' type=kotlin.String origin=null
+          block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+              BLOCK_BODY
+                CALL 'public final fun myUnit (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<java.lang.Object>"
+        actual: CALL 'public final fun getSuperInterface (block: kotlin.Function0<kotlin.Any?>): kotlin.String declared in <root>' type=kotlin.String origin=null
+          block: FUN_EXPR type=kotlin.Function0<kotlin.Any?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any?
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.box'
+                  CONST String type=kotlin.String value="functionArgument"
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<java.lang.Object>"
+        actual: CALL 'public final fun getSuperInterface (block: kotlin.Function0<kotlin.Any?>): kotlin.String declared in <root>' type=kotlin.String origin=null
+          block: FUN_EXPR type=kotlin.Function0<kotlin.Any?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any?
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.box'
+                  CONST Int type=kotlin.Int value=100
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<java.lang.Object>"
+        actual: CALL 'public final fun getSuperInterface (block: kotlin.Function0<kotlin.Any?>): kotlin.String declared in <root>' type=kotlin.String origin=null
+          block: FUN_EXPR type=kotlin.Function0<kotlin.Any?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any?
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.box'
+                  CONST Null type=kotlin.Nothing? value=null
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<java.lang.Object>"
+        actual: CALL 'public final fun getSuperInterface (block: kotlin.Function0<kotlin.Any?>): kotlin.String declared in <root>' type=kotlin.String origin=null
+          block: FUN_EXPR type=kotlin.Function0<kotlin.Any?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any?
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.box'
+                  TYPE_OP type=kotlin.Nothing? origin=CAST typeOperand=kotlin.Nothing?
+                    CONST Null type=kotlin.Nothing? value=null
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="interface kotlin.jvm.functions.Function0"
+        actual: CALL 'public final fun getSuperInterfaceGeneric <T> (block: kotlin.Function0<T of <root>.getSuperInterfaceGeneric>): kotlin.String declared in <root>' type=kotlin.String origin=null
+          <T>: kotlin.Nothing?
+          block: FUN_EXPR type=kotlin.Function0<kotlin.Nothing?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing?
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Nothing? declared in <root>.box'
+                  CONST Null type=kotlin.Nothing? value=null
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<kotlin.Unit>"
+        actual: CALL 'public final fun renderSuperInterface <T> (value: T of <root>.renderSuperInterface): kotlin.String declared in <root>' type=kotlin.String origin=null
+          <T>: kotlin.Function0<kotlin.Any>
+          value: CALL 'public final fun <get-lambdaEmpty> (): kotlin.Function0<kotlin.Any> declared in <root>' type=kotlin.Function0<kotlin.Any> origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<kotlin.Unit>"
+        actual: CALL 'public final fun renderSuperInterface <T> (value: T of <root>.renderSuperInterface): kotlin.String declared in <root>' type=kotlin.String origin=null
+          <T>: kotlin.Function0<kotlin.Any>
+          value: CALL 'public final fun <get-lambdaUnit> (): kotlin.Function0<kotlin.Any> declared in <root>' type=kotlin.Function0<kotlin.Any> origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<kotlin.Unit>"
+        actual: CALL 'public final fun renderSuperInterface <T> (value: T of <root>.renderSuperInterface): kotlin.String declared in <root>' type=kotlin.String origin=null
+          <T>: kotlin.Function0<kotlin.Any>
+          value: CALL 'public final fun <get-lambdaMyUnit> (): kotlin.Function0<kotlin.Any> declared in <root>' type=kotlin.Function0<kotlin.Any> origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<kotlin.Unit>"
+        actual: CALL 'public final fun renderSuperInterface <T> (value: T of <root>.renderSuperInterface): kotlin.String declared in <root>' type=kotlin.String origin=null
+          <T>: kotlin.Function0<kotlin.Any>
+          value: CALL 'public final fun <get-lambdaExplicitUnit> (): kotlin.Function0<kotlin.Any> declared in <root>' type=kotlin.Function0<kotlin.Any> origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<java.lang.Object>"
+        actual: CALL 'public final fun renderSuperInterface <T> (value: T of <root>.renderSuperInterface): kotlin.String declared in <root>' type=kotlin.String origin=null
+          <T>: kotlin.Function0<kotlin.Any?>
+          value: CALL 'public final fun <get-lambdaTypeVariableConstructor> (): kotlin.Function0<kotlin.Any?> declared in <root>' type=kotlin.Function0<kotlin.Any?> origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<java.lang.Object>"
+        actual: CALL 'public final fun renderSuperInterface <T> (value: T of <root>.renderSuperInterface): kotlin.String declared in <root>' type=kotlin.String origin=null
+          <T>: kotlin.Function0<kotlin.Any>
+          value: CALL 'public final fun <get-lambdaExplicitUnitOrString> (): kotlin.Function0<kotlin.Any> declared in <root>' type=kotlin.Function0<kotlin.Any> origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<java.lang.String>"
+        actual: CALL 'public final fun renderSuperInterface <T> (value: T of <root>.renderSuperInterface): kotlin.String declared in <root>' type=kotlin.String origin=null
+          <T>: kotlin.Function0<kotlin.Any>
+          value: CALL 'public final fun <get-lambdaString> (): kotlin.Function0<kotlin.Any> declared in <root>' type=kotlin.Function0<kotlin.Any> origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<java.lang.Integer>"
+        actual: CALL 'public final fun renderSuperInterface <T> (value: T of <root>.renderSuperInterface): kotlin.String declared in <root>' type=kotlin.String origin=null
+          <T>: kotlin.Function0<kotlin.Any>
+          value: CALL 'public final fun <get-lambdaInt> (): kotlin.Function0<kotlin.Any> declared in <root>' type=kotlin.Function0<kotlin.Any> origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        expected: CONST String type=kotlin.String value="interface kotlin.jvm.functions.Function0"
+        actual: CALL 'public final fun renderSuperInterface <T> (value: T of <root>.renderSuperInterface): kotlin.String declared in <root>' type=kotlin.String origin=null
+          <T>: kotlin.Function0<kotlin.Any?>
+          value: CALL 'public final fun <get-lambdaNothing> (): kotlin.Function0<kotlin.Any?> declared in <root>' type=kotlin.Function0<kotlin.Any?> origin=GET_PROPERTY
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+  FUN name:getSuperInterface visibility:public modality:FINAL <> (block:kotlin.Function0<kotlin.Any?>) returnType:kotlin.String
+    VALUE_PARAMETER name:block index:0 type:kotlin.Function0<kotlin.Any?>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun getSuperInterface (block: kotlin.Function0<kotlin.Any?>): kotlin.String declared in <root>'
+        CALL 'public final fun renderSuperInterface <T> (value: T of <root>.renderSuperInterface): kotlin.String declared in <root>' type=kotlin.String origin=null
+          <T>: kotlin.Function0<kotlin.Any?>
+          value: GET_VAR 'block: kotlin.Function0<kotlin.Any?> declared in <root>.getSuperInterface' type=kotlin.Function0<kotlin.Any?> origin=null
+  FUN name:getSuperInterfaceGeneric visibility:public modality:FINAL <T> (block:kotlin.Function0<T of <root>.getSuperInterfaceGeneric>) returnType:kotlin.String
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:block index:0 type:kotlin.Function0<T of <root>.getSuperInterfaceGeneric>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun getSuperInterfaceGeneric <T> (block: kotlin.Function0<T of <root>.getSuperInterfaceGeneric>): kotlin.String declared in <root>'
+        CALL 'public final fun renderSuperInterface <T> (value: T of <root>.renderSuperInterface): kotlin.String declared in <root>' type=kotlin.String origin=null
+          <T>: kotlin.Function0<T of <root>.getSuperInterfaceGeneric>
+          value: GET_VAR 'block: kotlin.Function0<T of <root>.getSuperInterfaceGeneric> declared in <root>.getSuperInterfaceGeneric' type=kotlin.Function0<T of <root>.getSuperInterfaceGeneric> origin=null
+  FUN name:materialize visibility:public modality:FINAL <E> () returnType:E of <root>.materialize
+    TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun materialize <E> (): E of <root>.materialize declared in <root>'
+        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+  FUN name:myUnit visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun myUnit (): kotlin.Unit declared in <root>'
+        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:renderSuperInterface visibility:public modality:FINAL <T> (value:T of <root>.renderSuperInterface) returnType:kotlin.String
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
+    VALUE_PARAMETER name:value index:0 type:T of <root>.renderSuperInterface
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun renderSuperInterface <T> (value: T of <root>.renderSuperInterface): kotlin.String declared in <root>'
+        TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+          CALL 'public open fun renderSuperInterface (value: @[FlexibleNullability] kotlin.Any?): @[FlexibleNullability] kotlin.String? declared in <root>.Helper' type=@[FlexibleNullability] kotlin.String? origin=null
+            value: GET_VAR 'value: T of <root>.renderSuperInterface declared in <root>.renderSuperInterface' type=T of <root>.renderSuperInterface origin=null
+  TYPEALIAS name:MyUnit visibility:public expandedType:kotlin.Unit

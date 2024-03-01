@@ -3067,12 +3067,6 @@ public class FirPsiJsIrTextTestGenerated extends AbstractFirPsiJsIrTextTest {
     }
 
     @Test
-    @TestMetadata("lambdaReturningUnit.kt")
-    public void testLambdaReturningUnit() {
-      runTest("compiler/testData/ir/irText/lambdas/lambdaReturningUnit.kt");
-    }
-
-    @Test
     @TestMetadata("localFunction.kt")
     public void testLocalFunction() {
       runTest("compiler/testData/ir/irText/lambdas/localFunction.kt");

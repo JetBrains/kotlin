@@ -1107,18 +1107,14 @@ open class FirDeclarationsResolveTransformer(
     }
 
     private fun FirAnonymousFunction.computeReturnTypeRef(expected: FirResolvedTypeRef?): FirResolvedTypeRef {
-        val returnExpressions = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(this)
-        // Any lambda expression assigned to `(...) -> Unit` returns Unit if all return expressions are implicit
-        // `lambda@ { return@lambda }` always returns Unit
-        if (isLambda && expected?.type?.isUnit == true && returnExpressions.all { !it.isExplicit }) return expected
-        if (shouldReturnUnit(returnExpressions.map { it.expression })) return session.builtinTypes.unitType
-        // Here is a questionable moment where we could prefer the expected type over an inferred one.
-        // In correct code this doesn't matter, as all return expression types should be subtypes of the expected type.
-        // In incorrect code, this would change diagnostics: we can get errors either on the entire lambda, or only on its
-        // return statements. The former kind of makes more sense, but the latter is more readable.
-        val inferredFromReturnExpressions = session.typeContext.commonSuperTypeOrNull(returnExpressions.map { it.expression.resolvedType })
-        return inferredFromReturnExpressions?.let { returnTypeRef.resolvedTypeFromPrototype(it) }
-            ?: session.builtinTypes.unitType // Empty lambda returns Unit
+        return returnTypeRef.resolvedTypeFromPrototype(
+            computeReturnType(
+                session,
+                expected?.type,
+                isPassedAsFunctionArgument = false,
+                dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(this),
+            )
+        )
     }
 
     private fun obtainValueParametersFromResolvedLambdaAtom(

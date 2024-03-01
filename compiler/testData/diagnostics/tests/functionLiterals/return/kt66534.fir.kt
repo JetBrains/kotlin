@@ -19,7 +19,7 @@ public class A {
 // ================= Lambdas assigned to a variable =================
 
 val expectedNullableUnitEmptyReturnAndString: () -> Unit? = l@ {
-    if ("0".hashCode() == 42) return@l
+    if ("0".hashCode() == 42) <!RETURN_TYPE_MISMATCH!>return@l<!>
     ""
 }
 
@@ -31,8 +31,8 @@ fun expectedFlexibleUnitEmptyReturnAndString() {
 }
 
 val expectedNullableUnitEmptyReturnAndExplicitReturnNull: () -> Unit? = l@ {
-    if ("0".hashCode() == 42) return@l
-    return@l <!NULL_FOR_NONNULL_TYPE!>null<!>
+    if ("0".hashCode() == 42) <!RETURN_TYPE_MISMATCH!>return@l<!>
+    return@l null
 }
 
 fun expectedFlexibleUnitEmptyReturnAndExplicitReturnNull() {
@@ -42,13 +42,13 @@ fun expectedFlexibleUnitEmptyReturnAndExplicitReturnNull() {
     }
 }
 
-val expectedNullableUnitExplicitReturnUnitAndString: () -> Unit? = <!INITIALIZER_TYPE_MISMATCH!>l@ {
+val expectedNullableUnitExplicitReturnUnitAndString: () -> Unit? = <!INITIALIZER_TYPE_MISMATCH("kotlin.Function0<kotlin.Unit?>; kotlin.Function0<kotlin.Any>")!>l@ {
     if ("0".hashCode() == 42) return@l Unit
     ""
 }<!>
 
 fun expectedFlexibleUnitExplicitReturnUnitAndString() {
-    A.foo = l@ <!ASSIGNMENT_TYPE_MISMATCH!>{
+    A.foo = l@ <!ASSIGNMENT_TYPE_MISMATCH("kotlin.Function0<kotlin.Unit!>; kotlin.Function0<kotlin.Any>")!>{
         if ("0".hashCode() == 42) return@l Unit
         ""
     }<!>
@@ -94,7 +94,7 @@ fun test() {
 
     A.run l@ {
         if ("0".hashCode() == 42) return@l
-        return@l null
+        return@l <!NULL_FOR_NONNULL_TYPE!>null<!>
     }
 
     run<Unit?> l@ {

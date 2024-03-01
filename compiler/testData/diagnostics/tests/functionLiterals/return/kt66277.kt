@@ -1,4 +1,5 @@
 // ISSUE: KT-66277
+// FIR_IDENTICAL
 
 fun foo() {}
 typealias MyUnit = Unit

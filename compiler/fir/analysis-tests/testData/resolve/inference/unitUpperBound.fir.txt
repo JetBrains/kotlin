@@ -6,7 +6,7 @@ FILE: unitUpperBound.kt
 
         public final fun foo(x: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
             lvar w: R|kotlin/Int| = Int(1)
-            R|<local>/x|.R|kotlin/collections/ifEmpty|<R|kotlin/collections/List<kotlin/String>|, R|kotlin/Any|>(<L> = ifEmpty@fun <anonymous>(): R|kotlin/Any| <inline=Inline, kind=AT_MOST_ONCE>  {
+            R|<local>/x|.R|kotlin/collections/ifEmpty|<R|kotlin/collections/List<kotlin/String>|, R|kotlin/Any|>(<L> = ifEmpty@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=AT_MOST_ONCE>  {
                 R|<local>/w| = R|<local>/w|.R|kotlin/Int.plus|(Int(2))
             }
             )
