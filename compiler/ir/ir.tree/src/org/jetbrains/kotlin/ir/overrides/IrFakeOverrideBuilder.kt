@@ -378,7 +378,7 @@ class IrFakeOverrideBuilder(
         a: IrOverridableMember,
         b: IrOverridableMember
     ): Boolean {
-        return a > b
+        return a >= b
     }
 
     // Based on compareTo from FirOverrideService.kt
@@ -458,20 +458,12 @@ class IrFakeOverrideBuilder(
         }
         val candidates = mutableListOf<FakeOverride>()
         var transitivelyMostSpecific = overridables.first()
-        val transitivelyMostSpecificMember = transitivelyMostSpecific
         for (overridable in overridables) {
-            if (isMoreSpecificThenAllOf(overridable, overridables)
-            ) {
+            if (isMoreSpecificThenAllOf(overridable, overridables)) {
                 candidates.add(overridable)
             }
-            if (isMoreSpecific(
-                    overridable.override,
-                    transitivelyMostSpecificMember.override
-                )
-                && !isMoreSpecific(
-                    transitivelyMostSpecificMember.override,
-                    overridable.override
-                )
+            if (isMoreSpecific(overridable.override, transitivelyMostSpecific.override)
+                && !isMoreSpecific(transitivelyMostSpecific.override, overridable.override)
             ) {
                 transitivelyMostSpecific = overridable
             }
@@ -483,7 +475,7 @@ class IrFakeOverrideBuilder(
         }
         var firstNonFlexible: FakeOverride? = null
         for (candidate in candidates) {
-            if (candidate.override.returnType !is IrDynamicType) {
+            if (!candidate.override.returnType.isFlexible()) {
                 firstNonFlexible = candidate
                 break
             }

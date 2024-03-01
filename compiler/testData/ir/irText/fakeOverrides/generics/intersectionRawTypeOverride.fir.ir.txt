@@ -303,12 +303,12 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:G modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface; <root>.KotlinInterface2]'
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.KotlinInterface2) returnType:kotlin.collections.List<*> [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.KotlinInterface) returnType:kotlin.collections.List<kotlin.Any?> [fake_override]
       overridden:
         public open fun bar (): @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.Java1
         public abstract fun bar (): kotlin.collections.List<kotlin.Any?> declared in <root>.KotlinInterface
         public abstract fun bar (): kotlin.collections.List<*> declared in <root>.KotlinInterface2
-      $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface2
+      $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
@@ -387,12 +387,12 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface; <root>.KotlinInterface2]'
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.KotlinInterface2) returnType:kotlin.collections.List<*> [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.KotlinInterface) returnType:kotlin.collections.List<kotlin.Any?> [fake_override]
       overridden:
         public open fun bar (): @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.Java1
         public abstract fun bar (): kotlin.collections.List<kotlin.Any?> declared in <root>.KotlinInterface
         public abstract fun bar (): kotlin.collections.List<*> declared in <root>.KotlinInterface2
-      $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface2
+      $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
@@ -637,7 +637,7 @@ FILE fqName:<root> fileName:/1.kt
           <T>: kotlin.Nothing?
           element: CONST Null type=kotlin.Nothing? value=null
       VAR name:k7 type:kotlin.collections.List<kotlin.Any?> [val]
-        CALL 'public open fun bar (): kotlin.collections.List<*> declared in <root>.G' type=kotlin.collections.List<kotlin.Any?> origin=null
+        CALL 'public open fun bar (): kotlin.collections.List<kotlin.Any?> declared in <root>.G' type=kotlin.collections.List<kotlin.Any?> origin=null
           $this: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
       CALL 'public open fun foo (a: kotlin.collections.List<kotlin.Any?>): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
         $this: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
@@ -645,7 +645,7 @@ FILE fqName:<root> fileName:/1.kt
           <T>: kotlin.Nothing?
           element: CONST Null type=kotlin.Nothing? value=null
       VAR name:k8 type:kotlin.collections.List<kotlin.Any?> [val]
-        CALL 'public open fun bar (): kotlin.collections.List<*> declared in <root>.H' type=kotlin.collections.List<kotlin.Any?> origin=null
+        CALL 'public open fun bar (): kotlin.collections.List<kotlin.Any?> declared in <root>.H' type=kotlin.collections.List<kotlin.Any?> origin=null
           $this: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
       CALL 'public open fun foo (a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>?): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
         $this: GET_VAR 'i: <root>.I declared in <root>.test' type=<root>.I origin=null

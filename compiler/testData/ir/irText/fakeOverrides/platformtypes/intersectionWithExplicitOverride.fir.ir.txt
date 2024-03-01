@@ -434,12 +434,12 @@ FILE fqName:<root> fileName:/1.kt
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.Java3) returnType:@[FlexibleNullability] kotlin.Number? [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.Java2) returnType:kotlin.Int [fake_override]
       overridden:
         public abstract fun foo (): @[FlexibleNullability] kotlin.Any? declared in <root>.Java1
         public abstract fun foo (): kotlin.Int declared in <root>.Java2
         public abstract fun foo (): @[FlexibleNullability] kotlin.Number? declared in <root>.Java3
-      $this: VALUE_PARAMETER name:<this> type:<root>.Java3
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java2
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.Java1
@@ -726,7 +726,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
         <set-?>: CONST Int type=kotlin.Int value=4
       VAR name:k42 type:kotlin.Int [val]
-        CALL 'public abstract fun foo (): @[FlexibleNullability] kotlin.Number? declared in <root>.I' type=kotlin.Int origin=null
+        CALL 'public abstract fun foo (): kotlin.Int declared in <root>.I' type=kotlin.Int origin=null
           $this: GET_VAR 'i: <root>.I declared in <root>.test' type=<root>.I origin=null
       VAR name:k43 type:kotlin.Unit [val]
         CALL 'public abstract fun bar (o: kotlin.Int): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
