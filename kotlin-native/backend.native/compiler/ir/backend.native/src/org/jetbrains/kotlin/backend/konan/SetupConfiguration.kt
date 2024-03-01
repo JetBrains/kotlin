@@ -169,7 +169,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(FRAMEWORK_IMPORT_HEADERS, arguments.frameworkImportHeaders.toNonNullList())
     arguments.emitLazyObjCHeader?.let { put(EMIT_LAZY_OBJC_HEADER_FILE, it) }
 
-    put(BITCODE_EMBEDDING_MODE, selectBitcodeEmbeddingMode(this@setupFromArguments, arguments))
     put(DEBUG_INFO_VERSION, arguments.debugInfoFormatVersion.toInt())
     put(OBJC_GENERICS, !arguments.noObjcGenerics)
     put(DEBUG_PREFIX_MAP, parseDebugPrefixMap(arguments, this@setupFromArguments))
@@ -370,25 +369,6 @@ private fun parsePreLinkCachesValue(
         configuration.report(ERROR, "Unsupported `-Xpre-link-caches` value: $value. Possible values are 'enable'/'disable'")
         null
     }
-}
-
-private fun selectBitcodeEmbeddingMode(
-        configuration: CompilerConfiguration,
-        arguments: K2NativeCompilerArguments
-): BitcodeEmbedding.Mode = when {
-    arguments.embedBitcodeMarker -> {
-        if (arguments.embedBitcode) {
-            configuration.report(
-                    STRONG_WARNING,
-                    "'${K2NativeCompilerArguments.EMBED_BITCODE_FLAG}' is ignored because '${K2NativeCompilerArguments.EMBED_BITCODE_MARKER_FLAG}' is specified"
-            )
-        }
-        BitcodeEmbedding.Mode.MARKER
-    }
-    arguments.embedBitcode -> {
-        BitcodeEmbedding.Mode.FULL
-    }
-    else -> BitcodeEmbedding.Mode.NONE
 }
 
 private fun selectExportedLibraries(
