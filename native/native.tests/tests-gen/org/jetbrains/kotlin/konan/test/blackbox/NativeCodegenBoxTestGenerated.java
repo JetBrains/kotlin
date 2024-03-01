@@ -40159,6 +40159,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("inProjectedSam.kt")
+      public void testInProjectedSam() {
+        runTest("compiler/testData/codegen/box/sam/inProjectedSam.kt");
+      }
+
+      @Test
       @TestMetadata("kt51821.kt")
       public void testKt51821() {
         runTest("compiler/testData/codegen/box/sam/kt51821.kt");

@@ -42746,6 +42746,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/sam/fieldInJavaSamInterface.kt");
     }
 
+    @TestMetadata("inProjectedSam.kt")
+    public void testInProjectedSam() {
+      runTest("compiler/testData/codegen/box/sam/inProjectedSam.kt");
+    }
+
     @TestMetadata("inlinedSamWrapper.kt")
     public void testInlinedSamWrapper() {
       runTest("compiler/testData/codegen/box/sam/inlinedSamWrapper.kt");

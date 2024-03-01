@@ -505,8 +505,9 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
 ): ConeKotlinType? {
     if (candidateExpectedType.isSomeFunctionType(session)) return null
 
-    val expectedFunctionType = context.bodyResolveComponents.samResolver.getFunctionTypeForPossibleSamType(candidateExpectedType)
+    val samConversionInfo = context.bodyResolveComponents.samResolver.getSamInfoForPossibleSamType(candidateExpectedType)
         ?: return null
+    val expectedFunctionType = samConversionInfo.functionalType
 
     if (!argument.shouldUseSamConversion(
             session,
@@ -520,9 +521,9 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
     }
 
     val samConversions = functionTypesOfSamConversions
-        ?: hashMapOf<FirExpression, ConeKotlinType>().also { functionTypesOfSamConversions = it }
+        ?: hashMapOf<FirExpression, FirSamResolver.SamConversionInfo>().also { functionTypesOfSamConversions = it }
 
-    samConversions[argument.unwrapArgument()] = expectedFunctionType
+    samConversions[argument.unwrapArgument()] = samConversionInfo
     return expectedFunctionType
 }
 

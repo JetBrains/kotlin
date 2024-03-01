@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
 
 private val SAM_PARAMETER_NAME = Name.identifier("function")
@@ -71,27 +70,42 @@ class FirSamResolver(
         else -> false
     }
 
-    fun getFunctionTypeForPossibleSamType(type: ConeKotlinType): ConeKotlinType? {
+    /**
+     * fun interface Foo {
+     *     fun bar(x: Int): String
+     * }
+     *
+     * [functionalType] is `(Int) -> String`
+     * [samType] is `Foo`
+     */
+    data class SamConversionInfo(val functionalType: ConeKotlinType, val samType: ConeKotlinType)
+
+    fun getSamInfoForPossibleSamType(type: ConeKotlinType): SamConversionInfo? {
         return when (type) {
-            is ConeClassLikeType -> getFunctionTypeForPossibleSamType(type.fullyExpandedType(session))
+            is ConeClassLikeType -> SamConversionInfo(
+                functionalType = getFunctionTypeForPossibleSamType(type.fullyExpandedType(session)) ?: return null,
+                samType = type
+            )
             is ConeFlexibleType -> {
-                val lowerType = getFunctionTypeForPossibleSamType(type.lowerBound) ?: return null
-                val upperType = getFunctionTypeForPossibleSamType(type.upperBound) ?: return null
-                ConeFlexibleType(lowerType.lowerBoundIfFlexible(), upperType.upperBoundIfFlexible())
+                val lowerType = getSamInfoForPossibleSamType(type.lowerBound)?.functionalType ?: return null
+                val upperType = getSamInfoForPossibleSamType(type.upperBound)?.functionalType ?: return null
+                SamConversionInfo(
+                    functionalType = ConeFlexibleType(lowerType.lowerBoundIfFlexible(), upperType.upperBoundIfFlexible()),
+                    samType = type
+                )
             }
 
             is ConeStubType, is ConeTypeParameterType, is ConeTypeVariableType,
             is ConeDefinitelyNotNullType, is ConeIntersectionType, is ConeIntegerLiteralType,
             -> null
 
-            is ConeCapturedType -> type.lowerType?.let { getFunctionTypeForPossibleSamType(it) }
+            is ConeCapturedType -> type.lowerType?.let { getSamInfoForPossibleSamType(it) }
 
             is ConeLookupTagBasedType -> unreachableBranch(type)
         }
     }
 
     private fun getFunctionTypeForPossibleSamType(type: ConeClassLikeType): ConeLookupTagBasedType? {
-        @OptIn(LookupTagInternals::class)
         val firRegularClass = type.lookupTag.toFirRegularClass(session) ?: return null
 
         val (_, unsubstitutedFunctionType) = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null

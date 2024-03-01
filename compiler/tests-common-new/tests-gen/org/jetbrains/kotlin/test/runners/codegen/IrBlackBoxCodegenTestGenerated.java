@@ -52960,6 +52960,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
     }
 
     @Test
+    @TestMetadata("inProjectedSam.kt")
+    public void testInProjectedSam() {
+      runTest("compiler/testData/codegen/box/sam/inProjectedSam.kt");
+    }
+
+    @Test
     @TestMetadata("inlinedSamWrapper.kt")
     public void testInlinedSamWrapper() {
       runTest("compiler/testData/codegen/box/sam/inlinedSamWrapper.kt");

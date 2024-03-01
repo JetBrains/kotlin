@@ -549,7 +549,7 @@ internal class AdapterGenerator(
     }
 
     internal fun getFunctionTypeForPossibleSamType(parameterType: ConeKotlinType): ConeKotlinType? {
-        return samResolver.getFunctionTypeForPossibleSamType(parameterType)
+        return samResolver.getSamInfoForPossibleSamType(parameterType)?.functionalType
     }
 
     /**

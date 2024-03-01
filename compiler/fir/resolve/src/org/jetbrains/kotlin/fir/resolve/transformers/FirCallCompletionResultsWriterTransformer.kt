@@ -414,10 +414,9 @@ class FirCallCompletionResultsWriterTransformer(
                 // Finally, the result can be wrapped in a SAM conversion if necessary.
                 if (transformed is FirExpression) {
                     val key = (element as? FirAnonymousFunctionExpression)?.anonymousFunction ?: element
-                    if (expectedArgumentsTypeMapping?.samFunctionTypes?.get(key) != null) {
-                        val expectedArgumentType = expectedArgumentsTypeMapping.getExpectedType(key)
+                    expectedArgumentsTypeMapping?.samConversions?.get(key)?.let { samInfo ->
                         @Suppress("UNCHECKED_CAST")
-                        expectedArgumentType?.let { return transformed.wrapInSamExpression(it) as E }
+                        return transformed.wrapInSamExpression(samInfo.samType) as E
                     }
                 }
 
@@ -436,7 +435,6 @@ class FirCallCompletionResultsWriterTransformer(
             source = this@wrapInSamExpression.source?.fakeElement(KtFakeSourceElementKind.SamConversion)
         }
     }
-
     private val FirBasedSymbol<*>.isArrayConstructorWithLambda: Boolean
         get() {
             val constructor = (this as? FirConstructorSymbol)?.fir ?: return false
@@ -639,7 +637,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         val isIntegerOperator = symbol.isWrappedIntegerOperator()
 
-        var samConversions: MutableMap<FirElement, ConeKotlinType>? = null
+        var samConversions: MutableMap<FirElement, FirSamResolver.SamConversionInfo>? = null
         val arguments = argumentMapping?.flatMap { (argument, valueParameter) ->
             val expectedType = when {
                 isIntegerOperator -> ConeIntegerConstantOperatorTypeImpl(
@@ -652,10 +650,12 @@ class FirCallCompletionResultsWriterTransformer(
 
             argument.unwrapAndFlattenArgument(flattenArrays = false).map {
                 val element: FirElement = (it as? FirAnonymousFunctionExpression)?.anonymousFunction ?: it
-                val samFunctionType = functionTypesOfSamConversions?.get(it)
-                if (samFunctionType != null) {
+                functionTypesOfSamConversions?.get(it)?.let { samInfo ->
                     if (samConversions == null) samConversions = mutableMapOf()
-                    samConversions!![element] = samFunctionType.substitute(this)
+                    samConversions!![element] = FirSamResolver.SamConversionInfo(
+                        functionalType = samInfo.functionalType.substituteType(this),
+                        samType = samInfo.samType.substituteType(this)
+                    )
                 }
                 element to expectedType
             }
@@ -771,9 +771,9 @@ class FirCallCompletionResultsWriterTransformer(
                 expectedArgumentType.isSomeFunctionType(session) -> expectedArgumentType
                 // fun interface (a.k.a. SAM), then unwrap it and build a functional type from that interface function
                 else -> {
-                    val samFunctionType = (data as? ExpectedArgumentType.ArgumentsMap)?.samFunctionTypes?.get(anonymousFunction)
-                        ?: samResolver.getFunctionTypeForPossibleSamType(expectedArgumentType)
-                    samFunctionType?.lowerBoundIfFlexible()
+                    val samInfo = (data as? ExpectedArgumentType.ArgumentsMap)?.samConversions?.get(anonymousFunction)
+                        ?: samResolver.getSamInfoForPossibleSamType(expectedArgumentType)
+                    samInfo?.functionalType?.lowerBoundIfFlexible()
                 }
             }
         }
@@ -1062,7 +1062,7 @@ sealed class ExpectedArgumentType {
     class ArgumentsMap(
         val map: Map<FirElement, ConeKotlinType>,
         val lambdasReturnTypes: Map<FirAnonymousFunction, ConeKotlinType>,
-        val samFunctionTypes: Map<FirElement, ConeKotlinType>,
+        val samConversions: Map<FirElement, FirSamResolver.SamConversionInfo>,
     ) : ExpectedArgumentType()
 
     class ExpectedType(val type: ConeKotlinType) : ExpectedArgumentType()
