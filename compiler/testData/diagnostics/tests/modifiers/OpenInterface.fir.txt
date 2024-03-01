@@ -1,4 +1,4 @@
-FILE: OpenInterface.fir.kt
+FILE: OpenInterface.kt
     public open interface OpenInterface : R|kotlin/Any| {
         public abstract fun defaultModalityFuncWithoutBody(): R|kotlin/Unit|
 

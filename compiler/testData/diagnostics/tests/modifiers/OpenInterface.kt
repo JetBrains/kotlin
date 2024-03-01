@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FIR_DUMP
 <!REDUNDANT_MODIFIER_FOR_TARGET!>open<!> interface OpenInterface {
     fun defaultModalityFuncWithoutBody()
