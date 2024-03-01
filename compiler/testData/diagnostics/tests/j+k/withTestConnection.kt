@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FULL_JDK
 // JVM_TARGET: 1.8
 
