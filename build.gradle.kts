@@ -811,10 +811,11 @@ tasks {
     // - different GCs
     // ...
     register("nativeCompilerTest") {
+        dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
+        dependsOn(":native:analysis-api-klib-reader:check")
         dependsOn(":native:native.tests:test")
         dependsOn(":native:objcexport-header-generator:check")
         dependsOn(":native:swift:swift-export-standalone:test")
-        dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
     }
 
     // These are unit tests of Native compiler
