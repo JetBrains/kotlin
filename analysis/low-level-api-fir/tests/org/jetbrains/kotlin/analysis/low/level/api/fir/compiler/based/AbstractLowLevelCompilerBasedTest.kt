@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 
-abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
+abstract class AbstractLowLevelCompilerBasedTest : AbstractCompilerBasedTest() {
     final override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = FrontendKinds.FIR

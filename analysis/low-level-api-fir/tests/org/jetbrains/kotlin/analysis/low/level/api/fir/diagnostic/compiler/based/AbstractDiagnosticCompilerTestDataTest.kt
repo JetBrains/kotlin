@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirOnlyNonReversedTestSuppressor
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractCompilerBasedTestForFir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractLowLevelCompilerBasedTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactoryWithoutPreresolve
 import org.jetbrains.kotlin.fir.symbols.FirLazyResolveContractViolationException
 import org.jetbrains.kotlin.test.WrappedException
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.utils.bind
 
-abstract class AbstractDiagnosticCompilerTestDataTest : AbstractCompilerBasedTestForFir() {
+abstract class AbstractDiagnosticCompilerTestDataTest : AbstractLowLevelCompilerBasedTest() {
     override fun configureTest(builder: TestConfigurationBuilder) {
         with(builder) {
             baseFirDiagnosticTestConfiguration(
