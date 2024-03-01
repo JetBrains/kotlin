@@ -17,6 +17,7 @@ class Implementation(element: Element, name: String?) : AbstractImplementation<I
 
     var generationCallback: (context(ImportCollector) SmartPrinter.() -> Unit)? = null
 
+    var bindOwnedSymbol = true
     override var doPrint = true
 
     init {

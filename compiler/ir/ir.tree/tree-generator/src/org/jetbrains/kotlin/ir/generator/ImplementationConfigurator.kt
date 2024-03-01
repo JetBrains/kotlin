@@ -1,25 +1,18 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.generator
 
-import org.jetbrains.kotlin.generators.tree.ArbitraryImportable
-import org.jetbrains.kotlin.generators.tree.ImplementationKind
-import org.jetbrains.kotlin.generators.tree.ClassRef
-import org.jetbrains.kotlin.generators.tree.ImportCollector
-import org.jetbrains.kotlin.generators.tree.StandardTypes
-import org.jetbrains.kotlin.generators.tree.Visibility
+import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.VariableKind
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
 import org.jetbrains.kotlin.generators.tree.printer.printPropertyDeclaration
 import org.jetbrains.kotlin.ir.generator.config.AbstractIrTreeImplementationConfigurator
 import org.jetbrains.kotlin.ir.generator.model.Element
-import org.jetbrains.kotlin.ir.generator.model.Implementation
 import org.jetbrains.kotlin.ir.generator.model.ListField
-import org.jetbrains.kotlin.utils.SmartPrinter
 
 object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
     override fun configure(model: Model): Unit = with(IrTree) {
@@ -117,7 +110,13 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(errorDeclaration) {
-            implementation.doPrint = false
+            implementation.bindOwnedSymbol = false
+            default("symbol") {
+                value = "error(\"Should never be called\")"
+                withGetter = true
+            }
+            isMutable("descriptor")
+            isLateinit("descriptor")
         }
 
         impl(externalPackageFragment) {
@@ -130,6 +129,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
     }
 
     private fun ImplementationContext.configureDeclarationWithLateBindinig(symbolType: ClassRef<*>) {
+        implementation.bindOwnedSymbol = false
         default("isBound") {
             value = "_symbol != null"
             withGetter = true
@@ -201,7 +201,10 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             default(it, "ArrayList(2)")
         }
 
-        configureFieldInAllImplementations("descriptor", { impl -> impl.allFields.any { it.name == "symbol" } }) {
+        configureFieldInAllImplementations(
+            "descriptor",
+            { impl -> impl.allFields.any { it.name == "symbol" } && impl.element != IrTree.errorDeclaration }
+        ) {
             default(it, "symbol.descriptor", withGetter = true)
         }
 

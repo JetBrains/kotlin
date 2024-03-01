@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.ir.generator.print
 
-import com.intellij.psi.util.PsiExpressionTrimRenderer.render
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.printBlock
 import org.jetbrains.kotlin.ir.generator.IrTree
-import org.jetbrains.kotlin.ir.generator.IrTree.parent
 import org.jetbrains.kotlin.ir.generator.irImplementationDetailType
-import org.jetbrains.kotlin.ir.generator.model.*
+import org.jetbrains.kotlin.ir.generator.model.Element
+import org.jetbrains.kotlin.ir.generator.model.Field
+import org.jetbrains.kotlin.ir.generator.model.Implementation
 import org.jetbrains.kotlin.utils.SmartPrinter
 
 internal class ImplementationPrinter(printer: SmartPrinter) : AbstractImplementationPrinter<Implementation, Element, Field>(printer) {
@@ -34,7 +34,7 @@ internal class ImplementationPrinter(printer: SmartPrinter) : AbstractImplementa
 
         if (
             implementation.element.traverseParentsUntil { it == IrTree.symbolOwner } &&
-            !implementation.element.let { it == IrTree.propertyWithLateBinding || it == IrTree.functionWithLateBinding }
+            implementation.bindOwnedSymbol
         ) {
             val symbolField = implementation["symbol"]
             if (symbolField != null) {

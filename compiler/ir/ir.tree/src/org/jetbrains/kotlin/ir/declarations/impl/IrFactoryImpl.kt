@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrImplementationDetail
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -134,6 +135,7 @@ abstract class AbstractIrFactoryImpl : IrFactory {
             factory = this
         )
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun createErrorDeclaration(
         startOffset: Int,
         endOffset: Int,
