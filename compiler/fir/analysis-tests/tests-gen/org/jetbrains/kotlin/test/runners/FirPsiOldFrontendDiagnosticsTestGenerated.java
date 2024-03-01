@@ -22295,6 +22295,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("kjkRawTypeWithKotlinUpperBound.kt")
+      public void testKjkRawTypeWithKotlinUpperBound() {
+        runTest("compiler/testData/diagnostics/tests/j+k/kjkRawTypeWithKotlinUpperBound.kt");
+      }
+
+      @Test
       @TestMetadata("kt1402.kt")
       public void testKt1402() {
         runTest("compiler/testData/diagnostics/tests/j+k/kt1402.kt");
