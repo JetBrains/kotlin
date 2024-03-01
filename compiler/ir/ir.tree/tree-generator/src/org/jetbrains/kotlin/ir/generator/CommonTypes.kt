@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -33,7 +33,6 @@ val elementVisitorVoidType = type(visitors, "IrElementVisitorVoid")
 val elementTransformerType = type(visitors, "IrElementTransformer")
 val elementTransformerVoidType = type(visitors, "IrElementTransformerVoid", TypeKind.Class)
 val typeTransformerType = type(visitors, "IrTypeTransformer")
-val mutableAnnotationContainerType = type(declarations, "IrMutableAnnotationContainer")
 val irTypeType = type(types, "IrType")
 val irFactoryType = type(declarations, "IrFactory")
 val stageControllerType = type(declarations, "StageController", TypeKind.Class)

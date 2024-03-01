@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.generators.tree.printer.printPropertyDeclaration
 import org.jetbrains.kotlin.ir.generator.config.AbstractIrTreeImplementationConfigurator
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.ListField
+import org.jetbrains.kotlin.utils.withIndent
 
 object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
     override fun configure(model: Model): Unit = with(IrTree) {
@@ -145,7 +146,19 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(file) {
-            implementation.doPrint = false
+            implementation.putImplementationOptInInConstructor = false
+            implementation.constructorParameterOrderOverride = listOf("fileEntry", "symbol", "packageFqName")
+            default("startOffset", "0", withGetter = true)
+            default("endOffset", "fileEntry.maxOffset", withGetter = true)
+            isMutable("module")
+            isLateinit("module")
+            implementation.generationCallback = {
+                println()
+                println("internal val isInsideModule: Boolean")
+                withIndent {
+                    println("get() = ::module.isInitialized")
+                }
+            }
         }
     }
 

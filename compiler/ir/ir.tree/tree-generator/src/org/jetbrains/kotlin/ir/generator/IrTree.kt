@@ -656,7 +656,7 @@ object IrTree : AbstractTreeBuilder() {
         generateIrFactoryMethod = false
 
         parent(packageFragment)
-        parent(mutableAnnotationContainerType)
+        parent(mutableAnnotationContainer)
         parent(metadataSourceOwner)
 
         +symbol(fileSymbolType)

@@ -3,6 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// DO NOT MODIFY IT MANUALLY.
+
+@file:Suppress("DuplicatedCode")
+
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.ir.IrFileEntry
@@ -20,15 +25,6 @@ class IrFileImpl(
     override val symbol: IrFileSymbol,
     override var packageFqName: FqName,
 ) : IrFile() {
-    init {
-        symbol.bind(this)
-    }
-
-    override lateinit var module: IrModuleFragment
-
-    internal val isInsideModule: Boolean
-        get() = ::module.isInitialized
-
     override val startOffset: Int
         get() = 0
 
@@ -41,4 +37,13 @@ class IrFileImpl(
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override var metadata: MetadataSource? = null
+
+    override lateinit var module: IrModuleFragment
+
+    internal val isInsideModule: Boolean
+        get() = ::module.isInitialized
+
+    init {
+        symbol.bind(this)
+    }
 }
