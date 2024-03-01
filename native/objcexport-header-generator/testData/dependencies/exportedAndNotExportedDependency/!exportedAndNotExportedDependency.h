@@ -158,6 +158,13 @@ __attribute__((swift_name("FooKt")))
 @end
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TopLevelCallablesKt")))
+@interface MyAppTopLevelCallablesKt : MyAppBase
++ (int32_t)topLevelFunction __attribute__((swift_name("topLevelFunction()")));
+@property (class, readonly) int32_t topLevelProperty __attribute__((swift_name("topLevelProperty")));
+@end
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TLBMyLibraryB")))
 @interface MyAppTLBMyLibraryB : MyAppBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));

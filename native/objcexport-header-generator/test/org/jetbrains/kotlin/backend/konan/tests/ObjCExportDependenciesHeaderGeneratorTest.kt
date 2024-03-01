@@ -69,14 +69,15 @@ class ObjCExportDependenciesHeaderGeneratorTest(
      * Requires being able to use AA to iterate over symbols to 'export' the dependency
      */
     @Test
-    @TodoAnalysisApi
     fun `test - exportedAndNotExportedDependency`() {
         doTest(
             dependenciesDir.resolve("exportedAndNotExportedDependency"), configuration = HeaderGenerator.Configuration(
                 frameworkName = "MyApp",
                 generateBaseDeclarationStubs = true,
                 dependencies = listOf(testLibraryAKlibFile, testLibraryBKlibFile),
-                exportedDependencyModuleNames = setOf("org.jetbrains.kotlin:testLibraryA")
+                exportedDependencyModuleNames = setOf(
+                    "org.jetbrains.kotlin:testLibraryA", "testLibraryA"
+                )
             )
         )
     }

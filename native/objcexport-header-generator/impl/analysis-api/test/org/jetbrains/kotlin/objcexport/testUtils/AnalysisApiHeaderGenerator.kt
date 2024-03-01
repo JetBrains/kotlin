@@ -41,7 +41,7 @@ object AnalysisApiHeaderGenerator : HeaderGenerator {
                 KtObjCExportConfiguration(
                     frameworkName = configuration.frameworkName,
                     generateBaseDeclarationStubs = configuration.generateBaseDeclarationStubs,
-                    exportedModuleNames = setOf(defaultKotlinSourceModuleName)
+                    exportedModuleNames = setOf(defaultKotlinSourceModuleName) + configuration.exportedDependencyModuleNames
                 )
             ) {
                 translateToObjCHeader(files.map { it as KtFile })
