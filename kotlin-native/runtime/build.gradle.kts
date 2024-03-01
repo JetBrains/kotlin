@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
+import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.properties.saveProperties
 import org.jetbrains.kotlin.konan.target.*
@@ -16,8 +17,8 @@ import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
 
 // These properties are used by the 'konan' plugin, thus we set them before applying it.
 val distDir: File by project
-val konanHome: String by extra(distDir.absolutePath)
-extra["org.jetbrains.kotlin.native.home"] = konanHome
+val downloader = NativeCompilerDownloader(project)
+extra["org.jetbrains.kotlin.native.home"] = downloader.compilerDirectory.absolutePath
 
 val kotlinVersion: String by rootProject.extra
 
@@ -563,6 +564,12 @@ tasks.named("clean") {
 
 // region: Stdlib
 
+tasks.register("downloadBootstrapCompiler") {
+    doFirst {
+        downloader.downloadIfNeeded()
+    }
+}
+
 val commonStdlibSrcDirs = project(":kotlin-stdlib")
         .files(
                 "common/src/kotlin",
@@ -623,7 +630,7 @@ konanArtifacts {
 
     stdlibBuildTask = project.findKonanBuildTask("stdlib", project.platformManager.hostPlatform.target).apply {
         configure {
-            dependsOn(":kotlin-native:distCompiler")
+            dependsOn("downloadBootstrapCompiler")
             dependsOn(":prepare:build.version:writeStdlibVersion")
         }
     }
@@ -646,11 +653,8 @@ val stdlibTask = tasks.register<Copy>("nativeStdlib") {
                 val props = loadProperties()
                 props[KLIB_PROPERTY_NATIVE_TARGETS] = targetList.joinToString(separator = " ")
 
-                // Check that we didn't get other than the requested version from cache, previous build or due to some other build issue
-                val versionFromManifest = props[KLIB_PROPERTY_COMPILER_VERSION]
-                check(versionFromManifest == kotlinVersion) {
-                    "Manifest file ($this) processing: $versionFromManifest was found while $kotlinVersion was expected"
-                }
+                // Override the bootstrap version in the library with the current Kotlin version.
+                props[KLIB_PROPERTY_COMPILER_VERSION] = kotlinVersion
 
                 saveProperties(props)
             }
@@ -668,6 +672,7 @@ cacheableTargetNames.forEach { targetName ->
         klibUniqName = "stdlib"
         cacheRoot = project.layout.buildDirectory.dir("cache/$targetName").get().asFile.absolutePath
 
+        dependsOn(":kotlin-native:distCompiler")
         dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
         // stdlib cache links in runtime modules from the K/N distribution.
         inputs.dir("$distDir/konan/targets/$targetName/native")

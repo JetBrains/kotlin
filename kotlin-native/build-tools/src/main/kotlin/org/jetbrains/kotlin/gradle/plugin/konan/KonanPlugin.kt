@@ -80,6 +80,12 @@ internal fun Project.setProperty(property: KonanPlugin.ProjectProperty, value: A
 // konanHome extension is set by downloadKonanCompiler task.
 internal val Project.konanHome: String
     get() {
+        // First get the overridden property in the project
+        val currentProjectProperty = validPropertiesNames.firstOrNull { project.hasProperty(it) }?.let { project.findProperty(it) }
+        if (currentProjectProperty != null) {
+            return file(currentProjectProperty).absolutePath
+        }
+        // Get the property defined for the whole kotlin-native
         return project.kotlinNativeDist.absolutePath
     }
 

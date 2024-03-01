@@ -5,6 +5,7 @@
 
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanInteropTask
+import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
 
@@ -18,7 +19,8 @@ val jvmArgs: String by extra(
         }.joinToString(" ")
 )
 
-extra["org.jetbrains.kotlin.native.home"] = konanHome
+val downloader = NativeCompilerDownloader(project)
+extra["org.jetbrains.kotlin.native.home"] = downloader.compilerDirectory.absolutePath
 extra["konan.jvmArgs"] = jvmArgs
 
 plugins {
@@ -67,7 +69,9 @@ konanTargetList.forEach { target ->
                 noEndorsedLibs(true)
                 noPack(true)
                 libraries {
-                    klibFiles(df.config.depends.map { "$konanHome/klib/platform/$targetName/${fileNamePrefix}${it}" })
+                    klibFiles(df.config.depends.map {
+                        project.layout.buildDirectory.dir("konan/libs/$targetName/${fileNamePrefix}${it}")
+                    })
                 }
                 extraOpts("-Xpurge-user-libs", "-Xshort-module-name", df.name, "-Xdisable-experimental-annotation")
                 compilerOpts("-fmodules-cache-path=${project.layout.buildDirectory.dir("clangModulesCache").get().asFile}")
@@ -78,7 +82,6 @@ konanTargetList.forEach { target ->
         val libTask = konanArtifacts.getByName(libName).getByTarget(targetName) as TaskProvider<KonanInteropTask>
         libTask.configure {
             dependsOn(df.config.depends.map { defFileToLibName(targetName, it) })
-            dependsOn(":kotlin-native:${targetName}CrossDist")
 
             enableParallel = project.findProperty("kotlin.native.platformLibs.parallel")?.toString()?.toBoolean() ?: true
         }
@@ -107,6 +110,7 @@ konanTargetList.forEach { target ->
                 }.forEach {
                     dependsOn(it)
                     dependsOn("${it}Cache")
+                    dependsOn(":kotlin-native:${targetName}CrossDist")
                 }
             }
             cacheTasks.add(cacheTask)
