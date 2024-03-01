@@ -19,7 +19,11 @@ object OBJECT
 
 data class DATA_CLASS(val a: Int)
 
+data class DATA_CLASS_WITH_REF(val o: OBJECT)
+
 inline class INLINE_CLASS(val a: Int)
+
+inline class INLINE_CLASS_WITH_REF(val i: DATA_CLASS_WITH_REF)
 
 abstract class ABSTRACT_CLASS
 

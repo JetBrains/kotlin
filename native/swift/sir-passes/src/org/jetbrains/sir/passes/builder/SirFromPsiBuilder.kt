@@ -5,13 +5,11 @@
 
 package org.jetbrains.sir.passes.builder
 
-import com.sun.org.apache.xpath.internal.operations.Bool
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isPublic
 import org.jetbrains.kotlin.sir.*
@@ -43,13 +41,10 @@ private class PsiToSirTranslationCollector(
     private val res: MutableList<SirDeclaration>,
     private val checker: PsiToSirTranslation<Boolean>,
     private val translator: PsiToSirTranslation<SirDeclaration>,
-    private val isFirstLevel: Boolean = true,
 ) : KtTreeVisitorVoid() {
 
     override fun visitClassOrObject(classOrObject: KtClassOrObject) {
-        if (isFirstLevel) {
-            classOrObject.checkAndTranslate(null)
-        }
+        classOrObject.checkAndTranslate(null)
     }
 
     override fun visitNamedFunction(function: KtNamedFunction) {
@@ -121,7 +116,6 @@ internal fun buildSirClassFromPsi(classOrObject: KtClassOrObject): SirNamedDecla
                 declarations,
                 PsiToSirTranslatableChecker(analysisSession),
                 PsiToSirElementTranslation(analysisSession),
-                false
             )
         )
     }.also { resultedClass ->
