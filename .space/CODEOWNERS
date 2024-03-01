@@ -362,6 +362,7 @@
 /license/ "Kotlin Build Infrastructure"
 
 /native/ "Kotlin Native"
+/native/analysis-api-klib-reader/ "Kotlin Native" "Kotlin in Fleet"
 /native/commonizer/ "Kotlin Apple Ecosystem"
 /native/commonizer-api/ "Kotlin Apple Ecosystem"
 /native/commonizer-embeddable/ "Kotlin Apple Ecosystem"
