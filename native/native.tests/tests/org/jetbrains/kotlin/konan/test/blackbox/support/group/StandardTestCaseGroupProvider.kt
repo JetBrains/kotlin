@@ -46,7 +46,10 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             val disabledTestCaseIds = hashSetOf<TestCaseId>()
             excludedTestDataFiles.mapTo(disabledTestCaseIds, TestCaseId::TestDataFile)
 
-            val testCases = includedTestDataFiles.map { testDataFile -> createTestCase(testDataFile, settings) }
+            val testCases = includedTestDataFiles.mapNotNull { testDataFile -> createTestCase(testDataFile, settings).also {
+                    if (it == null) disabledTestCaseIds += TestCaseId.TestDataFile(testDataFile)
+                }
+            }
 
             val lldbTestCases = testCases.filter { it.kind == TestKind.STANDALONE_LLDB }
             if (lldbTestCases.isNotEmpty()
@@ -61,7 +64,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
         }
     }
 
-    private fun createTestCase(testDataFile: File, settings: Settings): TestCase {
+    private fun createTestCase(testDataFile: File, settings: Settings): TestCase? {
         val generatedSourcesDir = computeGeneratedSourcesDir(
             testDataBaseDir = settings.get<TestRoots>().baseDir,
             testDataFile = testDataFile,
@@ -194,6 +197,9 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
 
         val registeredDirectives = directivesParser.build()
 
+        if (settings.isDisabledNative(registeredDirectives))
+            return null
+
         val freeCompilerArgs = parseFreeCompilerArgs(registeredDirectives, location)
         val expectedTimeoutFailure = parseExpectedTimeoutFailure(registeredDirectives)
 
@@ -216,6 +222,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             modules = testModules.values.toSet(),
             freeCompilerArgs = freeCompilerArgs,
             nominalPackageName = nominalPackageName,
+            expectedFailure = settings.isIgnoredTarget(registeredDirectives),
             checks = TestRunChecks(
                 computeExecutionTimeoutCheck(settings, expectedTimeoutFailure),
                 computeExitCodeCheck(testKind, registeredDirectives, location),
