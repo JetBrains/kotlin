@@ -103,9 +103,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         impl(moduleFragment) {
             implementation.putImplementationOptInInConstructor = false
-            additionalImports(ArbitraryImportable(Packages.tree, "UNDEFINED_OFFSET"))
-            default("startOffset", "UNDEFINED_OFFSET", withGetter = true)
-            default("endOffset", "UNDEFINED_OFFSET", withGetter = true)
+            default("startOffset", undefinedOffset(), withGetter = true)
+            default("endOffset", undefinedOffset(), withGetter = true)
             default("name", "descriptor.name", withGetter = true)
         }
 
@@ -120,7 +119,29 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(externalPackageFragment) {
-            implementation.doPrint = false
+            implementation.putImplementationOptInInConstructor = false
+            implementation.constructorParameterOrderOverride = listOf("symbol", "packageFqName")
+            additionalImports(
+                ArbitraryImportable(Packages.descriptors, "ModuleDescriptor"),
+            )
+            default("startOffset", undefinedOffset(), withGetter = true)
+            default("endOffset", undefinedOffset(), withGetter = true)
+            implementation.generationCallback = {
+                println()
+                print()
+                println(
+                    """
+                    companion object {
+                        @Deprecated(
+                            message = "Use org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment instead",
+                            replaceWith = ReplaceWith("createEmptyExternalPackageFragment", "org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment")
+                        )
+                        fun createEmptyExternalPackageFragment(module: ModuleDescriptor, fqName: FqName): IrExternalPackageFragment =
+                            org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment(module, fqName)
+                    }
+                    """.replaceIndent(currentIndent)
+                )
+            }
         }
 
         impl(file) {

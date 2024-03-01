@@ -3,6 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// DO NOT MODIFY IT MANUALLY.
+
+@file:Suppress("DuplicatedCode")
+
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -23,22 +28,19 @@ class IrExternalPackageFragmentImpl(
     override val endOffset: Int
         get() = UNDEFINED_OFFSET
 
-    init {
-        symbol.bind(this)
-    }
-
     @UnsafeDuringIrConstructionAPI
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 
     companion object {
         @Deprecated(
             message = "Use org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment instead",
-            replaceWith = ReplaceWith(
-                "createEmptyExternalPackageFragment",
-                "org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment"
-            )
+            replaceWith = ReplaceWith("createEmptyExternalPackageFragment", "org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment")
         )
         fun createEmptyExternalPackageFragment(module: ModuleDescriptor, fqName: FqName): IrExternalPackageFragment =
             org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment(module, fqName)
+    }
+
+    init {
+        symbol.bind(this)
     }
 }
