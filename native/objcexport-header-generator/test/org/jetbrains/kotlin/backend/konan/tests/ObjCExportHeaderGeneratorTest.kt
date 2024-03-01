@@ -137,7 +137,6 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    @TodoAnalysisApi
     fun `test - functionWithThrowsAnnotation`() {
         doTest(headersTestDataDir.resolve("functionWithThrowsAnnotation"))
     }
@@ -338,6 +337,21 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     @Test
     fun `test - privateGenericSuperInterface`() {
         doTest(headersTestDataDir.resolve("privateGenericSuperInterface"))
+    }
+
+    @Test
+    fun `test - throwable`() {
+        doTest(headersTestDataDir.resolve("throwable"))
+    }
+
+    @Test
+    fun `test - illegalStateException`() {
+        doTest(headersTestDataDir.resolve("illegalStateException"))
+    }
+
+    @Test
+    fun `test - suspend function`() {
+        doTest(headersTestDataDir.resolve("suspendFunction"))
     }
 
     private fun doTest(root: File, configuration: Configuration = Configuration()) {

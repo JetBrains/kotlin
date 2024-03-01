@@ -6,8 +6,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.buildThrowableAsErrorMethod
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isThrowable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
