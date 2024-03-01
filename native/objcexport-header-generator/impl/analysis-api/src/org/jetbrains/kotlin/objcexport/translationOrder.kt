@@ -28,6 +28,12 @@ internal val StableFunctionOrder: Comparator<KtFunctionSymbol>
          */
     )
 
+internal val StableConstructorOrder: Comparator<KtConstructorSymbol>
+    get() = compareBy(
+        { it.valueParameters.size },
+        // TODO NOW! { KonanManglerDesc.run { it.signatureString(false) } }
+    )
+
 internal val StableClassifierOrder: Comparator<KtClassifierSymbol> =
     compareBy<KtClassifierSymbol> { classifier ->
         if (classifier !is KtClassOrObjectSymbol) return@compareBy 0
@@ -45,6 +51,7 @@ internal val StableCallableOrder: Comparator<KtCallableSymbol> = compareBy<KtCal
         else -> 3
     }
 }
+    .thenComparing(StableConstructorOrder)
     .thenComparing(StablePropertyOrder)
     .thenComparing(StableFunctionOrder)
 

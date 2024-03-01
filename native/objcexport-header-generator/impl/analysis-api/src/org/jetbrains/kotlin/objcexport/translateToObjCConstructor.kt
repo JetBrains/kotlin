@@ -20,6 +20,7 @@ fun KtClassOrObjectSymbol.translateToObjCConstructors(): List<ObjCMethod> {
     result += getDeclaredMemberScope().getConstructors()
         .filter { !it.hasExportForCompilerAnnotation }
         .filter { it.isVisibleInObjC() }
+        .sortedWith(StableCallableOrder)
         .map { it.buildObjCMethod() }
 
     /* Create special 'alloc' constructors */
@@ -61,9 +62,13 @@ fun KtClassOrObjectSymbol.translateToObjCConstructors(): List<ObjCMethod> {
             }
         }
 
-    if (result.size == 1 && result.first().name == "init") {
+    val initIndex = result.indexOfFirst { it.name == "init" }
+    if (initIndex > -1) {
+        /**
+         * If there is "init" we need always add this special constructor
+         */
         result.add(
-            ObjCMethod(
+            initIndex + 1, ObjCMethod(
                 comment = null,
                 origin = getObjCExportStubOrigin(),
                 isInstanceMethod = false,

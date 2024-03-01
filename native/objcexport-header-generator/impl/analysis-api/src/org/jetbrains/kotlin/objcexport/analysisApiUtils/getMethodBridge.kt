@@ -20,8 +20,14 @@ internal fun KtFunctionLikeSymbol.getFunctionMethodBridge(): MethodBridge {
         valueParameters += bridgeParameter(it.returnType)
     }
 
-    if (this is KtFunctionSymbol && isSuspend) {
-        valueParameters += MethodBridgeValueParameter.SuspendCompletion(false)
+    if (isSuspend) {
+        valueParameters += MethodBridgeValueParameter.SuspendCompletion(true)
+    } else if (hasThrowsAnnotation) {
+        // Add error out parameter before tail block parameters. The convention allows this.
+        // Placing it after would trigger https://bugs.swift.org/browse/SR-12201
+        // (see also https://github.com/JetBrains/kotlin-native/issues/3825).
+        val tailBlocksCount = valueParameters.reversed().takeWhile { it.isBlockPointer() }.count()
+        valueParameters.add(valueParameters.size - tailBlocksCount, MethodBridgeValueParameter.ErrorOutParameter)
     }
 
     return MethodBridge(
@@ -125,13 +131,11 @@ private fun bridgeFunctionType(type: KtType): TypeBridge {
 context(KtAnalysisSession, KtObjCExportSession)
 private fun KtCallableSymbol.bridgeReturnType(): MethodBridge.ReturnValue {
 
-    val convertExceptionsToErrors = false // TODO: Add exception handling and return MethodBridge.ReturnValue.WithError.ZeroForError
-
     if (isArrayConstructor) {
         return MethodBridge.ReturnValue.Instance.FactoryResult
     } else if (isConstructor) {
         val result = MethodBridge.ReturnValue.Instance.InitResult
-        if (convertExceptionsToErrors) {
+        if (hasThrowsAnnotation) {
             MethodBridge.ReturnValue.WithError.ZeroForError(result, successMayBeZero = false)
         } else {
             return result
@@ -151,7 +155,7 @@ private fun KtCallableSymbol.bridgeReturnType(): MethodBridge.ReturnValue {
 //    }
 
     if (returnType.isUnit || returnType.isNothing) {
-        return if (convertExceptionsToErrors) {
+        return if (hasThrowsAnnotation) {
             MethodBridge.ReturnValue.WithError.Success
         } else {
             MethodBridge.ReturnValue.Void
@@ -162,7 +166,7 @@ private fun KtCallableSymbol.bridgeReturnType(): MethodBridge.ReturnValue {
     val returnTypeBridge = bridgeType(returnType)
     val successReturnValueBridge = MethodBridge.ReturnValue.Mapped(returnTypeBridge)
 
-    return if (convertExceptionsToErrors) {
+    return if (hasThrowsAnnotation) {
         val canReturnZero = !returnTypeBridge.isReferenceOrPointer() || returnType.canBeNull
         MethodBridge.ReturnValue.WithError.ZeroForError(
             successReturnValueBridge,
@@ -179,4 +183,13 @@ private fun KtCallableSymbol.bridgeReturnType(): MethodBridge.ReturnValue {
 private fun TypeBridge.isReferenceOrPointer(): Boolean = when (this) {
     ReferenceBridge, is BlockPointerBridge -> true
     is ValueTypeBridge -> this.objCValueType == ObjCValueType.POINTER
+}
+
+private fun MethodBridgeValueParameter.isBlockPointer(): Boolean = when (this) {
+    is MethodBridgeValueParameter.Mapped -> when (this.bridge) {
+        ReferenceBridge, is ValueTypeBridge -> false
+        is BlockPointerBridge -> true
+    }
+    MethodBridgeValueParameter.ErrorOutParameter -> false
+    is MethodBridgeValueParameter.SuspendCompletion -> true
 }
