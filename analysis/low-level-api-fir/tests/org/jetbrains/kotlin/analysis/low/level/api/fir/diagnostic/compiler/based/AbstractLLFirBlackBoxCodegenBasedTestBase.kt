@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractLowLevelCompilerBasedTest
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestConfiguration
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
+import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.runners.codegen.baseFirBlackBoxCodegenTestDirectivesConfiguration
 import org.jetbrains.kotlin.test.runners.codegen.configureModernJavaWhenNeeded
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -32,31 +34,37 @@ import java.io.File
  * This test case does not interact with the backend at all.
  */
 abstract class AbstractLLFirBlackBoxCodegenBasedTestBase : AbstractLowLevelCompilerBasedTest() {
-    protected fun TestConfigurationBuilder.baseConfiguration() {
-        baseFirBlackBoxCodegenTestDirectivesConfiguration()
-        configureModernJavaWhenNeeded()
-        useConfigurators(
-            ::CommonEnvironmentConfigurator,
-            ::JvmEnvironmentConfigurator,
-        )
+    abstract fun facade(): Constructor<LowLevelFirFrontendFacade>
+    abstract fun facadeSpecificSuppressor(): Constructor<AfterAnalysisChecker>
 
-        useAdditionalSourceProviders(
-            ::AdditionalDiagnosticsSourceFilesProvider,
-            ::CoroutineHelpersSourceFilesProvider,
-            ::CodegenHelpersSourceFilesProvider,
-        )
-
-        firHandlersStep {
-            useHandlers(
-                ::FirDiagnosticsHandler,
-                ::FirDumpHandler,
-                ::FirScopeDumpHandler,
-                ::FirCfgDumpHandler,
-                ::FirResolvedTypesVerifier,
+    override fun configureTest(builder: TestConfigurationBuilder) {
+        with(builder) {
+            facadeStep(facade())
+            baseFirBlackBoxCodegenTestDirectivesConfiguration()
+            configureModernJavaWhenNeeded()
+            useConfigurators(
+                ::CommonEnvironmentConfigurator,
+                ::JvmEnvironmentConfigurator,
             )
-        }
 
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
+            useAdditionalSourceProviders(
+                ::AdditionalDiagnosticsSourceFilesProvider,
+                ::CoroutineHelpersSourceFilesProvider,
+                ::CodegenHelpersSourceFilesProvider,
+            )
+
+            firHandlersStep {
+                useHandlers(
+                    ::FirDiagnosticsHandler,
+                    ::FirDumpHandler,
+                    ::FirScopeDumpHandler,
+                    ::FirCfgDumpHandler,
+                    ::FirResolvedTypesVerifier,
+                )
+            }
+
+            useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor, facadeSpecificSuppressor())
+        }
     }
 
     override fun shouldSkipTest(filePath: String, configuration: TestConfiguration): Boolean {

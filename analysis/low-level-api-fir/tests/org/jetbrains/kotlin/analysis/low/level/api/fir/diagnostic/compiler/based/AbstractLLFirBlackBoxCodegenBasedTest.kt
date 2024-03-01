@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.base
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirOnlyNonReversedTestSuppressor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactoryWithoutPreresolve
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractLLFirBlackBoxCodegenBasedTest : AbstractLLFirBlackBoxCodegenBasedTestBase() {
-    override fun configureTest(builder: TestConfigurationBuilder) {
-        with(builder) {
-            facadeStep(::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithoutPreresolve))
-            baseConfiguration()
-            useAfterAnalysisCheckers(::LLFirOnlyNonReversedTestSuppressor)
-        }
+    override fun facade(): Constructor<LowLevelFirFrontendFacade> {
+        return ::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithoutPreresolve)
     }
+
+    override fun facadeSpecificSuppressor(): (TestServices) -> AfterAnalysisChecker = ::LLFirOnlyNonReversedTestSuppressor
 }
