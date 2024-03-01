@@ -5,6 +5,8 @@ declare namespace JS_TESTS {
             readonly required: number;
             readonly notRequired?: Nullable<number>;
         }
+        interface ExportedParentInterface {
+        }
     }
     namespace foo {
         interface TestInterface {
@@ -43,6 +45,12 @@ declare namespace JS_TESTS {
         interface InterfaceWithCompanion {
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.InterfaceWithCompanion": unique symbol;
+            };
+        }
+        interface ExportedChildInterface extends foo.ExportedParentInterface {
+            bar(): void;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.ExportedChildInterface": unique symbol;
             };
         }
     }

@@ -62,3 +62,11 @@ interface InterfaceWithCompanion {
         fun foo() = "String"
     }
 }
+
+@JsExport
+external interface ExportedParentInterface
+
+@JsExport
+interface ExportedChildInterface : ExportedParentInterface {
+    fun bar()
+}

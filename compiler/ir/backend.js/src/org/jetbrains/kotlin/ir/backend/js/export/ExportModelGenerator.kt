@@ -379,7 +379,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     private fun IrClass.shouldContainImplementationOfMagicProperty(superTypes: Iterable<IrType>): Boolean {
         return !isExternal && superTypes.any {
             val superClass = it.classOrNull?.owner ?: return@any false
-            superClass.isInterface && superClass.isExported(context) || superClass.isJsImplicitExport()
+            superClass.isInterface && it.shouldAddMagicPropertyOfSuper() || superClass.isJsImplicitExport()
         }
     }
 
