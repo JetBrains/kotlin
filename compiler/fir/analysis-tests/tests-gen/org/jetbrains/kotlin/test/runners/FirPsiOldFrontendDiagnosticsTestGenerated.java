@@ -17766,6 +17766,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("kt49829_noCast.kt")
+        public void testKt49829_noCast() {
+          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt49829_noCast.kt");
+        }
+
+        @Test
         @TestMetadata("kt50498.kt")
         public void testKt50498() {
           runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt50498.kt");
