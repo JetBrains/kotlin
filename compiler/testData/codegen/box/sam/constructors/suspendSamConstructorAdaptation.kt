@@ -12,5 +12,6 @@ fun box(): String {
     val lambda: () -> Unit = { }
     func(f = lambda)
     func(lambda)
+    func {}
     return "OK"
 }
