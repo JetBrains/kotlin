@@ -813,6 +813,7 @@ tasks {
     register("nativeCompilerTest") {
         dependsOn(":native:native.tests:test")
         dependsOn(":native:objcexport-header-generator:check")
+        dependsOn(":native:swift:swift-export-standalone:test")
         dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
     }
 

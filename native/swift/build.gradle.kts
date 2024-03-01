@@ -7,7 +7,4 @@ tasks.register("sirAllTests") {
         ":native:swift:sir-compiler-bridge:test",
         ":native:swift:sir-printer:test"
     )
-    if (kotlinBuildProperties.isKotlinNativeEnabled) {
-        dependsOn(":native:swift:swift-export-standalone:test")
-    }
 }
