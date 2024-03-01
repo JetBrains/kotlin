@@ -20,9 +20,13 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 abstract class AbstractLLFirScriptDiagnosticCompilerTestDataTest : AbstractDiagnosticCompilerTestDataTest() {
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
-        builder.configureWithCustomScriptDef()
-        builder.useConfigurators(::CustomScriptDefinitionEnvironmentConfigurator)
+        builder.configureCustomScriptDefinitions()
     }
+}
+
+internal fun TestConfigurationBuilder.configureCustomScriptDefinitions() {
+    configureWithCustomScriptDef()
+    useConfigurators(::CustomScriptDefinitionEnvironmentConfigurator)
 }
 
 internal class CustomScriptDefinitionEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {

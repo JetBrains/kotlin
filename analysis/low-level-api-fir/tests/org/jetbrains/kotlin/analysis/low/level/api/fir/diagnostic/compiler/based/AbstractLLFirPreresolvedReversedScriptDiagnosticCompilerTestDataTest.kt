@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 
-import org.jetbrains.kotlin.scripting.test.configureWithCustomScriptDef
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
 abstract class AbstractLLFirPreresolvedReversedScriptDiagnosticCompilerTestDataTest :
     AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataTest() {
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
-        builder.configureWithCustomScriptDef()
-        builder.useConfigurators(::CustomScriptDefinitionEnvironmentConfigurator)
+        builder.configureCustomScriptDefinitions()
     }
 }

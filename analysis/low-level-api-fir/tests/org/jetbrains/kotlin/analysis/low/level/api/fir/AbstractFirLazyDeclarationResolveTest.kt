@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirCustomScriptDefinitionTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
@@ -56,4 +58,10 @@ abstract class AbstractFirOutOfContentRootLazyDeclarationResolveTest : AbstractF
 
 abstract class AbstractFirScriptLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveTest() {
     override val configurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
+}
+
+abstract class AbstractFirCustomScriptDefinitionLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveTest() {
+    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirCustomScriptDefinitionTestConfigurator(
+        analyseInDependentSession = false,
+    )
 }
