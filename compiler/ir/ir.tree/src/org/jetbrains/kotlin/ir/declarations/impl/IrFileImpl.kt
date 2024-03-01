@@ -22,26 +22,6 @@ class IrFileImpl(
     override val symbol: IrFileSymbol,
     override var packageFqName: FqName
 ) : IrFile() {
-    constructor(
-        fileEntry: IrFileEntry,
-        packageFragmentDescriptor: PackageFragmentDescriptor
-    ) : this(fileEntry, IrFileSymbolImpl(packageFragmentDescriptor), packageFragmentDescriptor.fqName)
-
-    constructor(
-        fileEntry: IrFileEntry,
-        packageFragmentDescriptor: PackageFragmentDescriptor,
-        module: IrModuleFragment,
-    ) : this(fileEntry, IrFileSymbolImpl(packageFragmentDescriptor), packageFragmentDescriptor.fqName, module)
-
-    constructor(
-        fileEntry: IrFileEntry,
-        symbol: IrFileSymbol,
-        fqName: FqName,
-        module: IrModuleFragment
-    ) : this(fileEntry, symbol, fqName) {
-        this.module = module
-    }
-
     init {
         symbol.bind(this)
     }
@@ -64,3 +44,23 @@ class IrFileImpl(
 
     override var metadata: MetadataSource? = null
 }
+
+fun IrFileImpl(
+    fileEntry: IrFileEntry,
+    symbol: IrFileSymbol,
+    fqName: FqName,
+    module: IrModuleFragment,
+) = IrFileImpl(fileEntry, symbol, fqName).apply {
+    this.module = module
+}
+
+fun IrFileImpl(
+    fileEntry: IrFileEntry,
+    packageFragmentDescriptor: PackageFragmentDescriptor,
+) = IrFileImpl(fileEntry, IrFileSymbolImpl(packageFragmentDescriptor), packageFragmentDescriptor.fqName)
+
+fun IrFileImpl(
+    fileEntry: IrFileEntry,
+    packageFragmentDescriptor: PackageFragmentDescriptor,
+    module: IrModuleFragment,
+) = IrFileImpl(fileEntry, IrFileSymbolImpl(packageFragmentDescriptor), packageFragmentDescriptor.fqName, module)
