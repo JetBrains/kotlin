@@ -24,6 +24,12 @@ public class StdLibSourcesLazyDeclarationResolveTestGenerated extends AbstractSt
   }
 
   @Test
+  @TestMetadata("linkedHashMap.kt")
+  public void testLinkedHashMap() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolveStdlibSources/linkedHashMap.kt");
+  }
+
+  @Test
   @TestMetadata("wrappedInt.kt")
   public void testWrappedInt() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveStdlibSources/wrappedInt.kt");
