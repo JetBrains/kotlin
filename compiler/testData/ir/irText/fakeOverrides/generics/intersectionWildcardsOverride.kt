@@ -1,8 +1,7 @@
+// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
-// SEPARATE_SIGNATURE_DUMP_FOR_K2
-// ^ ISSUE: KT-66120
 
 // FILE: Java1.java
 import java.util.*;

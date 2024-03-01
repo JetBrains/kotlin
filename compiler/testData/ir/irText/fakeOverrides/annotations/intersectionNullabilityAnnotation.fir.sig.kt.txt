@@ -210,10 +210,10 @@ class H : Java1, Java2, Java3 {
   constructor() /* primary */
 
   // CHECK JVM_IR:
-  //   Mangled name: H#bar(){}kotlin.String?{EnhancedNullability}
-  //   Public signature: /H.bar|7290041286951472444[0]
-  //   Public signature debug description: bar(){}kotlin.String?{EnhancedNullability}
-  /* fake */ override fun bar(): @EnhancedNullability String?
+  //   Mangled name: H#bar(){}kotlin.String{EnhancedNullability}
+  //   Public signature: /H.bar|-4383985778696477509[0]
+  //   Public signature debug description: bar(){}kotlin.String{EnhancedNullability}
+  /* fake */ override fun bar(): @EnhancedNullability String
 
   // CHECK:
   //   Mangled name: H#foo(kotlin.String?){}
@@ -286,3 +286,4 @@ interface KotlinInterface2 {
 //   Public signature: /test|-2663909601123444132[0]
 //   Public signature debug description: test(A;B;C;D;E;F;G;H){}
 fun test(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H): Unit
+
