@@ -163,6 +163,11 @@ configurations {
         canBeConsumed = false
         canBeResolved = true
     }
+
+    nativeLibs {
+        canBeConsumed = false
+        canBeResolved = true
+    }
 }
 
 apply plugin: CompilationDatabasePlugin
@@ -188,6 +193,7 @@ dependencies {
     runtimeBitcode project(":kotlin-native:runtime")
     objcExportApi project(":kotlin-native:runtime")
     embeddableJar project(path: ':kotlin-native:prepare:kotlin-native-compiler-embeddable', configuration: 'runtimeElements')
+    nativeLibs project(path: ':kotlin-native:common', configuration: 'nativeLibs')
 }
 
 apply plugin: GitClangFormatPlugin
@@ -274,6 +280,10 @@ tasks.register("distCompiler", Copy) {
     destinationDir distDir
 
     from(project(':kotlin-native:backend.native').file("build/nativelibs/$hostName")) {
+        into('konan/nativelib')
+    }
+
+    from(configurations.nativeLibs) {
         into('konan/nativelib')
     }
 
