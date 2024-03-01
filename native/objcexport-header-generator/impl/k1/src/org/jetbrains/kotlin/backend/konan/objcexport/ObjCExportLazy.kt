@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.LocalRedeclarationChecker
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
+import org.jetbrains.kotlin.tooling.core.Extras
+import org.jetbrains.kotlin.tooling.core.emptyExtras
 import org.jetbrains.kotlin.types.error.ErrorUtils
 
 interface ObjCExportLazy {
@@ -325,6 +327,7 @@ class ObjCExportLazyImpl(
         name: ObjCExportNamer.ClassOrProtocolName,
         private val psi: KtClassOrObject,
         private val lazy: ObjCExportLazyImpl,
+        override val extras: Extras = emptyExtras(),
     ) : LazyObjCProtocol(name) {
         private val descriptor: ClassDescriptor by lazy { lazy.resolve(psi) }
 
@@ -339,6 +342,7 @@ class ObjCExportLazyImpl(
         generics: List<ObjCGenericTypeDeclaration>,
         private val psi: KtClassOrObject,
         private val lazy: ObjCExportLazyImpl,
+        override val extras: Extras = emptyExtras(),
     ) : LazyObjCInterface(name = name, generics = generics, categoryName = null, attributes = attributes) {
         private val descriptor: ClassDescriptor by lazy { lazy.resolve(psi) }
 
@@ -352,6 +356,7 @@ class ObjCExportLazyImpl(
         private val file: KtFile,
         private val declarations: List<KtCallableDeclaration>,
         private val lazy: ObjCExportLazyImpl,
+        override val extras: Extras = emptyExtras(),
     ) : LazyObjCInterface(name = name, generics = emptyList(), categoryName = null, attributes = listOf(OBJC_SUBCLASSING_RESTRICTED)) {
 
         override val origin: Nothing? = null
@@ -372,6 +377,7 @@ class ObjCExportLazyImpl(
         private val classDescriptor: ClassDescriptor,
         private val declarations: List<KtCallableDeclaration>,
         private val lazy: ObjCExportLazyImpl,
+        override val extras: Extras = emptyExtras(),
     ) : LazyObjCInterface(name = name.objCName, generics = emptyList(), categoryName = categoryName, attributes = emptyList()) {
 
         override fun computeRealStub(): ObjCInterface = lazy.translator.translateExtensions(

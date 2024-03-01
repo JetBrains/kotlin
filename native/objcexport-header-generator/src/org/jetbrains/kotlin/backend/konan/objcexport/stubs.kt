@@ -7,11 +7,15 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.tooling.core.Extras
+import org.jetbrains.kotlin.tooling.core.HasExtras
+import org.jetbrains.kotlin.tooling.core.emptyExtras
+
 @Deprecated("Use 'ObjCExportStub' instead", replaceWith = ReplaceWith("ObjCExportStub"))
 @Suppress("unused")
 typealias Stub<@Suppress("UNUSED_TYPEALIAS_PARAMETER") T> = ObjCExportStub
 
-sealed interface ObjCExportStub {
+sealed interface ObjCExportStub : HasExtras {
     /**
      * The ObjC name of this entity;
      * Note: The original 'Kotlin Name' can be found in [origin]
@@ -72,6 +76,7 @@ class ObjCProtocolImpl(
     override val attributes: List<String>,
     override val superProtocols: List<String>,
     override val members: List<ObjCExportStub>,
+    override val extras: Extras = emptyExtras(),
 ) : ObjCProtocol()
 
 class ObjCInterfaceImpl(
@@ -85,6 +90,7 @@ class ObjCInterfaceImpl(
     override val generics: List<ObjCGenericTypeDeclaration>,
     override val superClass: String?,
     override val superClassGenerics: List<ObjCNonNullReferenceType>,
+    override val extras: Extras = emptyExtras(),
 ) : ObjCInterface()
 
 class ObjCMethod(
@@ -95,6 +101,7 @@ class ObjCMethod(
     val selectors: List<String>,
     val parameters: List<ObjCParameter>,
     val attributes: List<String>,
+    override val extras: Extras = emptyExtras(),
 ) : ObjCExportStub {
     override val name: String = buildMethodName(selectors, parameters)
 }
@@ -103,7 +110,8 @@ class ObjCParameter(
     override val name: String,
     override val origin: ObjCExportStubOrigin?,
     val type: ObjCType,
-    val todo: Nothing?
+    val todo: Nothing?,
+    override val extras: Extras = emptyExtras(),
 ) : ObjCExportStub {
     override val comment: Nothing? = null
 }
@@ -117,6 +125,7 @@ class ObjCProperty(
     val setterName: String? = null,
     val getterName: String? = null,
     val declarationAttributes: List<String> = emptyList(),
+    override val extras: Extras = emptyExtras(),
 ) : ObjCExportStub
 
 private fun buildMethodName(selectors: List<String>, parameters: List<ObjCParameter>): String =

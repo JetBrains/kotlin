@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSelectors
 import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSwiftNames
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
+import org.jetbrains.kotlin.objcexport.extras.objCExportStubExtras
+import org.jetbrains.kotlin.objcexport.extras.throwsAnnotationClassIds
 
 internal val KtCallableSymbol.isConstructor: Boolean
     get() = this is KtConstructorSymbol
@@ -50,7 +52,8 @@ internal fun KtFunctionLikeSymbol.buildObjCMethod(
     val swiftName = getSwiftName(bridge)
     val attributes = mutableListOf<String>()
     val returnBridge = bridge.returnBridge
-    val comment = this.translateToObjCComment(bridge, parameters)
+    val comment = translateToObjCComment(bridge, parameters)
+    val throws = definedThrows.map { it }.toList()
 
     attributes += getSwiftPrivateAttribute() ?: swiftNameAttribute(swiftName)
 
@@ -81,7 +84,10 @@ internal fun KtFunctionLikeSymbol.buildObjCMethod(
         returnType = returnType,
         selectors = selectors,
         parameters = parameters,
-        attributes = attributes
+        attributes = attributes,
+        extras = objCExportStubExtras {
+            throwsAnnotationClassIds = throws
+        }
     )
 }
 
@@ -257,7 +263,6 @@ fun MethodBridge.valueParametersAssociated(
     function: KtFunctionLikeSymbol,
 ): List<Pair<MethodBridgeValueParameter, KtValueParameterSymbol?>> {
     val allParameters = function.valueParameters
-    if (allParameters.isEmpty()) return emptyList()
 
     return this.valueParameters.mapIndexed { index, valueParameterBridge ->
         when (valueParameterBridge) {

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.objcexport.KtObjCExportHeaderGenerator.QueueElement
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
 import org.jetbrains.kotlin.objcexport.extras.originClassId
 import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
+import org.jetbrains.kotlin.objcexport.extras.throwsAnnotationClassIds
 import org.jetbrains.kotlin.psi.KtFile
 
 
@@ -181,6 +182,11 @@ private class KtObjCExportHeaderGenerator {
      * and `Array` has to be registered as forward declaration.
      */
     private fun enqueueDependencyClasses(stub: ObjCExportStub) {
+
+        symbolDeque += stub.closureSequence()
+            .flatMap { child -> child.throwsAnnotationClassIds.orEmpty() }
+            .map { QueueElement.Class(it) }
+
         symbolDeque += stub.closureSequence()
             .mapNotNull { child ->
                 when (child) {
