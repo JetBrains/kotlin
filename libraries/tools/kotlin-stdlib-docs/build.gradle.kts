@@ -60,6 +60,7 @@ dependencies {
 
 fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
     tasks.register<DokkaTaskPartial>("kotlin-stdlib_" + version + (if (isLatest) "_latest" else "")) {
+        notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
         dependsOn(prepare)
 
         val kotlin_stdlib_dir = file("$kotlin_root/libraries/stdlib")
@@ -217,6 +218,7 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
 
 fun createKotlinReflectVersionedDocTask(version: String, isLatest: Boolean) =
     tasks.register<DokkaTaskPartial>("kotlin-reflect_" + version + (if (isLatest) "_latest" else "")) {
+        notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
         dependsOn(prepare)
 
         val kotlinReflectIncludeMd = file("$kotlin_root/libraries/reflect/Module.md")
@@ -262,6 +264,7 @@ fun createKotlinReflectVersionedDocTask(version: String, isLatest: Boolean) =
 
 fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
     tasks.register<DokkaTaskPartial>("kotlin-test_" + version + (if (isLatest) "_latest" else "")) {
+        notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
         dependsOn(prepare)
 
         val kotlinTestIncludeMd = file("$kotlin_root/libraries/kotlin.test/Module.md")
@@ -406,6 +409,7 @@ fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
 
 fun createAllLibsVersionedDocTask(version: String, isLatest: Boolean, vararg libTasks: TaskProvider<DokkaTaskPartial>) =
     tasks.register<DokkaMultiModuleTask>("all-libs_" + version + (if (isLatest) "_latest" else "")) {
+        notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
         moduleName.set("Kotlin libraries")
         plugins.extendsFrom(configurations.dokkaHtmlMultiModulePlugin.get())
         runtime.extendsFrom(configurations.dokkaHtmlMultiModuleRuntime.get())
