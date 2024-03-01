@@ -5,6 +5,8 @@ plugins {
     id("jps-compatible")
 }
 
+val scriptingTestDefinition by configurations.creating
+
 dependencies {
     api(project(":compiler:psi"))
     implementation(project(":analysis:project-structure"))
@@ -57,6 +59,8 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(project(":analysis:symbol-light-classes"))
+    testImplementation(projectTests(":plugins:scripting:scripting-tests"))
+    testImplementation(project(":kotlin-scripting-common"))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
@@ -64,6 +68,8 @@ dependencies {
     // We use 'api' instead of 'implementation' because other modules might be using these jars indirectly
     testApi(project(":plugins:fir-plugin-prototype"))
     testApi(projectTests(":plugins:fir-plugin-prototype"))
+
+    scriptingTestDefinition(projectTests(":plugins:scripting:test-script-definition"))
 }
 
 sourceSets {
@@ -78,9 +84,14 @@ kotlin {
 }
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
+    dependsOn(":dist", ":plugins:scripting:test-script-definition:testJar")
     workingDir = rootDir
     useJUnitPlatform()
+
+    val scriptingTestDefinitionClasspath = scriptingTestDefinition.asPath
+    doFirst {
+        systemProperty("kotlin.script.test.script.definition.classpath", scriptingTestDefinitionClasspath)
+    }
 }
 
 allprojects {

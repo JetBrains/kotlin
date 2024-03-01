@@ -30,7 +30,7 @@ open class AbstractScriptWithCustomDefBlackBoxCodegenTest : AbstractFirScriptCod
     }
 }
 
-private fun TestConfigurationBuilder.configureWithCustomScriptDef() {
+fun TestConfigurationBuilder.configureWithCustomScriptDef() {
     useConfigurators(
         ::ScriptWithCustomDefEnvironmentConfigurator
     )
