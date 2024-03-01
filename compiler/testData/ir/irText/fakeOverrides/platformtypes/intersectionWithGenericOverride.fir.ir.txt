@@ -216,12 +216,12 @@ FILE fqName:<root> fileName:/1.kt
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface2
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface2<R of <root>.F>) returnType:R of <root>.F [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface<R of <root>.F>) returnType:R of <root>.F [fake_override]
       overridden:
         public abstract fun foo (): @[FlexibleNullability] T of <root>.Java1? declared in <root>.Java1
         public abstract fun foo (): T of <root>.KotlinInterface declared in <root>.KotlinInterface
         public abstract fun foo (): T of <root>.KotlinInterface2 declared in <root>.KotlinInterface2
-      $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface2<R of <root>.F>
+      $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface<R of <root>.F>
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.Java1

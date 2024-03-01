@@ -1,6 +1,4 @@
 // TARGET_BACKEND: JVM
-// SEPARATE_SIGNATURE_DUMP_FOR_K2
-// ^ ISSUE: KT-66120
 
 // MODULE: separate
 // FILE: SeparateModuleJava1.java
