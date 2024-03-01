@@ -22889,6 +22889,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("withTestConnection.kt")
+      public void testWithTestConnection() {
+        runTest("compiler/testData/diagnostics/tests/j+k/withTestConnection.kt");
+      }
+
+      @Test
       @TestMetadata("wrongVarianceInJava.kt")
       public void testWrongVarianceInJava() {
         runTest("compiler/testData/diagnostics/tests/j+k/wrongVarianceInJava.kt");
