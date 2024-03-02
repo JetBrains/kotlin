@@ -179,18 +179,8 @@ apply plugin: CompilationDatabasePlugin
 
 dependencies {
     ftpAntTask 'org.apache.ant:ant-commons-net:1.9.9'
-    distPack project(':kotlin-native:Interop:Runtime')
-    distPack project(':kotlin-native:Interop:Indexer')
-    distPack project(':kotlin-native:Interop:StubGenerator')
     distPack project(':kotlin-native:Interop:Skia')
-    distPack project(':kotlin-native:backend.native')
-    distPack project(':native:objcexport-header-generator')
-    distPack project(':native:objcexport-header-generator-k1')
-    distPack project(':native:base')
-    distPack project(':kotlin-native:utilities:cli-runner')
-    distPack project(':kotlin-native:klib')
-    distPack project(':native:cli-native')
-    distPack project(path: ':kotlin-native:endorsedLibraries:kotlinx.cli', configuration: "jvmRuntimeElements")
+    distPack project(path: ':kotlin-native:utilities:cli-runner', configuration: 'runtimeElements')
     commonSources project(path: ':kotlin-stdlib', configuration: 'metadataSourcesElements')
     commonSources project(path: ':kotlin-test', configuration: 'metadataSourcesElements')
     compilationDatabase project(":kotlin-native:common")
