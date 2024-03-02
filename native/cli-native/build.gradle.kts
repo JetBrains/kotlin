@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":kotlin-native:backend.native", "compilerApiElements"))
+    api(project(":kotlin-native:backend.native"))
 }
 
 sourceSets {

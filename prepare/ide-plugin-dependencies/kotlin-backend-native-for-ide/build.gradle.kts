@@ -33,8 +33,8 @@ idePluginDependency {
         embedded(project(":compiler:fir:native")) { isTransitive = false }
 
         proguardLibraryJars(project(":native:kotlin-native-utils")) { isTransitive = false }
-        proguardLibraryJars(project(":kotlin-native:backend.native", "kotlin_stdlib_jar"))
-        proguardLibraryJars(project(":kotlin-native:backend.native", "kotlin_reflect_jar"))
+        proguardLibraryJars(project(":kotlin-stdlib"))
+        proguardLibraryJars(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
         proguardLibraryJars(project(":native:cli-native"))
         backendNativeSourcesConfiguration(project(":kotlin-native:backend.native"))
         backendNativeSourcesConfiguration(project(":native:cli-native"))

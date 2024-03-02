@@ -168,6 +168,11 @@ configurations {
         canBeConsumed = false
         canBeResolved = true
     }
+
+    trove4j_jar {
+        canBeConsumed = false
+        canBeResolved = true
+    }
 }
 
 apply plugin: CompilationDatabasePlugin
@@ -195,6 +200,9 @@ dependencies {
     embeddableJar project(path: ':kotlin-native:prepare:kotlin-native-compiler-embeddable', configuration: 'runtimeElements')
     nativeLibs project(path: ':kotlin-native:common', configuration: 'nativeLibs')
     nativeLibs project(path: ':kotlin-native:llvmInterop', configuration: 'nativeLibs')
+    use(RepoDependencies) {
+        trove4j_jar commonDependency("org.jetbrains.intellij.deps:trove4j")
+    }
 }
 
 apply plugin: GitClangFormatPlugin
@@ -284,8 +292,11 @@ tasks.register("distCompiler", Copy) {
         into('konan/nativelib')
     }
 
-    from(project(':kotlin-native:backend.native').file('build/external_jars/trove4j.jar')) {
-        into('konan/lib')
+    from(configurations.trove4j_jar) {
+        include "trove4j*.jar"
+        rename "trove4j(.*).jar", "trove4j.jar"
+
+        into("konan/lib")
     }
 
     from(configurations.embeddableJar) {
