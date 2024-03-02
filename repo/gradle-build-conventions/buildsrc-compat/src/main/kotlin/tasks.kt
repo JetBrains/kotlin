@@ -133,6 +133,7 @@ fun Project.projectTest(
     jUnitMode: JUnitMode = JUnitMode.JUnit4,
     maxHeapSizeMb: Int? = null,
     minHeapSizeMb: Int? = null,
+    maxMetaspaceSizeMb: Int = 512,
     reservedCodeCacheSizeMb: Int = 256,
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
@@ -211,18 +212,19 @@ fun Project.projectTest(
             "-XX:+HeapDumpOnOutOfMemoryError",
             "-XX:+UseCodeCacheFlushing",
             "-XX:ReservedCodeCacheSize=${reservedCodeCacheSizeMb}m",
+            "-XX:MaxMetaspaceSize=${maxMetaspaceSizeMb}m",
             "-Djna.nosys=true"
         )
 
         val junit5ParallelTestWorkers =
             project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution ?: Runtime.getRuntime().availableProcessors()
 
-        val memoryPerTestProcessMb = maxHeapSizeMb ?: if (jUnitMode == JUnitMode.JUnit5)
+        val memoryPerTestProcessMb = if (jUnitMode == JUnitMode.JUnit5)
             totalMaxMemoryForTestsMb.coerceIn(defaultMaxMemoryPerTestWorkerMb, defaultMaxMemoryPerTestWorkerMb * junit5ParallelTestWorkers)
         else
             defaultMaxMemoryPerTestWorkerMb
 
-        maxHeapSize = "${memoryPerTestProcessMb}m"
+        maxHeapSize = "${maxHeapSizeMb ?: (memoryPerTestProcessMb - maxMetaspaceSizeMb)}m"
         usesService(concurrencyLimitService)
 
         if (minHeapSizeMb != null) {
