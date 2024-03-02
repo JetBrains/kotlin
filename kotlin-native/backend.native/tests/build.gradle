@@ -26,7 +26,6 @@ apply plugin: 'kotlin.native.build-tools-conventions'
 apply plugin: 'native-dependencies'
 
 configurations {
-    cli_bc
     update_tests
 
     nopPluginApi
@@ -1443,7 +1442,7 @@ dependencies {
     nopPluginApi project(":kotlin-util-klib-metadata")
     nopPluginApi project(":compiler:ir.serialization.common")
 
-    api project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
+    api project(':native:cli-native')
     api libs.junit4
 }
 

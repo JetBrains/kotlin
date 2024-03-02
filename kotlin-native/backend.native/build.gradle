@@ -22,9 +22,6 @@ sourceSets {
         }
         resources.srcDir 'compiler/ir/backend.native/resources/'
     }
-    cli_bc {
-        kotlin.srcDir 'cli.bc/src'
-    }
 }
 
 compileCompilerKotlin {
@@ -42,10 +39,6 @@ tasks.withType(KotlinCompilationTask.class).configureEach {
     compilerOptions.optIn.add("org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI")
 }
 
-compileCli_bcKotlin {
-    compilerOptions.freeCompilerArgs.add('-Xskip-prerelease-check')
-}
-
 configurations {
     kotlin_compiler_jar
     kotlin_stdlib_jar
@@ -53,11 +46,10 @@ configurations {
     kotlin_script_runtime_jar
     trove4j_jar
 
-    cli_bcApiElements {
-        extendsFrom cli_bcApi
+    compilerApiElements {
+        extendsFrom apiElements
+        extendsFrom compilerApi
     }
-
-    cli_bcApi.extendsFrom compilerApi
 }
 
 dependencies {
@@ -102,17 +94,12 @@ dependencies {
         compilerApi(intellijCore())
         compileOnly(jpsModel())
     }
-
-    cli_bcApi sourceSets.compiler.output
-
-    cli_bcApiElements sourceSets.cli_bc.output
 }
 
-classes.dependsOn 'compilerClasses', 'cli_bcClasses'
+classes.dependsOn 'compilerClasses'
 
 tasks.named("jar") {
-    from sourceSets.cli_bc.output,
-            sourceSets.compiler.output
+    from sourceSets.compiler.output
 
     dependsOn 'external_jars'
 }
@@ -158,7 +145,6 @@ tasks.register("debugCompiler", JavaExec) {
 }
 
 RepoArtifacts.sourcesJar(project) {
-    it.from(sourceSets["cli_bc"].allSource)
     it.from(sourceSets["compiler"].allSource)
 }
 

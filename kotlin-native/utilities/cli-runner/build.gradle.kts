@@ -7,6 +7,7 @@ plugins {
 dependencies {
     implementation(kotlinStdlib())
     implementation(project(":kotlin-native:backend.native"))
+    implementation(project(":native:cli-native"))
     implementation(project(":compiler:cli-common"))
     implementation(project(":kotlin-native:Interop:StubGenerator"))
     implementation(project(":kotlin-native:klib"))
