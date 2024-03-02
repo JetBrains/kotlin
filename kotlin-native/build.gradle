@@ -194,6 +194,7 @@ dependencies {
     objcExportApi project(":kotlin-native:runtime")
     embeddableJar project(path: ':kotlin-native:prepare:kotlin-native-compiler-embeddable', configuration: 'runtimeElements')
     nativeLibs project(path: ':kotlin-native:common', configuration: 'nativeLibs')
+    nativeLibs project(path: ':kotlin-native:llvmInterop', configuration: 'nativeLibs')
 }
 
 apply plugin: GitClangFormatPlugin
@@ -278,10 +279,6 @@ tasks.register("distCompiler", Copy) {
     }
 
     destinationDir distDir
-
-    from(project(':kotlin-native:backend.native').file("build/nativelibs/$hostName")) {
-        into('konan/nativelib')
-    }
 
     from(configurations.nativeLibs) {
         into('konan/nativelib')

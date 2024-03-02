@@ -895,6 +895,7 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':kotlin-native:utilities'
     include ':kotlin-native:platformLibs'
     include ':kotlin-native:libclangext'
+    include ':kotlin-native:llvmInterop'
     include ':kotlin-native:backend.native:tests'
     include ':kotlin-native:prepare:kotlin-native-compiler-embeddable'
     include ':native:kotlin-test-native-xctest'
