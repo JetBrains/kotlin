@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.model.AnnotationMarker
 import org.jetbrains.kotlin.utils.withIndent
 
 // Note the style of the DSL to describe IR elements, which is these things in the following order:
@@ -800,6 +801,7 @@ object IrTree : AbstractTreeBuilder() {
         transformerReturnType = rootElement
 
         parent(functionAccessExpression)
+        parent(type<AnnotationMarker>())
 
         +symbol(constructorSymbolType, mutable = true)
         +field("source", type<SourceElement>()) {

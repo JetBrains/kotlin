@@ -11,11 +11,12 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.types.model.AnnotationMarker
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.constructorCall]
  */
-abstract class IrConstructorCall : IrFunctionAccessExpression() {
+abstract class IrConstructorCall : IrFunctionAccessExpression(), AnnotationMarker {
     abstract override var symbol: IrConstructorSymbol
 
     abstract var source: SourceElement
