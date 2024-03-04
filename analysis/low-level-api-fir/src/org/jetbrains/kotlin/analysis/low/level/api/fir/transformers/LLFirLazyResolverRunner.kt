@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
  */
 internal object LLFirLazyResolverRunner {
     /**
-     * Runs [resolver][LLFirLazyResolver] associated with [phase] for [target] and checks if it finished correctly.
+     * Runs [resolver][LLFirLazyResolver] associated with [phase] for [target].
      *
      * @see LLFirLazyPhaseResolverByPhase
      */
@@ -28,7 +28,5 @@ internal object LLFirLazyResolverRunner {
         LLFirGlobalResolveComponents.getInstance(target.session).lockProvider.withGlobalLock {
             lazyResolver.resolve(target)
         }
-
-        lazyResolver.checkIsResolved(target)
     }
 }

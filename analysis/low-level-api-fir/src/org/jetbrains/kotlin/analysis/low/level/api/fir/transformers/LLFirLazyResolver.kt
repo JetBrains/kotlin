@@ -33,6 +33,9 @@ internal sealed class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
         )
 
         resolver.resolveDesignation()
+        target.forEachTarget(::checkIsResolved)
+
+        checkCanceled()
     }
 
     protected abstract fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver
@@ -56,11 +59,6 @@ internal sealed class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
             newPhase = resolverPhase,
             updateForLocalDeclarations = resolverPhase == FirResolvePhase.BODY_RESOLVE,
         )
-    }
-
-    fun checkIsResolved(designation: LLFirResolveTarget) {
-        designation.forEachTarget(::checkIsResolved)
-        checkCanceled()
     }
 
     private fun checkNestedDeclarationsAreResolved(target: FirElementWithResolveState) {

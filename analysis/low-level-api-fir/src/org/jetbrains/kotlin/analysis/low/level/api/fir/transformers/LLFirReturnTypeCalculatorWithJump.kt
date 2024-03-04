@@ -42,7 +42,7 @@ internal class LLFirReturnTypeCalculatorWithJump(
             return recursionInImplicitTypeRef()
         }
 
-        LLFirImplicitTypesLazyResolver.checkIsResolved(designation)
+        LLFirImplicitTypesLazyResolver.checkIsResolved(declaration)
         return declaration.returnTypeRef as FirResolvedTypeRef
     }
 }
