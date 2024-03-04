@@ -342,6 +342,9 @@ object Elements : TemplateGroupBase() {
         returns("T")
         body {
             """
+            contract {
+                callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+            }
             if (this is List)
                 return this.getOrElse(index, defaultValue)
             if (index < 0)
@@ -358,6 +361,9 @@ object Elements : TemplateGroupBase() {
         }
         body(Sequences) {
             """
+            contract {
+                callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+            }
             if (index < 0)
                 return defaultValue(index)
             val iterator = iterator()
@@ -374,6 +380,9 @@ object Elements : TemplateGroupBase() {
             inlineOnly()
             body {
                 """
+                contract {
+                    callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+                }
                 return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
                 """
             }
@@ -388,6 +397,9 @@ object Elements : TemplateGroupBase() {
         inlineOnly()
         body {
             """
+            contract {
+                callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+            }
             return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
             """
         }

@@ -13,6 +13,7 @@ package kotlin.text
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.contracts.*
 import kotlin.random.*
 
 /**
@@ -29,6 +30,9 @@ public expect fun CharSequence.elementAt(index: Int): Char
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.elementAtOrElse(index: Int, defaultValue: (Int) -> Char): Char {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -132,6 +136,9 @@ public inline fun CharSequence.firstOrNull(predicate: (Char) -> Boolean): Char? 
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.getOrElse(index: Int, defaultValue: (Int) -> Char): Char {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 

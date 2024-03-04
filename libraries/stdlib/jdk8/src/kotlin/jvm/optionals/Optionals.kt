@@ -6,6 +6,7 @@
 package kotlin.jvm.optionals
 
 import java.util.Optional
+import kotlin.contracts.*
 
 /**
  * Returns this [Optional]'s value if [present][Optional.isPresent], or otherwise `null`.
@@ -26,8 +27,12 @@ public fun <T> Optional<out T & Any>.getOrDefault(defaultValue: T): T = if (isPr
  */
 @SinceKotlin("1.8")
 @WasExperimental(ExperimentalStdlibApi::class)
-public inline fun <T> Optional<out T & Any>.getOrElse(defaultValue: () -> T): T =
-    if (isPresent) get() else defaultValue()
+public inline fun <T> Optional<out T & Any>.getOrElse(defaultValue: () -> T): T {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (isPresent) get() else defaultValue()
+}
 
 /**
  * Appends this [Optional]'s value to the given [destination] collection if [present][Optional.isPresent].

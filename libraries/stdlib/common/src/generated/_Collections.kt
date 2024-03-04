@@ -13,6 +13,7 @@ package kotlin.collections
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.contracts.*
 import kotlin.random.*
 import kotlin.ranges.contains
 import kotlin.ranges.reversed
@@ -103,6 +104,9 @@ public inline fun <T> List<T>.elementAt(index: Int): T {
  * @sample samples.collections.Collections.Elements.elementAtOrElse
  */
 public fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     if (this is List)
         return this.getOrElse(index, defaultValue)
     if (index < 0)
@@ -124,6 +128,9 @@ public fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T)
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> List<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -294,6 +301,9 @@ public inline fun <T> Iterable<T>.firstOrNull(predicate: (T) -> Boolean): T? {
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> List<T>.getOrElse(index: Int, defaultValue: (Int) -> T): T {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 

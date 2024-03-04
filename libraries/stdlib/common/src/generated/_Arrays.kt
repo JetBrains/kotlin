@@ -13,6 +13,7 @@ package kotlin.collections
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.contracts.*
 import kotlin.random.*
 import kotlin.ranges.contains
 import kotlin.ranges.reversed
@@ -649,6 +650,9 @@ public expect fun CharArray.elementAt(index: Int): Char
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -659,6 +663,9 @@ public inline fun <T> Array<out T>.elementAtOrElse(index: Int, defaultValue: (In
  */
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Byte): Byte {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -669,6 +676,9 @@ public inline fun ByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> B
  */
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Short): Short {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -679,6 +689,9 @@ public inline fun ShortArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
  */
 @kotlin.internal.InlineOnly
 public inline fun IntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Int): Int {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -689,6 +702,9 @@ public inline fun IntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> In
  */
 @kotlin.internal.InlineOnly
 public inline fun LongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Long): Long {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -699,6 +715,9 @@ public inline fun LongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> L
  */
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Float): Float {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -709,6 +728,9 @@ public inline fun FloatArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
  */
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Double): Double {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -719,6 +741,9 @@ public inline fun DoubleArray.elementAtOrElse(index: Int, defaultValue: (Int) ->
  */
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Boolean): Boolean {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -729,6 +754,9 @@ public inline fun BooleanArray.elementAtOrElse(index: Int, defaultValue: (Int) -
  */
 @kotlin.internal.InlineOnly
 public inline fun CharArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Char): Char {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -1352,6 +1380,9 @@ public inline fun CharArray.firstOrNull(predicate: (Char) -> Boolean): Char? {
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.getOrElse(index: Int, defaultValue: (Int) -> T): T {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -1360,6 +1391,9 @@ public inline fun <T> Array<out T>.getOrElse(index: Int, defaultValue: (Int) -> 
  */
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.getOrElse(index: Int, defaultValue: (Int) -> Byte): Byte {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -1368,6 +1402,9 @@ public inline fun ByteArray.getOrElse(index: Int, defaultValue: (Int) -> Byte): 
  */
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.getOrElse(index: Int, defaultValue: (Int) -> Short): Short {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -1376,6 +1413,9 @@ public inline fun ShortArray.getOrElse(index: Int, defaultValue: (Int) -> Short)
  */
 @kotlin.internal.InlineOnly
 public inline fun IntArray.getOrElse(index: Int, defaultValue: (Int) -> Int): Int {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -1384,6 +1424,9 @@ public inline fun IntArray.getOrElse(index: Int, defaultValue: (Int) -> Int): In
  */
 @kotlin.internal.InlineOnly
 public inline fun LongArray.getOrElse(index: Int, defaultValue: (Int) -> Long): Long {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -1392,6 +1435,9 @@ public inline fun LongArray.getOrElse(index: Int, defaultValue: (Int) -> Long): 
  */
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.getOrElse(index: Int, defaultValue: (Int) -> Float): Float {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -1400,6 +1446,9 @@ public inline fun FloatArray.getOrElse(index: Int, defaultValue: (Int) -> Float)
  */
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.getOrElse(index: Int, defaultValue: (Int) -> Double): Double {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -1408,6 +1457,9 @@ public inline fun DoubleArray.getOrElse(index: Int, defaultValue: (Int) -> Doubl
  */
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.getOrElse(index: Int, defaultValue: (Int) -> Boolean): Boolean {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -1416,6 +1468,9 @@ public inline fun BooleanArray.getOrElse(index: Int, defaultValue: (Int) -> Bool
  */
 @kotlin.internal.InlineOnly
 public inline fun CharArray.getOrElse(index: Int, defaultValue: (Int) -> Char): Char {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 

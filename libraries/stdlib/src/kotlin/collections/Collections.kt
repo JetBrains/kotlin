@@ -278,8 +278,12 @@ public inline fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
  */
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
-public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : Collection<*>, C : R =
-    if (isEmpty()) defaultValue() else this
+public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : Collection<*>, C : R {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (isEmpty()) defaultValue() else this
+}
 
 
 /**

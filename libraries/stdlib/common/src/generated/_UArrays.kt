@@ -14,6 +14,7 @@ package kotlin.collections
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.contracts.*
 import kotlin.random.*
 import kotlin.ranges.contains
 import kotlin.ranges.reversed
@@ -323,6 +324,9 @@ public expect fun UShortArray.elementAt(index: Int): UShort
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> UInt): UInt {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -335,6 +339,9 @@ public inline fun UIntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> U
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> ULong): ULong {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -347,6 +354,9 @@ public inline fun ULongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> UByte): UByte {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -359,6 +369,9 @@ public inline fun UByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.elementAtOrElse(index: Int, defaultValue: (Int) -> UShort): UShort {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -689,6 +702,9 @@ public inline fun UShortArray.firstOrNull(predicate: (UShort) -> Boolean): UShor
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.getOrElse(index: Int, defaultValue: (Int) -> UInt): UInt {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -699,6 +715,9 @@ public inline fun UIntArray.getOrElse(index: Int, defaultValue: (Int) -> UInt): 
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.getOrElse(index: Int, defaultValue: (Int) -> ULong): ULong {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -709,6 +728,9 @@ public inline fun ULongArray.getOrElse(index: Int, defaultValue: (Int) -> ULong)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.getOrElse(index: Int, defaultValue: (Int) -> UByte): UByte {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -719,6 +741,9 @@ public inline fun UByteArray.getOrElse(index: Int, defaultValue: (Int) -> UByte)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.getOrElse(index: Int, defaultValue: (Int) -> UShort): UShort {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
