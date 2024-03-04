@@ -892,26 +892,12 @@ class CallAndReferenceGenerator(
                 if (argumentsCount <= valueArgumentsCount) {
                     apply {
                         val (valueParameters, argumentMapping, substitutor) = extractArgumentsMapping(call)
-                        if (argumentMapping != null && (visitor.annotationMode || argumentMapping.isNotEmpty())) {
-                            if (valueParameters != null) {
-                                return applyArgumentsWithReorderingIfNeeded(
-                                    argumentMapping, valueParameters, substitutor, contextReceiverCount, call,
-                                )
-                            }
-                        }
-                        // Case without argument mapping (deserialized annotation)
-                        // TODO: support argument mapping in deserialized annotations and remove me
-                        for ((index, argument) in call.arguments.withIndex()) {
-                            val valueParameter = when (argument) {
-                                is FirNamedArgumentExpression -> valueParameters?.find { it.name == argument.name }
-                                else -> null
-                            } ?: valueParameters?.get(index)
-                            val argumentExpression = convertArgument(argument, valueParameter, substitutor)
-                            putValueArgument(
-                                (valueParameters?.indexOf(valueParameter)?.takeIf { it >= 0 } ?: index) + contextReceiverCount,
-                                argumentExpression
+                        if (argumentMapping != null && (visitor.annotationMode || argumentMapping.isNotEmpty()) && valueParameters != null) {
+                            return applyArgumentsWithReorderingIfNeeded(
+                                argumentMapping, valueParameters, substitutor, contextReceiverCount, call,
                             )
                         }
+                        check(argumentsCount == 0) { "Non-empty unresolved argument list." }
                     }
                 } else {
                     val calleeSymbol = (this as? IrCallImpl)?.symbol
