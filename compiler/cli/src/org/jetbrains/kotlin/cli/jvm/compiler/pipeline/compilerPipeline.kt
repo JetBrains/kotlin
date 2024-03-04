@@ -138,7 +138,6 @@ fun compileModulesUsingFrontendIrAndLightTree(
         return false
     }
 
-    performanceManager?.notifyGenerationStarted()
     performanceManager?.notifyIRTranslationStarted()
 
     val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
@@ -146,6 +145,7 @@ fun compileModulesUsingFrontendIrAndLightTree(
 
     performanceManager?.notifyIRTranslationFinished()
 
+    performanceManager?.notifyGenerationStarted()
     val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment, performanceManager)
 
     diagnosticsReporter.reportToMessageCollector(

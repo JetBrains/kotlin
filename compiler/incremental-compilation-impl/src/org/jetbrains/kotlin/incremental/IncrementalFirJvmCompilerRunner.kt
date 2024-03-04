@@ -267,7 +267,6 @@ open class IncrementalFirJvmCompilerRunner(
 
             val cycleResult = firIncrementalCycle() ?: return ExitCode.COMPILATION_ERROR to allCompiledSources
 
-            performanceManager?.notifyGenerationStarted()
             performanceManager?.notifyIRTranslationStarted()
 
             val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
@@ -278,6 +277,7 @@ open class IncrementalFirJvmCompilerRunner(
 
             performanceManager?.notifyIRTranslationFinished()
 
+            performanceManager?.notifyGenerationStarted()
             val irInput = ModuleCompilerIrBackendInput(
                 targetId,
                 configuration,
