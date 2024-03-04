@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrPr
  *
  * Where `FooKt` would be the "top level interface file facade" returned by this function.
  *
- * See related [getExtensionsFacade]
+ * See related [getExtensionFacades]
  */
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtFileSymbol.getTopLevelFacade(): ObjCInterface? {
