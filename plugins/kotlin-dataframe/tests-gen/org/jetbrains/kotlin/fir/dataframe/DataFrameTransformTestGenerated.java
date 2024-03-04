@@ -5,7 +5,6 @@ package org.jetbrains.kotlin.fir.dataframe;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -16,32 +15,32 @@ import java.util.regex.Pattern;
 @TestMetadata("testData/transform")
 @TestDataPath("$PROJECT_ROOT")
 public class DataFrameTransformTestGenerated extends AbstractDataFrameTransformTest {
-    @Test
-    public void testAllFilesPresentInTransform() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/transform"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInTransform() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/transform"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("explodeDataFrame.kt")
-    public void testExplodeDataFrame() throws Exception {
-        runTest("testData/transform/explodeDataFrame.kt");
-    }
+  @Test
+  @TestMetadata("explodeDataFrame.kt")
+  public void testExplodeDataFrame() {
+    runTest("testData/transform/explodeDataFrame.kt");
+  }
 
-    @Test
-    @TestMetadata("main.kt")
-    public void testMain() throws Exception {
-        runTest("testData/transform/main.kt");
-    }
+  @Test
+  @TestMetadata("main.kt")
+  public void testMain() {
+    runTest("testData/transform/main.kt");
+  }
 
-    @Test
-    @TestMetadata("parametrizedDataFrame.kt")
-    public void testParametrizedDataFrame() throws Exception {
-        runTest("testData/transform/parametrizedDataFrame.kt");
-    }
+  @Test
+  @TestMetadata("parametrizedDataFrame.kt")
+  public void testParametrizedDataFrame() {
+    runTest("testData/transform/parametrizedDataFrame.kt");
+  }
 
-    @Test
-    @TestMetadata("transformReplaceFunctionCall.kt")
-    public void testTransformReplaceFunctionCall() throws Exception {
-        runTest("testData/transform/transformReplaceFunctionCall.kt");
-    }
+  @Test
+  @TestMetadata("transformReplaceFunctionCall.kt")
+  public void testTransformReplaceFunctionCall() {
+    runTest("testData/transform/transformReplaceFunctionCall.kt");
+  }
 }

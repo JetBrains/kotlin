@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.extensions.*
+import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.name.CallableId
@@ -82,6 +83,7 @@ class DataFrameCommandLineProcessor : CommandLineProcessor {
 class FirDataFrameExtensionRegistrar(
     private val path: String?
 ) : FirExtensionRegistrar() {
+    @OptIn(FirExtensionApiInternals::class)
     override fun ExtensionRegistrarContext.configurePlugin() {
         // if input data schema for refinement is also generated schema, maybe it'll be possible to save names to a set
         val generator = Checker(GeneratedNames())
