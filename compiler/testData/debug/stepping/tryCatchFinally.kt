@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: WASM
+
 // FILE: test.kt
 
 fun foo() {
@@ -135,7 +135,14 @@ fun box() {
 // test.kt:6 $foo (8, 8, 8)
 // test.kt:26 $mightThrow (8, 8, 8, 22, 22, 16)
 // test.kt:27 $mightThrow (1, 1)
+
+// EXPECTATIONS FIR WASM
+// test.kt:5 $foo (4, 4, 4, 4, 4, 4)
+
+// EXPECTATIONS ClassicFrontend WASM
 // test.kt:5 $foo (4, 4, 4)
+
+// EXPECTATIONS WASM
 // test.kt:10 $foo (8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17, 17, 28, 17)
 // Array.kt:59 $kotlin.Array.get (19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8, 19, 26, 34, 8)
@@ -159,8 +166,8 @@ fun box() {
 // test.kt:35 $box (13, 4)
 // test.kt:36 $box
 // String.kt:143 $kotlin.stringLiteral (15, 8, 15, 8, 15, 8, 15, 8, 15, 8)
-// Exceptions.kt:16 $kotlin.Exception.<init> (34, 34, 4, 4, 41, 34, 34, 4, 4, 41, 34, 34, 4, 4, 41)
-// Throwable.kt:23 $kotlin.Throwable.<init> (32, 38, 27, 27, 43, 32, 38, 27, 27, 43, 32, 38, 27, 27, 43)
+// Exceptions.kt:16 $kotlin.Exception.<init> (34, 4, 41, 34, 4, 41, 34, 4, 41)
+// Throwable.kt:23 $kotlin.Throwable.<init> (32, 38, 27, 43, 32, 38, 27, 43, 32, 38, 27, 43)
 // Throwable.kt:18 $kotlin.Throwable.<init> (28, 62, 28, 62, 28, 62)
 // Throwable.kt:25 $kotlin.Throwable.<init> (50, 50, 50)
 // ExternalWrapper.kt:226 $kotlin.wasm.internal.jsCheckIsNullOrUndefinedAdapter (18, 8, 32, 33, 18, 8, 32, 33, 18, 8, 32, 33)

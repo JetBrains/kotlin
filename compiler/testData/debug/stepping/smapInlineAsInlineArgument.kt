@@ -64,6 +64,6 @@ fun fail() : String {
 // test.kt:6 $box
 // test.kt:21 $fail (11, 11, 11, 11, 4, 11, 11, 11, 11, 4)
 // String.kt:143 $kotlin.stringLiteral (15, 8, 15, 8, 15, 8, 15, 8, 15, 8, 15, 8)
-// test.kt:8 $box (4, 9, 4)
+// test.kt:8 $box (4, 9)
 // test.kt:9 $box (16, 21, 21, 21, 21, 26, 26, 26, 26)
 // test.kt:10 $box
