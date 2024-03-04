@@ -1,9 +1,16 @@
 fun topLevelFunA() {}
 fun topLevelFunB() {}
 
-fun Foo.extensionFunA() {}
-fun Foo.extensionFunB() {}
+fun ClazzA.extensionFunA1() {}
+fun ClazzA.extensionFunA2() {}
 
-class Foo {
+fun ClazzB.extensionFunB1() {}
+fun ClazzB.extensionFunB2() {}
+
+class ClazzA {
+    fun memberFun() {}
+}
+
+class ClazzB {
     fun memberFun() {}
 }

@@ -109,10 +109,12 @@ private class KtObjCExportHeaderGenerator {
 
     context(KtAnalysisSession, KtObjCExportSession)
     private fun translateFileSymbol(symbol: KtFileSymbol) {
-        symbol.getExtensionsFacade()?.let { extensionFacade ->
-            objCStubs += extensionFacade
-            enqueueDependencyClasses(extensionFacade)
-            objCClassForwardDeclarations += extensionFacade.name
+        symbol.getExtensionFacades().let { extensionFacades ->
+            extensionFacades.forEach { facade ->
+                objCStubs += facade
+                enqueueDependencyClasses(facade)
+                objCClassForwardDeclarations += facade.name
+            }
         }
 
         symbol.getTopLevelFacade()?.let { topLevelFacade ->
@@ -146,10 +148,10 @@ private class KtObjCExportHeaderGenerator {
         symbol.getDeclaredSuperInterfaceSymbols()
             .filter { it.isVisibleInObjC() }
             .forEach { superInterfaceSymbol ->
-            translateClassOrObjectSymbol(superInterfaceSymbol)?.let {
-                objCProtocolForwardDeclarations += it.name
+                translateClassOrObjectSymbol(superInterfaceSymbol)?.let {
+                    objCProtocolForwardDeclarations += it.name
+                }
             }
-        }
 
         symbol.getSuperClassSymbolNotAny()?.let { superClassSymbol ->
             translateClassOrObjectSymbol(superClassSymbol)?.let {
