@@ -5,9 +5,9 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1]'
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.KotlinClass<kotlin.Any>) returnType:kotlin.Number [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.KotlinClass<kotlin.Any>) returnType:kotlin.Number? [fake_override]
       overridden:
-        public open fun bar (): kotlin.Number declared in <root>.Java1
+        public open fun bar (): kotlin.Number? declared in <root>.Java1
       $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass<kotlin.Any>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -29,11 +29,11 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Number
-      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:kotlin.Number [fake_override]
+        public open a: kotlin.Number?
+      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:kotlin.Number? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public open fun <get-a> (): kotlin.Number declared in <root>.Java1
+          public open fun <get-a> (): kotlin.Number? declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
@@ -41,9 +41,9 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]'
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.KotlinClass<kotlin.Any>) returnType:kotlin.Number [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.KotlinClass<kotlin.Any>) returnType:kotlin.Number? [fake_override]
       overridden:
-        public open fun bar (): kotlin.Number declared in <root>.Java1
+        public open fun bar (): kotlin.Number? declared in <root>.Java1
       $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass<kotlin.Any>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -66,11 +66,11 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Number
-      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:kotlin.Number [fake_override]
+        public open a: kotlin.Number?
+      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:kotlin.Number? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public open fun <get-a> (): kotlin.Number declared in <root>.Java1
+          public open fun <get-a> (): kotlin.Number? declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
@@ -154,9 +154,9 @@ FILE fqName:<root> fileName:/1.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java3'
           <T>: kotlin.String
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java3<kotlin.String>]'
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.Java3<kotlin.String>) returnType:@[EnhancedNullability] kotlin.Number [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.Java3<kotlin.String>) returnType:@[EnhancedNullability] kotlin.Number? [fake_override]
       overridden:
-        public open fun bar (): @[EnhancedNullability] kotlin.Number declared in <root>.Java3
+        public open fun bar (): @[EnhancedNullability] kotlin.Number? declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:<root>.Java3<kotlin.String>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -183,11 +183,11 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Number
-      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.Java3<kotlin.String>) returnType:kotlin.Number [fake_override]
+        public open a: kotlin.Number?
+      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.Java3<kotlin.String>) returnType:kotlin.Number? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public open fun <get-a> (): kotlin.Number declared in <root>.Java3
+          public open fun <get-a> (): kotlin.Number? declared in <root>.Java3
         $this: VALUE_PARAMETER name:<this> type:<root>.Java3<kotlin.String>
   CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java3<kotlin.String>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F
@@ -196,9 +196,9 @@ FILE fqName:<root> fileName:/1.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java3'
           <T>: kotlin.String
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java3<kotlin.String>]'
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.Java3<kotlin.String>) returnType:@[EnhancedNullability] kotlin.Number [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.Java3<kotlin.String>) returnType:@[EnhancedNullability] kotlin.Number? [fake_override]
       overridden:
-        public open fun bar (): @[EnhancedNullability] kotlin.Number declared in <root>.Java3
+        public open fun bar (): @[EnhancedNullability] kotlin.Number? declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:<root>.Java3<kotlin.String>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -226,11 +226,11 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Number
-      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.Java3<kotlin.String>) returnType:kotlin.Number [fake_override]
+        public open a: kotlin.Number?
+      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.Java3<kotlin.String>) returnType:kotlin.Number? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public open fun <get-a> (): kotlin.Number declared in <root>.Java3
+          public open fun <get-a> (): kotlin.Number? declared in <root>.Java3
         $this: VALUE_PARAMETER name:<this> type:<root>.Java3<kotlin.String>
   CLASS CLASS name:G modality:FINAL visibility:public superTypes:[<root>.Java4]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G
@@ -238,9 +238,9 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java4'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:G modality:FINAL visibility:public superTypes:[<root>.Java4]'
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.KotlinClass2<kotlin.Any>) returnType:kotlin.Number [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.KotlinClass2<kotlin.Any>) returnType:kotlin.Number? [fake_override]
       overridden:
-        public open fun bar (): kotlin.Number declared in <root>.Java4
+        public open fun bar (): kotlin.Number? declared in <root>.Java4
       $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass2<kotlin.Any>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -262,11 +262,11 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Number
-      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.Java4) returnType:kotlin.Number [fake_override]
+        public open a: kotlin.Number?
+      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.Java4) returnType:kotlin.Number? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public open fun <get-a> (): kotlin.Number declared in <root>.Java4
+          public open fun <get-a> (): kotlin.Number? declared in <root>.Java4
         $this: VALUE_PARAMETER name:<this> type:<root>.Java4
   CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java4]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.H
@@ -294,18 +294,18 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:bar visibility:public modality:OPEN <> ($this:<root>.H) returnType:kotlin.Number
       overridden:
-        public open fun bar (): kotlin.Number declared in <root>.Java4
+        public open fun bar (): kotlin.Number? declared in <root>.Java4
       $this: VALUE_PARAMETER name:<this> type:<root>.H
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.Number declared in <root>.H'
           CONST Int type=kotlin.Int value=1
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Number
-      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.Java4) returnType:kotlin.Number [fake_override]
+        public open a: kotlin.Number?
+      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.Java4) returnType:kotlin.Number? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public open fun <get-a> (): kotlin.Number declared in <root>.Java4
+          public open fun <get-a> (): kotlin.Number? declared in <root>.Java4
         $this: VALUE_PARAMETER name:<this> type:<root>.Java4
   CLASS CLASS name:I modality:FINAL visibility:public superTypes:[<root>.Java5]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I
@@ -386,11 +386,11 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java6'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:K modality:FINAL visibility:public superTypes:[<root>.Java6]'
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.Java6) returnType:@[EnhancedNullability] kotlin.Number [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.Java6) returnType:@[EnhancedNullability] kotlin.Number? [fake_override]
       annotations:
         Override
       overridden:
-        public open fun bar (): @[EnhancedNullability] kotlin.Number declared in <root>.Java6
+        public open fun bar (): @[EnhancedNullability] kotlin.Number? declared in <root>.Java6
       $this: VALUE_PARAMETER name:<this> type:<root>.Java6
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -414,11 +414,11 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Number
-      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.Java6) returnType:kotlin.Number [fake_override]
+        public open a: kotlin.Number?
+      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.Java6) returnType:kotlin.Number? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public open fun <get-a> (): kotlin.Number declared in <root>.Java6
+          public open fun <get-a> (): kotlin.Number? declared in <root>.Java6
         $this: VALUE_PARAMETER name:<this> type:<root>.Java6
   CLASS CLASS name:KotlinClass modality:OPEN visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinClass<T of <root>.KotlinClass>
@@ -530,18 +530,18 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:bar visibility:public modality:OPEN <> ($this:<root>.L) returnType:kotlin.Number
       overridden:
-        public open fun bar (): @[EnhancedNullability] kotlin.Number declared in <root>.Java6
+        public open fun bar (): @[EnhancedNullability] kotlin.Number? declared in <root>.Java6
       $this: VALUE_PARAMETER name:<this> type:<root>.L
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.Number declared in <root>.L'
           CONST Int type=kotlin.Int value=4
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Number
-      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.Java6) returnType:kotlin.Number [fake_override]
+        public open a: kotlin.Number?
+      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.Java6) returnType:kotlin.Number? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public open fun <get-a> (): kotlin.Number declared in <root>.Java6
+          public open fun <get-a> (): kotlin.Number? declared in <root>.Java6
         $this: VALUE_PARAMETER name:<this> type:<root>.Java6
   FUN name:test visibility:public modality:FINAL <> (a:<root>.A, b:<root>.B, c:<root>.C, d:<root>.D, e:<root>.E, f:<root>.F, g:<root>.G, h:<root>.H, i:<root>.I, j:<root>.J, k:<root>.K, l:<root>.L) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
@@ -564,7 +564,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         t: CONST Double type=kotlin.Double value=1.1
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public open fun bar (): kotlin.Number declared in <root>.A' type=kotlin.Number origin=null
+        CALL 'public open fun bar (): kotlin.Number? declared in <root>.A' type=kotlin.Number? origin=null
           $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
       CALL 'public open fun foo (t: kotlin.Number): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
         $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
@@ -573,7 +573,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
         t: CONST Int type=kotlin.Int value=1
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public open fun bar (): kotlin.Number declared in <root>.B' type=kotlin.Number origin=null
+        CALL 'public open fun bar (): kotlin.Number? declared in <root>.B' type=kotlin.Number? origin=null
           $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       CALL 'public open fun foo (t: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
         $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
@@ -600,7 +600,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
         t: CONST String type=kotlin.String value=""
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public open fun bar (): @[EnhancedNullability] kotlin.Number declared in <root>.E' type=@[EnhancedNullability] kotlin.Number origin=null
+        CALL 'public open fun bar (): @[EnhancedNullability] kotlin.Number? declared in <root>.E' type=@[EnhancedNullability] kotlin.Number? origin=null
           $this: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
       CALL 'public open fun foo (t: kotlin.Number): kotlin.Unit declared in <root>.F' type=kotlin.Unit origin=null
         $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
@@ -609,13 +609,13 @@ FILE fqName:<root> fileName:/1.kt
         $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
         t: CONST String type=kotlin.String value=""
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public open fun bar (): @[EnhancedNullability] kotlin.Number declared in <root>.F' type=@[EnhancedNullability] kotlin.Number origin=null
+        CALL 'public open fun bar (): @[EnhancedNullability] kotlin.Number? declared in <root>.F' type=@[EnhancedNullability] kotlin.Number? origin=null
           $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
       CALL 'public open fun foo (t: kotlin.Number): kotlin.Unit declared in <root>.G' type=kotlin.Unit origin=null
         $this: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
         t: CONST Int type=kotlin.Int value=2
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public open fun bar (): kotlin.Number declared in <root>.G' type=kotlin.Number origin=null
+        CALL 'public open fun bar (): kotlin.Number? declared in <root>.G' type=kotlin.Number? origin=null
           $this: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
       CALL 'public open fun foo (t: kotlin.Number): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
         $this: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
@@ -642,7 +642,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: GET_VAR 'k: <root>.K declared in <root>.test' type=<root>.K origin=null
         t: CONST Int type=kotlin.Int value=1
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public open fun bar (): @[EnhancedNullability] kotlin.Number declared in <root>.K' type=@[EnhancedNullability] kotlin.Number origin=null
+        CALL 'public open fun bar (): @[EnhancedNullability] kotlin.Number? declared in <root>.K' type=@[EnhancedNullability] kotlin.Number? origin=null
           $this: GET_VAR 'k: <root>.K declared in <root>.test' type=<root>.K origin=null
       CALL 'public open fun foo (t: @[EnhancedNullability] kotlin.Number): kotlin.Unit declared in <root>.L' type=kotlin.Unit origin=null
         $this: GET_VAR 'l: <root>.L declared in <root>.test' type=<root>.L origin=null
