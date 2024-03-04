@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
@@ -335,7 +336,11 @@ internal sealed class LLFirTargetResolver(
     }
 
     private fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
-        LLFirLazyPhaseResolverByPhase.getByPhase(resolverPhase).updatePhaseForDeclarationInternals(target)
+        LLFirPhaseUpdater.updateDeclarationInternalsPhase(
+            target = target,
+            newPhase = resolverPhase,
+            updateForLocalDeclarations = resolverPhase == FirResolvePhase.BODY_RESOLVE,
+        )
     }
 
     /**

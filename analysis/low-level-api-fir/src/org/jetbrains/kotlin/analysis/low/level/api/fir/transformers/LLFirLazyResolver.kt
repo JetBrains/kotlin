@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -52,14 +51,6 @@ internal sealed class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
      * @see checkNestedDeclarationsAreResolved
      */
     protected abstract fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState)
-
-    fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
-        LLFirPhaseUpdater.updateDeclarationInternalsPhase(
-            target = target,
-            newPhase = resolverPhase,
-            updateForLocalDeclarations = resolverPhase == FirResolvePhase.BODY_RESOLVE,
-        )
-    }
 
     private fun checkNestedDeclarationsAreResolved(target: FirElementWithResolveState) {
         if (target !is FirDeclaration) return
