@@ -904,9 +904,8 @@ open class PsiRawFirBuilder(
                     val argumentExpression =
                         buildOrLazyExpression((argument as? PsiElement)?.toFirSourceElement()) { argument.toFirExpression() }
                     arguments += when (argument) {
-                        is KtLambdaArgument -> buildLambdaArgumentExpression {
-                            source = argument.toFirSourceElement()
-                            expression = argumentExpression
+                        is KtLambdaArgument -> argumentExpression.apply {
+                            (this as? FirAnonymousFunctionExpression)?.replaceIsTrailingLambda(true)
                         }
                         else -> argumentExpression
                     }

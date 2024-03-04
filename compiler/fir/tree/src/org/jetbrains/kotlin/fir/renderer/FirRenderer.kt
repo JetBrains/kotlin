@@ -435,6 +435,7 @@ class FirRenderer(
         }
 
         override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression) {
+            if (anonymousFunctionExpression.isTrailingLambda) print("<L> = ")
             visitAnonymousFunction(anonymousFunctionExpression.anonymousFunction)
         }
 
@@ -732,11 +733,6 @@ class FirRenderer(
             spreadArgumentExpression.expression.accept(this)
         }
 
-        override fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression) {
-            print("<L> = ")
-            lambdaArgumentExpression.expression.accept(this)
-        }
-
         override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression) {
             print("vararg(")
             renderSeparated(varargArgumentsExpression.arguments, visitor)
@@ -744,8 +740,17 @@ class FirRenderer(
         }
 
         override fun visitSamConversionExpression(samConversionExpression: FirSamConversionExpression) {
+            val expression = samConversionExpression.expression
+
+            if (expression is FirAnonymousFunctionExpression && expression.isTrailingLambda) {
+                print("<L> = SAM(")
+                expression.anonymousFunction.accept(this)
+                print(")")
+                return
+            }
+
             print("SAM(")
-            samConversionExpression.expression.accept(this)
+            expression.accept(this)
             print(")")
         }
 

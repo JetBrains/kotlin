@@ -488,7 +488,6 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
     private fun isInlinableDefaultValue(expression: FirExpression): Boolean =
         expression is FirCallableReferenceAccess ||
                 expression is FirFunctionCall ||
-                expression is FirLambdaArgumentExpression ||
                 expression is FirAnonymousFunctionExpression ||
                 (expression is FirLiteralExpression<*> && expression.value == null) //this will be reported separately
 

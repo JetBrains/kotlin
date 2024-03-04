@@ -359,9 +359,6 @@ abstract class FirVisitor<out R, in D> {
     open fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: D): R =
         visitElement(wrappedArgumentExpression, data)
 
-    open fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: D): R =
-        visitElement(lambdaArgumentExpression, data)
-
     open fun visitSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: D): R =
         visitElement(spreadArgumentExpression, data)
 

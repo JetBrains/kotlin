@@ -316,16 +316,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
-        impl(lambdaArgumentExpression) {
-            default("isSpread") {
-                value = "false"
-                withGetter = true
-            }
-            default("coneTypeOrNull") {
-                delegate = "expression"
-            }
-        }
-
         impl(spreadArgumentExpression) {
             default("isSpread") {
                 value = "true"

@@ -659,6 +659,18 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   }
 
   @Test
+  @TestMetadata("labeledLambda.kt")
+  public void testLabeledLambda() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/labeledLambda.kt");
+  }
+
+  @Test
+  @TestMetadata("labeledLambdaInsideParentheses.kt")
+  public void testLabeledLambdaInsideParentheses() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/labeledLambdaInsideParentheses.kt");
+  }
+
+  @Test
   @TestMetadata("memberFunctionCallWithTypeArgument.kt")
   public void testMemberFunctionCallWithTypeArgument() {
     runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/memberFunctionCallWithTypeArgument.kt");

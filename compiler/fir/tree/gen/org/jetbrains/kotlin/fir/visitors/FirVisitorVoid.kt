@@ -923,14 +923,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(wrappedArgumentExpression)
     }
 
-    final override fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: Nothing?) {
-        visitLambdaArgumentExpression(lambdaArgumentExpression)
-    }
-
-    open fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression) {
-        visitElement(lambdaArgumentExpression)
-    }
-
     final override fun visitSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: Nothing?) {
         visitSpreadArgumentExpression(spreadArgumentExpression)
     }

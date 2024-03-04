@@ -19,7 +19,7 @@ FILE: [ResolvedTo(RAW_FIR)] resultBodyAnnotation.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = @Anno[Unresolved](LAZY_EXPRESSION) foo#(<L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = @Anno[Unresolved](LAZY_EXPRESSION) foo#(LAZY_EXPRESSION)
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 
@@ -44,7 +44,7 @@ FILE: [ResolvedTo(IMPORTS)] resultBodyAnnotation.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = @Anno[Unresolved](LAZY_EXPRESSION) foo#(<L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = @Anno[Unresolved](LAZY_EXPRESSION) foo#(LAZY_EXPRESSION)
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 
@@ -69,7 +69,7 @@ FILE: [ResolvedTo(IMPORTS)] resultBodyAnnotation.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val $$result: <implicit> = @Anno[Unresolved](LAZY_EXPRESSION) foo#(<L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val $$result: <implicit> = @Anno[Unresolved](LAZY_EXPRESSION) foo#(LAZY_EXPRESSION)
             public [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
 
 
@@ -94,7 +94,7 @@ FILE: [ResolvedTo(IMPORTS)] resultBodyAnnotation.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(COMPANION_GENERATION)] val $$result: <implicit> = @Anno[Unresolved](LAZY_EXPRESSION) foo#(<L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(COMPANION_GENERATION)] val $$result: <implicit> = @Anno[Unresolved](LAZY_EXPRESSION) foo#(LAZY_EXPRESSION)
             public [ResolvedTo(COMPANION_GENERATION)] get(): <implicit>
 
 
@@ -119,7 +119,7 @@ FILE: [ResolvedTo(IMPORTS)] resultBodyAnnotation.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(SUPER_TYPES)] val $$result: <implicit> = @Anno[Unresolved](LAZY_EXPRESSION) foo#(<L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(SUPER_TYPES)] val $$result: <implicit> = @Anno[Unresolved](LAZY_EXPRESSION) foo#(LAZY_EXPRESSION)
             public [ResolvedTo(SUPER_TYPES)] get(): <implicit>
 
 
@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] resultBodyAnnotation.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(TYPES)] val $$result: <implicit> = @Anno[Unresolved](LAZY_EXPRESSION) foo#(<L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(TYPES)] val $$result: <implicit> = @Anno[Unresolved](LAZY_EXPRESSION) foo#(LAZY_EXPRESSION)
             public [ResolvedTo(TYPES)] get(): <implicit>
 
 
@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] resultBodyAnnotation.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(STATUS)] val $$result: <implicit> = @Anno[Unresolved](LAZY_EXPRESSION) foo#(<L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(STATUS)] val $$result: <implicit> = @Anno[Unresolved](LAZY_EXPRESSION) foo#(LAZY_EXPRESSION)
             public [ResolvedTo(STATUS)] get(): <implicit>
 
 
@@ -194,7 +194,7 @@ FILE: [ResolvedTo(IMPORTS)] resultBodyAnnotation.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val $$result: <implicit> = @Anno[Unresolved](LAZY_EXPRESSION) foo#(<L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val $$result: <implicit> = @Anno[Unresolved](LAZY_EXPRESSION) foo#(LAZY_EXPRESSION)
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
 
 
@@ -219,7 +219,7 @@ FILE: [ResolvedTo(IMPORTS)] resultBodyAnnotation.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONTRACTS)] val $$result: <implicit> = @Anno[Unresolved](LAZY_EXPRESSION) foo#(<L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(CONTRACTS)] val $$result: <implicit> = @Anno[Unresolved](LAZY_EXPRESSION) foo#(LAZY_EXPRESSION)
             public [ResolvedTo(CONTRACTS)] get(): <implicit>
 
 
@@ -366,3 +366,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] resultBodyAnnotation.kts
         }
         )
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|
+

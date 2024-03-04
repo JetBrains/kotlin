@@ -236,8 +236,8 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
             val delegateCall = property.delegate as FirFunctionCall
             val calleeSymbol = delegateCall.calleeReference.toResolvedNamedFunctionSymbol() ?: return null
             if (calleeSymbol.callableId.asSingleFqName().asString() != "kotlin.lazy") return null
-            val lazyCallArgument = delegateCall.argumentList.arguments.singleOrNull() as? FirLambdaArgumentExpression ?: return null
-            return (lazyCallArgument.expression as? FirAnonymousFunctionExpression)?.anonymousFunction
+            val lazyCallArgument = delegateCall.argumentList.arguments.singleOrNull() as? FirAnonymousFunctionExpression ?: return null
+            return lazyCallArgument.anonymousFunction
         }
 
     private fun FirDeclaration.isEnumEntryInitializer(): Boolean {

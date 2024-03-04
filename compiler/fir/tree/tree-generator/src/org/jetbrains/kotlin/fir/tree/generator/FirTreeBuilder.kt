@@ -143,7 +143,6 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val getClassCall by element(Expression, expression, call)
     val wrappedExpression by element(Expression, expression)
     val wrappedArgumentExpression by element(Expression, wrappedExpression)
-    val lambdaArgumentExpression by element(Expression, wrappedArgumentExpression)
     val spreadArgumentExpression by element(Expression, wrappedArgumentExpression)
     val namedArgumentExpression by element(Expression, wrappedArgumentExpression)
     val varargArgumentsExpression by element(Expression, expression)

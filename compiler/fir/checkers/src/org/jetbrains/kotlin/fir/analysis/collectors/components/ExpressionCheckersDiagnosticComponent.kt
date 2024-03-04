@@ -217,10 +217,6 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allBasicExpressionCheckers.check(namedArgumentExpression, data)
     }
 
-    override fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(lambdaArgumentExpression, data)
-    }
-
     override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: CheckerContext) {
         checkers.allBasicExpressionCheckers.check(smartCastExpression, data)
     }

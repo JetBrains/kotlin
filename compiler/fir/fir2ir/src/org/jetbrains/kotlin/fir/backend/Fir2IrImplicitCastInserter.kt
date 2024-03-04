@@ -88,9 +88,6 @@ class Fir2IrImplicitCastInserter(
     // TODO: element-wise cast?
     override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: IrElement): IrElement = data
 
-    // TODO: something to do w.r.t. SAM?
-    override fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: IrElement): IrElement = data
-
     // TODO: element-wise cast?
     override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: IrElement): IrElement = data
 

@@ -170,10 +170,10 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
                 owner.body.replaceFirstStatement<FirContractCallBlock> { FirContractCallBlock(resolvedContractCall) }
             }
 
-            val argument = resolvedContractCall.arguments.singleOrNull() as? FirLambdaArgumentExpression
+            val argument = resolvedContractCall.arguments.singleOrNull() as? FirAnonymousFunctionExpression
                 ?: return transformOwnerOfErrorContract(owner)
 
-            val lambdaBody = (argument.expression as FirAnonymousFunctionExpression).anonymousFunction.body
+            val lambdaBody = argument.anonymousFunction.body
                 ?: return transformOwnerOfErrorContract(owner)
 
             val resolvedContractDescription = buildResolvedContractDescription {
@@ -227,10 +227,9 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
                 }
             }
 
-            val lambdaArgument = buildLambdaArgumentExpression {
-                expression = buildAnonymousFunctionExpression {
-                    anonymousFunction = effectsBlock
-                }
+            val lambdaArgument = buildAnonymousFunctionExpression {
+                anonymousFunction = effectsBlock
+                isTrailingLambda = true
             }
 
             val contractCall = buildFunctionCall {

@@ -15,14 +15,15 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
+import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildLambdaArgumentExpression
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent
 import org.jetbrains.kotlin.fir.extensions.FirFunctionCallRefinementExtension
@@ -152,59 +153,58 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
 
         refinedType.callShapeData = CallShapeData.RefinedType(listOf(scopeSymbol))
 
-        val argument = buildLambdaArgumentExpression {
-            expression = buildAnonymousFunctionExpression {
-                val fSymbol = FirAnonymousFunctionSymbol()
-                anonymousFunction = buildAnonymousFunction {
-                    resolvePhase = FirResolvePhase.BODY_RESOLVE
+        val argument = buildAnonymousFunctionExpression {
+            val fSymbol = FirAnonymousFunctionSymbol()
+            isTrailingLambda = true
+            anonymousFunction = buildAnonymousFunction {
+                resolvePhase = FirResolvePhase.BODY_RESOLVE
+                moduleData = session.moduleData
+                origin = FirDeclarationOrigin.Plugin(KEY)
+                status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
+                deprecationsProvider = EmptyDeprecationsProvider
+                returnTypeRef = buildResolvedTypeRef {
+                    type = returnType
+                }
+                val itName = Name.identifier("it")
+                val parameterSymbol = FirValueParameterSymbol(itName)
+                valueParameters += buildValueParameter {
                     moduleData = session.moduleData
                     origin = FirDeclarationOrigin.Plugin(KEY)
-                    status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
-                    deprecationsProvider = EmptyDeprecationsProvider
                     returnTypeRef = buildResolvedTypeRef {
-                        type = returnType
+                        type = receiverType
                     }
-                    val itName = Name.identifier("it")
-                    val parameterSymbol = FirValueParameterSymbol(itName)
-                    valueParameters += buildValueParameter {
-                        moduleData = session.moduleData
-                        origin = FirDeclarationOrigin.Plugin(KEY)
-                        returnTypeRef = buildResolvedTypeRef {
-                            type = receiverType
-                        }
-                        name = itName
-                        this.symbol = parameterSymbol
-                        containingFunctionSymbol = fSymbol
-                        isCrossinline = false
-                        isNoinline = false
-                        isVararg = false
-                    }.also { parameterSymbol.bind(it) }
-                    body = buildBlock {
-                        this.coneTypeOrNull = returnType
+                    name = itName
+                    this.symbol = parameterSymbol
+                    containingFunctionSymbol = fSymbol
+                    isCrossinline = false
+                    isNoinline = false
+                    isVararg = false
+                }.also { parameterSymbol.bind(it) }
+                body = buildBlock {
+                    this.coneTypeOrNull = returnType
 
-                        // Schema is required for static extensions resolve and holds information for subsequent call modifications
-                        statements += schemaClass
+                    // Schema is required for static extensions resolve and holds information for subsequent call modifications
+                    statements += schemaClass
 
-                        // Scope (provides extensions API)
-                        statements += scopeClass
+                    // Scope (provides extensions API)
+                    statements += scopeClass
 
-                        // Return type - dataframe schema
-                        statements += refinedType
-                    }
-                    this.symbol = fSymbol
-                    isLambda = true
-                    hasExplicitParameterList = false
-                    typeRef = buildResolvedTypeRef {
-                        type = ConeClassLikeTypeImpl(
-                            ConeClassLikeLookupTagImpl(ClassId(FqName("kotlin"), Name.identifier("Function1"))),
-                            typeArguments = arrayOf(receiverType, returnType),
-                            isNullable = false
-                        )
-                    }
-                    invocationKind = EventOccurrencesRange.EXACTLY_ONCE
-                    inlineStatus = InlineStatus.Inline
-                }.also { fSymbol.bind(it) }
-            }
+                    // Return type - dataframe schema
+                    statements += refinedType
+                }
+                this.symbol = fSymbol
+                isLambda = true
+                hasExplicitParameterList = false
+                typeRef = buildResolvedTypeRef {
+                    type = ConeClassLikeTypeImpl(
+                        ConeClassLikeLookupTagImpl(ClassId(FqName("kotlin"), Name.identifier("Function1"))),
+                        typeArguments = arrayOf(receiverType, returnType),
+                        isNullable = false
+                    )
+                }
+                invocationKind = EventOccurrencesRange.EXACTLY_ONCE
+                inlineStatus = InlineStatus.Inline
+            }.also { fSymbol.bind(it) }
         }
 
         val newCall = buildFunctionCall {

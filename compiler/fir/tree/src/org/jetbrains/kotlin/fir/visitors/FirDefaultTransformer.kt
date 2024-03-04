@@ -70,11 +70,6 @@ abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
         return transformJump(breakExpression, data)
     }
 
-
-    override fun transformLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: D): FirStatement {
-        return transformWrappedArgumentExpression(lambdaArgumentExpression, data)
-    }
-
     override fun transformSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: D): FirStatement {
         return transformWrappedArgumentExpression(spreadArgumentExpression, data)
     }

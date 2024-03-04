@@ -923,14 +923,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformWrappedArgumentExpression(wrappedArgumentExpression, data)
     }
 
-    open fun transformLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: D): FirStatement {
-        return transformElement(lambdaArgumentExpression, data)
-    }
-
-    final override fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: D): FirStatement {
-        return transformLambdaArgumentExpression(lambdaArgumentExpression, data)
-    }
-
     open fun transformSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: D): FirStatement {
         return transformElement(spreadArgumentExpression, data)
     }

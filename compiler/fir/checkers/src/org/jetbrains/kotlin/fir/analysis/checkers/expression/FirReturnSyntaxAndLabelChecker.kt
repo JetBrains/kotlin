@@ -44,8 +44,7 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
                 }
                 if (functionCall is FirFunctionCall &&
                     functionCall.arguments.any {
-                        it is FirLambdaArgumentExpression &&
-                                (it.expression as? FirAnonymousFunctionExpression)?.anonymousFunction?.symbol == targetSymbol
+                        it is FirAnonymousFunctionExpression && it.anonymousFunction.symbol == targetSymbol
                     }
                 ) {
                     reporter.reportOn(source, FirErrors.RETURN_FOR_BUILT_IN_SUSPEND, context)

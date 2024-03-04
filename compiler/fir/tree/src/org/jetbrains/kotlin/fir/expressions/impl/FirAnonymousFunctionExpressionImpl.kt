@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 @OptIn(UnresolvedExpressionTypeAccess::class)
 internal class FirAnonymousFunctionExpressionImpl(
     override val source: KtSourceElement?,
-    override var anonymousFunction: FirAnonymousFunction
+    override var anonymousFunction: FirAnonymousFunction,
+    override var isTrailingLambda: Boolean,
 ) : FirAnonymousFunctionExpression() {
+
     @UnresolvedExpressionTypeAccess
     override val coneTypeOrNull: ConeKotlinType?
         get() = anonymousFunction.typeRef.coneTypeOrNull
@@ -38,6 +40,10 @@ internal class FirAnonymousFunctionExpressionImpl(
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         anonymousFunction.replaceAnnotations(newAnnotations)
+    }
+
+    override fun replaceIsTrailingLambda(newIsTrailingLambda: Boolean) {
+        isTrailingLambda = newIsTrailingLambda
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionExpressionImpl {

@@ -331,6 +331,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         anonymousFunctionExpression.configure {
             +field(anonymousFunction).withTransform()
+            +booleanField("isTrailingLambda", withReplace = true)
         }
 
         typeParameter.configure {

@@ -1350,8 +1350,10 @@ internal class KtFirCallResolver(
                 expression.realPsi as? KtExpression
             is FirSmartCastExpression ->
                 originalExpression.realPsi as? KtExpression
-            is FirNamedArgumentExpression, is FirSpreadArgumentExpression, is FirLambdaArgumentExpression ->
+            is FirNamedArgumentExpression, is FirSpreadArgumentExpression ->
                 realPsi.safeAs<KtValueArgument>()?.getArgumentExpression()
+            is FirAnonymousFunctionExpression ->
+                realPsi?.parent as? KtLabeledExpression ?: realPsi as? KtExpression
             else -> realPsi as? KtExpression
         }
     }

@@ -235,7 +235,7 @@ internal class KtFirExpressionTypeProvider(
             argumentsToParameters.entries.firstOrNull { (arg, _) ->
                 when (arg) {
                     // TODO: better to utilize. See `createArgumentMapping` in [KtFirCallResolver]
-                    is FirLambdaArgumentExpression, is FirNamedArgumentExpression, is FirSpreadArgumentExpression ->
+                    is FirNamedArgumentExpression, is FirSpreadArgumentExpression ->
                         arg.psi == argumentExpression.parent
                     else ->
                         arg.psi == argumentExpression

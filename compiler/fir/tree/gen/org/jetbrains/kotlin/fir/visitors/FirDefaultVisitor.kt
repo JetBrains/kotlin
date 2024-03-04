@@ -170,9 +170,6 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: D): R =
         visitWrappedExpression(wrappedArgumentExpression, data)
 
-    override fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: D): R =
-        visitWrappedArgumentExpression(lambdaArgumentExpression, data)
-
     override fun visitSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: D): R =
         visitWrappedArgumentExpression(spreadArgumentExpression, data)
 

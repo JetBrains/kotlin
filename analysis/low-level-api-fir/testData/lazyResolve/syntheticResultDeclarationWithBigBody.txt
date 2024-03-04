@@ -6,7 +6,7 @@ FILE: [ResolvedTo(RAW_FIR)] syntheticResultDeclarationWithBigBody.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(<L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(LAZY_EXPRESSION)
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 
@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(<L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(LAZY_EXPRESSION)
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 
@@ -30,7 +30,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
 
-        public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val $$result: <implicit> = foo#(<L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val $$result: <implicit> = foo#(LAZY_EXPRESSION)
             public [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
 
 
@@ -42,7 +42,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
 
-        public final [ResolvedTo(COMPANION_GENERATION)] val $$result: <implicit> = foo#(<L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(COMPANION_GENERATION)] val $$result: <implicit> = foo#(LAZY_EXPRESSION)
             public [ResolvedTo(COMPANION_GENERATION)] get(): <implicit>
 
 
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
 
-        public final [ResolvedTo(SUPER_TYPES)] val $$result: <implicit> = foo#(<L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(SUPER_TYPES)] val $$result: <implicit> = foo#(LAZY_EXPRESSION)
             public [ResolvedTo(SUPER_TYPES)] get(): <implicit>
 
 
@@ -66,7 +66,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
 
-        public final [ResolvedTo(TYPES)] val $$result: <implicit> = foo#(<L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(TYPES)] val $$result: <implicit> = foo#(LAZY_EXPRESSION)
             public [ResolvedTo(TYPES)] get(): <implicit>
 
 
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
 
-        public final [ResolvedTo(STATUS)] val $$result: <implicit> = foo#(<L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(STATUS)] val $$result: <implicit> = foo#(LAZY_EXPRESSION)
             public [ResolvedTo(STATUS)] get(): <implicit>
 
 
@@ -90,7 +90,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val $$result: <implicit> = foo#(<L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val $$result: <implicit> = foo#(LAZY_EXPRESSION)
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
 
 
@@ -102,7 +102,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONTRACTS)] val $$result: <implicit> = foo#(<L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(CONTRACTS)] val $$result: <implicit> = foo#(LAZY_EXPRESSION)
             public [ResolvedTo(CONTRACTS)] get(): <implicit>
 
 

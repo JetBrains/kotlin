@@ -75,7 +75,7 @@ fun BodyResolveComponents.mapArguments(
     val excessLambdaArguments: MutableList<FirExpression> = mutableListOf()
     var externalArgument: FirExpression? = null
     for (argument in arguments) {
-        if (argument is FirLambdaArgumentExpression) {
+        if (argument is FirAnonymousFunctionExpression && argument.isTrailingLambda) {
             if (externalArgument == null) {
                 externalArgument = argument
             } else {
