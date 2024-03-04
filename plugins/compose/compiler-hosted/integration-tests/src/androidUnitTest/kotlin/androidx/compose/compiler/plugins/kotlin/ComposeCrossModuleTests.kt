@@ -16,31 +16,21 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import android.widget.TextView
-import androidx.compose.runtime.Composer
-import java.net.URLClassLoader
 import kotlin.test.assertFalse
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
-import org.robolectric.ParameterizedRobolectricTestRunner
-import org.robolectric.annotation.Config
+import org.junit.runners.Parameterized
 
-@RunWith(ParameterizedRobolectricTestRunner::class)
-@Config(
-    manifest = Config.NONE,
-    minSdk = 23,
-    maxSdk = 23
-)
-class KtxCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
+@RunWith(Parameterized::class)
+class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
     companion object {
         @JvmStatic
-        @ParameterizedRobolectricTestRunner.Parameters(name = "useFir = {0}")
+        @Parameterized.Parameters(name = "useFir = {0}")
         fun data() = arrayOf<Any>(false, true)
     }
 
@@ -912,71 +902,6 @@ class KtxCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         )
     }
 
-    @Ignore("b/171801506")
-    @Test
-    fun testCrossModule_SimpleComposition() {
-        val tvId = 29
-
-        compose(
-            "TestF",
-            mapOf(
-                "library module" to mapOf(
-                    "my/test/lib/InternalComp.kt" to """
-                    package my.test.lib
-
-                    import androidx.compose.runtime.*
-
-                    @Composable fun InternalComp(block: @Composable () -> Unit) {
-                        block()
-                    }
-                 """
-                ),
-                "Main" to mapOf(
-                    "my/test/app/Main.kt" to """
-                   package my.test.app
-
-                   import android.widget.*
-                   import androidx.compose.runtime.*
-                   import androidx.compose.ui.viewinterop.emitView
-                   import my.test.lib.*
-
-                   var bar = 0
-                   var scope: RecomposeScope? = null
-
-                   class TestF {
-                       @Composable
-                       fun compose() {
-                         scope = currentRecomposeScope
-                         Foo(bar)
-                       }
-
-                       fun advance() {
-                         bar++
-                         scope?.invalidate()
-                       }
-                   }
-
-                   @Composable
-                   fun Foo(bar: Int) {
-                     InternalComp {
-                       emitView(::TextView) { 
-                         it.text="${'$'}bar" 
-                         it.id=$tvId
-                       }
-                     }
-                   }
-                """
-                )
-            )
-        ).then { activity ->
-            val tv = activity.findViewById(tvId) as TextView
-            assertEquals("0", tv.text)
-        }.then { activity ->
-            val tv = activity.findViewById(tvId) as TextView
-            assertEquals("1", tv.text)
-        }
-    }
-
     /**
      * Test for b/169071070
      */
@@ -1250,10 +1175,59 @@ class KtxCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         )
     }
 
+    // regression test for b/316196500
+    @Test
+    fun callingFakeOverriddenFunctionFromAnotherModule() {
+        compile(
+            mapOf(
+                "Base" to mapOf(
+                    "base/Base.kt" to """
+                    package base
+
+                    import androidx.compose.runtime.Composable
+
+                    open class Test {
+                        fun runTest(content: @Composable () -> Unit) {}
+                    }
+                    """
+                ),
+                "Intermediate" to mapOf(
+                    "intermediate/Intermediate.kt" to """
+                    package intermediate
+
+                    import androidx.compose.runtime.Composable
+                    import base.Test
+
+                    open class DeviceTest : Test()
+                    """
+                ),
+                "Main" to mapOf(
+                    "Main.kt" to """
+                    package main
+
+                    import intermediate.DeviceTest
+
+                    class MainTest : DeviceTest() {
+                        fun test() {
+                            runTest { }
+                        }
+                    }
+                    """
+                )
+            ),
+            validate = {
+                assertFalse(
+                    it.contains("Lkotlin/jvm/functions/Function0"),
+                    message = "Composable function types were not remapped"
+                )
+            },
+        )
+    }
+
     private fun compile(
         modules: Map<String, Map<String, String>>,
         dumpClasses: Boolean = false,
-        flipLibraryFirSetting: Boolean = false,
+        flipLibraryFirSetting: Boolean = false, // compiles deps with k2 for k1 test and vice versa
         validate: ((String) -> Unit)? = null
     ): List<OutputFile> {
         val libraryClasses = modules.filter { it.key != "Main" }.flatMap {
@@ -1287,41 +1261,6 @@ class KtxCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         }
 
         return outputFiles
-    }
-
-    private fun compose(
-        mainClassName: String,
-        modules: Map<String, Map<String, String>>,
-        dumpClasses: Boolean = false
-    ): RobolectricComposeTester {
-        val allClasses = compile(modules, dumpClasses)
-        val loader = URLClassLoader(emptyArray(), this.javaClass.classLoader)
-        val instanceClass = run {
-            var instanceClass: Class<*>? = null
-            var loadedOne = false
-            for (outFile in allClasses) {
-                val bytes = outFile.asByteArray()
-                val loadedClass = loadClass(loader, null, bytes)
-                if (loadedClass.name.endsWith(mainClassName)) instanceClass = loadedClass
-                loadedOne = true
-            }
-            if (!loadedOne) error("No classes loaded")
-            instanceClass ?: error("Could not find class $mainClassName in loaded classes")
-        }
-
-        val instanceOfClass = instanceClass.getDeclaredConstructor().newInstance()
-        val advanceMethod = instanceClass.getMethod("advance")
-        val composeMethod = instanceClass.getMethod(
-            "compose",
-            Composer::class.java,
-            Int::class.java
-        )
-
-        return composeMulti({ composer, _ ->
-            composeMethod.invoke(instanceOfClass, composer, 1)
-        }) {
-            advanceMethod.invoke(instanceOfClass)
-        }
     }
 
     @JvmField

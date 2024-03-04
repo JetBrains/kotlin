@@ -85,25 +85,32 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
         }
 
         return super.visitSimpleFunction(declaration).also {
-            it.overriddenSymbols.forEach { symbol ->
-                if (!symbol.isBound) {
-                    // symbol will be rebound by deep copy on later iteration
-                    return@forEach
-                }
-                val overriddenFn = symbol.owner
-                if (overriddenFn.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB) {
-                    // this is external function that is in a different compilation unit,
-                    // so we potentially need to update composable types for it.
-                    // if the function is in the current module, it should be updated eventually
-                    // by this deep copy pass.
-                    if (overriddenFn.needsComposableRemapping() && !overriddenFn.isDecoy()) {
-                        overriddenFn.remapTypes(typeRemapper)
-                    }
-                }
-            }
+            it.remapOverriddenFunctionTypes()
             it.correspondingPropertySymbol = declaration.correspondingPropertySymbol
         }
     }
+
+    private fun IrSimpleFunction.remapOverriddenFunctionTypes() {
+        overriddenSymbols.forEach { symbol ->
+            if (!symbol.isBound) {
+                // symbol will be remapped by deep copy on later iteration
+                return@forEach
+            }
+            val overriddenFn = symbol.owner
+            if (overriddenFn.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB) {
+                // this is external function that is in a different compilation unit,
+                // so we potentially need to update composable types for it.
+                // if the function is in the current module, it should be updated eventually
+                // by this deep copy pass.
+                if (overriddenFn.needsComposableRemapping() && !overriddenFn.isDecoy()) {
+                    overriddenFn.remapTypes(typeRemapper)
+                }
+            }
+            // traverse recursively to ensure that base function is transformed correctly
+            overriddenFn.remapOverriddenFunctionTypes()
+        }
+    }
+
     override fun visitProperty(declaration: IrProperty): IrProperty {
         return super.visitProperty(declaration).also {
             it.copyAttributes(declaration)
