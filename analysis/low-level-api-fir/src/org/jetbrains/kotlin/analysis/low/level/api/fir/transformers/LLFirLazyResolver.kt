@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
  * @see LLFirLazyResolverRunner
  * @see LLFirTargetResolver
  */
-internal abstract class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
+internal sealed class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
     fun resolve(target: LLFirResolveTarget) {
         val resolver = createTargetResolver(target)
         requireWithAttachment(

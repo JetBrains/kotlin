@@ -73,7 +73,7 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
  * @see LLFirLockProvider
  * @see FirResolvePhase
  */
-internal abstract class LLFirTargetResolver(
+internal sealed class LLFirTargetResolver(
     protected val resolveTarget: LLFirResolveTarget,
     val resolverPhase: FirResolvePhase,
     private val isJumpingPhase: Boolean = false,
