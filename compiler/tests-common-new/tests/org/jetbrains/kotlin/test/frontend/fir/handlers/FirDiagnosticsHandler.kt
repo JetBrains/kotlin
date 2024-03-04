@@ -643,7 +643,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
 
             for (part in info.partsForDependsOnModules) {
                 result += part.session.runCheckers(
-                    platformPart.firAnalyzerFacade.scopeSession,
+                    part.firAnalyzerFacade.scopeSession,
                     part.firFiles.values,
                     DiagnosticReporterFactory.createPendingReporter(),
                     mppCheckerKind = MppCheckerKind.Common
