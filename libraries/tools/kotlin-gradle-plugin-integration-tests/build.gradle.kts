@@ -1,7 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.nio.file.Paths
 
 plugins {
@@ -150,9 +148,36 @@ tasks.register<Task>("prepareNativeBundleForGradleIT") {
     description = "This task adds dependency on :kotlin-native:bundle"
 
     if (project.kotlinBuildProperties.isKotlinNativeEnabled) {
-        // 1. Build full Kotlin Native bundle
+        // Build full Kotlin Native bundle
         dependsOn(":kotlin-native:bundle")
     }
+}
+
+tasks.register<Task>("createProvisionedOkFiles") {
+
+    description = "This task creates `provisioned.ok` file for each preconfigured k/n native bundle." +
+            "Kotlin/Native bundle can be prepared in two ways:" +
+            "`prepareNativeBundleForGradleIT` task for local environment and `Compiler Dist: full bundle` build for CI environment."
+
+    val prepareNativeBundleTaskName = ":kotlin-gradle-plugin-integration-tests:prepareNativeBundleForGradleIT"
+    val taskExists = project.tasks.findByPath(prepareNativeBundleTaskName) != null
+    if (taskExists) {
+        mustRunAfter(prepareNativeBundleTaskName)
+    }
+
+    val konanDistributions = File(konanDataDir)
+
+    doLast {
+        konanDistributions
+            .walkTopDown().maxDepth(1)
+            .filter { file -> file != konanDistributions }
+            .filter { file -> file.isDirectory }
+            .toSet()
+            .forEach {
+                File(it, "provisioned.ok").createNewFile()
+            }
+    }
+
 }
 
 fun Test.includeMppAndAndroid(include: Boolean) = includeTestsWithPattern(include) {
@@ -164,7 +189,8 @@ fun Test.includeNative(include: Boolean) = includeTestsWithPattern(include) {
 }
 
 fun Test.applyKotlinNativeFromCurrentBranchIfNeeded() {
-    val kotlinNativeFromMasterEnabled = project.kotlinBuildProperties.isKotlinNativeEnabled && project.kotlinBuildProperties.useKotlinNativeLocalDistributionForTests
+    val kotlinNativeFromMasterEnabled =
+        project.kotlinBuildProperties.isKotlinNativeEnabled && project.kotlinBuildProperties.useKotlinNativeLocalDistributionForTests
 
     //add native bundle dependencies for local test run
     if (kotlinNativeFromMasterEnabled && !project.kotlinBuildProperties.isTeamcityBuild) {
@@ -185,6 +211,7 @@ fun Test.applyKotlinNativeFromCurrentBranchIfNeeded() {
         }
         systemProperty("konanDataDirForIntegrationTests", konanDataDir)
     }
+    dependsOn(":kotlin-gradle-plugin-integration-tests:createProvisionedOkFiles")
 }
 
 fun Test.includeTestsWithPattern(include: Boolean, patterns: (MutableSet<String>).() -> Unit) {
