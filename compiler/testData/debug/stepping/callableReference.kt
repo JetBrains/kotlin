@@ -43,7 +43,7 @@ fun f(block: () -> Unit) {
 // Runtime.kt:73 $kotlin.wasm.internal.getBoxedBoolean (8, 35)
 // Standard.kt:71 $kotlin.wasm.internal.getBoxedBoolean (0, 0, 0, 0)
 // Standard.kt:95 $kotlin.wasm.internal.getBoxedBoolean (4, 4)
-// Standard.kt:98 $kotlin.wasm.internal.getBoxedBoolean (4, 10, 4, 4, 10, 4)
+// Standard.kt:98 $kotlin.wasm.internal.getBoxedBoolean (4, 10, 4, 10)
 // Standard.kt:74 $kotlin.wasm.internal.getBoxedBoolean (15, 7)
 // Standard.kt:99 $kotlin.wasm.internal.getBoxedBoolean (11, 4, 11, 4)
 // Runtime.kt:74 $kotlin.wasm.internal.getBoxedBoolean (5, 5)

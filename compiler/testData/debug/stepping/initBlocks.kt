@@ -148,7 +148,7 @@ fun box() {
 // String.kt:143 $kotlin.stringLiteral (15, 8)
 // test.kt:30 $Boo.<init> (16, 8)
 // test.kt:32 $Boo.<init>
-// test.kt:52 $box (4, 4, 4)
+// test.kt:52 $box (4, 4)
 // test.kt:35 $Zoo.<init> (19, 11)
 // test.kt:37 $Zoo.<init> (19, 11)
 // test.kt:40 $Zoo.<init> (16, 8)
