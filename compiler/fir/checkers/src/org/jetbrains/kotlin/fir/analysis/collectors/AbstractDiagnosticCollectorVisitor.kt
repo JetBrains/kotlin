@@ -13,10 +13,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.createInlineFuncti
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
+import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
@@ -141,8 +144,10 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     override fun visitProperty(property: FirProperty, data: Nothing?) {
-        withAnnotationContainer(property) {
-            visitWithDeclaration(property)
+        withPotentialPropertyFromPrimaryConstructor(property) {
+            withAnnotationContainer(property) {
+                visitWithDeclaration(property)
+            }
         }
     }
 
@@ -439,6 +444,21 @@ abstract class AbstractDiagnosticCollectorVisitor(
                 }
                 context = existingContext
             }
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    inline fun <R> withPotentialPropertyFromPrimaryConstructor(property: FirProperty, block: () -> R): R {
+        val existingContext = context
+        property.correspondingValueParameterFromPrimaryConstructor?.let {
+            it.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
+            @OptIn(SymbolInternals::class)
+            addSuppressedDiagnosticsToContext(it.fir)
+        }
+        return try {
+            block()
+        } finally {
+            context = existingContext
         }
     }
 
