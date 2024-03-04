@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
@@ -59,6 +60,7 @@ internal abstract class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
 
     fun checkIsResolved(designation: LLFirResolveTarget) {
         designation.forEachTarget(::checkIsResolved)
+        checkCanceled()
     }
 
     private fun checkNestedDeclarationsAreResolved(target: FirElementWithResolveState) {
