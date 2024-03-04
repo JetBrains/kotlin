@@ -1072,25 +1072,7 @@ class CallAndReferenceGenerator(
             }
         }
         return irArgument
-            .applyAssigningArrayElementsToVarargInNamedForm(unwrappedArgument, parameter)
             .applyImplicitIntegerCoercionIfNeeded(unwrappedArgument, parameter)
-    }
-
-    private fun IrExpression.applyAssigningArrayElementsToVarargInNamedForm(
-        argument: FirExpression,
-        parameter: FirValueParameter?,
-    ): IrExpression {
-        if (this is IrVararg && parameter?.isVararg == true && argument is FirVarargArgumentsExpression && elements.size == 1) {
-            val irVarargElement = elements[0]
-            if (argument.arguments[0] is FirNamedArgumentExpression &&
-                // IrVarargElement can be either IrSpreadElement (then nothing to do) or IrExpression
-                irVarargElement is IrExpression &&
-                (irVarargElement.type.isArray() || irVarargElement.type.isPrimitiveArray() || irVarargElement.type.isUnsignedArray())
-            ) {
-                elements[0] = IrSpreadElementImpl(irVarargElement.startOffset, irVarargElement.endOffset, irVarargElement)
-            }
-        }
-        return this
     }
 
     private fun IrExpression.applyImplicitIntegerCoercionIfNeeded(

@@ -550,7 +550,7 @@ class Fir2IrVisitor(
     }
 
     private fun FirExpression.convertToIrVarargElement(): IrVarargElement =
-        if (this is FirSpreadArgumentExpression || this is FirNamedArgumentExpression && this.isSpread) {
+        if (this is FirSpreadArgumentExpression) {
             IrSpreadElementImpl(
                 source?.startOffset ?: UNDEFINED_OFFSET,
                 source?.endOffset ?: UNDEFINED_OFFSET,
