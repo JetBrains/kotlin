@@ -25,11 +25,8 @@ internal object LLFirLazyResolverRunner {
      */
     fun runLazyResolverByPhase(phase: FirResolvePhase, target: LLFirResolveTarget) {
         val lazyResolver = LLFirLazyPhaseResolverByPhase.getByPhase(phase)
-        val lockProvider = LLFirGlobalResolveComponents.getInstance(target.session).lockProvider
-        lockProvider.withGlobalLock {
-            lockProvider.withGlobalPhaseLock(phase) {
-                lazyResolver.resolve(target)
-            }
+        LLFirGlobalResolveComponents.getInstance(target.session).lockProvider.withGlobalLock {
+            lazyResolver.resolve(target)
         }
 
         lazyResolver.checkIsResolved(target)

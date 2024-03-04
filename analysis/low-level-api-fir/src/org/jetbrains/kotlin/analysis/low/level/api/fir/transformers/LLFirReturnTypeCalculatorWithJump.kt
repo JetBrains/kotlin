@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.session
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirImplicitBodyTargetResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirImplicitTypesLazyResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLImplicitBodyResolveComputationSession
@@ -37,9 +35,7 @@ internal class LLFirReturnTypeCalculatorWithJump(
             llImplicitBodyResolveComputationSessionParameter = computationSession,
         )
 
-        LLFirGlobalResolveComponents.getInstance(designation.session).lockProvider.withGlobalPhaseLock(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
-            resolver.resolveDesignation()
-        }
+        resolver.resolveDesignation()
 
         // Report recursion error if we found cycle during resolution
         if (computationSession.popCycledSymbolIfExists() == declaration.symbol) {
