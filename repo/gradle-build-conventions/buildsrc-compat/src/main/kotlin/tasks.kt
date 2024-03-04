@@ -224,7 +224,7 @@ fun Project.projectTest(
         else
             defaultMaxMemoryPerTestWorkerMb
 
-        maxHeapSize = "${maxHeapSizeMb ?: (memoryPerTestProcessMb - maxMetaspaceSizeMb)}m"
+        maxHeapSize = "${maxHeapSizeMb ?: (memoryPerTestProcessMb - maxMetaspaceSizeMb - reservedCodeCacheSizeMb)}m"
         usesService(concurrencyLimitService)
 
         if (minHeapSizeMb != null) {
