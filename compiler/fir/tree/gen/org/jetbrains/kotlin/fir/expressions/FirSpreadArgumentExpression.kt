@@ -10,11 +10,31 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
+ * ### Up to and including body resolution phase
+ *
+ * Represents a spread expression `*foo`. If a spread expression is passed as named argument `foo = *bar`, it will be
+ * represented as an [FirNamedArgumentExpression] with [FirNamedArgumentExpression.isSpread] set to `true`.
+ *
+ * ### After body resolution phase
+ *
+ * Represents spread expressions `*foo` and named argument expressions for vararg parameters `foo = bar` and `foo = *bar`.
+ *
+ * If [isNamed] is `true`, it means the argument was passed in named form. The name is not saved since it's not required.
+ * To retrieve the argument mapping of a call, [FirResolvedArgumentList.mapping] must be used.
+ *
+ * If [isFakeSpread] is `true`, it means this expression is the argument to a `vararg` parameter that was passed in named form
+ * without a spread operator `*`.
+ *
+ * The information carried by [isNamed] and [isFakeSpread] is only relevant for some checkers. Otherwise,
+ * [FirSpreadArgumentExpression]s should be treated uniformly since they always represent an array that was passed to a
+ * `vararg` parameter and don't influence the resulting platform code.
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.spreadArgumentExpression]
  */
 abstract class FirSpreadArgumentExpression : FirWrappedArgumentExpression() {
