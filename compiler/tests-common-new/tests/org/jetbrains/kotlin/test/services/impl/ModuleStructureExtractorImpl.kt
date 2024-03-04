@@ -355,18 +355,13 @@ class ModuleStructureExtractorImpl(
                 directives = moduleDirectives,
                 languageVersionSettings = currentModuleLanguageVersionSettingsBuilder.build()
             )
-            if (testModule.frontendKind != FrontendKinds.FIR ||
-                !testModule.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) ||
-                modules.isEmpty()
-            ) {
-                additionalSourceProviders.flatMapTo(filesOfCurrentModule) { additionalSourceProvider ->
-                    additionalSourceProvider.produceAdditionalFiles(
-                        globalDirectives ?: RegisteredDirectives.Empty,
-                        testModule
-                    ).also { additionalFiles ->
-                        require(additionalFiles.all { it.isAdditional }) {
-                            "Files produced by ${additionalSourceProvider::class.qualifiedName} should have flag `isAdditional = true`"
-                        }
+            additionalSourceProviders.flatMapTo(filesOfCurrentModule) { additionalSourceProvider ->
+                additionalSourceProvider.produceAdditionalFiles(
+                    globalDirectives ?: RegisteredDirectives.Empty,
+                    testModule
+                ).also { additionalFiles ->
+                    require(additionalFiles.all { it.isAdditional }) {
+                        "Files produced by ${additionalSourceProvider::class.qualifiedName} should have flag `isAdditional = true`"
                     }
                 }
             }

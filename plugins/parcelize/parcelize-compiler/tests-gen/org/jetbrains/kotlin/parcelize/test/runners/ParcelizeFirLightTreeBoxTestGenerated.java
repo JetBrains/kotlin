@@ -20,6 +20,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class ParcelizeFirLightTreeBoxTestGenerated extends AbstractParcelizeFirLightTreeBoxTest {
   @Test
+  @TestMetadata("additionalAnnotationTrigger.kt")
+  public void testAdditionalAnnotationTrigger() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/additionalAnnotationTrigger.kt");
+  }
+
+  @Test
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-compiler/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
   }
@@ -322,6 +328,12 @@ public class ParcelizeFirLightTreeBoxTestGenerated extends AbstractParcelizeFirL
   @TestMetadata("maps.kt")
   public void testMaps() {
     runTest("plugins/parcelize/parcelize-compiler/testData/box/maps.kt");
+  }
+
+  @Test
+  @TestMetadata("mppWithExpectParcelable.kt")
+  public void testMppWithExpectParcelable() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/mppWithExpectParcelable.kt");
   }
 
   @Test
