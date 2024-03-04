@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterfaceImpl
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getFileName
 
 private const val extensionsCategoryName = "Extensions"
 
@@ -49,26 +48,33 @@ internal val ObjCInterface.isExtensionsFacade: Boolean
  * See related [getTopLevelFacade]
  */
 context(KtAnalysisSession, KtObjCExportSession)
-fun KtFileSymbol.getExtensionsFacade(): ObjCInterface? {
+fun KtFileSymbol.getExtensionFacades(): List<ObjCInterface> {
 
     val extensions = getFileScope()
         .getCallableSymbols().filter { it.isExtension }
-        .toList().sortedWith(StableCallableOrder)
-        .ifEmpty { return null }
+        .toList()
+        .sortedWith(StableCallableOrder)
+        .ifEmpty { return emptyList() }
+        .groupBy {
+            val classSymbol = it.receiverParameter?.type?.expandedClassSymbol
+            classSymbol?.getObjCClassOrProtocolName()?.objCName
+        }
+        .mapNotNull { (key, value) ->
+            if (key == null) return@mapNotNull null else key to value
+        }
 
-    val fileName = getFileName()
-        ?: throw IllegalStateException("File '$this' cannot be translated without file name")
-
-    return ObjCInterfaceImpl(
-        name = fileName,
-        comment = null,
-        origin = null,
-        attributes = emptyList(),
-        superProtocols = emptyList(),
-        members = extensions.mapNotNull { it.translateToObjCExportStub() },
-        categoryName = extensionsCategoryName,
-        generics = emptyList(),
-        superClass = null,
-        superClassGenerics = emptyList()
-    )
+    return extensions.map { (objCName, extensionSymbols) ->
+        ObjCInterfaceImpl(
+            name = objCName,
+            comment = null,
+            origin = null,
+            attributes = emptyList(),
+            superProtocols = emptyList(),
+            members = extensionSymbols.mapNotNull { ext -> ext.translateToObjCExportStub() },
+            categoryName = extensionsCategoryName,
+            generics = emptyList(),
+            superClass = null,
+            superClassGenerics = emptyList()
+        )
+    }
 }

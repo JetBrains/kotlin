@@ -6,7 +6,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class Foo;
+@class Clazz;
 
 NS_ASSUME_NONNULL_BEGIN
 #pragma clang diagnostic push
@@ -21,13 +21,13 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 __attribute__((objc_subclassing_restricted))
-@interface Foo : Base
+@interface Clazz : Base
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (void)memberFun __attribute__((swift_name("memberFun()")));
 @end
 
-@interface Foo (Extensions)
+@interface Clazz (Extensions)
 @property (readonly) int32_t extensionValA __attribute__((swift_name("extensionValA")));
 @property (readonly) int32_t extensionValB __attribute__((swift_name("extensionValB")));
 @property int32_t extensionVarA __attribute__((swift_name("extensionVarA")));
