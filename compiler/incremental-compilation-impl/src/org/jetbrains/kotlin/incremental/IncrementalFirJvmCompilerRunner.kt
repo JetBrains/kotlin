@@ -213,8 +213,6 @@ open class IncrementalFirJvmCompilerRunner(
                         configuration
                     )
 
-                    performanceManager?.notifyAnalysisStarted()
-
                     val analysisResults =
                         compileModuleToAnalyzedFir(
                             compilerInput,
@@ -224,8 +222,6 @@ open class IncrementalFirJvmCompilerRunner(
                             diagnosticsReporter,
                             performanceManager
                         )
-
-                    performanceManager?.notifyAnalysisFinished()
 
                     // TODO: consider what to do if many compilations find a main class
                     if (mainClassFqName == null && configuration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {

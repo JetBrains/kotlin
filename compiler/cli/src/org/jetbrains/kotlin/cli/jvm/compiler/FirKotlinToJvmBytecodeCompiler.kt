@@ -141,7 +141,6 @@ object FirKotlinToJvmBytecodeCompiler {
     }
 
     private fun CompilationContext.compileModule(): Pair<FirResult, GenerationState>? {
-        performanceManager?.notifyAnalysisStarted()
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         if (!checkKotlinPackageUsageForPsi(configuration, allSources)) return null
@@ -149,9 +148,7 @@ object FirKotlinToJvmBytecodeCompiler {
         val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
         val diagnosticsReporter = createPendingReporter(messageCollector)
 
-        val firResult = runFrontend(allSources, diagnosticsReporter, module.getModuleName(), module.getFriendPaths()).also {
-            performanceManager?.notifyAnalysisFinished()
-        }
+        val firResult = runFrontend(allSources, diagnosticsReporter, module.getModuleName(), module.getFriendPaths())
         if (firResult == null) {
             FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
             return null
@@ -192,6 +189,9 @@ object FirKotlinToJvmBytecodeCompiler {
         rootModuleName: String,
         friendPaths: List<String>,
     ): FirResult? {
+        val performanceManager = configuration.get(CLIConfigurationKeys.PERF_MANAGER)
+        performanceManager?.notifyAnalysisStarted()
+
         val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
             AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
         }
@@ -228,6 +228,7 @@ object FirKotlinToJvmBytecodeCompiler {
         }
         outputs.runPlatformCheckers(diagnosticsReporter)
 
+        performanceManager?.notifyAnalysisFinished()
         return runUnless(syntaxErrors || scriptsInCommonSourcesErrors || diagnosticsReporter.hasErrors) { FirResult(outputs) }
     }
 

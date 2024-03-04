@@ -111,9 +111,6 @@ fun compileModulesUsingFrontendIrAndLightTree(
     val renderDiagnosticNames = moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     val diagnosticsReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
 
-
-    performanceManager?.notifyAnalysisStarted()
-
     val analysisResults = compileModuleToAnalyzedFir(
         compilerInput,
         projectEnvironment,
@@ -126,8 +123,6 @@ fun compileModulesUsingFrontendIrAndLightTree(
     if (!checkKotlinPackageUsageForLightTree(moduleConfiguration, analysisResults.outputs.flatMap { it.fir })) {
         return false
     }
-
-    performanceManager?.notifyAnalysisFinished()
 
     val mainClassFqName = runIf(moduleConfiguration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
         findMainClass(analysisResults.outputs.last().fir)
@@ -273,6 +268,7 @@ fun compileModuleToAnalyzedFir(
     diagnosticsReporter: BaseDiagnosticsCollector,
     performanceManager: CommonCompilerPerformanceManager?
 ): FirResult {
+    performanceManager?.notifyAnalysisStarted()
     val moduleConfiguration = input.configuration
 
     var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
@@ -317,6 +313,7 @@ fun compileModuleToAnalyzedFir(
     }
     outputs.runPlatformCheckers(diagnosticsReporter)
 
+    performanceManager?.notifyAnalysisFinished()
     return FirResult(outputs)
 }
 
