@@ -16,108 +16,108 @@ import java.util.regex.Pattern;
 @TestMetadata("testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosticTest {
+  @Test
+  public void testAllFilesPresentInDiagnostics() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
+
+  @Test
+  @TestMetadata("dataSchemaCodegen.kt")
+  public void testDataSchemaCodegen() {
+    runTest("testData/diagnostics/dataSchemaCodegen.kt");
+  }
+
+  @Test
+  @TestMetadata("dfIde.kt")
+  public void testDfIde() {
+    runTest("testData/diagnostics/dfIde.kt");
+  }
+
+  @Test
+  @TestMetadata("disableInterpretation.kt")
+  public void testDisableInterpretation() {
+    runTest("testData/diagnostics/disableInterpretation.kt");
+  }
+
+  @Test
+  @TestMetadata("explode.kt")
+  public void testExplode() {
+    runTest("testData/diagnostics/explode.kt");
+  }
+
+  @Test
+  @TestMetadata("HistoryItem.kt")
+  public void testHistoryItem() {
+    runTest("testData/diagnostics/HistoryItem.kt");
+  }
+
+  @Test
+  @TestMetadata("injectAccessors.kt")
+  public void testInjectAccessors() {
+    runTest("testData/diagnostics/injectAccessors.kt");
+  }
+
+  @Test
+  @TestMetadata("injectAccessorsDsl.kt")
+  public void testInjectAccessorsDsl() {
+    runTest("testData/diagnostics/injectAccessorsDsl.kt");
+  }
+
+  @Test
+  @TestMetadata("insert.kt")
+  public void testInsert() {
+    runTest("testData/diagnostics/insert.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedDataSchemaCodegen.kt")
+  public void testNestedDataSchemaCodegen() {
+    runTest("testData/diagnostics/nestedDataSchemaCodegen.kt");
+  }
+
+  @Test
+  @TestMetadata("read.kt")
+  public void testRead() {
+    runTest("testData/diagnostics/read.kt");
+  }
+
+  @Test
+  @TestMetadata("Schema.kt")
+  public void testSchema() {
+    runTest("testData/diagnostics/Schema.kt");
+  }
+
+  @Test
+  @TestMetadata("selectDuringTyping.kt")
+  public void testSelectDuringTyping() {
+    runTest("testData/diagnostics/selectDuringTyping.kt");
+  }
+
+  @Test
+  @TestMetadata("structuralCast.kt")
+  public void testStructuralCast() {
+    runTest("testData/diagnostics/structuralCast.kt");
+  }
+
+  @Nested
+  @TestMetadata("testData/diagnostics/schemaRender")
+  @TestDataPath("$PROJECT_ROOT")
+  public class SchemaRender {
     @Test
-    public void testAllFilesPresentInDiagnostics() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    public void testAllFilesPresentInSchemaRender() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/diagnostics/schemaRender"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
-    @TestMetadata("dataSchemaCodegen.kt")
-    public void testDataSchemaCodegen() throws Exception {
-        runTest("testData/diagnostics/dataSchemaCodegen.kt");
+    @TestMetadata("Schema1.kt")
+    public void testSchema1() {
+      runTest("testData/diagnostics/schemaRender/Schema1.kt");
     }
 
     @Test
-    @TestMetadata("dfIde.kt")
-    public void testDfIde() throws Exception {
-        runTest("testData/diagnostics/dfIde.kt");
+    @TestMetadata("Schema2.kt")
+    public void testSchema2() {
+      runTest("testData/diagnostics/schemaRender/Schema2.kt");
     }
-
-    @Test
-    @TestMetadata("disableInterpretation.kt")
-    public void testDisableInterpretation() throws Exception {
-        runTest("testData/diagnostics/disableInterpretation.kt");
-    }
-
-    @Test
-    @TestMetadata("explode.kt")
-    public void testExplode() throws Exception {
-        runTest("testData/diagnostics/explode.kt");
-    }
-
-    @Test
-    @TestMetadata("HistoryItem.kt")
-    public void testHistoryItem() throws Exception {
-        runTest("testData/diagnostics/HistoryItem.kt");
-    }
-
-    @Test
-    @TestMetadata("injectAccessors.kt")
-    public void testInjectAccessors() throws Exception {
-        runTest("testData/diagnostics/injectAccessors.kt");
-    }
-
-    @Test
-    @TestMetadata("injectAccessorsDsl.kt")
-    public void testInjectAccessorsDsl() throws Exception {
-        runTest("testData/diagnostics/injectAccessorsDsl.kt");
-    }
-
-    @Test
-    @TestMetadata("insert.kt")
-    public void testInsert() throws Exception {
-        runTest("testData/diagnostics/insert.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedDataSchemaCodegen.kt")
-    public void testNestedDataSchemaCodegen() throws Exception {
-        runTest("testData/diagnostics/nestedDataSchemaCodegen.kt");
-    }
-
-    @Test
-    @TestMetadata("read.kt")
-    public void testRead() throws Exception {
-        runTest("testData/diagnostics/read.kt");
-    }
-
-    @Test
-    @TestMetadata("Schema.kt")
-    public void testSchema() throws Exception {
-        runTest("testData/diagnostics/Schema.kt");
-    }
-
-    @Test
-    @TestMetadata("selectDuringTyping.kt")
-    public void testSelectDuringTyping() throws Exception {
-        runTest("testData/diagnostics/selectDuringTyping.kt");
-    }
-
-    @Test
-    @TestMetadata("structuralCast.kt")
-    public void testStructuralCast() throws Exception {
-        runTest("testData/diagnostics/structuralCast.kt");
-    }
-
-    @Nested
-    @TestMetadata("testData/diagnostics/schemaRender")
-    @TestDataPath("$PROJECT_ROOT")
-    public class SchemaRender {
-        @Test
-        public void testAllFilesPresentInSchemaRender() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/diagnostics/schemaRender"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("Schema1.kt")
-        public void testSchema1() throws Exception {
-            runTest("testData/diagnostics/schemaRender/Schema1.kt");
-        }
-
-        @Test
-        @TestMetadata("Schema2.kt")
-        public void testSchema2() throws Exception {
-            runTest("testData/diagnostics/schemaRender/Schema2.kt");
-        }
-    }
+  }
 }
