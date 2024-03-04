@@ -25,9 +25,6 @@ fun main() {
             testClass<AbstractDataFrameTransformTest> {
                 model("transform")
             }
-//            testClass<AbstractDataFrameInterpretationTests> {
-//                model("interpretation")
-//            }
 //
 //            testClass<AbstractResearchTest> {
 //                model("research")
