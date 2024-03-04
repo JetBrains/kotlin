@@ -7,8 +7,6 @@ import createNested1 = JS_TESTS.foo.createNested1;
 import createNested2 = JS_TESTS.foo.createNested2;
 import createNested3 = JS_TESTS.foo.createNested3;
 import WithSimpleObjectInside = JS_TESTS.foo.WithSimpleObjectInside;
-import BaseWithCompanion = JS_TESTS.foo.BaseWithCompanion;
-import ChildWithCompanion = JS_TESTS.foo.ChildWithCompanion;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -36,6 +34,5 @@ function box(): string {
 
     assert(WithSimpleObjectInside.value === "WithSimpleObjectInside");
     assert(WithSimpleObjectInside.SimpleObject.value === "SimpleObject");
-
     return "OK";
 }
