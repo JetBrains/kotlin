@@ -1059,4 +1059,14 @@ extern "C" ALWAYS_INLINE OBJ_GETTER(Kotlin_Interop_refFromObjC, void* obj) {
   RETURN_OBJ(nullptr);
 }
 
+extern "C" const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForClass(Class clazz) {
+  RuntimeAssert(false, "Unavailable operation");
+  return nullptr;
+}
+
+extern "C" const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForProtocol(Protocol* protocol) {
+  RuntimeAssert(false, "Unavailable operation");
+  return nullptr;
+}
+
 #endif // KONAN_OBJC_INTEROP
