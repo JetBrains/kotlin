@@ -22433,6 +22433,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("nullableRawTypeWithFlexibleArguments.kt")
+      public void testNullableRawTypeWithFlexibleArguments() {
+        runTest("compiler/testData/diagnostics/tests/j+k/nullableRawTypeWithFlexibleArguments.kt");
+      }
+
+      @Test
       @TestMetadata("orderOfSupertypesAndFakeOverrides_1.kt")
       public void testOrderOfSupertypesAndFakeOverrides_1() {
         runTest("compiler/testData/diagnostics/tests/j+k/orderOfSupertypesAndFakeOverrides_1.kt");
