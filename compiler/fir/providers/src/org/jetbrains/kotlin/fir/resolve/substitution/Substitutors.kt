@@ -281,7 +281,7 @@ class ConeRawScopeSubstitutor(
         return when {
             type is ConeTypeParameterType -> {
                 substituteOrSelf(
-                    listOf(type.lookupTag.symbol).getProjectionsForRawType(useSiteSession, makeNullable = type.isNullable)[0]
+                    type.lookupTag.symbol.getProjectionForRawType(useSiteSession, makeNullable = type.isMarkedNullable)
                 )
             }
             type is ConeClassLikeType && type.typeArguments.isNotEmpty() -> {
@@ -295,8 +295,11 @@ class ConeRawScopeSubstitutor(
                 }
 
                 val firClass = type.fullyExpandedType(useSiteSession).lookupTag.toFirRegularClassSymbol(useSiteSession) ?: return null
+                val nullabilities = BooleanArray(type.typeArguments.size) { type.typeArguments[it].type?.isMarkedNullable == true }
                 ConeRawType.create(
-                    type.withArguments(firClass.typeParameterSymbols.getProjectionsForRawType(useSiteSession, makeNullable = type.isNullable)),
+                    type.withArguments(
+                        firClass.typeParameterSymbols.getProjectionsForRawType(useSiteSession, nullabilities = nullabilities)
+                    ),
                     type.replaceArgumentsWithStarProjections()
                 )
             }
