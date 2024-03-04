@@ -910,6 +910,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("functionTypeParameter.kt")
+    public void testFunctionTypeParameter() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/functionTypeParameter.kt");
+    }
+
+    @Test
     @TestMetadata("functionWithGenericExpectedTypeInside.kt")
     public void testFunctionWithGenericExpectedTypeInside() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/functionWithGenericExpectedTypeInside.kt");
@@ -949,6 +955,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("implicitTypeFromFunctionWithDuplicatedName.kt")
     public void testImplicitTypeFromFunctionWithDuplicatedName() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/implicitTypeFromFunctionWithDuplicatedName.kt");
+    }
+
+    @Test
+    @TestMetadata("incompleteFunctionTypeParameter.kt")
+    public void testIncompleteFunctionTypeParameter() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/incompleteFunctionTypeParameter.kt");
     }
 
     @Test

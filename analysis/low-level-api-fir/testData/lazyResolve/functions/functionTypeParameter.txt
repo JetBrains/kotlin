@@ -1,0 +1,61 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] functionTypeParameter.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] TYPE> foo([ResolvedTo(RAW_FIR)] a: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] functionTypeParameter.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] TYPE> foo([ResolvedTo(RAW_FIR)] a: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] functionTypeParameter.kt
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun <[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] TYPE> foo([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] a: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] functionTypeParameter.kt
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun <[ResolvedTo(COMPANION_GENERATION)] TYPE> foo([ResolvedTo(COMPANION_GENERATION)] a: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] functionTypeParameter.kt
+    public? final? [ResolvedTo(SUPER_TYPES)] fun <[ResolvedTo(SUPER_TYPES)] TYPE> foo([ResolvedTo(SUPER_TYPES)] a: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] functionTypeParameter.kt
+    public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] TYPE> foo([ResolvedTo(TYPES)] a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] functionTypeParameter.kt
+    public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] TYPE> foo([ResolvedTo(STATUS)] a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] functionTypeParameter.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] TYPE> foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] functionTypeParameter.kt
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] TYPE> foo([ResolvedTo(CONTRACTS)] a: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] functionTypeParameter.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] TYPE> foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] a: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] functionTypeParameter.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] TYPE> foo([ResolvedTo(CONSTANT_EVALUATION)] a: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] functionTypeParameter.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] TYPE> foo([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] functionTypeParameter.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] TYPE> foo([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] functionTypeParameter.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] TYPE> foo([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int|): R|kotlin/Unit| {
+    }

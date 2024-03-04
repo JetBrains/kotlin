@@ -1336,6 +1336,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("incompleteFunctionTypeParemeter.kt")
+    public void testIncompleteFunctionTypeParemeter() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/incompleteFunctionTypeParemeter.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaAsSAMInterfaceWithAnnotation.kt")
     public void testLambdaAsSAMInterfaceWithAnnotation() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/lambdaAsSAMInterfaceWithAnnotation.kt");
