@@ -22901,6 +22901,24 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("withTestConnection2.kt")
+      public void testWithTestConnection2() {
+        runTest("compiler/testData/diagnostics/tests/j+k/withTestConnection2.kt");
+      }
+
+      @Test
+      @TestMetadata("withTestConnection3.kt")
+      public void testWithTestConnection3() {
+        runTest("compiler/testData/diagnostics/tests/j+k/withTestConnection3.kt");
+      }
+
+      @Test
+      @TestMetadata("withTestConnection4.kt")
+      public void testWithTestConnection4() {
+        runTest("compiler/testData/diagnostics/tests/j+k/withTestConnection4.kt");
+      }
+
+      @Test
       @TestMetadata("wrongVarianceInJava.kt")
       public void testWrongVarianceInJava() {
         runTest("compiler/testData/diagnostics/tests/j+k/wrongVarianceInJava.kt");
