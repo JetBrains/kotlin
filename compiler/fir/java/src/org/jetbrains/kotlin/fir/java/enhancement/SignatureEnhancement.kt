@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -279,7 +280,7 @@ class FirSignatureEnhancement(
         var isJavaRecordComponent = false
 
         val typeParameterSubstitutionMap = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
-        var typeParameterSubstitutor: ConeSubstitutorByMap? = null
+        var typeParameterSubstitutor: ConeSubstitutor? = null
         val declarationOrigin =
             if (isIntersectionOverride) FirDeclarationOrigin.IntersectionOverride else FirDeclarationOrigin.Enhancement
 
@@ -360,7 +361,7 @@ class FirSignatureEnhancement(
                         newTypeParameter
                     }
                     if (typeParameterSubstitutionMap.isNotEmpty()) {
-                        typeParameterSubstitutor = ConeSubstitutorByMap(typeParameterSubstitutionMap, session)
+                        typeParameterSubstitutor = ConeSubstitutorByMap.create(typeParameterSubstitutionMap, session)
                     }
                     returnTypeRef = newReturnTypeRef.withReplacedConeType(
                         typeParameterSubstitutor?.substituteOrNull(newReturnTypeRef.coneType)

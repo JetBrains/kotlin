@@ -79,7 +79,7 @@ class FirLocalScope private constructor(
         val klass = classes[name]
         if (klass != null) {
             val substitution = klass.typeParameterSymbols.associateWith { it.toConeType() }
-            processor(klass, ConeSubstitutorByMap(substitution, useSiteSession))
+            processor(klass, ConeSubstitutorByMap.create(substitution, useSiteSession))
         }
     }
 

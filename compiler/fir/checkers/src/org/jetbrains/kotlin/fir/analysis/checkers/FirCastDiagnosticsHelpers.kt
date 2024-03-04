@@ -279,7 +279,7 @@ fun findStaticallyKnownSubtype(
 
     // At this point we have values for all type parameters of List
     // Let's make a type by substituting them: List<T> -> List<Foo>
-    val substitutor = ConeSubstitutorByMap(resultSubstitution, session)
+    val substitutor = ConeSubstitutorByMap.create(resultSubstitution, session)
     return substitutor.substituteOrSelf(subtypeWithVariablesType)
 }
 

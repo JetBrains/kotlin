@@ -37,7 +37,7 @@ abstract class FirNestedClassifierScope(val klass: FirClass, val useSiteSession:
             val substitution = klass.typeParameters.associate {
                 it.symbol to it.toConeType()
             }
-            ConeSubstitutorByMap(substitution, useSiteSession)
+            ConeSubstitutorByMap.create(substitution, useSiteSession)
         }
         processor(matchedClass, substitutor)
     }

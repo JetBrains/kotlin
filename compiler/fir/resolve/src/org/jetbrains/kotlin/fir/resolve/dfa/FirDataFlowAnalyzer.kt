@@ -1024,7 +1024,7 @@ abstract class FirDataFlowAnalyzer(
             val substitutionFromArguments = typeParameters.zip(qualifiedAccess.typeArguments).map { (typeParameterRef, typeArgument) ->
                 typeParameterRef.symbol to typeArgument.toConeTypeProjection().type
             }.filter { it.second != null }.toMap() as Map<FirTypeParameterSymbol, ConeKotlinType>
-            ConeSubstitutorByMap(substitutionFromArguments, components.session)
+            ConeSubstitutorByMap.create(substitutionFromArguments, components.session)
         } else {
             ConeSubstitutor.Empty
         }
@@ -1034,7 +1034,7 @@ abstract class FirDataFlowAnalyzer(
             typeArgumentsSubstitutor
         } else {
             val map = originalFunction.symbol.typeParameterSymbols.zip(typeParameters.map { it.symbol.toConeType() }).toMap()
-            ConeSubstitutorByMap(map, components.session).chain(typeArgumentsSubstitutor)
+            ConeSubstitutorByMap.create(map, components.session).chain(typeArgumentsSubstitutor)
         }
 
         for (conditionalEffect in conditionalEffects) {

@@ -900,7 +900,7 @@ internal fun FirQualifiedAccessExpression.buildSubstitutorByCalledCallable(): Co
         val typeProjection = typeArguments.getOrNull(index) as? FirTypeProjectionWithVariance ?: continue
         map[typeParameter.symbol] = typeProjection.typeRef.coneType
     }
-    return ConeSubstitutorByMap(map, session)
+    return ConeSubstitutorByMap.create(map, session)
 }
 
 val augmentedArrayAssignSourceKindToIrStatementOrigin = mapOf(

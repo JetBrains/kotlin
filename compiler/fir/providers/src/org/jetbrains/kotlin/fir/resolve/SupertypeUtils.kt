@@ -307,7 +307,7 @@ fun createSubstitutionForSupertype(superType: ConeLookupTagBasedType, session: F
         it as? ConeKotlinType ?: ConeErrorType(ConeSimpleDiagnostic("illegal projection usage", DiagnosticKind.IllegalProjectionUsage))
     }
     val mapping = klass.typeParameters.map { it.symbol }.zip(arguments).toMap()
-    return ConeSubstitutorByMap(mapping, session)
+    return ConeSubstitutorByMap.create(mapping, session)
 }
 
 fun FirRegularClassSymbol.getSuperClassSymbolOrAny(session: FirSession): FirRegularClassSymbol {

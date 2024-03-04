@@ -67,7 +67,7 @@ fun wrapProjection(old: ConeTypeProjection, newType: ConeKotlinType): ConeTypePr
 
 abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContext) : ConeSubstitutor() {
     abstract fun substituteType(type: ConeKotlinType): ConeKotlinType?
-    open fun substituteArgument(projection: ConeTypeProjection, index: Int): ConeTypeProjection? {
+    override fun substituteArgument(projection: ConeTypeProjection, index: Int): ConeTypeProjection? {
         val type = (projection as? ConeKotlinTypeProjection)?.type ?: return null
         val newType = substituteOrNull(type) ?: return null
         return wrapProjection(projection, newType)
@@ -212,18 +212,18 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
 }
 
 fun substitutorByMap(substitution: Map<FirTypeParameterSymbol, ConeKotlinType>, useSiteSession: FirSession): ConeSubstitutor {
-    // If all arguments match parameters, then substitutor isn't needed
-    if (substitution.all { (parameterSymbol, argumentType) ->
-            (argumentType as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol == parameterSymbol && !argumentType.isMarkedNullable
-        }
-    ) return ConeSubstitutor.Empty
-    return ConeSubstitutorByMap(substitution, useSiteSession)
+    return ConeSubstitutorByMap.create(substitution, useSiteSession, allowIdenticalSubstitution = false)
 }
 
 data class ChainedSubstitutor(val first: ConeSubstitutor, val second: ConeSubstitutor) : ConeSubstitutor() {
     override fun substituteOrNull(type: ConeKotlinType): ConeKotlinType? {
         first.substituteOrNull(type)?.let { return second.substituteOrSelf(it) }
         return second.substituteOrNull(type)
+    }
+
+    override fun substituteArgument(projection: ConeTypeProjection, index: Int): ConeTypeProjection? {
+        first.substituteArgument(projection, index)?.let { return second.substituteArgument(projection, index) }
+        return second.substituteArgument(projection, index)
     }
 
     override fun toString(): String {
@@ -237,11 +237,31 @@ fun ConeSubstitutor.chain(other: ConeSubstitutor): ConeSubstitutor {
     return ChainedSubstitutor(this, other)
 }
 
-class ConeSubstitutorByMap(
+class ConeSubstitutorByMap private constructor(
     // Used only for sake of optimizations at org.jetbrains.kotlin.analysis.api.fir.types.KtFirMapBackedSubstitutor
     val substitution: Map<FirTypeParameterSymbol, ConeKotlinType>,
     private val useSiteSession: FirSession
 ) : AbstractConeSubstitutor(useSiteSession.typeContext) {
+    companion object {
+        fun create(
+            substitution: Map<FirTypeParameterSymbol, ConeKotlinType>,
+            useSiteSession: FirSession,
+            allowIdenticalSubstitution: Boolean = true,
+        ): ConeSubstitutor {
+            if (substitution.isEmpty()) return Empty
+
+            if (!allowIdenticalSubstitution) {
+                // If all arguments match parameters, then substitutor isn't needed
+                val substitutionIsIdentical = substitution.all { (parameterSymbol, argumentType) ->
+                    (argumentType as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol == parameterSymbol && !argumentType.isMarkedNullable
+                }
+                if (substitutionIsIdentical) {
+                    return Empty
+                }
+            }
+            return ConeSubstitutorByMap(substitution, useSiteSession)
+        }
+    }
 
     private val hashCode by lazy(LazyThreadSafetyMode.PUBLICATION) {
         substitution.hashCode()
