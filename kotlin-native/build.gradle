@@ -88,8 +88,6 @@ allprojects {
     }
 
     setupHostAndTarget()
-    loadCommandLineProperties()
-    loadLocalProperties()
     setupClang(project)
 }
 
@@ -102,40 +100,6 @@ void setupHostAndTarget() {
 void setupClang(Project project) {
     project.extensions.platformManager = project.project(":kotlin-native").ext.platformManager
     project.extensions.execClang = org.jetbrains.kotlin.ExecClang.create(project)
-}
-
-void loadLocalProperties() {
-    if (new File("$project.rootDir/local.properties").exists()) {
-        Properties props = new Properties()
-        props.load(new FileInputStream("$project.rootDir/local.properties"))
-        props.each { prop -> project.ext.set(prop.key, prop.value) }
-    }
-}
-
-void loadCommandLineProperties() {
-    if (project.hasProperty("konanc_flags")) {
-        throw new Error("Specify either -Ptest_flags or -Pbuild_flags.")
-    }
-
-    ext.globalBuildArgs = new ArrayList<String>()
-    if (project.hasProperty("build_flags")) {
-        for (String flag : ext.build_flags.toString().split("\\s")) {
-            flag = flag.trim()
-            if (!flag.isEmpty()) ext.globalBuildArgs.add(flag)
-        }
-    }
-
-    ext.globalTestArgs = new ArrayList<String>()
-    ext.globalTestArgs.add("-Xpartial-linkage=enable")
-    ext.globalTestArgs.add("-Xpartial-linkage-loglevel=error")
-    if (project.hasProperty("test_flags")) {
-        for (String flag : ext.test_flags.toString().split("\\s")) {
-            flag = flag.trim()
-            if (!flag.isEmpty()) ext.globalTestArgs.add(flag)
-        }
-    }
-
-    ext.testTarget = project.hasProperty("test_target") ? ext.test_target : ext.hostName
 }
 
 configurations {

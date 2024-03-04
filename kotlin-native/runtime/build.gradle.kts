@@ -596,7 +596,6 @@ konanArtifacts {
         noDefaultLibs(true)
         noEndorsedLibs(true)
 
-        extraOpts(project.globalBuildArgs)
         extraOpts(
                 "-Werror",
                 "-Xexplicit-api=strict",
