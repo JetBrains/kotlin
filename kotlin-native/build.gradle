@@ -72,9 +72,6 @@ ext {
             KonanTarget.LINUX_MIPSEL32.INSTANCE
     ]
 
-    kotlinCompilerModule = project(":kotlin-compiler")
-    kotlinStdLibModule= project(":kotlin-stdlib")
-
     // A separate map for each build for automatic cleaning the daemon after the build have finished.
     toolClassLoadersMap = new ConcurrentHashMap<Object, URLClassLoader>()
 }
