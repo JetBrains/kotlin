@@ -125,9 +125,11 @@ val jsMainSources by task<Sync> {
     }
     from("$jsDir/runtime") {
         exclude("collectionsHacks.kt")
+        exclude("collectionsInterop.kt")
         into("runtime")
     }
     from("$jsDir/builtins") {
+        exclude("Collections.kt")
         into("builtins")
     }
 

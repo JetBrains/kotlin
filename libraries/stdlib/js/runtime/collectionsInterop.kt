@@ -14,6 +14,24 @@ private fun UNSUPPORTED_OPERATION() {
     throw UnsupportedOperationException()
 }
 
+internal fun <E> createListFrom(array: JsReadonlyArray<E>): List<E> =
+    ArrayList<E>(array.asDynamic().slice().unsafeCast<Array<Any?>>()).asReadonly()
+
+internal fun <E> createMutableListFrom(array: JsReadonlyArray<E>): MutableList<E> =
+    ArrayList<E>(array.asDynamic().slice().unsafeCast<Array<Any?>>())
+
+internal fun <E> createSetFrom(set: JsReadonlySet<E>): Set<E> =
+    buildSetInternal { forEach({ _, value, _ -> add(value) }, set) }
+
+internal fun <E> createMutableSetFrom(set: JsReadonlySet<E>): MutableSet<E> =
+    LinkedHashSet<E>().apply { forEach({ _, value, _ -> add(value) }, set) }
+
+internal fun <K, V> createMapFrom(map: JsReadonlyMap<K, V>): Map<K, V> =
+    buildMapInternal { forEach({ key, value, _ -> put(key, value) }, map) }
+
+internal fun <K, V> createMutableMapFrom(map: JsReadonlyMap<K, V>): MutableMap<K, V> =
+    LinkedHashMap<K, V>().apply { forEach({ key, value, _ -> put(key, value) }, map) }
+
 internal fun <E> createJsReadonlyArrayViewFrom(list: List<E>): JsReadonlyArray<E> =
     createJsArrayViewWith(
         listSize = { list.size },

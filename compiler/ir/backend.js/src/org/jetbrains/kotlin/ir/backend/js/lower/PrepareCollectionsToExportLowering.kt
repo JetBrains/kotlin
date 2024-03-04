@@ -58,7 +58,7 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
             declaration.markWithJsImplicitExport()
 
             declaration.declarations.forEach {
-                if (it !is IrDeclarationWithName || it.name.toString() !in exportedMethodNames) {
+                if (!it.shouldIncludeInInterfaceExport()) {
                     it.excludeFromJsExport()
                 }
             }
@@ -66,6 +66,9 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
 
         return null
     }
+
+    private fun IrDeclaration.shouldIncludeInInterfaceExport() =
+        (this is IrSimpleFunction && name.toString() in exportedMethodNames) || (this is IrClass && isCompanion)
 
     private fun IrDeclaration.excludeFromJsExport() {
         if (this is IrSimpleFunction) {

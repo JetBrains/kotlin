@@ -10,6 +10,12 @@ import provideMap = JS_TESTS.provideMap;
 import consumeMap = JS_TESTS.consumeMap;
 import provideMutableMap = JS_TESTS.provideMutableMap;
 import consumeMutableMap = JS_TESTS.consumeMutableMap;
+import KtList = JS_TESTS.kotlin.collections.KtList;
+import KtMutableList = JS_TESTS.kotlin.collections.KtMutableList;
+import KtSet = JS_TESTS.kotlin.collections.KtSet;
+import KtMutableSet = JS_TESTS.kotlin.collections.KtMutableSet;
+import KtMutableMap = JS_TESTS.kotlin.collections.KtMutableMap;
+import KtMap = JS_TESTS.kotlin.collections.KtMap;
 
 function assert(condition: boolean, message: string) {
     if (!condition) {
@@ -49,6 +55,8 @@ function testImmutableList() {
     assertThrow(() => { (listReadonlyArrayView as Array<number>).pop() }, "Immutable list readonly array view have ability to mutate the list by 'pop'")
     // @ts-expect-error
     assertThrow(() => { listReadonlyArrayView["foo"] }, "Immutable list getting a random index from its readonly array view")
+
+    assert(consumeList(KtList.fromJsArray([1, 2, 3])), "Problem with array to list conversion for Kotlin list")
 }
 
 function testMutableList() {
@@ -105,6 +113,9 @@ function testMutableList() {
     assert(mutableListReadonlyArrayView.map(x => x + 1).join("") == "678", "Problem with mutable list readonly array view after size decreased")
 
     assertThrow(() => { mutableListArrayView.length = 5 }, "Mutable list view size increasing works, but should not")
+
+    assert(consumeList(KtMutableList.fromJsArray([1, 2, 3])), "Problem with array to list conversion for Kotlin mutable list")
+    assert(consumeMutableList(KtMutableList.fromJsArray([4, 5, 6])), "Problem with array to mutable list conversion for Kotlin mutable list")
 }
 
 function testImmutableSet() {
@@ -117,6 +128,8 @@ function testImmutableSet() {
     assertThrow(() => { (setReadonlyView as Set<number>).add(4) }, "Set readonly view have ability to mutate the set by 'add'")
     assertThrow(() => { (setReadonlyView as Set<number>).delete(4) }, "Set readonly view have ability to mutate the set by 'delete'")
     assertThrow(() => { (setReadonlyView as Set<number>).clear() }, "Set readonly view have ability to mutate the set by 'clear'")
+
+    assert(consumeSet(KtSet.fromJsSet(new Set([1, 2, 3]))), "Problem with set to set conversion for Kotlin set")
 }
 
 function testMutableSet() {
@@ -148,6 +161,9 @@ function testMutableSet() {
     mutableSetView.clear()
 
     assert(joinSetOrMap(mutableSetView) == "", "Problem with mutable set view after the view is mutated")
+
+    assert(consumeSet(KtMutableSet.fromJsSet(new Set([1, 2, 3]))), "Problem with set to set conversion for Kotlin mutable set")
+    assert(consumeMutableSet(KtMutableSet.fromJsSet(new Set([4, 5, 6]))), "Problem with set to mutable set conversion for Kotlin mutable set")
 }
 
 function testImmutableMap() {
@@ -161,6 +177,8 @@ function testImmutableMap() {
     assertThrow(() => { (mapReadonlyView as Map<string, number>).set("d", 4) }, "Map readonly view have ability to mutate the map by 'set'")
     assertThrow(() => { (mapReadonlyView as Map<string, number>).delete("a") }, "Map readonly view have ability to mutate the map by 'delete'")
     assertThrow(() => { (mapReadonlyView as Map<string, number>).clear() }, "Map readonly view have ability to mutate the map by 'clear'")
+
+    assert(consumeMap(KtMap.fromJsMap(new Map([["a", 1], ["b", 2], ["c", 3]]))), "Problem with map to map conversion for Kotlin map")
 }
 
 function testMutableMap() {
@@ -194,6 +212,9 @@ function testMutableMap() {
     mutableMapView.clear()
 
     assert(joinSetOrMap(mutableMapView) == "", "Problem with mutable map view after the view is mutated")
+
+    assert(consumeMap(KtMutableMap.fromJsMap(new Map([["a", 1], ["b", 2], ["c", 3]]))), "Problem with map to map conversion for Kotlin mutable map")
+    assert(consumeMutableMap(KtMutableMap.fromJsMap(new Map([["d", 4], ["e", 5], ["f", 6]]))), "Problem with map to mutable map conversion for Kotlin mutable map")
 }
 
 function joinSetOrMap(setOrMap: ReadonlySet<number> | ReadonlyMap<string, number>): string {
