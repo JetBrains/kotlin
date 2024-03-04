@@ -5,13 +5,13 @@ interface Foo {
     fun foo()
 }
 
-expect <!ABSTRACT_MEMBER_NOT_IMPLEMENTED{METADATA}!>class ImplicitFoo<!> : Foo
+expect class ImplicitFoo : Foo
 
 expect class ExplicitFoo : Foo {
     override fun foo()
 }
 
-expect <!ABSTRACT_MEMBER_NOT_IMPLEMENTED{METADATA}!>class ImplicitFooCheck<!> : Foo
+expect class ImplicitFooCheck : Foo
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

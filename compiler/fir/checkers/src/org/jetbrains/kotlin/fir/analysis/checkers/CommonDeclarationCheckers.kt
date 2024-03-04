@@ -100,8 +100,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirOverrideChecker.Regular,
             FirOverrideChecker.ForExpectClass,
-            FirNotImplementedOverrideChecker.Regular,
-            FirNotImplementedOverrideChecker.ForExpectClass,
+            FirNotImplementedOverrideChecker,
             FirNotImplementedOverrideSimpleEnumEntryChecker.Regular,
             FirNotImplementedOverrideSimpleEnumEntryChecker.ForExpectClass,
             FirThrowableSubclassChecker,

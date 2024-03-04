@@ -4,7 +4,7 @@
 expect abstract class BaseA() {
     abstract fun foo()
 }
-expect open <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class BaseAImpl<!>() : BaseA
+expect open <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED{METADATA}!>class BaseAImpl<!>() : BaseA
 
 <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED{METADATA}!>class DerivedA1<!> : BaseAImpl()
 class DerivedA2 : BaseAImpl() {
@@ -16,7 +16,7 @@ class DerivedA2 : BaseAImpl() {
 expect interface BaseB {
     fun foo()
 }
-expect open <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class BaseBImpl<!>() : BaseB
+expect open <!ABSTRACT_MEMBER_NOT_IMPLEMENTED{METADATA}!>class BaseBImpl<!>() : BaseB
 
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED, ABSTRACT_MEMBER_NOT_IMPLEMENTED{METADATA}!>class DerivedB1<!> : BaseBImpl()
 class DerivedB2 : BaseBImpl() {
@@ -58,7 +58,7 @@ sealed class BaseEImpl() : BaseE {
 expect interface BaseF {
     fun foo()
 }
-expect <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class BaseFImpl<!>() : BaseF
+expect <!ABSTRACT_MEMBER_NOT_IMPLEMENTED{METADATA}!>class BaseFImpl<!>() : BaseF
 
 
 
