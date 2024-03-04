@@ -64,14 +64,6 @@ ext {
     cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
     cacheableTargets = cacheableTargetNames.collect { platformManager.targetByName(it) }
 
-    // Some targets miss zlib in their sysroots.
-    // We skip these targets when generate a corresponding platform library.
-    // See also: the :distDef task, targetDefFiles in the :platformLibs project.
-    targetsWithoutZlib = [
-            KonanTarget.LINUX_MIPS32.INSTANCE,
-            KonanTarget.LINUX_MIPSEL32.INSTANCE
-    ]
-
     // A separate map for each build for automatic cleaning the daemon after the build have finished.
     toolClassLoadersMap = new ConcurrentHashMap<Object, URLClassLoader>()
 }
@@ -328,9 +320,6 @@ tasks.register("distDef", Copy) {
         from(project(":kotlin-native:platformLibs").file("src/platform/${target.family.name().toLowerCase()}")) {
             into target.visibleName
             include '**/*.def'
-            if (target in targetsWithoutZlib) {
-                exclude '**/zlib.def'
-            }
         }
     }
 }

@@ -25,15 +25,10 @@ plugins {
     id("konan")
 }
 
-val targetsWithoutZlib: List<KonanTarget> by project
-
 // region: Util functions.
 fun KonanTarget.defFiles() =
     project.fileTree("src/platform/${family.visibleName}")
             .filter { it.name.endsWith(".def") }
-            // The libz.a/libz.so and zlib.h are missing in MIPS sysroots.
-            // Just workaround it until we have sysroots corrected.
-            .filterNot { (this in targetsWithoutZlib) && it.name == "zlib.def" }
             .map { DefFile(it, this) }
 
 
