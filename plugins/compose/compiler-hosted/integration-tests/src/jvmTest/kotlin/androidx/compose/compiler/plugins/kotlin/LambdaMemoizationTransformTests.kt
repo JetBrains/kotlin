@@ -714,4 +714,29 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
             }
         """
     )
+
+    @Test
+    fun memoizeFunctionReferenceFromLocalClass() =
+        verifyGoldenComposeIrTransform(
+            extra = """
+                  interface Test {
+                    fun go()
+                  }
+            """,
+            source = """
+                import androidx.compose.runtime.Composable
+
+                class MainActivity {
+                  private val test = object : Test {
+                    override fun go() {
+                      this@MainActivity
+                    }
+                  }
+
+                  @Composable fun Test() {
+                    test::go
+                  }
+                }
+            """
+        )
 }
