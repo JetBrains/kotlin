@@ -85,6 +85,24 @@ public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("closingBracketOfCrossinlineInsideCrossinline.kt")
+  public void testClosingBracketOfCrossinlineInsideCrossinline() {
+    runTest("compiler/testData/debug/stepping/closingBracketOfCrossinlineInsideCrossinline.kt");
+  }
+
+  @Test
+  @TestMetadata("closingBracketOfLambdaOfInlineOnlyFunction.kt")
+  public void testClosingBracketOfLambdaOfInlineOnlyFunction() {
+    runTest("compiler/testData/debug/stepping/closingBracketOfLambdaOfInlineOnlyFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("closingBracketOfObjectInsideCrossinline.kt")
+  public void testClosingBracketOfObjectInsideCrossinline() {
+    runTest("compiler/testData/debug/stepping/closingBracketOfObjectInsideCrossinline.kt");
+  }
+
+  @Test
   @TestMetadata("commentBeforeClass.kt")
   public void testCommentBeforeClass() {
     runTest("compiler/testData/debug/stepping/commentBeforeClass.kt");
