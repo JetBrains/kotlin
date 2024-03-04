@@ -35956,6 +35956,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("optInDiagnosticOnPropertyGetter.kt")
+        public void testOptInDiagnosticOnPropertyGetter() {
+          runTest("compiler/testData/diagnostics/tests/suppress/oneWarning/optInDiagnosticOnPropertyGetter.kt");
+        }
+
+        @Test
         @TestMetadata("suppressOnDeclarationItself.kt")
         public void testSuppressOnDeclarationItself() {
           runTest("compiler/testData/diagnostics/tests/suppress/oneWarning/suppressOnDeclarationItself.kt");
