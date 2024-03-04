@@ -124,6 +124,13 @@ const hashString = function (s) {
     return hash
 }
 
+const withoutSurroundingApostrophes = function (s) {
+    if (s.startsWith("'") && s.endsWith("'"))
+        return s.slice(1, -1)
+
+    return s
+}
+
 // This reporter extends karma-teamcity-reporter
 //  It is necessary, because karma-teamcity-reporter can't write browser's log
 //  And additionally it overrides flushLogs, because flushLogs adds redundant spaces after some messages
@@ -175,7 +182,7 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
         }
 
         if (browserResult) {
-            browserResult.consoleCollector.push(log.slice(1, -1))
+            browserResult.consoleCollector.push(withoutSurroundingApostrophes(log))
         }
     };
 
