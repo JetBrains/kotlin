@@ -126,6 +126,8 @@ private constructor(
 
     override val substitutorProviderImpl: KtSubstitutorProvider = KtFirSubstitutorProvider(this)
 
+    override val dataFlowInfoProviderImpl: KtDataFlowInfoProvider = KtFirDataFlowInfoProvider(this)
+
     internal val useSiteSession: FirSession get() = firResolveSession.useSiteFirSession
     internal val firSymbolProvider: FirSymbolProvider get() = useSiteSession.symbolProvider
     internal val targetPlatform: TargetPlatform get() = useSiteSession.moduleData.platform

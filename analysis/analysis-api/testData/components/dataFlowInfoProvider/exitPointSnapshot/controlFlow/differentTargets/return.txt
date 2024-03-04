@@ -1,0 +1,12 @@
+KtDataFlowExitPointSnapshot:
+  defaultExpressionInfo = null
+  hasEscapingJumps = true
+  hasJumps = true
+  hasMultipleJumpKinds = false
+  hasMultipleJumpTargets = true
+  loopJumpExpressions = []
+  returnValueType = kotlin.Int
+  valuedReturnExpressions = [
+    return 1
+  ]
+  variableReassignments = []

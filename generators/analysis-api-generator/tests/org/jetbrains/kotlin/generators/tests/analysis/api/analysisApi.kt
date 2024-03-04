@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.contain
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByPsiTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderForSetterParameterTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.dataFlowInfoProvider.AbstractExitPointSnapshotTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractCodeFragmentCollectDiagnosticsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractCollectDiagnosticsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractDanglingFileCollectDiagnosticsTest
@@ -572,6 +573,12 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             ) {
                 model(it, "combinedDeclaredMemberScope")
             }
+        }
+    }
+
+    component("dataFlowInfoProvider") {
+        test<AbstractExitPointSnapshotTest>(filter = frontendIs(FrontendKind.Fir)) {
+            model(it, "exitPointSnapshot")
         }
     }
 }
