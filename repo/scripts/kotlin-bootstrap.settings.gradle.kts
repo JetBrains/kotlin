@@ -94,7 +94,9 @@ val kotlinRootDir: File = when (rootSettings.rootProject.name) {
     "gradle-build-conventions" -> rootSettings.rootDir.parentFile.parentFile
     "performance" -> rootSettings.rootDir.parentFile.parentFile
     "ui" -> rootSettings.rootDir.parentFile.parentFile.parentFile.parentFile
-    else -> rootSettings.rootDir
+    else -> {
+        settings.getSettingsDir()
+    }
 }
 
 private val localProperties = providers.of(PropertiesValueSource::class.java) {
@@ -117,10 +119,12 @@ fun loadLocalOrGradleProperty(
     // Workaround for https://github.com/gradle/gradle/issues/19114
     // as in the includedBuild GradleProperties are empty on configuration cache reuse
     return if ((gradle as GradleInternal).isRootBuild()) {
+        println("IS ROOT BUILD")
         localProperties.map { it.getProperty(propertyName) }
             .orElse(providers.gradleProperty(propertyName))
             .orElse(rootGradleProperties.map { it.getProperty(propertyName) })
     } else {
+        println("NON ROOT BUILD")
         localProperties.map { it.getProperty(propertyName) }
             .orElse(rootSettings.providers.gradleProperty(propertyName))
             .orElse(rootGradleProperties.map { it.getProperty(propertyName) })
