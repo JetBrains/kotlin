@@ -79,5 +79,5 @@ fun testExpressionBody(nullable: String?) =
 // String.kt:143 $kotlin.stringLiteral (15, 8)
 // test.kt:20 $testExpressionBody (4, 4)
 // test.kt:22 $testExpressionBody (12, 21, 31, 12, 32, 32)
-// test.kt:10 $box (23, 4, 4)
+// test.kt:10 $box (23, 4)
 // test.kt:11 $box

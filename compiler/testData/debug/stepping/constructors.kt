@@ -199,18 +199,18 @@ class O<T>(i: T) {
 // test.kt:6 $box (4, 6, 4, 4)
 // test.kt:21 $C.<init> (8, 19)
 // test.kt:7 $box (4, 4, 4)
-// test.kt:23 $D.<init> (4, 4, 17)
+// test.kt:23 $D.<init> (4, 17)
 // test.kt:24 $D.<init>
 // test.kt:8 $box (4, 6, 4, 4)
-// test.kt:26 $E.<init> (4, 4, 23)
+// test.kt:26 $E.<init> (4, 23)
 // test.kt:27 $E.<init>
 // test.kt:9 $box (4, 4, 4)
-// test.kt:29 $F.<init> (4, 4)
+// test.kt:29 $F.<init>
 // test.kt:32 $F.<init>
 // test.kt:30 $F.<init> (16, 8)
 // test.kt:31 $F.<init>
 // test.kt:10 $box (4, 6, 4, 4)
-// test.kt:34 $G.<init> (4, 4)
+// test.kt:34 $G.<init>
 // test.kt:37 $G.<init>
 // test.kt:35 $G.<init> (16, 8)
 // test.kt:36 $G.<init>
@@ -221,28 +221,28 @@ class O<T>(i: T) {
 // test.kt:43 $K.<init> (8, 19)
 // test.kt:45 $K.<init> (16, 8)
 // test.kt:13 $box (4, 4, 4)
-// test.kt:49 $L.<init> (4, 4)
+// test.kt:49 $L.<init>
 // test.kt:54 $L.<init> (16, 8)
 // test.kt:56 $L.<init>
 // test.kt:50 $L.<init> (16, 8)
 // test.kt:51 $L.<init>
 // test.kt:14 $box (4, 4, 4)
-// test.kt:58 $M.<init> (24, 19, 19)
-// test.kt:62 $M.<init> (4, 4)
+// test.kt:58 $M.<init> (24, 19)
+// test.kt:62 $M.<init>
 // test.kt:64 $M.<init>
 // test.kt:63 $M.<init>
 // test.kt:59 $M.<init> (16, 8)
 // test.kt:60 $M.<init>
 // test.kt:15 $box (4, 6, 4, 4)
-// test.kt:66 $N.<init> (25, 25)
-// test.kt:70 $N.<init> (4, 4)
+// test.kt:66 $N.<init>
+// test.kt:70 $N.<init>
 // test.kt:72 $N.<init>
 // test.kt:71 $N.<init>
 // test.kt:67 $N.<init> (16, 8)
 // test.kt:68 $N.<init>
 // test.kt:16 $box (4, 6, 6, 6, 6, 4, 4)
 // test.kt:73 $O.<init> (16, 16)
-// test.kt:17 $box (4, 6, 9, 9, 9, 9, 4, 4)
+// test.kt:17 $box (4, 6, 9, 9, 9, 9, 4)
 // String.kt:141 $kotlin.stringLiteral (17, 28, 17)
 // Array.kt:59 $kotlin.Array.get (19, 26, 34, 8)
 // ThrowHelpers.kt:29 $kotlin.wasm.internal.rangeCheck (6, 14, 6, 19, 28, 19, 6, 14, 6, 19, 28, 19)
@@ -256,6 +256,6 @@ class O<T>(i: T) {
 // Array.kt:75 $kotlin.Array.set (8, 20, 27, 16)
 // Array.kt:76 $kotlin.Array.set
 // String.kt:149 $kotlin.stringLiteral (11, 4)
-// test.kt:74 $O.<init> (36, 31, 31)
+// test.kt:74 $O.<init> (36, 31)
 // test.kt:75 $O.<init>
 // test.kt:18 $box

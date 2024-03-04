@@ -204,7 +204,7 @@ fun box() {
 // String.kt:63 $kotlin.String.hashCode
 // String.kt:66 $kotlin.String.hashCode (15, 8)
 // String.kt:127 $kotlin.String.hashCode (19, 8)
-// String.kt:128 $kotlin.String.hashCode (8, 8)
+// String.kt:128 $kotlin.String.hashCode
 // Standard.kt:136 $kotlin.String.hashCode (18, 52, 61, 52, 66, 51, 51, 44)
 // Standard.kt:152 $kotlin.String.hashCode
 // Standard.kt:154 $kotlin.String.hashCode (18, 4, 26, 4, 18, 9, 18, 4, 26, 4, 4)
@@ -215,8 +215,8 @@ fun box() {
 // String.kt:131 $kotlin.String.hashCode (20, 8)
 // String.kt:132 $kotlin.String.hashCode (15, 8)
 // test.kt:17 $box (4, 6, 6)
-// StringBuilder.kt:17 $kotlin.text.StringBuilder.<init> (39, 34, 34, 42)
-// StringBuilder.kt:20 $kotlin.text.StringBuilder.<init> (52, 62, 52, 47, 47, 72)
+// StringBuilder.kt:17 $kotlin.text.StringBuilder.<init> (39, 34, 42)
+// StringBuilder.kt:20 $kotlin.text.StringBuilder.<init> (52, 62, 52, 47, 72)
 // Arrays.kt:95 $kotlin.CharArray.<init> (12, 19, 12, 12, 19, 12)
 // Arrays.kt:96 $kotlin.CharArray.<init> (8, 32, 18, 8, 8, 32, 18, 8)
 // Arrays.kt:139 $kotlin.CharArray.<init> (1, 1)
@@ -236,7 +236,7 @@ fun box() {
 // StringBuilder.kt:697 $kotlin.text.StringBuilder.ensureExtraCapacity (5, 5, 5, 5, 5)
 // StringBuilder.kt:227 $kotlin.text.StringBuilder.append (8, 32, 39, 48, 19, 8, 8, 8, 32, 39, 48, 19, 8, 8, 8, 32, 39, 48, 19, 8, 8, 8, 32, 39, 48, 19, 8, 8)
 // StringBuilder.kt:915 $kotlin.text.insertString (21, 28, 35, 42, 45, 51, 8, 58, 21, 28, 35, 42, 45, 51, 8, 58, 21, 28, 35, 42, 45, 51, 8, 58, 21, 28, 35, 42, 45, 51, 8, 58)
-// StringBuilderWasm.kt:41 $kotlin.text.insertString (4, 4, 4, 4, 4, 4, 4, 4, 4, 4)
+// StringBuilderWasm.kt:41 $kotlin.text.insertString (4, 4, 4, 4, 4)
 // _WasmArrays.kt:62 $kotlin.text.insertString (53, 47, 60, 66, 53, 47, 60, 66, 53, 47, 60, 66, 53, 47, 60, 66, 53, 47, 60, 66)
 // _WasmArrays.kt:79 $kotlin.text.insertString (21, 21, 21, 21, 21)
 // _WasmArrays.kt:83 $kotlin.text.insertString (10, 3, 10, 3, 10, 3, 10, 3, 10, 3)
@@ -265,7 +265,7 @@ fun box() {
 // AbstractList.kt:125 $kotlin.collections.Companion.checkRangeIndexes (9, 9)
 // _ArraysWasm.kt:1229 $kotlin.collections.copyInto (20, 31, 20, 4)
 // _ArraysWasm.kt:1230 $kotlin.collections.copyInto (35, 54, 74, 54, 85, 97, 17)
-// _ArraysWasm.kt:1231 $kotlin.collections.copyInto (25, 25)
+// _ArraysWasm.kt:1231 $kotlin.collections.copyInto
 // _WasmArrays.kt:244 $kotlin.collections.copyInto (42869, 42874, 42883, 42895, 42904, 42916, 42935)
 // _WasmArrays.kt:88 $kotlin.collections.copyInto (35, 48, 66, 74, 87, 4)
 // _ArraysWasm.kt:1232 $kotlin.collections.copyInto (11, 4)
@@ -352,7 +352,7 @@ fun box() {
 // StringBuilder.kt:180 $kotlin.text.StringBuilder.append (15, 8)
 // StringBuilder.kt:499 $kotlin.text.StringBuilder.toString (64, 71, 74, 38, 82)
 // StringBuilderWasm.kt:46 $kotlin.text.unsafeStringFromCharArray (29, 15, 4)
-// StringBuilderWasm.kt:47 $kotlin.text.unsafeStringFromCharArray (4, 4)
+// StringBuilderWasm.kt:47 $kotlin.text.unsafeStringFromCharArray
 // _WasmArrays.kt:73 $kotlin.text.unsafeStringFromCharArray (3, 9, 18, 24, 31)
 // _WasmArrays.kt:74 $kotlin.text.unsafeStringFromCharArray
 // _WasmArrays.kt:88 $kotlin.text.unsafeStringFromCharArray (35, 48, 66, 74, 87, 4)
@@ -370,6 +370,6 @@ fun box() {
 // test.kt:23 $box (4, 6, 6)
 // test.kt:7 $E.toString (30, 30, 30, 30, 34)
 // test.kt:24 $box (19, 9, 9, 19, 13, 13)
-// test.kt:25 $box (4, 6, 6)
+// test.kt:25 $box (4, 6)
 // test.kt:10 $E.copy (17, 19, 22, 17, 24)
 // test.kt:26 $box

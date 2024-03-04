@@ -72,7 +72,7 @@ fun fail() : String {
 // String.kt:29 $kotlin.String.plus (15, 15, 15, 15, 22, 28, 33, 42, 48, 28, 62, 56, 15, 8, 15, 15, 15, 15, 22, 28, 33, 42, 48, 28, 62, 56, 15, 8)
 // String.kt:63 $kotlin.String.plus (12, 12)
 // String.kt:66 $kotlin.String.plus (15, 8, 15, 8)
-// test.kt:10 $box (4, 4, 4)
+// test.kt:10 $box (4, 4)
 // String.kt:143 $kotlin.stringLiteral (15, 8, 15, 8)
 // test.kt:11 $box
 // test.kt:12 $box
