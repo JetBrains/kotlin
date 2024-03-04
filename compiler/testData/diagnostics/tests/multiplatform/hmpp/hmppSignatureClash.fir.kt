@@ -9,8 +9,8 @@ expect class A {
 expect class B
 
 // K1 EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE false positive
-actual class A {
-    actual fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>(x: B) = "a"
+actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS{METADATA}!>A<!> {
+    actual fun <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT{METADATA}!>foo<!>(x: B) = "a"
 }
 
 // MODULE: main()()(intermediate)

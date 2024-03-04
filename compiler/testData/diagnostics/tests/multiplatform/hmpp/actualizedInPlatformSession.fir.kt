@@ -8,7 +8,7 @@ expect class Foo() {
 // TARGET_PLATFORM: Common
 expect open class Base() {}
 
-actual class Foo : Base() {
+actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS{METADATA}!>Foo<!> : Base() {
 }
 
 // MODULE: main()()(intermediate)

@@ -4,7 +4,7 @@ expect abstract class Foo() {
     abstract fun foo()
 }
 
-class Impl : Foo() {}
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED{METADATA}!>class Impl<!> : Foo() {}
 
 fun common() {
     Impl().foo()

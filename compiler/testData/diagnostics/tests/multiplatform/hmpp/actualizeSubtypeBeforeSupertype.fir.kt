@@ -8,7 +8,7 @@ expect open class B()
 // TARGET_PLATFORM: Common
 actual class A : B() {
     // "Nothing to override" in metadata compilation. Unfortunately we don't check metadata compilation in diagnostic tests
-    override fun foo() {}
+    <!NOTHING_TO_OVERRIDE{METADATA}!>override<!> fun foo() {}
 }
 actual class C : B() {
     // Nothing to override in platform compilation.

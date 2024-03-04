@@ -36,7 +36,7 @@ class NoFirCompilationErrorsHandler(testServices: TestServices) : FirAnalysisHan
 
             val diagnosticsPerFile = testServices.firDiagnosticCollectorService.getFrontendDiagnosticsForModule(info)
             for ((firFile, diagnostics) in diagnosticsPerFile) {
-                for (diagnostic in diagnostics) {
+                for (diagnostic in diagnostics.map { it.diagnostic }) {
                     if (diagnostic.severity == Severity.ERROR) {
                         hasError = true
                         if (!ignoreErrors) {

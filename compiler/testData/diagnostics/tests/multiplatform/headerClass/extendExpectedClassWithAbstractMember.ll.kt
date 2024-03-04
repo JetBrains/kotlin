@@ -6,7 +6,7 @@ expect abstract class BaseA() {
 }
 expect open <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class BaseAImpl<!>() : BaseA
 
-<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED{METADATA}!>class DerivedA1<!> : BaseAImpl()
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class DerivedA1<!> : BaseAImpl()
 class DerivedA2 : BaseAImpl() {
     override fun foo() = super.<!ABSTRACT_SUPER_CALL!>foo<!>()
 }
@@ -18,7 +18,7 @@ expect interface BaseB {
 }
 expect open <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class BaseBImpl<!>() : BaseB
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED, ABSTRACT_MEMBER_NOT_IMPLEMENTED{METADATA}!>class DerivedB1<!> : BaseBImpl()
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class DerivedB1<!> : BaseBImpl()
 class DerivedB2 : BaseBImpl() {
     override fun foo() = super.<!ABSTRACT_SUPER_CALL!>foo<!>()
 }
@@ -30,7 +30,7 @@ expect interface BaseC {
 }
 expect abstract class BaseCImpl() : BaseC
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED, ABSTRACT_MEMBER_NOT_IMPLEMENTED{METADATA}!>class DerivedC1<!> : BaseCImpl()
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class DerivedC1<!> : BaseCImpl()
 class DerivedC2 : BaseCImpl() {
     override fun foo() = super.<!ABSTRACT_SUPER_CALL!>foo<!>()
 }
