@@ -689,14 +689,31 @@ fun List<FirTypeParameterSymbol>.eraseToUpperBoundsAssociated(
     }
 }
 
-fun List<FirTypeParameterSymbol>.getProjectionsForRawType(session: FirSession, makeNullable: Boolean): Array<ConeKotlinType> {
+fun List<FirTypeParameterSymbol>.getProjectionsForRawType(session: FirSession, nullabilities: BooleanArray?): Array<ConeKotlinType> {
     val cache = mutableMapOf<FirTypeParameter, ConeKotlinType>()
     return Array(size) { index ->
-        this[index].fir.eraseToUpperBound(
-            session, cache, mode = EraseUpperBoundMode.FOR_RAW_TYPE_ERASURE
-        ).applyIf(makeNullable) { withNullability(ConeNullability.NULLABLE, session.typeContext) }
+        this[index].getProjectionForRawType(session, cache, nullabilities?.get(index) == true)
     }
 }
+
+fun FirTypeParameterSymbol.getProjectionForRawType(
+    session: FirSession,
+    makeNullable: Boolean,
+): ConeKotlinType {
+    return getProjectionForRawType(session, mutableMapOf(), makeNullable)
+}
+
+private fun FirTypeParameterSymbol.getProjectionForRawType(
+    session: FirSession,
+    cache: MutableMap<FirTypeParameter, ConeKotlinType>,
+    makeNullable: Boolean,
+): ConeKotlinType {
+    return fir.eraseToUpperBound(session, cache, mode = EraseUpperBoundMode.FOR_RAW_TYPE_ERASURE)
+        .applyIf(makeNullable) {
+            withNullability(ConeNullability.NULLABLE, session.typeContext)
+        }
+}
+
 
 private enum class EraseUpperBoundMode {
     FOR_RAW_TYPE_ERASURE,
