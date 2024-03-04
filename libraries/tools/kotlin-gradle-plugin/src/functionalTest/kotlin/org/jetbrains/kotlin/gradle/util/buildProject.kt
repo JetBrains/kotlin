@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionImpl
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.kotlinArtifactsExtension
+import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.konan.target.Xcode
+import org.jetbrains.kotlin.konan.target.XcodeVersion
 
 fun buildProject(
     projectBuilder: ProjectBuilder.() -> Unit = { },
@@ -141,4 +144,11 @@ fun Project.enableDependencyVerification(enabled: Boolean = true) {
 
 fun Project.enableWasmStabilityNoWarn(enabled: Boolean = true) {
     propertiesExtension.set("kotlin.wasm.stability.nowarn", enabled.toString())
+}
+
+fun Project.mockXcodeVersion(version: XcodeVersion = XcodeVersion.maxTested) {
+    project.layout.buildDirectory.getFile().apply {
+        mkdirs()
+        resolve("xcode-version.txt").writeText(version.toString())
+    }
 }
