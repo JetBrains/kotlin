@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cpp.*
 import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
 import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.target.SanitizerKind
 import org.jetbrains.kotlin.konan.target.TargetDomainObjectContainer
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
@@ -205,7 +206,8 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
         }
 
         private val compilationDatabase = project.extensions.getByType<CompilationDatabaseExtension>()
-        private val execClang = project.extensions.getByType<ExecClang>()
+        private val platformManager = project.extensions.getByType<PlatformManager>()
+        private val execClang = ExecClang.create(project.objects, platformManager)
         private val nativeDependencies = project.extensions.getByType<NativeDependenciesExtension>()
 
         /**

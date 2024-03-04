@@ -88,7 +88,6 @@ void setupHostAndTarget() {
 
 void setupClang(Project project) {
     project.extensions.platformManager = project.project(":kotlin-native").ext.platformManager
-    project.extensions.execClang = org.jetbrains.kotlin.ExecClang.create(project)
 }
 
 configurations {
