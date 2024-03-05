@@ -9,18 +9,32 @@ import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.jetbrains.kotlin.konan.target.*
 
-private class XcodeSnapshot(original: Xcode) : Xcode {
-    override val additionalTools = original.additionalTools
-    override val appletvosSdk = original.appletvosSdk
-    override val appletvsimulatorSdk = original.appletvsimulatorSdk
-    override val iphoneosSdk = original.iphoneosSdk
-    override val iphonesimulatorSdk = original.iphonesimulatorSdk
-    override val macosxSdk = original.macosxSdk
-    override val simulatorRuntimes = original.simulatorRuntimes
-    override val toolchain = original.toolchain
-    override val version = original.version
-    override val watchosSdk = original.watchosSdk
-    override val watchsimulatorSdk = original.watchsimulatorSdk
+private data class XcodeSnapshot(
+        override val additionalTools: String,
+        override val appletvosSdk: String,
+        override val appletvsimulatorSdk: String,
+        override val iphoneosSdk: String,
+        override val iphonesimulatorSdk: String,
+        override val macosxSdk: String,
+        override val simulatorRuntimes: String,
+        override val toolchain: String,
+        override val version: XcodeVersion,
+        override val watchosSdk: String,
+        override val watchsimulatorSdk: String,
+) : Xcode {
+    constructor(original: Xcode) : this(
+            additionalTools = original.additionalTools,
+            appletvosSdk = original.appletvosSdk,
+            appletvsimulatorSdk = original.appletvsimulatorSdk,
+            iphoneosSdk = original.iphoneosSdk,
+            iphonesimulatorSdk = original.iphonesimulatorSdk,
+            macosxSdk = original.macosxSdk,
+            simulatorRuntimes = original.simulatorRuntimes,
+            toolchain = original.toolchain,
+            version = original.version,
+            watchosSdk = original.watchosSdk,
+            watchsimulatorSdk = original.watchsimulatorSdk,
+    )
 }
 
 abstract class XcodeValueSource: ValueSource<Xcode, ValueSourceParameters.None> {
