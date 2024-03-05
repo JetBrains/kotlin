@@ -65,3 +65,6 @@ val KotlinBuildProperties.isSwiftExportPluginPublishingEnabled: Boolean
 
 val KotlinBuildProperties.limitTestTasksConcurrency: Boolean
     get() = getBoolean("kotlin.build.limitTestTasksConcurrency", true)
+
+val KotlinBuildProperties.konanDataDir: String?
+    get() = getOrNull("konan.data.dir") as String?

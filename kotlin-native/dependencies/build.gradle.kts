@@ -3,8 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
-import java.io.File
 import org.jetbrains.kotlin.konan.target.allTargetsWithSanitizers
+import org.jetbrains.kotlin.konan.util.DependencyDirectories
 
 plugins {
     id("native-dependencies-downloader")
@@ -13,7 +13,7 @@ plugins {
 
 nativeDependenciesDownloader {
     repositoryURL.set("https://cache-redirector.jetbrains.com/download.jetbrains.com/kotlin/native")
-    dependenciesDirectory.set(rootProject.project(":kotlin-native").property("dependenciesDir") as File)
+    dependenciesDirectory.set(DependencyDirectories.getDependenciesRoot(kotlinBuildProperties.konanDataDir))
 
     allTargets {}
 }

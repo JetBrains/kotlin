@@ -170,7 +170,7 @@ class NamedNativeInteropConfig implements Named {
         this.project = project
         this.flavor = flavor
 
-        def platformManager = project.project(":kotlin-native").ext.platformManager
+        def platformManager = project.extensions.platformManager
         def targetManager = platformManager.targetManager(target)
         this.target = targetManager.targetName
 
@@ -304,6 +304,7 @@ class NativeInteropPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project prj) {
+        prj.plugins.apply("platform-manager")
         prj.plugins.apply("native-dependencies")
 
         prj.extensions.add("kotlinNativeInterop", new NativeInteropExtension(prj))

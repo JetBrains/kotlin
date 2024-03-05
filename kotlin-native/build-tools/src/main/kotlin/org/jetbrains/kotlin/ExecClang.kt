@@ -162,12 +162,6 @@ abstract class ExecClang @Inject constructor(
 
     companion object {
         @JvmStatic
-        fun create(project: Project): ExecClang = create(
-                project.objects,
-                project.project(":kotlin-native").findProperty("platformManager") as PlatformManager,
-        )
-
-        @JvmStatic
         fun create(objects: ObjectFactory, platformManager: PlatformManager) =
                 objects.newInstance(ExecClang::class.java, platformManager)
     }

@@ -21,6 +21,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.ExecClang
+import org.jetbrains.kotlin.PlatformManagerPlugin
 import org.jetbrains.kotlin.cpp.*
 import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
 import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.target.SanitizerKind
 import org.jetbrains.kotlin.konan.target.TargetDomainObjectContainer
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.konan.target.enabledTargets
 import org.jetbrains.kotlin.testing.native.GoogleTestExtension
 import org.jetbrains.kotlin.utils.capitalized
 import java.time.Duration
@@ -139,13 +141,10 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             "-Wno-unused-parameter",  // False positives with polymorphic functions.
     )
 
-    private val targetList = with(project) {
-        provider { (rootProject.project(":kotlin-native").property("targetList") as? List<*>)?.filterIsInstance<String>() ?: emptyList() } // TODO: Can we make it better?
-    }
-
     private val allTestsTasks by lazy {
         val name = project.name.capitalized
-        targetList.get().associateBy(keySelector = { it }, valueTransform = {
+        val platformManager = project.extensions.getByType<PlatformManager>()
+        enabledTargets(platformManager).associateBy(keySelector = { it.visibleName }, valueTransform = {
             project.tasks.register("${it}${name}Tests") {
                 description = "Runs all $name tests for $it"
                 group = VERIFICATION_TASK_GROUP
@@ -670,6 +669,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
  */
 open class CompileToBitcodePlugin : Plugin<Project> {
     override fun apply(project: Project) {
+        project.apply<PlatformManagerPlugin>()
         project.apply<CppConsumerPlugin>()
         project.apply<CompilationDatabasePlugin>()
         project.apply<GitClangFormatPlugin>()

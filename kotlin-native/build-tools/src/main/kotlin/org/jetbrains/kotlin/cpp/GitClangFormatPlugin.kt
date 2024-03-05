@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cpp
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.PlatformManagerPlugin
 import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
 import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
 
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
  */
 open class GitClangFormatPlugin : Plugin<Project> {
     override fun apply(target: Project) {
+        target.apply<PlatformManagerPlugin>()
         target.apply<NativeDependenciesPlugin>()
         val nativeDependencies = target.extensions.getByType<NativeDependenciesExtension>()
 

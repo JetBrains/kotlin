@@ -13,6 +13,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.PlatformManagerPlugin
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.target.TargetDomainObjectContainer
@@ -166,6 +167,7 @@ abstract class NativeDependenciesDownloaderExtension @Inject constructor(private
  */
 open class NativeDependenciesDownloaderPlugin : Plugin<Project> {
     override fun apply(project: Project) {
+        project.apply<PlatformManagerPlugin>()
         project.apply<NativeDependenciesBasePlugin>()
         project.extensions.create<NativeDependenciesDownloaderExtension>("nativeDependenciesDownloader", project)
     }

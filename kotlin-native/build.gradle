@@ -52,18 +52,7 @@ if (PlatformInfo.isMac()) {
 }
 
 apply plugin: "kotlin.native.build-tools-conventions"
-
-ext {
-    distDir = UtilsKt.getKotlinNativeDist(project)
-    def konanDataDir = project.hasProperty('konan.data.dir') ? project.property('konan.data.dir').toString() : null
-    dependenciesDir = DependencyDirectories.INSTANCE.getDependenciesRoot(konanDataDir)
-    experimentalEnabled = project.hasProperty("org.jetbrains.kotlin.native.experimentalTargets")
-    platformManager = new PlatformManager(DistributionKt.buildDistribution(projectDir.absolutePath, konanDataDir),
-            ext.experimentalEnabled)
-
-    cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
-    cacheableTargets = cacheableTargetNames.collect { platformManager.targetByName(it) }
-}
+apply plugin: "platform-manager"
 
 allprojects {
     repositories {
@@ -72,20 +61,13 @@ allprojects {
             url project.bootstrapKotlinRepo
         }
     }
-
-    setupHostAndTarget()
-    setupClang(project)
 }
 
-void setupHostAndTarget() {
-    ext.hostName = platformManager.hostName
-    ext.targetList = EnabledTargetsKt.enabledTargets(platformManager).collect { it.visibleName } as List
-    ext.konanTargetList = EnabledTargetsKt.enabledTargets(platformManager) as List
-}
-
-void setupClang(Project project) {
-    project.extensions.platformManager = project.project(":kotlin-native").ext.platformManager
-}
+def platformManager = project.extensions.platformManager
+def distDir = UtilsKt.getKotlinNativeDist(project)
+def hostName = PlatformInfo.hostName
+def targetList = EnabledTargetsKt.enabledTargets(platformManager).collect { it.visibleName } as List
+def cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
 
 configurations {
     ftpAntTask
@@ -302,11 +284,7 @@ tasks.register("distCompiler", Copy) {
                 tokens: [("llvm.${hostName}.dev".toString()): "\$llvm.${hostName}.${llvmVariant}".toString()]
         )
     }
-    if (experimentalEnabled) {
-        file('konan/experimentalTargetsEnabled').text = ""
-    } else {
-        delete('konan/experimentalTargetsEnabled')
-    }
+    delete('konan/experimentalTargetsEnabled')
 }
 
 tasks.register("distDef", Copy) {

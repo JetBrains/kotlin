@@ -32,7 +32,7 @@ object PlatformInfo {
 
     @JvmStatic
     fun getTarget(project: Project): KonanTarget {
-        val platformManager = project.project(":kotlin-native").platformManager
+        val platformManager = project.platformManager
         val targetName = project.project.testTarget.name
         return platformManager.targetManager(targetName).target
     }
