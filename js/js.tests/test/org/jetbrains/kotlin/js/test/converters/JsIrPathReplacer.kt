@@ -24,7 +24,7 @@ import kotlin.io.invariantSeparatorsPath
 private const val PATH_TO_ROOT_TOKEN = "@PATH_TO_ROOT"
 
 class JsIrPathReplacer(testServices: TestServices) : DeclarationTransformer {
-    private val replacements = testServices.collectReplacementsMap()
+    private val replacements = testServices.collectReplacementMap()
 
     override fun lower(irFile: IrFile) {
         super.lower(irFile)
@@ -38,7 +38,7 @@ class JsIrPathReplacer(testServices: TestServices) : DeclarationTransformer {
     }
 
     private fun IrAnnotationContainer.replaceJsModulePath() {
-        val jsModuleAnnotation = getAnnotation(JsAnnotations.jsModuleFqn) ?: return
+        val jsModuleAnnotation = getAnnotation(JsAnnotations.jsImportFqn) ?: getAnnotation(JsAnnotations.jsModuleFqn) ?: return
 
         @Suppress("UNCHECKED_CAST")
         val stringLiteral = jsModuleAnnotation.getValueArgument(0) as IrConst<String>
@@ -51,7 +51,7 @@ class JsIrPathReplacer(testServices: TestServices) : DeclarationTransformer {
         return IrConstImpl.string(startOffset, endOffset, type, replacements[value] ?: return null)
     }
 
-    private fun TestServices.collectReplacementsMap(): Map<String, String> {
+    private fun TestServices.collectReplacementMap(): Map<String, String> {
         return moduleStructure.modules.asSequence()
             .map { module -> module to module.files.filter { it.isJsFile || it.isMjsFile } }
             .filter { (_, files) -> files.isNotEmpty() }

@@ -1,0 +1,12 @@
+// DONT_TARGET_EXACT_BACKEND: JS
+// ES_MODULES
+package foo
+
+@JsImport("./externalFunction.mjs")
+@JsImport.Default
+external fun foo(y: Int): Int = definedExternally
+
+fun box(): String {
+    assertEquals(65, foo(42))
+    return "OK"
+}

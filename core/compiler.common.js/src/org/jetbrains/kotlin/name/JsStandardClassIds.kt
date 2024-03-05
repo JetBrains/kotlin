@@ -42,6 +42,18 @@ object JsStandardClassIds {
         val JsExport = "JsExport".jsId()
 
         @JvmField
+        val JsImport = "JsImport".jsId()
+
+        @JvmField
+        val JsImportName = JsImport.createNestedClassId(Name.identifier("Name"))
+
+        @JvmField
+        val JsImportDefault = JsImport.createNestedClassId(Name.identifier("Default"))
+
+        @JvmField
+        val JsImportNamespace = JsImport.createNestedClassId(Name.identifier("Namespace"))
+
+        @JvmField
         val JsExternalInheritorsOnly = "JsExternalInheritorsOnly".jsId()
 
         @JvmField

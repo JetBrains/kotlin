@@ -1,0 +1,7 @@
+package
+
+package foo {
+    @kotlin.js.JsImport(from = "bar") public external var bar: kotlin.Int
+    @foo.JsI /* = kotlin.js.JsImport */(from = "bar") public external var bar2: kotlin.Int
+    public typealias JsI = kotlin.js.JsImport
+}

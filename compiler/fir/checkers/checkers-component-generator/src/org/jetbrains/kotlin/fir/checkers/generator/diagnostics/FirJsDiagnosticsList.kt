@@ -78,6 +78,19 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val IMPLEMENTING_FUNCTION_INTERFACE by error<KtClassOrObject>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
     }
 
+    val IMPORT by object : DiagnosticGroup("JsImport") {
+        val JS_IMPORT_PROHIBITED_ON_VAR by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_IMPORT_PROHIBITED_ON_NON_NATIVE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val NESTED_JS_IMPORT_PROHIBITED by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+
+        val JS_IMPORT_DEFAULT_AND_NAMED by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_IMPORT_OPTION_WITHOUT_JS_IMPORT by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_IMPORT_NAMESPACE_ON_NON_OBJECT_DECLARATION by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_IMPORT_NAMESPACE_WITH_FILE_JS_IMPORT by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+
+        val JS_IMPORT_AND_JS_MODULE_MIX by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+    }
+
     val EXTERNAL by object : DiagnosticGroup("External") {
         val OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {

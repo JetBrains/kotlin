@@ -3941,6 +3941,38 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ImplementingFunctionInterface::class
     }
 
+    interface JsImportProhibitedOnVar : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsImportProhibitedOnVar::class
+    }
+
+    interface JsImportProhibitedOnNonNative : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsImportProhibitedOnNonNative::class
+    }
+
+    interface NestedJsImportProhibited : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NestedJsImportProhibited::class
+    }
+
+    interface JsImportDefaultAndNamed : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsImportDefaultAndNamed::class
+    }
+
+    interface JsImportOptionWithoutJsImport : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsImportOptionWithoutJsImport::class
+    }
+
+    interface JsImportNamespaceOnNonObjectDeclaration : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsImportNamespaceOnNonObjectDeclaration::class
+    }
+
+    interface JsImportNamespaceWithFileJsImport : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsImportNamespaceWithFileJsImport::class
+    }
+
+    interface JsImportAndJsModuleMix : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsImportAndJsModuleMix::class
+    }
+
     interface OverridingExternalFunWithOptionalParams : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = OverridingExternalFunWithOptionalParams::class
     }

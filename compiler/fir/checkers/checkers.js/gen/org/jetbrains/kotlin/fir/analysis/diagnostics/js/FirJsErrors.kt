@@ -60,6 +60,16 @@ object FirJsErrors {
     // Fun Interfaces
     val IMPLEMENTING_FUNCTION_INTERFACE: KtDiagnosticFactory0 by error0<KtClassOrObject>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
+    // JsImport
+    val JS_IMPORT_PROHIBITED_ON_VAR: KtDiagnosticFactory0 by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val JS_IMPORT_PROHIBITED_ON_NON_NATIVE: KtDiagnosticFactory0 by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val NESTED_JS_IMPORT_PROHIBITED: KtDiagnosticFactory0 by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val JS_IMPORT_DEFAULT_AND_NAMED: KtDiagnosticFactory0 by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val JS_IMPORT_OPTION_WITHOUT_JS_IMPORT: KtDiagnosticFactory0 by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val JS_IMPORT_NAMESPACE_ON_NON_OBJECT_DECLARATION: KtDiagnosticFactory0 by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val JS_IMPORT_NAMESPACE_WITH_FILE_JS_IMPORT: KtDiagnosticFactory0 by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val JS_IMPORT_AND_JS_MODULE_MIX: KtDiagnosticFactory0 by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+
     // External
     val OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS: KtDiagnosticFactory0 by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE: KtDiagnosticFactory1<FirNamedFunctionSymbol> by error1<KtElement, FirNamedFunctionSymbol>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)

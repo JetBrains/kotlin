@@ -266,6 +266,294 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     }
 
     @Nested
+    @TestMetadata("js/js.translator/testData/box/esModules/jsFileImport")
+    @TestDataPath("$PROJECT_ROOT")
+    public class JsFileImport {
+      @Test
+      public void testAllFilesPresentInJsFileImport() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsFileImport"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      }
+
+      @Nested
+      @TestMetadata("js/js.translator/testData/box/esModules/jsFileImport/default")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Default {
+        @Test
+        public void testAllFilesPresentInDefault() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsFileImport/default"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @Test
+        @TestMetadata("externalClass.kt")
+        public void testExternalClass() {
+          runTest("js/js.translator/testData/box/esModules/jsFileImport/default/externalClass.kt");
+        }
+
+        @Test
+        @TestMetadata("externalFunction.kt")
+        public void testExternalFunction() {
+          runTest("js/js.translator/testData/box/esModules/jsFileImport/default/externalFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("externalFunctionNameClash.kt")
+        public void testExternalFunctionNameClash() {
+          runTest("js/js.translator/testData/box/esModules/jsFileImport/default/externalFunctionNameClash.kt");
+        }
+
+        @Test
+        @TestMetadata("externalObject.kt")
+        public void testExternalObject() {
+          runTest("js/js.translator/testData/box/esModules/jsFileImport/default/externalObject.kt");
+        }
+
+        @Test
+        @TestMetadata("externalProperty.kt")
+        public void testExternalProperty() {
+          runTest("js/js.translator/testData/box/esModules/jsFileImport/default/externalProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("topLevelVarargFun.kt")
+        public void testTopLevelVarargFun() {
+          runTest("js/js.translator/testData/box/esModules/jsFileImport/default/topLevelVarargFun.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("js/js.translator/testData/box/esModules/jsFileImport/named")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Named {
+        @Test
+        public void testAllFilesPresentInNamed() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsFileImport/named"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @Test
+        @TestMetadata("externalClass.kt")
+        public void testExternalClass() {
+          runTest("js/js.translator/testData/box/esModules/jsFileImport/named/externalClass.kt");
+        }
+
+        @Test
+        @TestMetadata("externalFunction.kt")
+        public void testExternalFunction() {
+          runTest("js/js.translator/testData/box/esModules/jsFileImport/named/externalFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("externalFunctionNameClash.kt")
+        public void testExternalFunctionNameClash() {
+          runTest("js/js.translator/testData/box/esModules/jsFileImport/named/externalFunctionNameClash.kt");
+        }
+
+        @Test
+        @TestMetadata("externalObject.kt")
+        public void testExternalObject() {
+          runTest("js/js.translator/testData/box/esModules/jsFileImport/named/externalObject.kt");
+        }
+
+        @Test
+        @TestMetadata("externalProperty.kt")
+        public void testExternalProperty() {
+          runTest("js/js.translator/testData/box/esModules/jsFileImport/named/externalProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("topLevelVarargFun.kt")
+        public void testTopLevelVarargFun() {
+          runTest("js/js.translator/testData/box/esModules/jsFileImport/named/topLevelVarargFun.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("js/js.translator/testData/box/esModules/jsFileImport/plainNamed")
+      @TestDataPath("$PROJECT_ROOT")
+      public class PlainNamed {
+        @Test
+        public void testAllFilesPresentInPlainNamed() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsFileImport/plainNamed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @Test
+        @TestMetadata("externalClassNameClash.kt")
+        public void testExternalClassNameClash() {
+          runTest("js/js.translator/testData/box/esModules/jsFileImport/plainNamed/externalClassNameClash.kt");
+        }
+
+        @Test
+        @TestMetadata("externalPackage.kt")
+        public void testExternalPackage() {
+          runTest("js/js.translator/testData/box/esModules/jsFileImport/plainNamed/externalPackage.kt");
+        }
+
+        @Test
+        @TestMetadata("externalPackageInDifferentFile.kt")
+        public void testExternalPackageInDifferentFile() {
+          runTest("js/js.translator/testData/box/esModules/jsFileImport/plainNamed/externalPackageInDifferentFile.kt");
+        }
+
+        @Test
+        @TestMetadata("interfaces.kt")
+        public void testInterfaces() {
+          runTest("js/js.translator/testData/box/esModules/jsFileImport/plainNamed/interfaces.kt");
+        }
+      }
+    }
+
+    @Nested
+    @TestMetadata("js/js.translator/testData/box/esModules/jsImport")
+    @TestDataPath("$PROJECT_ROOT")
+    public class JsImport {
+      @Test
+      public void testAllFilesPresentInJsImport() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsImport"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      }
+
+      @Nested
+      @TestMetadata("js/js.translator/testData/box/esModules/jsImport/default")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Default {
+        @Test
+        public void testAllFilesPresentInDefault() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsImport/default"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @Test
+        @TestMetadata("externalClass.kt")
+        public void testExternalClass() {
+          runTest("js/js.translator/testData/box/esModules/jsImport/default/externalClass.kt");
+        }
+
+        @Test
+        @TestMetadata("externalFunction.kt")
+        public void testExternalFunction() {
+          runTest("js/js.translator/testData/box/esModules/jsImport/default/externalFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("externalFunctionNameClash.kt")
+        public void testExternalFunctionNameClash() {
+          runTest("js/js.translator/testData/box/esModules/jsImport/default/externalFunctionNameClash.kt");
+        }
+
+        @Test
+        @TestMetadata("externalObject.kt")
+        public void testExternalObject() {
+          runTest("js/js.translator/testData/box/esModules/jsImport/default/externalObject.kt");
+        }
+
+        @Test
+        @TestMetadata("externalProperty.kt")
+        public void testExternalProperty() {
+          runTest("js/js.translator/testData/box/esModules/jsImport/default/externalProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("topLevelVarargFun.kt")
+        public void testTopLevelVarargFun() {
+          runTest("js/js.translator/testData/box/esModules/jsImport/default/topLevelVarargFun.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("js/js.translator/testData/box/esModules/jsImport/named")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Named {
+        @Test
+        public void testAllFilesPresentInNamed() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsImport/named"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @Test
+        @TestMetadata("externalClass.kt")
+        public void testExternalClass() {
+          runTest("js/js.translator/testData/box/esModules/jsImport/named/externalClass.kt");
+        }
+
+        @Test
+        @TestMetadata("externalFunction.kt")
+        public void testExternalFunction() {
+          runTest("js/js.translator/testData/box/esModules/jsImport/named/externalFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("externalFunctionNameClash.kt")
+        public void testExternalFunctionNameClash() {
+          runTest("js/js.translator/testData/box/esModules/jsImport/named/externalFunctionNameClash.kt");
+        }
+
+        @Test
+        @TestMetadata("externalObject.kt")
+        public void testExternalObject() {
+          runTest("js/js.translator/testData/box/esModules/jsImport/named/externalObject.kt");
+        }
+
+        @Test
+        @TestMetadata("externalProperty.kt")
+        public void testExternalProperty() {
+          runTest("js/js.translator/testData/box/esModules/jsImport/named/externalProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("topLevelVarargFun.kt")
+        public void testTopLevelVarargFun() {
+          runTest("js/js.translator/testData/box/esModules/jsImport/named/topLevelVarargFun.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("js/js.translator/testData/box/esModules/jsImport/namespaced")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Namespaced {
+        @Test
+        public void testAllFilesPresentInNamespaced() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsImport/namespaced"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @Test
+        @TestMetadata("externalObject.kt")
+        public void testExternalObject() {
+          runTest("js/js.translator/testData/box/esModules/jsImport/namespaced/externalObject.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("js/js.translator/testData/box/esModules/jsImport/plainNamed")
+      @TestDataPath("$PROJECT_ROOT")
+      public class PlainNamed {
+        @Test
+        public void testAllFilesPresentInPlainNamed() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsImport/plainNamed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @Test
+        @TestMetadata("externalClassNameClash.kt")
+        public void testExternalClassNameClash() {
+          runTest("js/js.translator/testData/box/esModules/jsImport/plainNamed/externalClassNameClash.kt");
+        }
+
+        @Test
+        @TestMetadata("externalPackage.kt")
+        public void testExternalPackage() {
+          runTest("js/js.translator/testData/box/esModules/jsImport/plainNamed/externalPackage.kt");
+        }
+
+        @Test
+        @TestMetadata("externalPackageInDifferentFile.kt")
+        public void testExternalPackageInDifferentFile() {
+          runTest("js/js.translator/testData/box/esModules/jsImport/plainNamed/externalPackageInDifferentFile.kt");
+        }
+
+        @Test
+        @TestMetadata("interfaces.kt")
+        public void testInterfaces() {
+          runTest("js/js.translator/testData/box/esModules/jsImport/plainNamed/interfaces.kt");
+        }
+      }
+    }
+
+    @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/jsModule")
     @TestDataPath("$PROJECT_ROOT")
     public class JsModule {

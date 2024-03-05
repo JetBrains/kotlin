@@ -542,6 +542,70 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/import")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Import {
+    @Test
+    public void testAllFilesPresentInImport() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/import"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("jsImportOptionsWithoutJsImport.kt")
+    public void testJsImportOptionsWithoutJsImport() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/import/jsImportOptionsWithoutJsImport.kt");
+    }
+
+    @Test
+    @TestMetadata("jsVarProhibited.kt")
+    public void testJsVarProhibited() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/import/jsVarProhibited.kt");
+    }
+
+    @Test
+    @TestMetadata("mixedJsImportAndJsModule.kt")
+    public void testMixedJsImportAndJsModule() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/import/mixedJsImportAndJsModule.kt");
+    }
+
+    @Test
+    @TestMetadata("mixedJsImportAndJsQualifier.kt")
+    public void testMixedJsImportAndJsQualifier() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/import/mixedJsImportAndJsQualifier.kt");
+    }
+
+    @Test
+    @TestMetadata("multipleJsImportOptions.kt")
+    public void testMultipleJsImportOptions() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/import/multipleJsImportOptions.kt");
+    }
+
+    @Test
+    @TestMetadata("namespaceInsideFileJsImport.kt")
+    public void testNamespaceInsideFileJsImport() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/import/namespaceInsideFileJsImport.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedProhibited.kt")
+    public void testNestedProhibited() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/import/nestedProhibited.kt");
+    }
+
+    @Test
+    @TestMetadata("nonObjectNamespace.kt")
+    public void testNonObjectNamespace() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/import/nonObjectNamespace.kt");
+    }
+
+    @Test
+    @TestMetadata("prohibitedOnNonNative.kt")
+    public void testProhibitedOnNonNative() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/import/prohibitedOnNonNative.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/inline")
   @TestDataPath("$PROJECT_ROOT")
   public class Inline {

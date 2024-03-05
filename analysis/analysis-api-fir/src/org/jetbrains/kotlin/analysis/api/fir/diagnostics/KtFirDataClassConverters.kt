@@ -5660,6 +5660,54 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJsErrors.JS_IMPORT_PROHIBITED_ON_VAR) { firDiagnostic ->
+        JsImportProhibitedOnVarImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.JS_IMPORT_PROHIBITED_ON_NON_NATIVE) { firDiagnostic ->
+        JsImportProhibitedOnNonNativeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.NESTED_JS_IMPORT_PROHIBITED) { firDiagnostic ->
+        NestedJsImportProhibitedImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.JS_IMPORT_DEFAULT_AND_NAMED) { firDiagnostic ->
+        JsImportDefaultAndNamedImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.JS_IMPORT_OPTION_WITHOUT_JS_IMPORT) { firDiagnostic ->
+        JsImportOptionWithoutJsImportImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.JS_IMPORT_NAMESPACE_ON_NON_OBJECT_DECLARATION) { firDiagnostic ->
+        JsImportNamespaceOnNonObjectDeclarationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.JS_IMPORT_NAMESPACE_WITH_FILE_JS_IMPORT) { firDiagnostic ->
+        JsImportNamespaceWithFileJsImportImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.JS_IMPORT_AND_JS_MODULE_MIX) { firDiagnostic ->
+        JsImportAndJsModuleMixImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS) { firDiagnostic ->
         OverridingExternalFunWithOptionalParamsImpl(
             firDiagnostic as KtPsiDiagnostic,

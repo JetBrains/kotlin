@@ -4757,6 +4757,46 @@ internal class ImplementingFunctionInterfaceImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtClassOrObject>(firDiagnostic, token), KtFirDiagnostic.ImplementingFunctionInterface
 
+internal class JsImportProhibitedOnVarImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.JsImportProhibitedOnVar
+
+internal class JsImportProhibitedOnNonNativeImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.JsImportProhibitedOnNonNative
+
+internal class NestedJsImportProhibitedImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.NestedJsImportProhibited
+
+internal class JsImportDefaultAndNamedImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.JsImportDefaultAndNamed
+
+internal class JsImportOptionWithoutJsImportImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.JsImportOptionWithoutJsImport
+
+internal class JsImportNamespaceOnNonObjectDeclarationImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.JsImportNamespaceOnNonObjectDeclaration
+
+internal class JsImportNamespaceWithFileJsImportImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.JsImportNamespaceWithFileJsImport
+
+internal class JsImportAndJsModuleMixImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.JsImportAndJsModuleMix
+
 internal class OverridingExternalFunWithOptionalParamsImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

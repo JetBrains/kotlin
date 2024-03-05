@@ -104,6 +104,56 @@ public actual annotation class JsFileName(actual val name: String)
 public annotation class JsModule(val import: String)
 
 /**
+ * Denotes an `external` declaration that must be imported from native JavaScript library.
+ * It's the future replacement for the [JsModule] annotation
+ *
+ * The compiler produces the code relevant for the target module system, for example, in case of CommonJS,
+ * it will import the declaration via the ESM `import` statement
+ *
+ * The annotation can be used on top-level external declarations (classes, properties, functions) and files.
+ * In case of file (which can't be `external`) the following rule applies: all the declarations in
+ * the file must be `external`. By applying `@JsModule(...)` on a file you tell the compiler to import a JavaScript object
+ * that contain all the declarations from the file.
+ *
+ * Example:
+ *
+ * ``` kotlin
+ * @JsImport(from = "jquery", exportName = "Test")
+ * external abstract class JQuery() {
+ *     // some declarations here
+ * }
+ *
+ * @JsImport(from = "jquery", default = true)
+ * external fun JQuery(element: Element): JQuery
+ * ```
+ *
+ * @property `from` name of a module to import declaration from.
+ *           It is not interpreted by the Kotlin compiler, it's passed as is directly to the target module system.
+ * @property `default` handle the case if the imported declaration is default exported from the target module.
+ * @property `exportName` declare the original name that is used to export the declaration from the target module.
+ */
+@SinceKotlin("1.9")
+@Retention(AnnotationRetention.BINARY)
+@Target(CLASS, PROPERTY, FUNCTION, FILE)
+public annotation class JsImport(val from: String) {
+
+    @Retention(AnnotationRetention.BINARY)
+    @Target(CLASS, PROPERTY, FUNCTION, CONSTRUCTOR)
+    @SinceKotlin("1.9")
+    public annotation class Name(val exportName: String)
+
+    @Retention(AnnotationRetention.BINARY)
+    @Target(CLASS, PROPERTY, FUNCTION, CONSTRUCTOR)
+    @SinceKotlin("1.9")
+    public annotation class Default
+
+    @Retention(AnnotationRetention.BINARY)
+    @Target(CLASS)
+    @SinceKotlin("1.9")
+    public annotation class Namespace
+}
+
+/**
  * Denotes an `external` declaration that can be used without module system.
  *
  * By default, an `external` declaration is available regardless your target module system.

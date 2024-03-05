@@ -17,6 +17,10 @@ import org.jetbrains.kotlin.name.Name
 
 object JsAnnotations {
     val jsModuleFqn = FqName("kotlin.js.JsModule")
+    val jsImportFqn = FqName("kotlin.js.JsImport")
+    val jsImportNameFqn = FqName("kotlin.js.JsImport.Name")
+    val jsImportDefaultFqn = FqName("kotlin.js.JsImport.Default")
+    val jsImportNamespaceFqn = FqName("kotlin.js.JsImport.Namespace")
     val jsNonModuleFqn = FqName("kotlin.js.JsNonModule")
     val jsNameFqn = FqName("kotlin.js.JsName")
     val jsFileNameFqn = FqName("kotlin.js.JsFileName")
@@ -42,6 +46,18 @@ fun IrConstructorCall.getSingleConstBooleanArgument() =
 
 fun IrAnnotationContainer.getJsModule(): String? =
     getAnnotation(JsAnnotations.jsModuleFqn)?.getSingleConstStringArgument()
+
+fun IrAnnotationContainer.getJsImport(): String? =
+    getAnnotation(JsAnnotations.jsImportFqn)?.getSingleConstStringArgument()
+
+fun IrAnnotationContainer.getJsImportName(): String? =
+    getAnnotation(JsAnnotations.jsImportNameFqn)?.getSingleConstStringArgument()
+
+fun IrAnnotationContainer.hasJsImportDefault(): Boolean =
+    hasAnnotation(JsAnnotations.jsImportDefaultFqn)
+
+fun IrAnnotationContainer.hasJsImportNamespace(): Boolean =
+    hasAnnotation(JsAnnotations.jsImportNamespaceFqn)
 
 fun IrAnnotationContainer.isJsNonModule(): Boolean =
     hasAnnotation(JsAnnotations.jsNonModuleFqn)

@@ -19,6 +19,8 @@ object JsDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
         get() = setOf(
             FirJsModuleChecker,
+            FirJsImportChecker,
+            FirJsImportOptionsChecker,
             FirJsRuntimeAnnotationChecker,
             FirJsExternalChecker,
             FirJsExternalFileChecker,

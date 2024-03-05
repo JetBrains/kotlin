@@ -42,6 +42,10 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.isEf
 public final class AnnotationsUtils {
     private static final FqName JS_NAME = Annotations.JsName.asSingleFqName();
     private static final FqName JS_EXPORT = Annotations.JsExport.asSingleFqName();
+    private static final FqName JS_IMPORT = Annotations.JsImport.asSingleFqName();
+    private static final FqName JS_IMPORT_NAME = Annotations.JsImportName.asSingleFqName();
+    private static final FqName JS_IMPORT_DEFAULT = Annotations.JsImportDefault.asSingleFqName();
+    private static final FqName JS_IMPORT_NAMESPACE = Annotations.JsImportNamespace.asSingleFqName();
     private static final FqName JS_EXPORT_IGNORE = Annotations.JsExportIgnore.asSingleFqName();
     private static final FqName JS_MODULE_ANNOTATION = Annotations.JsModule.asSingleFqName();
     private static final FqName JS_NON_MODULE_ANNOTATION = Annotations.JsNonModule.asSingleFqName();
@@ -233,8 +237,35 @@ public final class AnnotationsUtils {
     }
 
     @Nullable
+    public static String getImportSource(@NotNull DeclarationDescriptor declaration) {
+        AnnotationDescriptor annotation = declaration.getAnnotations().findAnnotation(JS_IMPORT);
+        return annotation != null ? extractSingleStringArgument(annotation) : null;
+    }
+
+    @Nullable
+    public static String getImportName(@NotNull DeclarationDescriptor declaration) {
+        AnnotationDescriptor annotation = declaration.getAnnotations().findAnnotation(JS_IMPORT_NAME);
+        return annotation != null ? extractSingleStringArgument(annotation) : null;
+    }
+
+    @Nullable
+    public static boolean hasImportDefault(@NotNull DeclarationDescriptor declaration) {
+        return declaration.getAnnotations().findAnnotation(JS_IMPORT_DEFAULT) != null;
+    }
+
+    @Nullable
+    public static boolean hasImportNamespace(@NotNull DeclarationDescriptor declaration) {
+        return declaration.getAnnotations().findAnnotation(JS_IMPORT_NAMESPACE) != null;
+    }
+
+    @Nullable
     public static String getFileModuleName(@NotNull BindingContext bindingContext, @NotNull DeclarationDescriptor declaration) {
         return getSingleStringAnnotationArgument(bindingContext, declaration, JS_MODULE_ANNOTATION);
+    }
+
+    @Nullable
+    public static String getFileImportSource(@NotNull BindingContext bindingContext, @NotNull DeclarationDescriptor declaration) {
+        return getSingleStringAnnotationArgument(bindingContext, declaration, JS_IMPORT);
     }
 
     @Nullable

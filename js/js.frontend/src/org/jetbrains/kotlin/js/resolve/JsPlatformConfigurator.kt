@@ -22,6 +22,7 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
     additionalDeclarationCheckers = listOf(
         NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(),
         JsNameChecker, JsModuleChecker, JsExternalFileChecker,
+        JsImportChecker, JsImportOptionsChecker,
         JsInheritanceChecker, JsMultipleInheritanceChecker,
         JsExternalInheritorOnlyChecker,
         JsRuntimeAnnotationChecker,

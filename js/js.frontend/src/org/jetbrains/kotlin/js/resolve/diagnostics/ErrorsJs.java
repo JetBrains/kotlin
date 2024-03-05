@@ -58,6 +58,18 @@ public interface ErrorsJs {
     DiagnosticFactory0<KtElement> JS_MODULE_PROHIBITED_ON_VAR = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtElement> JS_MODULE_PROHIBITED_ON_NON_NATIVE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtElement> NESTED_JS_MODULE_PROHIBITED = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+
+    DiagnosticFactory0<KtElement> JS_IMPORT_PROHIBITED_ON_VAR = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtElement> JS_IMPORT_PROHIBITED_ON_NON_NATIVE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtElement> NESTED_JS_IMPORT_PROHIBITED = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+
+    DiagnosticFactory0<KtElement> JS_IMPORT_DEFAULT_AND_NAMED = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtElement> JS_IMPORT_OPTION_WITHOUT_JS_IMPORT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtElement> JS_IMPORT_NAMESPACE_ON_NON_OBJECT_DECLARATION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtElement> JS_IMPORT_NAMESPACE_WITH_FILE_JS_IMPORT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+
+    DiagnosticFactory0<KtElement> JS_IMPORT_AND_JS_MODULE_MIX = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+
     DiagnosticFactory1<PsiElement, DeclarationDescriptor> CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM =
             DiagnosticFactory1.create(ERROR, DEFAULT);
     DiagnosticFactory1<PsiElement, DeclarationDescriptor> CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM =

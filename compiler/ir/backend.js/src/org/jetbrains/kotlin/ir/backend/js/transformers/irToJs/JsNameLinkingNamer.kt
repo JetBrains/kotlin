@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.constant
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class JsNameLinkingNamer(
@@ -39,9 +41,9 @@ class JsNameLinkingNamer(
 
     override fun getNameForStaticDeclaration(declaration: IrDeclarationWithName): JsName {
         if (declaration.isEffectivelyExternal()) {
-            val jsModule: String? = declaration.getJsModule()
+            val jsModule: String? = declaration.getJsImport() ?: declaration.getJsModule()
             val maybeParentFile: IrFile? = declaration.parent as? IrFile
-            val fileJsModule: String? = maybeParentFile?.getJsModule()
+            val fileJsModule: String? = maybeParentFile?.getJsImport() ?: maybeParentFile?.getJsModule()
             val jsQualifier: List<JsName>? = maybeParentFile?.getJsQualifier()?.split('.')?.map { JsName(it, false) }
 
             return when {
@@ -80,25 +82,55 @@ class JsNameLinkingNamer(
     }
 
     private fun IrDeclarationWithName.generateImportForDeclarationWithJsModule(jsModule: String): JsName {
-        val nameString = if (isJsNonModule()) {
-            getJsNameOrKotlinName().asString()
+        val hasJsImport = getJsImport() != null
+        val importName = getJsImportName()?.toJsName(temporary = false)
+        val isDefaultImport = hasJsImportDefault()
+        val isNamespaceImport = hasJsImportNamespace()
+
+        val declarationName = getJsNameOrKotlinName()
+        val nameString = if (isJsNonModule() || hasJsImport) {
+            declarationName.identifier
         } else {
             val parent = fqNameWhenAvailable!!.parent()
-            parent.child(getJsNameOrKotlinName()).asString()
+            parent.child(declarationName).asString()
         }
         val name = JsName(sanitizeName(nameString), true)
         val nameRef = name.makeRef()
 
         if (isEsModules) {
             val importSubject = when {
+                hasJsImport -> when {
+                    isNamespaceImport -> JsImport.Target.All(nameRef)
+                    isDefaultImport -> JsImport.Target.Default(nameRef)
+                    else -> JsImport.Target.Elements(
+                        mutableListOf(
+                            JsImport.Element(importName ?: JsName(nameString, false), nameRef)
+                        )
+                    )
+                }
                 this is IrClass && isObject -> JsImport.Target.All(nameRef)
                 else -> JsImport.Target.Default(nameRef)
             }
             imports[this] = JsImport(jsModule, importSubject)
             nameMap[this] = name
+        } else if (hasJsImport) {
+            if (isNamespaceImport || isDefaultImport) {
+                importedModules += JsImportedModule(jsModule, name, null)
+                return name
+            }
+
+            val moduleName = JsName(sanitizeName("\$module\$$jsModule"), true)
+            importedModules += JsImportedModule(jsModule, moduleName, null)
+            nameMap[this] = name
+
+            imports[this] = jsElementAccess(
+                importName?.ident ?: nameString,
+                moduleName.makeRef()
+            ).putIntoVariableWitName(name)
         } else {
             importedModules += JsImportedModule(jsModule, name, nameRef)
         }
+
         return name
     }
 
@@ -108,11 +140,21 @@ class JsNameLinkingNamer(
     ): JsName {
         if (this in nameMap) return getName()
 
+        val importName = getJsImportName()?.toJsName(temporary = false)
+        val isDefaultImport = hasJsImportDefault()
         val declarationStableName = getJsNameOrKotlinName().identifier
 
         if (isEsModules) {
-            val importedName = jsQualifier?.firstOrNull() ?: declarationStableName.toJsName(temporary = false)
-            val importStatement = JsImport(fileJsModule, JsImport.Element(importedName))
+            val usedDeclarationName = jsQualifier?.firstOrNull() ?: declarationStableName.toJsName(temporary = importName != null)
+
+            val importElement = when {
+                isDefaultImport -> JsImport.Target.Default(usedDeclarationName.makeRef())
+                importName != null -> JsImport.Target.Elements(mutableListOf(JsImport.Element(importName, usedDeclarationName.makeRef())))
+                else -> JsImport.Target.Elements(mutableListOf(JsImport.Element(usedDeclarationName)))
+            }
+
+            val importStatement = JsImport(fileJsModule, importElement)
+
             imports[this] = when (val qualifiedReference = jsQualifier?.makeRef()) {
                 null -> importStatement
                 else -> JsCompositeBlock(
@@ -126,12 +168,20 @@ class JsNameLinkingNamer(
             }
 
         } else {
+            if (isDefaultImport) {
+                val declarationName = declarationStableName.toJsName()
+                importedModules += JsImportedModule(fileJsModule, declarationName, null)
+                return declarationName
+            }
             val moduleName = JsName(sanitizeName("\$module\$$fileJsModule"), true)
             importedModules += JsImportedModule(fileJsModule, moduleName, null)
             val qualifiedReference =
                 if (jsQualifier == null) moduleName.makeRef() else (listOf(moduleName) + jsQualifier).makeRef()
             imports[this] =
-                jsElementAccess(declarationStableName, qualifiedReference).putIntoVariableWitName(declarationStableName.toJsName())
+                jsElementAccess(
+                    importName?.ident ?: declarationStableName,
+                    qualifiedReference
+                ).putIntoVariableWitName(declarationStableName.toJsName())
         }
 
         return getName()
