@@ -6,11 +6,22 @@
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.CompilationService
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 abstract class BaseTest {
     companion object {
         val compilationService: CompilationService by lazy {
             CompilationService.loadImplementation(BaseTest::class.java.classLoader)
+        }
+        private val _compilerVersion by lazy {
+            try {
+                compilationService.getCompilerVersion()
+            } catch (_: NoSuchMethodError) {
+                "1.9.20" // getCompilerVersion is introduced since 2.0.0
+            }
+        }
+        val compilerVersion: KotlinToolingVersion by lazy {
+            KotlinToolingVersion(_compilerVersion)
         }
     }
 }

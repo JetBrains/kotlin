@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.*
-import org.jetbrains.kotlin.buildtools.api.tests.buildToolsVersion
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
@@ -98,7 +97,7 @@ class JvmModule(
             options.setBuildDir(buildDirectory.toFile())
             options.setRootProjectDir(project.projectDirectory.toFile())
 
-            if (buildToolsVersion < KotlinToolingVersion(2, 0, 0, "Beta2")) {
+            if (BaseTest.compilerVersion < KotlinToolingVersion(2, 0, 0, "Beta2")) {
                 // workaround for the incorrect default value
                 options.useOutputDirs(setOf(icCachesDir.toFile(), outputDirectory.toFile()))
             }

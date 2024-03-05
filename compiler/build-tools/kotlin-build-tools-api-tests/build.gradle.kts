@@ -91,10 +91,6 @@ testing {
                 targets.all {
                     projectTest(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5) {
                         ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
-                        systemProperty(
-                            "kotlin.build-tools-api.impl-version",
-                            implVersion.toString()
-                        ) // TODO: remove after KT-63862
                     }
                 }
             }
@@ -119,12 +115,6 @@ testing {
             targets.all {
                 projectTest(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5) {
                     systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
-                    if (isRegular) {
-                        systemProperty(
-                            "kotlin.build-tools-api.impl-version",
-                            project.version.toString()
-                        ) // TODO: remove after KT-63862
-                    }
                 }
             }
         }
