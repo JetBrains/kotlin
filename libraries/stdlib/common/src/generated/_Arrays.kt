@@ -653,7 +653,7 @@ public inline fun <T> Array<out T>.elementAtOrElse(index: Int, defaultValue: (In
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -666,7 +666,7 @@ public inline fun ByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> B
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -679,7 +679,7 @@ public inline fun ShortArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -692,7 +692,7 @@ public inline fun IntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> In
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -705,7 +705,7 @@ public inline fun LongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> L
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -718,7 +718,7 @@ public inline fun FloatArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -731,7 +731,7 @@ public inline fun DoubleArray.elementAtOrElse(index: Int, defaultValue: (Int) ->
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -744,7 +744,7 @@ public inline fun BooleanArray.elementAtOrElse(index: Int, defaultValue: (Int) -
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -757,7 +757,7 @@ public inline fun CharArray.elementAtOrElse(index: Int, defaultValue: (Int) -> C
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -1383,7 +1383,7 @@ public inline fun <T> Array<out T>.getOrElse(index: Int, defaultValue: (Int) -> 
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -1394,7 +1394,7 @@ public inline fun ByteArray.getOrElse(index: Int, defaultValue: (Int) -> Byte): 
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -1405,7 +1405,7 @@ public inline fun ShortArray.getOrElse(index: Int, defaultValue: (Int) -> Short)
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -1416,7 +1416,7 @@ public inline fun IntArray.getOrElse(index: Int, defaultValue: (Int) -> Int): In
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -1427,7 +1427,7 @@ public inline fun LongArray.getOrElse(index: Int, defaultValue: (Int) -> Long): 
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -1438,7 +1438,7 @@ public inline fun FloatArray.getOrElse(index: Int, defaultValue: (Int) -> Float)
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -1449,7 +1449,7 @@ public inline fun DoubleArray.getOrElse(index: Int, defaultValue: (Int) -> Doubl
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -1460,7 +1460,7 @@ public inline fun BooleanArray.getOrElse(index: Int, defaultValue: (Int) -> Bool
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -1471,7 +1471,7 @@ public inline fun CharArray.getOrElse(index: Int, defaultValue: (Int) -> Char): 
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -1480,7 +1480,7 @@ public inline fun CharArray.getOrElse(index: Int, defaultValue: (Int) -> Char): 
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun <T> Array<out T>.getOrNull(index: Int): T? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -1489,7 +1489,7 @@ public fun <T> Array<out T>.getOrNull(index: Int): T? {
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun ByteArray.getOrNull(index: Int): Byte? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -1498,7 +1498,7 @@ public fun ByteArray.getOrNull(index: Int): Byte? {
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun ShortArray.getOrNull(index: Int): Short? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -1507,7 +1507,7 @@ public fun ShortArray.getOrNull(index: Int): Short? {
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun IntArray.getOrNull(index: Int): Int? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -1516,7 +1516,7 @@ public fun IntArray.getOrNull(index: Int): Int? {
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun LongArray.getOrNull(index: Int): Long? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -1525,7 +1525,7 @@ public fun LongArray.getOrNull(index: Int): Long? {
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun FloatArray.getOrNull(index: Int): Float? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -1534,7 +1534,7 @@ public fun FloatArray.getOrNull(index: Int): Float? {
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun DoubleArray.getOrNull(index: Int): Double? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -1543,7 +1543,7 @@ public fun DoubleArray.getOrNull(index: Int): Double? {
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun BooleanArray.getOrNull(index: Int): Boolean? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -1552,7 +1552,7 @@ public fun BooleanArray.getOrNull(index: Int): Boolean? {
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun CharArray.getOrNull(index: Int): Char? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**

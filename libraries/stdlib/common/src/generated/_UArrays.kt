@@ -327,7 +327,7 @@ public inline fun UIntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> U
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -342,7 +342,7 @@ public inline fun ULongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -357,7 +357,7 @@ public inline fun UByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -372,7 +372,7 @@ public inline fun UShortArray.elementAtOrElse(index: Int, defaultValue: (Int) ->
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -705,7 +705,7 @@ public inline fun UIntArray.getOrElse(index: Int, defaultValue: (Int) -> UInt): 
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -718,7 +718,7 @@ public inline fun ULongArray.getOrElse(index: Int, defaultValue: (Int) -> ULong)
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -731,7 +731,7 @@ public inline fun UByteArray.getOrElse(index: Int, defaultValue: (Int) -> UByte)
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -744,7 +744,7 @@ public inline fun UShortArray.getOrElse(index: Int, defaultValue: (Int) -> UShor
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -755,7 +755,7 @@ public inline fun UShortArray.getOrElse(index: Int, defaultValue: (Int) -> UShor
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UIntArray.getOrNull(index: Int): UInt? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -766,7 +766,7 @@ public fun UIntArray.getOrNull(index: Int): UInt? {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun ULongArray.getOrNull(index: Int): ULong? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -777,7 +777,7 @@ public fun ULongArray.getOrNull(index: Int): ULong? {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UByteArray.getOrNull(index: Int): UByte? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -788,7 +788,7 @@ public fun UByteArray.getOrNull(index: Int): UByte? {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UShortArray.getOrNull(index: Int): UShort? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**

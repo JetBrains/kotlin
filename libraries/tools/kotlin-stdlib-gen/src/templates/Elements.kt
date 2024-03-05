@@ -378,12 +378,13 @@ object Elements : TemplateGroupBase() {
         }
         specialFor(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             inlineOnly()
+            val indices = if (family == Lists) "0..<size" else "indices"
             body {
                 """
                 contract {
                     callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
                 }
-                return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+                return if (index in $indices) get(index) else defaultValue(index)
                 """
             }
         }
@@ -395,12 +396,13 @@ object Elements : TemplateGroupBase() {
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this ${f.collection}." }
         returns("T")
         inlineOnly()
+        val indices = if (family == Lists) "0..<size" else "indices"
         body {
             """
             contract {
                 callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
             }
-            return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+            return if (index in $indices) get(index) else defaultValue(index)
             """
         }
     }
@@ -454,9 +456,10 @@ object Elements : TemplateGroupBase() {
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or `null` if the [index] is out of bounds of this ${f.collection}." }
         sample("samples.collections.Collections.Elements.getOrNull")
         returns("T?")
+        val indices = if (family == Lists) "0..<size" else "indices"
         body {
             """
-            return if (index >= 0 && index <= lastIndex) get(index) else null
+            return if (index in $indices) get(index) else null
             """
         }
     }

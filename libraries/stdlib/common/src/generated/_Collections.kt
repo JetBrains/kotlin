@@ -131,7 +131,7 @@ public inline fun <T> List<T>.elementAtOrElse(index: Int, defaultValue: (Int) ->
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in 0..<size) get(index) else defaultValue(index)
 }
 
 /**
@@ -304,7 +304,7 @@ public inline fun <T> List<T>.getOrElse(index: Int, defaultValue: (Int) -> T): T
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in 0..<size) get(index) else defaultValue(index)
 }
 
 /**
@@ -313,7 +313,7 @@ public inline fun <T> List<T>.getOrElse(index: Int, defaultValue: (Int) -> T): T
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun <T> List<T>.getOrNull(index: Int): T? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in 0..<size) get(index) else null
 }
 
 /**

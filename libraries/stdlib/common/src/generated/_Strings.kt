@@ -33,7 +33,7 @@ public inline fun CharSequence.elementAtOrElse(index: Int, defaultValue: (Int) -
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -139,7 +139,7 @@ public inline fun CharSequence.getOrElse(index: Int, defaultValue: (Int) -> Char
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
     }
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -148,7 +148,7 @@ public inline fun CharSequence.getOrElse(index: Int, defaultValue: (Int) -> Char
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun CharSequence.getOrNull(index: Int): Char? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
