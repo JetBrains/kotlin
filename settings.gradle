@@ -26,13 +26,6 @@ plugins {
 }
 
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
-if (buildProperties.isKotlinNativeEnabled && startParameter.isConfigurationCacheRequested()) {
-    throw new Exception(
-            """
-            Kotlin Native is not compatible with Gradle configuration-cache.
-            Please, disable Configuration-cache before you enable native.
-            """.stripIndent())
-}
 
 // modules
 include ":benchmarks",
