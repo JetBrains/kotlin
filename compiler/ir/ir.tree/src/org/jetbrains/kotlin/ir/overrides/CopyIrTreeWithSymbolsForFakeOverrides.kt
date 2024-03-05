@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 class CopyIrTreeWithSymbolsForFakeOverrides(
     private val overridableMember: IrOverridableMember,
     typeArguments: Map<IrTypeParameterSymbol, IrType>,
-    private val parent: IrClass,
+    parentClass: IrClass,
     unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
 ) {
     private val symbolRemapper = FakeOverrideSymbolRemapperImpl(typeArguments, NullDescriptorsRemapper)
@@ -32,22 +32,18 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
     private val copier = FakeOverrideCopier(
         symbolRemapper,
         FakeOverrideTypeRemapper(symbolRemapper, typeArguments),
-        parent,
+        parentClass,
         unimplementedOverridesStrategy
     )
 
     fun copy(): IrOverridableMember {
         overridableMember.acceptVoid(symbolRemapper)
 
-        val result = when (overridableMember) {
+        return when (overridableMember) {
             is IrSimpleFunction -> copier.copySimpleFunction(overridableMember)
             is IrProperty -> copier.copyProperty(overridableMember)
             else -> error("Unsupported member: ${overridableMember.render()}")
         }
-
-        result.patchDeclarationParents(parent)
-
-        return result
     }
 
     private inner class FakeOverrideTypeRemapper(

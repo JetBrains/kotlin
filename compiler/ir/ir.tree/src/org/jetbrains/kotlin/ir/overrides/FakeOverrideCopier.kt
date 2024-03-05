@@ -13,15 +13,15 @@ import org.jetbrains.kotlin.ir.util.copyAnnotations
 internal class FakeOverrideCopier(
     private val symbolRemapper: SymbolRemapper,
     private val typeRemapper: TypeRemapper,
-    private val parent: IrClass,
+    private val parentClass: IrClass,
     private val unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
 ) {
     fun copySimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction {
-        val customization = unimplementedOverridesStrategy.computeCustomization(declaration, parent)
+        val customization = unimplementedOverridesStrategy.computeCustomization(declaration, parentClass)
 
         return declaration.factory.createFunctionWithLateBinding(
-            startOffset = parent.startOffset,
-            endOffset = parent.endOffset,
+            startOffset = parentClass.startOffset,
+            endOffset = parentClass.endOffset,
             origin = customization.origin ?: IrDeclarationOrigin.FAKE_OVERRIDE,
             name = declaration.name,
             visibility = declaration.visibility,
@@ -35,25 +35,26 @@ internal class FakeOverrideCopier(
             isInfix = declaration.isInfix,
             isExternal = declaration.isExternal,
         ).apply {
+            parent = parentClass
             contextReceiverParametersCount = declaration.contextReceiverParametersCount
             annotations = declaration.copyAnnotations()
-            typeParameters = declaration.typeParameters.map(::copyTypeParameter)
+            typeParameters = declaration.typeParameters.map { copyTypeParameter(it, this) }
             for ((i, thisTypeParameter) in typeParameters.withIndex()) {
                 val otherTypeParameter = declaration.typeParameters[i]
                 thisTypeParameter.superTypes = otherTypeParameter.superTypes.map(typeRemapper::remapType)
             }
-            dispatchReceiverParameter = declaration.dispatchReceiverParameter?.let(::copyValueParameter)
-            extensionReceiverParameter = declaration.extensionReceiverParameter?.let(::copyValueParameter)
+            dispatchReceiverParameter = declaration.dispatchReceiverParameter?.let { copyValueParameter(it, this) }
+            extensionReceiverParameter = declaration.extensionReceiverParameter?.let { copyValueParameter(it, this) }
             returnType = typeRemapper.remapType(declaration.returnType)
-            valueParameters = declaration.valueParameters.map(::copyValueParameter)
+            valueParameters = declaration.valueParameters.map { copyValueParameter(it, this) }
         }
     }
 
     fun copyProperty(declaration: IrProperty): IrProperty {
-        val customization = unimplementedOverridesStrategy.computeCustomization(declaration, parent)
+        val customization = unimplementedOverridesStrategy.computeCustomization(declaration, parentClass)
 
         return declaration.factory.createPropertyWithLateBinding(
-            parent.startOffset, parent.endOffset,
+            parentClass.startOffset, parentClass.endOffset,
             customization.origin ?: IrDeclarationOrigin.FAKE_OVERRIDE,
             declaration.name,
             declaration.visibility,
@@ -65,16 +66,17 @@ internal class FakeOverrideCopier(
             isExpect = declaration.isExpect,
             isExternal = declaration.isExternal,
         ).apply {
+            parent = parentClass
             annotations = declaration.copyAnnotations()
             this.getter = declaration.getter?.let(::copySimpleFunction)
             this.setter = declaration.setter?.let(::copySimpleFunction)
         }
     }
 
-    private fun copyValueParameter(declaration: IrValueParameter): IrValueParameter =
+    private fun copyValueParameter(declaration: IrValueParameter, newParent: IrDeclarationParent): IrValueParameter =
         declaration.factory.createValueParameter(
-            startOffset = parent.startOffset,
-            endOffset = parent.endOffset,
+            startOffset = parentClass.startOffset,
+            endOffset = parentClass.endOffset,
             origin = IrDeclarationOrigin.DEFINED,
             name = declaration.name,
             type = typeRemapper.remapType(declaration.type),
@@ -86,11 +88,12 @@ internal class FakeOverrideCopier(
             isNoinline = declaration.isNoinline,
             isHidden = declaration.isHidden,
         ).apply {
+            parent = newParent
             annotations = declaration.copyAnnotations()
             // Don't set the default value for fake overrides.
         }
 
-    private fun copyTypeParameter(declaration: IrTypeParameter): IrTypeParameter =
+    private fun copyTypeParameter(declaration: IrTypeParameter, newParent: IrDeclarationParent): IrTypeParameter =
         declaration.factory.createTypeParameter(
             startOffset = declaration.startOffset,
             endOffset = declaration.endOffset,
@@ -101,6 +104,7 @@ internal class FakeOverrideCopier(
             index = declaration.index,
             isReified = declaration.isReified,
         ).apply {
+            parent = newParent
             annotations = declaration.copyAnnotations()
         }
 }
