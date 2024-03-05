@@ -9,7 +9,6 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -185,63 +184,5 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
   @TestMetadata("wasmImport.kt")
   public void testWasmImport() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/wasmImport.kt");
-  }
-
-  @Nested
-  @TestMetadata("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations")
-  @TestDataPath("$PROJECT_ROOT")
-  public class TypeScriptDeclarations {
-    @Test
-    public void testAllFilesPresentInTypeScriptDeclarations() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
-    }
-
-    @Test
-    @TestMetadata("externalDeclarations.kt")
-    public void testExternalDeclarations() {
-      runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/externalDeclarations.kt");
-    }
-
-    @Test
-    @TestMetadata("generics.kt")
-    public void testGenerics() {
-      runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/generics.kt");
-    }
-
-    @Test
-    @TestMetadata("jsPrimitives.kt")
-    public void testJsPrimitives() {
-      runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/jsPrimitives.kt");
-    }
-
-    @Test
-    @TestMetadata("nullableJsPrimitives.kt")
-    public void testNullableJsPrimitives() {
-      runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/nullableJsPrimitives.kt");
-    }
-
-    @Test
-    @TestMetadata("nullablePrimitives.kt")
-    public void testNullablePrimitives() {
-      runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/nullablePrimitives.kt");
-    }
-
-    @Test
-    @TestMetadata("nullableUnisnged.kt")
-    public void testNullableUnisnged() {
-      runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/nullableUnisnged.kt");
-    }
-
-    @Test
-    @TestMetadata("primitives.kt")
-    public void testPrimitives() {
-      runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/primitives.kt");
-    }
-
-    @Test
-    @TestMetadata("unisnged.kt")
-    public void testUnisnged() {
-      runTest("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations/unisnged.kt");
-    }
   }
 }
