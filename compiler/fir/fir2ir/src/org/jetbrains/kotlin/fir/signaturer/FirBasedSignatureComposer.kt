@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.signaturer
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.FirMangler
 import org.jetbrains.kotlin.fir.backend.conversionData
 import org.jetbrains.kotlin.fir.declarations.*
@@ -19,8 +20,33 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-// @NoMutableState -- we'll restore this annotation once we get rid of withFileSignature().
-class FirBasedSignatureComposer(val mangler: FirMangler) {
+
+sealed class FirBasedSignatureComposer(val mangler: FirMangler) {
+    companion object {
+        fun create(mangler: FirMangler, configuration: Fir2IrConfiguration): FirBasedSignatureComposer {
+            return when (configuration.useFirBasedFakeOverrideGenerator) {
+                false -> Empty(mangler)
+                true -> FirBasedSignatureComposerImpl(mangler)
+            }
+        }
+    }
+
+    abstract fun composeSignature(
+        declaration: FirCallableDeclaration,
+        containingClass: ConeClassLikeLookupTag? = null,
+        forceExpect: Boolean = false
+    ): IdSignature?
+
+    class Empty(mangler: FirMangler) : FirBasedSignatureComposer(mangler) {
+        override fun composeSignature(
+            declaration: FirCallableDeclaration,
+            containingClass: ConeClassLikeLookupTag?,
+            forceExpect: Boolean
+        ): IdSignature? = null
+    }
+}
+
+class FirBasedSignatureComposerImpl(mangler: FirMangler) : FirBasedSignatureComposer(mangler) {
     private data class FirDeclarationWithParentId(val declaration: FirDeclaration, val classId: ClassId?, val forceExpect: Boolean)
 
     private val signatureCache = mutableMapOf<FirDeclarationWithParentId, IdSignature.CommonSignature>()
@@ -29,10 +55,10 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
         declaration.signatureString(compatibleMode = false).let { it.hashMangle to it }
     }
 
-    fun composeSignature(
+    override fun composeSignature(
         declaration: FirCallableDeclaration,
-        containingClass: ConeClassLikeLookupTag? = null,
-        forceExpect: Boolean = false
+        containingClass: ConeClassLikeLookupTag?,
+        forceExpect: Boolean
     ): IdSignature? {
         return composeSignatureImpl(declaration, containingClass, forceExpect)
     }
