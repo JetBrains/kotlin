@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 /**
  * This class provides utility to resolve [org.jetbrains.kotlin.ir.symbols.impl.IrFunctionFakeOverrideSymbol]
@@ -111,6 +110,24 @@ class SpecialFakeOverrideSymbolsResolver(private val expectActualMap: Map<IrSymb
                 yieldAll((overridden.remap().owner as IrOverridableDeclaration<*>).collectOverrides(visited))
             }
         }
+    }
+
+    fun cacheFakeOverridesOfAllClasses(irModuleFragment: IrModuleFragment) {
+        val visitor = object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {}
+
+            override fun visitFile(declaration: IrFile) {
+                declaration.acceptChildrenVoid(this)
+            }
+
+            override fun visitClass(declaration: IrClass) {
+                if (!declaration.isExpect) {
+                    processClass(declaration)
+                }
+                declaration.acceptChildrenVoid(this)
+            }
+        }
+        irModuleFragment.acceptChildrenVoid(visitor)
     }
 }
 
