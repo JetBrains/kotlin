@@ -483,12 +483,6 @@ class ExpressionCodegen(
 
             lineNumberMapper.buildSmapFor(inlinedBlock, inlinedBlock.buildOrGetClassSMAP(info), info)
 
-            if (inlineCall.usesDefaultArguments()) {
-                // $default function has first LN pointing to original callee
-                callee?.markLineNumber(startOffset = true)
-                mv.nop()
-            }
-
             // 2. Evaluate DEFAULT arguments from inline function call
             inlinedBlock.getDefaultAdditionalStatementsFromInlinedBlock().forEach { exp ->
                 exp.accept(this, info).discard()
@@ -922,13 +916,7 @@ class ExpressionCodegen(
     override fun visitSetValue(expression: IrSetValue, data: BlockInfo): PromisedValue {
         expression.value.markLineNumber(startOffset = true)
         expression.value.accept(this, data).materializeAt(expression.symbol.owner.type)
-        // We set the value of parameters only for default values. The inliner accepts only
-        // a very specific bytecode pattern for default arguments and does not tolerate a
-        // line number on the store. Therefore, if we are storing to a parameter, we do not
-        // output a line number for the store.
-        if (expression.symbol !is IrValueParameterSymbol) {
-            expression.markLineNumber(startOffset = true)
-        }
+        expression.markLineNumber(startOffset = true)
         mv.store(findLocalIndex(expression.symbol), expression.symbol.owner.asmType)
         return unitValue
     }

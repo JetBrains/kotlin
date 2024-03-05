@@ -129,6 +129,10 @@ private fun extractDefaultLambdasInfo(
     return conditions.map {
         val varAssignmentInstruction = it.varInsNode!!
         var instanceInstuction = varAssignmentInstruction.previous
+
+        if (instanceInstuction is LineNumberNode) {
+            instanceInstuction = instanceInstuction.previous.previous
+        }
         if (instanceInstuction is TypeInsnNode && instanceInstuction.opcode == Opcodes.CHECKCAST) {
             instanceInstuction = instanceInstuction.previous
         }
@@ -156,7 +160,7 @@ private fun extractDefaultLambdasInfo(
             }
 
             is FieldInsnNode -> {
-                toDelete.addAll(InsnSequence(instanceInstuction, varAssignmentInstruction.next).toList())
+                toDelete.addAll(InsnSequence(instanceInstuction.previous, varAssignmentInstruction.next).toList())
 
                 val needReification =
                     instanceInstuction.previous.takeIf { isNeedClassReificationMarker(it) }?.let { toDelete.add(it) } != null
