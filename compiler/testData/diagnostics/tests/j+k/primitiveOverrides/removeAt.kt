@@ -2,7 +2,7 @@
 // WITH_STDLIB
 // SCOPE_DUMP: A:removeAt
 // ISSUE: KT-65410
-// IGNORE_DIAGNOSTIC_API
+// IGNORE_NON_REVERSED_RESOLVE
 // IGNORE_REVERSED_RESOLVE
 // Reason: SCOPE_DUMP uses different parameter names in AA modes
 

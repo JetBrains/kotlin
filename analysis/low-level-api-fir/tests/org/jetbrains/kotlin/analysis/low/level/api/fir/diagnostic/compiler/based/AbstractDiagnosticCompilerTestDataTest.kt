@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirOnlyNonReversedTestSuppressor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractCompilerBasedTestForFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactoryWithoutPreresolve
 import org.jetbrains.kotlin.fir.symbols.FirLazyResolveContractViolationException
@@ -25,7 +26,7 @@ abstract class AbstractDiagnosticCompilerTestDataTest : AbstractCompilerBasedTes
             testDataConsistencyHandler = ::ReversedFirIdenticalChecker,
         )
         useAfterAnalysisCheckers(::ContractViolationSuppressor)
-        useAfterAnalysisCheckers(::DiagnosticSuppressor)
+        useAfterAnalysisCheckers(::LLFirOnlyNonReversedTestSuppressor)
     }
 }
 
@@ -53,31 +54,5 @@ private class ContractViolationSuppressor(testServices: TestServices) : AfterAna
 
     companion object : SimpleDirectivesContainer() {
         val IGNORE_CONTRACT_VIOLATIONS by directive("Temporary disables test with contract violation until the issue is fixed")
-    }
-}
-
-private class DiagnosticSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
-    override val directiveContainers: List<DirectivesContainer> get() = listOf(Companion)
-
-    override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        if (!isDisabled()) {
-            return failedAssertions
-        }
-
-        return if (failedAssertions.isEmpty()) {
-            listOf(
-                AssertionError(
-                    "Test contains $IGNORE_DIAGNOSTIC_API directive but no errors was reported. Please remove directive",
-                ).wrap()
-            )
-        } else {
-            emptyList()
-        }
-    }
-
-    private fun isDisabled(): Boolean = IGNORE_DIAGNOSTIC_API in testServices.moduleStructure.allDirectives
-
-    companion object : SimpleDirectivesContainer() {
-        val IGNORE_DIAGNOSTIC_API by directive("Temporary disables diagnostic api test until the issue is fixed")
     }
 }
