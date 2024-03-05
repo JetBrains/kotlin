@@ -1,3 +1,6 @@
+// KT-66342: fail 1: `const val bar` has changed its value
+// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
+
 // MODULE: lib
 // FILE: A.kt
 // VERSION: 1
