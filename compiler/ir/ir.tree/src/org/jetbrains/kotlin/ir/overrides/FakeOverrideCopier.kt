@@ -6,12 +6,16 @@
 package org.jetbrains.kotlin.ir.overrides
 
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.util.SymbolRemapper
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.util.TypeRemapper
 import org.jetbrains.kotlin.ir.util.copyAnnotations
 
 internal class FakeOverrideCopier(
-    private val symbolRemapper: SymbolRemapper,
+    private val valueParameters: MutableMap<IrValueParameterSymbol, IrValueParameterSymbol>,
+    private val typeParameters: MutableMap<IrTypeParameterSymbol, IrTypeParameterSymbol>,
     private val typeRemapper: TypeRemapper,
     private val parentClass: IrClass,
     private val unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
@@ -81,13 +85,14 @@ internal class FakeOverrideCopier(
             name = declaration.name,
             type = typeRemapper.remapType(declaration.type),
             isAssignable = declaration.isAssignable,
-            symbol = symbolRemapper.getDeclaredValueParameter(declaration.symbol),
+            symbol = IrValueParameterSymbolImpl(null),
             index = declaration.index,
             varargElementType = declaration.varargElementType?.let(typeRemapper::remapType),
             isCrossinline = declaration.isCrossinline,
             isNoinline = declaration.isNoinline,
             isHidden = declaration.isHidden,
         ).apply {
+            valueParameters[declaration.symbol] = symbol
             parent = newParent
             annotations = declaration.copyAnnotations()
             // Don't set the default value for fake overrides.
@@ -99,11 +104,12 @@ internal class FakeOverrideCopier(
             endOffset = declaration.endOffset,
             origin = declaration.origin,
             name = declaration.name,
-            symbol = symbolRemapper.getDeclaredTypeParameter(declaration.symbol),
+            symbol = IrTypeParameterSymbolImpl(null),
             variance = declaration.variance,
             index = declaration.index,
             isReified = declaration.isReified,
         ).apply {
+            typeParameters[declaration.symbol] = symbol
             parent = newParent
             annotations = declaration.copyAnnotations()
         }
