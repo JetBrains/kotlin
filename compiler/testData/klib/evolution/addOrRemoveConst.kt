@@ -1,3 +1,6 @@
+// KT-44602: fail 2
+// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
+
 // MODULE: lib
 // FILE: A.kt
 // VERSION: 1

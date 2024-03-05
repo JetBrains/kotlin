@@ -31,7 +31,7 @@ fun main(args: Array<String>) {
     generateTestGroupSuite(args) {
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractDceTest> {
-                model("dce/", pattern = "(.+)\\.js", targetBackend = TargetBackend.JS)
+                model("dce/", pattern = "(.+)\\.js", targetBackend = TargetBackend.JS_IR)
             }
         }
 

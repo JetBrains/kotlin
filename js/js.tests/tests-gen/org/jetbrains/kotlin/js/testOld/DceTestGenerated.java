@@ -23,11 +23,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class DceTestGenerated extends AbstractDceTest {
   private void runTest(String testDataFilePath) {
-    KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+    KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
   }
 
   public void testAllFilesPresentInDce() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/dce"), Pattern.compile("(.+)\\.js"), null, TargetBackend.JS, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/dce"), Pattern.compile("(.+)\\.js"), null, TargetBackend.JS_IR, true);
   }
 
   @TestMetadata("amd.js")
