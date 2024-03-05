@@ -29991,6 +29991,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("complexOrderAndImplicitTypes.kt")
+      public void testComplexOrderAndImplicitTypes() {
+        runTest("compiler/testData/diagnostics/tests/resolve/complexOrderAndImplicitTypes.kt");
+      }
+
+      @Test
       @TestMetadata("constructorVsCompanion.kt")
       public void testConstructorVsCompanion() {
         runTest("compiler/testData/diagnostics/tests/resolve/constructorVsCompanion.kt");
