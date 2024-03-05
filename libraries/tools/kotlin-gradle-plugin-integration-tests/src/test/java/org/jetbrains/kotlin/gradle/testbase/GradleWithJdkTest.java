@@ -21,6 +21,5 @@ import java.lang.annotation.Target;
 @JdkVersions
 @ParameterizedTest(name = "{1} with {0}: {displayName}")
 @ArgumentsSource(GradleAndJdkArgumentsProvider.class)
-@ExtendWith(DisabledIfNoArgumentsProvided.class)
 public @interface GradleWithJdkTest {
 }

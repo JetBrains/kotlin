@@ -306,6 +306,7 @@ junitTags.forEach { junitTag ->
             maxParallelForks = maxParallelTestForks
 
             systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
+            systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
             if (junitTag in requiresKotlinNative) {
                 applyKotlinNativeFromCurrentBranchIfNeeded()
             }

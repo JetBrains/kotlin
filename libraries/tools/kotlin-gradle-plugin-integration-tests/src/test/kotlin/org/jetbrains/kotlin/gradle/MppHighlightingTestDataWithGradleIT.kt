@@ -238,6 +238,5 @@ internal class MppHighlightingTestDataWithGradleIT : KGPBaseTest() {
     @GradleTestVersions
     @ParameterizedTest(name = "{0} - {1} - {2} - {3}: {displayName}")
     @ArgumentsSource(GradleAndMppHighlightingProvider::class)
-    @ExtendWith(DisabledIfNoArgumentsProvided::class)
     annotation class GradleWithMppHighlightingTest
 }
