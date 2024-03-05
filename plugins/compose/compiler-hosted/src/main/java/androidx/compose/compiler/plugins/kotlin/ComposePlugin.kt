@@ -80,6 +80,10 @@ object ComposeConfiguration {
         CompilerConfigurationKey<List<String>>(
             "Path to stability configuration file"
         )
+    val TEST_STABILITY_CONFIG_KEY =
+        CompilerConfigurationKey<Set<String>>(
+            "Set of stable classes to be merged with configuration file, used for testing."
+        )
     val TRACE_MARKERS_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Include composition trace markers in generated code")
 }
@@ -453,6 +457,10 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                 }
                 stableTypeMatchers.addAll(matchers)
             }
+            val testingMatchers = configuration.get(ComposeConfiguration.TEST_STABILITY_CONFIG_KEY)
+                ?.map { FqNameMatcher(it) }
+                ?: emptySet()
+            stableTypeMatchers.addAll(testingMatchers)
 
             return ComposeIrGenerationExtension(
                 liveLiteralsEnabled = liveLiteralsEnabled,
