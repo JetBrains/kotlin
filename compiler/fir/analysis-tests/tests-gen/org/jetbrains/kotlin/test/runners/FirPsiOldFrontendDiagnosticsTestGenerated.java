@@ -44222,6 +44222,30 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("constructorVsCompanionMember.kt")
+        public void testConstructorVsCompanionMember() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/ambiguousTypeReferences/constructorVsCompanionMember.kt");
+        }
+
+        @Test
+        @TestMetadata("constructorVsSyntheticValues.kt")
+        public void testConstructorVsSyntheticValues() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/ambiguousTypeReferences/constructorVsSyntheticValues.kt");
+        }
+
+        @Test
+        @TestMetadata("constructorVsSyntheticValuesPrioritized.kt")
+        public void testConstructorVsSyntheticValuesPrioritized() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/ambiguousTypeReferences/constructorVsSyntheticValuesPrioritized.kt");
+        }
+
+        @Test
+        @TestMetadata("constructorVsTopLevel.kt")
+        public void testConstructorVsTopLevel() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/ambiguousTypeReferences/constructorVsTopLevel.kt");
+        }
+
+        @Test
         @TestMetadata("qualifierEnumEntryOrCompanionMemberCase.kt")
         public void testQualifierEnumEntryOrCompanionMemberCase() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/ambiguousTypeReferences/qualifierEnumEntryOrCompanionMemberCase.kt");

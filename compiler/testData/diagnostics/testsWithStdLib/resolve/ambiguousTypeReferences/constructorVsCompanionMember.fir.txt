@@ -1,0 +1,62 @@
+FILE: constructorVsCompanionMember.kt
+    package bar
+
+    public final class Owner : R|kotlin/Any| {
+        public constructor(): R|bar/Owner| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|bar/Owner.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun Foo(string: R|kotlin/String?|): R|kotlin/Unit| {
+            }
+
+            public final class Foo : R|kotlin/Any| {
+                public constructor(str: R|kotlin/String|): R|bar/Owner.Companion.Foo| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final val str: R|kotlin/String| = R|<local>/str|
+                    public get(): R|kotlin/String|
+
+            }
+
+            public final fun Bar(string: R|kotlin/String|): R|kotlin/Unit| {
+            }
+
+            public final class Bar : R|kotlin/Any| {
+                public constructor(str: R|kotlin/String?|): R|bar/Owner.Companion.Bar| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final val str: R|kotlin/String?| = R|<local>/str|
+                    public get(): R|kotlin/String?|
+
+            }
+
+            public final val foo: R|kotlin/Unit| = this@R|bar/Owner.Companion|.R|bar/Owner.Companion.Foo|(String(1))
+                public get(): R|kotlin/Unit|
+
+            public final val bar: R|kotlin/Unit| = this@R|bar/Owner.Companion|.R|bar/Owner.Companion.Bar|(String(2))
+                public get(): R|kotlin/Unit|
+
+        }
+
+        public final val foo: R|bar/Owner.Companion.Foo| = R|bar/Owner.Companion.Foo.Foo|(String(3))
+            public get(): R|bar/Owner.Companion.Foo|
+
+        public final val bar: R|bar/Owner.Companion.Bar| = R|bar/Owner.Companion.Bar.Bar|(String(4))
+            public get(): R|bar/Owner.Companion.Bar|
+
+    }
+    public final val ownerFoo: R|kotlin/Unit| = Q|bar/Owner|.R|bar/Owner.Companion.Foo|(String(1))
+        public get(): R|kotlin/Unit|
+    public final val ownerCompanionFoo: R|bar/Owner.Companion.Foo| = Q|bar/Owner.Companion|.R|bar/Owner.Companion.Foo.Foo|(String(2))
+        public get(): R|bar/Owner.Companion.Foo|
+    public final val ownerBar: R|kotlin/Unit| = Q|bar/Owner|.R|bar/Owner.Companion.Bar|(String(3))
+        public get(): R|kotlin/Unit|
+    public final val ownerCompanionBar: R|bar/Owner.Companion.Bar| = Q|bar/Owner.Companion|.R|bar/Owner.Companion.Bar.Bar|(String(4))
+        public get(): R|bar/Owner.Companion.Bar|

@@ -1,0 +1,44 @@
+package
+
+package bar {
+    public val ownerBar: kotlin.Unit
+    public val ownerCompanionBar: bar.Owner.Companion.Bar
+    public val ownerCompanionFoo: bar.Owner.Companion.Foo
+    public val ownerFoo: kotlin.Unit
+
+    public final class Owner {
+        public constructor Owner()
+        public final val bar: bar.Owner.Companion.Bar
+        public final val foo: bar.Owner.Companion.Foo
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public companion object Companion {
+            private constructor Companion()
+            public final val bar: kotlin.Unit
+            public final val foo: kotlin.Unit
+            public final fun Bar(/*0*/ string: kotlin.String): kotlin.Unit
+            public final fun Foo(/*0*/ string: kotlin.String?): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public final class Bar {
+                public constructor Bar(/*0*/ str: kotlin.String?)
+                public final val str: kotlin.String?
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            public final class Foo {
+                public constructor Foo(/*0*/ str: kotlin.String)
+                public final val str: kotlin.String
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+    }
+}

@@ -1,0 +1,23 @@
+FILE: Foo.kt
+    package bar
+
+    public final fun Foo(string: R|kotlin/String?|): R|kotlin/Unit| {
+    }
+    public final class Foo : R|kotlin/Any| {
+        public constructor(str: R|kotlin/String|): R|bar/Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val str: R|kotlin/String| = R|<local>/str|
+            public get(): R|kotlin/String|
+
+    }
+    public final val foo: R|bar/Foo| = R|bar/Foo.Foo|(String(1))
+        public get(): R|bar/Foo|
+    public final val barFoo: R|kotlin/Unit| = Q|bar|.R|bar/Foo|(String(2))
+        public get(): R|kotlin/Unit|
+FILE: another.kt
+    package foo
+
+    public final val foo: R|bar/Foo| = R|bar/Foo.Foo|(String(3))
+        public get(): R|bar/Foo|
