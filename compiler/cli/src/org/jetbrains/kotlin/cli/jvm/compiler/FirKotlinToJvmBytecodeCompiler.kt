@@ -158,7 +158,6 @@ object FirKotlinToJvmBytecodeCompiler {
         val fir2IrAndIrActualizerResult =
             firResult.convertToIrAndActualizeForJvm(fir2IrExtensions, configuration, diagnosticsReporter, irGenerationExtensions)
 
-        performanceManager?.notifyGenerationStarted()
         val generationState = runBackend(
             fir2IrExtensions,
             fir2IrAndIrActualizerResult,
@@ -167,8 +166,6 @@ object FirKotlinToJvmBytecodeCompiler {
 
         FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
 
-        performanceManager?.notifyIRGenerationFinished()
-        performanceManager?.notifyGenerationFinished()
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         return firResult to generationState

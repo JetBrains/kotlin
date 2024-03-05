@@ -136,15 +136,11 @@ fun compileModulesUsingFrontendIrAndLightTree(
     val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
     val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment)
 
-    performanceManager?.notifyGenerationStarted()
     val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment, performanceManager)
 
     diagnosticsReporter.reportToMessageCollector(
         messageCollector, moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     )
-
-    performanceManager?.notifyIRGenerationFinished()
-    performanceManager?.notifyGenerationFinished()
 
     return writeOutputsIfNeeded(
         project,
@@ -236,6 +232,7 @@ fun generateCodeFromIr(
         environment.diagnosticsReporter
     ).build()
 
+    performanceManager?.notifyGenerationStarted()
     performanceManager?.notifyIRLoweringStarted()
     generationState.beforeCompile()
     codegenFactory.generateModuleInFrontendIRMode(
@@ -255,6 +252,9 @@ fun generateCodeFromIr(
     }
     CodegenFactory.doCheckCancelled(generationState)
     generationState.factory.done()
+    performanceManager?.notifyIRGenerationFinished()
+
+    performanceManager?.notifyGenerationFinished()
 
     return ModuleCompilerOutput(generationState)
 }

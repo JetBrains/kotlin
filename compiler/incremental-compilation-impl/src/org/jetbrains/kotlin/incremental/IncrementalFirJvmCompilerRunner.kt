@@ -269,7 +269,6 @@ open class IncrementalFirJvmCompilerRunner(
                 extensions, configuration, compilerEnvironment.diagnosticsReporter, irGenerationExtensions,
             )
 
-            performanceManager?.notifyGenerationStarted()
             val irInput = ModuleCompilerIrBackendInput(
                 targetId,
                 configuration,
@@ -281,9 +280,6 @@ open class IncrementalFirJvmCompilerRunner(
             )
 
             val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment, performanceManager)
-
-            performanceManager?.notifyIRGenerationFinished()
-            performanceManager?.notifyGenerationFinished()
 
             diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
 
