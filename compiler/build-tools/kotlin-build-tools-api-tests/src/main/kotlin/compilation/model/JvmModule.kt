@@ -40,7 +40,7 @@ class JvmModule(
         val stdlibLocation =
             KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath() // compile against the provided stdlib
         val dependencyFiles = dependencies.map { it.location }.plusElement(stdlibLocation)
-        val compilationConfig = project.compilationService.makeJvmCompilationConfiguration()
+        val compilationConfig = BaseTest.compilationService.makeJvmCompilationConfiguration()
         compilationConfigAction(compilationConfig)
         compilationConfig.useLogger(kotlinLogger)
         val defaultCompilationArguments = listOf(
@@ -50,7 +50,7 @@ class JvmModule(
             "-cp", dependencyFiles.joinToString(File.pathSeparator),
             "-module-name", moduleName,
         )
-        return project.compilationService.compileJvm(
+        return BaseTest.compilationService.compileJvm(
             project.projectId,
             strategyConfig,
             compilationConfig,
@@ -60,8 +60,10 @@ class JvmModule(
     }
 
     private fun generateClasspathSnapshot(dependency: Dependency): Path {
-        val snapshot =
-            project.compilationService.calculateClasspathSnapshot(dependency.location.toFile(), ClassSnapshotGranularity.CLASS_MEMBER_LEVEL)
+        val snapshot = BaseTest.compilationService.calculateClasspathSnapshot(
+            dependency.location.toFile(),
+            ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
+        )
         val hash = snapshot.classSnapshots.values
             .filterIsInstance<AccessibleClassSnapshot>()
             .withIndex()

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
-import org.jetbrains.kotlin.buildtools.api.CompilationService
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -18,7 +17,6 @@ class Project(
     val projectDirectory: Path,
 ) {
     val projectId = ProjectId.ProjectUUID(UUID.randomUUID())
-    val compilationService = CompilationService.loadImplementation(this.javaClass.classLoader)
 
     fun module(
         moduleName: String,
@@ -37,7 +35,7 @@ class Project(
     }
 
     fun endCompilationRound() {
-        compilationService.finishProjectCompilation(projectId)
+        BaseTest.compilationService.finishProjectCompilation(projectId)
     }
 }
 

@@ -5,16 +5,14 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests
 
-import org.jetbrains.kotlin.buildtools.api.CompilationService
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.BaseTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 @Disabled("Example tests for evaluation purposes of the DSL")
-class ExampleCompatibilityTest {
-    private val compilationService = CompilationService.loadImplementation(ExampleCompatibilityTest::class.java.classLoader)
-
+class ExampleCompatibilityTest : BaseTest() {
     @Test
     @DisplayName("Sample compatibility test that is run as part of each test suit")
     fun testDefaultNonIncrementalSettings() {

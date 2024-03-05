@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
-import org.jetbrains.kotlin.buildtools.api.CompilationService
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.provider.Arguments
@@ -14,9 +13,8 @@ import java.util.stream.Stream
 import kotlin.streams.asStream
 
 class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
-    private val compilationService = CompilationService.loadImplementation(this.javaClass.classLoader)
-
     override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+        val compilationService = BaseTest.compilationService
         return sequenceOf(
             named("in-process", compilationService.makeCompilerExecutionStrategyConfiguration().useInProcessStrategy()),
             named("within daemon", compilationService.makeCompilerExecutionStrategyConfiguration().useDaemonStrategy(emptyList())),

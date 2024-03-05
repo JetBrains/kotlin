@@ -10,7 +10,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 
 @TestDataPath("\$CONTENT_ROOT/../main/resources/modules")
-abstract class BaseCompilationTest {
+abstract class BaseCompilationTest : BaseTest() {
     @TempDir
     lateinit var workingDirectory: Path
 }
