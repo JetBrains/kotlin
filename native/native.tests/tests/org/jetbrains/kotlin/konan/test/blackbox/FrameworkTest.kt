@@ -14,18 +14,15 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.doFileCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.createTestProvider
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.KtAssert.fail
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.io.FileWriter
 import kotlin.time.Duration
 
 @TestDataPath("\$PROJECT_ROOT")
@@ -83,7 +80,7 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         objCFrameworkCompilation.result.assertSuccess()
 
         val fileCheckDump = buildDir.resolve("out.$fileCheckStage.ll").also { assert(it.exists()) }
-        val result = doFileCheck(testCase.checks.fileCheckMatcher!!, fileCheckDump)
+        val result = testCase.checks.fileCheckMatcher!!.doFileCheck(fileCheckDump)
         if (!(result.stdout.isEmpty() && result.stderr.isEmpty())) {
             val shortOutText = result.stdout.lines().take(100)
             val shortErrText = result.stderr.lines().take(100)

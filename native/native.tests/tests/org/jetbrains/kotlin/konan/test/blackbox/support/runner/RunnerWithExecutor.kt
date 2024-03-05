@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.AbstractRunner.AbstractRun
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.native.executors.ExecuteRequest
 import org.jetbrains.kotlin.native.executors.Executor
@@ -66,7 +65,6 @@ internal open class RunnerWithExecutor(
 
     override fun buildResultHandler(runResult: RunResult): ResultHandler = ResultHandler(
         runResult = runResult,
-        visibleProcessName = "Test process under Executor ${executor::class.simpleName}",
         checks = testRun.checks,
         testRun = testRun,
         loggedParameters = getLoggedParameters()

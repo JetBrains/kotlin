@@ -112,7 +112,6 @@ internal object SharedExecutionBuilder {
 
         override fun buildResultHandler(runResult: RunResult): ResultHandler = ResultHandler(
             runResult = runResult,
-            visibleProcessName = "Test process under ${this::class.simpleName}",
             checks = sharedTestRun.checks,
             testRun = testRun.copy(
                 runParameters = sharedTestRun.runParameters
