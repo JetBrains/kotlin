@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOu
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.project
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
@@ -17,7 +18,8 @@ import org.junit.jupiter.api.DisplayName
 class ExampleCompatibilityCompilationTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Sample compatibility compilation test that is run as part of each test suit")
-    fun myTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    @TestMetadata("jvm-module-1")
+    fun testCompatibilityCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
         project {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))

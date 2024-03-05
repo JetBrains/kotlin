@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.BaseCompilati
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.project
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
@@ -20,7 +21,8 @@ import kotlin.io.path.writeText
 class ExampleIncrementalCompilationTest : BaseCompilationTest() {
     @DisplayName("Sample IC test with a single module")
     @DefaultStrategyAgnosticCompilationTest
-    fun singleModuleTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    @TestMetadata("jvm-module-1")
+    fun testSingleModule(strategyConfig: CompilerExecutionStrategyConfiguration) {
         project {
             val module1 = module("jvm-module-1")
 
@@ -41,7 +43,8 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
 
     @DisplayName("Sample IC test with 2 modules and custom compilation options")
     @DefaultStrategyAgnosticCompilationTest
-    fun twoModulesTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    @TestMetadata("jvm-module-1")
+    fun testTwoModules(strategyConfig: CompilerExecutionStrategyConfiguration) {
         project {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))

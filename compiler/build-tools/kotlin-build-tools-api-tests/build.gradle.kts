@@ -10,6 +10,7 @@ dependencies {
     api(kotlinStdlib())
     compileOnly(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
+    api(projectTests(":compiler:test-infrastructure-utils")) // for `@TestDataPath`/`@TestMetadata`
 
     api(platform(libs.junit.bom))
     compileOnly(libs.junit.jupiter.engine)
@@ -73,9 +74,13 @@ testing {
             register<JvmTestSuite>(suit)
         }
 
+        var configuredIdeaSourceSets = false
         for (implVersion in compatibilityTestsVersions) {
             register<JvmTestSuite>("testCompatibility${implVersion}") {
-                sources.configureCompatibilitySourceDirectories()
+                if (!kotlinBuildProperties.isInIdeaSync || !configuredIdeaSourceSets) {
+                    sources.configureCompatibilitySourceDirectories()
+                    configuredIdeaSourceSets = true
+                }
                 dependencies {
                     if (implVersion.isCurrent) {
                         runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-impl"))

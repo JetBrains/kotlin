@@ -10,12 +10,14 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCo
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
 class ExampleIncrementalScenarioTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Sample scenario DSL IC test with a single module")
-    fun scenario1Test(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    @TestMetadata("jvm-module-1")
+    fun testScenario1(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
             val module1 = module("jvm-module-1")
 
@@ -45,7 +47,8 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
 
     @DisplayName("Another sample scenario DSL IC test with a single module and custom IC options")
     @DefaultStrategyAgnosticCompilationTest
-    fun scenario2Test(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    @TestMetadata("jvm-module-1")
+    fun testScenario2(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
             val module1 = module("jvm-module-1", incrementalCompilationOptionsModifier = { it.keepIncrementalCompilationCachesInMemory(false) })
 
@@ -75,7 +78,8 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
 
     @DisplayName("Sample scenario DSL IC test with two modules")
     @DefaultStrategyAgnosticCompilationTest
-    fun scenario3Test(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    @TestMetadata("jvm-module-1")
+    fun testScenario3(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))
