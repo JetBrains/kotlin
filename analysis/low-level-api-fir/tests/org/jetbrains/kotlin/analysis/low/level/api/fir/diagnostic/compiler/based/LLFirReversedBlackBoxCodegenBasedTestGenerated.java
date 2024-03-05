@@ -21597,6 +21597,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
+    @TestMetadata("overriddenPropertyInComplexHierarchy.kt")
+    public void testOverriddenPropertyInComplexHierarchy() {
+      runTest("compiler/testData/codegen/box/fir/overriddenPropertyInComplexHierarchy.kt");
+    }
+
+    @Test
     @TestMetadata("publicMethodCallViaPackagePrivateCommon.kt")
     public void testPublicMethodCallViaPackagePrivateCommon() {
       runTest("compiler/testData/codegen/box/fir/publicMethodCallViaPackagePrivateCommon.kt");

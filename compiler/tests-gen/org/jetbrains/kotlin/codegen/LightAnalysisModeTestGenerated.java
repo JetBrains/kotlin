@@ -17996,6 +17996,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/fir/notFoundClasses.kt");
     }
 
+    @TestMetadata("overriddenPropertyInComplexHierarchy.kt")
+    public void testOverriddenPropertyInComplexHierarchy() {
+      runTest("compiler/testData/codegen/box/fir/overriddenPropertyInComplexHierarchy.kt");
+    }
+
     @TestMetadata("publicMethodCallViaPackagePrivateCommon.kt")
     public void testPublicMethodCallViaPackagePrivateCommon() {
       runTest("compiler/testData/codegen/box/fir/publicMethodCallViaPackagePrivateCommon.kt");
