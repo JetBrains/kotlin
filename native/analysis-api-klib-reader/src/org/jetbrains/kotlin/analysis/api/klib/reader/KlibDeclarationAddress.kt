@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.analysis.api.klib.reader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import java.nio.file.Path
 
 public sealed class KlibDeclarationAddress {
+    internal abstract val libraryPath: Path
     public abstract val sourceFileName: String?
     public abstract val packageFqName: FqName
 }
@@ -18,13 +20,15 @@ public sealed class KlibClassifierAddress : KlibDeclarationAddress() {
     public abstract val classId: ClassId
 }
 
-public data class KlibClassAddress(
+public data class KlibClassAddress internal constructor(
+    override val libraryPath: Path,
     public override val sourceFileName: String?,
     public override val packageFqName: FqName,
     public override val classId: ClassId,
 ) : KlibClassifierAddress()
 
-public data class KlibTypeAliasAddress(
+public data class KlibTypeAliasAddress internal constructor(
+    override val libraryPath: Path,
     override val packageFqName: FqName,
     override val classId: ClassId,
 ) : KlibClassifierAddress() {
@@ -38,14 +42,17 @@ public sealed class KlibCallableAddress : KlibDeclarationAddress() {
     public abstract val callableName: Name
 }
 
-public data class KlibPropertyAddress(
+public data class KlibPropertyAddress internal constructor(
+    override val libraryPath: Path,
     override val sourceFileName: String?,
     override val packageFqName: FqName,
     override val callableName: Name,
 ) : KlibCallableAddress()
 
-public data class KlibFunctionAddress(
+public data class KlibFunctionAddress internal constructor(
+    override val libraryPath: Path,
     override val sourceFileName: String?,
     override val packageFqName: FqName,
     override val callableName: Name,
 ) : KlibCallableAddress()
+

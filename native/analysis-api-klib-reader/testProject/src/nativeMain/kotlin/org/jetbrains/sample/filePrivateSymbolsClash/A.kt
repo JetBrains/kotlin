@@ -7,4 +7,13 @@
 
 package org.jetbrains.sample.filePrivateSymbolsClash
 
+annotation class A
+
+/**
+ * Defined in A.kt, clashes with B.kt
+ */
+@A
 private fun foo() = 42
+
+@A
+private val fooProperty get() = 42

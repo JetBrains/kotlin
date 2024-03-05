@@ -72,7 +72,7 @@ internal fun readKlibDeclarationAddresses(library: KotlinLibrary): Set<KlibDecla
     return packageMetadataSequence.flatMap { packageMetadata ->
         val packageFragmentProto = parsePackageFragment(packageMetadata)
 
-        with(PackageFragmentReadingContext(packageFragmentProto) ?: return@flatMap emptySet()) {
+        with(PackageFragmentReadingContext(library, packageFragmentProto) ?: return@flatMap emptySet()) {
             packageFragmentProto.readKlibClassAddresses() +
                     packageFragmentProto.readKlibTypeAliasAddresses() +
                     packageFragmentProto.readKlibPropertyAddresses() +
@@ -88,6 +88,7 @@ internal fun ProtoBuf.PackageFragment.readKlibClassAddresses(): Set<KlibClassAdd
         val classId = ClassId.fromString(nameResolver.getQualifiedClassName(classProto.fqName))
         if (classId.isNestedClass) return@mapNotNull null
         KlibClassAddress(
+            libraryPath = libraryPath,
             packageFqName = packageFqName,
             sourceFileName = classProto.getExtensionOrNull(KlibMetadataProtoBuf.classFile)?.let { fileNameId ->
                 nameResolver.strings.getString(fileNameId)
@@ -102,6 +103,7 @@ internal fun ProtoBuf.PackageFragment.readKlibTypeAliasAddresses(): Set<KlibType
     return this.`package`.typeAliasList.map { typeAliasProto ->
         val name = Name.identifier(nameResolver.getString(typeAliasProto.name))
         KlibTypeAliasAddress(
+            libraryPath = libraryPath,
             packageFqName = packageFqName,
             classId = ClassId(packageFqName, name)
         )
@@ -112,6 +114,7 @@ context(PackageFragmentReadingContext)
 internal fun ProtoBuf.PackageFragment.readKlibPropertyAddresses(): Set<KlibPropertyAddress> {
     return `package`.propertyList.map { propertyProto ->
         KlibPropertyAddress(
+            libraryPath = libraryPath,
             sourceFileName = propertyProto.getExtensionOrNull(KlibMetadataProtoBuf.propertyFile)?.let { fileNameId ->
                 nameResolver.strings.getString(fileNameId)
             },
@@ -125,6 +128,7 @@ context(PackageFragmentReadingContext)
 internal fun ProtoBuf.PackageFragment.readKlibFunctionAddresses(): Set<KlibFunctionAddress> {
     return `package`.functionList.map { functionProto ->
         KlibFunctionAddress(
+            libraryPath = libraryPath,
             sourceFileName = functionProto.getExtensionOrNull(KlibMetadataProtoBuf.functionFile)?.let { fileNameId ->
                 nameResolver.getString(fileNameId)
             },

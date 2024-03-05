@@ -111,10 +111,30 @@ Class (org.jetbrains.sample.b.BClass)
   Package Name     : "org.jetbrains.sample.b"
   ClassId          : "org/jetbrains/sample/b/BClass"
 
+Class (org.jetbrains.sample.filePrivateSymbolsClash.A)
+  Source File Name : "A.kt"
+  Package Name     : "org.jetbrains.sample.filePrivateSymbolsClash"
+  ClassId          : "org/jetbrains/sample/filePrivateSymbolsClash/A"
+
+Property (org.jetbrains.sample.filePrivateSymbolsClash.fooProperty)
+  Source File Name : "A.kt"
+  Package Name     : "org.jetbrains.sample.filePrivateSymbolsClash"
+  Property Name    : "fooProperty"
+
 Function (org.jetbrains.sample.filePrivateSymbolsClash.foo)
   Source File Name : "A.kt"
   Package Name     : "org.jetbrains.sample.filePrivateSymbolsClash"
   Function Name    : "foo"
+
+Class (org.jetbrains.sample.filePrivateSymbolsClash.B)
+  Source File Name : "B.kt"
+  Package Name     : "org.jetbrains.sample.filePrivateSymbolsClash"
+  ClassId          : "org/jetbrains/sample/filePrivateSymbolsClash/B"
+
+Property (org.jetbrains.sample.filePrivateSymbolsClash.fooProperty)
+  Source File Name : "B.kt"
+  Package Name     : "org.jetbrains.sample.filePrivateSymbolsClash"
+  Property Name    : "fooProperty"
 
 Function (org.jetbrains.sample.filePrivateSymbolsClash.foo)
   Source File Name : "B.kt"
