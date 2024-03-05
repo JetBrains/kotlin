@@ -113,5 +113,15 @@ fun main(args: Array<String>) {
                 model("debug/stepping")
             }
         }
+
+        testGroup("wasm/wasm.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
+            testClass<AbstractFirWasmTypeScriptExportTest> {
+                model("typescript-export/wasm/")
+            }
+
+            testClass<AbstractK1WasmTypeScriptExportTest> {
+                model("typescript-export/wasm/")
+            }
+        }
     }
 }

@@ -9,7 +9,6 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -107,15 +106,5 @@ public class FirJsCodegenWasmJsInteropTestGenerated extends AbstractFirJsCodegen
   @TestMetadata("vararg.kt")
   public void testVararg() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/vararg.kt");
-  }
-
-  @Nested
-  @TestMetadata("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations")
-  @TestDataPath("$PROJECT_ROOT")
-  public class TypeScriptDeclarations {
-    @Test
-    public void testAllFilesPresentInTypeScriptDeclarations() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop/typeScriptDeclarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
-    }
   }
 }
