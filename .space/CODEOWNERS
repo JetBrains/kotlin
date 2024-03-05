@@ -80,7 +80,6 @@
 /compiler/ir/backend.wasm/ "Kotlin Wasm"
 /compiler/ir/ir.actualization/ "Kotlin Compiler Core" "Kotlin Common Backend" Simon.Ogorodnik
 /compiler/ir/ir.interpreter/ "Kotlin Common Backend"
-/compiler/ir/ir.ir2cfg/ Mikhail.Glukhikh
 /compiler/ir/ir.psi2ir/ "Kotlin JVM"
 /compiler/ir/ir.tree/ "Kotlin Common Backend"
 /compiler/ir/ir.objcinterop/ "Kotlin Native"
@@ -154,7 +153,6 @@
 # UNKNOWN: /compiler/testData/integration/
 /compiler/testData/ir/closureAnnotator/ "Kotlin JVM"
 /compiler/testData/ir/interpreter/ "Kotlin Common Backend"
-/compiler/testData/ir/irCfg/ "Kotlin JVM"
 /compiler/testData/ir/irText/ "Kotlin Compiler Core"
 /compiler/testData/ir/klibLayout/ "Kotlin Common Backend"
 /compiler/testData/ir/sourceRanges/ "Kotlin Compiler Core"
