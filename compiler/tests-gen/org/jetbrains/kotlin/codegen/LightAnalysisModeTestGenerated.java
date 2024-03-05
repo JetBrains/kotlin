@@ -17422,6 +17422,21 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/fakeOverride/kjkWithPackagePrivate.kt");
     }
 
+    @TestMetadata("kt40180.kt")
+    public void testKt40180() {
+      runTest("compiler/testData/codegen/box/fakeOverride/kt40180.kt");
+    }
+
+    @TestMetadata("kt40180_2.kt")
+    public void testKt40180_2() {
+      runTest("compiler/testData/codegen/box/fakeOverride/kt40180_2.kt");
+    }
+
+    @TestMetadata("kt40180_3.kt")
+    public void testKt40180_3() {
+      runTest("compiler/testData/codegen/box/fakeOverride/kt40180_3.kt");
+    }
+
     @TestMetadata("kt49371.kt")
     public void testKt49371() {
       runTest("compiler/testData/codegen/box/fakeOverride/kt49371.kt");
