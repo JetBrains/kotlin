@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.cfa.util
 
 import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.InlineStatus
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.expressions.dispatchReceiver
@@ -40,6 +42,8 @@ class PropertyInitializationInfoCollector(
         private val EMPTY_INFO: PathAwarePropertyInitializationInfo = persistentMapOf(NormalPath to PropertyInitializationInfo.EMPTY)
     }
 
+    private val scopeStack = arrayListOf<ControlFlowGraph>()
+
     override val emptyInfo: PathAwarePropertyInitializationInfo
         get() = EMPTY_INFO
 
@@ -58,6 +62,17 @@ class PropertyInitializationInfoCollector(
         val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: return dataForNode
         if (symbol !in localProperties) return dataForNode
         return addRange(dataForNode, symbol, EventOccurrencesRange.EXACTLY_ONCE)
+            .also { it.setPropertyAsInitializedInsideConstructorIfNeeded(symbol) }
+    }
+
+    private fun PathAwarePropertyInitializationInfo.setPropertyAsInitializedInsideConstructorIfNeeded(
+        symbol: FirPropertySymbol,
+    ) {
+        if (scopeStack.all { (it.declaration as? FirAnonymousFunction)?.inlineStatus == InlineStatus.Inline }) {
+            for (info in values) {
+                info.initializedInsideConstructor.add(symbol)
+            }
+        }
     }
 
     override fun visitVariableDeclarationNode(
@@ -121,6 +136,48 @@ class PropertyInitializationInfoCollector(
     ): PathAwarePropertyInitializationInfo {
         declaredVariableCollector.exitCapturingStatement(node.fir)
         return visitNode(node, data)
+    }
+
+    override fun visitFunctionEnterNode(
+        node: FunctionEnterNode,
+        data: PathAwareControlFlowInfo<PropertyInitializationInfo>
+    ): PathAwareControlFlowInfo<PropertyInitializationInfo> {
+        if (node.owner.declaration is FirAnonymousFunction) {
+            scopeStack.add(node.owner)
+        }
+        return super.visitFunctionEnterNode(node, data)
+    }
+
+    override fun visitFunctionExitNode(
+        node: FunctionExitNode,
+        data: PathAwareControlFlowInfo<PropertyInitializationInfo>
+    ): PathAwareControlFlowInfo<PropertyInitializationInfo> {
+        if (node.owner.declaration is FirAnonymousFunction) {
+            assert(scopeStack.isNotEmpty() && node.owner == scopeStack.last()) {
+                "Unexpected scopeStack's top. Expected: ${node.owner.name}, but got: ${if (scopeStack.isEmpty()) "null" else scopeStack.last().name}"
+            }
+            scopeStack.removeLast()
+        }
+        return super.visitFunctionExitNode(node, data)
+    }
+
+    override fun visitAnonymousObjectEnterNode(
+        node: AnonymousObjectEnterNode,
+        data: PathAwareControlFlowInfo<PropertyInitializationInfo>
+    ): PathAwareControlFlowInfo<PropertyInitializationInfo> {
+        scopeStack.add(node.owner)
+        return super.visitAnonymousObjectEnterNode(node, data)
+    }
+
+    override fun visitAnonymousObjectExpressionExitNode(
+        node: AnonymousObjectExpressionExitNode,
+        data: PathAwareControlFlowInfo<PropertyInitializationInfo>
+    ): PathAwareControlFlowInfo<PropertyInitializationInfo> {
+        assert(scopeStack.isNotEmpty() && node.owner == scopeStack.last()) {
+            "Unexpected scopeStack's top. Expected: ${node.owner.name}, but got: ${if (scopeStack.isEmpty()) "null" else scopeStack.last().name}"
+        }
+        scopeStack.removeLast()
+        return super.visitAnonymousObjectExpressionExitNode(node, data)
     }
 }
 

@@ -47,6 +47,8 @@ class PropertyInitializationInfo(
         val EMPTY = PropertyInitializationInfo()
     }
 
+    val initializedInsideConstructor: MutableSet<FirPropertySymbol> = mutableSetOf()
+
     override val constructor: (PersistentMap<FirPropertySymbol, EventOccurrencesRange>) -> PropertyInitializationInfo =
         ::PropertyInitializationInfo
 }
