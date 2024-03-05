@@ -54,6 +54,14 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.HashSet
 import kotlin.system.measureTimeMillis
 
 class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
@@ -444,6 +452,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val enumWhenTracker = EnumWhenTrackerImpl()
         val importTracker = ImportTrackerImpl()
 
+        val daemonLogPath: Path = getDaemonLogPath()
         val environment = createCompileEnvironment(
             context,
             representativeTarget,
@@ -454,8 +463,13 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             enumWhenTracker,
             importTracker,
             chunk,
-            messageCollector
+            messageCollector,
+            daemonLogPath.toString()
         ) ?: return ABORT
+
+        environment.withProgressReporter { progress ->
+            progress.progress("Daemon log is located at: $daemonLogPath")
+        }
 
         context.testingContext?.buildLogger?.compilingFiles(
             kotlinDirtyFilesHolder.allDirtyFiles,
@@ -569,6 +583,27 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         return OK
     }
 
+    private fun getDaemonLogPath(): Path {
+        System.getProperty("kotlin.jps.daemon.log")?.let { customDaemonLog ->
+            return Paths.get(customDaemonLog).takeIf { Files.isDirectory(it) }
+                ?.run { createTempFile(directory = this) }
+                ?: Paths.get(customDaemonLog)
+        }
+
+        return createTempFile()
+    }
+
+    private fun createTempFile(directory: Path? = null): Path {
+        val timestamp = SimpleDateFormat("HH-mm-dd-MM-yyyy", Locale.getDefault()).format(Date())
+        val suffix = "-$timestamp.log"
+
+        return if (directory != null) {
+            Files.createTempFile(directory, "daemon-log", suffix)
+        } else {
+            Files.createTempFile("daemon-log", suffix)
+        }
+    }
+
     private fun cleanJsOutputs(
         context: CompileContext,
         kotlinChunk: KotlinChunk,
@@ -655,7 +690,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         enumWhenTracker: EnumWhenTracker,
         importTracker: ImportTracker,
         chunk: ModuleChunk,
-        messageCollector: MessageCollectorAdapter
+        messageCollector: MessageCollectorAdapter,
+        daemonLogPath: String? = null
     ): JpsCompilerEnvironment? {
         val compilerServices = with(Services.Builder()) {
             kotlinModuleBuilderTarget.makeServices(
@@ -676,7 +712,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             classesToLoadByParent,
             messageCollector,
             OutputItemsCollectorImpl(),
-            ProgressReporterImpl(context, chunk)
+            ProgressReporterImpl(context, chunk),
+            daemonLogPath
         )
     }
 

@@ -227,6 +227,9 @@ class JpsKotlinCompilerRunner {
         )
         val compilationResult = JpsCompilationResult()
 
+        environment.daemonLogPath?.let {
+            CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.value = it
+        }
         return doWithDaemon(environment) { sessionId, daemon ->
             environment.withProgressReporter { progress ->
                 progress.compilationStarted()
