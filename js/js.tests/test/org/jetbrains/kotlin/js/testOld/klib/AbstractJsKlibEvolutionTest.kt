@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.compatibility.binary.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
+import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinBaseTest
@@ -129,7 +129,7 @@ abstract class AbstractJsKlibEvolutionTest(val compilerType: CompilerType) : Abs
     }
 
     // TODO: ask js folks what to use here.
-    protected open val testChecker get() = V8JsTestChecker
+    protected open val testChecker get() = V8IrJsTestChecker
 
     companion object {
         private val String.klib: String get() = "$this.$KLIB_FILE_EXTENSION"
