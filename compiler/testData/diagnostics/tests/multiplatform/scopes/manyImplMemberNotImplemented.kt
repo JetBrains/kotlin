@@ -1,8 +1,5 @@
 // TARGET_BACKEND: JVM
 // LANGUAGE: +MultiPlatformProjects
-// MUTE_LL_FIR
-//  Reason: MPP diagnostics are reported differentely in the compiler and AA
-
 // MODULE: m1-common
 // FILE: common.kt
 

@@ -4,7 +4,7 @@
 // FILE: common.kt
 expect interface I
 
-<!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface F : I {
+fun interface F : I {
     fun foo()
 }
 

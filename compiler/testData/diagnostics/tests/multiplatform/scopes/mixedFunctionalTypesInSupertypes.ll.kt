@@ -11,7 +11,7 @@ expect interface I2<out R> {
 
 expect interface ExpectInterface : I1<Int>, I2<Int>
 
-interface CommonInterface : <!MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES!>I1<Int>, I2<Int><!>
+interface CommonInterface : I1<Int>, I2<Int>
 
 // MODULE: jvm()()(common)
 // FILE: main.kt

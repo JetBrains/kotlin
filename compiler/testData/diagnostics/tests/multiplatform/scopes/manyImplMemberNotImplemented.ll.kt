@@ -6,8 +6,8 @@
 expect open class C1()
 expect interface I1
 
-open <!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Common1_1<!> : C1(), I1
-open <!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Common1_2<!> : I1, C1()
+open class Common1_1 : C1(), I1
+open class Common1_2 : I1, C1()
 
 expect open class Expect1_1 : C1, I1
 expect open class Expect1_2 : I1, C1
