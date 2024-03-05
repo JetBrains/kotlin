@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests
 
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.BaseTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName

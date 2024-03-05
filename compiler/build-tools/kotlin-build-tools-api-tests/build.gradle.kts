@@ -32,7 +32,7 @@ val compatibilityTestsVersions = listOf(
 )
 
 class BuildToolsVersion(val version: KotlinToolingVersion, val isCurrent: Boolean = false) {
-    override fun toString() = version.toString()
+    override fun toString() = if (isCurrent) "Snapshot" else version.toString()
 }
 
 fun Test.ensureExecutedAgainstExpectedBuildToolsImplVersion(version: BuildToolsVersion) {
@@ -64,6 +64,7 @@ fun SourceSet.configureCompatibilitySourceDirectories() {
     )
 }
 
+// just add a new test suit name here and that's it
 val businessLogicTestSuits = setOf(
     "testExample",
 )

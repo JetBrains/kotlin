@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguratio
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertNoCompiledSources
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertAddedOutputs
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertNoOutputSetChanges
@@ -17,6 +16,9 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertRemo
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
+/**
+ * The preferred way to write incremental compilation tests.
+ */
 class ExampleIncrementalScenarioTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Sample scenario DSL IC test with a single module")
@@ -24,6 +26,7 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
     fun testScenario1(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
             val module1 = module("jvm-module-1")
+            // at this moment, the module is already initially built and ready for further incremental compilations
 
             module1.createFile(
                 "foobar.kt",
@@ -35,7 +38,7 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
 
             module1.compile {
                 assertCompiledSources("foobar.kt")
-                assertAddedOutputs("FoobarKt.class")
+                assertAddedOutputs("FoobarKt.class") // specify only the difference
             }
 
             module1.deleteFile(
@@ -44,7 +47,7 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
 
             module1.compile {
                 assertNoCompiledSources()
-                assertRemovedOutputs("FoobarKt.class")
+                assertRemovedOutputs("FoobarKt.class") // specify only the difference
             }
         }
     }
@@ -54,6 +57,7 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
     @TestMetadata("jvm-module-1")
     fun testScenario2(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
+            // compilation options may be modified
             val module1 = module("jvm-module-1", incrementalCompilationOptionsModifier = { it.keepIncrementalCompilationCachesInMemory(false) })
 
             module1.createFile(
@@ -96,6 +100,7 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
                 }
             )
 
+            // you should handle the right order of compilation between modules yourself
             module1.compile {
                 assertCompiledSources("bar.kt")
                 assertNoOutputSetChanges()

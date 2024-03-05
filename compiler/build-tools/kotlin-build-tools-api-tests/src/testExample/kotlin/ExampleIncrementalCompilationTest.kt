@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguratio
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertLogContainsPatterns
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.project
@@ -18,6 +17,9 @@ import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
+/**
+ * Avoid using this DSL unless you face a scenario that can't be solved within the scenario DSL
+ */
 class ExampleIncrementalCompilationTest : BaseCompilationTest() {
     @DisplayName("Sample IC test with a single module")
     @DefaultStrategyAgnosticCompilationTest
@@ -25,6 +27,8 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
     fun testSingleModule(strategyConfig: CompilerExecutionStrategyConfiguration) {
         project(strategyConfig) {
             val module1 = module("jvm-module-1")
+
+            // this is not the scenario DSL, so the module is not built at this moment
 
             module1.compileIncrementally(SourcesChanges.Unknown)
 
@@ -48,6 +52,9 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))
 
+            // this is not the scenario DSL, so the modules are not built at this moment
+
+            // you should handle the right order of compilation between modules yourself
             module1.compileIncrementally(SourcesChanges.Unknown)
             module2.compileIncrementally(SourcesChanges.Unknown)
 

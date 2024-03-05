@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
+import org.jetbrains.kotlin.buildtools.api.tests.BaseTest
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.provider.Arguments

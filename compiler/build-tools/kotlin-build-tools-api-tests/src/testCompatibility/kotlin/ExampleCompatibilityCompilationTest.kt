@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.buildtools.api.tests
 
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOutputs
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.project
 import org.jetbrains.kotlin.test.TestMetadata

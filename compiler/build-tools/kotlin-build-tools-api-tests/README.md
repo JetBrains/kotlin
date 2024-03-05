@@ -1,44 +1,53 @@
 ## Build Tools API integration tests
 
-This module contains integration tests covering the build tools API implementation using the DSL 
+This module contains integration tests covering the build tools API implementation using the DSL
 built on top of the [Build Tools API](../kotlin-build-tools-api/README.md).
 
 #### How to run
 
-To run all tests for all Gradle plugins use `check` task.
+To run all tests use the `check` task.
 
-The module defines test matrix using the `jvm-test-suite` plugin to cover different combinations of 
-the Build Tools API's and its implementations' versions.
+The module defines test suites using the `jvm-test-suite` plugin.
 
 #### Test suites:
-* `testSnapshotToSnapshot`: runs all tests against the API and implementation of the snapshot version. 
-  * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testSnapshotToSnapshot` to run them
-* `test1.9.20ToSnapshot`: runs all the tests marked with the `CompatibilityTests` annotation against API 1.9.20 and the snapshot implementation
-  * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:test1.9.20ToSnapshot` to run them
-* `testSnapshotTo1.9.20`: runs all the tests marked with the `CompatibilityTests` annotation against the snapshot API and 1.9.20 implementation
-    * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testSnapshotTo1.9.20` to run them
+
+* Compatibility: a special test suit that runs against a set of implementation versions
+    * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testCompatibility1.9.20`
+      to run the tests against BTA implementation 1.9.20
+    * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testCompatibilitySnapshot`
+      to run the tests against the current BTA implementation
+    * Avoid adding new tests here unless you can articulate their necessity as they will be executed multiple times significantly increasing
+      the overall test execution time.
+* Example: provides examples of the DSL usage. Excluded from the `check` task
+    * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testExample` to run them
 
 #### How to work with the tests
 
 Few rules you should follow while writing tests:
+
 - All tests should be written using [JUnit 5 platform](https://junit.org/junit5/docs/current/user-guide/#overview).
-- All the compilation test classes should extend [BaseCompilationTest](./src/testCommon/kotlin/compilation/model/BaseCompilationTest.kt)
-- Consider using the scenario DSL for the incremental compilation tests, an usage example is located [here](src/testExample/kotlin/ExampleIncrementalScenarioTest.kt)
 - Add `@DisplayName(...)` with meaningful description both for test class and methods inside. This will allow developers easier
   to understand what test is about.
-- Don't create one big test suite (class). Consider splitting tests into smaller suites. All tests are running in parallel (except daemon tests)
-  and having small tests suites should improve overall tests running time.
-- Mark the test with the `DefaultStrategyAgnosticCompilationTest` annotation if the test is expected to perform exactly 
-  the same using the daemon or in-process compiler execution strategy. This way the test will be executed using both strategies.
-- If you're writing a test for a specific strategy, consider configuring it manually through `CompilationService.makeCompilerExecutionStrategyConfiguration()` 
+- Don't create one big test class. Consider splitting tests into smaller classes. All tests can run in parallel, thus having small tests
+  classes should improve overall tests running time.
+- Don't create one big test suit. Consider grouping test classes semantically into test suits. Adding a new test suit is as easy as adding
+  an entry to `businessLogicTestSuits` in the [build.gradle.kts](./build.gradle.kts)
+- All test classes should extend [BaseTest](./src/main/kotlin/BaseTest.kt)
+
+The rules specific to compilation tests:
+
+- All the compilation test classes should extend [BaseCompilationTest](./src/main/kotlin/compilation/BaseCompilationTest.kt)
+- Consider using the scenario DSL for the incremental compilation tests, a usage example is
+  located [here](src/testExample/kotlin/ExampleIncrementalScenarioTest.kt)
+- Mark the compilation test with the `DefaultStrategyAgnosticCompilationTest` annotation if the test is expected to perform exactly
+  the same using the daemon or in-process compiler execution strategy.
+- If you're writing a test for a specific strategy, consider configuring it manually
+  through `CompilationService.makeCompilerExecutionStrategyConfiguration()`
 
 #### The scenario DSL
 
-The incremental compilation tests written using the scenario DSL are subject to some optimizations and automatic checks, allowing you to avoid boilerplate.
+The incremental compilation tests written using the scenario DSL are subject to some optimizations and automatic checks, allowing you to
+avoid boilerplate.
 
-* Creating a module (e.g. `val module1 = module("jvm-module-1")`), you already have this module compiled non-incrementally 
-to apply further incremental changes. If this module is reused between different tests, the initial compilation output will be reused
-instead of recompiling it again and again.
-* Methods for applying modifications allow to perform automatic checks of resulting outputs files after the compilation, 
-so you don't need to create assertions using `assertOutputs`
+Please refer to the example test [class](src/testExample/kotlin/ExampleIncrementalScenarioTest.kt) for more information
 

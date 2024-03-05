@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.ProjectId
+import org.jetbrains.kotlin.buildtools.api.tests.BaseTest
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*

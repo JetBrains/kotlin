@@ -10,10 +10,9 @@ import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.IncrementalJvmCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOutputs
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.CompilationOutcome
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.*
-import java.nio.file.Files
-import java.nio.file.Path
-import java.util.*
 import kotlin.io.path.*
 
 internal class ScenarioModuleImpl(
