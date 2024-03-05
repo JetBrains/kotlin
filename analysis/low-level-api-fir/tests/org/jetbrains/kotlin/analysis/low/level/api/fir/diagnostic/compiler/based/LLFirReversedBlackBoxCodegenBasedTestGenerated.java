@@ -20949,6 +20949,24 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
+    @TestMetadata("kt40180.kt")
+    public void testKt40180() {
+      runTest("compiler/testData/codegen/box/fakeOverride/kt40180.kt");
+    }
+
+    @Test
+    @TestMetadata("kt40180_2.kt")
+    public void testKt40180_2() {
+      runTest("compiler/testData/codegen/box/fakeOverride/kt40180_2.kt");
+    }
+
+    @Test
+    @TestMetadata("kt40180_3.kt")
+    public void testKt40180_3() {
+      runTest("compiler/testData/codegen/box/fakeOverride/kt40180_3.kt");
+    }
+
+    @Test
     @TestMetadata("kt49371.kt")
     public void testKt49371() {
       runTest("compiler/testData/codegen/box/fakeOverride/kt49371.kt");
