@@ -1,4 +1,4 @@
-FILE: constructorVsSyntheticValuesPrioritized.kt
+FILE: constructorVsSyntheticValuesPrioritized.fir.kt
     public final enum class SomeClass : R|kotlin/Enum<SomeClass>| {
         private constructor(): R|SomeClass| {
             super<R|kotlin/Enum<SomeClass>|>()
@@ -32,5 +32,5 @@ FILE: constructorVsSyntheticValuesPrioritized.kt
     }
     public final val resultEntries: R|kotlin/enums/EnumEntries<SomeClass>| = Q|SomeClass|.R|/SomeClass.entries*s|
         public get(): R|kotlin/enums/EnumEntries<SomeClass>|
-    public final val resultEntriesRef: R|kotlin/reflect/KProperty0<kotlin/enums/EnumEntries<SomeClass>>| = Q|SomeClass|::R|/SomeClass.entries*s|
-        public get(): R|kotlin/reflect/KProperty0<kotlin/enums/EnumEntries<SomeClass>>|
+    public final val resultEntriesRef: <ERROR TYPE REF: Ambiguity: entries, [/SomeClass.entries, /SomeClass.entries.entries]> = Q|SomeClass|::<Ambiguity: entries, [/SomeClass.entries, /SomeClass.entries.entries]>#
+        public get(): <ERROR TYPE REF: Ambiguity: entries, [/SomeClass.entries, /SomeClass.entries.entries]>

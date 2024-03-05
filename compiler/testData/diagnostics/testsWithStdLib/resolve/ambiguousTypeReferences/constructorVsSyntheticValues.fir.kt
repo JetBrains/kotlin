@@ -13,7 +13,7 @@ enum class SomeClass {
     }
 }
 
-val resultValues = SomeClass.values()
-val resultValuesRef = SomeClass::values
+val resultValues = SomeClass.<!OVERLOAD_RESOLUTION_AMBIGUITY!>values<!>()
+val resultValuesRef = SomeClass::<!OVERLOAD_RESOLUTION_AMBIGUITY!>values<!>
 val resultEntries = <!DEPRECATED_ACCESS_TO_ENTRIES_AS_QUALIFIER!>SomeClass.entries<!>
 val resultEntriesRef = SomeClass::<!DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE!>entries<!>

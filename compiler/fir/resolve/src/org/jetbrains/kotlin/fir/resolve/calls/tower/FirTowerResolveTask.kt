@@ -269,7 +269,7 @@ internal open class FirTowerResolveTask(
                     else -> null
                 }
             ),
-            info, TowerGroup.Qualifier
+            info, TowerGroup.QualifierOrClassifier
         )
     }
 
@@ -284,7 +284,7 @@ internal open class FirTowerResolveTask(
         val scope = qualifierReceiver.classifierScope() ?: return
         processLevel(
             scope.toScopeTowerLevel(constructorFilter = ConstructorFilter.OnlyNested), info,
-            TowerGroup.Classifier
+            TowerGroup.QualifierOrClassifier
         )
     }
 

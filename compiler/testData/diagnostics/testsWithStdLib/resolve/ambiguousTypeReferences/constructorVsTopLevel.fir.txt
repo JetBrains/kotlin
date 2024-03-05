@@ -14,8 +14,8 @@ FILE: Foo.kt
     }
     public final val foo: R|bar/Foo| = R|bar/Foo.Foo|(String(1))
         public get(): R|bar/Foo|
-    public final val barFoo: R|kotlin/Unit| = Q|bar|.R|bar/Foo|(String(2))
-        public get(): R|kotlin/Unit|
+    public final val barFoo: R|bar/Foo| = Q|bar|.R|bar/Foo.Foo|(String(2))
+        public get(): R|bar/Foo|
 FILE: another.kt
     package foo
 
