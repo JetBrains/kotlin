@@ -17802,6 +17802,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("propertyInvokeInsidePCLALambda.kt")
+        public void testPropertyInvokeInsidePCLALambda() {
+          runTest("compiler/testData/diagnostics/tests/inference/builderInference/propertyInvokeInsidePCLALambda.kt");
+        }
+
+        @Test
         @TestMetadata("propertySubstitution.kt")
         public void testPropertySubstitution() {
           runTest("compiler/testData/diagnostics/tests/inference/builderInference/propertySubstitution.kt");

@@ -2706,6 +2706,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
+      @TestMetadata("propertyInvokeInsidePCLALambda.kt")
+      public void testPropertyInvokeInsidePCLALambda() {
+        runTest("compiler/testData/codegen/box/builderInference/propertyInvokeInsidePCLALambda.kt");
+      }
+
+      @Test
       @TestMetadata("receiverUsesOuterTVButReturnTypeIsProper.kt")
       public void testReceiverUsesOuterTVButReturnTypeIsProper() {
         runTest("compiler/testData/codegen/box/builderInference/receiverUsesOuterTVButReturnTypeIsProper.kt");

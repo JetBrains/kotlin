@@ -111,13 +111,10 @@ class FirCallResolver(
             resolvedReceiver.replaceResolvedToCompanionObject(candidate.isFromCompanionObjectTypeScope)
         }
 
+        candidate?.updateSourcesOfReceivers()
+
         // We need desugaring
         val resultFunctionCall = if (candidate != null && candidate.callInfo != result.info) {
-            // This branch support case for the call of the type `a.invoke()`
-            // 1. Handle candidate for `a`
-            (resolvedReceiver?.toReference(session) as? FirNamedReferenceWithCandidate)?.candidate?.updateSourcesOfReceivers()
-            // 2. Handle candidate for `invoke`
-            candidate.updateSourcesOfReceivers()
             functionCall.copyAsImplicitInvokeCall {
                 explicitReceiver = candidate.callInfo.explicitReceiver
                 dispatchReceiver = candidate.dispatchReceiverExpression()
@@ -126,7 +123,6 @@ class FirCallResolver(
                 contextReceiverArguments.addAll(candidate.contextReceiverArguments())
             }
         } else {
-            candidate?.updateSourcesOfReceivers()
             functionCall
         }
         val type = components.typeFromCallee(resultFunctionCall).type

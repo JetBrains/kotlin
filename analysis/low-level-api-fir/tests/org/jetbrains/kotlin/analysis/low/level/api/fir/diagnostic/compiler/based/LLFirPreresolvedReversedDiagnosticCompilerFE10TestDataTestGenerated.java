@@ -17808,6 +17808,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("propertyInvokeInsidePCLALambda.kt")
+        public void testPropertyInvokeInsidePCLALambda() {
+          runTest("compiler/testData/diagnostics/tests/inference/builderInference/propertyInvokeInsidePCLALambda.kt");
+        }
+
+        @Test
         @TestMetadata("propertySubstitution.kt")
         public void testPropertySubstitution() {
           runTest("compiler/testData/diagnostics/tests/inference/builderInference/propertySubstitution.kt");
