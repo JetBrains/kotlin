@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.coneType
@@ -24,6 +26,7 @@ private object ComponentFunctionSymbolKey : FirDeclarationDataKey()
 private object SourceElementKey : FirDeclarationDataKey()
 private object ModuleNameKey : FirDeclarationDataKey()
 private object DanglingTypeConstraintsKey : FirDeclarationDataKey()
+private object KlibSourceFile : FirDeclarationDataKey()
 
 var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
 var FirProperty.isReferredViaField: Boolean? by FirDeclarationDataRegistry.data(IsReferredViaField)
@@ -32,11 +35,26 @@ var FirProperty.componentFunctionSymbol: FirNamedFunctionSymbol? by FirDeclarati
 var FirClassLikeDeclaration.sourceElement: SourceElement? by FirDeclarationDataRegistry.data(SourceElementKey)
 var FirRegularClass.moduleName: String? by FirDeclarationDataRegistry.data(ModuleNameKey)
 
+/**
+ * @see [FirBasedSymbol.klibSourceFile]
+ */
+var FirDeclaration.klibSourceFile: SourceFile? by FirDeclarationDataRegistry.data(KlibSourceFile)
+
 val FirClassLikeSymbol<*>.sourceElement: SourceElement?
     get() = fir.sourceElement
 
 val FirPropertySymbol.fromPrimaryConstructor: Boolean
     get() = fir.fromPrimaryConstructor ?: false
+
+/**
+ * Declarations like classes, functions, and properties can encode their containing Kotlin source file into .klibs using
+ * klib specific metadata extensions.
+ * If present in the klib and deserialized by the corresponding deserializer/symbol provider,
+ * then this source file is available here
+ * @see FirDeclaration.klibSourceFile
+ */
+val FirBasedSymbol<out FirDeclaration>.klibSourceFile: SourceFile?
+    get() = fir.klibSourceFile
 
 /**
  * Constraint without corresponding type argument
