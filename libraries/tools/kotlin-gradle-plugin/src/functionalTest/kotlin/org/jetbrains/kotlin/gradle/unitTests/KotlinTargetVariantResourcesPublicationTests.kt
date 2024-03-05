@@ -38,6 +38,7 @@ class KotlinTargetVariantResourcesPublicationTests {
                 { linuxX64() },
                 { wasmWasi() },
                 { wasmJs() },
+                { js() },
             )
         )
     }
@@ -52,6 +53,7 @@ class KotlinTargetVariantResourcesPublicationTests {
                 { linuxX64() },
                 { wasmWasi() },
                 { wasmJs() },
+                { js() },
             )
         )
     }
@@ -68,6 +70,7 @@ class KotlinTargetVariantResourcesPublicationTests {
                 { linuxX64() },
                 { wasmWasi() },
                 { wasmJs() },
+                { js() },
             )
         )
     }

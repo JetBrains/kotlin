@@ -32,6 +32,7 @@ kotlin {
         iosArm64(),
         wasmJs(),
         wasmWasi(),
+        js(),
     ).forEach { target ->
         val relativeResourcePlacement = provider { File("embed/${project.name}") }
         val sourceSetPathProvider: (KotlinSourceSet) -> (Provider<File>) = { sourceSet ->

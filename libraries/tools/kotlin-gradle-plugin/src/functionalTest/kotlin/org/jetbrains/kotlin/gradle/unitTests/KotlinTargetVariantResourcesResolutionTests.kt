@@ -74,10 +74,11 @@ class KotlinTargetVariantResourcesResolutionTests {
     }
 
     @Test
-    fun `test direct dependency - for wasmJs and wasmWasi targets - when using artifact view`() {
+    fun `test direct dependency - for wasmJs, wasmWasi, js targets - when using artifact view`() {
         listOf<TargetProvider>(
             { wasmJs() },
             { wasmWasi() },
+            { js() },
         ).forEach { target ->
             testDirectDependencyOnResourcesProducer(
                 producerTarget = { target() },
@@ -135,6 +136,25 @@ class KotlinTargetVariantResourcesResolutionTests {
     }
 
     @Test
+    fun `test direct dependency - for js - when using resources configuration`() {
+        testDirectDependencyOnResourcesProducer(
+            producerTarget = { js() },
+            consumerTarget = { js() },
+            resolutionStrategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration,
+            filterResolvedFiles = {
+                it.filterNot {
+                    it.path.contains("kotlin-stdlib-js") || it.path.contains("kotlin-dom-api-compat")
+                }.toSet()
+            },
+            expectedResult = { _, producer ->
+                hashSetOf(
+                    producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/js/producer.kotlin_resources.zip"),
+                )
+            },
+        )
+    }
+
+    @Test
     fun `test transitive dependency - without resources in middle project - with configuration`() {
         testTransitiveDependencyOnResourcesProducer(
             targetProvider = { linuxX64() },
@@ -185,6 +205,44 @@ class KotlinTargetVariantResourcesResolutionTests {
                 expectedResult = { _, _, producer ->
                     setOf(
                         producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/wasmJs/producer.kotlin_resources.zip"),
+                    )
+                }
+            )
+        }
+    }
+
+    @Test
+    fun `test transitive dependency - without resources in middle project in js - with configuration`() {
+        dependencyScopesWithResources().forEach { dependencyScope ->
+            testTransitiveDependencyOnResourcesProducer(
+                targetProvider = { js() },
+                resolutionStrategy = KotlinTargetResourcesResolutionStrategy.VariantReselection,
+                dependencyScope = dependencyScope,
+                filterResolvedFiles = {
+                    it.filterNot {
+                        it.path.contains("kotlin-stdlib-js") || it.path.contains("kotlin-dom-api-compat")
+                    }.toSet()
+                },
+                expectedResult = { _, _, producer ->
+                    setOf(
+                        producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/js/producer.kotlin_resources.zip"),
+                    )
+                }
+            )
+        }
+    }
+
+    @Test
+    fun `test transitive dependency - without resources in middle project in js - with artifact view`() {
+        dependencyScopesWithResources().forEach { dependencyScope ->
+            testTransitiveDependencyOnResourcesProducer(
+                targetProvider = { js() },
+                resolutionStrategy = KotlinTargetResourcesResolutionStrategy.VariantReselection,
+                dependencyScope = dependencyScope,
+                filterResolvedFiles = { it },
+                expectedResult = { _, _, producer ->
+                    setOf(
+                        producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/js/producer.kotlin_resources.zip"),
                     )
                 }
             )
@@ -273,6 +331,7 @@ class KotlinTargetVariantResourcesResolutionTests {
         val targetsToTest = listOf<TargetProvider>(
             { wasmJs() },
             { wasmWasi() },
+            { js() },
             { linuxX64() },
             { iosArm64() },
         )
@@ -335,9 +394,6 @@ class KotlinTargetVariantResourcesResolutionTests {
         return listOf(
             { this::implementation },
             { this::api },
-            // What are these supposed to mean for resources?
-            // { this::compileOnly }, ?
-            // { this::runtimeOnly }, ?
         )
     }
 
