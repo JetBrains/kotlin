@@ -26,6 +26,7 @@
          <trust group="org.jetbrains.kotlin" name="kotlin-compiler-runner" version="1\.9\.3[0-9](-.+)?|2\.0\.0(-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-daemon-client" version="1\.9\.3[0-9](-.+)?|2\.0\.0(-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-daemon-embeddable" version="1\.9\.3[0-9](-.+)?|2\.0\.0(-.+)?" regex="true"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-dom-api-compat" version="1\.9\.3[0-9](-.+)?|2\.0\.0(-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin" version="1\.9\.3[0-9](-.+)?|2\.0\.0(-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-annotations" version="1\.9\.3[0-9](-.+)?|2\.0\.0(-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-api" version="1\.9\.3[0-9](-.+)?|2\.0\.0(-.+)?" regex="true"/>

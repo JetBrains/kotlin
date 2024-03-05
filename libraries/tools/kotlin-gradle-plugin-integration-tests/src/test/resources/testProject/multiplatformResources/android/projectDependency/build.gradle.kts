@@ -38,6 +38,7 @@ kotlin {
         linuxX64(),
         wasmJs(),
         wasmWasi(),
+        js(),
     ).forEach { target ->
         val fontsFilter = if (target is KotlinAndroidTarget) listOf("fonts/*") else emptyList()
         val relativeResourcePlacement = provider { File("embed/subproject") }

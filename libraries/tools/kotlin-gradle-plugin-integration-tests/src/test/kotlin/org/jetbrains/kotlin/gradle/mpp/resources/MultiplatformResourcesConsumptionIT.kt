@@ -74,6 +74,7 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
                 "linuxX64",
                 "wasmJs",
                 "wasmWasi",
+                "js",
             ) + if (HostManager.hostIsMac) listOf("iosArm64") else emptyList()
 
             resolvableTargets.forEach { target ->

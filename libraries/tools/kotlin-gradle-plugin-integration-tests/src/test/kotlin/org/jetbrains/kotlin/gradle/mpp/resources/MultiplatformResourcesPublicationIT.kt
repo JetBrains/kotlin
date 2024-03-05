@@ -129,6 +129,23 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
         )
     }
 
+    @DisplayName("Multiplatform resources publication for js target")
+    @GradleAndroidTest
+    fun testJsTargetResourcesPublication(
+        gradleVersion: GradleVersion,
+        androidVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk,
+    ) {
+        testEmbeddedResources(
+            gradleVersion,
+            androidVersion,
+            providedJdk,
+            publicationTask = ":publishJsPublicationToMavenRepository",
+            publishedArchive = "build/repo/test/publication-js/1.0/publication-js-1.0-kotlin_resources.kotlin_resources.zip",
+            referenceName = "js",
+        )
+    }
+
     @DisplayName("Multiplatform resources publication when a previously non-existent source set with resource is added")
     @GradleAndroidTest
     fun testNativeTargetResourcesPublicationWithNewSourceSet(

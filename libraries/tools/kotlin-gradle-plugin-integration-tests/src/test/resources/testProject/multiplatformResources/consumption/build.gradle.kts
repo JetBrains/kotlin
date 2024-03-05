@@ -22,6 +22,7 @@ kotlin {
         iosSimulatorArm64(),
         wasmJs(),
         wasmWasi(),
+        js(),
     ).forEach { target ->
         val assemblyTask = publication.resolveResources(target)
         tasks.register<Copy>("${target.disambiguationClassifier}ResolveResources") {

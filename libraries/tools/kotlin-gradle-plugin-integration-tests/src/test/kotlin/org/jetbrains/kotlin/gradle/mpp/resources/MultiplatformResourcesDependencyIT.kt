@@ -49,10 +49,12 @@ class MultiplatformResourcesDependencyIT : KGPBaseTest() {
                         ":compileKotlinLinuxX64",
                         ":compileKotlinWasmJs",
                         ":compileKotlinWasmWasi",
+                        ":compileKotlinJs",
                         ":project:compileKotlinJvm",
                         ":project:compileKotlinLinuxX64",
                         ":project:compileKotlinWasmJs",
                         ":project:compileKotlinWasmWasi",
+                        ":project:compileKotlinJs",
                     )
                     if (HostManager.host.family.isAppleFamily) {
                         assertTasksExecuted(
