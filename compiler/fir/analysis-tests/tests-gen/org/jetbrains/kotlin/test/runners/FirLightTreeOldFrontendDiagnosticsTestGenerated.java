@@ -19802,6 +19802,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("complexTypeUnwrapping2.kt")
+        public void testComplexTypeUnwrapping2() {
+          runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/complexTypeUnwrapping2.kt");
+        }
+
+        @Test
         @TestMetadata("kt61717.kt")
         public void testKt61717() {
           runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/kt61717.kt");
