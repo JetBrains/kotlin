@@ -220,7 +220,6 @@ open class IncrementalFirJvmCompilerRunner(
                             emptyList(),
                             incrementalExcludesScope,
                             diagnosticsReporter,
-                            performanceManager
                         )
 
                     // TODO: consider what to do if many compilations find a main class
@@ -279,7 +278,7 @@ open class IncrementalFirJvmCompilerRunner(
                 irActualizedResult
             )
 
-            val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment, performanceManager)
+            val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)
 
             diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
 

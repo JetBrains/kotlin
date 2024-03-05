@@ -95,8 +95,6 @@ object FirKotlinToJvmBytecodeCompiler {
         buildFile: File?,
         module: Module,
     ): Boolean {
-        val performanceManager = compilerConfiguration.get(CLIConfigurationKeys.PERF_MANAGER)
-
         val targetIds = compilerConfiguration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
         val incrementalComponents = compilerConfiguration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
 
@@ -111,7 +109,6 @@ object FirKotlinToJvmBytecodeCompiler {
             messageCollector,
             moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME),
             moduleConfiguration,
-            performanceManager,
             targetIds,
             incrementalComponents,
             extensionRegistrars = FirExtensionRegistrar.getInstances(project),
@@ -259,7 +256,7 @@ object FirKotlinToJvmBytecodeCompiler {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         val generationState = generateCodeFromIr(
-            irInput, ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter), performanceManager
+            irInput, ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
         ).generationState
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -284,7 +281,6 @@ object FirKotlinToJvmBytecodeCompiler {
         override val messageCollector: MessageCollector,
         val renderDiagnosticName: Boolean,
         override val configuration: CompilerConfiguration,
-        val performanceManager: CommonCompilerPerformanceManager?,
         override val targetIds: List<TargetId>?,
         override val incrementalComponents: IncrementalCompilationComponents?,
         override val extensionRegistrars: List<FirExtensionRegistrar>,

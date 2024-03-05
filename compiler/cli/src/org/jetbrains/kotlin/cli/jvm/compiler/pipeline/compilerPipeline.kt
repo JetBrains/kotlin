@@ -117,7 +117,6 @@ fun compileModulesUsingFrontendIrAndLightTree(
         emptyList(),
         null,
         diagnosticsReporter,
-        performanceManager
     )
 
     if (!checkKotlinPackageUsageForLightTree(moduleConfiguration, analysisResults.outputs.flatMap { it.fir })) {
@@ -136,7 +135,7 @@ fun compileModulesUsingFrontendIrAndLightTree(
     val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
     val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment)
 
-    val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment, performanceManager)
+    val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)
 
     diagnosticsReporter.reportToMessageCollector(
         messageCollector, moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
@@ -203,8 +202,7 @@ fun FirResult.convertToIrAndActualizeForJvm(
 
 fun generateCodeFromIr(
     input: ModuleCompilerIrBackendInput,
-    environment: ModuleCompilerEnvironment,
-    performanceManager: CommonCompilerPerformanceManager?
+    environment: ModuleCompilerEnvironment
 ): ModuleCompilerOutput {
     // IR
     val codegenFactory = JvmIrCodegenFactory(
@@ -232,6 +230,7 @@ fun generateCodeFromIr(
         environment.diagnosticsReporter
     ).build()
 
+    val performanceManager = input.configuration[CLIConfigurationKeys.PERF_MANAGER]
     performanceManager?.notifyGenerationStarted()
     performanceManager?.notifyIRLoweringStarted()
     generationState.beforeCompile()
@@ -265,10 +264,10 @@ fun compileModuleToAnalyzedFir(
     previousStepsSymbolProviders: List<FirSymbolProvider>,
     incrementalExcludesScope: AbstractProjectFileSearchScope?,
     diagnosticsReporter: BaseDiagnosticsCollector,
-    performanceManager: CommonCompilerPerformanceManager?
 ): FirResult {
-    performanceManager?.notifyAnalysisStarted()
     val moduleConfiguration = input.configuration
+    val performanceManager = moduleConfiguration[CLIConfigurationKeys.PERF_MANAGER]
+    performanceManager?.notifyAnalysisStarted()
 
     var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
     val rootModuleName = input.targetId.name
