@@ -164,25 +164,14 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
     }
 }
 
+@Suppress("JUnitTestCaseWithNoTests")
 @TestDataPath("\$PROJECT_ROOT")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 class ClassicCompilerOutputTest : CompilerOutputTestBase()
 
+@Suppress("JUnitTestCaseWithNoTests")
 @FirPipeline
 @Tag("frontend-fir")
 @TestDataPath("\$PROJECT_ROOT")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
-class FirCompilerOutputTest : CompilerOutputTestBase() {
-
-    @Test
-    fun testSignatureClashDiagnostics() {
-        // TODO: use the Compiler Core test infrastructure for testing these diagnostics (KT-64393)
-        val rootDir = File("native/native.tests/testData/compilerOutput/SignatureClashDiagnostics")
-        val settings = testRunSettings
-        val lib = compileLibrary(settings, rootDir.resolve("lib.kt")).assertSuccess().resultingArtifact
-        val compilationResult = compileLibrary(settings, rootDir.resolve("main.kt"), dependencies = listOf(lib))
-        val goldenData = rootDir.resolve("output.txt")
-
-        KotlinTestUtils.assertEqualsToFile(goldenData, compilationResult.toOutput())
-    }
-}
+class FirCompilerOutputTest : CompilerOutputTestBase()
