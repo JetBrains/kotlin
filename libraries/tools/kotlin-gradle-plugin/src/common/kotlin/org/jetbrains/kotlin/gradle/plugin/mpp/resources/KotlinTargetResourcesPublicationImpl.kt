@@ -73,9 +73,6 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
 
     override fun canPublishResources(target: KotlinTarget): Boolean {
         if (targetsThatSupportPublication.none { it.isInstance(target) }) return false
-        if (target is KotlinJsIrTarget) {
-            return target.platformType == KotlinPlatformType.wasm
-        }
         if (target is KotlinAndroidTarget) {
             return AndroidGradlePluginVersion.current >= KotlinAndroidTargetResourcesPublication.MIN_AGP_VERSION
         }
