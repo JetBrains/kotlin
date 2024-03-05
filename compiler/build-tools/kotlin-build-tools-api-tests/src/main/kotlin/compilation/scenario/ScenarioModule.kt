@@ -15,23 +15,21 @@ interface ScenarioModule {
      */
     fun changeFile(
         fileName: String,
-        addedOutputs: Set<String> = emptySet(),
-        removedOutputs: Set<String> = emptySet(),
         transform: (String) -> String,
     )
 
     /**
      * Performs registered file deletion.
      */
-    fun deleteFile(fileName: String, removedOutputs: Set<String>)
+    fun deleteFile(fileName: String)
 
     /**
      * Performs registered new file creation.
      */
-    fun createFile(fileName: String, addedOutputs: Set<String>, content: String)
+    fun createFile(fileName: String, content: String)
 
     fun compile(
         forceOutput: LogLevel? = null,
-        assertions: context(Module) CompilationOutcome.() -> Unit = {},
+        assertions: context(Module, ScenarioModule) CompilationOutcome.() -> Unit = {},
     )
 }

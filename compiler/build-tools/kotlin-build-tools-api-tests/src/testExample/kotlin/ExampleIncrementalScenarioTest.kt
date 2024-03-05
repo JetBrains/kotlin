@@ -7,9 +7,13 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertNoCompiledSources
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertAddedOutputs
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertNoOutputSetChanges
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertRemovedOutputs
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
@@ -23,7 +27,6 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
 
             module1.createFile(
                 "foobar.kt",
-                addedOutputs = setOf("FoobarKt.class"),
                 //language=kt
                 """
                 fun foobar() {}
@@ -32,15 +35,16 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
 
             module1.compile {
                 assertCompiledSources("foobar.kt")
+                assertAddedOutputs("FoobarKt.class")
             }
 
             module1.deleteFile(
                 "foobar.kt",
-                removedOutputs = setOf("FoobarKt.class"),
             )
 
             module1.compile {
-                assertCompiledSources()
+                assertNoCompiledSources()
+                assertRemovedOutputs("FoobarKt.class")
             }
         }
     }
@@ -54,7 +58,6 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
 
             module1.createFile(
                 "foobar.kt",
-                addedOutputs = setOf("FoobarKt.class"),
                 //language=kt
                 """
                 fun foobar() {}
@@ -63,15 +66,16 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
 
             module1.compile {
                 assertCompiledSources("foobar.kt")
+                assertAddedOutputs("FoobarKt.class")
             }
 
             module1.deleteFile(
                 "foobar.kt",
-                removedOutputs = setOf("FoobarKt.class"),
             )
 
             module1.compile {
-                assertCompiledSources()
+                assertNoCompiledSources()
+                assertRemovedOutputs("FoobarKt.class")
             }
         }
     }
@@ -94,10 +98,12 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
 
             module1.compile {
                 assertCompiledSources("bar.kt")
+                assertNoOutputSetChanges()
             }
 
             module2.compile {
                 assertCompiledSources("b.kt")
+                assertNoOutputSetChanges()
             }
         }
     }

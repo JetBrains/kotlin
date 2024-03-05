@@ -14,6 +14,14 @@ import kotlin.io.path.isRegularFile
 import kotlin.io.path.relativeTo
 import kotlin.io.path.walk
 
+/**
+ * Equivalent to [assertNoCompiledSources] with an empty array/set
+ */
+context(Module)
+fun CompilationOutcome.assertNoCompiledSources() {
+    assertCompiledSources()
+}
+
 context(Module)
 fun CompilationOutcome.assertCompiledSources(vararg expectedCompiledSources: String) {
     assertCompiledSources(expectedCompiledSources.toSet())

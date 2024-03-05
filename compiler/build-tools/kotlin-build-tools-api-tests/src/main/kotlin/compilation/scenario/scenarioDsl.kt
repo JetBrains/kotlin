@@ -18,41 +18,35 @@ import kotlin.io.path.*
 
 internal class ScenarioModuleImpl(
     internal val module: Module,
-    private val outputs: MutableSet<String>,
+    internal val outputs: MutableSet<String>,
     private val strategyConfig: CompilerExecutionStrategyConfiguration,
     private val compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
     private val incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
 ) : ScenarioModule {
     override fun changeFile(
         fileName: String,
-        addedOutputs: Set<String>,
-        removedOutputs: Set<String>,
         transform: (String) -> String,
     ) {
         val file = module.sourcesDirectory.resolve(fileName)
         file.writeText(transform(file.readText()))
-        outputs.addAll(addedOutputs)
-        outputs.removeAll(removedOutputs)
         sourcesChanges = SourcesChanges.Known(
             modifiedFiles = sourcesChanges.modifiedFiles + file.toFile(),
             removedFiles = sourcesChanges.removedFiles,
         )
     }
 
-    override fun deleteFile(fileName: String, removedOutputs: Set<String>) {
+    override fun deleteFile(fileName: String) {
         val file = module.sourcesDirectory.resolve(fileName)
         file.deleteExisting()
-        outputs.removeAll(removedOutputs)
         sourcesChanges = SourcesChanges.Known(
             modifiedFiles = sourcesChanges.modifiedFiles,
             removedFiles = sourcesChanges.removedFiles + file.toFile(),
         )
     }
 
-    override fun createFile(fileName: String, addedOutputs: Set<String>, content: String) {
+    override fun createFile(fileName: String, content: String) {
         val file = module.sourcesDirectory.resolve(fileName)
         file.writeText(content)
-        outputs.addAll(addedOutputs)
         sourcesChanges = SourcesChanges.Known(
             modifiedFiles = sourcesChanges.modifiedFiles + file.toFile(),
             removedFiles = sourcesChanges.removedFiles,
@@ -63,7 +57,7 @@ internal class ScenarioModuleImpl(
 
     override fun compile(
         forceOutput: LogLevel?,
-        assertions: context(Module) CompilationOutcome.() -> Unit,
+        assertions: context(Module, ScenarioModule) CompilationOutcome.() -> Unit,
     ) {
         module.compileIncrementally(
             sourcesChanges,
@@ -72,8 +66,7 @@ internal class ScenarioModuleImpl(
             compilationConfigAction = { compilationOptionsModifier?.invoke(it) },
             incrementalCompilationConfigAction = { incrementalCompilationOptionsModifier?.invoke(it) },
             assertions = {
-                assertions(module, this)
-                assertOutputs(outputs)
+                assertions(module, this@ScenarioModuleImpl, this)
             })
     }
 }
