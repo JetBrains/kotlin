@@ -28,7 +28,7 @@ class Project(
         val moduleDirectory = projectDirectory.resolve(moduleName)
         val module = JvmModule(this, moduleName, moduleDirectory, dependencies, additionalCompilationArguments)
         module.sourcesDirectory.createDirectories()
-        val templatePath = Paths.get("src/testCommon/resources/modules/$moduleName")
+        val templatePath = Paths.get("src/main/resources/modules/$moduleName")
         assert(templatePath.isDirectory()) {
             "Template for $moduleName not found. Expected template directory path is $templatePath"
         }

@@ -10,6 +10,12 @@ plugins {
 
 dependencies {
     api(kotlinStdlib())
+    compileOnly(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
+    compileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
+
+    api(platform(libs.junit.bom))
+    compileOnly(libs.junit.jupiter.engine)
+    compileOnly(libs.junit.jupiter.params)
 }
 
 kotlin {
@@ -32,6 +38,12 @@ class BuildToolsApiTestSuit(
 )
 
 val testMatrix = listOf(
+    BuildToolsApiTestSuit(
+        "example",
+        BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
+        BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
+        onlyCompatibilityTests = false,
+    ),
     BuildToolsApiTestSuit(
         "testSnapshotToSnapshot",
         BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
@@ -104,9 +116,11 @@ testing {
                 dependencies {
                     useJUnitJupiter(libs.versions.junit5.get())
 
-                    compileOnly(project()) // propagate stdlib from the main dependencies for compilation,
-                    // the runtime dependency provides the actual required version
-                    implementation(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
+                    compileOnly(project()) // propagate stdlib from the main dependencies for compilation, the runtime dependency provides the actual required version
+                    implementation(project()) {
+                        isTransitive = false
+                    }
+                    implementation(project(":kotlin-tooling-core"))
 
                     if (suitConfig.apiVersion.isCurrent) {
                         compileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
