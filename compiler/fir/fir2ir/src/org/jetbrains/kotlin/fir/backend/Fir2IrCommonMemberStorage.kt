@@ -33,6 +33,7 @@ class Fir2IrCommonMemberStorage(val firSignatureComposer: FirBasedSignatureCompo
     val localClassCache: MutableMap<FirClass, IrClass> = mutableMapOf()
 
     val functionCache: ConcurrentHashMap<FirFunction, IrSimpleFunctionSymbol> = ConcurrentHashMap()
+    val dataClassGeneratedFunctionsCache: ConcurrentHashMap<FirClass, Fir2IrDeclarationStorage.DataClassGeneratedFunctionsStorage> = ConcurrentHashMap()
 
     val constructorCache: ConcurrentHashMap<FirConstructor, IrConstructorSymbol> = ConcurrentHashMap()
 

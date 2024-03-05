@@ -113,4 +113,9 @@ object OperatorNameConventions {
         RANGE_TO to "..",
         RANGE_UNTIL to "..<",
     )
+
+    fun isComponentN(name: Name): Boolean {
+        val identifier = name.identifierOrNullIfSpecial ?: return false
+        return COMPONENT_REGEX.matches(identifier)
+    }
 }

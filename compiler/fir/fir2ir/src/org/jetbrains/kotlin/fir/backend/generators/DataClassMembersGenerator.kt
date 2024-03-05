@@ -310,8 +310,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
             otherParameterNeeded: Boolean = false,
             isOperator: Boolean = false,
         ): IrSimpleFunction {
-            val signature = if (klass.symbol.classId.isLocal) null else components.signatureComposer.composeSignature(syntheticCounterpart)
-            val symbol = components.declarationStorage.createFunctionSymbol(signature)
+            val symbol = components.declarationStorage.createFunctionSymbol(signature = null)
             return components.irFactory.createSimpleFunction(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
