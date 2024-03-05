@@ -30770,6 +30770,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
   public static class Klib extends AbstractLightAnalysisModeTest {
+    @TestMetadata("kt66338.kt")
+    public void ignoreKt66338() {
+      runTest("compiler/testData/codegen/box/klib/kt66338.kt");
+    }
+
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
