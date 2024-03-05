@@ -128,6 +128,8 @@ private constructor(
 
     override val dataFlowInfoProviderImpl: KtDataFlowInfoProvider = KtFirDataFlowInfoProvider(this)
 
+    override val klibSourceFileProviderImpl: KtKlibSourceFileNameProvider = KtFirKlibSourceFileNameProvider(this)
+
     internal val useSiteSession: FirSession get() = firResolveSession.useSiteFirSession
     internal val firSymbolProvider: FirSymbolProvider get() = useSiteSession.symbolProvider
     internal val targetPlatform: TargetPlatform get() = useSiteSession.moduleData.platform

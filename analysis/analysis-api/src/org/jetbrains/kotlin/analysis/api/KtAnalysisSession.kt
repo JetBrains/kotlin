@@ -93,7 +93,8 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     KtCompilerFacilityMixIn,
     KtMetadataCalculatorMixIn,
     KtSubstitutorProviderMixIn,
-    KtDataFlowInfoProviderMixin {
+    KtDataFlowInfoProviderMixin,
+    KtKlibSourceFileProviderMixIn {
 
     public abstract val useSiteModule: KtModule
 
@@ -219,6 +220,9 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     internal val dataFlowInfoProvider: KtDataFlowInfoProvider get() = dataFlowInfoProviderImpl
     @KtAnalysisNonPublicApi
     protected abstract val dataFlowInfoProviderImpl: KtDataFlowInfoProvider
+
+    internal val klibSourceFileProvider: KtKlibSourceFileNameProvider get() = klibSourceFileProviderImpl
+    protected abstract val klibSourceFileProviderImpl: KtKlibSourceFileNameProvider
 }
 
 public fun KtAnalysisSession.getModule(element: PsiElement): KtModule {
