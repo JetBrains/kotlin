@@ -1,8 +1,5 @@
 // FIR_IDENTICAL
 // KT-64271
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
-// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6
-// ^ Set has js specific methods
 
 inline class IT(val x: Int)
 

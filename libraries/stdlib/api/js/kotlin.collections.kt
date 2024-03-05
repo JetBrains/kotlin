@@ -10341,6 +10341,13 @@ public interface List<out E> : kotlin.collections.Collection<E> {
     public abstract fun listIterator(index: kotlin.Int): kotlin.collections.ListIterator<E>
 
     public abstract fun subList(fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.List<E>
+
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "1.9")
+    public companion object of List {
+        public final fun <E> fromJsArray(array: kotlin.js.collections.JsReadonlyArray<E>): kotlin.collections.List<E>
+    }
 }
 
 public interface ListIterator<out T> : kotlin.collections.Iterator<T> {
@@ -10386,6 +10393,13 @@ public interface Map<K, out V> {
     public abstract operator fun get(key: K): V?
 
     public abstract fun isEmpty(): kotlin.Boolean
+
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "1.9")
+    public companion object of Map {
+        public final fun <K, V> fromJsMap(map: kotlin.js.collections.JsReadonlyMap<K, V>): kotlin.collections.Map<K, V>
+    }
 
     public interface Entry<out K, out V> {
         public abstract val key: K { get; }
@@ -10449,6 +10463,13 @@ public interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections
     public abstract operator fun set(index: kotlin.Int, element: E): E
 
     public abstract override fun subList(fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.MutableList<E>
+
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "1.9")
+    public companion object of MutableList {
+        public final fun <E> fromJsArray(array: kotlin.js.collections.JsReadonlyArray<E>): kotlin.collections.MutableList<E>
+    }
 }
 
 public interface MutableListIterator<T> : kotlin.collections.ListIterator<T>, kotlin.collections.MutableIterator<T> {
@@ -10483,6 +10504,13 @@ public interface MutableMap<K, V> : kotlin.collections.Map<K, V> {
 
     public abstract fun remove(key: K): V?
 
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "1.9")
+    public companion object of MutableMap {
+        public final fun <K, V> fromJsMap(map: kotlin.js.collections.JsReadonlyMap<K, V>): kotlin.collections.MutableMap<K, V>
+    }
+
     public interface MutableEntry<K, V> : kotlin.collections.Map.Entry<K, V> {
         public abstract fun setValue(newValue: V): V
     }
@@ -10507,6 +10535,13 @@ public interface MutableSet<E> : kotlin.collections.Set<E>, kotlin.collections.M
     public abstract override fun removeAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
     public abstract override fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "1.9")
+    public companion object of MutableSet {
+        public final fun <E> fromJsSet(set: kotlin.js.collections.JsReadonlySet<E>): kotlin.collections.MutableSet<E>
+    }
 }
 
 public interface RandomAccess {
@@ -10527,6 +10562,13 @@ public interface Set<out E> : kotlin.collections.Collection<E> {
     public abstract override fun isEmpty(): kotlin.Boolean
 
     public abstract override operator fun iterator(): kotlin.collections.Iterator<E>
+
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "1.9")
+    public companion object of Set {
+        public final fun <E> fromJsSet(set: kotlin.js.collections.JsReadonlySet<E>): kotlin.collections.Set<E>
+    }
 }
 
 public abstract class ShortIterator : kotlin.collections.Iterator<kotlin.Short> {
