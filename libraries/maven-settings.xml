@@ -34,5 +34,10 @@
             <username>${kotlin.kotlin-space-packages.user}</username>
             <password>${kotlin.kotlin-space-packages.password}</password>
         </server>
+        <server>
+            <id>space-swift-export</id>
+            <username>${kotlin.space-swift-export.user}</username>
+            <password>${kotlin.space-swift-export.password}</password>
+        </server>
     </servers>
 </settings>
