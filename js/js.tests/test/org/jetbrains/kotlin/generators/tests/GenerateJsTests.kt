@@ -133,11 +133,11 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractIrJsTypeScriptExportTest> {
-                model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
+                model("typescript-export/js/", pattern = "^([^_](.+))\\.kt$")
             }
 
             testClass<AbstractIrJsES6TypeScriptExportTest> {
-                model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
+                model("typescript-export/js/", pattern = "^([^_](.+))\\.kt$")
             }
 
             testClass<AbstractJsIrLineNumberTest> {
@@ -157,11 +157,11 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractFirJsTypeScriptExportTest> {
-                model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
+                model("typescript-export/js/", pattern = "^([^_](.+))\\.kt$")
             }
 
             testClass<AbstractFirJsES6TypeScriptExportTest> {
-                model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
+                model("typescript-export/js/", pattern = "^([^_](.+))\\.kt$")
             }
 
             testClass<AbstractFirJsLineNumberTest> {

@@ -1,10 +1,23 @@
 import org.gradle.internal.os.OperatingSystem
 import java.net.URI
+import com.github.gradle.node.npm.task.NpmTask
 import java.util.*
 
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    alias(libs.plugins.gradle.node)
+}
+
+val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
+
+node {
+    download.set(true)
+    version.set(nodejsVersion)
+    nodeProjectDir.set(layout.buildDirectory.dir("node"))
+    if (cacheRedirectorEnabled) {
+        distBaseUrl.set("https://cache-redirector.jetbrains.com/nodejs.org/dist")
+    }
 }
 
 repositories {
@@ -116,6 +129,42 @@ fun Test.setupGradlePropertiesForwarding() {
     }
 }
 
+val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
+val typescriptTestsDir = testDataDir.resolve("typescript-export")
+val wasmTestDir = typescriptTestsDir.resolve("wasm")
+
+fun generateTypeScriptTestFor(dir: String): TaskProvider<NpmTask> = tasks.register<NpmTask>("generate-ts-for-$dir") {
+    val baseDir = wasmTestDir.resolve(dir)
+    val mainTsFile = fileTree(baseDir).files.find { it.name.endsWith("__main.ts") } ?: return@register
+    val mainJsFile = baseDir.resolve("${mainTsFile.nameWithoutExtension}.js")
+
+    workingDir.set(testDataDir)
+
+    inputs.file(mainTsFile)
+    outputs.file(mainJsFile)
+    outputs.upToDateWhen { mainJsFile.exists() }
+
+    args.set(listOf("run", "generateTypeScriptTests", "--", "./typescript-export/wasm/$dir/tsconfig.json"))
+}
+
+val installTsDependencies by task<NpmTask> {
+    val packageLockFile = testDataDir.resolve("package-lock.json")
+    val nodeModules = testDataDir.resolve("node_modules")
+    inputs.file(testDataDir.resolve("package.json"))
+    outputs.file(packageLockFile)
+    outputs.upToDateWhen { nodeModules.exists() }
+
+    workingDir.set(testDataDir)
+    args.set(listOf("install"))
+}
+
+val generateTypeScriptTests by parallel(
+    beforeAll = installTsDependencies,
+    tasksToRun = wasmTestDir
+        .listFiles { it: File -> it.isDirectory }
+        .map { generateTypeScriptTestFor(it.name) }
+)
+
 val unzipJsShell by task<Copy> {
     dependsOn(jsShell)
     from {
@@ -163,10 +212,12 @@ fun Project.wasmProjectTest(
 wasmProjectTest("test")
 
 wasmProjectTest("testFir") {
+    dependsOn(generateTypeScriptTests)
     include("**/Fir*.class")
 }
 
 wasmProjectTest("testK1") {
+    dependsOn(generateTypeScriptTests)
     include("**/K1*.class")
 }
 
