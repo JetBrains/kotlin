@@ -1,5 +1,3 @@
-import org.gradle.configurationcache.extensions.capitalized
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 plugins {
@@ -27,56 +25,13 @@ kotlin {
     }
 }
 
-class BuildToolsApiTestSuit(
-    val testName: String,
-    val apiVersion: BuildToolsVersion,
-    val implVersion: BuildToolsVersion,
-    /**
-     * Tells whether only tests marked with the `CompatibilityTest` JUnit tag must be run
-     */
-    val onlyCompatibilityTests: Boolean = true,
+val compatibilityTestsVersions = listOf(
+    BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
+    BuildToolsVersion(KotlinToolingVersion(1, 9, 20, null)),
 )
-
-val testMatrix = listOf(
-    BuildToolsApiTestSuit(
-        "example",
-        BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
-        BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
-        onlyCompatibilityTests = false,
-    ),
-    BuildToolsApiTestSuit(
-        "testSnapshotToSnapshot",
-        BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
-        BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
-        onlyCompatibilityTests = false,
-    ),
-    BuildToolsApiTestSuit(
-        "test1.9.20ToSnapshot",
-        BuildToolsVersion(KotlinToolingVersion(1, 9, 20, null)),
-        BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
-    ),
-    BuildToolsApiTestSuit(
-        "testSnapshotTo1.9.20",
-        BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
-        BuildToolsVersion(KotlinToolingVersion(1, 9, 20, null)),
-    ),
-)
-
-val SourceSet.kotlinCompileTask
-    get() = tasks.named<KotlinCompile>("compile${name.capitalized()}Kotlin")
 
 class BuildToolsVersion(val version: KotlinToolingVersion, val isCurrent: Boolean = false) {
     override fun toString() = version.toString()
-}
-
-fun KotlinCompile.ensureCompiledAgainstExpectedBuildToolsApiVersion(version: BuildToolsVersion) {
-    if (version.isCurrent) return
-    // the check is required for the case when Gradle substitutes external dependencies with project ones
-    doFirst {
-        check(libraries.any { "kotlin-build-tools-api-${version}" in it.name }) {
-            "compilation classpath must contain kotlin-build-tools-api:$version"
-        }
-    }
 }
 
 fun Test.ensureExecutedAgainstExpectedBuildToolsImplVersion(version: BuildToolsVersion) {
@@ -89,65 +44,81 @@ fun Test.ensureExecutedAgainstExpectedBuildToolsImplVersion(version: BuildToolsV
     }
 }
 
-fun SourceSet.configureApiVersionSourceDirectories() {
+fun SourceSet.configureCompatibilitySourceDirectories() {
     java.setSrcDirs(
         listOf(
-            layout.projectDirectory.dir("src/testCommon/java"),
+            layout.projectDirectory.dir("src/testCompatibility/java"),
         )
     )
     kotlin.setSrcDirs(
         listOf(
-            layout.projectDirectory.dir("src/testCommon/java"),
-            layout.projectDirectory.dir("src/testCommon/kotlin"),
+            layout.projectDirectory.dir("src/testCompatibility/java"),
+            layout.projectDirectory.dir("src/testCompatibility/kotlin"),
         )
     )
     resources.setSrcDirs(
         listOf(
-            layout.projectDirectory.dir("src/testCommon/resources"),
+            layout.projectDirectory.dir("src/testCompatibility/resources"),
         )
     )
 }
 
+val businessLogicTestSuits = setOf(
+    "testExample",
+)
+
 testing {
     suites {
-        for (suitConfig in testMatrix) {
-            register<JvmTestSuite>(suitConfig.testName) {
-                sources.configureApiVersionSourceDirectories()
+        for (suit in businessLogicTestSuits) {
+            register<JvmTestSuite>(suit)
+        }
+
+        for (implVersion in compatibilityTestsVersions) {
+            register<JvmTestSuite>("testCompatibility${implVersion}") {
+                sources.configureCompatibilitySourceDirectories()
                 dependencies {
-                    useJUnitJupiter(libs.versions.junit5.get())
-
-                    compileOnly(project()) // propagate stdlib from the main dependencies for compilation, the runtime dependency provides the actual required version
-                    implementation(project()) {
-                        isTransitive = false
-                    }
-                    implementation(project(":kotlin-tooling-core"))
-
-                    if (suitConfig.apiVersion.isCurrent) {
-                        compileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
-                    } else {
-                        compileOnly("org.jetbrains.kotlin:kotlin-build-tools-api:${suitConfig.apiVersion}")
-                    }
-                    sources.kotlinCompileTask.configure {
-                        ensureCompiledAgainstExpectedBuildToolsApiVersion(suitConfig.apiVersion)
-                    }
-
-                    if (suitConfig.implVersion.isCurrent) {
+                    if (implVersion.isCurrent) {
                         runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-impl"))
                     } else {
-                        runtimeOnly("org.jetbrains.kotlin:kotlin-build-tools-impl:${suitConfig.implVersion}")
+                        runtimeOnly("org.jetbrains.kotlin:kotlin-build-tools-impl:${implVersion}")
                     }
                 }
-
                 targets.all {
                     projectTest(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5) {
-                        ensureExecutedAgainstExpectedBuildToolsImplVersion(suitConfig.implVersion)
-                        useJUnitPlatform {
-                            if (suitConfig.onlyCompatibilityTests) {
-                                includeTags("CompatibilityTests")
-                            }
-                        }
-                        systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
-                        systemProperty("kotlin.build-tools-api.impl-version", suitConfig.implVersion.toString()) // TODO: remove after KT-63862
+                        ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
+                        systemProperty(
+                            "kotlin.build-tools-api.impl-version",
+                            implVersion.toString()
+                        ) // TODO: remove after KT-63862
+                    }
+                }
+            }
+        }
+
+        withType<JvmTestSuite>().configureEach configureSuit@{
+            val isRegular = this@configureSuit.name in businessLogicTestSuits
+            dependencies {
+                useJUnitJupiter(libs.versions.junit5.get())
+
+                compileOnly(project()) // propagate stdlib from the main dependencies for compilation, the runtime dependency provides the actual required version
+                implementation(project()) {
+                    isTransitive = false
+                }
+                implementation(project(":kotlin-tooling-core"))
+                compileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
+                if (isRegular) {
+                    runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-impl"))
+                }
+            }
+
+            targets.all {
+                projectTest(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5) {
+                    systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
+                    if (isRegular) {
+                        systemProperty(
+                            "kotlin.build-tools-api.impl-version",
+                            project.version.toString()
+                        ) // TODO: remove after KT-63862
                     }
                 }
             }
@@ -156,5 +127,5 @@ testing {
 }
 
 tasks.named("check") {
-    dependsOn(testing.suites)
+    dependsOn(testing.suites.matching { it.name != "testExample" }) // do not run example tests by default
 }

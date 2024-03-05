@@ -23,7 +23,7 @@ the Build Tools API's and its implementations' versions.
 Few rules you should follow while writing tests:
 - All tests should be written using [JUnit 5 platform](https://junit.org/junit5/docs/current/user-guide/#overview).
 - All the compilation test classes should extend [BaseCompilationTest](./src/testCommon/kotlin/compilation/model/BaseCompilationTest.kt)
-- Consider using the scenario DSL for the incremental compilation tests, an usage example is located [here](./src/testCommon/kotlin/compilation/ExampleIncrementalScenarioTest.kt)
+- Consider using the scenario DSL for the incremental compilation tests, an usage example is located [here](src/testExample/kotlin/ExampleIncrementalScenarioTest.kt)
 - Add `@DisplayName(...)` with meaningful description both for test class and methods inside. This will allow developers easier
   to understand what test is about.
 - Don't create one big test suite (class). Consider splitting tests into smaller suites. All tests are running in parallel (except daemon tests)

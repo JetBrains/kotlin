@@ -3,10 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation
+package org.jetbrains.kotlin.buildtools.api.tests
 
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.api.tests.CompatibilityTests
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.DisplayName
 
 @Disabled("Example tests for evaluation purposes of the DSL")
 class ExampleCompatibilityCompilationTest : BaseCompilationTest() {
-    @CompatibilityTests
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Sample compatibility compilation test that is run as part of each test suit")
     fun myTest(strategyConfig: CompilerExecutionStrategyConfiguration) {

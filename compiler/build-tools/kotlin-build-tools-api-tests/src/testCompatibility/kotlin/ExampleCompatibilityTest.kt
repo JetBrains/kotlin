@@ -3,10 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation
+package org.jetbrains.kotlin.buildtools.api.tests
 
 import org.jetbrains.kotlin.buildtools.api.CompilationService
-import org.jetbrains.kotlin.buildtools.api.tests.CompatibilityTests
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.Test
 class ExampleCompatibilityTest {
     private val compilationService = CompilationService.loadImplementation(ExampleCompatibilityTest::class.java.classLoader)
 
-    @CompatibilityTests
     @Test
     @DisplayName("Sample compatibility test that is run as part of each test suit")
     fun testDefaultNonIncrementalSettings() {

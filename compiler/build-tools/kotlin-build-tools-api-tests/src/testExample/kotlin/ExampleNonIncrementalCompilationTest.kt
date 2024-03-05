@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,11 +12,9 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.BaseCompilati
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.project
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.writeText
 
-@Disabled("Example tests for evaluation purposes of the DSL")
 class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
     @DisplayName("Sample non-incremental compilation test with two modules")
     @DefaultStrategyAgnosticCompilationTest
