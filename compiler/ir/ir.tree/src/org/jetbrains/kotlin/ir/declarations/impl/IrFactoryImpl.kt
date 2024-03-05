@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.Variance
@@ -94,7 +93,7 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         visibility: DescriptorVisibility,
         isInline: Boolean,
         isExpect: Boolean,
-        returnType: IrType,
+        returnType: IrType?,
         symbol: IrConstructorSymbol,
         isPrimary: Boolean,
         isExternal: Boolean,
@@ -114,7 +113,7 @@ abstract class AbstractIrFactoryImpl : IrFactory {
             containerSource = containerSource,
             factory = this
         ).apply {
-            if (returnType != IrUninitializedType) {
+            if (returnType != null) {
                 this.returnType = returnType
             }
         }
@@ -184,7 +183,7 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         visibility: DescriptorVisibility,
         isInline: Boolean,
         isExpect: Boolean,
-        returnType: IrType,
+        returnType: IrType?,
         modality: Modality,
         symbol: IrSimpleFunctionSymbol,
         isTailrec: Boolean,
@@ -214,7 +213,7 @@ abstract class AbstractIrFactoryImpl : IrFactory {
             containerSource = containerSource,
             factory = this
         ).apply {
-            if (returnType != IrUninitializedType) {
+            if (returnType != null) {
                 this.returnType = returnType
             }
         }
@@ -227,7 +226,7 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         visibility: DescriptorVisibility,
         isInline: Boolean,
         isExpect: Boolean,
-        returnType: IrType,
+        returnType: IrType?,
         modality: Modality,
         isTailrec: Boolean,
         isSuspend: Boolean,
@@ -253,7 +252,7 @@ abstract class AbstractIrFactoryImpl : IrFactory {
             isFakeOverride = isFakeOverride,
             factory = this
         ).apply {
-            if (returnType != IrUninitializedType) {
+            if (returnType != null) {
                 this.returnType = returnType
             }
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,8 +25,8 @@ abstract class AbstractTreeBuilder {
         customUseInIrFactoryStrategy = Field.UseFieldAsParameterInIrFactoryStrategy.No
     }
 
-    protected fun Field.useFieldInIrFactory(defaultValue: String? = null) {
-        customUseInIrFactoryStrategy = Field.UseFieldAsParameterInIrFactoryStrategy.Yes(defaultValue)
+    protected fun Field.useFieldInIrFactory(customType: TypeRef? = null, defaultValue: String? = null) {
+        customUseInIrFactoryStrategy = Field.UseFieldAsParameterInIrFactoryStrategy.Yes(customType, defaultValue)
     }
 
     fun element(category: Element.Category, name: String? = null, initializer: Element.() -> Unit = {}): ElementDelegate {

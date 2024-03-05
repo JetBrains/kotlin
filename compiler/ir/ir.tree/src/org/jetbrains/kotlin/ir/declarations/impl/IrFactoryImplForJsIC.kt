@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -94,11 +94,11 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         visibility: DescriptorVisibility,
         isInline: Boolean,
         isExpect: Boolean,
-        returnType: IrType,
+        returnType: IrType?,
         symbol: IrConstructorSymbol,
         isPrimary: Boolean,
         isExternal: Boolean,
-        containerSource: DeserializedContainerSource?
+        containerSource: DeserializedContainerSource?,
     ): IrConstructor {
         return super.createConstructor(
             startOffset,
@@ -170,7 +170,7 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         visibility: DescriptorVisibility,
         isInline: Boolean,
         isExpect: Boolean,
-        returnType: IrType,
+        returnType: IrType?,
         modality: Modality,
         symbol: IrSimpleFunctionSymbol,
         isTailrec: Boolean,
@@ -179,7 +179,7 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         isInfix: Boolean,
         isExternal: Boolean,
         containerSource: DeserializedContainerSource?,
-        isFakeOverride: Boolean
+        isFakeOverride: Boolean,
     ): IrSimpleFunction {
         return super.createSimpleFunction(
             startOffset,
@@ -210,7 +210,7 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         visibility: DescriptorVisibility,
         isInline: Boolean,
         isExpect: Boolean,
-        returnType: IrType,
+        returnType: IrType?,
         modality: Modality,
         isTailrec: Boolean,
         isSuspend: Boolean,

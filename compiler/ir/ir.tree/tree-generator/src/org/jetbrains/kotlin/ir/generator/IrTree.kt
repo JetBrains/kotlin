@@ -405,7 +405,9 @@ object IrTree : AbstractTreeBuilder() {
         // NB: there's an inline constructor for Array and each primitive array class.
         +field("isInline", boolean)
         +field("isExpect", boolean)
-        +field("returnType", irTypeType)
+        +field("returnType", irTypeType) {
+            useFieldInIrFactory(customType = irTypeType.copy(nullable = true))
+        }
         +field("dispatchReceiverParameter", valueParameter, nullable = true)
         +field("extensionReceiverParameter", valueParameter, nullable = true)
         +listField("valueParameters", valueParameter, mutability = Var)

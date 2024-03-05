@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,7 @@ sealed class Field(
 
         data object No : UseFieldAsParameterInIrFactoryStrategy()
 
-        data class Yes(val defaultValue: String?) : UseFieldAsParameterInIrFactoryStrategy()
+        data class Yes(val customType: TypeRef?, val defaultValue: String?) : UseFieldAsParameterInIrFactoryStrategy()
     }
 
     var customUseInIrFactoryStrategy: UseFieldAsParameterInIrFactoryStrategy? = null
@@ -26,7 +26,7 @@ sealed class Field(
             ?: if (isChild && containsElement) {
                 UseFieldAsParameterInIrFactoryStrategy.No
             } else {
-                UseFieldAsParameterInIrFactoryStrategy.Yes(null)
+                UseFieldAsParameterInIrFactoryStrategy.Yes(null, null)
             }
 
 

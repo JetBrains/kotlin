@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -50,7 +50,7 @@ private class FactoryMethod(val element: Element) {
         .filterNot { it.name in element.fieldsToSkipInIrFactoryMethod }
         .mapNotNull { field ->
             (field.useInIrFactoryStrategy as? Field.UseFieldAsParameterInIrFactoryStrategy.Yes)?.let {
-                FunctionParameter(field.name, field.typeRef, it.defaultValue)
+                FunctionParameter(field.name, it.customType ?: field.typeRef, it.defaultValue)
             }
         }
         .sortedBy { it.defaultValue != null } // All parameters with default values must go last
