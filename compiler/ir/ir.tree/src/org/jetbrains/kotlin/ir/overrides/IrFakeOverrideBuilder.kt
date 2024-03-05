@@ -374,64 +374,25 @@ class IrFakeOverrideBuilder(
         return AbstractTypeChecker.isSubtypeOf(typeCheckerState, a.returnType, b.returnType)
     }
 
-    private fun isMoreSpecific(
-        a: IrOverridableMember,
-        b: IrOverridableMember
-    ): Boolean {
-        return a >= b
+    private fun isMoreSpecific(a: IrOverridableMember, b: IrOverridableMember): Boolean {
+        if (!isVisibilityMoreSpecific(a, b)) return false
+
+        if (a is IrProperty) {
+            check(b is IrProperty) { "b is not a property: $b" }
+            if (!isAccessorMoreSpecific(a.setter, b.setter)) return false
+            if (!a.isVar && b.isVar) return false
+        }
+
+        return isReturnTypeIsSubtypeOfOtherReturnType(a, b)
     }
 
-    // Based on compareTo from FirOverrideService.kt
-    private operator fun IrOverridableMember.compareTo(other: IrOverridableMember): Int {
-        fun merge(preferA: Boolean, preferB: Boolean, previous: Int): Int = when {
-            preferA == preferB -> previous
-            preferA && previous >= 0 -> 1
-            preferB && previous <= 0 -> -1
-            else -> 0
-        }
-
-        val aIr = this@compareTo
-        val bIr = other
-        val byVisibility = DescriptorVisibilities.compare(aIr.visibility, bIr.visibility) ?: 0
-        val aReturnType = aIr.returnType
-        val bReturnType = bIr.returnType
-
-        val aSubtypesB = isReturnTypeIsSubtypeOfOtherReturnType(aIr, bIr)
-        val bSubtypesA = isReturnTypeIsSubtypeOfOtherReturnType(bIr, aIr)
-
-        val byVisibilityAndType = when {
-            // Could be that one of them is flexible, in which case the types are not equal but still subtypes of one another;
-            // make the inflexible one more specific.
-            aSubtypesB && bSubtypesA -> merge(!aReturnType.isFlexible(), !bReturnType.isFlexible(), byVisibility)
-            aSubtypesB && byVisibility >= 0 -> 1
-            bSubtypesA && byVisibility <= 0 -> -1
-            else -> 0
-        }
-
-        return when (aIr) {
-            is IrSimpleFunction -> byVisibilityAndType
-            is IrProperty -> {
-                require(bIr is IrProperty)
-                val settersComparison = if (aIr.isVar && bIr.isVar) {
-                    val aSetter = aIr.setter
-                    val bSetter = bIr.setter
-                    when {
-                        aSetter != null && bSetter != null -> aSetter.compareTo(bSetter)
-                        else -> 0
-                    }
-                } else {
-                    0
-                }
-                val bySetters = merge(
-                    preferA = settersComparison >= 0,
-                    preferB = settersComparison <= 0,
-                    byVisibilityAndType
-                )
-                merge(aIr.isVar, bIr.isVar, bySetters)
-            }
-            else -> error("Unexpected type: $aIr")
-        }
+    private fun isVisibilityMoreSpecific(a: IrOverridableMember, b: IrOverridableMember): Boolean {
+        val result = DescriptorVisibilities.compare(a.visibility, b.visibility)
+        return result == null || result >= 0
     }
+
+    private fun isAccessorMoreSpecific(a: IrSimpleFunction?, b: IrSimpleFunction?): Boolean =
+        a == null || b == null || isVisibilityMoreSpecific(a, b)
 
     private fun IrType.isFlexible(): Boolean {
         return with(typeSystem) { isFlexible() }
