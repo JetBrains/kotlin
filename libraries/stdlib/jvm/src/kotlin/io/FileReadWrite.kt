@@ -15,6 +15,8 @@ import java.util.*
 import java.nio.charset.Charset
 import java.nio.charset.CharsetEncoder
 import java.nio.charset.CodingErrorAction
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.math.ceil
 
 
@@ -279,5 +281,9 @@ public fun File.readLines(charset: Charset = Charsets.UTF_8): List<String> {
  * @param charset character set to use. By default uses UTF-8 charset.
  * @return the value returned by [block].
  */
-public inline fun <T> File.useLines(charset: Charset = Charsets.UTF_8, block: (Sequence<String>) -> T): T =
-    bufferedReader(charset).use { block(it.lineSequence()) }
+public inline fun <T> File.useLines(charset: Charset = Charsets.UTF_8, block: (Sequence<String>) -> T): T {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return bufferedReader(charset).use { block(it.lineSequence()) }
+}
