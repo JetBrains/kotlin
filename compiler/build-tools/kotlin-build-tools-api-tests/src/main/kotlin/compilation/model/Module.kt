@@ -46,16 +46,18 @@ interface Module : Dependency {
      */
     val icCachesDir: Path
 
+    val defaultStrategyConfig: CompilerExecutionStrategyConfiguration
+
     fun compile(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        strategyConfig: CompilerExecutionStrategyConfiguration = defaultStrategyConfig,
         forceOutput: LogLevel? = null,
         compilationConfigAction: (JvmCompilationConfiguration) -> Unit = {},
         assertions: context(Module) CompilationOutcome.() -> Unit = {},
     ): CompilationResult
 
     fun compileIncrementally(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
         sourcesChanges: SourcesChanges,
+        strategyConfig: CompilerExecutionStrategyConfiguration = defaultStrategyConfig,
         forceOutput: LogLevel? = null,
         forceNonIncrementalCompilation: Boolean = false,
         compilationConfigAction: (JvmCompilationConfiguration) -> Unit = {},

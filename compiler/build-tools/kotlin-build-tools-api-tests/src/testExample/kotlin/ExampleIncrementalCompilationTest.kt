@@ -23,16 +23,15 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("jvm-module-1")
     fun testSingleModule(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project {
+        project(strategyConfig) {
             val module1 = module("jvm-module-1")
 
-            module1.compileIncrementally(strategyConfig, SourcesChanges.Unknown)
+            module1.compileIncrementally(SourcesChanges.Unknown)
 
             val fooKt = module1.sourcesDirectory.resolve("foo.kt")
             fooKt.writeText(fooKt.readText().replace("foo()", "foo(i: Int = 1)"))
 
             module1.compileIncrementally(
-                strategyConfig,
                 SourcesChanges.Known(modifiedFiles = listOf(fooKt.toFile()), removedFiles = emptyList()),
             ) {
                 assertCompiledSources("foo.kt", "bar.kt")
@@ -45,18 +44,17 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("jvm-module-1")
     fun testTwoModules(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project {
+        project(strategyConfig) {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))
 
-            module1.compileIncrementally(strategyConfig, SourcesChanges.Unknown)
-            module2.compileIncrementally(strategyConfig, SourcesChanges.Unknown)
+            module1.compileIncrementally(SourcesChanges.Unknown)
+            module2.compileIncrementally(SourcesChanges.Unknown)
 
             val barKt = module1.sourcesDirectory.resolve("bar.kt")
             barKt.writeText(barKt.readText().replace("bar()", "bar(i: Int = 1)"))
 
             module1.compileIncrementally(
-                strategyConfig,
                 SourcesChanges.Known(modifiedFiles = listOf(barKt.toFile()), removedFiles = emptyList()),
                 incrementalCompilationConfigAction = {
                     it.keepIncrementalCompilationCachesInMemory(false)
@@ -64,7 +62,6 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
             )
 
             module2.compileIncrementally(
-                strategyConfig,
                 SourcesChanges.Known(modifiedFiles = emptyList(), removedFiles = emptyList())
             ) {
                 assertCompiledSources("b.kt")

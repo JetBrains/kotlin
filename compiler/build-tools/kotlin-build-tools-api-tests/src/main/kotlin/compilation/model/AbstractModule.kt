@@ -43,6 +43,7 @@ abstract class AbstractModule(
     final override val moduleName: String,
     val moduleDirectory: Path,
     val dependencies: List<Dependency>,
+    override val defaultStrategyConfig: CompilerExecutionStrategyConfiguration,
     final override val additionalCompilationArguments: List<String> = emptyList(),
 ) : Module {
     override val sourcesDirectory: Path

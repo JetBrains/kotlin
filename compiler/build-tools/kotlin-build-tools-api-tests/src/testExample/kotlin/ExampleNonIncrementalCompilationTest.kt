@@ -19,14 +19,14 @@ class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
     @DisplayName("Sample non-incremental compilation test with two modules")
     @DefaultStrategyAgnosticCompilationTest
     fun myTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project {
+        project(strategyConfig) {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))
 
-            module1.compile(strategyConfig) {
+            module1.compile {
                 assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
             }
-            module2.compile(strategyConfig) {
+            module2.compile {
                 assertOutputs("AKt.class", "BKt.class")
             }
         }
@@ -35,12 +35,12 @@ class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
     @DisplayName("Sample non-incremental compilation test with a single module and a compilation error")
     @DefaultStrategyAgnosticCompilationTest
     fun failedCompilationTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project {
+        project(strategyConfig) {
             val module1 = module("jvm-module-1")
 
             module1.sourcesDirectory.resolve("bar.kt").writeText("aaaa")
 
-            module1.compile(strategyConfig) {
+            module1.compile {
                 expectFail()
                 assertLogContainsPatterns(LogLevel.ERROR, ".*bar\\.kt:1:1 Syntax error: Expecting a top level declaration.*".toRegex())
             }

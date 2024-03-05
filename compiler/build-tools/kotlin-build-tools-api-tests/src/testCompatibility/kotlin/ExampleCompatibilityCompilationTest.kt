@@ -20,14 +20,14 @@ class ExampleCompatibilityCompilationTest : BaseCompilationTest() {
     @DisplayName("Sample compatibility compilation test that is run as part of each test suit")
     @TestMetadata("jvm-module-1")
     fun testCompatibilityCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project {
+        project(strategyConfig) {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))
 
-            module1.compile(strategyConfig) {
+            module1.compile {
                 assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
             }
-            module2.compile(strategyConfig) {
+            module2.compile {
                 assertOutputs("AKt.class", "BKt.class")
             }
         }

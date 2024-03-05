@@ -66,8 +66,8 @@ private class ScenarioModuleImpl(
         assertions: context(Module) CompilationOutcome.() -> Unit,
     ) {
         module.compileIncrementally(
-            strategyConfig,
             sourcesChanges,
+            strategyConfig,
             forceOutput,
             compilationConfigAction = { compilationOptionsModifier?.invoke(it) },
             incrementalCompilationConfigAction = { incrementalCompilationOptionsModifier?.invoke(it) },
@@ -91,14 +91,15 @@ private class ScenarioDsl(
         incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
     ): ScenarioModule {
         val transformedDependencies = dependencies.map { (it as ScenarioModuleImpl).module }
-        val module = project.module(moduleName, transformedDependencies, additionalCompilationArguments)
+        val module =
+            project.module(moduleName, transformedDependencies, additionalCompilationArguments)
         return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
             ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
     }
 }
 
 fun BaseCompilationTest.scenario(strategyConfig: CompilerExecutionStrategyConfiguration, action: Scenario.() -> Unit) {
-    action(ScenarioDsl(Project(workingDirectory), strategyConfig))
+    action(ScenarioDsl(Project(strategyConfig, workingDirectory), strategyConfig))
 }
 
 private data class GlobalCompiledProjectsCacheKey(
@@ -135,8 +136,8 @@ private object GlobalCompiledProjectsCache {
         incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
     ): ScenarioModuleImpl {
         module.compileIncrementally(
-            strategyConfig,
             SourcesChanges.Unknown,
+            strategyConfig,
             compilationConfigAction = { compilationOptionsModifier?.invoke(it) },
             incrementalCompilationConfigAction = { incrementalCompilationOptionsModifier?.invoke(it) }
         )

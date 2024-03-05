@@ -23,12 +23,14 @@ class JvmModule(
     moduleName: String,
     moduleDirectory: Path,
     dependencies: List<Dependency>,
+    defaultStrategyConfig: CompilerExecutionStrategyConfiguration,
     additionalCompilationArguments: List<String> = emptyList(),
 ) : AbstractModule(
     project,
     moduleName,
     moduleDirectory,
     dependencies,
+    defaultStrategyConfig,
     additionalCompilationArguments,
 ) {
     override fun compileImpl(
@@ -75,8 +77,8 @@ class JvmModule(
     }
 
     override fun compileIncrementally(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
         sourcesChanges: SourcesChanges,
+        strategyConfig: CompilerExecutionStrategyConfiguration,
         forceOutput: LogLevel?,
         forceNonIncrementalCompilation: Boolean,
         compilationConfigAction: (JvmCompilationConfiguration) -> Unit,

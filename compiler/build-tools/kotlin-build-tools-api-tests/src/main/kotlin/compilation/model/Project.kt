@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
+import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -14,6 +15,7 @@ import kotlin.io.path.createDirectories
 import kotlin.io.path.isDirectory
 
 class Project(
+    val defaultStrategyConfig: CompilerExecutionStrategyConfiguration,
     val projectDirectory: Path,
 ) {
     val projectId = ProjectId.ProjectUUID(UUID.randomUUID())
@@ -24,7 +26,7 @@ class Project(
         additionalCompilationArguments: List<String> = emptyList(),
     ): Module {
         val moduleDirectory = projectDirectory.resolve(moduleName)
-        val module = JvmModule(this, moduleName, moduleDirectory, dependencies, additionalCompilationArguments)
+        val module = JvmModule(this, moduleName, moduleDirectory, dependencies, defaultStrategyConfig, additionalCompilationArguments)
         module.sourcesDirectory.createDirectories()
         val templatePath = Paths.get("src/main/resources/modules/$moduleName")
         assert(templatePath.isDirectory()) {
@@ -39,8 +41,8 @@ class Project(
     }
 }
 
-fun BaseCompilationTest.project(action: Project.() -> Unit) {
-    Project(workingDirectory).apply {
+fun BaseCompilationTest.project(strategyConfig: CompilerExecutionStrategyConfiguration, action: Project.() -> Unit) {
+    Project(strategyConfig, workingDirectory).apply {
         action()
         endCompilationRound()
     }
