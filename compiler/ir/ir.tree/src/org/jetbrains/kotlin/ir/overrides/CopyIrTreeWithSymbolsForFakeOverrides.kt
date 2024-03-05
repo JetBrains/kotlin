@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.ir.overrides
 
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -34,7 +32,6 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
     private val copier = FakeOverrideCopier(
         symbolRemapper,
         FakeOverrideTypeRemapper(symbolRemapper, typeArguments),
-        SymbolRenamer.DEFAULT,
         parent,
         unimplementedOverridesStrategy
     )
@@ -42,7 +39,11 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
     fun copy(): IrOverridableMember {
         overridableMember.acceptVoid(symbolRemapper)
 
-        val result = overridableMember.transform(copier, null) as IrOverridableMember
+        val result = when (overridableMember) {
+            is IrSimpleFunction -> copier.copySimpleFunction(overridableMember)
+            is IrProperty -> copier.copyProperty(overridableMember)
+            else -> error("Unsupported member: ${overridableMember.render()}")
+        }
 
         result.patchDeclarationParents(parent)
 
@@ -89,7 +90,7 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
                     kotlinType = null
                     classifier = symbolRemapper.getReferencedClassifier(type.classifier)
                     arguments = remapTypeArguments(type.arguments)
-                    annotations = type.annotations.memoryOptimizedMap { it.transform(copier, null) as IrConstructorCall }
+                    annotations = type.copyAnnotations()
                 }
             }
         }
