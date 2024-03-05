@@ -30,11 +30,6 @@ public class CompileKotlinAgainstKlibTestGenerated extends AbstractCompileKotlin
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxKlib"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
   }
 
-  @TestMetadata("kt33411.kt")
-  public void testKt33411() {
-    runTest("compiler/testData/codegen/boxKlib/kt33411.kt");
-  }
-
   @TestMetadata("properties.kt")
   public void testProperties() {
     runTest("compiler/testData/codegen/boxKlib/properties.kt");
