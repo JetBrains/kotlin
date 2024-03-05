@@ -12,10 +12,22 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
 interface ScenarioModule {
     /**
      * Performs registered existing file modification.
+     *
+     * Prefer the overload with versioned file modification if it's possible
      */
     fun changeFile(
         fileName: String,
         transform: (String) -> String,
+    )
+
+    /**
+     * Performs registered existing file modification.
+     *
+     * Check the example `ExampleIncrementalScenarioTest.testScenario4` out
+     */
+    fun changeFile(
+        fileName: String,
+        version: UInt,
     )
 
     /**

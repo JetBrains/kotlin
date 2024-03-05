@@ -107,4 +107,20 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
             }
         }
     }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Sample scenario DSL IC test with versioned source file modification")
+    @TestMetadata("jvm-module-1")
+    fun testScenario4(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        scenario(strategyConfig) {
+            val module1 = module("jvm-module-1")
+
+            module1.changeFile("bar.kt", 1U)
+
+            module1.compile {
+                assertCompiledSources("bar.kt")
+                assertNoOutputSetChanges()
+            }
+        }
+    }
 }

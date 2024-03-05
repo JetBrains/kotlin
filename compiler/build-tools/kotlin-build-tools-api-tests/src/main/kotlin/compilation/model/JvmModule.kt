@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.createParentDirectories
-import kotlin.io.path.listDirectoryEntries
-import kotlin.io.path.toPath
+import kotlin.io.path.*
 
 class JvmModule(
     project: Project,
@@ -51,11 +48,14 @@ class JvmModule(
             "-cp", dependencyFiles.joinToString(File.pathSeparator),
             "-module-name", moduleName,
         )
+        val allowedExtensions = compilationConfig.kotlinScriptFilenameExtensions + setOf("kt", "kts")
         return BaseTest.compilationService.compileJvm(
             project.projectId,
             strategyConfig,
             compilationConfig,
-            sourcesDirectory.listDirectoryEntries().map { it.toFile() },
+            sourcesDirectory.listDirectoryEntries()
+                .filter { path -> path.pathString.run { allowedExtensions.any { endsWith(".$it") } } }
+                .map { it.toFile() },
             defaultCompilationArguments + additionalCompilationArguments,
         )
     }

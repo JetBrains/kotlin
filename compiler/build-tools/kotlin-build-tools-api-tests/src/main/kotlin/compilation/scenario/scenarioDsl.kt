@@ -28,11 +28,12 @@ internal class ScenarioModuleImpl(
         transform: (String) -> String,
     ) {
         val file = module.sourcesDirectory.resolve(fileName)
-        file.writeText(transform(file.readText()))
-        sourcesChanges = SourcesChanges.Known(
-            modifiedFiles = sourcesChanges.modifiedFiles + file.toFile(),
-            removedFiles = sourcesChanges.removedFiles,
-        )
+        writeFile(fileName, transform(file.readText()))
+    }
+
+    override fun changeFile(fileName: String, version: UInt) {
+        val file = module.sourcesDirectory.resolve("$fileName.$version")
+        writeFile(fileName, file.readText())
     }
 
     override fun deleteFile(fileName: String) {
@@ -45,8 +46,12 @@ internal class ScenarioModuleImpl(
     }
 
     override fun createFile(fileName: String, content: String) {
+        writeFile(fileName, content)
+    }
+
+    private fun writeFile(fileName: String, newContent: String) {
         val file = module.sourcesDirectory.resolve(fileName)
-        file.writeText(content)
+        file.writeText(newContent)
         sourcesChanges = SourcesChanges.Known(
             modifiedFiles = sourcesChanges.modifiedFiles + file.toFile(),
             removedFiles = sourcesChanges.removedFiles,
