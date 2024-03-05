@@ -220,11 +220,21 @@ class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
     )
 }
 
+/**
+ * Disables a parametrized test if any of argument providers doesn't have arguments to provide.
+ * When gradle.integration.tests.gradle.version.filter property is used, all arguments of a GradleArgumentsProvider may be filtered out.
+ * If such a test is not disabled, it will fail with initialization error.
+ */
 class DisabledIfNoArgumentsProvided : ExecutionCondition {
     override fun evaluateExecutionCondition(context: ExtensionContext): ConditionEvaluationResult {
+        if (!context.testMethod.isPresent) {
+            return ConditionEvaluationResult.enabled("The execution condition is only applicable to test methods")
+        }
+
         val gradleVersionFilterParameter = context.getConfigurationParameter("gradle.integration.tests.gradle.version.filter")
-        if (!gradleVersionFilterParameter.isPresent)
+        if (!gradleVersionFilterParameter.isPresent) {
             return ConditionEvaluationResult.enabled("No Gradle version filter provided")
+        }
 
         val argumentProviders = AnnotationUtils.findRepeatableAnnotations(context.requiredTestMethod, ArgumentsSource::class.java)
             .map(ArgumentsSource::value)

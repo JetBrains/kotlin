@@ -104,6 +104,5 @@ internal class HierarchicalStructureOptInMigrationArtifactContentMppIT : KGPBase
     @GradleTestVersions
     @ParameterizedTest(name = "{0} mode {1}: {displayName}")
     @ArgumentsSource(GradleAndHmppModeProvider::class)
-    @ExtendWith(DisabledIfNoArgumentsProvided::class)
     annotation class GradleWithHmppModeTest
 }
