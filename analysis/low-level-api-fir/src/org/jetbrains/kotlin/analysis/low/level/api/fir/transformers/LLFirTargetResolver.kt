@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
@@ -92,13 +93,16 @@ internal abstract class LLFirTargetResolver(
     fun containingClass(context: FirElement): FirRegularClass {
         val containingDeclaration = containingDeclarations.lastOrNull() ?: errorWithAttachment("Containing declaration is not found") {
             withFirEntry("context", context)
-            withEntry("originalTarget", resolveTarget.toString())
+            withFirDesignationEntry("designation", resolveTarget.designation)
         }
 
         requireWithAttachment(
             containingDeclaration is FirRegularClass,
             { "${FirRegularClass::class.simpleName} expected, but ${containingDeclaration::class.simpleName} found" },
-        )
+        ) {
+            withFirEntry("context", context)
+            withFirDesignationEntry("designation", resolveTarget.designation)
+        }
 
         return containingDeclaration
     }
