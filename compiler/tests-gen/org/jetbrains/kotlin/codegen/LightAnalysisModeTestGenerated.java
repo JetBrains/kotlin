@@ -4195,6 +4195,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/callableReference/callableReferenceOfStaticMethod.kt");
     }
 
+    @TestMetadata("callableReferencetoInnerAndLocal.kt")
+    public void testCallableReferencetoInnerAndLocal() {
+      runTest("compiler/testData/codegen/box/callableReference/callableReferencetoInnerAndLocal.kt");
+    }
+
     @TestMetadata("charArrayOf.kt")
     public void testCharArrayOf() {
       runTest("compiler/testData/codegen/box/callableReference/charArrayOf.kt");

@@ -9,11 +9,14 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.types.Variance
@@ -145,17 +148,28 @@ class FirDoubleColonExpressionResolver(private val session: FirSession) {
             firClassLikeDeclaration.symbol.toLookupTag(),
             Array(firClassLikeDeclaration.typeParameters.size) { index ->
                 val typeArgument = expression.typeArguments.getOrNull(index)
-                if (typeArgument == null) ConeStarProjection
-                else when (typeArgument) {
-                    is FirTypeProjectionWithVariance -> {
-                        val coneType = typeArgument.typeRef.coneType
-                        when (typeArgument.variance) {
-                            Variance.INVARIANT -> coneType
-                            Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(coneType)
-                            Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(coneType)
-                        }
+                if (typeArgument == null) {
+                    // We currently only support local classes with captured type parameters from non-classes
+                    // (i.e. local class in generic function).
+                    // TODO(KT-66344) Support inner classes
+                    val typeParameter = firClassLikeDeclaration.typeParameters[0]
+                    if (firClassLikeDeclaration.isLocal && typeParameter is FirOuterClassTypeParameterRef && typeParameter.symbol.containingDeclarationSymbol !is FirClassSymbol) {
+                        typeParameter.symbol.defaultType
+                    } else {
+                        ConeStarProjection
                     }
-                    else -> ConeStarProjection
+                } else {
+                    when (typeArgument) {
+                        is FirTypeProjectionWithVariance -> {
+                            val coneType = typeArgument.typeRef.coneType
+                            when (typeArgument.variance) {
+                                Variance.INVARIANT -> coneType
+                                Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(coneType)
+                                Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(coneType)
+                            }
+                        }
+                        else -> ConeStarProjection
+                    }
                 }
             },
             isNullable = resolvedExpression.isNullableLHSForCallableReference

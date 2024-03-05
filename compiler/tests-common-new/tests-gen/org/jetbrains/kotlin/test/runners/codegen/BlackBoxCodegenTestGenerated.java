@@ -4596,6 +4596,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
 
     @Test
+    @TestMetadata("callableReferencetoInnerAndLocal.kt")
+    public void testCallableReferencetoInnerAndLocal() {
+      runTest("compiler/testData/codegen/box/callableReference/callableReferencetoInnerAndLocal.kt");
+    }
+
+    @Test
     @TestMetadata("charArrayOf.kt")
     public void testCharArrayOf() {
       runTest("compiler/testData/codegen/box/callableReference/charArrayOf.kt");
