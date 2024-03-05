@@ -274,8 +274,16 @@ fun Project.configureTests() {
         }
     }
 
+    val concurrencyLimitService = project.gradle.sharedServices.registerIfAbsent(
+        "concurrencyLimitService",
+        ConcurrencyLimitService::class
+    ) {
+        maxParallelUsages = 1
+    }
+
     tasks.withType<Test>().configureEach {
         outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
+        usesService(concurrencyLimitService)
     }
 
     // Aggregate task for build related checks

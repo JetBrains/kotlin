@@ -138,10 +138,6 @@ fun Project.projectTest(
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> {
-    val concurrencyLimitService =
-        project.gradle.sharedServices.registerIfAbsent("concurrencyLimitService", ConcurrencyLimitService::class) {
-            maxParallelUsages = 1
-        }
     val shouldInstrument = project.providers.gradleProperty("kotlin.test.instrumentation.disable")
         .orNull?.toBoolean() != true
     if (shouldInstrument) {
@@ -225,7 +221,6 @@ fun Project.projectTest(
             defaultMaxMemoryPerTestWorkerMb
 
         maxHeapSize = "${maxHeapSizeMb ?: (memoryPerTestProcessMb - maxMetaspaceSizeMb - reservedCodeCacheSizeMb)}m"
-        usesService(concurrencyLimitService)
 
         if (minHeapSizeMb != null) {
             minHeapSize = "${minHeapSizeMb}m"
