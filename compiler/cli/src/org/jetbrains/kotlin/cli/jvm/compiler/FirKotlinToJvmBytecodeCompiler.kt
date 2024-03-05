@@ -154,13 +154,9 @@ object FirKotlinToJvmBytecodeCompiler {
             return null
         }
 
-        performanceManager?.notifyIRTranslationStarted()
-
         val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
         val fir2IrAndIrActualizerResult =
             firResult.convertToIrAndActualizeForJvm(fir2IrExtensions, configuration, diagnosticsReporter, irGenerationExtensions)
-
-        performanceManager?.notifyIRTranslationFinished()
 
         performanceManager?.notifyGenerationStarted()
         val generationState = runBackend(

@@ -133,12 +133,8 @@ fun compileModulesUsingFrontendIrAndLightTree(
         return false
     }
 
-    performanceManager?.notifyIRTranslationStarted()
-
     val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
     val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment)
-
-    performanceManager?.notifyIRTranslationFinished()
 
     performanceManager?.notifyGenerationStarted()
     val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment, performanceManager)
@@ -192,6 +188,9 @@ fun FirResult.convertToIrAndActualizeForJvm(
     diagnosticsReporter: DiagnosticReporter,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
 ): Fir2IrActualizedResult {
+    val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
+    performanceManager?.notifyIRTranslationStarted()
+
     val fir2IrConfiguration = Fir2IrConfiguration.forJvmCompilation(configuration, diagnosticsReporter)
 
     return convertToIrAndActualize(
@@ -203,7 +202,7 @@ fun FirResult.convertToIrAndActualizeForJvm(
         FirJvmVisibilityConverter,
         DefaultBuiltIns.Instance,
         ::JvmIrTypeSystemContext,
-    )
+    ).also { performanceManager?.notifyIRTranslationFinished() }
 }
 
 fun generateCodeFromIr(
