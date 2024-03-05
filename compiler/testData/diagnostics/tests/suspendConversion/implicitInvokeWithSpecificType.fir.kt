@@ -1,7 +1,6 @@
-// IGNORE_DIAGNOSTIC_API
 // ISSUE: KT-62836
 fun box() {
-    useSuspendFunInt(Test())
+    useSuspendFunInt(<!ARGUMENT_TYPE_MISMATCH!>Test()<!>)
 }
 
 fun useSuspendFunInt(fn: suspend () -> String): String = ""
