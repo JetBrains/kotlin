@@ -293,35 +293,38 @@ val gradleVersions = listOf(
     "8.5",
     "8.6"
 )
-val junitTags = listOf("JvmKGP", "DaemonsKGP", "JsKGP", "NativeKGP", "MppKGP", "AndroidKGP", "OtherKGP")
-val requiresKotlinNative = listOf("NativeKGP", "MppKGP", "OtherKGP")
-val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
 
-junitTags.forEach { junitTag ->
-    val taskPrefix = "kgp${junitTag.substringBefore("KGP")}"
-    val tasksByGradleVersion = gradleVersions.map { gradleVersion ->
-        tasks.register<Test>("${taskPrefix}TestsForGradle_${gradleVersion.replace(".", "_")}") {
-            group = gradleVersionTaskGroup
-            description = "Runs all tests for Kotlin Gradle plugins against Gradle $gradleVersion"
-            maxParallelForks = maxParallelTestForks
+if (project.kotlinBuildProperties.isTeamcityBuild) {
+    val junitTags = listOf("JvmKGP", "DaemonsKGP", "JsKGP", "NativeKGP", "MppKGP", "AndroidKGP", "OtherKGP")
+    val requiresKotlinNative = listOf("NativeKGP", "MppKGP", "OtherKGP")
+    val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
 
-            systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
-            systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
-            if (junitTag in requiresKotlinNative) {
-                applyKotlinNativeFromCurrentBranchIfNeeded()
-            }
+    junitTags.forEach { junitTag ->
+        val taskPrefix = "kgp${junitTag.substringBefore("KGP")}"
+        val tasksByGradleVersion = gradleVersions.map { gradleVersion ->
+            tasks.register<Test>("${taskPrefix}TestsForGradle_${gradleVersion.replace(".", "_")}") {
+                group = gradleVersionTaskGroup
+                description = "Runs all tests for Kotlin Gradle plugins against Gradle $gradleVersion"
+                maxParallelForks = maxParallelTestForks
 
-            useJUnitPlatform {
-                includeTags(junitTag)
-                excludeTags(*(junitTags - junitTag).toTypedArray())
-                includeEngines("junit-jupiter")
+                systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
+                systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
+                if (junitTag in requiresKotlinNative) {
+                    applyKotlinNativeFromCurrentBranchIfNeeded()
+                }
+
+                useJUnitPlatform {
+                    includeTags(junitTag)
+                    excludeTags(*(junitTags - junitTag).toTypedArray())
+                    includeEngines("junit-jupiter")
+                }
             }
         }
-    }
 
-    tasks.register("${taskPrefix}TestsGroupedByGradleVersion") {
-        group = gradleVersionTaskGroup
-        dependsOn(tasksByGradleVersion)
+        tasks.register("${taskPrefix}TestsGroupedByGradleVersion") {
+            group = gradleVersionTaskGroup
+            dependsOn(tasksByGradleVersion)
+        }
     }
 }
 
