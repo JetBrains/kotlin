@@ -525,11 +525,11 @@ FILE fqName:<root> fileName:/1.kt
         $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         a: CONST Int type=kotlin.Int value=1
       CALL 'public open fun foo <T> (a: @[FlexibleNullability] T of <root>.A.foo?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
-        <T>: @[FlexibleNullability] kotlin.Nothing?
+        <T>: kotlin.Nothing?
         $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         a: CONST Null type=kotlin.Nothing? value=null
       CALL 'public open fun foo <T> (a: @[FlexibleNullability] T of <root>.A.foo?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
-        <T>: kotlin.Int?
+        <T>: @[FlexibleNullability] kotlin.Int?
         $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         a: CONST Null type=kotlin.Nothing? value=null
       CALL 'public open fun foo <T> (a: @[FlexibleNullability] T of <root>.A.foo?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
@@ -655,11 +655,11 @@ FILE fqName:<root> fileName:/1.kt
         $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
         a: CONST Int type=kotlin.Int value=1
       CALL 'public open fun foo <T> (a: @[FlexibleNullability] T of <root>.F.foo?): kotlin.Unit declared in <root>.F' type=kotlin.Unit origin=null
-        <T>: @[FlexibleNullability] kotlin.Nothing?
+        <T>: kotlin.Nothing?
         $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
         a: CONST Null type=kotlin.Nothing? value=null
       CALL 'public open fun foo <T> (a: @[FlexibleNullability] T of <root>.F.foo?): kotlin.Unit declared in <root>.F' type=kotlin.Unit origin=null
-        <T>: kotlin.Int?
+        <T>: @[FlexibleNullability] kotlin.Int?
         $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
         a: CONST Null type=kotlin.Nothing? value=null
       CALL 'public open fun foo <T> (a: @[FlexibleNullability] T of <root>.F.foo?): kotlin.Unit declared in <root>.F' type=kotlin.Unit origin=null
@@ -681,11 +681,11 @@ FILE fqName:<root> fileName:/1.kt
         $this: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
         a: CONST Int type=kotlin.Int value=1
       CALL 'public open fun foo <T> (a: @[FlexibleNullability] T of <root>.G.foo?): kotlin.Unit declared in <root>.G' type=kotlin.Unit origin=null
-        <T>: @[FlexibleNullability] kotlin.Nothing?
+        <T>: kotlin.Nothing?
         $this: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
         a: CONST Null type=kotlin.Nothing? value=null
       CALL 'public open fun foo <T> (a: @[FlexibleNullability] T of <root>.G.foo?): kotlin.Unit declared in <root>.G' type=kotlin.Unit origin=null
-        <T>: kotlin.Int?
+        <T>: @[FlexibleNullability] kotlin.Int?
         $this: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
         a: CONST Null type=kotlin.Nothing? value=null
       CALL 'public open fun foo <T> (a: @[FlexibleNullability] T of <root>.G.foo?): kotlin.Unit declared in <root>.G' type=kotlin.Unit origin=null
@@ -707,11 +707,11 @@ FILE fqName:<root> fileName:/1.kt
         $this: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
         a: CONST Int type=kotlin.Int value=1
       CALL 'public open fun foo <T> (a: @[FlexibleNullability] T of <root>.H.foo?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
-        <T>: @[FlexibleNullability] kotlin.Nothing?
+        <T>: kotlin.Nothing?
         $this: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
         a: CONST Null type=kotlin.Nothing? value=null
       CALL 'public open fun foo <T> (a: @[FlexibleNullability] T of <root>.H.foo?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
-        <T>: kotlin.Int?
+        <T>: @[FlexibleNullability] kotlin.Int?
         $this: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
         a: CONST Null type=kotlin.Nothing? value=null
       CALL 'public open fun foo <T> (a: @[FlexibleNullability] T of <root>.H.foo?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
@@ -748,23 +748,23 @@ FILE fqName:<root> fileName:/1.kt
           element: CONST Null type=kotlin.Nothing? value=null
       VAR name:k21 type:kotlin.Int? [val]
         CALL 'public open fun bar <T> (): @[FlexibleNullability] T of <root>.J.bar? declared in <root>.J' type=@[FlexibleNullability] kotlin.Int? origin=null
-          <T>: kotlin.Int?
+          <T>: @[FlexibleNullability] kotlin.Int?
           $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
       VAR name:k22 type:kotlin.Any [val]
         TYPE_OP type=kotlin.Any origin=IMPLICIT_NOTNULL typeOperand=kotlin.Any
           CALL 'public open fun bar <T> (): @[FlexibleNullability] T of <root>.J.bar? declared in <root>.J' type=@[FlexibleNullability] kotlin.Any? origin=null
-            <T>: kotlin.Any
+            <T>: @[FlexibleNullability] kotlin.Any?
             $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
       CALL 'public open fun foo <T> (a: @[FlexibleNullability] T of <root>.J.foo?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
         <T>: @[FlexibleNullability] kotlin.Int?
         $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
         a: CONST Int type=kotlin.Int value=1
       CALL 'public open fun foo <T> (a: @[FlexibleNullability] T of <root>.J.foo?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
-        <T>: @[FlexibleNullability] kotlin.Nothing?
+        <T>: kotlin.Nothing?
         $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
         a: CONST Null type=kotlin.Nothing? value=null
       CALL 'public open fun foo <T> (a: @[FlexibleNullability] T of <root>.J.foo?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
-        <T>: kotlin.Int?
+        <T>: @[FlexibleNullability] kotlin.Int?
         $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
         a: CONST Null type=kotlin.Nothing? value=null
       CALL 'public open fun foo <T> (a: @[FlexibleNullability] T of <root>.J.foo?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
@@ -779,5 +779,5 @@ FILE fqName:<root> fileName:/1.kt
         a: CONST Int type=kotlin.Int value=1
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun bar <T> (): @[FlexibleNullability] T of <root>.L.bar? declared in <root>.L' type=@[FlexibleNullability] kotlin.Int? origin=null
-          <T>: kotlin.Int
+          <T>: @[FlexibleNullability] kotlin.Int?
           $this: GET_VAR 'l: <root>.L declared in <root>.test' type=<root>.L origin=null

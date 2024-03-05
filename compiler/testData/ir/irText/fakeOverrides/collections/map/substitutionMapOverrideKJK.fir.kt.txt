@@ -35,8 +35,8 @@ fun test(a: A<Boolean>, b: B<Boolean?>) {
   b.<get-size>() /*~> Unit */
   b.put(key = false, value = false) /*~> Unit */
   b.put(key = null, value = null) /*~> Unit */
-  b.set<@FlexibleNullability Boolean?, @FlexibleNullability Boolean?>(key = null, value = null)
-  b.set<@FlexibleNullability Boolean?, @FlexibleNullability Boolean?>(key = true, value = true)
+  b.set<Boolean?, Boolean?>(key = null, value = null)
+  b.set<Boolean?, Boolean?>(key = true, value = true)
   b.get(key = null) /*~> Unit */
   b.get(key = true) /*~> Unit */
   b.remove(key = null) /*~> Unit */

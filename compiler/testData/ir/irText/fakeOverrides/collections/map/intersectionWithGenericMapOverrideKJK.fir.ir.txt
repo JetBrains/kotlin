@@ -468,8 +468,8 @@ FILE fqName:<root> fileName:/1.kt
           key: CONST Boolean type=kotlin.Boolean value=false
           value: CONST Boolean type=kotlin.Boolean value=false
       CALL 'public final fun set <K, V> (key: K of kotlin.collections.set, value: V of kotlin.collections.set): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
-        <K>: @[FlexibleNullability] kotlin.Boolean?
-        <V>: @[FlexibleNullability] kotlin.Boolean?
+        <K>: kotlin.Boolean?
+        <V>: kotlin.Boolean?
         $receiver: GET_VAR 'b: <root>.B<kotlin.Boolean?> declared in <root>.test' type=<root>.B<kotlin.Boolean?> origin=null
         key: CONST Boolean type=kotlin.Boolean value=true
         value: CONST Boolean type=kotlin.Boolean value=true

@@ -355,16 +355,16 @@ FILE fqName:<root> fileName:/1.kt
         $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         c: GET_VAR 'val k3: kotlin.collections.MutableSet<kotlin.Int> declared in <root>.test' type=kotlin.collections.MutableSet<kotlin.Int> origin=null
       VAR name:k19 type:kotlin.collections.MutableList<kotlin.String?> [val]
-        TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.String?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.String?>
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.Java1?>? visibility:public' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.String?>? origin=null
+        TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableList<kotlin.String?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableList<kotlin.String?>
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.Java1?>? visibility:public' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<kotlin.String?>? origin=null
             receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       VAR name:k20 type:java.util.Queue<kotlin.String?> [val]
-        TYPE_OP type=java.util.Queue<@[FlexibleNullability] kotlin.String?> origin=IMPLICIT_NOTNULL typeOperand=java.util.Queue<@[FlexibleNullability] kotlin.String?>
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:@[FlexibleNullability] java.util.Queue<@[FlexibleNullability] T of <root>.Java1?>? visibility:public' type=@[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? origin=null
+        TYPE_OP type=java.util.Queue<kotlin.String?> origin=IMPLICIT_NOTNULL typeOperand=java.util.Queue<kotlin.String?>
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:@[FlexibleNullability] java.util.Queue<@[FlexibleNullability] T of <root>.Java1?>? visibility:public' type=@[FlexibleNullability] java.util.Queue<kotlin.String?>? origin=null
             receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       VAR name:k21 type:kotlin.collections.MutableSet<kotlin.String?> [val]
-        TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.String?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.String?>
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:c type:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] T of <root>.Java1?>? visibility:public' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.String?>? origin=null
+        TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableSet<kotlin.String?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableSet<kotlin.String?>
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:c type:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] T of <root>.Java1?>? visibility:public' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<kotlin.String?>? origin=null
             receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.Java1?>? visibility:public' type=kotlin.Unit origin=EQ
         receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
@@ -379,16 +379,16 @@ FILE fqName:<root> fileName:/1.kt
         value: CALL 'public final fun mutableSetOf <T> (): kotlin.collections.MutableSet<T of kotlin.collections.mutableSetOf> declared in kotlin.collections' type=kotlin.collections.MutableSet<kotlin.String?> origin=null
           <T>: kotlin.String?
       VAR name:k22 type:kotlin.collections.MutableList<kotlin.String?> [val]
-        TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.String?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.String?>
-          CALL 'public open fun bar (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.String?>? declared in <root>.B' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.String?>? origin=null
+        TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableList<kotlin.String?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableList<kotlin.String?>
+          CALL 'public open fun bar (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.String?>? declared in <root>.B' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<kotlin.String?>? origin=null
             $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       VAR name:k23 type:java.util.Queue<kotlin.String?> [val]
-        TYPE_OP type=java.util.Queue<@[FlexibleNullability] kotlin.String?> origin=IMPLICIT_NOTNULL typeOperand=java.util.Queue<@[FlexibleNullability] kotlin.String?>
-          CALL 'public open fun bar2 (): @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? declared in <root>.B' type=@[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? origin=null
+        TYPE_OP type=java.util.Queue<kotlin.String?> origin=IMPLICIT_NOTNULL typeOperand=java.util.Queue<kotlin.String?>
+          CALL 'public open fun bar2 (): @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? declared in <root>.B' type=@[FlexibleNullability] java.util.Queue<kotlin.String?>? origin=null
             $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       VAR name:k24 type:kotlin.collections.MutableSet<kotlin.String?> [val]
-        TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.String?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.String?>
-          CALL 'public open fun bar3 (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.String?>? declared in <root>.B' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.String?>? origin=null
+        TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableSet<kotlin.String?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableSet<kotlin.String?>
+          CALL 'public open fun bar3 (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.String?>? declared in <root>.B' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<kotlin.String?>? origin=null
             $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       CALL 'public open fun foo (a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.String?>?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
         $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null

@@ -497,7 +497,7 @@ FILE fqName:<root> fileName:/1.kt
         CALL 'public open fun foo (): T of <root>.C declared in <root>.C' type=kotlin.Any origin=null
           $this: GET_VAR 'c: <root>.C<kotlin.Any> declared in <root>.test' type=<root>.C<kotlin.Any> origin=null
       VAR name:k9 type:kotlin.Any? [val]
-        CALL 'public abstract fun <get-a> (): @[FlexibleNullability] T of <root>.D? declared in <root>.D' type=@[FlexibleNullability] kotlin.Any? origin=GET_PROPERTY
+        CALL 'public abstract fun <get-a> (): @[FlexibleNullability] T of <root>.D? declared in <root>.D' type=kotlin.Any? origin=GET_PROPERTY
           $this: GET_VAR 'd: <root>.D<kotlin.Any?> declared in <root>.test' type=<root>.D<kotlin.Any?> origin=null
       CALL 'public abstract fun <set-a> (<set-?>: @[FlexibleNullability] T of <root>.D?): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'd: <root>.D<kotlin.Any?> declared in <root>.test' type=<root>.D<kotlin.Any?> origin=null
@@ -566,7 +566,7 @@ FILE fqName:<root> fileName:/1.kt
           $this: GET_VAR 'h: <root>.H<kotlin.Any?> declared in <root>.test' type=<root>.H<kotlin.Any?> origin=null
           o: CONST Null type=kotlin.Nothing? value=null
       VAR name:k26 type:kotlin.Any? [val]
-        CALL 'public abstract fun foo (): @[FlexibleNullability] T of <root>.H? declared in <root>.H' type=@[FlexibleNullability] kotlin.Any? origin=null
+        CALL 'public abstract fun foo (): @[FlexibleNullability] T of <root>.H? declared in <root>.H' type=kotlin.Any? origin=null
           $this: GET_VAR 'h: <root>.H<kotlin.Any?> declared in <root>.test' type=<root>.H<kotlin.Any?> origin=null
       VAR name:k27 type:kotlin.Unit [val]
         CALL 'public open fun bar (o: T of <root>.I): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null

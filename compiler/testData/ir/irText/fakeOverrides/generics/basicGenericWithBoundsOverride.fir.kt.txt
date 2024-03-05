@@ -86,7 +86,7 @@ fun test(a: A, b: B, c: C, d: D, e: E, f: F) {
   d.foo(t = 1.1)
   d.bar() /*~> Unit */
   e.foo<@FlexibleNullability Int?>(a = 1)
-  e.bar<Int>() /*~> Unit */
+  e.bar<@FlexibleNullability Int?>() /*~> Unit */
   f.foo<Double>(a = 2.2)
   f.bar<Double>() /*~> Unit */
 }
