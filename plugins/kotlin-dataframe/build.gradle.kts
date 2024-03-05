@@ -1,13 +1,12 @@
 plugins {
     id("java")
     kotlin("jvm")
-    kotlin("libs.publisher") version "0.0.60-dev-30"
+    kotlin("libs.publisher")
     id("com.github.johnrengelman.shadow") version "7.1.2"
     kotlin("plugin.serialization")
 }
 
 group = "org.jetbrains.kotlinx.dataframe"
-version = "0.10.0-dev"
 
 val kotlinVersion: String by project.properties
 
