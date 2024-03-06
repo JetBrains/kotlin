@@ -112,7 +112,7 @@ internal inline fun <reified T : PsiFileSystemItem> getPsiFilesFromPaths(
     val psiManager = PsiManager.getInstance(kotlinCoreProjectEnvironment.project)
     return buildList {
         for (path in paths) {
-            val vFile = fs.findFileByPath(path.toString()) ?: continue
+            val vFile = fs.findFileByNioFile(path.toAbsolutePath()) ?: continue
             val psiFileSystemItem =
                 if (vFile.isDirectory)
                     psiManager.findDirectory(vFile) as? T
