@@ -952,6 +952,7 @@ private val KProperty1<*, *>.gradleValues: DefaultValues
         when (this) {
             DefaultValue.BOOLEAN_FALSE_DEFAULT -> DefaultValues.BooleanFalseDefault
             DefaultValue.BOOLEAN_TRUE_DEFAULT -> DefaultValues.BooleanTrueDefault
+            DefaultValue.BOOLEAN_NULL_DEFAULT -> DefaultValues.BooleanNullDefault
             DefaultValue.STRING_NULL_DEFAULT -> DefaultValues.StringNullDefault
             DefaultValue.EMPTY_STRING_LIST_DEFAULT -> DefaultValues.EmptyStringListDefault
             DefaultValue.EMPTY_STRING_ARRAY_DEFAULT -> DefaultValues.EmptyStringArrayDefault

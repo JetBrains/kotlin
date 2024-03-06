@@ -13,6 +13,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.ES_2015
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import javax.inject.Inject
 
 abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
@@ -274,7 +276,11 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         this.inputFilesDirectory.set(inputFilesDirectory)
 
         val platformType = binary.compilation.platformType
-        val moduleKind = binary.linkTask.flatMap { it.compilerOptions.moduleKind }
+        val moduleKind = binary.linkTask.flatMap { task ->
+            task.compilerOptions.moduleKind.orElse(task.compilerOptions.target.map {
+                if (it == ES_2015) JsModuleKind.MODULE_ES else JsModuleKind.MODULE_UMD
+            })
+        }
 
         this.entryModuleName.set(entryModuleName)
         this.esModules.convention(

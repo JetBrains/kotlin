@@ -217,7 +217,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         configuration.put(JSConfigurationKeys.FRIEND_PATHS, friends)
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name.removeSuffix(OLD_MODULE_SUFFIX))
-        configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.v5)
+        configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.es5)
 
         val errorIgnorancePolicy = registeredDirectives[ERROR_POLICY].singleOrNull() ?: ErrorTolerancePolicy.DEFAULT
         configuration.put(JSConfigurationKeys.ERROR_TOLERANCE_POLICY, errorIgnorancePolicy)

@@ -336,7 +336,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions 
 	public abstract fun getSourceMapPrefix ()Ljava/lang/String;
 	public abstract fun getTarget ()Ljava/lang/String;
 	public abstract fun getTypedArrays ()Z
-	public abstract fun getUseEsClasses ()Z
+	public abstract fun getUseEsClasses ()Ljava/lang/Boolean;
 	public abstract fun setFriendModulesDisabled (Z)V
 	public abstract fun setMain (Ljava/lang/String;)V
 	public abstract fun setMetaInfo (Z)V
@@ -349,7 +349,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions 
 	public abstract fun setSourceMapPrefix (Ljava/lang/String;)V
 	public abstract fun setTarget (Ljava/lang/String;)V
 	public abstract fun setTypedArrays (Z)V
-	public abstract fun setUseEsClasses (Z)V
+	public abstract fun setUseEsClasses (Ljava/lang/Boolean;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions$DefaultImpls {
@@ -370,7 +370,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions$DefaultImpls 
 	public static fun getSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun getTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
 	public static fun getTypedArrays (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
-	public static fun getUseEsClasses (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
+	public static fun getUseEsClasses (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/Boolean;
 	public static fun getUseK2 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun getVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun setAllWarningsAsErrors (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
@@ -390,7 +390,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions$DefaultImpls 
 	public static fun setSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 	public static fun setTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
 	public static fun setTypedArrays (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
-	public static fun setUseEsClasses (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
+	public static fun setUseEsClasses (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/Boolean;)V
 	public static fun setUseK2 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 	public static fun setVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 }
