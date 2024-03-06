@@ -30,8 +30,7 @@ abstract class AbstractFirIdenticalChecker(testServices: TestServices) : AfterAn
 
     final override fun check(failedAssertions: List<WrappedException>) {
         if (failedAssertions.isNotEmpty()) return
-        val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
-        checkTestDataFile(testDataFile)
+        testServices.moduleStructure.originalTestDataFiles.firstOrNull()?.let(::checkTestDataFile)
     }
 
     /**

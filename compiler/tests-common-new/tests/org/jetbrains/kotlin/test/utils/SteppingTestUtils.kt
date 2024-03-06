@@ -89,7 +89,7 @@ fun checkSteppingTestResult(
     directives: RegisteredDirectives
 ) {
     val lines = wholeFile.readLines()
-    val result = calculateSteppingTestResult(frontendKind, targetBackend, lines, loggedItems)
+    val result = calculateSteppingTestResult(frontendKind, targetBackend, lines, loggedItems, directives)
     assertEqualsToFile(wholeFile, result)
 }
 
@@ -97,10 +97,11 @@ fun checkSteppingTestResult(
     frontendKind: FrontendKind<*>,
     targetBackend: TargetBackend,
     originalSource: String,
-    loggedItems: List<SteppingTestLoggedData>
+    loggedItems: List<SteppingTestLoggedData>,
+    directives: RegisteredDirectives
 ) {
     val lines = originalSource.split("\n")
-    val result = calculateSteppingTestResult(frontendKind, targetBackend, lines, loggedItems)
+    val result = calculateSteppingTestResult(frontendKind, targetBackend, lines, loggedItems, directives)
     assertEquals(originalSource, result)
 }
 
@@ -109,6 +110,7 @@ fun calculateSteppingTestResult(
     targetBackend: TargetBackend,
     lines: List<String>,
     loggedItems: List<SteppingTestLoggedData>,
+    directives: RegisteredDirectives,
 ): String {
     val actual = mutableListOf<String>()
     val directivesInTestFile = mutableSetOf<Directive>()

@@ -162,7 +162,7 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
             eventSet.resume()
         }
         when (val file = wholeFile) {
-            null -> checkSteppingTestResult(frontend, backend, originalSource, loggedItems)
+            null -> checkSteppingTestResult(frontend, backend, originalSource, loggedItems, testServices.defaultDirectives)
             else -> checkSteppingTestResult(frontend, backend, file, loggedItems, testServices.defaultDirectives)
         }
         virtualMachine.resume()
