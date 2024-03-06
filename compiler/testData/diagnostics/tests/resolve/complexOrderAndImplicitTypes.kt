@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-66313
 
 val foo: String get() = ""
