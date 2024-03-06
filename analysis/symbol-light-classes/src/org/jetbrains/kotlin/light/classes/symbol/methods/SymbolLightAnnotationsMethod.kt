@@ -115,7 +115,7 @@ internal class SymbolLightAnnotationsMethod private constructor(
 
     override fun getNameIdentifier(): PsiIdentifier = _identifier
 
-    override fun getReturnType(): PsiType = PsiType.VOID
+    override fun getReturnType(): PsiType = PsiTypes.voidType()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

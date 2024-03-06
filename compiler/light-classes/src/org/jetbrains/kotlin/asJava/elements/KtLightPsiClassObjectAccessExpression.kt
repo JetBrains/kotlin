@@ -9,6 +9,7 @@ import com.intellij.psi.PsiClassObjectAccessExpression
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiTypeElement
+import com.intellij.psi.PsiTypes
 import com.intellij.psi.impl.light.LightTypeElement
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
@@ -23,7 +24,7 @@ class KtLightPsiClassObjectAccessExpression(override val kotlinOrigin: KtClassLi
         val bindingContext = LightClassGenerationSupport.getInstance(this.project).analyze(kotlinOrigin)
         val (classId, arrayDimensions) = bindingContext[BindingContext.COMPILE_TIME_VALUE, kotlinOrigin]
             ?.toConstantValue(TypeUtils.NO_EXPECTED_TYPE)?.safeAs<KClassValue>()?.value
-            ?.safeAs<KClassValue.Value.NormalClass>()?.value ?: return PsiType.VOID
+            ?.safeAs<KClassValue.Value.NormalClass>()?.value ?: return PsiTypes.voidType()
         var type = psiType(classId.asSingleFqName().asString(), kotlinOrigin, boxPrimitiveType = arrayDimensions > 0)
         repeat(arrayDimensions) {
             type = type.createArrayType()

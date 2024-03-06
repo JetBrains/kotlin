@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
+import com.intellij.psi.PsiTypes
 import com.intellij.psi.util.ClassUtil
 import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.components.KaMetadataCalculator
@@ -103,7 +104,7 @@ internal class KaFirMetadataCalculator(override val analysisSession: KaFirSessio
                         bindings.put(FIELD_FOR_PROPERTY, fir, Type.getType(getBinaryPresentationWithCorrection(it.type)) to it.name)
                     }
                     fir.getter?.let { getter ->
-                        methods.singleOrNull { it.returnType != PsiType.VOID }?.let {
+                        methods.singleOrNull { it.returnType != PsiTypes.voidType() }?.let {
                             bindings.put(METHOD_FOR_FIR_FUNCTION, getter, Method(it.name, getAsmMethodSignatureWithCorrection(it)))
                         }
                     }
@@ -180,7 +181,7 @@ private fun getAsmMethodSignatureWithCorrection(method: PsiMethod): String = bui
         append(getBinaryPresentationWithCorrection(param.type))
     }
     append(")")
-    append(getBinaryPresentationWithCorrection(method.returnType ?: PsiType.VOID))
+    append(getBinaryPresentationWithCorrection(method.returnType ?: PsiTypes.voidType()))
 }
 
 private fun getBinaryPresentationWithCorrection(psiType: PsiType): String =

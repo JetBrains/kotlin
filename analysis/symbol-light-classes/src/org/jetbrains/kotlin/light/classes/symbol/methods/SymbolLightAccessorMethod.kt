@@ -255,7 +255,7 @@ internal class SymbolLightAccessorMethod private constructor(
     }
 
     private val _returnedType: PsiType by lazyPub {
-        if (!isGetter) return@lazyPub PsiType.VOID
+        if (!isGetter) return@lazyPub PsiTypes.voidType()
 
         withPropertySymbol { propertySymbol ->
             val ktType = propertySymbol.returnType

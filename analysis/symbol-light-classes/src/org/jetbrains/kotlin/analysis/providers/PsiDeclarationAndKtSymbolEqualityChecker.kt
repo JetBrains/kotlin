@@ -9,6 +9,7 @@ import com.intellij.psi.PsiArrayType
 import com.intellij.psi.PsiEllipsisType
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
+import com.intellij.psi.PsiTypes
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
@@ -90,7 +91,7 @@ internal object PsiDeclarationAndKtSymbolEqualityChecker {
         isVarargs: Boolean = false, // isVarargs == isVararg && last param
     ): Boolean {
         // Shortcut: primitive void == Unit as a function return type
-        if (psi == PsiType.VOID && ktType.isUnit) return true
+        if (psi == PsiTypes.voidType() && ktType.isUnit) return true
         val ktTypeRendered = ktType.asPsiType(context, allowErrorTypes = true, mode) ?: return false
         return if (isVararg) {
             if (isVarargs) {

@@ -219,7 +219,7 @@ private fun createTypeFromCanonicalText(
     val signature = StringCharacterIterator(canonicalSignature)
     val javaType = SignatureParsing.parseTypeString(signature, GUESSING_MAPPER)
     val typeInfo = TypeInfo.fromString(javaType, false)
-    val typeText = TypeInfo.createTypeText(typeInfo) ?: return PsiType.NULL
+    val typeText = TypeInfo.createTypeText(typeInfo) ?: return PsiTypes.nullType()
 
     val typeElement = ClsTypeElementImpl(psiContext, typeText, '\u0000')
     val type = if (kotlinType != null)

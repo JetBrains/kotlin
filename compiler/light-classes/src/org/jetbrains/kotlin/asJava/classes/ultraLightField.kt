@@ -85,7 +85,7 @@ internal open class KtUltraLightFieldImpl protected constructor(
     private val containingClass: KtLightClass,
     private val support: KtUltraLightSupport,
     modifiers: Set<String>,
-) : LightFieldBuilder(name, PsiType.NULL, declaration), KtLightField,
+) : LightFieldBuilder(name, PsiTypes.nullType(), declaration), KtLightField,
     KtUltraLightElementWithNullabilityAnnotationDescriptorBased<KtDeclaration, PsiField> {
 
     private val modifierList by lazyPub {
@@ -152,8 +152,8 @@ internal open class KtUltraLightFieldImpl protected constructor(
                     ?: nonExistent()
 
             else -> {
-                val kotlinType = declaration.getKotlinType() ?: return@lazyPub PsiType.NULL
-                val descriptor = variableDescriptor ?: return@lazyPub PsiType.NULL
+                val kotlinType = declaration.getKotlinType() ?: return@lazyPub PsiTypes.nullType()
+                val descriptor = variableDescriptor ?: return@lazyPub PsiTypes.nullType()
 
                 support.mapType(kotlinType, this) { typeMapper, sw ->
                     typeMapper.writeFieldSignature(kotlinType, descriptor, sw)

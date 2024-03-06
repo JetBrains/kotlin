@@ -220,7 +220,7 @@ internal class SymbolLightSimpleMethod(
             val ktType = if (functionSymbol.isSuspend) {
                 analysisSession.builtinTypes.NULLABLE_ANY // Any?
             } else {
-                functionSymbol.returnType.takeUnless { isVoidType(it) } ?: return@withFunctionSymbol PsiType.VOID
+                functionSymbol.returnType.takeUnless { isVoidType(it) } ?: return@withFunctionSymbol PsiTypes.voidType()
             }
 
             val typeMappingMode = if (forceBoxedReturnType(functionSymbol))

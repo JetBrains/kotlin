@@ -52,7 +52,7 @@ object DummyJavaPsiFactory {
     fun createDummyVoidMethod(project: Project): PsiMethod {
         // Can't use PsiElementFactory.createMethod() because of formatting in PsiElementFactoryImpl.
         val name = "dummy"
-        val returnType = PsiType.VOID
+        val returnType = PsiTypes.voidType()
 
         val canonicalText = GenericsUtil.getVariableTypeByExpressionType(returnType).getCanonicalText(true)
         val file = createDummyJavaFile(project, "class _Dummy_ { public $canonicalText $name() {\n} }")
