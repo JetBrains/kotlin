@@ -41,6 +41,13 @@ abstract class AbstractKaptToolIntegrationTest {
 
     private class GotResult(val actual: String): RuntimeException()
 
+    private fun List<String>.withSpecifiedMemoryIfNecessary(): List<String> {
+        val proguardedCompiler = System.getProperty("kotlin.proguard.enabled").toBoolean()
+        if (proguardedCompiler) return this
+        if (this.any { it.startsWith("-J-Xmx") }) return this
+        return this + "-J-Xmx384M"
+    }
+
     private fun doTestInTempDirectory(originalTestFile: File, testFile: File) {
         val sections = Section.parse(testFile)
 
@@ -49,7 +56,7 @@ abstract class AbstractKaptToolIntegrationTest {
                 when (section.name) {
                     "mkdir" -> section.args.forEach { File(tmpdir, it).mkdirs() }
                     "copy" -> copyFile(originalTestFile.parentFile, section.args)
-                    "kotlinc" -> runKotlinDistBinary("kotlinc", section.args)
+                    "kotlinc" -> runKotlinDistBinary("kotlinc", section.args.withSpecifiedMemoryIfNecessary())
                     "kapt" -> runKotlinDistBinary("kapt", section.args)
                     "javac" -> runJavac(section.args)
                     "java" -> runJava(section.args)
