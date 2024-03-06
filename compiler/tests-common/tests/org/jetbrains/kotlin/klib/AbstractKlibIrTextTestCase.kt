@@ -137,6 +137,7 @@ abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
             abiVersion = KotlinAbiVersion.CURRENT,
             jsOutputName = null,
             builtInsPlatform = BuiltInsPlatform.JS,
+            wasmTarget = null,
         )
         return klibDir.canonicalPath
     }

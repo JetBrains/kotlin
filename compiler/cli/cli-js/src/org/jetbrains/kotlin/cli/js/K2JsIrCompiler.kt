@@ -32,7 +32,10 @@ import org.jetbrains.kotlin.cli.js.klib.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.getModuleNameForSource
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -481,6 +484,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 moduleFragment = moduleFragment,
                 diagnosticReporter = diagnosticsReporter,
                 builtInsPlatform = if (arguments.wasm) BuiltInsPlatform.WASM else BuiltInsPlatform.JS,
+                wasmTarget = if (!arguments.wasm) null else arguments.wasmTarget?.let(WasmTarget::fromName)
             )
 
             val messageCollector = environmentForJS.configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
@@ -579,7 +583,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 messageCollector = messageCollector,
                 diagnosticsReporter = diagnosticsReporter,
                 jsOutputName = arguments.irPerModuleOutputName,
-                useWasmPlatform = arguments.wasm
+                useWasmPlatform = arguments.wasm,
+                wasmTarget = arguments.wasmTarget?.let(WasmTarget::fromName)
             )
 
             reportCollectedDiagnostics(moduleStructure.compilerConfiguration, diagnosticsReporter, messageCollector)

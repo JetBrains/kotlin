@@ -260,6 +260,7 @@ fun serializeFirKlib(
     diagnosticsReporter: BaseDiagnosticsCollector,
     jsOutputName: String?,
     useWasmPlatform: Boolean,
+    wasmTarget: WasmTarget?,
 ) {
     val fir2KlibMetadataSerializer = Fir2KlibMetadataSerializer(
         moduleStructure.compilerConfiguration,
@@ -285,5 +286,6 @@ fun serializeFirKlib(
         abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
         jsOutputName = jsOutputName,
         builtInsPlatform = if (useWasmPlatform) BuiltInsPlatform.WASM else BuiltInsPlatform.JS,
+        wasmTarget = wasmTarget,
     )
 }
