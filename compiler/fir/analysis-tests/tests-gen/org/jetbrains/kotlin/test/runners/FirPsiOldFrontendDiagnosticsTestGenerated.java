@@ -13333,6 +13333,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("dnnTypeProjectionInParameter.kt")
+      public void testDnnTypeProjectionInParameter() {
+        runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/dnnTypeProjectionInParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("dnnTypeProjectionInReceiver.kt")
+      public void testDnnTypeProjectionInReceiver() {
+        runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/dnnTypeProjectionInReceiver.kt");
+      }
+
+      @Test
       @TestMetadata("inference.kt")
       public void testInference() {
         runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/inference.kt");
