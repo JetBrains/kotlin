@@ -24385,6 +24385,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("BoxedInaccessibleGenericTypeUsedByDependencies.kt")
+      public void testBoxedInaccessibleGenericTypeUsedByDependencies() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/BoxedInaccessibleGenericTypeUsedByDependencies.kt");
+      }
+
+      @Test
       @TestMetadata("dependencyModule.kt")
       public void testDependencyModule() {
         runTest("compiler/testData/diagnostics/tests/multimodule/dependencyModule.kt");
