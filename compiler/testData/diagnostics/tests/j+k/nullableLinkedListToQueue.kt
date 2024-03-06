@@ -1,4 +1,5 @@
 // FULL_JDK
+// ISSUE: KT-65184
 
 // FILE: A.java
 
@@ -33,4 +34,12 @@ fun test(x : X) {
     func(<!TYPE_MISMATCH!>A<B<String?>>()<!>)
     func(<!TYPE_MISMATCH!>A<B<String?>?>()<!>)
     func(<!TYPE_MISMATCH!>A<B<String>?>()<!>)
+}
+
+class C {
+    fun bar(b: Queue<String>) {}
+}
+
+fun test(c: C, jj: LinkedList<String?>) {
+    c.bar(<!TYPE_MISMATCH!>jj<!>)
 }
