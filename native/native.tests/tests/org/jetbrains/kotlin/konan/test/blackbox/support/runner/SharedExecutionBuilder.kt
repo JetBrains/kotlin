@@ -28,11 +28,13 @@ internal object SharedExecutionBuilder {
     private val testCasesToExecuteSeparately: ConcurrentHashMap<TestExecutable, MutableList<TestCase>> = ConcurrentHashMap()
 
     fun buildRunner(settings: Settings, executor: Executor, testRun: TestRun): AbstractRunner<Unit> {
-        if (testRun.testCase.kind != TestKind.REGULAR) {
+        if (testRun.testCase.kind !in listOf(TestKind.REGULAR, TestKind.STANDALONE)) {
             return RunnerWithExecutor(executor, testRun)
         }
 
-        val separateTestCases = settings.computeSeparateTestCases(testRun)
+        val separateTestCases = if (testRun.testCase.kind == TestKind.REGULAR)
+            settings.computeSeparateTestCases(testRun)
+        else emptyList()
 
         if (testRun.testCase in separateTestCases) {
             return RunnerWithExecutor(executor, testRun)
