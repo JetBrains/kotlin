@@ -177,6 +177,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
     }
 
     @Test
+    @TestMetadata("delegateByArrayLiteral.kt")
+    public void testDelegateByArrayLiteral() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/delegateByArrayLiteral.kt");
+    }
+
+    @Test
     @TestMetadata("delegatedSuperType.kt")
     public void testDelegatedSuperType() {
       runTest("compiler/fir/analysis-tests/testData/resolve/delegatedSuperType.kt");
