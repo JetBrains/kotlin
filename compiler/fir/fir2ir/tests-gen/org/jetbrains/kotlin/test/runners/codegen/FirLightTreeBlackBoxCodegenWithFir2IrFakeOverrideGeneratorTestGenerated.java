@@ -18178,6 +18178,12 @@ public class FirLightTreeBlackBoxCodegenWithFir2IrFakeOverrideGeneratorTestGener
     }
 
     @Test
+    @TestMetadata("kt44199.kt")
+    public void testKt44199() {
+      runTest("compiler/testData/codegen/box/delegation/kt44199.kt");
+    }
+
+    @Test
     @TestMetadata("kt54654.kt")
     public void testKt54654() {
       runTest("compiler/testData/codegen/box/delegation/kt54654.kt");

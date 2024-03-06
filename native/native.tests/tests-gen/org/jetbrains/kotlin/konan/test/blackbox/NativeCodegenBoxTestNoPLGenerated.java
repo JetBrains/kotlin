@@ -15169,6 +15169,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
       }
 
       @Test
+      @TestMetadata("kt44199.kt")
+      public void testKt44199() {
+        runTest("compiler/testData/codegen/box/delegation/kt44199.kt");
+      }
+
+      @Test
       @TestMetadata("kt8154.kt")
       public void testKt8154() {
         runTest("compiler/testData/codegen/box/delegation/kt8154.kt");

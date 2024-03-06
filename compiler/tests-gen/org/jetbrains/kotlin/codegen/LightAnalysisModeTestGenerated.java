@@ -15046,6 +15046,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/delegation/kt30102_comparable.kt");
     }
 
+    @TestMetadata("kt44199.kt")
+    public void testKt44199() {
+      runTest("compiler/testData/codegen/box/delegation/kt44199.kt");
+    }
+
     @TestMetadata("kt54654.kt")
     public void testKt54654() {
       runTest("compiler/testData/codegen/box/delegation/kt54654.kt");
