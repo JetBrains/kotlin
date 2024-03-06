@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.AbstractKotlinSuppressCache
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -35,15 +36,21 @@ interface DiagnosticSuppressor {
     fun isSuppressed(diagnostic: Diagnostic): Boolean
     fun isSuppressed(diagnostic: Diagnostic, bindingContext: BindingContext?): Boolean = isSuppressed(diagnostic)
 
-    companion object {
-        val EP_NAME: ExtensionPointName<DiagnosticSuppressor> =
-            ExtensionPointName.create("org.jetbrains.kotlin.diagnosticSuppressor")
+    companion object : ProjectExtensionDescriptor<DiagnosticSuppressor>(
+        "org.jetbrains.kotlin.diagnosticSuppressor", DiagnosticSuppressor::class.java
+    ) {
+        @Deprecated(
+            message = "This field is deprecated for compatibility reasons. Use ProjectExtensionDescriptor API instead",
+            replaceWith = ReplaceWith("DiagnosticSuppressor.extensionPointName"),
+            level = DeprecationLevel.WARNING
+        )
+        val EP_NAME: ExtensionPointName<DiagnosticSuppressor> = extensionPointName
     }
 }
 
 abstract class KotlinSuppressCache : AbstractKotlinSuppressCache<PsiElement>() {
 
-    private val diagnosticSuppressors = ExtensionProvider.create(DiagnosticSuppressor.EP_NAME)
+    private val diagnosticSuppressors = ExtensionProvider.create(DiagnosticSuppressor.extensionPointName)
 
     val filter: (Diagnostic) -> Boolean = { diagnostic: Diagnostic ->
         !isSuppressed(DiagnosticSuppressRequest(diagnostic))
