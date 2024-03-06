@@ -15,13 +15,13 @@ public final class Base</*0*/ T : [Error type: Cyclic upper bounds]> : kotlin.co
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.MutableIterator<T>
-    invisible_fake open override /*1*/ /*fake_override*/ fun readObject(/*0*/ s: java.io.ObjectInputStream!): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun readObject(/*0*/ p0: java.io.ObjectInputStream!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun remove(/*0*/ element: T): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
-    public open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ a: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    invisible_fake open override /*1*/ /*fake_override*/ fun writeObject(/*0*/ s: java.io.ObjectOutputStream!): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun writeObject(/*0*/ p0: java.io.ObjectOutputStream!): kotlin.Unit
 }
 
