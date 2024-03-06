@@ -34,15 +34,17 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
         }
     }
 
+    val testProjectKlibFiles = testProjectKlib.incoming.files
+
     dependencies {
         testProjectKlib(project("testProject"))
     }
 
-    inputs.files(testProjectKlib)
+    inputs.files(testProjectKlibFiles)
         .withPathSensitivity(PathSensitivity.RELATIVE)
 
     doFirst {
-        systemProperty("testKlibs", testProjectKlib.files.joinToString(File.pathSeparator))
+        systemProperty("testKlibs", testProjectKlibFiles.joinToString(File.pathSeparator))
     }
 }
 
