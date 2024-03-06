@@ -8,6 +8,7 @@
 
 package kotlin.metadata.jvm
 
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import kotlin.metadata.*
 import kotlin.metadata.jvm.internal.jvm
 
@@ -172,3 +173,11 @@ public var KmType.isRaw: Boolean
  */
 public val KmType.annotations: MutableList<KmAnnotation>
     get() = jvm.annotations
+
+
+/**
+ * The type flexibility id, signifying that the visited type is a JVM platform type.
+ *
+ * @see KmFlexibleTypeUpperBound.typeFlexibilityId
+ */
+public val KmFlexibleTypeUpperBound.Companion.JVM_PLATFORM_TYPE_ID: String get() = JvmProtoBufUtil.PLATFORM_TYPE_ID

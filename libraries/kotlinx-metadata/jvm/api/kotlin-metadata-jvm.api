@@ -483,6 +483,7 @@ public final class kotlin/metadata/KmEffectType : java/lang/Enum {
 }
 
 public final class kotlin/metadata/KmFlexibleTypeUpperBound {
+	public static final field Companion Lkotlin/metadata/KmFlexibleTypeUpperBound$Companion;
 	public fun <init> (Lkotlin/metadata/KmType;Ljava/lang/String;)V
 	public final fun component1 ()Lkotlin/metadata/KmType;
 	public final fun component2 ()Ljava/lang/String;
@@ -495,6 +496,9 @@ public final class kotlin/metadata/KmFlexibleTypeUpperBound {
 	public final fun setType (Lkotlin/metadata/KmType;)V
 	public final fun setTypeFlexibilityId (Ljava/lang/String;)V
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/metadata/KmFlexibleTypeUpperBound$Companion {
 }
 
 public final class kotlin/metadata/KmFunction {
@@ -730,6 +734,7 @@ public final class kotlin/metadata/jvm/JvmExtensionsKt {
 	public static final fun getAnonymousObjectOriginName (Lkotlin/metadata/KmClass;)Ljava/lang/String;
 	public static final fun getFieldSignature (Lkotlin/metadata/KmProperty;)Lkotlin/metadata/jvm/JvmFieldSignature;
 	public static final fun getGetterSignature (Lkotlin/metadata/KmProperty;)Lkotlin/metadata/jvm/JvmMethodSignature;
+	public static final fun getJVM_PLATFORM_TYPE_ID (Lkotlin/metadata/KmFlexibleTypeUpperBound$Companion;)Ljava/lang/String;
 	public static final fun getLambdaClassOriginName (Lkotlin/metadata/KmFunction;)Ljava/lang/String;
 	public static final fun getLocalDelegatedProperties (Lkotlin/metadata/KmClass;)Ljava/util/List;
 	public static final fun getLocalDelegatedProperties (Lkotlin/metadata/KmPackage;)Ljava/util/List;

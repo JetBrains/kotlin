@@ -588,7 +588,12 @@ public data class KmTypeProjection(var variance: KmVariance?, var type: KmType?)
  * @property typeFlexibilityId id of the kind of flexibility this type has. For example, "kotlin.jvm.PlatformType" for JVM platform types,
  *                          or "kotlin.DynamicType" for JS dynamic type
  */
-public data class KmFlexibleTypeUpperBound(var type: KmType, var typeFlexibilityId: String?)
+public data class KmFlexibleTypeUpperBound(var type: KmType, var typeFlexibilityId: String?) {
+    /**
+     * A companion object providing possibility to declare various platform-dependent constant ids as extension properties of it.
+     */
+    public companion object
+}
 
 /**
  * Variance applied to a type parameter on the declaration site (*declaration-site variance*),

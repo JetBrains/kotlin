@@ -121,12 +121,5 @@ internal class JvmTypeExtension : KmTypeExtension {
     companion object {
         @JvmField
         val TYPE: KmExtensionType = KmExtensionType(JvmTypeExtension::class)
-
-        /**
-         * The type flexibility id, signifying that the visited type is a JVM platform type.
-         *
-         * @see KmTypeVisitor.visitFlexibleTypeUpperBound
-         */
-        const val PLATFORM_TYPE_ID: String = JvmProtoBufUtil.PLATFORM_TYPE_ID // TODO: move out of deprecated visitor
     }
 }
