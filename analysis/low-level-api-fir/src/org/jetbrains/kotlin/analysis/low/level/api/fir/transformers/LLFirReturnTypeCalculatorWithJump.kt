@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarg
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirImplicitBodyTargetResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirImplicitTypesLazyResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLImplicitBodyResolveComputationSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ReturnTypeCalculatorWithJump
@@ -44,5 +45,10 @@ internal class LLFirReturnTypeCalculatorWithJump(
 
         LLFirImplicitTypesLazyResolver.checkIsResolved(declaration)
         return declaration.returnTypeRef as FirResolvedTypeRef
+    }
+
+    override fun tryCalculateReturnTypeOrNull(declaration: FirCallableDeclaration): FirResolvedTypeRef {
+        checkCanceled()
+        return super.tryCalculateReturnTypeOrNull(declaration)
     }
 }
