@@ -24,6 +24,12 @@ public class FirPsiDiagnosticTestForAllOpenGenerated extends AbstractFirPsiDiagn
   }
 
   @Test
+  @TestMetadata("allOpenOnAnnotation.kt")
+  public void testAllOpenOnAnnotation() {
+    runTest("plugins/allopen/testData/diagnostics/allOpenOnAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("kt54260.kt")
   public void testKt54260() {
     runTest("plugins/allopen/testData/diagnostics/kt54260.kt");
