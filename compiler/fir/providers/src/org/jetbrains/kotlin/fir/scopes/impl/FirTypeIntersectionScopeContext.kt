@@ -215,7 +215,8 @@ class FirTypeIntersectionScopeContext(
         containsMultipleNonSubsumed: Boolean,
     ): MemberWithBaseScope<FirCallableSymbol<*>> {
         val newModality = chooseIntersectionOverrideModality(extractedOverrides.flatMap { it.flattenIntersectionsRecursively() }.nonSubsumed())
-        val newVisibility = overrideChecker.chooseIntersectionVisibility(extractedOverrides, dispatchClassSymbol)
+        val nonSubsumedNonPhantomOverrides = extractedOverrides.getNonSubsumedNonPhantomOverriddenSymbols().map { it.member }
+        val newVisibility = overrideChecker.chooseIntersectionVisibility(nonSubsumedNonPhantomOverrides, dispatchClassSymbol)
         val mostSpecificSymbols = mostSpecific.map { it.member }
         val extractedOverridesSymbols = extractedOverrides.map { it.member }
         val key = mostSpecific.first()
@@ -227,7 +228,8 @@ class FirTypeIntersectionScopeContext(
 
             is FirPropertySymbol ->
                 createIntersectionOverrideProperty(
-                    mostSpecificSymbols, extractedOverridesSymbols, newModality, newVisibility, containsMultipleNonSubsumed
+                    mostSpecificSymbols, extractedOverridesSymbols, nonSubsumedNonPhantomOverrides, newModality,
+                    newVisibility, containsMultipleNonSubsumed,
                 )
 
             is FirFieldSymbol -> {
@@ -368,6 +370,7 @@ class FirTypeIntersectionScopeContext(
     private fun createIntersectionOverrideProperty(
         mostSpecific: Collection<FirCallableSymbol<*>>,
         overrides: Collection<FirCallableSymbol<*>>,
+        nonSubsumedNonPhantomOverrides: List<FirCallableSymbol<*>>,
         newModality: Modality?,
         newVisibility: Visibility,
         containsMultipleNonSubsumed: Boolean,
@@ -378,6 +381,14 @@ class FirTypeIntersectionScopeContext(
             containsMultipleNonSubsumed,
             ::FirIntersectionOverridePropertySymbol,
         ) { symbol, fir, deferredReturnTypeCalculation, returnType ->
+            // Only setters's visibilities are calculated properly, because
+            // getters' visibilities must be the same as the ones of their
+            // properties and those we've already calculated.
+            val setters = nonSubsumedNonPhantomOverrides.mapNotNull {
+                (it as? FirPropertySymbol)?.unwrapSubstitutionOverrides()?.setterSymbol
+            }
+            val setterVisibility = chooseIntersectionVisibilityOrNull(setters) ?: Visibilities.Unknown
+
             FirFakeOverrideGenerator.createCopyForFirProperty(
                 symbol, fir, derivedClassLookupTag = null, session,
                 FirDeclarationOrigin.IntersectionOverride,
@@ -390,6 +401,7 @@ class FirTypeIntersectionScopeContext(
                 // anyway and their uses should result in an overload resolution error.
                 newReturnType = returnType,
                 newSource = dispatchReceiverType.toSymbol(session)?.source,
+                newSetterVisibility = setterVisibility,
             )
         }
     }

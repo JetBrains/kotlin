@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
-import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -38,12 +37,11 @@ class FirNativeOverrideChecker(private val session: FirSession) : FirOverrideChe
         // KT-57640: There's no necessity to implement platform-dependent overridability check for properties
         standardOverrideChecker.isOverriddenProperty(overrideCandidate, baseDeclaration)
 
-    override fun <D : FirCallableSymbol<*>> chooseIntersectionVisibility(
-        extractedOverrides: Collection<MemberWithBaseScope<D>>,
+    override fun chooseIntersectionVisibility(
+        overrides: Collection<FirCallableSymbol<*>>,
         dispatchClassSymbol: FirRegularClassSymbol?,
     ): Visibility {
-        val nonSubsumed = extractedOverrides.getNonSubsumedNonPhantomOverriddenSymbols()
-        return chooseIntersectionVisibilityOrNull(nonSubsumed) { it.isAbstract || it.member.isObjCClassProperty(session) }
+        return chooseIntersectionVisibilityOrNull(overrides) { it.isAbstractAccordingToRawStatus || it.isObjCClassProperty(session) }
             ?: Visibilities.Unknown
     }
 

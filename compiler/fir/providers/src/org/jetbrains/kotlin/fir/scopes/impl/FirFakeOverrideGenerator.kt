@@ -399,6 +399,7 @@ object FirFakeOverrideGenerator {
         newReturnType: ConeKotlinType? = null,
         newModality: Modality? = null,
         newVisibility: Visibility? = null,
+        newSetterVisibility: Visibility? = null,
         deferredReturnTypeCalculation: DeferredCallableCopyReturnType? = null,
         newSource: KtSourceElement? = derivedClassLookupTag?.toSymbol(session)?.source,
     ): FirProperty = buildProperty {
@@ -436,16 +437,19 @@ object FirFakeOverrideGenerator {
             newSource = newSource ?: baseProperty.getter?.source,
         )
 
-        setter = baseProperty.setter?.buildCopyIfNeeded(
-            moduleData = session.nullableModuleData ?: baseProperty.moduleData,
-            origin = origin,
-            propertyReturnTypeRef = this@buildProperty.returnTypeRef,
-            propertySymbol = newSymbol,
-            dispatchReceiverType = dispatchReceiverType,
-            derivedClassLookupTag = derivedClassLookupTag,
-            baseProperty = baseProperty,
-            newSource = newSource ?: baseProperty.setter?.source,
-        )
+        setter = baseProperty.setter?.let { setter ->
+            setter.buildCopyIfNeeded(
+                moduleData = session.nullableModuleData ?: baseProperty.moduleData,
+                origin = origin,
+                propertyReturnTypeRef = this@buildProperty.returnTypeRef,
+                propertySymbol = newSymbol,
+                dispatchReceiverType = dispatchReceiverType,
+                derivedClassLookupTag = derivedClassLookupTag,
+                baseProperty = baseProperty,
+                newSource = newSource ?: baseProperty.setter?.source,
+                newSetterVisibility ?: setter.visibility,
+            )
+        }
     }.apply {
         containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseProperty) }
     }
@@ -459,8 +463,9 @@ object FirFakeOverrideGenerator {
         derivedClassLookupTag: ConeClassLikeLookupTag?,
         baseProperty: FirProperty,
         newSource: KtSourceElement? = source,
+        newVisibility: Visibility = visibility,
     ) = when {
-        annotations.isNotEmpty() || visibility != baseProperty.visibility -> buildCopy(
+        annotations.isNotEmpty() || newVisibility != baseProperty.visibility -> buildCopy(
             moduleData,
             origin,
             propertyReturnTypeRef,
@@ -469,6 +474,7 @@ object FirFakeOverrideGenerator {
             derivedClassLookupTag,
             baseProperty,
             newSource,
+            newVisibility,
         )
         else -> null
     }
@@ -482,13 +488,14 @@ object FirFakeOverrideGenerator {
         derivedClassLookupTag: ConeClassLikeLookupTag?,
         baseProperty: FirProperty,
         newSource: KtSourceElement? = source,
+        newVisibility: Visibility = visibility,
     ) = when (this) {
         is FirDefaultPropertyGetter -> FirDefaultPropertyGetter(
             source = newSource,
             moduleData = moduleData,
             origin = origin,
             propertyTypeRef = propertyReturnTypeRef,
-            visibility = visibility,
+            visibility = newVisibility,
             propertySymbol = propertySymbol,
             modality = modality ?: Modality.FINAL,
             effectiveVisibility = effectiveVisibility,
@@ -501,7 +508,7 @@ object FirFakeOverrideGenerator {
             moduleData = moduleData,
             origin = origin,
             propertyTypeRef = propertyReturnTypeRef,
-            visibility = visibility,
+            visibility = newVisibility,
             propertySymbol = propertySymbol,
             modality = modality ?: Modality.FINAL,
             effectiveVisibility = effectiveVisibility,
@@ -518,6 +525,7 @@ object FirFakeOverrideGenerator {
             this.dispatchReceiverType = dispatchReceiverType
             this.body = null
             resolvePhase = origin.resolvePhaseForCopy
+            this.status = status.copy(visibility = newVisibility)
         }.also {
             if (it.isSetter) {
                 val originalParameter = it.valueParameters.first()

@@ -25,11 +25,8 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractOverrideChecker
-import org.jetbrains.kotlin.fir.scopes.impl.chooseIntersectionVisibilityOrNull
-import org.jetbrains.kotlin.fir.scopes.impl.isAbstract
+import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptorRepresentation
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -370,25 +367,23 @@ class JavaOverrideChecker internal constructor(
         return overridesMutableCollectionRemove
     }
 
-    override fun <D : FirCallableSymbol<*>> chooseIntersectionVisibility(
-        extractedOverrides: Collection<MemberWithBaseScope<D>>,
+    override fun chooseIntersectionVisibility(
+        overrides: Collection<FirCallableSymbol<*>>,
         dispatchClassSymbol: FirRegularClassSymbol?,
     ): Visibility {
-        val nonSubsumed = extractedOverrides.getNonSubsumedNonPhantomOverriddenSymbols()
-
         // In Java it's OK to inherit multiple implementations of the same function
         // from the supertypes as long as there's an implementation from a class.
         // We shouldn't reject green Java code.
         if (dispatchClassSymbol?.fir is FirJavaClass) {
-            val nonAbstractFromClass = nonSubsumed.find {
-                !it.isAbstract && it.member.dispatchReceiverClassLookupTagOrNull()
+            val nonAbstractFromClass = overrides.find {
+                !it.isAbstractAccordingToRawStatus && it.dispatchReceiverClassLookupTagOrNull()
                     ?.toSymbol(session)?.classKind == ClassKind.CLASS
             }
             if (nonAbstractFromClass != null) {
-                return nonAbstractFromClass.member.rawStatus.visibility
+                return nonAbstractFromClass.rawStatus.visibility
             }
         }
 
-        return chooseIntersectionVisibilityOrNull(nonSubsumed) ?: Visibilities.Unknown
+        return chooseIntersectionVisibilityOrNull(overrides) ?: Visibilities.Unknown
     }
 }

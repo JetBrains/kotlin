@@ -35,11 +35,11 @@ class FirIntersectionScopeOverrideChecker(session: FirSession) : FirOverrideChec
         return standardOverrideChecker.isOverriddenProperty(overrideCandidate, baseDeclaration)
     }
 
-    override fun <D : FirCallableSymbol<*>> chooseIntersectionVisibility(
-        extractedOverrides: Collection<MemberWithBaseScope<D>>,
+    override fun chooseIntersectionVisibility(
+        overrides: Collection<FirCallableSymbol<*>>,
         dispatchClassSymbol: FirRegularClassSymbol?,
     ): Visibility {
-        platformSpecificOverridabilityRules?.chooseIntersectionVisibility(extractedOverrides, dispatchClassSymbol)?.let { return it }
-        return standardOverrideChecker.chooseIntersectionVisibility(extractedOverrides, dispatchClassSymbol)
+        platformSpecificOverridabilityRules?.chooseIntersectionVisibility(overrides, dispatchClassSymbol)?.let { return it }
+        return standardOverrideChecker.chooseIntersectionVisibility(overrides, dispatchClassSymbol)
     }
 }

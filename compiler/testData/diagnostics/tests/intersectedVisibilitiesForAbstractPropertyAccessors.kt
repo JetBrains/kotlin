@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-66046
 
 abstract class I1 {

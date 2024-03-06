@@ -27,8 +27,8 @@ interface FirOverrideChecker : FirSessionComponent {
         baseDeclaration: FirProperty
     ): Boolean
 
-    fun <D : FirCallableSymbol<*>> chooseIntersectionVisibility(
-        extractedOverrides: Collection<MemberWithBaseScope<D>>,
+    fun chooseIntersectionVisibility(
+        overrides: Collection<FirCallableSymbol<*>>,
         dispatchClassSymbol: FirRegularClassSymbol?,
     ): Visibility
 }
