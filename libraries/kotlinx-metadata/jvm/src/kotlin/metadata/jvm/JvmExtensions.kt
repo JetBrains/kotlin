@@ -43,19 +43,6 @@ public var KmClass.anonymousObjectOriginName: String?
     }
 
 /**
- * JVM-specific flags of the class, consisting of [JvmFlag.Class] flags.
- */
-@Deprecated(
-    "Flag API is deprecated. Please use corresponding member extensions on KmClass, such as KmClass.hasMethodBodiesInInterface",
-    level = DeprecationLevel.ERROR
-)
-public var KmClass.jvmFlags: Int
-    get() = jvm.jvmFlags
-    set(value) {
-        jvm.jvmFlags = value
-    }
-
-/**
  * Metadata of local delegated properties used somewhere inside this package fragment (but not in any class).
  * Note that for classes produced by the Kotlin compiler, such properties will have default accessors.
  *
@@ -95,19 +82,6 @@ public var KmFunction.lambdaClassOriginName: String?
     get() = jvm.lambdaClassOriginName
     set(value) {
         jvm.lambdaClassOriginName = value
-    }
-
-/**
- * JVM-specific flags of the property, consisting of [JvmFlag.Property] flags.
- */
-@Deprecated(
-    "Flag API is deprecated. Please use corresponding member extensions on KmProperty, such as KmProperty.isMovedFromInterfaceCompanion",
-    level = DeprecationLevel.ERROR
-)
-public var KmProperty.jvmFlags: Int
-    get() = jvm.jvmFlags
-    set(value) {
-        jvm.jvmFlags = value
     }
 
 /**

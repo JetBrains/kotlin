@@ -2,8 +2,6 @@
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION","DEPRECATION_ERROR") // inheritance of deprecated visitors will be removed with visitors
-
 package kotlin.metadata.jvm.internal
 
 import kotlin.metadata.*
@@ -11,104 +9,68 @@ import kotlin.metadata.internal.extensions.*
 import kotlin.metadata.jvm.*
 
 internal val KmClass.jvm: JvmClassExtension
-    get() = visitExtensions(JvmClassExtensionVisitor.TYPE) as JvmClassExtension
+    get() = getExtension(JvmClassExtension.TYPE) as JvmClassExtension
 
 internal val KmPackage.jvm: JvmPackageExtension
-    get() = visitExtensions(JvmPackageExtensionVisitor.TYPE) as JvmPackageExtension
+    get() = getExtension(JvmPackageExtension.TYPE) as JvmPackageExtension
 
 internal val KmFunction.jvm: JvmFunctionExtension
-    get() = visitExtensions(JvmFunctionExtensionVisitor.TYPE) as JvmFunctionExtension
+    get() = getExtension(JvmFunctionExtension.TYPE) as JvmFunctionExtension
 
 internal val KmProperty.jvm: JvmPropertyExtension
-    get() = visitExtensions(JvmPropertyExtensionVisitor.TYPE) as JvmPropertyExtension
+    get() = getExtension(JvmPropertyExtension.TYPE) as JvmPropertyExtension
 
 internal val KmConstructor.jvm: JvmConstructorExtension
-    get() = visitExtensions(JvmConstructorExtensionVisitor.TYPE) as JvmConstructorExtension
+    get() = getExtension(JvmConstructorExtension.TYPE) as JvmConstructorExtension
 
 internal val KmTypeParameter.jvm: JvmTypeParameterExtension
-    get() = visitExtensions(JvmTypeParameterExtensionVisitor.TYPE) as JvmTypeParameterExtension
+    get() = getExtension(JvmTypeParameterExtension.TYPE) as JvmTypeParameterExtension
 
 internal val KmType.jvm: JvmTypeExtension
-    get() = visitExtensions(JvmTypeExtensionVisitor.TYPE) as JvmTypeExtension
+    get() = getExtension(JvmTypeExtension.TYPE) as JvmTypeExtension
 
 
-internal class JvmClassExtension : JvmClassExtensionVisitor(), KmClassExtension {
+internal class JvmClassExtension : KmClassExtension {
     val localDelegatedProperties: MutableList<KmProperty> = ArrayList(0)
     var moduleName: String? = null
     var anonymousObjectOriginName: String? = null
     var jvmFlags: Int = 0
 
-    override fun visitLocalDelegatedProperty(flags: Int, name: String, getterFlags: Int, setterFlags: Int): KmPropertyVisitor =
-        KmProperty(flags, name, getterFlags, setterFlags).also { localDelegatedProperties.add(it) }
+    override val type: KmExtensionType
+        get() = TYPE
 
-    override fun visitModuleName(name: String) {
-        this.moduleName = name
-    }
-
-    override fun visitAnonymousObjectOriginName(internalName: String) {
-        this.anonymousObjectOriginName = internalName
-    }
-
-    override fun visitJvmFlags(flags: Int) {
-        this.jvmFlags = flags
-    }
-
-    override fun accept(visitor: KmClassExtensionVisitor) {
-        require(visitor is JvmClassExtensionVisitor)
-        localDelegatedProperties.forEach {
-            @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE") // getter.flags
-            visitor.visitLocalDelegatedProperty(it.flags, it.name, it.getter.flags, it.setterFlags)?.let(it::accept)
-        }
-        moduleName?.let(visitor::visitModuleName)
-        anonymousObjectOriginName?.let(visitor::visitAnonymousObjectOriginName)
-        jvmFlags.takeIf { it != 0 }?.let(visitor::visitJvmFlags)
-        visitor.visitEnd()
+    companion object {
+        val TYPE: KmExtensionType = KmExtensionType(JvmClassExtension::class)
     }
 }
 
-internal class JvmPackageExtension : JvmPackageExtensionVisitor(), KmPackageExtension {
+internal class JvmPackageExtension : KmPackageExtension {
     val localDelegatedProperties: MutableList<KmProperty> = ArrayList(0)
     var moduleName: String? = null
 
-    override fun visitLocalDelegatedProperty(flags: Int, name: String, getterFlags: Int, setterFlags: Int): KmPropertyVisitor =
-        KmProperty(flags, name, getterFlags, setterFlags).also { localDelegatedProperties.add(it) }
+    override val type: KmExtensionType
+        get() = TYPE
 
-    override fun visitModuleName(name: String) {
-        this.moduleName = name
-    }
-
-    override fun accept(visitor: KmPackageExtensionVisitor) {
-        require(visitor is JvmPackageExtensionVisitor)
-        localDelegatedProperties.forEach {
-            @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE") // getter.flags
-            visitor.visitLocalDelegatedProperty(it.flags, it.name, it.getter.flags, it.setterFlags)?.let(it::accept)
-        }
-        moduleName?.let(visitor::visitModuleName)
-        visitor.visitEnd()
+    companion object {
+        @JvmField
+        val TYPE: KmExtensionType = KmExtensionType(JvmPackageExtension::class)
     }
 }
 
-internal class JvmFunctionExtension : JvmFunctionExtensionVisitor(), KmFunctionExtension {
+internal class JvmFunctionExtension : KmFunctionExtension {
     var signature: JvmMethodSignature? = null
     var lambdaClassOriginName: String? = null
 
-    override fun visit(signature: JvmMethodSignature?) {
-        this.signature = signature
-    }
+    override val type: KmExtensionType
+        get() = TYPE
 
-    override fun visitLambdaClassOriginName(internalName: String) {
-        this.lambdaClassOriginName = internalName
-    }
-
-    override fun accept(visitor: KmFunctionExtensionVisitor) {
-        require(visitor is JvmFunctionExtensionVisitor)
-        visitor.visit(signature)
-        lambdaClassOriginName?.let(visitor::visitLambdaClassOriginName)
-        visitor.visitEnd()
+    companion object {
+        @JvmField
+        val TYPE: KmExtensionType = KmExtensionType(JvmFunctionExtension::class)
     }
 }
 
-internal class JvmPropertyExtension : JvmPropertyExtensionVisitor(), KmPropertyExtension {
+internal class JvmPropertyExtension : KmPropertyExtension {
     var jvmFlags: Int = 0
     var fieldSignature: JvmFieldSignature? = null
     var getterSignature: JvmMethodSignature? = null
@@ -116,78 +78,55 @@ internal class JvmPropertyExtension : JvmPropertyExtensionVisitor(), KmPropertyE
     var syntheticMethodForAnnotations: JvmMethodSignature? = null
     var syntheticMethodForDelegate: JvmMethodSignature? = null
 
-    override fun visit(
-        jvmFlags: Int,
-        fieldSignature: JvmFieldSignature?,
-        getterSignature: JvmMethodSignature?,
-        setterSignature: JvmMethodSignature?
-    ) {
-        this.jvmFlags = jvmFlags
-        this.fieldSignature = fieldSignature
-        this.getterSignature = getterSignature
-        this.setterSignature = setterSignature
-    }
+    override val type: KmExtensionType
+        get() = TYPE
 
-    override fun visitSyntheticMethodForAnnotations(signature: JvmMethodSignature?) {
-        this.syntheticMethodForAnnotations = signature
-    }
-
-    override fun visitSyntheticMethodForDelegate(signature: JvmMethodSignature?) {
-        this.syntheticMethodForDelegate = signature
-    }
-
-    override fun accept(visitor: KmPropertyExtensionVisitor) {
-        require(visitor is JvmPropertyExtensionVisitor)
-        visitor.visit(jvmFlags, fieldSignature, getterSignature, setterSignature)
-        visitor.visitSyntheticMethodForAnnotations(syntheticMethodForAnnotations)
-        visitor.visitSyntheticMethodForDelegate(syntheticMethodForDelegate)
-        visitor.visitEnd()
+    companion object {
+        @JvmField
+        val TYPE: KmExtensionType = KmExtensionType(JvmPropertyExtension::class)
     }
 }
 
-internal class JvmConstructorExtension : JvmConstructorExtensionVisitor(), KmConstructorExtension {
+internal class JvmConstructorExtension : KmConstructorExtension {
     var signature: JvmMethodSignature? = null
 
-    override fun visit(signature: JvmMethodSignature?) {
-        this.signature = signature
-    }
+    override val type: KmExtensionType
+        get() = TYPE
 
-    override fun accept(visitor: KmConstructorExtensionVisitor) {
-        require(visitor is JvmConstructorExtensionVisitor)
-        visitor.visit(signature)
+    companion object {
+        @JvmField
+        val TYPE: KmExtensionType = KmExtensionType(JvmConstructorExtension::class)
     }
 }
 
-internal class JvmTypeParameterExtension : JvmTypeParameterExtensionVisitor(), KmTypeParameterExtension {
+internal class JvmTypeParameterExtension : KmTypeParameterExtension {
     val annotations: MutableList<KmAnnotation> = mutableListOf()
 
-    override fun visitAnnotation(annotation: KmAnnotation) {
-        annotations.add(annotation)
-    }
+    override val type: KmExtensionType
+        get() = TYPE
 
-    override fun accept(visitor: KmTypeParameterExtensionVisitor) {
-        require(visitor is JvmTypeParameterExtensionVisitor)
-        annotations.forEach(visitor::visitAnnotation)
-        visitor.visitEnd()
+    companion object {
+        @JvmField
+        val TYPE: KmExtensionType = KmExtensionType(JvmTypeParameterExtension::class)
     }
 }
 
-internal class JvmTypeExtension : JvmTypeExtensionVisitor(), KmTypeExtension {
+internal class JvmTypeExtension : KmTypeExtension {
     var isRaw: Boolean = false
     val annotations: MutableList<KmAnnotation> = mutableListOf()
 
-    override fun visit(isRaw: Boolean) {
-        this.isRaw = isRaw
-    }
+    override val type: KmExtensionType
+        get() = TYPE
 
-    override fun visitAnnotation(annotation: KmAnnotation) {
-        annotations.add(annotation)
-    }
+    companion object {
+        @JvmField
+        val TYPE: KmExtensionType = KmExtensionType(JvmTypeExtension::class)
 
-    override fun accept(visitor: KmTypeExtensionVisitor) {
-        require(visitor is JvmTypeExtensionVisitor)
-        visitor.visit(isRaw)
-        annotations.forEach(visitor::visitAnnotation)
-        visitor.visitEnd()
+        /**
+         * The type flexibility id, signifying that the visited type is a JVM platform type.
+         *
+         * @see KmTypeVisitor.visitFlexibleTypeUpperBound
+         */
+        const val PLATFORM_TYPE_ID: String = JvmProtoBufUtil.PLATFORM_TYPE_ID // TODO: move out of deprecated visitor
     }
 }

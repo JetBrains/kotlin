@@ -18,14 +18,6 @@ public fun ClassName.toJvmInternalName(): String =
     if (this.isLocalClassName()) substring(1)
     else replace('.', '$')
 
-// Deprecated since 0.6.1, should be error in 0.7.0+
-@Deprecated(
-    "Renamed to toJvmInternalName() to avoid confusion with String properties",
-    ReplaceWith("toJvmInternalName()"),
-    level = DeprecationLevel.ERROR
-)
-public val ClassName.jvmInternalName: String get() = toJvmInternalName()
-
 /**
  * Helper function to instantiate [Metadata].
  * Contrary to a direct constructor call, this one accepts nullable parameters to substitute nulls with default values.

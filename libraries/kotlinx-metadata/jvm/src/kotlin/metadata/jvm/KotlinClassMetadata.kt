@@ -2,19 +2,12 @@
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress(
-    "DEPRECATION_ERROR", // Deprecated .accept implementation
-    "DEPRECATION", // COMPATIBLE_METADATA_VERSION as default param
-    "UNUSED_PARAMETER" // For deprecated Writer.write
-)
-
 package kotlin.metadata.jvm
 
 import kotlin.metadata.*
 import kotlin.metadata.internal.*
 import kotlin.metadata.jvm.internal.*
 import kotlin.metadata.jvm.internal.JvmReadUtils.readMetadataImpl
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion as CompilerMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import java.util.*
 
@@ -114,53 +107,6 @@ public sealed class KotlinClassMetadata {
                 Metadata(CLASS_KIND, version.toIntArray(), d1, d2, extraInt = flags)
             }
         }
-
-        /**
-         * Returns a new [KmClass] instance created from this class metadata.
-         */
-        @Deprecated(
-            "To avoid excessive copying, use .kmClass property instead. Note that it returns a view and not a copy.",
-            ReplaceWith("kmClass"),
-            DeprecationLevel.ERROR
-        )
-        public fun toKmClass(): KmClass = KmClass().also { newKm -> kmClass.accept(newKm) } // defensive copy
-
-        /**
-         * Makes the given visitor visit the metadata of this class.
-         *
-         * @param v the visitor that must visit this class
-         */
-        @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
-        public fun accept(v: KmClassVisitor): Unit = kmClass.accept(v)
-
-        /**
-         * A [KmClassVisitor] that generates the metadata of a Kotlin class.
-         */
-        @Deprecated(
-            "$WRITER_API_MESSAGE, such as KotlinClassMetadata.writeClass(kmClass, metadataVersion, extraInt)",
-            level = DeprecationLevel.ERROR
-        )
-        public class Writer : ClassWriter(JvmStringTable()) {
-            /**
-             * Returns the metadata of the class that was written with this writer.
-             *
-             * @param metadataVersion metadata version to be written to the metadata (see [Metadata.metadataVersion]),
-             *   [KotlinClassMetadata.COMPATIBLE_METADATA_VERSION] by default. Cannot be less (lexicographically) than `[1, 4]`
-             * @param extraInt the value of the class-level flags to be written to the metadata (see [Metadata.extraInt]),
-             *   0 by default
-             */
-            @JvmOverloads
-            @Deprecated(
-                "$WRITER_API_MESSAGE, such as KotlinClassMetadata.writeClass(kmClass, metadataVersion, extraInt)",
-                level = DeprecationLevel.ERROR
-            )
-            public fun write(
-                metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
-                extraInt: Int = 0
-            ): Class {
-                error("This method is no longer implemented. Migrate to KotlinClassMetadata.writeClass.")
-            }
-        }
     }
 
     /**
@@ -204,53 +150,6 @@ public sealed class KotlinClassMetadata {
                 writer.writePackage(kmPackage)
                 val (d1, d2) = writeProtoBufData(writer.t.build(), writer.c)
                 Metadata(FILE_FACADE_KIND, version.toIntArray(), d1, d2, extraInt = flags)
-            }
-        }
-
-        /**
-         * Creates a new [KmPackage] instance from this file facade metadata.
-         */
-        @Deprecated(
-            "To avoid excessive copying, use .kmPackage property instead. Note that it returns a view and not a copy.",
-            ReplaceWith("kmPackage"),
-            DeprecationLevel.ERROR
-        )
-        public fun toKmPackage(): KmPackage = KmPackage().also { newPkg -> kmPackage.accept(newPkg) }
-
-        /**
-         * Makes the given visitor visit metadata of this file facade.
-         *
-         * @param v the visitor that must visit this file facade
-         */
-        @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
-        public fun accept(v: KmPackageVisitor): Unit = kmPackage.accept(v)
-
-        /**
-         * A [KmPackageVisitor] that generates the metadata of a Kotlin file facade.
-         */
-        @Deprecated(
-            "$WRITER_API_MESSAGE, such as KotlinClassMetadata.writeFileFacade(kmPackage, metadataVersion, extraInt)",
-            level = DeprecationLevel.ERROR
-        )
-        public class Writer : PackageWriter(JvmStringTable()) {
-            /**
-             * Returns the metadata of the file facade that was written with this writer.
-             *
-             * @param metadataVersion metadata version to be written to the metadata (see [Metadata.metadataVersion]),
-             *   [KotlinClassMetadata.COMPATIBLE_METADATA_VERSION] by default. Cannot be less (lexicographically) than `[1, 4]`
-             * @param extraInt the value of the class-level flags to be written to the metadata (see [Metadata.extraInt]),
-             *   0 by default
-             */
-            @JvmOverloads
-            @Deprecated(
-                "$WRITER_API_MESSAGE, such as KotlinClassMetadata.writeFileFacade(kmPackage, metadataVersion, extraInt)",
-                level = DeprecationLevel.ERROR
-            )
-            public fun write(
-                metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
-                extraInt: Int = 0
-            ): FileFacade {
-                error("This method is no longer implemented. Migrate to KotlinClassMetadata.writeFileFacade.")
             }
         }
     }
@@ -305,67 +204,6 @@ public sealed class KotlinClassMetadata {
          */
         public val isLambda: Boolean
             get() = kmLambda != null
-
-        /**
-         * Creates a new [KmLambda] instance from this synthetic class metadata.
-         * Returns `null` if this synthetic class does not represent a lambda.
-         */
-        @Deprecated(
-            "To avoid excessive copying, use .kmLambda property instead. Note that it returns a view and not a copy.",
-            ReplaceWith("kmLambda"),
-            DeprecationLevel.ERROR
-        )
-        public fun toKmLambda(): KmLambda? = if (isLambda) KmLambda().apply(this::accept) else null
-
-        /**
-         * Makes the given visitor visit metadata of this file facade if this synthetic class represents a Kotlin lambda
-         * (`isLambda` == true).
-         *
-         * Throws [IllegalArgumentException] if this synthetic class does not represent a Kotlin lambda.
-         *
-         * @param v the visitor that must visit this lambda
-         */
-        @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
-        public fun accept(v: KmLambdaVisitor) {
-            if (!isLambda) throw IllegalArgumentException(
-                "accept(KmLambdaVisitor) is only possible for synthetic classes which are lambdas (isLambda = true)"
-            )
-
-            kmLambda!!.accept(v)
-        }
-
-        /**
-         * A [KmLambdaVisitor] that generates the metadata of a synthetic class. To generate metadata of a Kotlin lambda,
-         * call [Writer.visitFunction] and [Writer.visitEnd] on a newly created instance of this writer. If these methods are not called,
-         * the resulting metadata will represent a _non-lambda_ synthetic class.
-         */
-        @Deprecated(
-            WRITER_API_MESSAGE + ": KotlinClassMetadata.writeLambda(kmLambda, metadataVersion, extraInt) " +
-                    "or KotlinClassMetadata.writeSyntheticClass(metadataVersion, extraInt) for a non-lambda synthetic class",
-            level = DeprecationLevel.ERROR
-        )
-        public class Writer : LambdaWriter(JvmStringTable()) {
-            /**
-             * Returns the metadata of the synthetic class that was written with this writer.
-             *
-             * @param metadataVersion metadata version to be written to the metadata (see [Metadata.metadataVersion]),
-             *   [KotlinClassMetadata.COMPATIBLE_METADATA_VERSION] by default. Cannot be less (lexicographically) than `[1, 4]`
-             * @param extraInt the value of the class-level flags to be written to the metadata (see [Metadata.extraInt]),
-             *   0 by default
-             */
-            @Deprecated(
-                WRITER_API_MESSAGE + ": KotlinClassMetadata.writeLambda(kmLambda, metadataVersion, extraInt) " +
-                        "or KotlinClassMetadata.writeSyntheticClass(metadataVersion, extraInt) for a non-lambda synthetic class",
-                level = DeprecationLevel.ERROR
-            )
-            @JvmOverloads
-            public fun write(
-                metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
-                extraInt: Int = 0
-            ): SyntheticClass {
-                error("This method is no longer implemented. Migrate to KotlinClassMetadata.writeLambda or KotlinClassMetadata.writeSyntheticClass.")
-            }
-        }
     }
 
     /**
@@ -430,37 +268,6 @@ public sealed class KotlinClassMetadata {
                 partClassNames.toTypedArray<String>(), extraInt = flags
             )
         }
-
-        /**
-         * A writer that generates the metadata of a multi-file class facade.
-         */
-        @Deprecated(
-            "$WRITER_API_MESSAGE, such as KotlinClassMetadata.writeMultiFileClassFacade(partClassNames, metadataVersion, extraInt)",
-            level = DeprecationLevel.ERROR
-        )
-        public class Writer {
-            /**
-             * Returns the metadata of the multi-file class facade that was written with this writer.
-             *
-             * @param partClassNames JVM internal names of the part classes which this multi-file class combines
-             * @param metadataVersion metadata version to be written to the metadata (see [Metadata.metadataVersion]),
-             *   [KotlinClassMetadata.COMPATIBLE_METADATA_VERSION] by default. Cannot be less (lexicographically) than `[1, 4]`
-             * @param extraInt the value of the class-level flags to be written to the metadata (see [Metadata.extraInt]),
-             *   0 by default
-             */
-            @Deprecated(
-                "$WRITER_API_MESSAGE, such as KotlinClassMetadata.writeMultiFileClassFacade(partClassNames, metadataVersion, extraInt)",
-                level = DeprecationLevel.ERROR
-            )
-            @JvmOverloads
-            public fun write(
-                partClassNames: List<String>,
-                metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
-                extraInt: Int = 0
-            ): MultiFileClassFacade {
-                error("This method is no longer implemented. Migrate to KotlinClassMetadata.writeMultiFileClassFacade.")
-            }
-        }
     }
 
     /**
@@ -516,57 +323,6 @@ public sealed class KotlinClassMetadata {
                 )
             }
         }
-
-        /**
-         * Creates a new [KmPackage] instance from this multi-file class part metadata.
-         */
-        @Deprecated(
-            "To avoid excessive copying, use .kmPackage property instead. Note that it returns a view and not a copy.",
-            ReplaceWith("kmPackage"),
-            DeprecationLevel.ERROR
-        )
-        public fun toKmPackage(): KmPackage = KmPackage().also { newKmp -> kmPackage.accept(newKmp) }
-
-        /**
-         * Makes the given visitor visit metadata of this multi-file class part.
-         *
-         * @param v the visitor that must visit this multi-file class part
-         */
-        @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
-        public fun accept(v: KmPackageVisitor) {
-            kmPackage.accept(v)
-        }
-
-        /**
-         * A [KmPackageVisitor] that generates the metadata of a multi-file class part.
-         */
-        @Deprecated(
-            "$WRITER_API_MESSAGE, such as KotlinClassMetadata.writeMultiFileClassPart(kmPackage, facadeClassName, metadataVersion, extraInt)",
-            level = DeprecationLevel.ERROR
-        )
-        public class Writer : PackageWriter(JvmStringTable()) {
-            /**
-             * Returns the metadata of the multi-file class part that was written with this writer.
-             *
-             * @param facadeClassName JVM internal name of the corresponding multi-file class facade
-             * @param metadataVersion metadata version to be written to the metadata (see [Metadata.metadataVersion]),
-             *   [KotlinClassMetadata.COMPATIBLE_METADATA_VERSION] by default. Cannot be less (lexicographically) than `[1, 4]`
-             * @param extraInt the value of the class-level flags to be written to the metadata (see [Metadata.extraInt]),
-             *   0 by default
-             */
-            @Deprecated(
-                "$WRITER_API_MESSAGE, such as KotlinClassMetadata.writeMultiFileClassPart(kmPackage, facadeClassName, metadataVersion, extraInt)",
-                level = DeprecationLevel.ERROR
-            )
-            @JvmOverloads
-            public fun write(
-                facadeClassName: String,
-                metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
-                extraInt: Int = 0
-            ): MultiFileClassPart {
-                error("This method is no longer implemented. Migrate to KotlinClassMetadata.writeMultifileClassPart.")
-            }
-        }
     }
 
     /**
@@ -597,13 +353,6 @@ public sealed class KotlinClassMetadata {
                 flags
             )
         }
-
-        @PublishedApi
-        @Deprecated("This declaration is intended for binary compatibility only", level = DeprecationLevel.HIDDEN)
-        internal companion object {
-            @JvmField // For binary compatibility with previous `data object Unknown`
-            public val INSTANCE: Unknown = Unknown(Metadata(kind = 99, metadataVersion = JvmMetadataVersion.LATEST_STABLE_SUPPORTED.toIntArray()), true)
-        }
     }
 
     /**
@@ -626,152 +375,6 @@ public sealed class KotlinClassMetadata {
         public fun transform(metadata: Metadata, transformer: (KotlinClassMetadata) -> Unit): Metadata {
             return readStrict(metadata).apply(transformer).write()
         }
-
-        /**
-         * Writes contents of [kmClass] as the class metadata.
-         *
-         * @param metadataVersion metadata version to be written to the metadata (see [Metadata.metadataVersion]),
-         *   [KotlinClassMetadata.COMPATIBLE_METADATA_VERSION] by default. Cannot be less (lexicographically) than `[1, 4]`
-         * @param extraInt the value of the class-level flags to be written to the metadata (see [Metadata.extraInt]),
-         *   0 by default
-         *
-         * @throws IllegalArgumentException if [kmClass] is not correct and cannot be written or if [metadataVersion] is not supported for writing.
-         */
-        @JvmStatic
-        @JvmOverloads
-        @Deprecated("Use a KotlinClassMetadata.Class instance and its write() member function", level = DeprecationLevel.ERROR)
-        public fun writeClass(
-            kmClass: KmClass,
-            metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
-            extraInt: Int = 0,
-        ): Metadata = Class(kmClass, JvmMetadataVersion(metadataVersion), extraInt).write()
-
-
-        /**
-         * Writes [kmPackage] contents as the file facade metadata.
-         *
-         * @param metadataVersion metadata version to be written to the metadata (see [Metadata.metadataVersion]),
-         *   [KotlinClassMetadata.COMPATIBLE_METADATA_VERSION] by default. Cannot be less (lexicographically) than `[1, 4]`
-         * @param extraInt the value of the class-level flags to be written to the metadata (see [Metadata.extraInt]),
-         *   0 by default
-         *
-         * @throws IllegalArgumentException if [kmPackage] is not correct and cannot be written or if [metadataVersion] is not supported for writing.
-         */
-        @JvmStatic
-        @JvmOverloads
-        @Deprecated("Use a KotlinClassMetadata.FileFacade instance and its write() member function", level = DeprecationLevel.ERROR)
-        public fun writeFileFacade(
-            kmPackage: KmPackage,
-            metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
-            extraInt: Int = 0,
-        ): Metadata = FileFacade(kmPackage, JvmMetadataVersion(metadataVersion), extraInt).write()
-
-        /**
-         * Writes [kmLambda] as the synthetic class metadata.
-         *
-         * @param metadataVersion metadata version to be written to the metadata (see [Metadata.metadataVersion]),
-         *   [KotlinClassMetadata.COMPATIBLE_METADATA_VERSION] by default. Cannot be less (lexicographically) than `[1, 4]`
-         * @param extraInt the value of the class-level flags to be written to the metadata (see [Metadata.extraInt]),
-         *   0 by default
-         *
-         * @throws IllegalArgumentException if [kmLambda] is not correct and cannot be written or if [metadataVersion] is not supported for writing.
-         */
-        @JvmStatic
-        @JvmOverloads
-        @Deprecated("Use a KotlinClassMetadata.SyntheticClass instance and its write() member function", level = DeprecationLevel.ERROR)
-        public fun writeLambda(
-            kmLambda: KmLambda,
-            metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
-            extraInt: Int = 0,
-        ): Metadata = SyntheticClass(kmLambda, JvmMetadataVersion(metadataVersion), extraInt).write()
-
-        /**
-         * Writes synthetic class metadata.
-         *
-         * @param metadataVersion metadata version to be written to the metadata (see [Metadata.metadataVersion]),
-         *   [KotlinClassMetadata.COMPATIBLE_METADATA_VERSION] by default. Cannot be less (lexicographically) than `[1, 4]`
-         * @param extraInt the value of the class-level flags to be written to the metadata (see [Metadata.extraInt]),
-         *   0 by default
-         *
-         * @throws IllegalArgumentException if [metadataVersion] is not supported for writing.
-         */
-        @JvmStatic
-        @JvmOverloads
-        @Deprecated("Use a KotlinClassMetadata.SyntheticClass instance and its write() member function", level = DeprecationLevel.ERROR)
-        public fun writeSyntheticClass(
-            metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
-            extraInt: Int = 0,
-        ): Metadata = SyntheticClass(null, JvmMetadataVersion(metadataVersion), extraInt).write()
-
-        /**
-         * Writes metadata of the multi-file class facade.
-         *
-         * @param partClassNames JVM internal names of the part classes which this multi-file class combines
-         * @param metadataVersion metadata version to be written to the metadata (see [Metadata.metadataVersion]),
-         *   [KotlinClassMetadata.COMPATIBLE_METADATA_VERSION] by default. Cannot be less (lexicographically) than `[1, 4]`
-         * @param extraInt the value of the class-level flags to be written to the metadata (see [Metadata.extraInt]),
-         *   0 by default
-         *
-         * @throws IllegalArgumentException if [metadataVersion] is not supported for writing.
-         */
-        @JvmStatic
-        @JvmOverloads
-        @Deprecated(
-            "Use a KotlinClassMetadata.MultiFileClassFacade instance and its write() member function",
-            level = DeprecationLevel.ERROR
-        )
-        public fun writeMultiFileClassFacade(
-            partClassNames: List<String>, metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
-            extraInt: Int = 0,
-        ): Metadata = MultiFileClassFacade(partClassNames, JvmMetadataVersion(metadataVersion), extraInt).write()
-
-        /**
-         * Writes the metadata of the multi-file class part.
-         *
-         * @param facadeClassName JVM internal name of the corresponding multi-file class facade
-         * @param metadataVersion metadata version to be written to the metadata (see [Metadata.metadataVersion]),
-         *   [KotlinClassMetadata.COMPATIBLE_METADATA_VERSION] by default. Cannot be less (lexicographically) than `[1, 4]`
-         * @param extraInt the value of the class-level flags to be written to the metadata (see [Metadata.extraInt]),
-         *   0 by default
-         *
-         * @throws IllegalArgumentException if [kmPackage] is not correct and cannot be written or if [metadataVersion] is not supported for writing.
-         */
-        @JvmStatic
-        @JvmOverloads
-        @Deprecated(
-            "Use a KotlinClassMetadata.MultiFileClassPart instance and its write() member function",
-            level = DeprecationLevel.ERROR
-        )
-        public fun writeMultiFileClassPart(
-            kmPackage: KmPackage,
-            facadeClassName: String,
-            metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
-            extraInt: Int = 0,
-        ): Metadata = MultiFileClassPart(kmPackage, facadeClassName, JvmMetadataVersion(metadataVersion), extraInt).write()
-
-        /**
-         * Reads and parses the given annotation data of a Kotlin JVM class file and returns the correct type of [KotlinClassMetadata] encoded by
-         * this annotation, if metadata version is supported.
-         *
-         * [annotationData] may be obtained reflectively, constructed manually or with helper [kotlinx.metadata.jvm.Metadata] function,
-         * or equivalent [KotlinClassHeader] can be used.
-         *
-         * Metadata version is supported if it is greater or equal than 1.1, and less or equal than [COMPATIBLE_METADATA_VERSION] + 1 minor version.
-         * Note that metadata version is 1.1 for Kotlin < 1.4, and is equal to the language version starting from Kotlin 1.4.
-         * For example, if the latest Kotlin version is 1.7.0, the latest kotlinx-metadata-jvm can read binaries produced by Kotlin
-         * compilers from 1.0 to 1.8.* inclusively.
-         *
-         * @throws IllegalArgumentException if the metadata version is unsupported
-         *
-         * @see COMPATIBLE_METADATA_VERSION
-         */
-        @JvmStatic
-        @Deprecated(
-            "read() throws an error if metadata version is too high. Use either readStrict() if you want to retain this behavior, or readLenient() if you want to try to read newer metadata.",
-            ReplaceWith("KotlinClassMetadata.readStrict(annotationData)"),
-            DeprecationLevel.ERROR
-        )
-        public fun read(annotationData: Metadata): KotlinClassMetadata = readMetadataImpl(annotationData, lenient = false)
 
         /**
          * Reads and parses the given annotation data of a Kotlin JVM class file and returns the correct type of [KotlinClassMetadata] encoded by
@@ -867,28 +470,5 @@ public sealed class KotlinClassMetadata {
          * @see JvmMultifileClass
          */
         public const val MULTI_FILE_CLASS_PART_KIND: Int = 5
-
-        /**
-         * The latest stable metadata version supported by this version of the library.
-         * The library can read in strict mode Kotlin metadata produced by Kotlin compilers from 1.0 up to and including this version + 1 minor.
-         *
-         * In other words, a metadata version is supported if it is greater or equal than 1.1, and less or equal than [COMPATIBLE_METADATA_VERSION] + 1 minor version.
-         * Note that a metadata version is 1.1 for Kotlin < 1.4, and is equal to the language version starting from Kotlin 1.4.
-         *
-         * For example, if the latest supported stable Kotlin version is 1.7.0, kotlinx-metadata-jvm can read binaries produced by Kotlin compilers from 1.0
-         * to 1.8.* inclusively. In this case, this property will have the value `[1, 7, 0]`.
-         *
-         * @see Metadata.metadataVersion
-         */
-        @JvmField
-        @Deprecated("Use JvmMetadataVersion.LATEST_STABLE_SUPPORTED instead", ReplaceWith("JvmMetadataVersion.LATEST_STABLE_SUPPORTED"), DeprecationLevel.ERROR)
-        public val COMPATIBLE_METADATA_VERSION: IntArray = CompilerMetadataVersion.INSTANCE.toArray().copyOf()
-
     }
 }
-
-internal const val VISITOR_API_MESSAGE =
-    "Visitor API is deprecated as excessive and cumbersome. Please use nodes (such as KmClass) and their properties."
-
-internal const val WRITER_API_MESSAGE =
-    "Visitor Writer API is deprecated as excessive and cumbersome. Please use member functions of KotlinClassMetadata.Companion"
