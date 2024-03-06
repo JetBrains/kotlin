@@ -348,6 +348,7 @@ fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: Fi
 
 private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>): FirResolvedTypeRef {
     return when (symbol) {
+        is FirSyntheticPropertySymbol -> typeFromSymbol(symbol.getterSymbol!!.delegateFunctionSymbol)
         is FirCallableSymbol<*> -> {
             val returnTypeRef = returnTypeCalculator.tryCalculateReturnType(symbol.fir)
             returnTypeRef.copyWithNewSource(null)

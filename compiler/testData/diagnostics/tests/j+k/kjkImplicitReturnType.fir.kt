@@ -55,9 +55,9 @@ open class KotlinClass {
 
 class B : Java1() {
     override fun a(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.a()
-    override val b: String? = super.b
+    override val b: <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.b
     override var c: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.c
-    override var d: String? = super.d
+    override var d: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.d
     override var e: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.e
     override var f: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.f
 }
