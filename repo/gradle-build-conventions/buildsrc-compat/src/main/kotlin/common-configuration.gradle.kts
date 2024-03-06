@@ -286,7 +286,9 @@ fun Project.configureTests() {
 
     tasks.withType<Test>().configureEach {
         outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
-        usesService(concurrencyLimitService)
+        if (project.kotlinBuildProperties.limitTestTasksConcurrency) {
+            usesService(concurrencyLimitService)
+        }
     }
 
     // Aggregate task for build related checks
