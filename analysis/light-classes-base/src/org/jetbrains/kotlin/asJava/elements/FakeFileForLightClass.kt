@@ -20,13 +20,13 @@ import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.impl.source.SourceTreeToPsiMap
 import com.intellij.psi.impl.source.tree.TreeElement
 import com.intellij.psi.util.PsiUtil
-import com.intellij.reference.SoftReference
 import com.intellij.util.AstLoadingFilter
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import java.lang.ref.Reference
+import java.lang.ref.SoftReference
 
 open class FakeFileForLightClass(
     val ktFile: KtFile,
@@ -72,10 +72,10 @@ open class FakeFileForLightClass(
     private val myMirrorLock: Any = Any()
 
     override fun getMirror(): PsiElement {
-        SoftReference.dereference(myMirrorFileElement)?.let { return it.psi }
+        myMirrorFileElement?.get()?.let { return it.psi }
 
         val mirrorElement = synchronized(myMirrorLock) {
-            SoftReference.dereference(myMirrorFileElement)?.let { return@synchronized it }
+            myMirrorFileElement?.get()?.let { return@synchronized it }
 
             val file = this.virtualFile
             AstLoadingFilter.assertTreeLoadingAllowed(file)
