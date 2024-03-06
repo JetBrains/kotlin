@@ -36069,6 +36069,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("implicitInvokeFromChildClass.kt")
+      public void testImplicitInvokeFromChildClass() {
+        runTest("compiler/testData/diagnostics/tests/suspendConversion/implicitInvokeFromChildClass.kt");
+      }
+
+      @Test
+      @TestMetadata("implicitInvokeWithSpecificType.kt")
+      public void testImplicitInvokeWithSpecificType() {
+        runTest("compiler/testData/diagnostics/tests/suspendConversion/implicitInvokeWithSpecificType.kt");
+      }
+
+      @Test
       @TestMetadata("inGenericArgument.kt")
       public void testInGenericArgument() {
         runTest("compiler/testData/diagnostics/tests/suspendConversion/inGenericArgument.kt");

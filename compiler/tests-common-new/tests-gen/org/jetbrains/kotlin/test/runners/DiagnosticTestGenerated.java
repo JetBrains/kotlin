@@ -38359,6 +38359,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("implicitInvokeFromChildClass.kt")
+      public void testImplicitInvokeFromChildClass() {
+        runTest("compiler/testData/diagnostics/tests/suspendConversion/implicitInvokeFromChildClass.kt");
+      }
+
+      @Test
+      @TestMetadata("implicitInvokeWithSpecificType.kt")
+      public void testImplicitInvokeWithSpecificType() {
+        runTest("compiler/testData/diagnostics/tests/suspendConversion/implicitInvokeWithSpecificType.kt");
+      }
+
+      @Test
       @TestMetadata("inGenericArgument.kt")
       public void testInGenericArgument() {
         runTest("compiler/testData/diagnostics/tests/suspendConversion/inGenericArgument.kt");
