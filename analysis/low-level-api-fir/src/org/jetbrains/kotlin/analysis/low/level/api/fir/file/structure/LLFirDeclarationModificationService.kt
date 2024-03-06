@@ -124,7 +124,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
      * This action is required to fix inconsistencies in [FirFile][org.jetbrains.kotlin.fir.declarations.FirFile] tree.
      */
     fun flushModifications() {
-        ApplicationManager.getApplication().assertIsWriteThread()
+        ApplicationManager.getApplication().assertWriteIntentLockAcquired()
 
         processQueue { value, _ ->
             inBlockModification(value.blockOwner, value.ktModule)
@@ -166,7 +166,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
      * @param modificationType additional information to make more accurate decisions
      */
     fun elementModified(element: PsiElement, modificationType: ModificationType = ModificationType.Unknown) {
-        ApplicationManager.getApplication().assertIsWriteThread()
+        ApplicationManager.getApplication().assertWriteIntentLockAcquired()
 
         when (val changeType = calculateChangeType(element, modificationType)) {
             is ChangeType.Invisible -> {}

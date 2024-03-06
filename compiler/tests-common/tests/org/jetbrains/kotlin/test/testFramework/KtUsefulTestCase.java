@@ -558,7 +558,7 @@ public abstract class KtUsefulTestCase extends TestCase {
 
     @NotNull
     public static String toString(@NotNull Collection<?> collection, @NotNull String separator) {
-        List<String> list = ContainerUtil.map2List(collection, String::valueOf);
+        List<String> list = ContainerUtil.map(collection, String::valueOf);
         Collections.sort(list);
         StringBuilder builder = new StringBuilder();
         boolean flag = false;
@@ -601,7 +601,7 @@ public abstract class KtUsefulTestCase extends TestCase {
         if (collection.size() != checkers.length) {
             Assert.fail(toString(collection));
         }
-        Set<Consumer<T>> checkerSet = ContainerUtil.set(checkers);
+        Set<Consumer<T>> checkerSet = ContainerUtil.newHashSet(checkers);
         int i = 0;
         Throwable lastError = null;
         for (final T actual : collection) {

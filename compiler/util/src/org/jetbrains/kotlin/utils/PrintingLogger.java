@@ -82,7 +82,8 @@ public class PrintingLogger extends Logger {
         }
     }
 
+    @Deprecated // deprecated in com.intellij.openapi.diagnostic.Logger
     @Override
-    public void setLevel(Level level) {
+    public void setLevel(@NotNull Level level) {
     }
 }

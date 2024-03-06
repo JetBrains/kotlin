@@ -268,7 +268,7 @@ public final class ClassInnerStuffCache {
         for (PsiClass psiClass : myClass.getOwnInnerClasses()) {
             String name = psiClass.getName();
             if (name == null) {
-                Logger.getInstance(ClassInnerStuffCache.class).error(psiClass);
+                Logger.getInstance(ClassInnerStuffCache.class).error("$psiClass has no name");
             }
             else if (!(psiClass instanceof ExternallyDefinedPsiElement) || !cachedInners.containsKey(name)) {
                 cachedInners.put(name, psiClass);

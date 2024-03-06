@@ -36,7 +36,7 @@ val JpsProject.testingContext: TestingContext?
     get() = container.getChild(TESTING_CONTEXT)?.data
 
 val CompileContext.testingContext: TestingContext?
-    get() = projectDescriptor?.project?.testingContext
+    get() = projectDescriptor.project?.testingContext
 
 class TestingContext(
     val lookupTracker: LookupTracker,

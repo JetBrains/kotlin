@@ -99,6 +99,7 @@ public final class CompileScopeTestBuilder {
    *
    * @deprecated use {@link #allModules()} instead or directly add required target types via {@link #targetTypes}
    */
+  @Deprecated
   public CompileScopeTestBuilder all() {
     myTargetTypes.addAll(TargetTypeRegistry.getInstance().getTargetTypes());
     return this;

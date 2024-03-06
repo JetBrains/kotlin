@@ -100,7 +100,7 @@ public final class BuildResult implements MessageHandler {
         targetsNames.add(target != null ? getTargetIdWithTypeId(target) : "<unknown " + value + ">");
       });
       Collections.sort(targetsNames);
-      stream.println(hashCodeToOutputPath.get(key) + " -> " + targetsNames);
+      stream.println(hashCodeToOutputPath.get(key.intValue()) + " -> " + targetsNames);
     }
     stream.println("End Of OutputToTarget");
   }

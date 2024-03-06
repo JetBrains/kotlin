@@ -123,7 +123,7 @@ class KotlinClassInnerStuffCache(
             for (psiClass in classes) {
                 val name = psiClass.name
                 if (name == null) {
-                    Logger.getInstance(KotlinClassInnerStuffCache::class.java).error(psiClass)
+                    Logger.getInstance(KotlinClassInnerStuffCache::class.java).error("$psiClass has no name")
                 } else if (psiClass !is ExternallyDefinedPsiElement || !containsKey(name)) {
                     put(name, psiClass)
                 }

@@ -300,6 +300,7 @@ public abstract class JpsBuildTestCase extends UsefulTestCase {
    * Invoked forced rebuild for all targets in the project. May lead to unpredictable results if some plugins add targets your test doesn't expect.
    * @deprecated use {@link #rebuildAllModules()} instead or directly add required target types to the scope via {@link CompileScopeTestBuilder#targetTypes}
    */
+  @Deprecated
   protected void rebuildAll() {
     doBuild(CompileScopeTestBuilder.rebuild().all()).assertSuccessful();
   }
@@ -313,6 +314,7 @@ public abstract class JpsBuildTestCase extends UsefulTestCase {
    *
    * @deprecated use {@link #buildAllModules()} instead or directly add required target types to the scope via {@link CompileScopeTestBuilder#targetTypes}
    */
+  @Deprecated
   protected BuildResult makeAll() {
     return doBuild(make().all());
   }
