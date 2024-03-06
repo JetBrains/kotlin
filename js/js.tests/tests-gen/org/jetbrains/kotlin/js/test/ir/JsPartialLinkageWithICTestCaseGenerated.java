@@ -67,6 +67,12 @@ public class JsPartialLinkageWithICTestCaseGenerated extends AbstractJsPartialLi
   }
 
   @Test
+  @TestMetadata("externalDeclarationsKJS")
+  public void testExternalDeclarationsKJS() {
+    runTest("compiler/testData/klib/partial-linkage/externalDeclarationsKJS/");
+  }
+
+  @Test
   @TestMetadata("functionTransformations")
   public void testFunctionTransformations() {
     runTest("compiler/testData/klib/partial-linkage/functionTransformations/");

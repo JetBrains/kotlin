@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.wasm.test.AbstractWasmPartialLinkageWithICTestCase
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.wasm.test.*
 import org.jetbrains.kotlin.wasm.test.diagnostics.AbstractDiagnosticsWasmTest
 import org.jetbrains.kotlin.wasm.test.diagnostics.AbstractDiagnosticsFirWasmTest
@@ -28,6 +30,26 @@ fun main(args: Array<String>) {
         // Multimodal infra is not supported. Also, we don't use ES modules for cross-module refs in Wasm
         "crossModuleRef", "crossModuleRefPerFile", "crossModuleRefPerModule"
     )
+
+    generateTestGroupSuiteWithJUnit5(args) {
+        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData") {
+            testClass<AbstractWasmPartialLinkageNoICTestCase> {
+                model("klib/partial-linkage/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.WASM, recursive = false)
+            }
+        }
+
+        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData") {
+            testClass<AbstractWasmPartialLinkageWithICTestCase> {
+                model("klib/partial-linkage/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.WASM, recursive = false)
+            }
+        }
+
+        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData") {
+            testClass<AbstractFirWasmPartialLinkageNoICTestCase> {
+                model("klib/partial-linkage/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.WASM, recursive = false)
+            }
+        }
+    }
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("wasm/wasm.tests/tests-gen", "compiler/testData") {
