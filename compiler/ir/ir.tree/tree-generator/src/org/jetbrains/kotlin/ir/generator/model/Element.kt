@@ -99,7 +99,7 @@ class Element(
     private fun hasAcceptOrTransformChildrenMethod(walkableOrTransformableChildren: Element.() -> List<Field>): Boolean {
         if (!ownsChildren) return false
         if (!isRootElement && walkableOrTransformableChildren().isEmpty()) return false
-        val atLeastOneParentHasAcceptOrTransformChildrenMethod = traverseParentsUntil { parent ->
+        val atLeastOneParentHasAcceptOrTransformChildrenMethod = elementAncestorsAndSelfDepthFirst().any { parent ->
             parent != this && parent.hasAcceptOrTransformChildrenMethod(walkableOrTransformableChildren) && !parent.isRootElement
         }
         return !atLeastOneParentHasAcceptOrTransformChildrenMethod
