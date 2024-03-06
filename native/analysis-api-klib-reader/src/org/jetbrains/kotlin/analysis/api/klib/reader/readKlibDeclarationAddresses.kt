@@ -74,7 +74,7 @@ internal fun readKlibDeclarationAddresses(library: KotlinLibrary): Set<KlibDecla
 
         with(PackageFragmentReadingContext(packageFragmentProto) ?: return@flatMap emptySet()) {
             packageFragmentProto.readKlibClassAddresses() +
-                    packageFragmentProto.readTypeAliasAddresses() +
+                    packageFragmentProto.readKlibTypeAliasAddresses() +
                     packageFragmentProto.readKlibPropertyAddresses() +
                     packageFragmentProto.readKlibFunctionAddresses()
         }
@@ -98,10 +98,10 @@ internal fun ProtoBuf.PackageFragment.readKlibClassAddresses(): Set<KlibClassAdd
 }
 
 context(PackageFragmentReadingContext)
-internal fun ProtoBuf.PackageFragment.readTypeAliasAddresses(): Set<KlibTypealiasAddress> {
+internal fun ProtoBuf.PackageFragment.readKlibTypeAliasAddresses(): Set<KlibTypeAliasAddress> {
     return this.`package`.typeAliasList.map { typeAliasProto ->
         val name = Name.identifier(nameResolver.getString(typeAliasProto.name))
-        KlibTypealiasAddress(
+        KlibTypeAliasAddress(
             packageFqName = packageFqName,
             classId = ClassId(packageFqName, name)
         )
@@ -112,8 +112,8 @@ context(PackageFragmentReadingContext)
 internal fun ProtoBuf.PackageFragment.readKlibPropertyAddresses(): Set<KlibPropertyAddress> {
     return `package`.propertyList.map { propertyProto ->
         KlibPropertyAddress(
-            sourceFileName = propertyProto.getExtensionOrNull(KlibMetadataProtoBuf.propertyFile)?.let { classNameStringIndex ->
-                nameResolver.strings.getString(classNameStringIndex)
+            sourceFileName = propertyProto.getExtensionOrNull(KlibMetadataProtoBuf.propertyFile)?.let { fileNameId ->
+                nameResolver.strings.getString(fileNameId)
             },
             packageFqName = packageFqName,
             callableName = Name.identifier(nameResolver.getString(propertyProto.name))
@@ -125,8 +125,8 @@ context(PackageFragmentReadingContext)
 internal fun ProtoBuf.PackageFragment.readKlibFunctionAddresses(): Set<KlibFunctionAddress> {
     return `package`.functionList.map { functionProto ->
         KlibFunctionAddress(
-            sourceFileName = functionProto.getExtensionOrNull(KlibMetadataProtoBuf.functionFile)?.let { classNameStringIndex ->
-                nameResolver.getString(classNameStringIndex)
+            sourceFileName = functionProto.getExtensionOrNull(KlibMetadataProtoBuf.functionFile)?.let { fileNameId ->
+                nameResolver.getString(fileNameId)
             },
             packageFqName = packageFqName,
             callableName = Name.identifier(nameResolver.getString(functionProto.name))

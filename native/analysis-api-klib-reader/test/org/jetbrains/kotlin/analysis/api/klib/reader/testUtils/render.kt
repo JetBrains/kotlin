@@ -14,7 +14,7 @@ fun KlibDeclarationAddress.render(): String {
         is KlibFunctionAddress -> render()
         is KlibPropertyAddress -> render()
         is KlibClassAddress -> render()
-        is KlibTypealiasAddress -> render()
+        is KlibTypeAliasAddress -> render()
     }
 }
 
@@ -39,7 +39,7 @@ private fun KlibClassAddress.render(): String = """
       ClassId          : "${classId.asString()}"
 """.trimIndent()
 
-private fun KlibTypealiasAddress.render(): String = """
+private fun KlibTypeAliasAddress.render(): String = """
     TypeAlias (${classId.asFqNameString()})
       Package Name     : "${packageFqName.asString()}"
       ClassId          : "${classId.asString()}"

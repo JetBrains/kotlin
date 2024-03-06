@@ -120,7 +120,7 @@ class GetSymbolsTest {
     fun `test - getTypeAlias - TypeAliasA`() {
         withTestProjectLibraryAnalysisSession {
             val addresses = (useSiteModule as KtLibraryModule).readKlibDeclarationAddresses() ?: fail("Failed reading addresses")
-            val typeAliasAAddress = addresses.filterIsInstance<KlibTypealiasAddress>()
+            val typeAliasAAddress = addresses.filterIsInstance<KlibTypeAliasAddress>()
                 .find { it.classId == ClassId.fromString("org/jetbrains/sample/TypeAliasA") }
                 ?: fail("Could not find TypeAliasA")
 

@@ -28,7 +28,7 @@ context(KtAnalysisSession)
 public fun KlibDeclarationAddress.getSymbols(): Sequence<KtSymbol> {
     return when (this) {
         is KlibClassAddress -> getClassOrObjectSymbol()?.let { symbol -> sequenceOf(symbol) } ?: emptySequence()
-        is KlibTypealiasAddress -> getTypeAliasSymbol()?.let { symbol -> sequenceOf(symbol) } ?: emptySequence()
+        is KlibTypeAliasAddress -> getTypeAliasSymbol()?.let { symbol -> sequenceOf(symbol) } ?: emptySequence()
         is KlibFunctionAddress -> getFunctionSymbols()
         is KlibPropertyAddress -> getPropertySymbols()
     }
@@ -43,7 +43,7 @@ public fun KlibClassAddress.getClassOrObjectSymbol(): KtClassOrObjectSymbol? {
 }
 
 context(KtAnalysisSession)
-public fun KlibTypealiasAddress.getTypeAliasSymbol(): KtTypeAliasSymbol? {
+public fun KlibTypeAliasAddress.getTypeAliasSymbol(): KtTypeAliasSymbol? {
     return getTypeAliasByClassId(classId)
 }
 

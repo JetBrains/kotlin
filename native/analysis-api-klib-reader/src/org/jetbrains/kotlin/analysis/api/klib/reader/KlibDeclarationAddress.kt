@@ -24,7 +24,7 @@ public data class KlibClassAddress(
     public override val classId: ClassId,
 ) : KlibClassifierAddress()
 
-public data class KlibTypealiasAddress(
+public data class KlibTypeAliasAddress(
     override val packageFqName: FqName,
     override val classId: ClassId,
 ) : KlibClassifierAddress() {
