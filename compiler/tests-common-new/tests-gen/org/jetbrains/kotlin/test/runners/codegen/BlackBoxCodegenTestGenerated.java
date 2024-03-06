@@ -23432,6 +23432,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
 
     @Test
+    @TestMetadata("inlinedLambdaWithErasedParamType.kt")
+    public void testInlinedLambdaWithErasedParamType() {
+      runTest("compiler/testData/codegen/box/inline/inlinedLambdaWithErasedParamType.kt");
+    }
+
+    @Test
+    @TestMetadata("kt66017.kt")
+    public void testKt66017() {
+      runTest("compiler/testData/codegen/box/inline/kt66017.kt");
+    }
+
+    @Test
+    @TestMetadata("kt66017_inlineFromTheSameModule.kt")
+    public void testKt66017_inlineFromTheSameModule() {
+      runTest("compiler/testData/codegen/box/inline/kt66017_inlineFromTheSameModule.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaAsAny.kt")
     public void testLambdaAsAny() {
       runTest("compiler/testData/codegen/box/inline/lambdaAsAny.kt");
