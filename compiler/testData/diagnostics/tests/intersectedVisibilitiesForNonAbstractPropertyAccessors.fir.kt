@@ -2,14 +2,14 @@
 
 open class A1 {
     var a: Int = 10
-        <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>protected<!> set
+        protected set
 }
 
 interface I1 {
     var a: Int
 }
 
-abstract class B1 : A1(), I1
+abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>B1<!> : A1(), I1
 
 open class A2 {
     protected fun foo(): Int = 10

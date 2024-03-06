@@ -2,14 +2,14 @@
 
 abstract class I1 {
     abstract var a: Int
-        <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>protected<!> set
+        protected set
 }
 
 interface I2 {
     var a: Int
 }
 
-abstract class C : I1(), I2
+abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>C<!> : I1(), I2
 
 abstract class I3 {
     protected abstract fun foo(): Int
