@@ -309,7 +309,7 @@ class DeclarationGenerator(
                     val classMethod: VirtualMethodMetadata? = metadata.virtualMethods
                         .find { it.signature == method.signature && it.function.modality != Modality.ABSTRACT }  // TODO: Use map
 
-                    if (classMethod == null && !allowIncompleteImplementations) {
+                    if (classMethod == null && !allowIncompleteImplementations && !context.backendContext.partialLinkageSupport.isEnabled) {
                         error("Cannot find interface implementation of method ${method.signature} in class ${klass.fqNameWhenAvailable}")
                     }
 
