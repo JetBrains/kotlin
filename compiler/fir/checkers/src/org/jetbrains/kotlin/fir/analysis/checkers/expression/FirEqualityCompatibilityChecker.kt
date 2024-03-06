@@ -105,16 +105,6 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         }
     }
 
-    private fun shouldReportAsPerRules1(l: TypeInfo, r: TypeInfo, context: CheckerContext): Boolean {
-        val oneIsFinal = l.isFinal || r.isFinal
-
-        return when {
-            l.type.isNothingOrNullableNothing || r.type.isNothingOrNullableNothing -> false
-            oneIsFinal -> areUnrelated(l, r, context)
-            else -> false
-        }
-    }
-
     /**
      * K1 reports different diagnostics for different
      * cases, and this enum helps to replicate the K1's

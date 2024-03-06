@@ -128,3 +128,15 @@ internal fun areUnrelated(a: TypeInfo, b: TypeInfo, context: CheckerContext): Bo
 }
 
 internal fun areRelated(a: TypeInfo, b: TypeInfo, context: CheckerContext): Boolean = !areUnrelated(a, b, context)
+
+/**
+ * See [KT-57779](https://youtrack.jetbrains.com/issue/KT-57779) for more information.
+ */
+internal fun shouldReportAsPerRules1(l: TypeInfo, r: TypeInfo, context: CheckerContext): Boolean {
+    val oneIsFinal = l.isFinal || r.isFinal
+
+    return when {
+        oneIsFinal -> areUnrelated(l, r, context)
+        else -> false
+    }
+}
