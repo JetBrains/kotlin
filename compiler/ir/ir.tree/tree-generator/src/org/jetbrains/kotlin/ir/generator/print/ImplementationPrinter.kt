@@ -33,7 +33,7 @@ internal class ImplementationPrinter(printer: SmartPrinter) : AbstractImplementa
         implementation.generationCallback?.invoke(this@ImportCollector, this)
 
         if (
-            implementation.element.traverseParentsUntil { it == IrTree.symbolOwner } &&
+            implementation.element.elementAncestorsAndSelfDepthFirst().any { it == IrTree.symbolOwner } &&
             implementation.bindOwnedSymbol
         ) {
             val symbolField = implementation["symbol"]

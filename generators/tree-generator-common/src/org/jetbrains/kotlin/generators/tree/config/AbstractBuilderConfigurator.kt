@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.generators.tree.config
 
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.config.AbstractImplementationConfigurator.ImplementationContext.DefaultValueContext
 import org.jetbrains.kotlin.utils.DummyDelegate
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -121,7 +120,7 @@ abstract class AbstractBuilderConfigurator<Element, Implementation, BuilderField
             .mapNotNullTo(mutableSetOf()) { implementation ->
                 if (!implementationPredicate(implementation)) return@mapNotNullTo null
                 if (implementation.element == element) return@mapNotNullTo null
-                val hasElementInParents = implementation.element.traverseParentsUntil { it == element }
+                val hasElementInParents = implementation.element.elementAncestorsAndSelfDepthFirst().any { it == element }
                 implementation.takeIf { hasElementInParents }
             }
     }
