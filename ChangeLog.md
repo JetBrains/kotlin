@@ -6,7 +6,6 @@
 
 ### Backend. Wasm
 
-- [`KT-58088`](https://youtrack.jetbrains.com/issue/KT-58088) [PL] Support & enable partial linkage for Wasm
 - [`KT-64486`](https://youtrack.jetbrains.com/issue/KT-64486) Kotlin/Wasm/WASI exported function callback for coroutines support
 
 ### Compiler
