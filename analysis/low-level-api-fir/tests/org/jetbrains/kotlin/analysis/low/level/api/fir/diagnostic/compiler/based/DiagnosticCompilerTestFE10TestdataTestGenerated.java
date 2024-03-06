@@ -646,6 +646,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
     }
 
     @Test
+    @TestMetadata("intersectedVisibilitiesForAbstractPropertyAccessors.kt")
+    public void testIntersectedVisibilitiesForAbstractPropertyAccessors() {
+      runTest("compiler/testData/diagnostics/tests/intersectedVisibilitiesForAbstractPropertyAccessors.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectedVisibilitiesForNonAbstractPropertyAccessors.kt")
+    public void testIntersectedVisibilitiesForNonAbstractPropertyAccessors() {
+      runTest("compiler/testData/diagnostics/tests/intersectedVisibilitiesForNonAbstractPropertyAccessors.kt");
+    }
+
+    @Test
     @TestMetadata("intersectionWithMultipleDefaultsInJava.kt")
     public void testIntersectionWithMultipleDefaultsInJava() {
       runTest("compiler/testData/diagnostics/tests/intersectionWithMultipleDefaultsInJava.kt");
