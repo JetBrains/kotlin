@@ -106,9 +106,13 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    @TodoAnalysisApi
     fun `test - interfaceImplementingInterface`() {
         doTest(headersTestDataDir.resolve("interfaceImplementingInterface"))
+    }
+
+    @Test
+    fun `test - multipleInterfacesImplementationChain`() {
+        doTest(headersTestDataDir.resolve("multipleInterfacesImplementationChain"))
     }
 
     @Test
