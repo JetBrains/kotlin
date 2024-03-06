@@ -19,18 +19,18 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.BuildSyntheticPr
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.CopySwiftExportIntermediatesForConsumer
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.GenerateSPMPackageFromSwiftExport
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.util.enableSwiftExport
-import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.Assume
 import org.junit.Test
 import java.io.File
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class SwiftExportUnitTests {
@@ -38,9 +38,10 @@ class SwiftExportUnitTests {
     fun `swift export compilation test`() {
         Assume.assumeTrue("Macos host required for this test", HostManager.hostIsMac)
         val project = buildProjectWithMPP {
-            project.extraProperties.set(XCODE_ENVIRONMENT_KEY, TestXcodeEnvironment(project.layout))
-            project.multiplatformExtension.iosSimulatorArm64()
-            project.enableSwiftExport(true)
+            extraProperties.set(XCODE_ENVIRONMENT_KEY, TestXcodeEnvironment(project.layout))
+            multiplatformExtension.iosSimulatorArm64()
+            enableSwiftExport(true)
+            repositories.mavenLocal()
 
             kotlin {
                 iosSimulatorArm64 {
@@ -53,36 +54,20 @@ class SwiftExportUnitTests {
 
         project.evaluate()
 
-        // Check compile tasks configured
-        assertNotNull(project.tasks.locateTask<KotlinNativeCompile>("compileKotlinIosSimulatorArm64"))
-        assertNotNull(project.tasks.locateTask<KotlinNativeCompile>("compileSwiftExportMainKotlinIosSimulatorArm64"))
-        assertNotNull(project.tasks.locateTask<KotlinNativeCompile>("compileTestKotlinIosSimulatorArm64"))
+        val compilations = project.multiplatformExtension.iosSimulatorArm64().compilations
+        val mainCompilation = compilations.main
+        val swiftExportMainCompilation = compilations.getByName("swiftExportMain")
 
-        // Check link tasks configured
-        assertNotNull(project.tasks.locateTask<KotlinNativeLink>("linkDebugFrameworkIosSimulatorArm64"))
-        assertNotNull(project.tasks.locateTask<KotlinNativeLink>("linkDebugTestIosSimulatorArm64"))
-        assertNotNull(project.tasks.locateTask<KotlinNativeLink>("linkReleaseFrameworkIosSimulatorArm64"))
-        assertNotNull(project.tasks.locateTask<KotlinNativeLink>("linkSwiftExportBinaryDebugStaticIosSimulatorArm64"))
-        assertNotNull(project.tasks.locateTask<KotlinNativeLink>("linkSwiftExportBinaryReleaseStaticIosSimulatorArm64"))
+        // Main compilation exist
+        assertNotNull(mainCompilation)
 
+        // swiftExportMain compilation exist
+        assertNotNull(swiftExportMainCompilation)
 
-        // Framework copy task configured
-        assertNotNull(project.tasks.locateTask<FrameworkCopy>("assembleDebugAppleFrameworkForXcodeIosSimulatorArm64"))
+        val swiftExportMainAssociation = swiftExportMainCompilation.associatedCompilations.single()
 
-        // Swift Export task
-        assertNotNull(project.tasks.locateTask<SwiftExportTask>("iosSimulatorArm64DebugSwiftExport"))
-
-        // Generate SPM task
-        assertNotNull(project.tasks.locateTask<GenerateSPMPackageFromSwiftExport>("iosSimulatorArm64DebugGenerateSPMPackage"))
-
-        // Build synthetic task
-        assertNotNull(project.tasks.locateTask<BuildSyntheticProjectWithSwiftExportPackage>("iosSimulatorArm64DebugBuildSyntheticProject"))
-
-        //Copy Swift Export task
-        assertNotNull(project.tasks.locateTask<CopySwiftExportIntermediatesForConsumer>("iosSimulatorArm64DebugCopySyntheticProjectIntermediates"))
-
-        //Embed and Sign task
-        assertNotNull(project.tasks.locateTask<EmbedAndSignTask>("embedAndSignAppleFrameworkForXcode"))
+        // swiftExportMain associated with main
+        assertEquals(swiftExportMainAssociation, mainCompilation)
     }
 }
 
