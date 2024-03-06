@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
+import org.jetbrains.kotlin.gradle.utils.withType
 import java.io.Serializable
 import kotlin.reflect.KClass
 
@@ -24,7 +26,7 @@ import kotlin.reflect.KClass
  */
 class KotlinProjectNpmResolver(
     project: Project,
-    var resolver: KotlinRootNpmResolver
+    var resolver: KotlinRootNpmResolver,
 ) : Serializable {
     val projectPath by lazy { project.path }
 
@@ -52,19 +54,19 @@ class KotlinProjectNpmResolver(
             ?: error("NpmResolverPlugin should be applied after kotlin plugin")
 
         when (kotlin) {
-            is KotlinSingleTargetExtension<*> -> addTargetListeners(kotlin.target)
-            is KotlinMultiplatformExtension -> kotlin.targets.all {
+            is KotlinSingleTargetExtension<*> -> addTargetListeners(kotlin.target as KotlinJsIrTarget)
+            is KotlinMultiplatformExtension -> kotlin.targets.withType<KotlinJsIrTarget>().configureEach {
                 addTargetListeners(it)
             }
             else -> error("Unsupported kotlin model: $kotlin")
         }
     }
 
-    private fun addTargetListeners(target: KotlinTarget) {
+    private fun addTargetListeners(target: KotlinJsIrTarget) {
         check(resolution == null) { resolver.alreadyResolvedMessage("add target $target") }
 
         if (target.platformType == KotlinPlatformType.js ||
-            target.platformType == KotlinPlatformType.wasm
+            target.platformType == KotlinPlatformType.wasm && target.wasmTargetType != KotlinWasmTargetType.WASI
         ) {
             target.compilations.all { compilation ->
                 if (compilation is KotlinJsIrCompilation) {

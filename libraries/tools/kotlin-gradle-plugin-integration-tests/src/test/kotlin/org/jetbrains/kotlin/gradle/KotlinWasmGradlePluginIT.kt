@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Files
 import kotlin.io.path.writeText
@@ -183,6 +182,20 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertFileInProjectExists("build/${Distribution.DIST}/wasmJs/productionExecutable/redefined-wasm-module-name.wasm")
                 assertFileInProjectExists("build/${Distribution.DIST}/wasmJs/productionExecutable/new-mpp-wasm-js.js")
                 assertFileInProjectExists("build/${Distribution.DIST}/wasmJs/productionExecutable/new-mpp-wasm-js.js.map")
+            }
+        }
+    }
+
+    @DisplayName("Check mix project with wasi only dependency works correctly")
+    @GradleTest
+    fun jsAndWasiTargetsWithDependencyOnWasiOnlyProject(gradleVersion: GradleVersion) {
+        project("wasm-wasi-js-with-wasi-only-dependency", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            build("build") {
+                assertTasksExecuted(":lib:compileKotlinWasmWasi")
+                assertTasksExecuted(":app:compileProductionExecutableKotlinWasmJs")
+                assertTasksExecuted(":app:compileProductionExecutableKotlinWasmWasi")
             }
         }
     }
