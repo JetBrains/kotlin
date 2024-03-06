@@ -166,8 +166,26 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         source: KtSourceElement? = this.source,
     ) = when {
         visibility != Visibilities.Unknown -> true
-        else -> false.also { reporter.reportOn(source, FirErrors.CANNOT_INFER_VISIBILITY, this, context) }
+        else -> false.also { reporter.reportOn(source, chooseCannotInferVisibilityFor(this), this, context) }
     }
+
+    private fun chooseCannotInferVisibilityFor(symbol: FirCallableSymbol<*>) = when {
+        !symbol.wouldMissDiagnosticInK1 -> FirErrors.CANNOT_INFER_VISIBILITY
+        else -> FirErrors.CANNOT_INFER_VISIBILITY_WARNING
+    }
+
+    private fun chooseCannotChangeAccessPrivilegeFor(symbol: FirCallableSymbol<*>) = when {
+        !symbol.wouldMissDiagnosticInK1 -> FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE
+        else -> FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE_WARNING
+    }
+
+    private fun chooseCannotWeakenAccessPrivilegeFor(symbol: FirCallableSymbol<*>) = when {
+        !symbol.wouldMissDiagnosticInK1 -> FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE
+        else -> FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING
+    }
+
+    private val FirCallableSymbol<*>.wouldMissDiagnosticInK1 get() =
+        this is FirPropertyAccessorSymbol && propertySymbol.isIntersectionOverride
 
     private fun checkModality(
         overriddenSymbols: List<FirCallableSymbol<*>>,
@@ -494,7 +512,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         val containingClass = overridden.containingClassLookupTag() ?: return
         reportOn(
             overriding.source,
-            FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE,
+            chooseCannotWeakenAccessPrivilegeFor(overriding),
             overriding.visibility,
             overridden,
             containingClass.name,
@@ -510,7 +528,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         val containingClass = overridden.containingClassLookupTag() ?: return
         reportOn(
             overriding.source,
-            FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE,
+            chooseCannotChangeAccessPrivilegeFor(overriding),
             overriding.visibility,
             overridden,
             containingClass.name,

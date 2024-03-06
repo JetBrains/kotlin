@@ -658,6 +658,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
     }
 
     @Test
+    @TestMetadata("intersectedVisibilitiesPropertyAccessorsAdditionalWarnigns.kt")
+    public void testIntersectedVisibilitiesPropertyAccessorsAdditionalWarnigns() {
+      runTest("compiler/testData/diagnostics/tests/intersectedVisibilitiesPropertyAccessorsAdditionalWarnigns.kt");
+    }
+
+    @Test
     @TestMetadata("intersectionWithMultipleDefaultsInJava.kt")
     public void testIntersectionWithMultipleDefaultsInJava() {
       runTest("compiler/testData/diagnostics/tests/intersectionWithMultipleDefaultsInJava.kt");

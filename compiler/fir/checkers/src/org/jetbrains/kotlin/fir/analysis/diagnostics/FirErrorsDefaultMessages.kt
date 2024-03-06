@@ -122,11 +122,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CALLABLE_REFERENC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_BE_IMPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_CHECK_FOR_ERASED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_INFER_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_INFER_VISIBILITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_INFER_VISIBILITY_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_OVERRIDE_INVISIBLE_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAN_BE_VAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION
@@ -1656,6 +1659,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             TO_STRING
         )
         map.put(
+            CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING,
+            "Cannot weaken access privilege {0} for ''{1}'' in ''{2}''. This will be prohibited in the future.",
+            VISIBILITY,
+            DECLARATION_NAME,
+            TO_STRING
+        )
+        map.put(
             CANNOT_CHANGE_ACCESS_PRIVILEGE,
             "Cannot change access privilege {0} for ''{1}'' in ''{2}''.",
             VISIBILITY,
@@ -1663,8 +1673,20 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             TO_STRING
         )
         map.put(
+            CANNOT_CHANGE_ACCESS_PRIVILEGE_WARNING,
+            "Cannot change access privilege {0} for ''{1}'' in ''{2}''. This will be prohibited in the future.",
+            VISIBILITY,
+            DECLARATION_NAME,
+            TO_STRING
+        )
+        map.put(
             CANNOT_INFER_VISIBILITY,
-            "Cannot infer visibility for ''{0}''. Please specify it explicitly",
+            "Cannot infer visibility for ''{0}''. Please specify it explicitly.",
+            DECLARATION_NAME,
+        )
+        map.put(
+            CANNOT_INFER_VISIBILITY_WARNING,
+            "Cannot infer visibility for ''{0}''. Please specify it explicitly. This will be prohibited in the future.",
             DECLARATION_NAME,
         )
 

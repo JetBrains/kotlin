@@ -1925,6 +1925,13 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val containingClassName: Name
     }
 
+    interface CannotWeakenAccessPrivilegeWarning : KtFirDiagnostic<KtModifierListOwner> {
+        override val diagnosticClass get() = CannotWeakenAccessPrivilegeWarning::class
+        val overridingVisibility: Visibility
+        val overridden: KtCallableSymbol
+        val containingClassName: Name
+    }
+
     interface CannotChangeAccessPrivilege : KtFirDiagnostic<KtModifierListOwner> {
         override val diagnosticClass get() = CannotChangeAccessPrivilege::class
         val overridingVisibility: Visibility
@@ -1932,8 +1939,20 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val containingClassName: Name
     }
 
+    interface CannotChangeAccessPrivilegeWarning : KtFirDiagnostic<KtModifierListOwner> {
+        override val diagnosticClass get() = CannotChangeAccessPrivilegeWarning::class
+        val overridingVisibility: Visibility
+        val overridden: KtCallableSymbol
+        val containingClassName: Name
+    }
+
     interface CannotInferVisibility : KtFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = CannotInferVisibility::class
+        val callable: KtCallableSymbol
+    }
+
+    interface CannotInferVisibilityWarning : KtFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = CannotInferVisibilityWarning::class
         val callable: KtCallableSymbol
     }
 

@@ -9,7 +9,7 @@ interface I1 {
     var a: Int
 }
 
-abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>B1<!> : A1(), I1
+abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING!>B1<!> : A1(), I1
 
 open class A2 {
     protected fun foo(): Int = 10
