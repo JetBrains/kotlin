@@ -85,6 +85,7 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     JS_PROPERTY_LAZY_INITIALIZATION(CONCAT, AllowedListAnonymizer(listOf("true", "false")));
 
     companion object {
-        const val VERSION = 1
+        // Version 2: removed deprecated K/N targets from MPP_PLATFORMS
+        const val VERSION = 2
     }
 }
