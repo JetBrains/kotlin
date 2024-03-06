@@ -105,19 +105,6 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         }
     }
 
-    private fun shouldReportAsPerRules1(l: TypeInfo, r: TypeInfo, context: CheckerContext): Boolean {
-        val oneIsFinal = l.isFinal || r.isFinal
-
-        return when {
-            l.type.isNothingOrNullableNothing || r.type.isNothingOrNullableNothing -> false
-            oneIsFinal -> !l.isSubtypeOf(r, context) && !r.isSubtypeOf(l, context)
-            else -> false
-        }
-    }
-
-    private fun TypeInfo.isSubtypeOf(other: TypeInfo, context: CheckerContext) =
-        notNullType.isSubtypeOf(other.notNullType, context.session)
-
     /**
      * K1 reports different diagnostics for different
      * cases, and this enum helps to replicate the K1's
@@ -155,7 +142,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         val shouldProperlyReportError = context.languageVersionSettings.supportsFeature(LanguageFeature.ReportErrorsForComparisonOperators)
 
         // In this case K1 reports nothing
-        val shouldRelaxDiagnostic = (l.isPrimitive || r.isPrimitive) && (l.isSubtypeOf(r, context) || r.isSubtypeOf(l, context))
+        val shouldRelaxDiagnostic = (l.isPrimitive || r.isPrimitive) && areRelated(l, r, context)
                 && !shouldProperlyReportError
 
         return when {

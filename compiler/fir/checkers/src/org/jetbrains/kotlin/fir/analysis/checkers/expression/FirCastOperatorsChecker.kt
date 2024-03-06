@@ -53,7 +53,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
                 || l.type.isNullableNothing && !r.type.isNullable
 
         return when {
-            l.type.isNothing && r.type.isNothingOrNullableNothing -> Applicability.APPLICABLE
+            l.type.isNothing -> Applicability.APPLICABLE
             r.type.isNothing -> Applicability.IMPOSSIBLE_CAST
             isNullableNothingWithNotNull -> when (expression.operation) {
                 // (null as? WhatEver) == null
@@ -71,22 +71,15 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         useless: Applicability,
         context: CheckerContext,
     ): Applicability {
-        val oneIsFinal = l.isFinal || r.isFinal
         val oneIsNotNull = !l.type.isNullable || !r.type.isNullable
 
         return when {
             isRefinementUseless(context, l.directType.upperBoundIfFlexible(), r.directType, expression) -> useless
-            oneIsNotNull && oneIsFinal && areUnrelated(l, r, context) -> impossible
+            oneIsNotNull && shouldReportAsPerRules1(l, r, context) -> impossible
             isCastErased(l.directType, r.directType, context) -> Applicability.CAST_ERASED
             else -> Applicability.APPLICABLE
         }
     }
-
-    private fun areUnrelated(a: TypeInfo, b: TypeInfo, context: CheckerContext) =
-        !a.isSubtypeOf(b, context) && !b.isSubtypeOf(a, context)
-
-    private fun TypeInfo.isSubtypeOf(other: TypeInfo, context: CheckerContext) =
-        notNullType.isSubtypeOf(other.notNullType, context.session)
 
     /**
      * K1 reports different diagnostics for different

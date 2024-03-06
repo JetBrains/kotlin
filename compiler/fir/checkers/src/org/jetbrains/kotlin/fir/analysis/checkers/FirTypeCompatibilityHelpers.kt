@@ -115,3 +115,24 @@ internal fun FirExpression.toArgumentInfo(context: CheckerContext) =
         originalType = mostOriginalTypeIfSmartCast.fullyExpandedType(context.session).finalApproximationOrSelf(context),
         context.session,
     )
+
+private fun TypeInfo.isSubtypeOf(other: TypeInfo, context: CheckerContext) =
+    notNullType.isSubtypeOf(other.notNullType, context.session)
+
+internal fun areUnrelated(a: TypeInfo, b: TypeInfo, context: CheckerContext): Boolean {
+    return !a.isSubtypeOf(b, context) && !b.isSubtypeOf(a, context)
+}
+
+internal fun areRelated(a: TypeInfo, b: TypeInfo, context: CheckerContext): Boolean = !areUnrelated(a, b, context)
+
+/**
+ * See [KT-57779](https://youtrack.jetbrains.com/issue/KT-57779) for more information.
+ */
+internal fun shouldReportAsPerRules1(l: TypeInfo, r: TypeInfo, context: CheckerContext): Boolean {
+    val oneIsFinal = l.isFinal || r.isFinal
+
+    return when {
+        oneIsFinal -> areUnrelated(l, r, context)
+        else -> false
+    }
+}
