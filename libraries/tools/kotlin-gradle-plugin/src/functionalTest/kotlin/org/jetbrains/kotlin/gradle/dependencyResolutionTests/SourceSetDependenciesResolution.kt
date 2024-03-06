@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests
 
 import org.gradle.api.Project
+import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.kotlin.dsl.maven
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -29,20 +30,36 @@ abstract class SourceSetDependenciesResolution {
         /**
          * Declares an API dependency to test:[name]:[version] for [sourceSetName] source set
          */
-        fun api(sourceSetName: String, name: String, version: String) {
+        fun api(sourceSetName: String, name: String, version: String): Unit = project
+            .kotlinExtension
+            .sourceSets
+            .getByName(sourceSetName)
+            .dependencies { api(mockedDependency(name, version)) }
+
+        fun mockedDependency(name: String, version: String): String {
             declaredDependencies.add(name to version)
-            project.kotlinExtension.sourceSets.getByName(sourceSetName).dependencies { api("test:$name:$version") }
+            return "test:$name:$version"
         }
     }
 
-    fun assertSourceSetDependenciesResolution(expectedFilePath: String, configure: SourceSetDependenciesDsl.(Project) -> Unit) {
+    /**
+     * If [withProject] is not null then dependencies of source sets in this projects will be verified against [expectedFilePath]
+     *
+     */
+    fun assertSourceSetDependenciesResolution(
+        expectedFilePath: String,
+        withProject: ProjectInternal? = null,
+        configure: SourceSetDependenciesDsl.(Project) -> Unit
+    ) {
         val repoRoot = tempFolder.newFolder()
-        val project = buildProject {
-            enableDefaultStdlibDependency(false)
-            enableDependencyVerification(false)
+        val project = withProject ?: buildProject {
             applyMultiplatformPlugin()
+        }
 
-            repositories.maven(repoRoot)
+        project.allprojects {
+            it.enableDefaultStdlibDependency(false)
+            it.enableDependencyVerification(false)
+            it.repositories.maven(repoRoot)
         }
 
         val dsl = SourceSetDependenciesDsl(project)

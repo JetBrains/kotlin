@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.util.*
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -115,6 +116,7 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
     }
 
     @Test
+    @Ignore("TODO: KT-66375")
     fun jvmMainWithHigherVersion() {
         assertSourceSetDependenciesResolution("leafSourceSetWithHigherVersion.txt") { project ->
             project.defaultTargets()
@@ -130,6 +132,7 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
     }
 
     @Test
+    @Ignore("TODO: KT-66375")
     fun nativeMainWithHigherVersion() {
         assertSourceSetDependenciesResolution("leafSourceSetWithHigherVersion.txt") { project ->
             project.defaultTargets()
@@ -142,6 +145,7 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
     }
 
     @Test
+    @Ignore("TODO: KT-66375")
     fun jsMainWithHigherVersion() {
         assertSourceSetDependenciesResolution("leafSourceSetWithHigherVersion.txt") { project ->
             project.defaultTargets()
@@ -167,6 +171,7 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
     }
 
     @Test
+    @Ignore("TODO: KT-66375")
     fun leafSourceSetsDependsOnDifferentVersionsAndCommonCodeDoesNot() {
         assertSourceSetDependenciesResolution("leafSourceSetsDependsOnDifferentVersionsAndCommonCodeDoesNot.txt") { project ->
             project.defaultTargets()
@@ -177,6 +182,31 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
              * It complies with the desire of having global dependencies for the whole project */
             api("jvmMain", "lib", "1.0")
             api("linuxX64Main", "lib", "2.0")
+        }
+    }
+
+    /**
+     * after KT-66375 is fixed it is expected that all source sets will have foo:2.0 dependency
+     * unless other is decided
+     */
+    @Test
+    fun KT66375JvmDependenciesShouldNotDowngrade() {
+        val appProject = buildProject(projectBuilder = { withName("app") })
+        val libProject = buildProject(projectBuilder = { withName("lib").withParent(appProject) })
+
+        assertSourceSetDependenciesResolution("KT66375JvmDependenciesShouldNotDowngrade.txt", withProject = appProject) {
+            appProject.applyMultiplatformPlugin().apply {
+                jvm(); linuxX64()
+                // common main depends on 1.0
+                sourceSets.getByName("commonMain").dependencies { this.api(mockedDependency("foo", "1.0")) }
+                // jvm main depends on lib that transitively depends on 2.0
+                sourceSets.jvmMain.dependencies { api(project(":lib")) }
+            }
+
+            libProject.applyMultiplatformPlugin().apply {
+                jvm(); linuxX64()
+                sourceSets.jvmMain.dependencies { api(mockedDependency("foo", "2.0")) }
+            }
         }
     }
 

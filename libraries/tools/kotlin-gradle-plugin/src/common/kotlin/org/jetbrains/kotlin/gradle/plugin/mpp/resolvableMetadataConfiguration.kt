@@ -134,9 +134,5 @@ private fun Project.configureConsistentDependencyResolution(groupOfSourceSets: C
     configuration.extendsFrom(*extenders.toTypedArray())
     groupOfSourceSets.forEach { it.internal.resolvableMetadataConfiguration.shouldResolveConsistentlyWith(configuration) }
 
-    // Make actual compilation classpaths/libraries configurations to have the same consistent dependencies
-    groupOfSourceSets
-        .flatMap { it.internal.compilations }
-        .toSet()
-        .forEach { project.configurations.getByName(it.compileDependencyConfigurationName).shouldResolveConsistentlyWith(configuration) }
+    // FIXME: KT-66375 Make actual compilation classpaths/libraries configurations to have the same consistent dependencies
 }
