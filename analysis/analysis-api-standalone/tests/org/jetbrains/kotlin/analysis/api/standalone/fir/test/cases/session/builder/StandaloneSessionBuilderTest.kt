@@ -269,8 +269,9 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
                     buildKtSourceModule {
                         // addSourceRoot(testDataPath(root).resolve("main"))
                         // Instead, add [VirtualFile] on-the-fly
-                        val virtualFile = createVirtualFileOnTheFly(
+                        val virtualFile = createDumbVirtualFile(
                             project,
+                            "test.kt",
                             """
                                 fun main() {
                                     foo()

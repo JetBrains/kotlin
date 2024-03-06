@@ -26,6 +26,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.extension
 import kotlin.streams.asSequence
 import org.junit.jupiter.api.Assertions
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.io.OutputStream
 import java.time.LocalDateTime
@@ -59,21 +60,21 @@ internal fun compileCommonKlib(kLibSourcesRoot: Path): Path {
     return testKlib
 }
 
-internal fun createVirtualFileOnTheFly(
+internal fun createDumbVirtualFile(
     project: Project,
+    fileName: String,
     text: String,
-    fs: VirtualFileSystem = MockVirtualFileSystem(),
+    fileSystem: VirtualFileSystem = MockVirtualFileSystem(),
 ): VirtualFile {
     val factory = KtPsiFactory(project, markGenerated = false)
-    val ktFile = factory.createFile(text)
+    val ktFile = factory.createFile(fileName, text)
+
     return object : VirtualFile() {
-        override fun getName(): String = ktFile.name
+        override fun getFileSystem(): VirtualFileSystem = fileSystem
 
-        override fun getFileSystem(): VirtualFileSystem = fs
+        override fun getName(): String = fileName
 
-        override fun getPath(): String {
-            error("Not yet implemented")
-        }
+        override fun getPath(): String = "/$fileName"
 
         override fun isWritable(): Boolean = false
 
@@ -87,24 +88,22 @@ internal fun createVirtualFileOnTheFly(
 
         override fun getChildren(): Array<VirtualFile> = emptyArray()
 
+        override fun getInputStream(): InputStream {
+            error("Not yet implemented")
+        }
+
         override fun getOutputStream(requestor: Any?, newModificationStamp: Long, newTimeStamp: Long): OutputStream {
             error("Not yet implemented")
         }
 
         override fun contentsToByteArray(): ByteArray = ktFile.text.toByteArray()
 
+        override fun getLength(): Long = ktFile.textLength.toLong()
+
         private val timeStamp = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
 
         override fun getTimeStamp(): Long = timeStamp
 
-        override fun getLength(): Long = ktFile.textLength.toLong()
-
-        override fun refresh(asynchronous: Boolean, recursive: Boolean, postRunnable: Runnable?) {
-            error("Not yet implemented")
-        }
-
-        override fun getInputStream(): InputStream {
-            error("Not yet implemented")
-        }
+        override fun refresh(asynchronous: Boolean, recursive: Boolean, postRunnable: Runnable?) {}
     }
 }
