@@ -496,6 +496,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     }
 
     @Test
+    @TestMetadata("fpRedundantProtected.kt")
+    public void testFpRedundantProtected() {
+      runTest("compiler/testData/diagnostics/tests/fpRedundantProtected.kt");
+    }
+
+    @Test
     @TestMetadata("FreeFunctionCalledAsExtension.kt")
     public void testFreeFunctionCalledAsExtension() {
       runTest("compiler/testData/diagnostics/tests/FreeFunctionCalledAsExtension.kt");
