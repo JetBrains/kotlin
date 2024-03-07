@@ -12,8 +12,22 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import java.nio.file.Path
 
 private class CompilationOutcomeImpl(
-    override val logLines: Map<LogLevel, Collection<String>>,
+    rawLogLines: Map<LogLevel, Collection<String>>,
 ) : CompilationOutcome {
+    private val _logLines by lazy {
+        rawLogLines.mapValues { (_, lines) -> lines.toList() }
+    }
+
+    override val logLines: Map<LogLevel, List<String>>
+        get() = _logLines
+
+    private val _uniqueLogLines by lazy {
+        rawLogLines.mapValues { (_, lines) -> lines.toSet() }
+    }
+
+    override val uniqueLogLines: Map<LogLevel, Set<String>>
+        get() = _uniqueLogLines
+
     var maxLogLevel: LogLevel = LogLevel.ERROR
         private set
     var expectedResult = CompilationResult.COMPILATION_SUCCESS

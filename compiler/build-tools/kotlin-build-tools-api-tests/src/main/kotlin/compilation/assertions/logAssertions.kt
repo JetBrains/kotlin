@@ -14,7 +14,7 @@ fun CompilationOutcome.assertLogContainsLines(logLevel: LogLevel, vararg expecte
 
 fun CompilationOutcome.assertLogContainsLines(logLevel: LogLevel, expectedLines: Set<String>) {
     requireLogLevel(logLevel)
-    val absentLines = expectedLines.filter { !logLines.getValue(logLevel).contains(it) }
+    val absentLines = expectedLines.filter { !uniqueLogLines.getValue(logLevel).contains(it) }
     assert(absentLines.isEmpty()) {
         """
         |The following lines were expected to be printed on $logLevel level, however they were not:
@@ -29,7 +29,7 @@ fun CompilationOutcome.assertLogDoesNotContainLines(logLevel: LogLevel, vararg e
 
 fun CompilationOutcome.assertLogDoesNotContainLines(logLevel: LogLevel, expectedLines: Set<String>) {
     requireLogLevel(logLevel)
-    val presentLines = expectedLines.filter { logLines.getValue(logLevel).contains(it) }
+    val presentLines = expectedLines.filter { uniqueLogLines.getValue(logLevel).contains(it) }
     assert(presentLines.isEmpty()) {
         """
         |The following lines were not expected to be printed on $logLevel level, however they were:

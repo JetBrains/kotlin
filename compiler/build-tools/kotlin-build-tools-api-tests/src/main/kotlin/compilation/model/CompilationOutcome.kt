@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 
 interface CompilationOutcome {
-    val logLines: Map<LogLevel, Collection<String>>
+    val logLines: Map<LogLevel, List<String>>
+
+    val uniqueLogLines: Map<LogLevel, Set<String>>
 
     fun requireLogLevel(logLevel: LogLevel)
 
