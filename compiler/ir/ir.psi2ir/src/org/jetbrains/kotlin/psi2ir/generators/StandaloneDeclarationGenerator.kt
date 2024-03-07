@@ -180,7 +180,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
                 visibility = visibility,
                 isInline = isInline,
                 isExpect = isExpect,
-                returnType = null,
+                returnType = descriptor.returnType.toIrType(),
                 symbol = symbol,
                 isPrimary = isPrimary,
                 isExternal = isEffectivelyExternal(),
@@ -192,7 +192,6 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
             val ctorTypeParameters = descriptor.typeParameters.filter { it.containingDeclaration === descriptor }
             generateScopedTypeParameterDeclarations(irConstructor, ctorTypeParameters)
             generateValueParameterDeclarations(irConstructor, descriptor, defaultArgumentFactory)
-            irConstructor.returnType = descriptor.returnType.toIrType()
         }
 
         return irConstructor

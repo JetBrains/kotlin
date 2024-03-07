@@ -94,7 +94,7 @@ internal interface DescriptorToIrTranslationMixin {
                         visibility,
                         isInline,
                         isExpect,
-                        null,
+                        constructorDescriptor.returnType.toIrType(),
                         it,
                         isPrimary,
                         isEffectivelyExternal(),
@@ -109,7 +109,6 @@ internal interface DescriptorToIrTranslationMixin {
                 it.parent = irConstructor
             }
         }
-        irConstructor.returnType = constructorDescriptor.returnType.toIrType()
         irConstructor.generateAnnotations()
         return irConstructor
     }

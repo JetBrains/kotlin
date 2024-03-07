@@ -296,7 +296,7 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
                     visibility = visibility,
                     isInline = isInline,
                     isExpect = isExpect,
-                    returnType = null,
+                    returnType = constructorDescriptor.returnType.toIrType(),
                     symbol = it,
                     isPrimary = isPrimary,
                     isExternal = isEffectivelyExternal(),
@@ -310,7 +310,6 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
             if (context.configuration.generateBodies) {
                 irConstructor.body = createBodyGenerator(irConstructor.symbol).generateBody(irConstructor)
             }
-            irConstructor.returnType = constructorDescriptor.returnType.toIrType()
         }
     }
 
