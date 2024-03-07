@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Assumptions
 import java.io.File
 import kotlin.time.Duration
 
-internal sealed interface TestRunCheck {
+sealed interface TestRunCheck {
 
     fun apply(testRun: TestRun, runResult: RunResult): Result
 
@@ -280,7 +280,7 @@ internal sealed interface TestRunCheck {
     }
 }
 
-internal data class TestRunChecks(
+data class TestRunChecks(
     val executionTimeoutCheck: ExecutionTimeout,
     val testFiltering: TestFiltering,
     private val exitCodeCheck: ExitCode?,

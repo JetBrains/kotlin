@@ -814,6 +814,7 @@ tasks {
         dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
         dependsOn(":native:analysis-api-klib-reader:check")
         dependsOn(":native:native.tests:test")
+        dependsOn(":native:native.tests:driver:check")
         dependsOn(":native:native.tests:stress:check")
         dependsOn(":native:objcexport-header-generator:check")
         dependsOn(":native:swift:swift-export-standalone:test")

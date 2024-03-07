@@ -103,7 +103,7 @@ internal class ExecutableBuilder(
 }
 
 internal val AbstractNativeSimpleTest.buildDir: File get() = testRunSettings.get<Binaries>().testBinariesDir
-internal val AbstractNativeSimpleTest.targets: KotlinNativeTargets get() = testRunSettings.get()
+val AbstractNativeSimpleTest.targets: KotlinNativeTargets get() = testRunSettings.get()
 
 internal fun TestCompilationArtifact.KLIB.asLibraryDependency() =
     ExistingDependency(this, TestCompilationDependencyType.Library)

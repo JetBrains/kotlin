@@ -201,7 +201,7 @@ internal object TestDirectives : SimpleDirectivesContainer() {
 }
 
 // mimics class `JVMAssertionsMode`
-internal enum class AssertionsMode(val description: String) {
+enum class AssertionsMode(val description: String) {
     ALWAYS_ENABLE("always-enable"),
     ALWAYS_DISABLE("always-disable"),
     JVM("jvm"),
@@ -214,20 +214,20 @@ internal enum class AssertionsMode(val description: String) {
     }
 }
 
-internal enum class TestKind {
+enum class TestKind {
     REGULAR,
     STANDALONE,
     STANDALONE_NO_TR,
     STANDALONE_LLDB;
 }
 
-internal enum class TestRunnerType {
+enum class TestRunnerType {
     DEFAULT,
     WORKER,
     NO_EXIT
 }
 
-internal enum class MutedOption {
+enum class MutedOption {
     DEFAULT,
     K1,
     K2
@@ -241,7 +241,7 @@ internal class TestCInteropArgs(cinteropArgs: List<String>) : TestCompilerArgs(e
     constructor(vararg cinteropArgs: String) : this(cinteropArgs.asList())
 }
 
-internal open class TestCompilerArgs(
+open class TestCompilerArgs(
     val compilerArgs: List<String>,
     val cinteropArgs: List<String> = emptyList(),
     val assertionsMode: AssertionsMode = AssertionsMode.DEFAULT,

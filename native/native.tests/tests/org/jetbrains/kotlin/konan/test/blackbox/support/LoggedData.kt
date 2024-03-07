@@ -22,7 +22,7 @@ import kotlin.time.DurationUnit
  *
  * Handles all the necessary formatting right inside of [computeText]. Caches the resulting text to avoid re-computation.
  */
-internal abstract class LoggedData {
+abstract class LoggedData {
     private val text: String by lazy { computeText() }
     protected abstract fun computeText(): String
     final override fun toString() = text

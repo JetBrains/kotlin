@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.text.ParseException
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestReportParseState as State
 
-internal class TestReport(
+class TestReport(
     val passedTests: Collection<TestName>,
     val failedTests: Collection<TestName>,
     val ignoredTests: Collection<TestName>
@@ -26,7 +26,7 @@ internal class TestReport(
     """.trimIndent()
 }
 
-internal interface TestOutputFilter {
+interface TestOutputFilter {
     fun filter(testOutput: String): FilteredOutput
 
     data class FilteredOutput(val filteredOutput: String, val testReport: TestReport?)

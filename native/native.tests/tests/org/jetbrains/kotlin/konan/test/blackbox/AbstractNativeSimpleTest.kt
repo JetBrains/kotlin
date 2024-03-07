@@ -16,7 +16,7 @@ import kotlin.test.fail
 
 @ExtendWith(NativeSimpleTestSupport::class)
 abstract class AbstractNativeSimpleTest {
-    internal lateinit var testRunSettings: SimpleTestRunSettings
+    lateinit var testRunSettings: SimpleTestRunSettings
     internal lateinit var testRunProvider: SimpleTestRunProvider
 
     fun muteForK2(isK2: Boolean, test: () -> Unit) {

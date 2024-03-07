@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import kotlin.reflect.KClass
 
-internal abstract class Settings(private val parent: Settings?, settings: Iterable<Any>) {
+abstract class Settings(private val parent: Settings?, settings: Iterable<Any>) {
     private val map: Map<KClass<*>, Any> = buildMap {
         settings.forEach {
             val settingClass: KClass<*>
@@ -48,7 +48,7 @@ internal abstract class Settings(private val parent: Settings?, settings: Iterab
  * | [TestClassSettings]   | [TestProcessSettings]  | The single top-level (enclosing) test class |
  * | [TestRunSettings]     | [TestClassSettings]    | The single test run of a test function      |
  */
-internal class TestProcessSettings(vararg settings: Any) : Settings(parent = null, settings.asIterable())
+class TestProcessSettings(vararg settings: Any) : Settings(parent = null, settings.asIterable())
 internal class TestClassSettings(parent: TestProcessSettings, settings: Iterable<Any>) : Settings(parent, settings)
 internal class TestRunSettings(parent: TestClassSettings, settings: Iterable<Any>) : Settings(parent, settings)
 
@@ -61,8 +61,8 @@ internal class TestRunSettings(parent: TestClassSettings, settings: Iterable<Any
  * | [SimpleTestClassSettings] | [TestProcessSettings]     | The single top-level (enclosing) test class |
  * | [SimpleTestRunSettings]   | [SimpleTestClassSettings] | The single test run of a test function      |
  */
-internal class SimpleTestClassSettings(parent: TestProcessSettings, settings: Iterable<Any>) : Settings(parent, settings)
-internal class SimpleTestRunSettings(parent: SimpleTestClassSettings, settings: Iterable<Any>) : Settings(parent, settings)
+class SimpleTestClassSettings(parent: TestProcessSettings, settings: Iterable<Any>) : Settings(parent, settings)
+class SimpleTestRunSettings(parent: SimpleTestClassSettings, settings: Iterable<Any>) : Settings(parent, settings)
 
 internal val Settings.configurables: Configurables
     get() {

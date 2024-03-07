@@ -41,7 +41,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
     private val buildDir get() = testRunSettings.get<Binaries>().testBinariesDir
     private val konanc get() = konanHome.resolve("bin").resolve(if (HostManager.hostIsMingw) "konanc.bat" else "konanc")
 
-    private val testSuiteDir = File("native/native.tests/testData/driver")
+    private val testSuiteDir = File("native/native.tests/driver/testData")
     private val source = testSuiteDir.resolve("driver0.kt")
 
     @Test

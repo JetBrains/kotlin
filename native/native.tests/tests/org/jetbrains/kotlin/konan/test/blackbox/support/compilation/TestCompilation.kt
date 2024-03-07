@@ -33,11 +33,11 @@ private fun AssertionsMode.assertionsEnabledWith(optimizationMode: OptimizationM
     else -> optimizationMode != OptimizationMode.OPT
 }
 
-internal abstract class TestCompilation<A : TestCompilationArtifact> {
+abstract class TestCompilation<A : TestCompilationArtifact> {
     abstract val result: TestCompilationResult<out A>
 }
 
-internal abstract class BasicCompilation<A : TestCompilationArtifact>(
+abstract class BasicCompilation<A : TestCompilationArtifact>(
     protected val targets: KotlinNativeTargets,
     protected val home: KotlinNativeHome,
     private val classLoader: KotlinNativeClassLoader,
@@ -184,7 +184,7 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
     }
 }
 
-internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
+abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     targets: KotlinNativeTargets,
     home: KotlinNativeHome,
     classLoader: KotlinNativeClassLoader,
@@ -491,7 +491,7 @@ internal class SwiftCompilation<T: TestCompilationArtifact>(
     }
 }
 
-internal class ExecutableCompilation(
+class ExecutableCompilation(
     settings: Settings,
     freeCompilerArgs: TestCompilerArgs,
     sourceModules: Collection<TestModule>,
@@ -664,7 +664,7 @@ internal class StaticCacheCompilation(
     }
 }
 
-internal class CategorizedDependencies(uncategorizedDependencies: Iterable<TestCompilationDependency<*>>) {
+class CategorizedDependencies(uncategorizedDependencies: Iterable<TestCompilationDependency<*>>) {
     val failures: Set<TestCompilationResult.Failure> by lazy {
         uncategorizedDependencies.flatMapToSet { dependency ->
             when (val result = (dependency as? TestCompilation<*>)?.result) {

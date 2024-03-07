@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.compilation
 
 import java.io.File
 
-internal sealed interface TestCompilationArtifact {
+sealed interface TestCompilationArtifact {
     val logFile: File
 
     data class KLIB(val klibFile: File) : TestCompilationArtifact {
