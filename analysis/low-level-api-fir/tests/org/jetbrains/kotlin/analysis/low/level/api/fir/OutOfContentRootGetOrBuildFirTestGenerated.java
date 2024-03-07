@@ -300,6 +300,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("arrayAssignOperatorAsSingleExpressionInIf.kt")
+    public void testArrayAssignOperatorAsSingleExpressionInIf() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/arrayAssignOperatorAsSingleExpressionInIf.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayAssignOperatorAsSingleExpressionInWhen.kt")
+    public void testArrayAssignOperatorAsSingleExpressionInWhen() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/arrayAssignOperatorAsSingleExpressionInWhen.kt");
+    }
+
+    @Test
     @TestMetadata("arrayMinusAssignOperatorsInVariousScopes.kt")
     public void testArrayMinusAssignOperatorsInVariousScopes() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/arrayMinusAssignOperatorsInVariousScopes.kt");
