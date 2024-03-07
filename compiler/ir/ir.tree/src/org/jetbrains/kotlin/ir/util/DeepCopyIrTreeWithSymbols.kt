@@ -27,10 +27,19 @@ inline fun <reified T : IrElement> T.deepCopyWithSymbols(
     initialParent: IrDeclarationParent? = null,
     createTypeRemapper: (SymbolRemapper) -> TypeRemapper = ::DeepCopyTypeRemapper
 ): T {
+    return (deepCopyImpl(createTypeRemapper) as T).patchDeclarationParents(initialParent)
+}
+
+inline fun <reified T : IrElement> T.deepCopyWithoutPatchingParents(): T {
+    return deepCopyImpl(::DeepCopyTypeRemapper) as T
+}
+
+@PublishedApi
+internal inline fun <T : IrElement> T.deepCopyImpl(createTypeRemapper: (SymbolRemapper) -> TypeRemapper): IrElement {
     val symbolRemapper = DeepCopySymbolRemapper()
     acceptVoid(symbolRemapper)
     val typeRemapper = createTypeRemapper(symbolRemapper)
-    return transform(DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper), null).patchDeclarationParents(initialParent) as T
+    return transform(DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper), null)
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)

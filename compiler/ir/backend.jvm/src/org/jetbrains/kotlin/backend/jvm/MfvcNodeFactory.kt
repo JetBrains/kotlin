@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -64,7 +63,7 @@ fun createLeafMfvcNode(
             oldBackingField.metadata = null
         }.apply {
             this.parent = oldBackingField.parent
-            this.annotations = fieldAnnotations.map { it.deepCopyWithVariables() }
+            this.annotations = fieldAnnotations.map { it.deepCopyWithoutPatchingParents() }
         }
     }
 

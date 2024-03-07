@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.addProperty
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -432,7 +431,7 @@ interface IrBuilderWithPluginContext {
     }
 
     fun IrBuilderWithScope.copyAnnotationsFrom(annotations: List<IrConstructorCall>): List<IrExpression> =
-        annotations.filter { it.symbol.owner.parentAsClass.isSerialInfoAnnotation }.map { it.deepCopyWithVariables() }
+        annotations.filter { it.symbol.owner.parentAsClass.isSerialInfoAnnotation }.map { it.deepCopyWithoutPatchingParents() }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun IrBuilderWithScope.wrapperClassReference(classType: IrType): IrClassReference {
