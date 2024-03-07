@@ -75,7 +75,10 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
 
         return when {
             isRefinementUseless(context, l.directType.upperBoundIfFlexible(), r.directType, expression) -> useless
-            oneIsNotNull && shouldReportAsPerRules1(l, r, context) -> impossible
+            shouldReportAsPerRules1(l, r, context) -> when {
+                oneIsNotNull -> impossible
+                else -> useless
+            }
             isCastErased(l.directType, r.directType, context) -> Applicability.CAST_ERASED
             else -> Applicability.APPLICABLE
         }
