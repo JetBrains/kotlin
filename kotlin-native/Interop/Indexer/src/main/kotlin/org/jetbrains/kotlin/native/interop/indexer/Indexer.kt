@@ -38,7 +38,12 @@ private class StructDefImpl(
     override val staticFields: List<GlobalDecl>
 ) : StructDef(size, align)
 
-private class EnumDefImpl(spelling: String, type: Type, override val location: Location) : EnumDef(spelling, type) {
+private class EnumDefImpl(
+        spelling: String,
+        type: Type,
+        override val isAnonymous: Boolean,
+        override val location: Location
+) : EnumDef(spelling, type) {
     override val constants = mutableListOf<EnumConstant>()
 }
 
@@ -357,7 +362,12 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         val cursorType = clang_getCursorType(cursor)
         val typeSpelling = clang_getTypeSpelling(cursorType).convertAndDispose()
         val baseType = convertType(clang_getEnumDeclIntegerType(cursor))
-        return EnumDefImpl(typeSpelling, baseType, getLocation(cursor))
+        return EnumDefImpl(
+                typeSpelling,
+                baseType,
+                isAnonymous = clang_Cursor_isAnonymous(cursor) != 0,
+                getLocation(cursor)
+        )
     }
 
     private fun getObjCCategoryClassCursor(cursor: CValue<CXCursor>): CValue<CXCursor> {
