@@ -120,6 +120,12 @@ public class NativeKlibEvolutionTestGenerated extends AbstractNativeKlibEvolutio
   }
 
   @Test
+  @TestMetadata("changeFunctionReturnType.kt")
+  public void testChangeFunctionReturnType() {
+    runTest("compiler/testData/klib/evolution/changeFunctionReturnType.kt");
+  }
+
+  @Test
   @TestMetadata("changeNamesOfTypeParameters.kt")
   public void testChangeNamesOfTypeParameters() {
     runTest("compiler/testData/klib/evolution/changeNamesOfTypeParameters.kt");
