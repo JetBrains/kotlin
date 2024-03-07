@@ -71,11 +71,9 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         useless: Applicability,
         context: CheckerContext,
     ): Applicability {
-        val oneIsNotNull = !l.type.isNullable || !r.type.isNullable
-
         return when {
             isRefinementUseless(context, l.directType.upperBoundIfFlexible(), r.directType, expression) -> useless
-            oneIsNotNull && shouldReportAsPerRules1(l, r, context) -> impossible
+            shouldReportAsPerRules1(l, r, context) -> impossible
             isCastErased(l.directType, r.directType, context) -> Applicability.CAST_ERASED
             else -> Applicability.APPLICABLE
         }
