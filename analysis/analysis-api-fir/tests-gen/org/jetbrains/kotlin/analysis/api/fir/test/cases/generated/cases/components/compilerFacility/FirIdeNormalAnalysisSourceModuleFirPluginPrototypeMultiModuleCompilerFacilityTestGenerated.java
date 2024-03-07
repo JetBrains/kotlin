@@ -56,4 +56,10 @@ public class FirIdeNormalAnalysisSourceModuleFirPluginPrototypeMultiModuleCompil
   public void testComposableFunctionMultiModules2() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/composableFunctionMultiModules2.kt");
   }
+
+  @Test
+  @TestMetadata("composableInlineFunctionExpressionParameter.kt")
+  public void testComposableInlineFunctionExpressionParameter() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/composableInlineFunctionExpressionParameter.kt");
+  }
 }
