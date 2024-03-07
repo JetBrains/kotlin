@@ -187,6 +187,7 @@ class AnonymousInnerRecord(val def: StructDef) : StructMember("") {
 abstract class StructDecl(val spelling: String) : TypeDeclaration {
 
     abstract val def: StructDef?
+    abstract val isAnonymous: Boolean
 }
 
 /**
