@@ -218,7 +218,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
             val strategy = KotlinTargetResourcesResolutionStrategy.fromProperty(it)
             if (strategy == null) { project.reportDiagnostic(KotlinToolingDiagnostics.UnknownValueProvidedForResourcesStrategy(it)) }
             return@let strategy
-        } ?: KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration
+        } ?: KotlinTargetResourcesResolutionStrategy.VariantReselection
 
     val mppFilterResourcesByExtension: Provider<Boolean>
         get() = project.providers
