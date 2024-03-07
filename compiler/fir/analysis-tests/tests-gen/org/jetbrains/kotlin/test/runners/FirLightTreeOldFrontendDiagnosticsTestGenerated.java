@@ -21183,6 +21183,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("valueOfKFunctionTypeAsArgumentOfInlineFunction.kt")
+      public void testValueOfKFunctionTypeAsArgumentOfInlineFunction() {
+        runTest("compiler/testData/diagnostics/tests/inline/valueOfKFunctionTypeAsArgumentOfInlineFunction.kt");
+      }
+
+      @Test
       @TestMetadata("vararg.kt")
       public void testVararg() {
         runTest("compiler/testData/diagnostics/tests/inline/vararg.kt");
