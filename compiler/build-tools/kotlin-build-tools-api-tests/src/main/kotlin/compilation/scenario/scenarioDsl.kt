@@ -32,7 +32,7 @@ internal class ScenarioModuleImpl(
         writeFile(fileName, transform(file.readText()))
     }
 
-    override fun changeFile(fileName: String, version: UInt) {
+    override fun replaceFileWithVersion(fileName: String, version: String) {
         val file = module.sourcesDirectory.resolve(fileName)
         val chosenRevision = module.sourcesDirectory.resolve("$fileName.$version")
         Files.delete(file)
@@ -50,7 +50,7 @@ internal class ScenarioModuleImpl(
         writeFile(fileName, content)
     }
 
-    override fun createFile(fileName: String, version: UInt) {
+    override fun createPredefinedFile(fileName: String, version: String) {
         val file = module.sourcesDirectory.resolve(fileName)
         val chosenRevision = module.sourcesDirectory.resolve("$fileName.$version")
         Files.copy(chosenRevision, file)

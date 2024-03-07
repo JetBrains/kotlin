@@ -13,7 +13,7 @@ interface ScenarioModule {
     /**
      * Performs registered existing file modification.
      *
-     * Prefer the overload with versioned file modification if it's possible
+     * Prefer using [replaceFileWithVersion] if it's possible
      */
     fun changeFile(
         fileName: String,
@@ -26,9 +26,9 @@ interface ScenarioModule {
      *
      * Check the example `ExampleIncrementalScenarioTest.testScenario4` out
      */
-    fun changeFile(
+    fun replaceFileWithVersion(
         fileName: String,
-        version: UInt,
+        version: String,
     )
 
     /**
@@ -39,7 +39,7 @@ interface ScenarioModule {
     /**
      * Performs registered new file creation.
      *
-     * Prefer the overload with versioned file modification if it's possible
+     * Prefer using [createPredefinedFile] if it's possible
      */
     fun createFile(fileName: String, content: String)
 
@@ -47,7 +47,7 @@ interface ScenarioModule {
      * Performs registered new file creation by copying a revision from
      * the file located by path "[fileName].[version]" in the module sources directory.
      */
-    fun createFile(fileName: String, version: UInt)
+    fun createPredefinedFile(fileName: String, version: String)
 
     fun compile(
         forceOutput: LogLevel? = null,

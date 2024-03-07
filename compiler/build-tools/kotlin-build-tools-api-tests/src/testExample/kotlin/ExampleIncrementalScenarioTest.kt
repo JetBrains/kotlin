@@ -129,7 +129,7 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
             val module1 = module("jvm-module-1")
 
             // replaces bar.kt with bar.kt.1
-            module1.changeFile("bar.kt", 1U)
+            module1.replaceFileWithVersion("bar.kt", "add-default-argument")
 
             module1.compile {
                 assertCompiledSources("bar.kt")
@@ -146,7 +146,7 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
             val module1 = module("jvm-module-1")
 
             // creates secret.kt from secret.kt.1
-            module1.createFile("secret.kt", 1U)
+            module1.createPredefinedFile("secret.kt", "new-file")
 
             module1.compile {
                 assertCompiledSources("secret.kt")
