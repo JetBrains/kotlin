@@ -7,24 +7,18 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.file.ProjectLayout
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.EmbedAndSignTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeEnvironmentContainer.XCODE_ENVIRONMENT_KEY
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.BuildSyntheticProjectWithSwiftExportPackage
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.CopySwiftExportIntermediatesForConsumer
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.GenerateSPMPackageFromSwiftExport
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
-import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.targets
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.Assume
@@ -39,11 +33,10 @@ class SwiftExportUnitTests {
         Assume.assumeTrue("Macos host required for this test", HostManager.hostIsMac)
         val project = buildProjectWithMPP {
             extraProperties.set(XCODE_ENVIRONMENT_KEY, TestXcodeEnvironment(project.layout))
-            multiplatformExtension.iosSimulatorArm64()
             enableSwiftExport(true)
             repositories.mavenLocal()
 
-            kotlin {
+            with(multiplatformExtension) {
                 iosSimulatorArm64 {
                     binaries.framework {
                         baseName = "Shared"
@@ -54,22 +47,29 @@ class SwiftExportUnitTests {
 
         project.evaluate()
 
-        val compilations = project.multiplatformExtension.iosSimulatorArm64().compilations
+        val compilations = project.kotlinExtension
+            .targets
+            .filter { it.name.contains("ios") }
+            .map { it.compilations }
+            .single()
+
         val mainCompilation = compilations.main
-        val swiftExportMainCompilation = compilations.getByName("swiftExportMain")
+        val swiftExportCompilation = compilations.swiftExport
 
         // Main compilation exist
         assertNotNull(mainCompilation)
 
         // swiftExportMain compilation exist
-        assertNotNull(swiftExportMainCompilation)
+        assertNotNull(swiftExportCompilation)
 
-        val swiftExportMainAssociation = swiftExportMainCompilation.associatedCompilations.single()
+        val swiftExportMainAssociation = swiftExportCompilation.associatedCompilations.single()
 
         // swiftExportMain associated with main
         assertEquals(swiftExportMainAssociation, mainCompilation)
     }
 }
+
+private val <T : KotlinCompilation<*>> NamedDomainObjectCollection<out T>.swiftExport: T get() = getByName("swiftExportMain")
 
 private class TestXcodeEnvironment(layout: ProjectLayout) : XcodeEnvironment {
     override val buildType: NativeBuildType = NativeBuildType.DEBUG
