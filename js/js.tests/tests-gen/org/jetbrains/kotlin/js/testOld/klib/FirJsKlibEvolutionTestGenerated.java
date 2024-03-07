@@ -110,6 +110,11 @@ public class FirJsKlibEvolutionTestGenerated extends AbstractFirJsKlibEvolutionT
     runTest("compiler/testData/klib/evolution/changeConstInitialization.kt");
   }
 
+  @TestMetadata("changeFunctionReturnType.kt")
+  public void testChangeFunctionReturnType() {
+    runTest("compiler/testData/klib/evolution/changeFunctionReturnType.kt");
+  }
+
   @TestMetadata("changeNamesOfTypeParameters.kt")
   public void testChangeNamesOfTypeParameters() {
     runTest("compiler/testData/klib/evolution/changeNamesOfTypeParameters.kt");
