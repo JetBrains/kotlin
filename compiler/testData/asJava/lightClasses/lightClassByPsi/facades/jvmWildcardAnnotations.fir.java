@@ -33,7 +33,7 @@ public final class JvmWildcardAnnotationsKt /* JvmWildcardAnnotationsKt*/ {
   public static final void deepOpen(@org.jetbrains.annotations.NotNull() Out<Out<Out<Open>>>);//  deepOpen(Out<Out<Out<Open>>>)
 
   @org.jetbrains.annotations.NotNull()
-  public static final OutPair<Final, OutPair<Out<Final>, Out<Final>>> falseTrueFalse();//  falseTrueFalse()
+  public static final OutPair<? extends Final, OutPair<Out<Final>, Out<? extends Final>>> falseTrueFalse();//  falseTrueFalse()
 
   @org.jetbrains.annotations.NotNull()
   public static final OutPair<Open, ? extends OutPair<Open,? extends Out<Open>>> combination();//  combination()
