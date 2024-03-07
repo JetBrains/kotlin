@@ -65,6 +65,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
+      @TestMetadata("intrinsicConstEvaluationInSources.kt")
+      public void testIntrinsicConstEvaluationInSources() {
+        runTest("compiler/testData/codegen/box/annotations/intrinsicConstEvaluationInSources.kt");
+      }
+
+      @Test
       @TestMetadata("nestedAnnotation.kt")
       public void testNestedAnnotation() {
         runTest("compiler/testData/codegen/box/annotations/nestedAnnotation.kt");

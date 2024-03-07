@@ -162,6 +162,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
 
     @Test
+    @TestMetadata("intrinsicConstEvaluationInSources.kt")
+    public void testIntrinsicConstEvaluationInSources() {
+      runTest("compiler/testData/codegen/box/annotations/intrinsicConstEvaluationInSources.kt");
+    }
+
+    @Test
     @TestMetadata("javaAnnotationArrayValueDefault.kt")
     public void testJavaAnnotationArrayValueDefault() {
       runTest("compiler/testData/codegen/box/annotations/javaAnnotationArrayValueDefault.kt");

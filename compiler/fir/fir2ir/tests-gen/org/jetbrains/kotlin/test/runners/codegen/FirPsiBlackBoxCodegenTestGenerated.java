@@ -198,6 +198,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("intrinsicConstEvaluationInSources.kt")
+    public void testIntrinsicConstEvaluationInSources() {
+      runTest("compiler/testData/codegen/box/annotations/intrinsicConstEvaluationInSources.kt");
+    }
+
+    @Test
     @TestMetadata("invisibleFunctionWithReceiverWithSuppress.kt")
     public void testInvisibleFunctionWithReceiverWithSuppress() {
       runTest("compiler/testData/codegen/box/annotations/invisibleFunctionWithReceiverWithSuppress.kt");

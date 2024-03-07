@@ -178,6 +178,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/annotations/genericAnnotations.kt");
     }
 
+    @TestMetadata("intrinsicConstEvaluationInSources.kt")
+    public void testIntrinsicConstEvaluationInSources() {
+      runTest("compiler/testData/codegen/box/annotations/intrinsicConstEvaluationInSources.kt");
+    }
+
     @TestMetadata("invisibleFunctionWithReceiverWithSuppress.kt")
     public void testInvisibleFunctionWithReceiverWithSuppress() {
       runTest("compiler/testData/codegen/box/annotations/invisibleFunctionWithReceiverWithSuppress.kt");
