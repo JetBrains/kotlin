@@ -513,7 +513,7 @@ class Fir2IrDeclarationStorage(
         predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
     ): IrConstructor {
-        val symbol = getIrConstructorSymbol(constructor.symbol, isLocal)
+        val symbol = getIrConstructorSymbol(constructor.symbol, potentiallyExternal = !isLocal)
         return callablesGenerator.createIrConstructor(
             constructor,
             irParent(),
@@ -527,13 +527,13 @@ class Fir2IrDeclarationStorage(
         constructorCache[constructor] = irConstructorSymbol
     }
 
-    fun getIrConstructorSymbol(firConstructorSymbol: FirConstructorSymbol, isLocal: Boolean = false): IrConstructorSymbol {
+    fun getIrConstructorSymbol(firConstructorSymbol: FirConstructorSymbol, potentiallyExternal: Boolean = true): IrConstructorSymbol {
         val constructor = firConstructorSymbol.fir
         getCachedIrConstructorSymbol(constructor)?.let { return it }
 
         // caching of created constructor is not called here, because `callablesGenerator` calls `cacheIrConstructor` by itself
         val symbol = IrConstructorSymbolImpl()
-        if (!isLocal) {
+        if (potentiallyExternal) {
             val irParent = findIrParent(constructor, fakeOverrideOwnerLookupTag = null)
             val isIntrinsicConstEvaluation =
                 constructor.returnTypeRef.coneType.classId == StandardClassIds.Annotations.IntrinsicConstEvaluation
