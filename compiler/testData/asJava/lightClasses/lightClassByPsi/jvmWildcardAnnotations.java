@@ -60,7 +60,7 @@ public final class ContainerForPropertyAndAccessors /* ContainerForPropertyAndAc
   public final Out<? extends Final> getSimpleOut();//  getSimpleOut()
 
   @org.jetbrains.annotations.NotNull()
-  public final Out<? extends Open> getZoo(@org.jetbrains.annotations.NotNull() Out<Out<Out<Open>>>);//  getZoo(Out<Out<Out<Open>>>)
+  public final Out<? extends Open> getZoo(@org.jetbrains.annotations.NotNull() Out<? extends Out<? extends Out<? extends Open>>>);//  getZoo(Out<? extends Out<? extends Out<? extends Open>>>)
 
   @org.jetbrains.annotations.NotNull()
   public final Out<Open> getBar();//  getBar()
