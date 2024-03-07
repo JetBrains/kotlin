@@ -168,17 +168,8 @@ fun ConeKotlinType.isNonReifiedTypeParameter(): Boolean {
     return this is ConeTypeParameterType && !this.lookupTag.typeParameterSymbol.isReified
 }
 
-fun isUpcast(context: CheckerContext, candidateType: ConeKotlinType, targetType: ConeKotlinType): Boolean {
-    if (!AbstractTypeChecker.isSubtypeOf(context.session.typeContext, candidateType, targetType, stubTypesEqualToAnything = false))
-        return false
-
-    // E.g., foo(p1: (X) -> Y), where p1 has a function type whose receiver type is X and return type is Y.
-    // For bar(p2: X.() -> Y), p2 has the same function type (with same receiver and return types).
-    // The only difference is the existence of type annotation, @ExtensionFunctionType,
-    //   which indicates that the annotated type represents an extension function.
-    // If one casts p1 to p2 (or vice versa), it is _not_ up cast, i.e., not redundant, yet meaningful.
-    return candidateType.isExtensionFunctionType == targetType.isExtensionFunctionType
-}
+fun isUpcast(context: CheckerContext, candidateType: ConeKotlinType, targetType: ConeKotlinType): Boolean =
+    AbstractTypeChecker.isSubtypeOf(context.session.typeContext, candidateType, targetType, stubTypesEqualToAnything = false)
 
 internal fun isRefinementUseless(
     context: CheckerContext,
@@ -216,9 +207,5 @@ internal fun isRefinementUseless(
     }
 }
 
-private fun isExactTypeCast(context: CheckerContext, lhsType: ConeKotlinType, targetType: ConeKotlinType): Boolean {
-    if (!AbstractTypeChecker.equalTypes(context.session.typeContext, lhsType, targetType, stubTypesEqualToAnything = false))
-        return false
-    // See comments at [isUpcast] why we need to check the existence of @ExtensionFunctionType
-    return lhsType.isExtensionFunctionType == targetType.isExtensionFunctionType
-}
+private fun isExactTypeCast(context: CheckerContext, lhsType: ConeKotlinType, targetType: ConeKotlinType): Boolean =
+    AbstractTypeChecker.equalTypes(context.session.typeContext, lhsType, targetType, stubTypesEqualToAnything = false)
