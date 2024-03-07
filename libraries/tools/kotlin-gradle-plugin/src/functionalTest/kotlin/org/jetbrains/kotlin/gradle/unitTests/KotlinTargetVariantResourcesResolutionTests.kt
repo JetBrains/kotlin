@@ -14,6 +14,7 @@ import org.gradle.api.artifacts.ResolveException
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Usage
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.internal.component.NoMatchingConfigurationSelectionException
 import org.gradle.kotlin.dsl.project
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
@@ -357,6 +358,45 @@ class KotlinTargetVariantResourcesResolutionTests {
                 strategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration,
             )
         }
+    }
+
+    @Test
+    fun `test KT66393 - resolving resources with java-api dependencies in native configuration`() {
+        val resolutionStrategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration
+        val rootProject = buildProject()
+        val producer = rootProject.createSubproject("producer") {
+            kotlin {
+                linuxArm64()
+                sourceSets.commonMain {
+                    dependencies {
+                        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0")
+                    }
+                }
+                setMppResourcesResolutionStrategy(resolutionStrategy)
+            }
+        }
+        val consumer = rootProject.createSubproject("consumer") {
+            kotlin {
+                linuxArm64()
+                sourceSets.commonMain {
+                    dependencies {
+                        implementation(project(":${producer.name}"))
+                    }
+                }
+                setMppResourcesResolutionStrategy(resolutionStrategy)
+            }
+        }
+
+        listOf(rootProject, producer, consumer).forEach { it.evaluate() }
+        producer.publishFakeResources(producer.multiplatformExtension.linuxArm64())
+
+        assert(
+            assertThrows<ResolveException> {
+                resolutionStrategy.resourceArchives(
+                    consumer.multiplatformExtension.linuxArm64().compilations.getByName("main")
+                ).files
+            }.cause?.cause is NoMatchingConfigurationSelectionException
+        )
     }
 
     private fun dependencyScopesWithResources(): List<DependencyScopeProvider> {
