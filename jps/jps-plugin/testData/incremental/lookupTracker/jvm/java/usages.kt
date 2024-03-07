@@ -18,7 +18,7 @@ import baz.*
 
     // inherited from I
     /*p:bar(C) p:bar.C(ifunc)*/c.ifunc()
-    /*p:bar.C(isfield) p:baz p:foo*/C.isfield
+    /*p:bar.C(isfield) p:baz p:foo p:foo.I(isfield)*/C.isfield
     // expected error: Unresolved reference: IS
     /*p:bar.C(IS) p:baz p:baz(IS) p:foo p:foo(IS)*/C.IS()
 

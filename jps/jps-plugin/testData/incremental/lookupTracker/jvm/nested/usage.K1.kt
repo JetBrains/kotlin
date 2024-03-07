@@ -1,7 +1,9 @@
 
-/*p:<root>*/fun usageAsCall(): /*p:<root>*/Int /*p:kotlin(Nothing)*/{
-    val f = /*p:<root> p:MainClass.NestedClass.A.B(F) p:java.lang p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.jvm p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/MainClass./*p:MainClass*/NestedClass./*p:MainClass.NestedClass*/A./*p:MainClass.NestedClass.A*/B./*p:MainClass.NestedClass.A.B*/F
-    /*p:kotlin(Nothing)*/return /*p:<root> p:java.lang p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.jvm p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/MainClass./*p:MainClass*/NestedClass./*p:MainClass.NestedClass*/A./*p:MainClass.NestedClass.A*/B./*p:MainClass.NestedClass.A.B*/F./*p:MainClass.NestedClass.A.B.F*/x
+package one
+
+/*p:one*/fun usageAsCall(): /*p:one*/Int /*p:kotlin(Nothing)*/{
+    val f = /*p:java.lang p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.jvm p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:one p:one.MainClass.NestedClass.A.B(F)*/MainClass./*p:one.MainClass*/NestedClass./*p:one.MainClass.NestedClass*/A./*p:one.MainClass.NestedClass.A*/B./*p:one.MainClass.NestedClass.A.B*/F
+    /*p:kotlin(Nothing)*/return /*p:java.lang p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.jvm p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:one*/MainClass./*p:one.MainClass*/NestedClass./*p:one.MainClass.NestedClass*/A./*p:one.MainClass.NestedClass.A*/B./*p:one.MainClass.NestedClass.A.B*/F./*p:one.MainClass.NestedClass.A.B.F*/x
 }
 
-/*p:<root>*/fun usageAsType(f: /*p:<root>*/MainClass./*p:MainClass*/NestedClass./*p:MainClass.NestedClass*/A./*p:MainClass.NestedClass.A*/B./*p:MainClass.NestedClass.A.B*/F) {}
+/*p:one*/fun usageAsType(f: /*p:one*/MainClass./*p:one.MainClass*/NestedClass./*p:one.MainClass.NestedClass*/A./*p:one.MainClass.NestedClass.A*/B./*p:one.MainClass.NestedClass.A.B*/F) {}

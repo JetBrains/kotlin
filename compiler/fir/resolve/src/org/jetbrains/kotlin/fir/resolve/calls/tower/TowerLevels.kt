@@ -454,14 +454,16 @@ internal class ScopeTowerLevel(
         info: CallInfo,
         processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>
     ): ProcessResult {
+        val lookupTracker = session.lookupTracker
         var empty = true
-        session.lookupTracker?.recordCallLookup(info, scope.scopeOwnerLookupNames)
+        lookupTracker?.recordCallLookup(info, scope.scopeOwnerLookupNames)
         scope.processFunctionsAndConstructorsByName(
             info,
             session,
             bodyResolveComponents,
             constructorFilter
         ) { candidate ->
+            lookupTracker?.recordCallableCandidateAsLookup(candidate, info.callSite.source, info.containingFile.source)
             empty = false
             consumeCallableCandidate(candidate, info, processor)
         }
@@ -472,9 +474,11 @@ internal class ScopeTowerLevel(
         info: CallInfo,
         processor: TowerScopeLevelProcessor<FirVariableSymbol<*>>
     ): ProcessResult {
+        val lookupTracker = session.lookupTracker
         var empty = true
-        session.lookupTracker?.recordCallLookup(info, scope.scopeOwnerLookupNames)
+        lookupTracker?.recordCallLookup(info, scope.scopeOwnerLookupNames)
         scope.processPropertiesByName(info.name) { candidate ->
+            lookupTracker?.recordCallableCandidateAsLookup(candidate, info.callSite.source, info.containingFile.source)
             empty = false
             consumeCallableCandidate(candidate, info, processor)
         }
