@@ -36,6 +36,11 @@ public class ClassicJsKlibEvolutionTestGenerated extends AbstractClassicJsKlibEv
     runTest("compiler/testData/klib/evolution/addCompanionObject.kt");
   }
 
+  @TestMetadata("addCrossinline.kt")
+  public void testAddCrossinline() {
+    runTest("compiler/testData/klib/evolution/addCrossinline.kt");
+  }
+
   @TestMetadata("addDefaultImplementations.kt")
   public void testAddDefaultImplementations() {
     runTest("compiler/testData/klib/evolution/addDefaultImplementations.kt");
