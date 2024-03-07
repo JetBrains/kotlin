@@ -25729,6 +25729,22 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/box/klib")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Klib {
+    @Test
+    public void testAllFilesPresentInKlib() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/klib"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("kt33411.kt")
+    public void testKt33411() {
+      runTest("compiler/testData/codegen/box/klib/kt33411.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/box/ktype")
   @TestDataPath("$PROJECT_ROOT")
   public class Ktype {
