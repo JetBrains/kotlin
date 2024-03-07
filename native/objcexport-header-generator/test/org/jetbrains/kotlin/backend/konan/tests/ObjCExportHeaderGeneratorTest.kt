@@ -172,7 +172,6 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    @TodoAnalysisApi
     fun `test - parameterWithMustBeDocumentedAnnotation`() {
         doTest(headersTestDataDir.resolve("parameterWithMustBeDocumentedAnnotation"))
     }

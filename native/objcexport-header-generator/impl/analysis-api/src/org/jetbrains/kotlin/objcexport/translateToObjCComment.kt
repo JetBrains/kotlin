@@ -68,7 +68,7 @@ internal fun KtFunctionLikeSymbol.translateToObjCComment(bridge: MethodBridge, p
     val visibilityComments = buildObjCVisibilityComment("method")
 
     val paramComments = valueParameters.mapNotNull { parameterSymbol ->
-        parameters.find { parameter -> parameter.origin?.name == parameterSymbol.name }
+        parameters.find { parameter -> parameter.name == parameterSymbol.name.asString() }
             ?.renderedObjCDocumentedParamAnnotations(parameterSymbol)
     }
     val annotationsComments = annotationsList.translateToObjCComment()
