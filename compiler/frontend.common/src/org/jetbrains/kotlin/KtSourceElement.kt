@@ -144,6 +144,10 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     // with a fake sources for the block which refers to the wrapped expression
     object SingleExpressionBlock : KtFakeSourceElementKind()
 
+    // this source is used for a single fake block created for indexed assignments expression,
+    // see ImplicitUnit.IndexedAssignmentCoercion
+    object IndexedAssignmentCoercionBlock : KtFakeSourceElementKind()
+
     // Contract statements are wrapped in a special block to be reused between a contract FIR and a function body.
     object ContractBlock : KtFakeSourceElementKind()
 

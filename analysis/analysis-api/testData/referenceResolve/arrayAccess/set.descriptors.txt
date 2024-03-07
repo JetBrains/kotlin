@@ -1,8 +1,0 @@
-<caret> resolved to:
-0: (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
-
-<caret_singleIfStatement> resolved to:
-0: (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
-
-<caret_singleWhenStatement> resolved to:
-0: (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E

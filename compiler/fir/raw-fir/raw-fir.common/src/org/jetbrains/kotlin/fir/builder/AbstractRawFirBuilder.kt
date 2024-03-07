@@ -835,7 +835,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                 if (operation == FirOperation.ASSIGN) {
                     val result = unwrappedLhs.convert()
                     result.replaceAnnotations(result.annotations.smartPlus(annotations))
-                    source = result.source
+                    source = result.source?.fakeElement(KtFakeSourceElementKind.IndexedAssignmentCoercionBlock)
                     statements += result.pullUpSafeCallIfNecessary()
                 } else {
                     val receiver = unwrappedLhs.convert()
@@ -846,13 +846,13 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                                 receiver.selector as FirExpression, baseSource, arrayAccessSource, operation, annotations, rhsAST, convert
                             )
                         )
-                        source = receiver.source
+                        source = receiver.source?.fakeElement(KtFakeSourceElementKind.IndexedAssignmentCoercionBlock)
                         statements += receiver
                     } else {
                         val augmentedArraySetCall = generateAugmentedArraySetCall(
                             receiver, baseSource, arrayAccessSource, operation, annotations, rhsAST, convert
                         )
-                        source = augmentedArraySetCall.source
+                        source = augmentedArraySetCall.source?.fakeElement(KtFakeSourceElementKind.IndexedAssignmentCoercionBlock)
                         statements += augmentedArraySetCall
                     }
                 }
