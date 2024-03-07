@@ -42,12 +42,13 @@ enum class KotlinTargetResourcesResolutionStrategy {
                 }.files
             }
 
-            ResourcesConfiguration -> compilation.internal.configurations.resourcesConfiguration
-                ?: return compilation.project.files().also {
-                    compilation.project.reportDiagnostic(
-                        KotlinToolingDiagnostics.MissingResourcesConfigurationForTarget(compilation.target.name)
-                    )
-                }
+            ResourcesConfiguration -> compilation.internal.configurations.resourcesConfiguration?.let { resourcesConfiguration ->
+                resourcesConfiguration.incoming.artifactView { it.isLenient = true }.files
+            } ?: return compilation.project.files().also {
+                compilation.project.reportDiagnostic(
+                    KotlinToolingDiagnostics.MissingResourcesConfigurationForTarget(compilation.target.name)
+                )
+            }
         }
     }
 
