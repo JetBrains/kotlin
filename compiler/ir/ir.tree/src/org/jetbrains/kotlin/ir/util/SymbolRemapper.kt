@@ -110,4 +110,7 @@ interface SymbolRemapper {
         override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = symbol
     }
 
+    companion object {
+        val EMPTY: SymbolRemapper = Empty()
+    }
 }
