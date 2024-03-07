@@ -245,8 +245,9 @@ class MainKtsTest {
         assertSucceeded(res)
     }
 
+    @Ignore // see #KT-66395
     @Test
-    fun testHelloSerialization() = expectTestToFailOnK2 {
+    fun ignore_testHelloSerialization() {
         // the embeddable plugin is needed for this test, because embeddable compiler is used.
         val serializationPluginClasspath = System.getProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath")!!
         val out = captureOut {
