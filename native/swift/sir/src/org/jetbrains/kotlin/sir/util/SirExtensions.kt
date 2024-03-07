@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.sir.*
 val SirCallable.allParameters: List<SirParameter>
     get() = when (this) {
         is SirFunction -> this.parameters
-        is SirSetter -> listOf(SirParameter(parameterName = parameterName, type = this.valueType))
+        is SirSetter -> listOf(SirParameterImpl(parameterName = parameterName, type = this.valueType, argumentName = parameterName))
         is SirGetter -> listOf()
     }
 
@@ -18,7 +18,7 @@ val SirCallable.returnType: SirType
     get() = when (this) {
         is SirFunction -> this.returnType
         is SirGetter -> this.valueType
-        is SirSetter -> SirNominalType(SirSwiftModule.void)
+        is SirSetter -> SirPredefinedNominalType(SirSwiftModule.void)
     }
 
 val SirAccessor.valueType: SirType
@@ -35,6 +35,6 @@ val SirVariable.accessors: List<SirAccessor>
         setter,
     )
 
-val SirParameter.name: String? get() = parameterName ?: argumentName
+val SirParameter.name: String get() = argumentName
 
 val SirType.isVoid: Boolean get() = this is SirNominalType && this.type == SirSwiftModule.void

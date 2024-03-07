@@ -7,15 +7,19 @@ package org.jetbrains.kotlin.sir
 
 sealed interface SirType
 
-class SirNominalType(
-    val type: SirNamedDeclaration,
+interface SirNominalType : SirType {
+    val type: SirNamedDeclaration
+}
+
+class SirPredefinedNominalType(
+    override val type: SirNamedDeclaration,
     val parent: SirNominalType? = null,
-) : SirType {
+) : SirNominalType {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other != null && this::class != other::class) return false
 
-        other as SirNominalType
+        other as SirPredefinedNominalType
 
         if (type != other.type) return false
         if (parent != other.parent) return false

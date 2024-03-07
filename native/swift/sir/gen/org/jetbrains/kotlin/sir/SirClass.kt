@@ -20,6 +20,7 @@ abstract class SirClass : SirDeclarationContainer(), SirNamedDeclaration {
     abstract override var parent: SirDeclarationParent
     abstract override val name: String
     abstract override val declarations: List<SirDeclaration>
+    abstract val superClass: SirType?
 
     override fun <R, D> accept(visitor: SirVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)

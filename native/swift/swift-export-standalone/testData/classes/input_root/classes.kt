@@ -12,5 +12,5 @@ class Foo {
     val my_value: UInt = 5u
 
     var my_variable: Long = 5
-
+    fun createInstance(): Foo = TODO()
 }

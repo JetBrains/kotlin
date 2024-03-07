@@ -20,6 +20,7 @@ internal class SirClassImpl(
     override val visibility: SirVisibility,
     override val name: String,
     override val declarations: MutableList<SirDeclaration>,
+    override val superClass: SirType?,
 ) : SirClass() {
     override lateinit var parent: SirDeclarationParent
 

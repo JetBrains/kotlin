@@ -11,18 +11,16 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.util.*
 import org.jetbrains.kotlin.sir.bridge.BridgeRequest
 import org.jetbrains.kotlin.sir.bridge.createFunctionBodyFromRequest
+import org.jetbrains.kotlin.sir.kt.KotlinSource
 import org.jetbrains.kotlin.sir.visitors.SirVisitorVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.sir.passes.SirPass
-import org.jetbrains.sir.passes.builder.KotlinSource
-import org.jetbrains.sir.passes.run
 
 internal fun SirModule.buildFunctionBridges(): List<BridgeRequest> {
     return BridgeGenerationPass.run(this)
 }
 
-private object BridgeGenerationPass : SirPass<SirElement, Nothing?, List<BridgeRequest>> {
-    override fun run(element: SirElement, data: Nothing?): List<BridgeRequest> {
+private object BridgeGenerationPass {
+    fun run(element: SirElement): List<BridgeRequest> {
         val requests = mutableListOf<BridgeRequest>()
         element.accept(Visitor(requests))
         return requests.toList()

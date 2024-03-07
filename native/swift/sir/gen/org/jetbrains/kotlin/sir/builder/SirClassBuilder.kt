@@ -20,6 +20,7 @@ class SirClassBuilder {
     var visibility: SirVisibility = SirVisibility.PUBLIC
     lateinit var name: String
     val declarations: MutableList<SirDeclaration> = mutableListOf()
+    var superClass: SirType? = null
 
     fun build(): SirClass {
         return SirClassImpl(
@@ -27,8 +28,10 @@ class SirClassBuilder {
             visibility,
             name,
             declarations,
+            superClass,
         )
     }
+
 }
 
 @OptIn(ExperimentalContracts::class)
@@ -49,5 +52,6 @@ inline fun buildClassCopy(original: SirClass, init: SirClassBuilder.() -> Unit):
     copyBuilder.visibility = original.visibility
     copyBuilder.name = original.name
     copyBuilder.declarations.addAll(original.declarations)
+    copyBuilder.superClass = original.superClass
     return copyBuilder.apply(init).build()
 }

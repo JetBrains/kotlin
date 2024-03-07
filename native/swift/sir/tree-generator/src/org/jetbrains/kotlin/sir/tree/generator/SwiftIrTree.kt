@@ -72,6 +72,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = namedDeclaration
         parent(namedDeclaration)
         parent(declarationContainer)
+        +field("superClass", typeType, nullable = true)
     }
 
     val callable by sealedElement {

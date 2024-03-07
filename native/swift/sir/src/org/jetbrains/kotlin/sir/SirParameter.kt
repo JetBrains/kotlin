@@ -5,17 +5,22 @@
 
 package org.jetbrains.kotlin.sir
 
-class SirParameter(
-    val argumentName: String? = null, // external function parameter (argument) name
+public interface SirParameter {
+    val argumentName: String
+
+    val type: SirType
+}
+
+class SirParameterImpl(
+    override val argumentName: String,
     val parameterName: String? = null, // internal function parameter name
-    val type: SirType,
-    /* TODO:  val defaultValue: Expression? = null, */
-) {
+    override val type: SirType,
+) : SirParameter {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other != null && this::class != other::class) return false
 
-        other as SirParameter
+        other as SirParameterImpl
 
         if (argumentName != other.argumentName) return false
         if (parameterName != other.parameterName) return false

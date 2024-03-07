@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.D
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEFAULT_BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildFunctionBridges
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildSwiftModule
-import org.jetbrains.kotlin.swiftexport.standalone.transformation.transformToSwift
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpResultToFiles
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Path
@@ -95,7 +94,6 @@ public fun runSwiftExport(
         isDebugModeEnabled,
         bridgeModuleName
     )
-        .transformToSwift()
     val bridgeRequests = module.buildFunctionBridges()
     module.dumpResultToFiles(bridgeRequests, output)
 }

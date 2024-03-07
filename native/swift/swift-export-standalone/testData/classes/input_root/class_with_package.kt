@@ -11,4 +11,7 @@ class Foo {
 
     var my_variable: Long = 5
 
+    fun createNamespacedClass(): NAMESPACED_CLASS = TODO()
+
+    fun createDeeperNamespacedClass(): namespace.deeper.NAMESPACED_CLASS = TODO()
 }

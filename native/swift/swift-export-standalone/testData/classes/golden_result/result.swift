@@ -3,11 +3,11 @@ import KotlinRuntime
 
 public enum namespace {
     public enum deeper {
-        public class NAMESPACED_CLASS {
+        public class NAMESPACED_CLASS : KotlinRuntime.KotlinBase {
         }
-        public class Foo {
-            public class INSIDE_CLASS {
-                public class DEEPER_INSIDE_CLASS {
+        public class Foo : KotlinRuntime.KotlinBase {
+            public class INSIDE_CLASS : KotlinRuntime.KotlinBase {
+                public class DEEPER_INSIDE_CLASS : KotlinRuntime.KotlinBase {
                     public func foo() -> Swift.Bool {
                         fatalError()
                     }
@@ -60,10 +60,10 @@ public enum namespace {
             }
         }
     }
-    public class NAMESPACED_CLASS {
+    public class NAMESPACED_CLASS : KotlinRuntime.KotlinBase {
     }
-    public class Foo {
-        public class INSIDE_CLASS {
+    public class Foo : KotlinRuntime.KotlinBase {
+        public class INSIDE_CLASS : KotlinRuntime.KotlinBase {
         }
         public func foo() -> Swift.Bool {
             fatalError()
@@ -81,11 +81,17 @@ public enum namespace {
                 fatalError()
             }
         }
+        public func createNamespacedClass() -> namespace.NAMESPACED_CLASS {
+            fatalError()
+        }
+        public func createDeeperNamespacedClass() -> namespace.deeper.NAMESPACED_CLASS {
+            fatalError()
+        }
     }
 }
 
-public class Foo {
-    public class INSIDE_CLASS {
+public class Foo : KotlinRuntime.KotlinBase {
+    public class INSIDE_CLASS : KotlinRuntime.KotlinBase {
         public func my_func() -> Swift.Bool {
             fatalError()
         }
@@ -118,5 +124,8 @@ public class Foo {
         set {
             fatalError()
         }
+    }
+    public func createInstance() -> Foo {
+        fatalError()
     }
 }

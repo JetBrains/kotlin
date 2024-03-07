@@ -1,5 +1,11 @@
 import kotlin.native.internal.ExportedBridge
 
+@ExportedBridge("namespace1_bar")
+public fun namespace1_bar(): Int {
+    val result = namespace1.bar()
+    return result
+}
+
 @ExportedBridge("namespace1_local_functions_foo")
 public fun namespace1_local_functions_foo(): Unit {
     val result = namespace1.local_functions.foo()
@@ -18,15 +24,15 @@ public fun namespace1_main_all_args(arg1: Boolean, arg2: Byte, arg3: Short, arg4
     return result
 }
 
-@ExportedBridge("namespace1_bar")
-public fun namespace1_bar(): Int {
-    val result = namespace1.bar()
-    return result
-}
-
 @ExportedBridge("namespace2_foo__TypesOfArguments__int32_t__")
 public fun namespace2_foo(arg1: Int): Int {
     val result = namespace2.foo(arg1)
+    return result
+}
+
+@ExportedBridge("__root___foo")
+public fun __root___foo(): Int {
+    val result = foo()
     return result
 }
 
@@ -39,12 +45,6 @@ public fun overload_foo(arg1: Int): Int {
 @ExportedBridge("overload_foo__TypesOfArguments__double__")
 public fun overload_foo(arg1: Double): Int {
     val result = overload.foo(arg1)
-    return result
-}
-
-@ExportedBridge("__root___foo")
-public fun __root___foo(): Int {
-    val result = foo()
     return result
 }
 

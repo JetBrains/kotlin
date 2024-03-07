@@ -2,10 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
-description = "Infrastructure of transformations over SIR"
+description = "SIR wrappers over KtSymbol"
 
 kotlin {
     explicitApi()
@@ -14,10 +13,8 @@ kotlin {
 dependencies {
     compileOnly(kotlinStdlib())
 
-    api(project(":native:swift:sir-light-classes"))
-    api(project(":native:swift:sir"))
-
     api(project(":compiler:psi"))
+    api(project(":native:swift:sir"))
     api(project(":analysis:analysis-api"))
 }
 

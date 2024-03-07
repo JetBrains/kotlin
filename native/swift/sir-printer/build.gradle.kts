@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -27,6 +29,10 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
+}
+
+tasks.withType<KotlinJvmCompile> {
+    compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
 }
 
 val testDataDir = projectDir.resolve("testData")

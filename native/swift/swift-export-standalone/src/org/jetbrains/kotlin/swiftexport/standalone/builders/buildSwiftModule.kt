@@ -15,12 +15,16 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModu
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.sir.SirDeclaration
+import org.jetbrains.kotlin.sir.SirEnum
 import org.jetbrains.kotlin.sir.SirModule
-import org.jetbrains.kotlin.sir.builder.SirImportBuilder
+import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.builder.buildImport
 import org.jetbrains.kotlin.sir.builder.buildModule
+import org.jetbrains.kotlin.sir.kt.KotlinRuntimeModule
+import org.jetbrains.kotlin.sir.kt.toSirDeclarations
+import org.jetbrains.kotlin.swiftexport.standalone.SirDeclarationLayoutStrategy
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportInput
-import org.jetbrains.sir.passes.builder.buildSirDeclarationList
 import kotlin.io.path.Path
 
 @OptIn(KtAnalysisApiInternals::class)
@@ -63,22 +67,44 @@ internal fun buildSwiftModule(
         ktFiles = ktFiles.sortedBy { it.name }
     }
 
-    return analyze(sourceModule) {
-        buildModule {
-            name = sourceModule.moduleName
-            declarations += buildImport {
-                moduleName = bridgeModuleName
+    val swiftModule = buildModule {
+        name = sourceModule.moduleName
+        declarations += buildImport {
+            moduleName = bridgeModuleName
+        }
+        declarations += buildImport {
+            moduleName = KotlinRuntimeModule.name
+        }
+    }
+    analyze(sourceModule) {
+        val sirSession = StandaloneSirSession(this, SirDeclarationLayoutStrategy.Enums, predefinedModules = mapOf(sourceModule to swiftModule))
+        val declarations = with(sirSession) {
+            ktFiles.flatMap { it.getFileSymbol().toSirDeclarations() }
+        }
+        declarations.forEach { declaration ->
+            declaration.fixupScopeMembers()
+        }
+    }
+    return swiftModule
+}
+
+private fun SirDeclaration.fixupScopeMembers() {
+    val parent = this.parent
+    when (parent) {
+        is SirModule -> {
+            if (this !in parent.declarations) {
+                // TODO: Hack. Create a safer API for that.
+                (parent.declarations as MutableList<SirDeclaration>) += this
             }
-            declarations += buildImport {
-                moduleName = KOTLIN_RUNTIME_MODULE_NAME
+        }
+        is SirEnum -> {
+            if (parent.origin is SirOrigin.Namespace && this !in parent.declarations) {
+                // TODO: Hack. Create a safer API for that.
+                (parent.declarations as MutableList<SirDeclaration>) += this
             }
-            ktFiles.forEach { file ->
-                declarations += buildSirDeclarationList(file)
-            }
-        }.apply {
-            declarations.forEach { it.parent = this }
+        }
+        is SirDeclaration -> {
+            parent.fixupScopeMembers()
         }
     }
 }
-
-private const val KOTLIN_RUNTIME_MODULE_NAME: String = "KotlinRuntime"

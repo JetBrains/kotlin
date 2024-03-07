@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.sir.bridge
 
 import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.sir.SirCallableKind
-import org.jetbrains.kotlin.sir.SirNominalType
-import org.jetbrains.kotlin.sir.SirParameter
-import org.jetbrains.kotlin.sir.SirType
+import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildFunction
 import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildSetter
@@ -85,7 +82,7 @@ private fun readRequestFromFile(file: File): BridgeRequest {
             parametersString.isNullOrEmpty() -> emptyList()
             else -> parametersString.split(Regex("\\s+"))
         }.map {
-            SirParameter(
+            SirParameterImpl(
                 argumentName = it.substringBefore(':'),
                 type = parseType(it.substringAfter(':'))
             )

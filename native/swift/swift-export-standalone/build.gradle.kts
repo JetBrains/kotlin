@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -38,6 +40,10 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+}
+
+tasks.withType<KotlinJvmCompile> {
+    compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
 }
 
 val testDataDir = projectDir.resolve("testData")

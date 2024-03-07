@@ -6,72 +6,83 @@
 package org.jetbrains.sir.printer
 
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.visitors.SirVisitorVoid
+import org.jetbrains.kotlin.sir.visitors.SirVisitor
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 
-public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVisitorVoid() {
+public data class RenderContext(
+    val currentModule: SirModule?,
+)
+
+public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVisitor<Unit, RenderContext>() {
 
     public constructor() : this(SmartPrinter(StringBuilder()))
 
     public fun print(element: SirElement): String {
-        element.accept(this)
+        element.accept(this, RenderContext(currentModule = null))
         return printer.toString().trim()
     }
 
-    override fun visitModule(module: SirModule): Unit = with(printer) {
+    override fun visitModule(module: SirModule, data: RenderContext): Unit = with(printer) {
+
         // We have to write imports before other declarations.
         val (imports, declarations) = module.declarations.partition { it is SirImport }
 
         imports.forEach {
-            it.accept(this@SirAsSwiftSourcesPrinter)
+            it.accept(this@SirAsSwiftSourcesPrinter, RenderContext(currentModule = module))
         }
         if (imports.isNotEmpty()) {
             println()
         }
         declarations.forEach {
-            it.accept(this@SirAsSwiftSourcesPrinter)
+            it.accept(this@SirAsSwiftSourcesPrinter, RenderContext(currentModule = module))
             if (module.declarations.last() != it) {
                 println()
             }
         }
     }
 
-    override fun visitImport(import: SirImport): Unit = with(printer) {
+    override fun visitImport(import: SirImport, data: RenderContext): Unit = with(printer) {
         println("import ${import.moduleName}")
     }
 
-    override fun visitClass(klass: SirClass): Unit = with(printer) {
+    override fun visitClass(klass: SirClass, data: RenderContext): Unit = with(printer) {
         printVisibility(klass)
-        println(
+        print(
             "class ",
             klass.name.swiftIdentifier,
-            " {"
         )
+        klass.superClass?.let {
+            print(
+                " : ",
+                with(data) { renderType(it) }
+            )
+        }
+        println(" {")
         withIndent {
-            klass.acceptChildren(this@SirAsSwiftSourcesPrinter)
+            klass.acceptChildren(this@SirAsSwiftSourcesPrinter, data)
         }
         println("}")
     }
 
-    override fun visitVariable(variable: SirVariable): Unit = with(printer) {
+    override fun visitVariable(variable: SirVariable, data: RenderContext): Unit = with(printer) {
         printVisibility(variable)
         printCallableKind(variable.kind)
         print(
             "var ",
             variable.name.swiftIdentifier,
             ": ",
-            variable.type.swift,
+            with(data) { renderType(variable.type) },
         )
         println(" {")
         withIndent {
-            variable.getter.accept(this@SirAsSwiftSourcesPrinter)
-            variable.setter?.accept(this@SirAsSwiftSourcesPrinter)
+            variable.getter.accept(this@SirAsSwiftSourcesPrinter, data)
+            variable.setter?.accept(this@SirAsSwiftSourcesPrinter, data)
         }
         println("}")
     }
 
-    override fun visitSetter(setter: SirSetter): Unit = with(printer) {
+    override fun visitSetter(setter: SirSetter, data: RenderContext): Unit = with(printer) {
         print("set")
         setter.body?.let { body ->
             println(" {")
@@ -82,7 +93,7 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
         } ?: println("")
     }
 
-    override fun visitGetter(getter: SirGetter): Unit = with(printer) {
+    override fun visitGetter(getter: SirGetter, data: RenderContext): Unit = with(printer) {
         print("get")
         getter.body?.let { body ->
             println(" {")
@@ -93,7 +104,7 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
         } ?: println("")
     }
 
-    override fun visitFunction(function: SirFunction): Unit = with(printer) {
+    override fun visitFunction(function: SirFunction, data: RenderContext): Unit = with(printer) {
         function.documentation?.let { println(it) }
         printVisibility(function)
         printCallableKind(function.kind)
@@ -106,7 +117,7 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
             println()
             withIndent {
                 function.parameters.forEachIndexed { index, sirParameter ->
-                    print(sirParameter.swift)
+                    print(with(data) { renderParameter(sirParameter) })
                     if (index != function.parameters.lastIndex) {
                         println(",")
                     } else {
@@ -118,7 +129,7 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
         print(
             ")",
             " -> ",
-            function.returnType.swift,
+            with(data) { renderType(function.returnType) },
         )
         println(" {")
         withIndent {
@@ -129,7 +140,7 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
         println("}")
     }
 
-    override fun visitEnum(enum: SirEnum): Unit = with(printer) {
+    override fun visitEnum(enum: SirEnum, data: RenderContext): Unit = with(printer) {
         printVisibility(enum)
         println(
             "enum ",
@@ -137,12 +148,12 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
             " {"
         )
         withIndent {
-            enum.acceptChildren(this@SirAsSwiftSourcesPrinter)
+            enum.acceptChildren(this@SirAsSwiftSourcesPrinter, data)
         }
         println("}")
     }
 
-    override fun visitElement(element: SirElement): Unit = with(printer) {
+    override fun visitElement(element: SirElement, data: RenderContext): Unit = with(printer) {
         println("/* ERROR: unsupported element type: " + element.javaClass.simpleName + " */")
     }
 }
@@ -160,19 +171,27 @@ private val SirVisibility.swift
         SirVisibility.PACKAGE -> "package"
     }
 
-private val SirParameter.swift get(): String = (argumentName ?: "_") + (parameterName?.let { " $it" } ?: "") + ": " + type.swift
+context(RenderContext)
+private fun renderParameter(parameter: SirParameter) = (parameter.argumentName) + ": " + renderType(parameter.type)
 
-private val SirType.swift
-    get(): String = when (this) {
+context(RenderContext)
+private fun renderType(sirType: SirType): String {
+    return when (sirType) {
         is SirExistentialType -> "Any"
-        is SirNominalType -> type.swiftFqName
+        is SirNominalType -> renderDeclarationReference(sirType.type)
     }
+}
 
-private val SirNamedDeclaration.swiftFqName: String
-    get() {
-        val parentName = (parent as? SirNamedDeclaration)?.swiftFqName ?: ((parent as? SirNamed)?.name)
-        return parentName?.let { "$it.$name" } ?: name
+context(RenderContext)
+private fun renderDeclarationReference(declaration: SirNamedDeclaration): String {
+    val parentName = when (val parent = declaration.parent) {
+        is SirNamedDeclaration -> renderDeclarationReference(parent)
+        is SirModule -> if (parent == currentModule) null else parent.name
+        is SirNamed -> parent.name
+        else -> null
     }
+    return parentName?.let { "$it.${declaration.name}" } ?: declaration.name
+}
 
 private val simpleIdentifierRegex = Regex("[_a-zA-Z][_a-zA-Z0-9]*")
 

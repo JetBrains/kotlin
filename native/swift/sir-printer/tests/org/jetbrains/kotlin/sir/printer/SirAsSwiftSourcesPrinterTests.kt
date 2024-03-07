@@ -26,7 +26,7 @@ class SirAsSwiftSourcesPrinterTests {
                     kind = SirCallableKind.FUNCTION
                     visibility = SirVisibility.PUBLIC
                     name = "foo"
-                    returnType = SirNominalType(SirSwiftModule.bool)
+                    returnType = SirPredefinedNominalType(SirSwiftModule.bool)
                 }
             )
         }
@@ -47,7 +47,7 @@ class SirAsSwiftSourcesPrinterTests {
                     kind = SirCallableKind.FUNCTION
                     visibility = SirVisibility.PUBLIC
                     name = "foo1"
-                    returnType = SirNominalType(SirSwiftModule.bool)
+                    returnType = SirPredefinedNominalType(SirSwiftModule.bool)
                 }
             )
             declarations.add(
@@ -56,7 +56,7 @@ class SirAsSwiftSourcesPrinterTests {
                     kind = SirCallableKind.FUNCTION
                     visibility = SirVisibility.PUBLIC
                     name = "foo2"
-                    returnType = SirNominalType(SirSwiftModule.bool)
+                    returnType = SirPredefinedNominalType(SirSwiftModule.bool)
                 }
             )
         }
@@ -78,12 +78,12 @@ class SirAsSwiftSourcesPrinterTests {
                     visibility = SirVisibility.PUBLIC
                     name = "foo"
                     parameters.add(
-                        SirParameter(
+                        SirParameterImpl(
                             argumentName = "arg1",
-                            type = SirNominalType(SirSwiftModule.int32)
+                            type = SirPredefinedNominalType(SirSwiftModule.int32)
                         )
                     )
-                    returnType = SirNominalType(SirSwiftModule.bool)
+                    returnType = SirPredefinedNominalType(SirSwiftModule.bool)
                 }
             )
         }
@@ -106,18 +106,18 @@ class SirAsSwiftSourcesPrinterTests {
                     visibility = SirVisibility.PUBLIC
                     name = "foo"
                     parameters.add(
-                        SirParameter(
+                        SirParameterImpl(
                             argumentName = "arg1",
-                            type = SirNominalType(SirSwiftModule.int32)
+                            type = SirPredefinedNominalType(SirSwiftModule.int32)
                         )
                     )
                     parameters.add(
-                        SirParameter(
+                        SirParameterImpl(
                             argumentName = "arg2",
-                            type = SirNominalType(SirSwiftModule.double)
+                            type = SirPredefinedNominalType(SirSwiftModule.double)
                         )
                     )
-                    returnType = SirNominalType(SirSwiftModule.bool)
+                    returnType = SirPredefinedNominalType(SirSwiftModule.bool)
                 }
             )
         }
@@ -141,37 +141,37 @@ class SirAsSwiftSourcesPrinterTests {
                     name = "foo"
                     parameters.addAll(
                         listOf(
-                            SirParameter(
+                            SirParameterImpl(
                                 argumentName = "arg1",
-                                type = SirNominalType(SirSwiftModule.bool)
+                                type = SirPredefinedNominalType(SirSwiftModule.bool)
                             ),
-                            SirParameter(
+                            SirParameterImpl(
                                 argumentName = "arg2",
-                                type = SirNominalType(SirSwiftModule.int8)
+                                type = SirPredefinedNominalType(SirSwiftModule.int8)
                             ),
-                            SirParameter(
+                            SirParameterImpl(
                                 argumentName = "arg3",
-                                type = SirNominalType(SirSwiftModule.int16)
+                                type = SirPredefinedNominalType(SirSwiftModule.int16)
                             ),
-                            SirParameter(
+                            SirParameterImpl(
                                 argumentName = "arg4",
-                                type = SirNominalType(SirSwiftModule.int32)
+                                type = SirPredefinedNominalType(SirSwiftModule.int32)
                             ),
-                            SirParameter(
+                            SirParameterImpl(
                                 argumentName = "arg5",
-                                type = SirNominalType(SirSwiftModule.int64)
+                                type = SirPredefinedNominalType(SirSwiftModule.int64)
                             ),
-                            SirParameter(
+                            SirParameterImpl(
                                 argumentName = "arg6",
-                                type = SirNominalType(SirSwiftModule.double)
+                                type = SirPredefinedNominalType(SirSwiftModule.double)
                             ),
-                            SirParameter(
+                            SirParameterImpl(
                                 argumentName = "arg7",
-                                type = SirNominalType(SirSwiftModule.float)
+                                type = SirPredefinedNominalType(SirSwiftModule.float)
                             ),
                         )
                     )
-                    returnType = SirNominalType(SirSwiftModule.bool)
+                    returnType = SirPredefinedNominalType(SirSwiftModule.bool)
                 }
             )
         }
@@ -194,12 +194,12 @@ class SirAsSwiftSourcesPrinterTests {
                     visibility = SirVisibility.PUBLIC
                     name = "foo"
                     parameters.add(
-                        SirParameter(
+                        SirParameterImpl(
                             argumentName = "arg1",
-                            type = SirNominalType(SirSwiftModule.int32)
+                            type = SirPredefinedNominalType(SirSwiftModule.int32)
                         )
                     )
-                    returnType = SirNominalType(SirSwiftModule.bool)
+                    returnType = SirPredefinedNominalType(SirSwiftModule.bool)
                     body = SirFunctionBody(listOf("return foo_wrapped(arg1)"))
                 }
             )
@@ -223,12 +223,12 @@ class SirAsSwiftSourcesPrinterTests {
                     visibility = SirVisibility.PUBLIC
                     name = "foo"
                     parameters.add(
-                        SirParameter(
+                        SirParameterImpl(
                             argumentName = "arg1",
-                            type = SirNominalType(SirSwiftModule.int32)
+                            type = SirPredefinedNominalType(SirSwiftModule.int32)
                         )
                     )
-                    returnType = SirNominalType(SirSwiftModule.bool)
+                    returnType = SirPredefinedNominalType(SirSwiftModule.bool)
                     body = SirFunctionBody(listOf("return foo_wrapped(arg1)"))
                 }
             )
@@ -252,12 +252,12 @@ class SirAsSwiftSourcesPrinterTests {
                     visibility = SirVisibility.PUBLIC
                     name = "foo"
                     parameters.add(
-                        SirParameter(
+                        SirParameterImpl(
                             argumentName = "arg1",
-                            type = SirNominalType(SirSwiftModule.int32)
+                            type = SirPredefinedNominalType(SirSwiftModule.int32)
                         )
                     )
-                    returnType = SirNominalType(SirSwiftModule.bool)
+                    returnType = SirPredefinedNominalType(SirSwiftModule.bool)
                     body = SirFunctionBody(listOf("return foo_wrapped(arg1)"))
                 }
             )
@@ -281,12 +281,12 @@ class SirAsSwiftSourcesPrinterTests {
                     visibility = SirVisibility.PUBLIC
                     name = "foo"
                     parameters.add(
-                        SirParameter(
+                        SirParameterImpl(
                             argumentName = "p",
-                            type = SirNominalType(SirSwiftModule.int64)
+                            type = SirPredefinedNominalType(SirSwiftModule.int64)
                         )
                     )
-                    returnType = SirNominalType(SirSwiftModule.bool)
+                    returnType = SirPredefinedNominalType(SirSwiftModule.bool)
                     documentation = """
                             /// Function foo description.
                             /// - Parameters:
@@ -387,37 +387,37 @@ class SirAsSwiftSourcesPrinterTests {
                             name = "foo"
                             parameters.addAll(
                                 listOf(
-                                    SirParameter(
+                                    SirParameterImpl(
                                         argumentName = "arg1",
-                                        type = SirNominalType(SirSwiftModule.bool)
+                                        type = SirPredefinedNominalType(SirSwiftModule.bool)
                                     ),
-                                    SirParameter(
+                                    SirParameterImpl(
                                         argumentName = "arg2",
-                                        type = SirNominalType(SirSwiftModule.int8)
+                                        type = SirPredefinedNominalType(SirSwiftModule.int8)
                                     ),
-                                    SirParameter(
+                                    SirParameterImpl(
                                         argumentName = "arg3",
-                                        type = SirNominalType(SirSwiftModule.int16)
+                                        type = SirPredefinedNominalType(SirSwiftModule.int16)
                                     ),
-                                    SirParameter(
+                                    SirParameterImpl(
                                         argumentName = "arg4",
-                                        type = SirNominalType(SirSwiftModule.int32)
+                                        type = SirPredefinedNominalType(SirSwiftModule.int32)
                                     ),
-                                    SirParameter(
+                                    SirParameterImpl(
                                         argumentName = "arg5",
-                                        type = SirNominalType(SirSwiftModule.int64)
+                                        type = SirPredefinedNominalType(SirSwiftModule.int64)
                                     ),
-                                    SirParameter(
+                                    SirParameterImpl(
                                         argumentName = "arg6",
-                                        type = SirNominalType(SirSwiftModule.double)
+                                        type = SirPredefinedNominalType(SirSwiftModule.double)
                                     ),
-                                    SirParameter(
+                                    SirParameterImpl(
                                         argumentName = "arg7",
-                                        type = SirNominalType(SirSwiftModule.float)
+                                        type = SirPredefinedNominalType(SirSwiftModule.float)
                                     ),
                                 )
                             )
-                            returnType = SirNominalType(SirSwiftModule.bool)
+                            returnType = SirPredefinedNominalType(SirSwiftModule.bool)
                         }
                     )
 
@@ -429,25 +429,25 @@ class SirAsSwiftSourcesPrinterTests {
                             name = "bar"
                             parameters.addAll(
                                 listOf(
-                                    SirParameter(
+                                    SirParameterImpl(
                                         argumentName = "arg1",
-                                        type = SirNominalType(SirSwiftModule.uint8)
+                                        type = SirPredefinedNominalType(SirSwiftModule.uint8)
                                     ),
-                                    SirParameter(
+                                    SirParameterImpl(
                                         argumentName = "arg2",
-                                        type = SirNominalType(SirSwiftModule.uint16)
+                                        type = SirPredefinedNominalType(SirSwiftModule.uint16)
                                     ),
-                                    SirParameter(
+                                    SirParameterImpl(
                                         argumentName = "arg3",
-                                        type = SirNominalType(SirSwiftModule.uint32)
+                                        type = SirPredefinedNominalType(SirSwiftModule.uint32)
                                     ),
-                                    SirParameter(
+                                    SirParameterImpl(
                                         argumentName = "arg4",
-                                        type = SirNominalType(SirSwiftModule.uint64)
+                                        type = SirPredefinedNominalType(SirSwiftModule.uint64)
                                     ),
                                 )
                             )
-                            returnType = SirNominalType(SirSwiftModule.bool)
+                            returnType = SirPredefinedNominalType(SirSwiftModule.bool)
                         }
                     )
                 }
@@ -473,7 +473,7 @@ class SirAsSwiftSourcesPrinterTests {
                     declarations.add(
                         buildVariable {
                             name = "my_variable1"
-                            type = SirNominalType(SirSwiftModule.bool)
+                            type = SirPredefinedNominalType(SirSwiftModule.bool)
                             getter = buildGetter {
                                 kind = SirCallableKind.INSTANCE_METHOD
                             }
@@ -483,7 +483,7 @@ class SirAsSwiftSourcesPrinterTests {
                     declarations.add(
                         buildVariable {
                             name = "my_variable2"
-                            type = SirNominalType(SirSwiftModule.int8)
+                            type = SirPredefinedNominalType(SirSwiftModule.int8)
                             getter = buildGetter {
                                 kind = SirCallableKind.INSTANCE_METHOD
                             }
