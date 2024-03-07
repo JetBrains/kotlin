@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.resources
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -29,7 +31,7 @@ import java.io.File
 import javax.inject.Inject
 
 internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor(
-    val project: Project
+    private val project: Project,
 ) : KotlinTargetResourcesPublication {
 
     internal data class TargetResources(
@@ -126,9 +128,8 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
     }
 
     override fun resolveResources(target: KotlinTarget): Provider<File> {
-        if (!canResolveResources(target)) {
-            target.project.reportDiagnostic(KotlinToolingDiagnostics.ResourceMayNotBeResolvedForTarget(target.name))
-        }
+        validateTargetResourcesAreResolvable(target)
+        validateGradleVersionIsCompatibleWithResolutionStrategy(target.name)
 
         val aggregateResourcesTaskName = target.disambiguateName("AggregateResources")
         project.locateTask<AggregateResourcesTask>(aggregateResourcesTaskName)?.let {
@@ -201,12 +202,34 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
         }
     }
 
+    private fun validateTargetResourcesAreResolvable(target: KotlinTarget) {
+        if (!canResolveResources(target)) {
+            target.project.reportDiagnostic(KotlinToolingDiagnostics.ResourceMayNotBeResolvedForTarget(target.name))
+        }
+    }
+
+    private fun validateGradleVersionIsCompatibleWithResolutionStrategy(targetName: String) {
+        if (project.kotlinPropertiesProvider.mppResourcesResolutionStrategy == KotlinTargetResourcesResolutionStrategy.VariantReselection) {
+            if (project.gradleVersion < minimumGradleVersionForVariantReselection) {
+                project.reportDiagnosticOncePerBuild(
+                    KotlinToolingDiagnostics.ResourceMayNotBeResolvedWithGradleVersion(
+                        targetName,
+                        GradleVersion.current().toString(),
+                        minimumGradleVersionForVariantReselection.toString(),
+                    )
+                )
+            }
+        }
+    }
+
     internal companion object {
         const val MULTIPLATFORM_RESOURCES_DIRECTORY = "kotlin-multiplatform-resources"
         const val RESOURCES_CLASSIFIER = "kotlin_resources"
         const val RESOURCES_ZIP_EXTENSION = "${RESOURCES_CLASSIFIER}.zip"
 
         const val RESOURCES_PATH = "ResourcesPath"
+
+        val minimumGradleVersionForVariantReselection = GradleVersion.version("7.6")
     }
 
 }
