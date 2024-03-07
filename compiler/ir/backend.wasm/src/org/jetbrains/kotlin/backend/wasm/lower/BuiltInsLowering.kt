@@ -97,7 +97,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 }
 
                 // For eqeqSymbol use overridden `Any.equals(Any?)` if there is any.
-                if (call.symbol === irBuiltins.eqeqSymbol && !lhsType.isNullable()) {
+                if (call.symbol === irBuiltins.eqeqSymbol && !lhsType.isNullable() && !lhsType.isNothing()) {
                     return irCall(call, lhsType.findEqualsMethod().symbol, argumentsAsReceivers = true)
                 }
 
