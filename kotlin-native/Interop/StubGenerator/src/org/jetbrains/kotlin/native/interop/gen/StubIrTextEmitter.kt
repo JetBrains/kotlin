@@ -132,15 +132,6 @@ class StubIrTextEmitter(
         out("")
 
         out("// NOTE THIS FILE IS AUTO-GENERATED")
-
-        if (context.libName == "llvmstubs") {
-            out("""@ExperimentalForeignApi
-val LLVMAttributeReturnIndex: Int get() = 0
-
-@ExperimentalForeignApi
-val LLVMAttributeFunctionIndex: Int get() = -1""")
-
-        }
     }
     fun emit(ktFile: Appendable) {
 
