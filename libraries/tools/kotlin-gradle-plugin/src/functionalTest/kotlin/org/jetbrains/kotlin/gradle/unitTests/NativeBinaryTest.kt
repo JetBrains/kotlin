@@ -8,41 +8,36 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.util.main
 import kotlin.test.*
 
 class NativeBinaryTest {
 
     @Test
     fun `test baseNameProvider`() {
-        val project = buildProjectWithMPP {
-            project.multiplatformExtension.iosSimulatorArm64()
-        }
-
-        val compilation = project
-            .multiplatformExtension
-            .iosSimulatorArm64()
-            .compilations
-            .main
-
-        assertNotNull(compilation)
-
         val initialBaseName = "Shared"
-        val binary = Framework("Test", initialBaseName, NativeBuildType.DEBUG, compilation)
-        val nameProvider = binary.baseNameProvider
 
-        fun checkBaseName(name: String) {
-            assertEquals(binary.baseName, name)
-            assertEquals(nameProvider.get(), name)
+        buildProjectWithMPP {
+            multiplatformExtension.apply {
+                iosSimulatorArm64 {
+                    binaries {
+                        framework(initialBaseName) {
+                            val nameProvider = this.baseNameProvider
+
+                            fun checkBaseName(name: String) {
+                                assertEquals(baseName, name)
+                                assertEquals(nameProvider.get(), name)
+                            }
+
+                            checkBaseName(initialBaseName)
+
+                            val newBaseName = "NewShared"
+                            this.baseName = newBaseName
+                            checkBaseName(newBaseName)
+                        }
+                    }
+                }
+            }
         }
-
-        checkBaseName(initialBaseName)
-
-        val newBaseName = "NewShared"
-        binary.baseName = newBaseName
-        checkBaseName(newBaseName)
     }
 }
