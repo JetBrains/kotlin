@@ -21,7 +21,11 @@ import clang.CXIdxEntityKind.*
 import clang.CXTypeKind.*
 import kotlinx.cinterop.*
 
-private class StructDeclImpl(spelling: String, override val location: Location) : StructDecl(spelling) {
+private class StructDeclImpl(
+        spelling: String,
+        override val isAnonymous: Boolean,
+        override val location: Location
+) : StructDecl(spelling) {
     override var def: StructDefImpl? = null
 }
 
@@ -34,7 +38,12 @@ private class StructDefImpl(
     override val staticFields: List<GlobalDecl>
 ) : StructDef(size, align)
 
-private class EnumDefImpl(spelling: String, type: Type, override val location: Location) : EnumDef(spelling, type) {
+private class EnumDefImpl(
+        spelling: String,
+        type: Type,
+        override val isAnonymous: Boolean,
+        override val location: Location
+) : EnumDef(spelling, type) {
     override val constants = mutableListOf<EnumConstant>()
 }
 
@@ -188,7 +197,11 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
 
     private fun createStructDecl(cursor: CValue<CXCursor>): StructDeclImpl =
-            StructDeclImpl(cursor.type.name, getLocation(cursor))
+            StructDeclImpl(
+                    cursor.type.name,
+                    isAnonymous = clang_Cursor_isAnonymous(cursor) != 0,
+                    getLocation(cursor)
+            )
 
     private data class CxxMembers(val methods: List<FunctionDecl> = emptyList(), val staticFields: List<GlobalDecl> = emptyList())
 
@@ -349,7 +362,12 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         val cursorType = clang_getCursorType(cursor)
         val typeSpelling = clang_getTypeSpelling(cursorType).convertAndDispose()
         val baseType = convertType(clang_getEnumDeclIntegerType(cursor))
-        return EnumDefImpl(typeSpelling, baseType, getLocation(cursor))
+        return EnumDefImpl(
+                typeSpelling,
+                baseType,
+                isAnonymous = clang_Cursor_isAnonymous(cursor) != 0,
+                getLocation(cursor)
+        )
     }
 
     private fun getObjCCategoryClassCursor(cursor: CValue<CXCursor>): CValue<CXCursor> {

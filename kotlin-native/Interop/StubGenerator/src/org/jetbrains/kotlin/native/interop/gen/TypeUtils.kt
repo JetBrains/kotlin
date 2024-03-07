@@ -20,12 +20,6 @@ import org.jetbrains.kotlin.native.interop.gen.jvm.DefaultPlugin
 import org.jetbrains.kotlin.native.interop.gen.jvm.Plugin
 import org.jetbrains.kotlin.native.interop.indexer.*
 
-val EnumDef.isAnonymous: Boolean
-    get() = spelling.contains("(anonymous ") // TODO: it is a hack
-
-val StructDecl.isAnonymous: Boolean
-    get() = spelling.contains("(anonymous ") // TODO: it is a hack
-
 /**
  * Returns the expression which could be used for this type in C code.
  * Note: the resulting string doesn't exactly represent this type, but it is enough for current purposes.

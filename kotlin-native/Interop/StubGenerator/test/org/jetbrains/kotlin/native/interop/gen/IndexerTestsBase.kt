@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
+import org.jetbrains.kotlin.native.interop.indexer.EnumDef
 import org.jetbrains.kotlin.native.interop.indexer.FunctionDecl
 import org.jetbrains.kotlin.native.interop.indexer.IndexerResult
+import org.jetbrains.kotlin.native.interop.indexer.StructDecl
 import org.jetbrains.kotlin.utils.atMostOne
 
 open class IndexerTestsBase : InteropTestsBase() {
@@ -28,4 +30,13 @@ open class IndexerTestsBase : InteropTestsBase() {
 
     fun indexFunction(headerContents: String): FunctionDecl =
             indexFunctionOrNull(headerContents)!!
+
+    fun indexStructs(headerContents: String): Collection<StructDecl> =
+            index(headerContents).index.structs
+
+    fun indexStruct(headerContents: String): StructDecl =
+            indexStructs(headerContents).single()
+
+    fun indexEnum(headerContents: String): EnumDef =
+            index(headerContents).index.enums.single()
 }
