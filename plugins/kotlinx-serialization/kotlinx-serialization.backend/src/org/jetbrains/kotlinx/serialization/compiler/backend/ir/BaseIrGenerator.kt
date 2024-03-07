@@ -676,10 +676,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                         val enumEntries = enumDescriptor.owner.enumEntries()
                         val entriesNames = enumEntries.map { it.annotations.serialNameValue?.let { n -> irString(n) } ?: irNull() }
                         val entriesAnnotations = enumEntries.map {
-                            val annotationConstructors = it.annotations.map { a ->
-                                a.deepCopyWithVariables()
-                            }
-                            val annotationsConstructors = copyAnnotationsFrom(annotationConstructors)
+                            val annotationsConstructors = copyAnnotationsFrom(it.annotations)
                             if (annotationsConstructors.isEmpty()) {
                                 irNull()
                             } else {
@@ -687,10 +684,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                             }
                         }
 
-                        val classAnnotationConstructors = enumDescriptor.owner.annotations.map { a ->
-                            a.deepCopyWithVariables()
-                        }
-                        val classAnnotationsConstructors = copyAnnotationsFrom(classAnnotationConstructors)
+                        val classAnnotationsConstructors = copyAnnotationsFrom(enumDescriptor.owner.annotations)
                         val classAnnotations = if (classAnnotationsConstructors.isEmpty()) {
                             irNull()
                         } else {

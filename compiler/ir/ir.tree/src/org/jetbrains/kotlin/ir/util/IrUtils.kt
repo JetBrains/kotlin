@@ -921,10 +921,8 @@ fun IrValueParameter.copyTo(
         factory.createExpressionBody(
             startOffset = originalDefault.startOffset,
             endOffset = originalDefault.endOffset,
-            expression = originalDefault.expression.deepCopyWithVariables(),
-        ).apply {
-            expression.patchDeclarationParents(irFunction)
-        }
+            expression = originalDefault.expression.deepCopyWithSymbols(irFunction),
+        )
     }
     return factory.createValueParameter(
         startOffset = startOffset,

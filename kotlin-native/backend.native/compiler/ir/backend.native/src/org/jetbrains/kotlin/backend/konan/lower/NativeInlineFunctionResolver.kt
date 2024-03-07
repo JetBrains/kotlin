@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.lower.inline.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
@@ -21,8 +20,7 @@ internal class InlineFunctionsSupport(mapping: NativeMapping) {
     private val partiallyLoweredInlineFunctions = mapping.partiallyLoweredInlineFunctions
 
     fun savePartiallyLoweredInlineFunction(function: IrFunction) =
-            function.deepCopyWithVariables().also {
-                it.patchDeclarationParents(function.parent)
+            function.deepCopyWithSymbols(function.parent).also {
                 partiallyLoweredInlineFunctions[function.symbol] = it
             }
 
