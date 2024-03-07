@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -39,10 +39,11 @@ class Fir2IrLazyClass(
     override var origin: IrDeclarationOrigin,
     override val fir: FirRegularClass,
     override val symbol: IrClassSymbol,
-    override var parent: IrDeclarationParent,
+    parent: IrDeclarationParent,
 ) : IrClass(), AbstractFir2IrLazyDeclaration<FirRegularClass>, Fir2IrTypeParametersContainer,
     IrMaybeDeserializedClass, DeserializableClass, Fir2IrComponents by c {
     init {
+        this.parent = parent
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
     }

@@ -36,8 +36,6 @@ class IrLazyConstructor(
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : IrConstructor(), IrLazyFunctionBase {
-    override lateinit var parent: IrDeclarationParent
-
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
     override var body: IrBody? = null

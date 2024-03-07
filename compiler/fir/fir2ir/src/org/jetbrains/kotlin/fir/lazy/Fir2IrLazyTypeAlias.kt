@@ -30,9 +30,10 @@ class Fir2IrLazyTypeAlias(
     override var origin: IrDeclarationOrigin,
     override val fir: FirTypeAlias,
     override val symbol: IrTypeAliasSymbol,
-    override var parent: IrDeclarationParent
+    parent: IrDeclarationParent,
 ) : IrTypeAlias(), AbstractFir2IrLazyDeclaration<FirTypeAlias>, Fir2IrTypeParametersContainer, Fir2IrComponents by c {
     init {
+        this.parent = parent
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
     }

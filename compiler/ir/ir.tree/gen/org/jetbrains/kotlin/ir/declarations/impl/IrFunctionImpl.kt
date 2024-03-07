@@ -45,8 +45,6 @@ class IrFunctionImpl @IrImplementationDetail constructor(
 ) : IrSimpleFunction() {
     override var annotations: List<IrConstructorCall> = emptyList()
 
-    override lateinit var parent: IrDeclarationParent
-
     override var typeParameters: List<IrTypeParameter> = emptyList()
 
     override var metadata: MetadataSource? = null

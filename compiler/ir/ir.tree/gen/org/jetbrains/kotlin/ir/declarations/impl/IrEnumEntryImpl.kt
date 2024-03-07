@@ -13,7 +13,10 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
@@ -28,8 +31,6 @@ class IrEnumEntryImpl @IrImplementationDetail constructor(
     override val symbol: IrEnumEntrySymbol,
 ) : IrEnumEntry() {
     override var annotations: List<IrConstructorCall> = emptyList()
-
-    override lateinit var parent: IrDeclarationParent
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor

@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
@@ -36,8 +39,6 @@ class IrFieldImpl @IrImplementationDetail constructor(
     override var isStatic: Boolean,
 ) : IrField() {
     override var annotations: List<IrConstructorCall> = emptyList()
-
-    override lateinit var parent: IrDeclarationParent
 
     override var metadata: MetadataSource? = null
 

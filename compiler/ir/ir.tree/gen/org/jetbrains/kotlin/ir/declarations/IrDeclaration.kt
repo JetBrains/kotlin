@@ -21,7 +21,7 @@ interface IrDeclaration : IrStatement, IrSymbolOwner, IrMutableAnnotationContain
 
     var origin: IrDeclarationOrigin
 
-    var parent: IrDeclarationParent
-
     val factory: IrFactory
+
+    var parent: IrDeclarationParent
 }
