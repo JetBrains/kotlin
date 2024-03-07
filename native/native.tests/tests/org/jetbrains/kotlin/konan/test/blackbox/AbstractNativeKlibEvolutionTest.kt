@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.test.Directives
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.DFS
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
@@ -42,6 +44,10 @@ abstract class AbstractNativeKlibEvolutionTest : AbstractNativeSimpleTest() {
 
     protected fun runTest(@TestDataFile testPath: String) {
         Assumptions.assumeFalse(isIgnoredTest(testPath))
+        KotlinTestUtils.runTest0(this::doTest, TargetBackend.NATIVE, testPath) // Respects `// IGNORE_BACKEND*` directives
+    }
+
+    private fun doTest(testPath: String) {
         AbstractKlibBinaryCompatibilityTest.doTest(
             filePath = testPath,
             expectedResult = "OK",
