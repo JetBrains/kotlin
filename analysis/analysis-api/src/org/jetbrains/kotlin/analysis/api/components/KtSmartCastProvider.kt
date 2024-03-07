@@ -57,6 +57,9 @@ public data class KtImplicitReceiverSmartCast(
     public val kind: KtImplicitReceiverSmartCastKind get() = withValidityAssertion { _kind }
 }
 
+/**
+ * AAAAAA
+ */
 public enum class KtImplicitReceiverSmartCastKind {
     DISPATCH, EXTENSION
 }
