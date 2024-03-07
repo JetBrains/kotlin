@@ -48,12 +48,15 @@ internal fun KtVariableLikeSymbol.getPropertyMethodBridge(): MethodBridge {
 
 context(KtAnalysisSession)
 private val KtCallableSymbol.receiverType: MethodBridgeReceiver
-    get() = if (isArrayConstructor) {
-        MethodBridgeReceiver.Factory
-    } else if (!isConstructor && isTopLevel && !isExtension) {
-        MethodBridgeReceiver.Static
-    } else {
-        MethodBridgeReceiver.Instance
+    get() {
+        val isProperty = getContainingSymbol() as? KtPropertySymbol != null
+        return if (isArrayConstructor) {
+            MethodBridgeReceiver.Factory
+        } else if (!isConstructor && isTopLevel && !isExtension && !isProperty) {
+            MethodBridgeReceiver.Static
+        } else {
+            MethodBridgeReceiver.Instance
+        }
     }
 
 /**
@@ -147,12 +150,6 @@ private fun KtCallableSymbol.bridgeReturnType(): MethodBridge.ReturnValue {
     if (isHashCode) {
         return MethodBridge.ReturnValue.HashCode
     }
-
-    //TODO: handle getter
-//    descriptor is PropertyGetterDescriptor -> {
-//        assert(!convertExceptionsToErrors)
-//        MethodBridge.ReturnValue.Mapped(bridgePropertyType(descriptor.correspondingProperty))
-//    }
 
     if (returnType.isUnit || returnType.isNothing) {
         return if (hasThrowsAnnotation) {

@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.annotationInfos
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
-import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.Name
@@ -20,10 +19,10 @@ internal val KtCallableSymbol.isConstructor: Boolean
     get() = this is KtConstructorSymbol
 
 context(KtAnalysisSession, KtObjCExportSession)
-fun KtFunctionSymbol.translateToObjCMethod(): ObjCMethod? {
+fun KtFunctionLikeSymbol.translateToObjCMethod(): ObjCMethod? {
     if (!isVisibleInObjC()) return null
     if (isFakeOverride) return null
-    if (isClone) return null
+    if (this is KtFunctionSymbol && isClone) return null
     return buildObjCMethod()
 }
 
@@ -48,7 +47,7 @@ internal fun KtFunctionLikeSymbol.buildObjCMethod(
     val returnType: ObjCType = mapReturnType(bridge.returnBridge)
     val parameters = translateToObjCParameters(bridge)
     val selector = getSelector(bridge)
-    val selectors: List<String> = splitSelector(selector)
+    val selectors = splitSelector(selector)
     val swiftName = getSwiftName(bridge)
     val attributes = mutableListOf<String>()
     val returnBridge = bridge.returnBridge
@@ -127,15 +126,18 @@ internal fun KtFunctionLikeSymbol.getSwiftName(methodBridge: MethodBridge): Stri
         append(getMangledName(forSwift = true))
         append("(")
 
-        parameters@ for ((bridge, symbol) in parameters) {
+        parameters@ for ((bridge, parameter: KtObjCParameterData?) in parameters) {
             val label = when (bridge) {
                 is MethodBridgeValueParameter.Mapped -> when {
-                    //it is ReceiverParameterDescriptor -> it.getObjCName().asIdentifier(true) { "_" }
+                    parameter?.isReceiver == true -> "_"
                     method is KtPropertySetterSymbol -> when (parameters.size) {
                         1 -> "_"
                         else -> "value"
                     }
-                    else -> symbol!!.name
+                    else -> {
+                        if (parameter == null) continue@parameters
+                        else if (parameter.isReceiver) "_" else parameter.name
+                    }
                 }
                 MethodBridgeValueParameter.ErrorOutParameter -> continue@parameters
                 is MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
@@ -149,7 +151,6 @@ internal fun KtFunctionLikeSymbol.getSwiftName(methodBridge: MethodBridge): Stri
     }
 
     return sb.toString()
-
 }
 
 
@@ -190,23 +191,23 @@ fun KtFunctionLikeSymbol.getSelector(methodBridge: MethodBridge): String {
     }
 
     val parameters = methodBridge.valueParametersAssociated(this)
-
     val method = this
-
     val sb = StringBuilder()
 
     sb.append(method.getMangledName(forSwift = false))
 
-    parameters.forEachIndexed { index, (bridge, typeParameterSymbol) ->
+    parameters.forEachIndexed { index, (bridge, parameter) ->
         val name = when (bridge) {
 
             is MethodBridgeValueParameter.Mapped -> when {
+                parameter?.isReceiver == true -> ""
                 method is KtPropertySetterSymbol -> when (parameters.size) {
                     1 -> ""
                     else -> "value"
                 }
                 else -> {
-                    typeParameterSymbol!!.name.toString()
+                    if (parameter == null) return@forEachIndexed
+                    else if (parameter.isReceiver) "" else parameter.name.toString()
                 }
             }
             MethodBridgeValueParameter.ErrorOutParameter -> "error"
@@ -253,26 +254,6 @@ private fun String.handleSpecialNames(prefix: String): String {
         }
     }
     return this
-}
-
-/**
- * [org.jetbrains.kotlin.backend.konan.objcexport.MethodBrideExtensionsKt.valueParametersAssociated]
- */
-@InternalKotlinNativeApi
-fun MethodBridge.valueParametersAssociated(
-    function: KtFunctionLikeSymbol,
-): List<Pair<MethodBridgeValueParameter, KtValueParameterSymbol?>> {
-    val allParameters = function.valueParameters
-
-    return this.valueParameters.mapIndexed { index, valueParameterBridge ->
-        when (valueParameterBridge) {
-            is MethodBridgeValueParameter.Mapped -> valueParameterBridge to allParameters[index]
-
-            is MethodBridgeValueParameter.SuspendCompletion,
-            is MethodBridgeValueParameter.ErrorOutParameter,
-            -> valueParameterBridge to null
-        }
-    }
 }
 
 private fun String.startsWithWords(words: String) = this.startsWith(words) &&

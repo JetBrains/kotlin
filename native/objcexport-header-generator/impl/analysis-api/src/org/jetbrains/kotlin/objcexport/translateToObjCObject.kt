@@ -33,7 +33,7 @@ fun KtClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
     objectMembers += getDefaultMembers()
     objectMembers += getDeclaredMemberScope().getCallableSymbols()
         .sortedWith(StableCallableOrder)
-        .mapNotNull { it.translateToObjCExportStub() }
+        .flatMap { it.translateToObjCExportStub() }
 
     return ObjCInterfaceImpl(
         name = name.objCName,

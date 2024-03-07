@@ -60,7 +60,7 @@ fun KtResolvedObjCExportFile.translateToObjCTopLevelFacade(): ObjCInterface? {
         origin = null,
         attributes = listOf(OBJC_SUBCLASSING_RESTRICTED) + fileName.toNameAttributes(),
         superProtocols = emptyList(),
-        members = extensions.mapNotNull { it.translateToObjCExportStub() },
+        members = extensions.flatMap { it.translateToObjCExportStub() },
         categoryName = null,
         generics = emptyList(),
         superClass = getDefaultSuperClassOrProtocolName().objCName,

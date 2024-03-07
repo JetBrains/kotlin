@@ -64,7 +64,7 @@ fun KtResolvedObjCExportFile.translateToObjCExtensionFacades(): List<ObjCInterfa
             origin = null,
             attributes = emptyList(),
             superProtocols = emptyList(),
-            members = extensionSymbols.mapNotNull { ext -> ext.translateToObjCExportStub() },
+            members = extensionSymbols.flatMap { ext -> ext.translateToObjCExportStub() },
             categoryName = extensionsCategoryName,
             generics = emptyList(),
             superClass = null,

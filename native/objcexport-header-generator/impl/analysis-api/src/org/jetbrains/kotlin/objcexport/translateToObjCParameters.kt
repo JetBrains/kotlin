@@ -5,11 +5,9 @@ import org.jetbrains.kotlin.analysis.api.components.buildClassType
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.KtParameter
 
 context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtFunctionLikeSymbol.translateToObjCParameters(baseMethodBridge: MethodBridge): List<ObjCParameter> {
@@ -27,13 +25,19 @@ internal fun KtFunctionLikeSymbol.translateToObjCParameters(baseMethodBridge: Me
 
     val usedNames = mutableSetOf<String>()
 
-    valueParametersAssociated.forEach { (bridge: MethodBridgeValueParameter, parameter: KtValueParameterSymbol?) ->
-        val candidateName: String = when (bridge) {
+    valueParametersAssociated.forEach { (bridge: MethodBridgeValueParameter, parameter: KtObjCParameterData?) ->
+        val candidateName = when (bridge) {
             is MethodBridgeValueParameter.Mapped -> {
-                if (parameter == null) throw IllegalStateException("Parameter shouldn't be null")
+                if (parameter == null) return@forEach
                 when {
-                    this is KtPropertySetterSymbol -> "value"
-                    else -> parameter.name.toString()
+                    this is KtPropertySetterSymbol -> {
+                        if (parameter.isReceiver) "receiver"
+                        else "value"
+                    }
+                    else -> {
+                        if (parameter.isReceiver) "receiver"
+                        else parameter.name.toString()
+                    }
                 }
             }
             MethodBridgeValueParameter.ErrorOutParameter -> "error"
@@ -45,10 +49,10 @@ internal fun KtFunctionLikeSymbol.translateToObjCParameters(baseMethodBridge: Me
 
         val type = when (bridge) {
             is MethodBridgeValueParameter.Mapped -> {
-                val returnType = parameter!!.returnType
+                val returnType = parameter!!.type
                 if (parameter.isVararg) {
                     //vararg is a special case, [parameter.returnType] is T, we need Array<T>
-                    buildClassType(StandardClassIds.Array) { argument(parameter.returnType) }.translateToObjCType(bridge.bridge)
+                    buildClassType(StandardClassIds.Array) { argument(parameter.type) }.translateToObjCType(bridge.bridge)
                 } else {
                     returnType.translateToObjCType(bridge.bridge)
                 }

@@ -28,7 +28,7 @@ fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
     val members = getCallableSymbolsForObjCMemberTranslation()
         .filter { it.isObjCBaseCallable() }
         .sortedWith(StableCallableOrder)
-        .mapNotNull { it.translateToObjCExportStub() }
+        .flatMap { it.translateToObjCExportStub() }
 
     val comment: ObjCComment? = annotationsList.translateToObjCComment()
 

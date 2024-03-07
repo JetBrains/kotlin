@@ -36,7 +36,7 @@ fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
 
         this += getCallableSymbolsForObjCMemberTranslation()
             .sortedWith(StableCallableOrder)
-            .mapNotNull { it.translateToObjCExportStub() }
+            .flatMap { it.translateToObjCExportStub() }
 
         if (classKind == KtClassKind.ENUM_CLASS) {
             this += translateEnumMembers()
