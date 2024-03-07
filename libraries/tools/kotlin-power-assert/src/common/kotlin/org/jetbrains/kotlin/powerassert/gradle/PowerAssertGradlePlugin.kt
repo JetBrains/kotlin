@@ -21,8 +21,10 @@ package org.jetbrains.kotlin.powerassert.gradle
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.*
 
+@OptIn(ExperimentalKotlinGradlePluginApi::class)
 class PowerAssertGradlePlugin : KotlinCompilerPluginSupportPlugin {
     companion object {
         private const val POWER_ASSERT_ARTIFACT_NAME = "kotlin-power-assert-compiler-plugin-embeddable"
@@ -37,7 +39,7 @@ class PowerAssertGradlePlugin : KotlinCompilerPluginSupportPlugin {
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
         val project = kotlinCompilation.target.project
         val extension = project.extensions.getByType(PowerAssertGradleExtension::class.java)
-        return extension.excludedSourceSets.none { it == kotlinCompilation.defaultSourceSet.name }
+        return extension.excludedSourceSets.get().none { it == kotlinCompilation.defaultSourceSet.name }
     }
 
     override fun applyToCompilation(
@@ -45,8 +47,8 @@ class PowerAssertGradlePlugin : KotlinCompilerPluginSupportPlugin {
     ): Provider<List<SubpluginOption>> {
         val project = kotlinCompilation.target.project
         val extension = project.extensions.getByType(PowerAssertGradleExtension::class.java)
-        return project.provider {
-            extension.functions.map {
+        return extension.functions.map { functions ->
+            functions.map {
                 SubpluginOption(key = FUNCTION_ARG_NAME, value = it)
             }
         }

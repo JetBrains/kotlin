@@ -19,7 +19,16 @@
 
 package org.jetbrains.kotlin.powerassert.gradle
 
-open class PowerAssertGradleExtension {
-    var functions: List<String> = listOf("kotlin.assert")
-    var excludedSourceSets: List<String> = listOf()
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import javax.inject.Inject
+
+@ExperimentalKotlinGradlePluginApi
+abstract class PowerAssertGradleExtension @Inject constructor(
+    objectFactory: ObjectFactory,
+) {
+    val functions: ListProperty<String> = objectFactory.listProperty(String::class.java).convention(listOf("kotlin.assert"))
+
+    val excludedSourceSets: ListProperty<String> = objectFactory.listProperty(String::class.java).convention(emptyList())
 }

@@ -34,15 +34,14 @@ kotlin {
 }
 
 powerAssert {
-    functions = listOf(
-        "kotlin.assert",
+    functions.addAll(
         "kotlin.test.assertTrue",
         "kotlin.require",
         "sample.AssertScope.assert",
         "sample.assert",
         "sample.dbg"
     )
-    excludedSourceSets = listOf(
+    excludedSourceSets.addAll(
         "commonMain",
         "jvmMain",
         "jsMain",
