@@ -47,11 +47,6 @@ val IrType.originalKotlinType: KotlinType?
 
 data object IrStarProjectionImpl : IrStarProjection
 
-internal class ReturnTypeIsNotInitializedException(function: IrFunction) : IllegalStateException(
-    "Return type is not initialized for function '${function.name}'"
-)
-
-
 // Please note this type is not denotable which means it could only exist inside type system
 class IrCapturedType(
     val captureStatus: CaptureStatus,
