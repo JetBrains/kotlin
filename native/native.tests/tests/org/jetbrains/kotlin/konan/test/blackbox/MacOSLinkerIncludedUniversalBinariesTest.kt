@@ -43,7 +43,7 @@ class MacOSLinkerIncludedUniversalBinariesTest : AbstractNativeSimpleTest() {
     fun includedUniversalArchive___producesThinArchive() = assertProducesThinImageInFramework(
         includedImageType = ImageType.OBJECT_FILE,
         linkingFlags = listOf("-Xstatic-framework"),
-        expectedMagic = universalMachOMagic,
+        expectedMagic = thinArchiveMagic,
     )
 
     @Test
@@ -55,7 +55,6 @@ class MacOSLinkerIncludedUniversalBinariesTest : AbstractNativeSimpleTest() {
 
     private val thinArchiveMagic = listOf(0x21, 0x3c, 0x61, 0x72)
     private val thinMachOMagic = listOf(0xfe, 0xed, 0xfa, 0xcf).reversed()
-    private val universalMachOMagic = listOf(0xca, 0xfe, 0xba, 0xbe)
 
     enum class ImageType(val clangOptions: List<String>) {
         DYLIB(

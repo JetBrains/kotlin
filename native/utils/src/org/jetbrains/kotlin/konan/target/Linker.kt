@@ -243,6 +243,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             return listOf(Command(libtool).apply {
                 +"-static"
                 +listOf("-o", executable)
+                +listOf("-arch_only", arch)
                 +objectFiles
                 +libraries
             })
