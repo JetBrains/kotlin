@@ -14,7 +14,6 @@ import org.gradle.api.artifacts.ResolveException
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Usage
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.internal.component.NoMatchingConfigurationSelectionException
 import org.gradle.kotlin.dsl.project
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExte
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.gradle.utils.buildOrNull
 import org.jetbrains.kotlin.util.assertThrows
 import org.junit.Test
 import java.io.File
@@ -67,17 +65,11 @@ class KotlinTargetVariantResourcesResolutionTests {
 
     @Test
     fun `test direct dependency - between different native targets - with resources configuration`() {
-        directDependencyOnResourcesProducer(
+        testDirectDependencyOnResourcesProducer(
             producerTarget = { linuxX64() },
             consumerTarget = { linuxArm64() },
-            strategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration,
-            assert = { consumer, _ ->
-                assertThrows<ResolveException> {
-                    KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration.resourceArchives(
-                        consumer.multiplatformExtension.linuxArm64().compilations.getByName("main")
-                    ).files
-                }
-            },
+            resolutionStrategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration,
+            expectedResult = { _, _ -> emptySet() },
         )
     }
 
@@ -390,12 +382,11 @@ class KotlinTargetVariantResourcesResolutionTests {
         listOf(rootProject, producer, consumer).forEach { it.evaluate() }
         producer.publishFakeResources(producer.multiplatformExtension.linuxArm64())
 
-        assert(
-            assertThrows<ResolveException> {
-                resolutionStrategy.resourceArchives(
-                    consumer.multiplatformExtension.linuxArm64().compilations.getByName("main")
-                ).files
-            }.cause?.cause is NoMatchingConfigurationSelectionException
+        assertEquals(
+            hashSetOf(producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/linuxArm64/producer.kotlin_resources.zip")),
+            resolutionStrategy.resourceArchives(
+                consumer.multiplatformExtension.linuxArm64().compilations.getByName("main")
+            ).files
         )
     }
 
