@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.target.ClangArgs
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
-import org.jetbrains.kotlin.konan.test.blackbox.buildDir
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
@@ -88,8 +87,9 @@ internal fun AbstractNativeSimpleTest.compileWithClang(
     val clangErrorOutput = process.errorStream.readBytes()
     val clangOutput = process.inputStream.readBytes()
 
-    val parameters = ClangParameters(
-        processBuilder.command()
+    val parameters = CommandParameters(
+        commandName = "CLANG",
+        command = processBuilder.command(),
     )
     val loggedData = LoggedData.CompilationToolCall(
         toolName = "CLANG",
@@ -105,17 +105,6 @@ internal fun AbstractNativeSimpleTest.compileWithClang(
     } else {
         val executable = TestCompilationArtifact.Executable(outputFile)
         TestCompilationResult.Success(executable, loggedData)
-    }
-}
-
-internal class ClangParameters(
-    private val command: List<String>,
-) : LoggedData() {
-    override fun computeText(): String = buildString {
-        appendLine("CLANG")
-        command.forEach {
-            appendLine("- $it")
-        }
     }
 }
 
