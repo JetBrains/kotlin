@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertNoOu
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertRemovedOutputs
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
+import java.util.UUID
+import kotlin.random.Random
 
 /**
  * The preferred way to write incremental compilation tests.
@@ -28,11 +30,15 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
             val module1 = module("jvm-module-1")
             // at this moment, the module is already initially built and ready for further incremental compilations
 
+            val randomString = UUID.randomUUID().toString()
+            // Use this overload to create file with some dynamic content
             module1.createFile(
                 "foobar.kt",
                 //language=kt
                 """
-                fun foobar() {}
+                fun foobar() {
+                    println("$randomString")
+                }
                 """.trimIndent()
             )
 
@@ -92,11 +98,13 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))
 
+            val randomInt = Random.nextInt()
+            // Use this overload to modify file dynamically
             module1.changeFile(
                 "bar.kt",
                 transform = {
                     //language=kt
-                    it.replace("fun bar()", "fun bar(someNumber: Int = 50)")
+                    it.replace("fun bar()", "fun bar(someNumber: Int = $randomInt)")
                 }
             )
 
@@ -120,11 +128,29 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
         scenario(strategyConfig) {
             val module1 = module("jvm-module-1")
 
+            // replaces bar.kt with bar.kt.1
             module1.changeFile("bar.kt", 1U)
 
             module1.compile {
                 assertCompiledSources("bar.kt")
                 assertNoOutputSetChanges()
+            }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Sample scenario DSL IC test with versioned source file creation")
+    @TestMetadata("jvm-module-1")
+    fun testScenario5(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        scenario(strategyConfig) {
+            val module1 = module("jvm-module-1")
+
+            // creates secret.kt from secret.kt.1
+            module1.createFile("secret.kt", 1U)
+
+            module1.compile {
+                assertCompiledSources("secret.kt")
+                assertAddedOutputs("SecretKt.class")
             }
         }
     }

@@ -21,7 +21,8 @@ interface ScenarioModule {
     )
 
     /**
-     * Performs registered existing file modification.
+     * Performs registered existing file modification by copying a revision from
+     * the file located by path "[fileName].[version]" in the module sources directory.
      *
      * Check the example `ExampleIncrementalScenarioTest.testScenario4` out
      */
@@ -37,8 +38,16 @@ interface ScenarioModule {
 
     /**
      * Performs registered new file creation.
+     *
+     * Prefer the overload with versioned file modification if it's possible
      */
     fun createFile(fileName: String, content: String)
+
+    /**
+     * Performs registered new file creation by copying a revision from
+     * the file located by path "[fileName].[version]" in the module sources directory.
+     */
+    fun createFile(fileName: String, version: UInt)
 
     fun compile(
         forceOutput: LogLevel? = null,

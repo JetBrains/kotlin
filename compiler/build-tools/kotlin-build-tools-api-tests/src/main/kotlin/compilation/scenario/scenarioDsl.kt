@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOu
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.CompilationOutcome
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.*
+import java.nio.file.Files
+import java.nio.file.Path
 import kotlin.io.path.*
 
 internal class ScenarioModuleImpl(
@@ -31,29 +33,47 @@ internal class ScenarioModuleImpl(
     }
 
     override fun changeFile(fileName: String, version: UInt) {
-        val file = module.sourcesDirectory.resolve("$fileName.$version")
-        writeFile(fileName, file.readText())
+        val file = module.sourcesDirectory.resolve(fileName)
+        val chosenRevision = module.sourcesDirectory.resolve("$fileName.$version")
+        Files.delete(file)
+        Files.copy(chosenRevision, file)
+        addToModifiedFiles(file)
     }
 
     override fun deleteFile(fileName: String) {
         val file = module.sourcesDirectory.resolve(fileName)
         file.deleteExisting()
-        sourcesChanges = SourcesChanges.Known(
-            modifiedFiles = sourcesChanges.modifiedFiles,
-            removedFiles = sourcesChanges.removedFiles + file.toFile(),
-        )
+        addToRemovedFiles(file)
     }
 
     override fun createFile(fileName: String, content: String) {
         writeFile(fileName, content)
     }
 
+    override fun createFile(fileName: String, version: UInt) {
+        val file = module.sourcesDirectory.resolve(fileName)
+        val chosenRevision = module.sourcesDirectory.resolve("$fileName.$version")
+        Files.copy(chosenRevision, file)
+        addToModifiedFiles(file)
+    }
+
     private fun writeFile(fileName: String, newContent: String) {
         val file = module.sourcesDirectory.resolve(fileName)
         file.writeText(newContent)
+        addToModifiedFiles(file)
+    }
+
+    private fun addToModifiedFiles(file: Path) {
         sourcesChanges = SourcesChanges.Known(
             modifiedFiles = sourcesChanges.modifiedFiles + file.toFile(),
             removedFiles = sourcesChanges.removedFiles,
+        )
+    }
+
+    private fun addToRemovedFiles(file: Path) {
+        sourcesChanges = SourcesChanges.Known(
+            modifiedFiles = sourcesChanges.modifiedFiles,
+            removedFiles = sourcesChanges.removedFiles + file.toFile(),
         )
     }
 
