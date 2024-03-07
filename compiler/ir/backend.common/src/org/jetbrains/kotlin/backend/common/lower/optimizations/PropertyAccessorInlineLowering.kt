@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.backend.common.ir.isPure
-import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isTopLevel
@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 open class PropertyAccessorInlineLowering(
     private val context: CommonBackendContext,
-    private val insertImplicitCasts: Boolean = true,
 ) : BodyLoweringPass {
 
     fun IrProperty.isSafeToInlineInClosedWorld() =
@@ -117,7 +116,7 @@ open class PropertyAccessorInlineLowering(
             }
 
             // Preserve call types when backingField have different type. This usually happens with generic field types.
-            return if (insertImplicitCasts && backingField.type != call.type)
+            return if (backingField.type != call.type)
                 builder.irImplicitCast(getField, call.type)
             else
                 getField
