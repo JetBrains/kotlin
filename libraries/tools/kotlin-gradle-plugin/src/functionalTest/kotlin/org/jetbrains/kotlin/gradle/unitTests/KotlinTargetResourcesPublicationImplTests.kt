@@ -10,12 +10,16 @@ package org.jetbrains.kotlin.gradle.unitTests
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.GradleVersionProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.util.*
@@ -163,6 +167,37 @@ class KotlinTargetResourcesPublicationImplTests {
             }
         }
     }
+
+    @Test
+    fun `test resolution - with variant reselection - when Gradle version is below 7_6`() {
+        buildProjectWithMPP(
+            preApplyCode = { overrideGradleVersion(GradleVersion.version("7.5.1")) }
+        ) {
+            setMppResourcesResolutionStrategy(KotlinTargetResourcesResolutionStrategy.VariantReselection)
+            kotlin {
+                resourcesPublicationExtension?.resolveResources(linuxArm64())
+            }
+        }.assertContainsDiagnostic(KotlinToolingDiagnostics.ResourceMayNotBeResolvedWithGradleVersion)
+    }
+
+    @Test
+    fun `test resolution - with variant reselection - when Gradle version is above 7_6`() {
+        buildProjectWithMPP(
+            preApplyCode = { overrideGradleVersion(GradleVersion.version("7.6.1")) }
+        ) {
+            setMppResourcesResolutionStrategy(KotlinTargetResourcesResolutionStrategy.VariantReselection)
+            kotlin {
+                resourcesPublicationExtension?.resolveResources(linuxArm64())
+            }
+        }.assertNoDiagnostics()
+    }
+
+    private fun Project.overrideGradleVersion(version: GradleVersion) = extraProperties.set(
+        GradleVersionProvider.EXTENSION_NAME,
+        object : GradleVersionProvider {
+            override val current: GradleVersion = version
+        }
+    )
 
     private fun testCallbacksAfterApiCall(
         callback: ((Unit) -> Unit) -> Unit,

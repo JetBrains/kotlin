@@ -744,6 +744,17 @@ object KotlinToolingDiagnostics {
         )
     }
 
+    object ResourceMayNotBeResolvedWithGradleVersion : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(
+            targetName: String, currentGradleVersion: String, minimumRequiredVersion: String) = build(
+            """
+            Resources for target $targetName may not be resolved. Minimum required Gradle version is ${minimumRequiredVersion} but current is ${currentGradleVersion}.
+            
+            $resourcesBugReportRequest
+            """.trimIndent()
+        )
+    }
+
     object UnknownValueProvidedForResourcesStrategy : ToolingDiagnosticFactory(ERROR) {
         operator fun invoke(value: String) = build(
             """

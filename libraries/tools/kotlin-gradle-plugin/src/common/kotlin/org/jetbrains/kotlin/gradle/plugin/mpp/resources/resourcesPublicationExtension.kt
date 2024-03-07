@@ -16,7 +16,13 @@ internal val KotlinMultiplatformExtension.resourcesPublicationExtension: KotlinT
     get() {
         if (!project.kotlinPropertiesProvider.mppResourcesPublication) return null
         return project.extraProperties.getOrPut(KotlinTargetResourcesPublication.EXTENSION_NAME) {
-            project.objects.newInstance(KotlinTargetResourcesPublicationImpl::class.java, project)
+            project.objects.newInstance(
+                KotlinTargetResourcesPublicationImpl::class.java,
+                project,
+                project.extraProperties.getOrPut<GradleVersionProvider>(GradleVersionProvider.EXTENSION_NAME) {
+                    GradleVersionProviderImpl()
+                }
+            )
         }
     }
 
