@@ -169,7 +169,7 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
 
         val symbolRemapper = SymbolRemapper()
         acceptVoid(symbolRemapper)
-        return transform(DeepCopyIrTreeWithSymbols(symbolRemapper, DeepCopyTypeRemapper(symbolRemapper)), data = null)
+        return transform(DeepCopyIrTreeWithSymbols(symbolRemapper), data = null)
     }
 
     private fun remapExpectTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameter {

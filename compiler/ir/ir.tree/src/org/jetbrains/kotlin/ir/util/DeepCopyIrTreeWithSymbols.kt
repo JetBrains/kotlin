@@ -25,33 +25,29 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 inline fun <reified T : IrElement> T.deepCopyWithSymbols(
     initialParent: IrDeclarationParent? = null,
-    createCopier: (SymbolRemapper, TypeRemapper) -> DeepCopyIrTreeWithSymbols =
-        { symbolRemapper, typeRemapper -> DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) },
-): T = deepCopyWithSymbols(initialParent, DeepCopySymbolRemapper(), createCopier)
-
-inline fun <reified T : IrElement> T.deepCopyWithSymbols(
-    initialParent: IrDeclarationParent?,
-    symbolRemapper: DeepCopySymbolRemapper,
-    createCopier: (SymbolRemapper, TypeRemapper) -> DeepCopyIrTreeWithSymbols =
-        { symbolRemapper, typeRemapper -> DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) },
+    createTypeRemapper: (SymbolRemapper) -> TypeRemapper = ::DeepCopyTypeRemapper
 ): T {
+    val symbolRemapper = DeepCopySymbolRemapper()
     acceptVoid(symbolRemapper)
-    val typeRemapper = DeepCopyTypeRemapper(symbolRemapper)
-    return transform(createCopier(symbolRemapper, typeRemapper), null).patchDeclarationParents(initialParent) as T
+    val typeRemapper = createTypeRemapper(symbolRemapper)
+    return transform(DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper), null).patchDeclarationParents(initialParent) as T
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 open class DeepCopyIrTreeWithSymbols(
     private val symbolRemapper: SymbolRemapper,
-    private val typeRemapper: TypeRemapper,
+    typeRemapper: TypeRemapper? = null,
     // This parameter is not used meaningfully, but is left for compatibility with compose.
     @Suppress("UNUSED_PARAMETER") symbolRenamer: SymbolRenamer? = null,
 ) : IrElementTransformerVoid() {
     private var transformedModule: IrModuleFragment? = null
+    private val typeRemapper: TypeRemapper = typeRemapper ?: DeepCopyTypeRemapper(symbolRemapper)
 
     init {
         // TODO refactor
-        (typeRemapper as? DeepCopyTypeRemapper)?.let {
+        // After removing usages of DeepCopyTypeRemapper constructor from compose, the lateinit property `DeepCopyTypeRemapper.deepCopy`
+        // can be refactored to a constructor parameter.
+        (this.typeRemapper as? DeepCopyTypeRemapper)?.let {
             it.deepCopy = this
         }
     }
