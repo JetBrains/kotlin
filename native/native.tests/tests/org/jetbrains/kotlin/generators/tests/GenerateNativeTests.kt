@@ -526,6 +526,26 @@ fun main() {
                 model("SwiftExport", pattern = "^([^_](.+))$", recursive = false)
             }
         }
+        // Stress tests
+        testGroup("native/native.tests/stress/tests-gen", "native/native.tests/stress/testData") {
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "NativeStressTestGenerated",
+                annotations = listOf(
+                    provider<UseStandardTestCaseGroupProvider>(),
+                )
+            ) {
+                model("")
+            }
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "FirNativeStressTestGenerated",
+                annotations = listOf(
+                    provider<UseStandardTestCaseGroupProvider>(),
+                    *frontendFir(),
+                )
+            ) {
+                model("")
+            }
+        }
     }
 }
 

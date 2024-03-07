@@ -43,12 +43,6 @@ public class NativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest {
     runTest("native/native.tests/testData/standalone/kt56048.kt");
   }
 
-  @Test
-  @TestMetadata("kt63423_dispose_on_main_stress.kt")
-  public void testKt63423_dispose_on_main_stress() {
-    runTest("native/native.tests/testData/standalone/kt63423_dispose_on_main_stress.kt");
-  }
-
   @Nested
   @TestMetadata("native/native.tests/testData/standalone/console")
   @TestDataPath("$PROJECT_ROOT")

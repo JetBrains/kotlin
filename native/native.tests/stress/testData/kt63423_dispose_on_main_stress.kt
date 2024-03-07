@@ -2,6 +2,7 @@
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+// KIND: STANDALONE_NO_TR
 // Test depends on macOS-specific AppKit
 // DISABLE_NATIVE: isAppleTarget=false
 // DISABLE_NATIVE: targetFamily=IOS
