@@ -839,6 +839,18 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
       }
 
       @Test
+      @TestMetadata("ArrayAssignmentOperator.kt")
+      public void testArrayAssignmentOperator() {
+        runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment/ArrayAssignmentOperator.kt");
+      }
+
+      @Test
+      @TestMetadata("ArrayPlusAssignmentOperator.kt")
+      public void testArrayPlusAssignmentOperator() {
+        runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment/ArrayPlusAssignmentOperator.kt");
+      }
+
+      @Test
       @TestMetadata("BinaryExpression.kt")
       public void testBinaryExpression() {
         runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment/BinaryExpression.kt");
