@@ -16,15 +16,12 @@ fun <T : IrElement> T.deepCopySavingMetadata(
     acceptVoid(symbolRemapper)
     val typeRemapper = DeepCopyTypeRemapper(symbolRemapper)
     @Suppress("UNCHECKED_CAST")
-    return transform(DeepCopySavingMetadata(symbolRemapper, typeRemapper, SymbolRenamer.DEFAULT), null)
+    return transform(DeepCopySavingMetadata(symbolRemapper, typeRemapper), null)
         .patchDeclarationParents(initialParent) as T
 }
 
-private class DeepCopySavingMetadata(
-    symbolRemapper: SymbolRemapper,
-    typeRemapper: TypeRemapper,
-    symbolRenamer: SymbolRenamer
-) : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper, symbolRenamer) {
+private class DeepCopySavingMetadata(symbolRemapper: SymbolRemapper, typeRemapper: TypeRemapper) :
+    DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) {
     override fun visitFile(declaration: IrFile): IrFile =
         super.visitFile(declaration).apply {
             metadata = declaration.metadata

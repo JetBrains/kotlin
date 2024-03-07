@@ -12,56 +12,42 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
+import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 inline fun <reified T : IrElement> T.deepCopyWithSymbols(
     initialParent: IrDeclarationParent? = null,
-    createCopier: (SymbolRemapper, TypeRemapper) -> DeepCopyIrTreeWithSymbols = ::DeepCopyIrTreeWithSymbols
+    createCopier: (SymbolRemapper, TypeRemapper) -> DeepCopyIrTreeWithSymbols =
+        { symbolRemapper, typeRemapper -> DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) },
 ): T = deepCopyWithSymbols(initialParent, DeepCopySymbolRemapper(), createCopier)
 
 inline fun <reified T : IrElement> T.deepCopyWithSymbols(
     initialParent: IrDeclarationParent?,
     symbolRemapper: DeepCopySymbolRemapper,
-    createCopier: (SymbolRemapper, TypeRemapper) -> DeepCopyIrTreeWithSymbols = ::DeepCopyIrTreeWithSymbols
+    createCopier: (SymbolRemapper, TypeRemapper) -> DeepCopyIrTreeWithSymbols =
+        { symbolRemapper, typeRemapper -> DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) },
 ): T {
     acceptVoid(symbolRemapper)
     val typeRemapper = DeepCopyTypeRemapper(symbolRemapper)
     return transform(createCopier(symbolRemapper, typeRemapper), null).patchDeclarationParents(initialParent) as T
 }
 
-interface SymbolRenamer {
-    fun getClassName(symbol: IrClassSymbol): Name = symbol.owner.name
-    fun getFunctionName(symbol: IrSimpleFunctionSymbol): Name = symbol.owner.name
-    fun getFieldName(symbol: IrFieldSymbol): Name = symbol.owner.name
-    fun getFileName(symbol: IrFileSymbol): FqName = symbol.owner.packageFqName
-    fun getExternalPackageFragmentName(symbol: IrExternalPackageFragmentSymbol): FqName = symbol.owner.packageFqName
-    fun getEnumEntryName(symbol: IrEnumEntrySymbol): Name = symbol.owner.name
-    fun getVariableName(symbol: IrVariableSymbol): Name = symbol.owner.name
-    fun getTypeParameterName(symbol: IrTypeParameterSymbol): Name = symbol.owner.name
-    fun getValueParameterName(symbol: IrValueParameterSymbol): Name = symbol.owner.name
-    fun getTypeAliasName(symbol: IrTypeAliasSymbol): Name = symbol.owner.name
-
-    object DEFAULT : SymbolRenamer
-}
-
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 open class DeepCopyIrTreeWithSymbols(
     private val symbolRemapper: SymbolRemapper,
     private val typeRemapper: TypeRemapper,
-    private val symbolRenamer: SymbolRenamer
+    // This parameter is not used meaningfully, but is left for compatibility with compose.
+    @Suppress("UNUSED_PARAMETER") symbolRenamer: SymbolRenamer? = null,
 ) : IrElementTransformerVoid() {
-
     private var transformedModule: IrModuleFragment? = null
-
-    constructor(symbolRemapper: SymbolRemapper, typeRemapper: TypeRemapper) : this(symbolRemapper, typeRemapper, SymbolRenamer.DEFAULT)
 
     init {
         // TODO refactor
@@ -107,7 +93,7 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment): IrExternalPackageFragment =
         IrExternalPackageFragmentImpl(
             symbolRemapper.getDeclaredExternalPackageFragment(declaration.symbol),
-            symbolRenamer.getExternalPackageFragmentName(declaration.symbol)
+            declaration.packageFqName
         ).apply {
             declaration.transformDeclarationsTo(this)
         }
@@ -116,7 +102,7 @@ open class DeepCopyIrTreeWithSymbols(
         IrFileImpl(
             declaration.fileEntry,
             symbolRemapper.getDeclaredFile(declaration.symbol),
-            symbolRenamer.getFileName(declaration.symbol),
+            declaration.packageFqName,
             transformedModule ?: declaration.module
         ).apply {
             transformAnnotations(declaration)
@@ -150,7 +136,7 @@ open class DeepCopyIrTreeWithSymbols(
             startOffset = declaration.startOffset,
             endOffset = declaration.endOffset,
             origin = mapDeclarationOrigin(declaration.origin),
-            name = symbolRenamer.getClassName(declaration.symbol),
+            name = declaration.name,
             visibility = declaration.visibility,
             symbol = symbolRemapper.getDeclaredClass(declaration.symbol),
             kind = declaration.kind,
@@ -183,7 +169,7 @@ open class DeepCopyIrTreeWithSymbols(
             startOffset = declaration.startOffset,
             endOffset = declaration.endOffset,
             origin = mapDeclarationOrigin(declaration.origin),
-            name = symbolRenamer.getFunctionName(declaration.symbol),
+            name = declaration.name,
             visibility = declaration.visibility,
             isInline = declaration.isInline,
             isExpect = declaration.isExpect,
@@ -279,7 +265,7 @@ open class DeepCopyIrTreeWithSymbols(
             startOffset = declaration.startOffset,
             endOffset = declaration.endOffset,
             origin = mapDeclarationOrigin(declaration.origin),
-            name = symbolRenamer.getFieldName(declaration.symbol),
+            name = declaration.name,
             visibility = declaration.visibility,
             symbol = symbolRemapper.getDeclaredField(declaration.symbol),
             type = declaration.type.remapType(),
@@ -312,7 +298,7 @@ open class DeepCopyIrTreeWithSymbols(
             startOffset = declaration.startOffset,
             endOffset = declaration.endOffset,
             origin = mapDeclarationOrigin(declaration.origin),
-            name = symbolRenamer.getEnumEntryName(declaration.symbol),
+            name = declaration.name,
             symbol = symbolRemapper.getDeclaredEnumEntry(declaration.symbol),
         ).apply {
             transformAnnotations(declaration)
@@ -335,7 +321,7 @@ open class DeepCopyIrTreeWithSymbols(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             symbolRemapper.getDeclaredVariable(declaration.symbol),
-            symbolRenamer.getVariableName(declaration.symbol),
+            declaration.name,
             declaration.type.remapType(),
             declaration.isVar,
             declaration.isConst,
@@ -356,7 +342,7 @@ open class DeepCopyIrTreeWithSymbols(
             startOffset = declaration.startOffset,
             endOffset = declaration.endOffset,
             origin = mapDeclarationOrigin(declaration.origin),
-            name = symbolRenamer.getTypeParameterName(declaration.symbol),
+            name = declaration.name,
             symbol = symbolRemapper.getDeclaredTypeParameter(declaration.symbol),
             variance = declaration.variance,
             index = declaration.index,
@@ -384,7 +370,7 @@ open class DeepCopyIrTreeWithSymbols(
             startOffset = declaration.startOffset,
             endOffset = declaration.endOffset,
             origin = mapDeclarationOrigin(declaration.origin),
-            name = symbolRenamer.getValueParameterName(declaration.symbol),
+            name = declaration.name,
             type = declaration.type.remapType(),
             isAssignable = declaration.isAssignable,
             symbol = symbolRemapper.getDeclaredValueParameter(declaration.symbol),
@@ -403,7 +389,7 @@ open class DeepCopyIrTreeWithSymbols(
             startOffset = declaration.startOffset,
             endOffset = declaration.endOffset,
             origin = mapDeclarationOrigin(declaration.origin),
-            name = symbolRenamer.getTypeAliasName(declaration.symbol),
+            name = declaration.name,
             visibility = declaration.visibility,
             symbol = symbolRemapper.getDeclaredTypeAlias(declaration.symbol),
             isActual = declaration.isActual,

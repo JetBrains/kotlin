@@ -63,3 +63,9 @@ fun DumpIrTreeVisitor(out: Appendable, normalizeNames: Boolean = false, stableOr
 )
 fun RenderIrElementVisitor(normalizeNames: Boolean = false, verboseErrorTypes: Boolean = true) =
     RenderIrElementVisitor(DumpIrTreeOptions(normalizeNames = normalizeNames, verboseErrorTypes = verboseErrorTypes))
+
+// This class is not used meaningfully, but is left for compatibility with compose.
+abstract class SymbolRenamer private constructor() {
+    @Deprecated("Used from Compose.")
+    companion object DEFAULT : SymbolRenamer()
+}

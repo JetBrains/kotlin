@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.backend.common.actualizer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
+import org.jetbrains.kotlin.ir.util.SymbolRemapper
+import org.jetbrains.kotlin.ir.util.TypeRemapper
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 internal class ActualizerSymbolRemapper(private val expectActualMap: Map<IrSymbol, IrSymbol>) : SymbolRemapper {
@@ -74,7 +77,7 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: Map<IrSymbo
 }
 
 internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper, typeRemapper: TypeRemapper) :
-    DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper, SymbolRenamer.DEFAULT) {
+    DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) {
 
     // We shouldn't touch attributes, because Fir2Ir wouldn't set them to anything meaningful anyway.
     // So it would be better to have them as is, i.e. referring to `this`, not some random node removed from the tree
