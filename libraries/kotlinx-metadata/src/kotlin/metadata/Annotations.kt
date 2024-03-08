@@ -16,7 +16,7 @@ package kotlin.metadata
  * @property arguments Explicitly specified arguments to the annotation; does not include default values for annotation parameters
  * (specified in the annotation class declaration)
  */
-public class KmAnnotation(public val className: kotlin.metadata.ClassName, public val arguments: Map<String, KmAnnotationArgument>) {
+public class KmAnnotation(public val className: ClassName, public val arguments: Map<String, KmAnnotationArgument>) {
 
     /**
      * Checks if this KmAnnotation is equal to the [other].
@@ -33,7 +33,7 @@ public class KmAnnotation(public val className: kotlin.metadata.ClassName, publi
     override fun hashCode(): Int = 31 * className.hashCode() + arguments.hashCode()
 
     /**
-     * Returns string representation of this instance with `@` sign, [className], and [arguments] in parenthesis.
+     * Returns string representation of this instance with `@` sign, [className], and [arguments] in parentheses.
      */
     override fun toString(): String {
         val args = arguments.toList().joinToString { (k, v) -> "$k = $v" }

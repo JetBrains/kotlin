@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags as JF
  *
  * Returns `false` if the property is not declared in a companion object of some interface.
  */
-public var KmProperty.isMovedFromInterfaceCompanion: Boolean by BooleanFlagDelegate(KmProperty::jvmFlags, booleanFlag(JF.IS_MOVED_FROM_INTERFACE_COMPANION))
+public var KmProperty.isMovedFromInterfaceCompanion: Boolean by BooleanFlagDelegate(
+    KmProperty::jvmFlags,
+    booleanFlag(JF.IS_MOVED_FROM_INTERFACE_COMPANION)
+)
 
 /**
  * Applicable to an interface compiled with -Xjvm-default=all or all-compatibility.
@@ -35,7 +38,10 @@ public var KmProperty.isMovedFromInterfaceCompanion: Boolean by BooleanFlagDeleg
  * @see JvmDefaultWithCompatibility
  * @see JvmDefaultWithoutCompatibility
  */
-public var KmClass.hasMethodBodiesInInterface: Boolean by BooleanFlagDelegate(KmClass::jvmFlags, booleanFlag(JF.IS_COMPILED_IN_JVM_DEFAULT_MODE))
+public var KmClass.hasMethodBodiesInInterface: Boolean by BooleanFlagDelegate(
+    KmClass::jvmFlags,
+    booleanFlag(JF.IS_COMPILED_IN_JVM_DEFAULT_MODE)
+)
 
 /**
  * Indicates if an interface was compiled with -Xjvm-default=all-compatibility.
@@ -51,7 +57,10 @@ public var KmClass.hasMethodBodiesInInterface: Boolean by BooleanFlagDelegate(Km
  * @see JvmDefaultWithCompatibility
  * @see JvmDefaultWithoutCompatibility
  */
-public var KmClass.isCompiledInCompatibilityMode: Boolean by BooleanFlagDelegate(KmClass::jvmFlags, booleanFlag(JF.IS_COMPILED_IN_COMPATIBILITY_MODE))
+public var KmClass.isCompiledInCompatibilityMode: Boolean by BooleanFlagDelegate(
+    KmClass::jvmFlags,
+    booleanFlag(JF.IS_COMPILED_IN_COMPATIBILITY_MODE)
+)
 
 private fun booleanFlag(f: Flags.BooleanFlagField): FlagImpl =
     FlagImpl(f.offset, f.bitWidth, 1)

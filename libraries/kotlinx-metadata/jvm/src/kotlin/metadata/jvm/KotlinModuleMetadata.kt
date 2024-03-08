@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion as C
  * Represents the parsed metadata of a Kotlin JVM module file.
  *
  * To create an instance of [KotlinModuleMetadata], load the contents of the `.kotlin_module` file into a byte array
- * and call [KotlinModuleMetadata.read]. Then it is possible to transform the result into [KmModule] with [KotlinModuleMetadata.toKmModule].
+ * and call [KotlinModuleMetadata.read]. Then it is possible to get the result in the form of [KmModule] with [KotlinModuleMetadata.kmModule].
  *
  * `.kotlin_module` file is produced per Kotlin compilation, and contains auxiliary information, such as a map of all single- and multi-file facades ([KmModule.packageParts]),
- *  `@OptionalExpectation` declarations ([KmModule.optionalAnnotationClasses]), and module annotations ([KmModule.annotations).
+ *  and `@OptionalExpectation` declarations ([KmModule.optionalAnnotationClasses]).
  */
 @UnstableMetadataApi
 public class KotlinModuleMetadata public constructor(
@@ -124,7 +124,7 @@ public class KmModule {
     /**
      * `@OptionalExpectation`-annotated annotation classes declared in this module.
      * Such classes are not materialized to bytecode on JVM, but the Kotlin compiler stores their metadata in the module file on JVM,
-     * and loads it during compilation of dependent modules, in order to avoid reporting "unresolved reference" errors on usages.
+     * and loads it during compilation of dependent modules, to avoid reporting "unresolved reference" errors on usages.
      *
      * Multiplatform projects are an experimental feature of Kotlin, and their behavior and/or binary format
      * may change in a subsequent release.

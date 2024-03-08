@@ -124,7 +124,7 @@ public class KmClass : KmDeclarationContainer {
 }
 
 /**
- * Represents a Kotlin package fragment that contains top-level functions, properties and type aliases.
+ * Represents a Kotlin package fragment that contains top-level functions, properties, and type aliases.
  * Package fragments are produced from single file facades and multi-file class parts.
  * Note that a package fragment does not contain any classes, as classes are not a part of file facades and have their own metadata.
  */
@@ -270,7 +270,7 @@ public class KmProperty internal constructor(
      * Attributes of the getter of this property.
      * Attributes can be retrieved with extension properties, such as [KmPropertyAccessorAttributes.visibility] or [KmPropertyAccessorAttributes.isNotDefault].
      *
-     * Getter for property is always present, hence return type of this function is non-nullable.
+     * Getter for property is always present, therefore, the type of this property is non-nullable.
      */
     public val getter: KmPropertyAccessorAttributes = KmPropertyAccessorAttributes(getterFlags).also { _hasGetter = true }
 
@@ -278,7 +278,7 @@ public class KmProperty internal constructor(
      * Attributes of the setter of this property.
      * Attributes can be retrieved with extension properties, such as [KmPropertyAccessorAttributes.visibility] or [KmPropertyAccessorAttributes.isNotDefault].
      *
-     * Returns null if setter is absent, i.e. [KmProperty.isVar] is false.
+     * Returns null if setter is absent, i.e., [KmProperty.isVar] is false.
      *
      * Note that setting [KmProperty.isVar] to true does not automatically create [KmProperty.setter] and vice versa. This has to be done explicitly.
      */
@@ -352,12 +352,12 @@ public class KmTypeAlias internal constructor(
     public val typeParameters: MutableList<KmTypeParameter> = ArrayList(0)
 
     /**
-     * Underlying type of the type alias, i.e. the type in the right-hand side of the type alias declaration.
+     * Underlying type of the type alias, i.e., the type in the right-hand side of the type alias declaration.
      */
     public lateinit var underlyingType: KmType
 
     /**
-     * Expanded type of the type alias, i.e. the full expansion of the underlying type, where all type aliases are substituted
+     * Expanded type of the type alias, i.e., the full expansion of the underlying type, where all type aliases are substituted
      * with their expanded types. If no type aliases are used in the underlying type, the expanded type is equal to the underlying type.
      */
     public lateinit var expandedType: KmType
@@ -377,7 +377,7 @@ public class KmTypeAlias internal constructor(
 }
 
 /**
- * Represents a value parameter of a Kotlin constructor, function or property setter.
+ * Represents a value parameter of a Kotlin constructor, function, or property setter.
  *
  * Various value parameter attributes can be read and manipulated via extension properties,
  * such as [KmValueParameter.declaresDefaultValue].
@@ -407,7 +407,7 @@ public class KmValueParameter internal constructor(
 }
 
 /**
- * Represents a type parameter of a Kotlin class, function, property or type alias.
+ * Represents a type parameter of a Kotlin class, function, property, or type alias.
  *
  * Various type parameter attributes can be read and manipulated via extension properties,
  * such as [KmTypeParameter.isReified].
@@ -656,17 +656,17 @@ public enum class KmVersionRequirementLevel {
  */
 public enum class KmVersionRequirementVersionKind {
     /**
-     * Indicates that certain language version is required.
+     * Indicates that a certain language version is required.
      */
     LANGUAGE_VERSION,
 
     /**
-     * Indicates that certain compiler version is required.
+     * Indicates that a certain compiler version is required.
      */
     COMPILER_VERSION,
 
     /**
-     * Indicates that certain API version is required.
+     * Indicates that a certain API version is required.
      */
     API_VERSION,
 

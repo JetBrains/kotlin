@@ -307,7 +307,7 @@ public var KmProperty.isLateinit: Boolean by propertyBooleanFlag(FlagImpl(ProtoF
 /**
  * Indicates that the corresponding property has a constant value. On JVM, this flag allows an optimization similarly to
  * [KmProperty.hasAnnotations]: constant values of properties are written to the bytecode directly, and this flag can be used to avoid
- * reading the value from the bytecode in case there isn't one.
+ * reading the value from the bytecode in case it is not there.
  *
  * Not to be confused with [KmProperty.isConst], because `const` modifier is applicable only to properties on top-level and inside objects,
  * while property in a regular class can also have constant value.
@@ -366,7 +366,7 @@ public var KmPropertyAccessorAttributes.visibility: Visibility by visibilityDele
 public var KmPropertyAccessorAttributes.modality: Modality by modalityDelegate(KmPropertyAccessorAttributes::flags)
 
 /**
- * Indicates that the corresponding property accessor is not default, i.e. it has a body and/or annotations in the source code,
+ * Indicates that the corresponding property accessor is not default, i.e., it has a body and/or annotations in the source code,
  * or the property is delegated.
  */
 public var KmPropertyAccessorAttributes.isNotDefault: Boolean by propertyAccessorBooleanFlag(FlagImpl(ProtoFlags.IS_NOT_DEFAULT))
@@ -384,7 +384,7 @@ public var KmPropertyAccessorAttributes.isInline: Boolean by propertyAccessorBoo
 // --- TYPE & TYPE_PARAM
 
 /**
- * Indicates that the corresponding type is marked as nullable, i.e. has a question mark at the end of its notation.
+ * Indicates that the corresponding type is marked as nullable, i.e., has a question mark at the end of its notation.
  */
 public var KmType.isNullable: Boolean by typeBooleanFlag(FlagImpl(0, 1, 1))
 
@@ -460,4 +460,7 @@ public var KmEffectExpression.isNegated: Boolean by BooleanFlagDelegate(KmEffect
  * may change in a subsequent release.
  */
 @ExperimentalContracts
-public var KmEffectExpression.isNullCheckPredicate: Boolean by BooleanFlagDelegate(KmEffectExpression::flags, FlagImpl(ProtoFlags.IS_NULL_CHECK_PREDICATE))
+public var KmEffectExpression.isNullCheckPredicate: Boolean by BooleanFlagDelegate(
+    KmEffectExpression::flags,
+    FlagImpl(ProtoFlags.IS_NULL_CHECK_PREDICATE)
+)

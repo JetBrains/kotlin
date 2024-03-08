@@ -9,7 +9,6 @@ import kotlin.metadata.internal.*
 import kotlin.metadata.jvm.internal.*
 import kotlin.metadata.jvm.internal.JvmReadUtils.readMetadataImpl
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
-import java.util.*
 
 /**
  * Represents the parsed metadata of a Kotlin JVM class file. Entry point for parsing metadata on JVM.
@@ -17,7 +16,7 @@ import java.util.*
  * To create an instance of [KotlinClassMetadata], first obtain an instance of [Metadata] annotation on a class file,
  * and then call [KotlinClassMetadata.readStrict] or [KotlinClassMetadata.readLenient], depending on your application (see 'Working with different versions' section in the readme).
  *
- * [Metadata] annotation can be obtained either via reflection or created from data from a binary class file, using its constructor or helper function [kotlinx.metadata.jvm.Metadata].
+ * [Metadata] annotation can be obtained either via reflection or created from data from a binary class file, using its constructor or helper function [kotlin.metadata.jvm.Metadata].
  *
  * [KotlinClassMetadata] alone exposes only [KotlinClassMetadata.version] and [KotlinClassMetadata.flags];
  * to work with it, it is required to do a `when` over subclasses.
@@ -46,7 +45,7 @@ import java.util.*
  * }
  * ```
  *
- * > In this example, only introspection (reading) is performed. In such cases, to support more broad range of metadata versions, you may also use [readLenient] method.
+ * > In this example, only introspection (reading) is performed. In such cases, to support broader range of metadata versions, you may also use [readLenient] method.
  */
 public sealed class KotlinClassMetadata {
 
@@ -55,8 +54,11 @@ public sealed class KotlinClassMetadata {
      *
      * This method encodes all available data, including [version] and [flags].
      * Due to technical limitations, it is not possible to write the metadata when the specified version is less than 1.4.
+     * It is also not possible to write metadata with the version higher that [JvmMetadataVersion.LATEST_STABLE_SUPPORTED] + 1, as
+     * we do not know if a metadata format is the same for yet unreleased Kotlin compilers.
      *
-     * @throws IllegalArgumentException if metadata is malformed or metadata was read in lenient mode and cannot be written back or [version] of this instance is less than 1.4.
+     * @throws IllegalArgumentException if metadata is malformed, or metadata was read in lenient mode and cannot be written back,
+     * or [version] of this instance is less than 1.4, or [version] of this instance is too high.
      */
     public abstract fun write(): Metadata
 
@@ -155,7 +157,7 @@ public sealed class KotlinClassMetadata {
     }
 
     /**
-     * Represents metadata of a class file containing a synthetic class, e.g. a class for lambda, `$DefaultImpls` class for interface
+     * Represents metadata of a class file containing a synthetic class, e.g., a class for lambda, `$DefaultImpls` class for interface
      * method implementations, `$WhenMappings` class for optimized `when` over enums, etc.
      */
     public class SyntheticClass(
@@ -271,7 +273,7 @@ public sealed class KotlinClassMetadata {
     }
 
     /**
-     * Represents metadata of a class file containing a compiled multi-file class part, i.e. an internal class with method bodies
+     * Represents metadata of a class file containing a compiled multi-file class part, i.e., an internal class with method bodies
      * and their metadata, accessed only from the corresponding [facade][MultiFileClassFacade]. Just like [FileFacade], this metadata contains only top-level declarations,
      * as classes have their own one.
      *
@@ -357,7 +359,7 @@ public sealed class KotlinClassMetadata {
 
     /**
      * Collection of methods for reading and writing [KotlinClassMetadata],
-     * as well as metadata kind constants and [COMPATIBLE_METADATA_VERSION] constant.
+     * as well as metadata kind constants.
      */
     public companion object {
 
@@ -380,7 +382,7 @@ public sealed class KotlinClassMetadata {
          * Reads and parses the given annotation data of a Kotlin JVM class file and returns the correct type of [KotlinClassMetadata] encoded by
          * this annotation, if the metadata version is supported.
          *
-         * [annotationData] may be obtained reflectively, constructed manually or with helper [kotlinx.metadata.jvm.Metadata] function,
+         * [annotationData] may be obtained reflectively, constructed manually or with helper [kotlin.metadata.jvm.Metadata] function,
          * or equivalent [KotlinClassHeader] can be used.
          *
          * This method can read only supported metadata versions (see [JvmMetadataVersion.LATEST_STABLE_SUPPORTED] for definition).
@@ -399,16 +401,16 @@ public sealed class KotlinClassMetadata {
          * Reads and parses the given annotation data of a Kotlin JVM class file and returns the correct type of [KotlinClassMetadata] encoded by
          * this annotation. [KotlinClassMetadata] instances obtained from this method cannot be written.
          *
-         * [annotationData] may be obtained reflectively, constructed manually or with helper [kotlinx.metadata.jvm.Metadata] function,
+         * [annotationData] may be obtained reflectively, constructed manually or with helper [kotlin.metadata.jvm.Metadata] function,
          * or equivalent [KotlinClassHeader] can be used.
          *
          * This method makes best effort to read unsupported metadata versions.
-         * If metadata version is greater than [JvmMetadataVersion.LATEST_STABLE_SUPPORTED] + 1, this method still attempts to read it and may ignore parts of the metadata it does not understand.
+         * If [annotationData] version is greater than [JvmMetadataVersion.LATEST_STABLE_SUPPORTED] + 1, this method still attempts to read it and may ignore parts of the metadata it does not understand.
          * Keep in mind that this method will still throw an exception if metadata is changed in an unpredictable way.
          * Because obtained metadata can be incomplete, its [KotlinClassMetadata.write] method will throw an exception.
          * This method still cannot read metadata produced by pre-1.0 compilers.
          *
-         * @throws IllegalArgumentException if the metadata version is that of Kotlin 1.0 or metadata format has been changed in an unpredictable way and reading of incompatible metadata is not possible
+         * @throws IllegalArgumentException if the metadata version is that of Kotlin 1.0, or the metadata format has been changed in an unpredictable way and reading of incompatible metadata is not possible
          *
          * @see JvmMetadataVersion.LATEST_STABLE_SUPPORTED
          */
@@ -445,7 +447,7 @@ public sealed class KotlinClassMetadata {
         public const val FILE_FACADE_KIND: Int = 2
 
         /**
-         * A class file kind signifying that the corresponding class file is synthetic, e.g. it is a class for lambda, `$DefaultImpls` class
+         * A class file kind signifying that the corresponding class file is synthetic, e.g., it is a class for lambda, `$DefaultImpls` class
          * for interface method implementations, `$WhenMappings` class for optimized `when` over enums, etc.
          *
          * @see Metadata.kind
@@ -462,7 +464,7 @@ public sealed class KotlinClassMetadata {
         public const val MULTI_FILE_CLASS_FACADE_KIND: Int = 4
 
         /**
-         * A class file kind signifying that the corresponding class file is a compiled multi-file class part, i.e. an internal class
+         * A class file kind signifying that the corresponding class file is a compiled multi-file class part, i.e., an internal class
          * with method bodies and their metadata, accessed only from the corresponding facade.
          *
          * @see Metadata.kind
