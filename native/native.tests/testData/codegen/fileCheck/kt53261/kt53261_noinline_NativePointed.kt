@@ -8,7 +8,7 @@ import kotlinx.cinterop.*
 
 // This test is useless in debug mode.
 // TODO(KT-59288): add ability to ignore tests in debug mode
-// CHECK-DEBUG-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-DEBUG-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 
 @kotlinx.cinterop.ExperimentalForeignApi
 fun box(): String = memScoped {
