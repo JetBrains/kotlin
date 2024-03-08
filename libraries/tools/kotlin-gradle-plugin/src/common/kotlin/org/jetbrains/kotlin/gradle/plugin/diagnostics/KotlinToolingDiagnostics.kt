@@ -867,6 +867,12 @@ object KotlinToolingDiagnostics {
             )
         }
     }
+
+    object WasmStabilityWarning : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(): ToolingDiagnostic =
+            build("New 'wasm' target is Work-in-Progress and is subject to change without notice. " +
+                        "Please report encountered issues to https://kotl.in/issue")
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

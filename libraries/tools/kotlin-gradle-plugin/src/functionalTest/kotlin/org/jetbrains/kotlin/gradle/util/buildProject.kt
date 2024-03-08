@@ -139,3 +139,6 @@ fun Project.enableDependencyVerification(enabled: Boolean = true) {
     else DependencyVerificationMode.OFF
 }
 
+fun Project.enableWasmStabilityNoWarn(enabled: Boolean = true) {
+    propertiesExtension.set("kotlin.wasm.stability.nowarn", enabled.toString())
+}
