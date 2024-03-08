@@ -271,6 +271,7 @@ sealed interface TestRunCheck {
                     "--input-file",
                     fileCheckDump.absolutePath,
                     "--check-prefixes", prefixes,
+                    "--allow-unused-prefixes",
                     "--allow-deprecated-dag-overlap" // TODO specify it via new test directive for `function_attributes_at_callsite.kt`
                 )
             } catch (t: Throwable) {

@@ -26,7 +26,7 @@ fun callBar(f: Boolean): ULong {
 }
 // CHECK: ret i64
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     val resultFoo = foo()
     val resultBar = callBar(false)
