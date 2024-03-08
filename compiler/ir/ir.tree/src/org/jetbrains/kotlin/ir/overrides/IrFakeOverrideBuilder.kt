@@ -104,8 +104,14 @@ class IrFakeOverrideBuilder(
         val allFromCurrentByName = allFromCurrent.groupBy { it.name }
 
         allFromSuperByName.forEach { (name, superMembers) ->
+            val isIntersectionOverrideForbiddenByGenericClash: Boolean = when {
+                superMembers.size <= 1 -> false // fast-path. Not important in that case
+                !strategy.isGenericClashFromSameSupertypeAllowed -> false // workaround is disabled
+                else -> superMembers.all { it.original.parent == superMembers[0].original.parent }
+            }
+            val isIntersectionOverrideForbidden = isStaticMembers || isIntersectionOverrideForbiddenByGenericClash
             generateOverridesInFunctionGroup(
-                superMembers, allFromCurrentByName[name] ?: emptyList(), clazz, oldSignatures, isStaticMembers
+                superMembers, allFromCurrentByName[name] ?: emptyList(), clazz, oldSignatures, isIntersectionOverrideForbidden
             )
         }
 
@@ -162,7 +168,7 @@ class IrFakeOverrideBuilder(
         membersFromCurrent: List<IrOverridableMember>,
         current: IrClass,
         compatibilityMode: Boolean,
-        isStaticMembers: Boolean,
+        isIntersectionOverrideForbidden: Boolean,
     ) {
         val notOverridden = membersFromSupertypes.toMutableSet()
 
@@ -172,7 +178,7 @@ class IrFakeOverrideBuilder(
         }
 
         val addedFakeOverrides = mutableListOf<IrOverridableMember>()
-        if (isStaticMembers) {
+        if (isIntersectionOverrideForbidden) {
             for (member in notOverridden) {
                 createAndBindFakeOverride(listOf(member), current, addedFakeOverrides, compatibilityMode)
             }

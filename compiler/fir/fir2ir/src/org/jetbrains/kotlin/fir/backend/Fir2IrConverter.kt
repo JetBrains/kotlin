@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFile
 
 class Fir2IrConverter(
@@ -730,7 +731,10 @@ class Fir2IrConverter(
                 { irBuiltins ->
                     IrFakeOverrideBuilder(
                         typeContextProvider(irBuiltins),
-                        Fir2IrFakeOverrideStrategy(friendModulesMap(session)),
+                        Fir2IrFakeOverrideStrategy(
+                            friendModulesMap(session),
+                            isGenericClashFromSameSupertypeAllowed = session.moduleData.platform.isJvm()
+                        ),
                         fir2IrExtensions.externalOverridabilityConditions
                     )
                 },

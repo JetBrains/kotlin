@@ -38,6 +38,17 @@ abstract class FakeOverrideBuilderStrategy(
     private val friendModules: Map<String, Collection<String>>,
     private val unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
 ) {
+
+    /**
+     * This flag enables workaround for KT-65504 and KT-42020.
+     *
+     * If there are several fake overrides in generic class, which becomes equivalent after
+     * generic parameter substitution in subtype, several separate equivalent fake overrides were generated
+     * because of incorrect optimization. This behavior existed for a long time, and would require some
+     * additional effort to deprecate, so we keep the ability to keep it where reasonable.
+     */
+    open val isGenericClashFromSameSupertypeAllowed: Boolean = false
+
     /**
      * Creates a fake override for [member] from [superType] to be added to the class [clazz] or returns null,
      * if no fake override should be created for this member

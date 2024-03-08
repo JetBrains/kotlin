@@ -1,9 +1,6 @@
 // IGNORE_BACKEND_K2: JS_IR
 // IGNORE_BACKEND: NATIVE
 
-// IGNORE_BACKEND_K2: JVM_IR
-// FIR status: KT-65504 IrFakeOverrideBuilder: incorrect runtime behavior in case a substitution fake override clashes with another fake override
-
 // MODULE: lib
 // FILE: a.kt
 package a
