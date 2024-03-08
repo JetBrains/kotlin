@@ -48,7 +48,7 @@ object CliExtraDiagnosticsProvider {
             .ifEmpty { return Diagnostics.EMPTY }
 
         val context = (LightClassGenerationSupport.getInstance(project) as CliLightClassGenerationSupport).context
-        val (_, _, diagnostics) = extraJvmDiagnosticsFromBackend(
+        val (_, diagnostics) = extraJvmDiagnosticsFromBackend(
             facadeFqName.parent(),
             facadeCollection,
             ClassFilterForFacade,

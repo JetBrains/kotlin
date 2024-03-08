@@ -33,7 +33,7 @@ internal class LightClassDataProviderForClassOrObject(
         //force resolve companion for light class generation
         cliSupport.traceHolder.bindingContext.get(BindingContext.CLASS, classOrObject)?.companionObjectDescriptor
 
-        val (_, bindingContext, diagnostics) = extraJvmDiagnosticsFromBackend(
+        val (bindingContext, diagnostics) = extraJvmDiagnosticsFromBackend(
             packageFqName,
             listOf(file),
             ClassFilterForClassOrObject(classOrObject),

@@ -5,38 +5,22 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler.builder
 
-import com.intellij.openapi.diagnostic.Logger
-import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
-import com.intellij.psi.stubs.StubElement
-import com.intellij.util.containers.Stack
+import org.jetbrains.kotlin.codegen.AbstractClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.org.objectweb.asm.ClassVisitor
+import org.jetbrains.org.objectweb.asm.ClassWriter
 
-class KotlinLightClassBuilderFactory(private val javaFileStub: PsiJavaFileStub) : ClassBuilderFactory {
-    private val stubStack = Stack<StubElement<PsiElement>>().apply {
-        @Suppress("UNCHECKED_CAST")
-        push(javaFileStub as StubElement<PsiElement>)
-    }
-
+object KotlinLightClassBuilderFactory : ClassBuilderFactory {
     override fun getClassBuilderMode(): ClassBuilderMode = ClassBuilderMode.LIGHT_CLASSES
-    override fun newClassBuilder(origin: JvmDeclarationOrigin) =
-        StubClassBuilder(stubStack, javaFileStub)
+    override fun newClassBuilder(origin: JvmDeclarationOrigin): ClassBuilder =
+        object : AbstractClassBuilder() {
+            override fun getVisitor(): ClassVisitor = ClassWriter(0)
+        }
 
     override fun asText(builder: ClassBuilder) = throw UnsupportedOperationException("asText is not implemented")
     override fun asBytes(builder: ClassBuilder) = throw UnsupportedOperationException("asBytes is not implemented")
     override fun close() {}
-
-    fun result(): PsiJavaFileStub {
-        val pop = stubStack.pop()
-        if (pop !== javaFileStub) {
-            LOG.error("Unbalanced stack operations: $pop")
-        }
-
-        return javaFileStub
-    }
 }
-
-private val LOG = Logger.getInstance(KotlinLightClassBuilderFactory::class.java)

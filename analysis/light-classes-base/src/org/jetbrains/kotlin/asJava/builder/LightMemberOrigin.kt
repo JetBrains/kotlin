@@ -10,23 +10,9 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
-interface LightElementOrigin {
-    val originalElement: PsiElement?
-    val originKind: JvmDeclarationOriginKind?
-
-    object None : LightElementOrigin {
-        override val originalElement: PsiElement?
-            get() = null
-        override val originKind: JvmDeclarationOriginKind?
-            get() = null
-
-        override fun toString() = "NONE"
-    }
-}
-
-interface LightMemberOrigin : LightElementOrigin {
-    override val originalElement: KtDeclaration?
-    override val originKind: JvmDeclarationOriginKind
+interface LightMemberOrigin {
+    val originalElement: KtDeclaration?
+    val originKind: JvmDeclarationOriginKind
     val parametersForJvmOverloads: List<KtParameter?>? get() = null
     val auxiliaryOriginalElement: KtDeclaration? get() = null
 
@@ -58,8 +44,4 @@ data class LightMemberOriginForDeclaration(
     override fun copy(): LightMemberOrigin {
         return LightMemberOriginForDeclaration(originalElement.copy() as KtDeclaration, originKind, parametersForJvmOverloads)
     }
-}
-
-data class DefaultLightElementOrigin(override val originalElement: PsiElement?) : LightElementOrigin {
-    override val originKind: JvmDeclarationOriginKind? get() = null
 }
