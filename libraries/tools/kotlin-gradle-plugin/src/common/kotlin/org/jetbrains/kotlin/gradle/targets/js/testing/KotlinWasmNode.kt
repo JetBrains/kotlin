@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing
 
-import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
@@ -20,41 +18,33 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.writeWasmUnitTestRunner
-import org.jetbrains.kotlin.gradle.utils.getValue
-import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
-import java.nio.file.Path
 
-internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJsTestFramework {
+internal class KotlinWasmNode(kotlinJsTest: KotlinJsTest) : KotlinJsTestFramework {
     override val settingsState: String = "KotlinWasmNode"
+
+    private val testPath = kotlinJsTest.path
+
     @Transient
     override val compilation: KotlinJsIrCompilation = kotlinJsTest.compilation
 
-    @Transient
-    private val target: KotlinJsIrTarget = compilation.target as KotlinJsIrTarget
+    private val projectLayout = kotlinJsTest.project.layout
 
-    @Transient
-    private val project: Project = target.project
-
-    private val projectLayout = project.layout
-
-    private val npmProjectDir by project.provider { compilation.npmProject.dir }
-
-    private val wasmTargetType: KotlinWasmTargetType? = target.wasmTargetType
-
-    override val workingDir: Provider<Directory>
-        get() = if (wasmTargetType != KotlinWasmTargetType.WASI) {
-            npmProjectDir
-        } else {
-            projectLayout.dir(kotlinJsTest.inputFileProperty.asFile.map { it.parentFile })
+    override val workingDir: Provider<Directory> =
+        (compilation.target as KotlinJsIrTarget).wasmTargetType.let { wasmTargetType ->
+            if (wasmTargetType != KotlinWasmTargetType.WASI) {
+                compilation.npmProject.dir
+            } else {
+                projectLayout.dir(kotlinJsTest.inputFileProperty.asFile.map { it.parentFile })
+            }
         }
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
         forkOptions: ProcessForkOptions,
         nodeJsArgs: MutableList<String>,
-        debug: Boolean
+        debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec {
-        val testRunnerFile = writeWasmUnitTestRunner(task.inputFileProperty.get().asFile)
+        val testRunnerFile = writeWasmUnitTestRunner(workingDir.get().asFile.parentFile, task.inputFileProperty.get().asFile)
 
         val clientSettings = TCServiceMessagesClientSettings(
             task.name,
@@ -87,5 +77,5 @@ internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJs
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = emptySet()
 
-    override fun getPath(): String = "${kotlinJsTest.path}:kotlinTestFrameworkStub"
+    override fun getPath(): String = "$testPath:kotlinTestFrameworkStub"
 }

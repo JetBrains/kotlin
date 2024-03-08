@@ -24,13 +24,13 @@ class KotlinKarmaTest {
 
         assertEquals(
             """
-            import( /* webpackMode: "eager" */ "../kotlin/main.mjs")
-                .then((exports) => {
-                    exports.default.startUnitTests();
-                    window.__karma__.loaded();
-                }, (reason) => {
-                    window.__karma__.error("Problem with loading", void 0, void 0, void 0, reason)
-                })
+            import { startUnitTests } from "../kotlin/main.mjs"
+            try {
+                startUnitTests()
+                window.__karma__.loaded();
+            } catch (e) {
+                window.__karma__.error("Problem with loading", void 0, void 0, void 0, e)
+            }
             """.trimIndent(),
             loadWasm.readText().trimIndent()
         )
