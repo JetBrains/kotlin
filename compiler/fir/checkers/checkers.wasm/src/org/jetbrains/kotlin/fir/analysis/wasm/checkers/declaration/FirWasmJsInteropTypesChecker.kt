@@ -61,8 +61,8 @@ object FirWasmJsInteropTypesChecker : FirBasicDeclarationChecker(MppCheckerKind.
                 reporter.reportOn(
                     source,
                     FirWasmErrors.WRONG_JS_INTEROP_TYPE,
-                    typePositionDescription,
                     this,
+                    typePositionDescription,
                     context
                 )
             }
