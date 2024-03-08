@@ -100,68 +100,6 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         KotlinTestUtils.assertEqualsToFile(goldenData, compilationResult.toOutput())
     }
 
-    private fun doBuildObjCFrameworkWithNameCollisions(rootDir: File, additionalOptions: List<String>): TestCompilationResult<out TestCompilationArtifact.ObjCFramework> {
-        Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
-
-        val settings = testRunSettings
-        val lib1 = compileLibrary(settings, rootDir.resolve("lib1.kt")).assertSuccess().resultingArtifact
-        val lib2 = compileLibrary(settings, rootDir.resolve("lib2.kt")).assertSuccess().resultingArtifact
-
-        val freeCompilerArgs = TestCompilerArgs(
-            listOf(
-                "-Xinclude=${lib1.path}",
-                "-Xinclude=${lib2.path}"
-            ) + additionalOptions
-        )
-        val expectedArtifact = TestCompilationArtifact.ObjCFramework(buildDir, "testObjCExportDiagnostics")
-
-        return ObjCFrameworkCompilation(
-            settings,
-            freeCompilerArgs,
-            sourceModules = emptyList(),
-            dependencies = emptyList(),
-            expectedArtifact
-        ).result
-    }
-
-    internal fun compileLibrary(
-        settings: Settings,
-        source: File,
-        freeCompilerArgs: List<String> = emptyList(),
-        dependencies: List<TestCompilationArtifact.KLIB> = emptyList(),
-    ): TestCompilationResult<out TestCompilationArtifact.KLIB> {
-        val testCase = generateTestCaseWithSingleModule(source, TestCompilerArgs(freeCompilerArgs))
-        val compilation = LibraryCompilation(
-            settings = settings,
-            freeCompilerArgs = testCase.freeCompilerArgs,
-            sourceModules = testCase.modules,
-            dependencies = dependencies.map { it.asLibraryDependency() },
-            expectedArtifact = getLibraryArtifact(testCase, buildDir)
-        )
-        return compilation.result
-    }
-
-    internal fun TestCompilationResult<*>.toOutput(): String {
-        check(this is TestCompilationResult.ImmediateResult<*>) { this }
-        val loggedData = this.loggedData
-
-        // Debug output for KT-64822 investigation
-        println("Compiler logged data:\n$loggedData")
-
-        check(loggedData is LoggedData.CompilationToolCall) { loggedData::class }
-        return normalizeOutput(loggedData.toolOutput, loggedData.exitCode)
-    }
-
-    private fun normalizeOutput(output: String, exitCode: ExitCode): String {
-        val dir = "compiler/testData/compileKotlinAgainstCustomBinaries/"
-        return AbstractCliTest.getNormalizedCompilerOutput(
-            output,
-            exitCode,
-            dir,
-            dir
-        )
-    }
-
     @Test
     fun testLoggingWarningWithDistCache() {
         val rootDir = File("native/native.tests/testData/compilerOutput/runtimeLogging")
@@ -212,6 +150,30 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
 
         KotlinTestUtils.assertEqualsToFile(goldenData, compilationResult.toOutput())
     }
+
+    private fun doBuildObjCFrameworkWithNameCollisions(rootDir: File, additionalOptions: List<String>): TestCompilationResult<out TestCompilationArtifact.ObjCFramework> {
+        Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
+
+        val settings = testRunSettings
+        val lib1 = compileLibrary(settings, rootDir.resolve("lib1.kt")).assertSuccess().resultingArtifact
+        val lib2 = compileLibrary(settings, rootDir.resolve("lib2.kt")).assertSuccess().resultingArtifact
+
+        val freeCompilerArgs = TestCompilerArgs(
+            listOf(
+                "-Xinclude=${lib1.path}",
+                "-Xinclude=${lib2.path}"
+            ) + additionalOptions
+        )
+        val expectedArtifact = TestCompilationArtifact.ObjCFramework(buildDir, "testObjCExportDiagnostics")
+
+        return ObjCFrameworkCompilation(
+            settings,
+            freeCompilerArgs,
+            sourceModules = emptyList(),
+            dependencies = emptyList(),
+            expectedArtifact
+        ).result
+    }
 }
 
 @Suppress("JUnitTestCaseWithNoTests")
@@ -225,3 +187,41 @@ class ClassicCompilerOutputTest : CompilerOutputTestBase()
 @TestDataPath("\$PROJECT_ROOT")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 class FirCompilerOutputTest : CompilerOutputTestBase()
+
+internal fun TestCompilationResult<*>.toOutput(): String {
+    check(this is TestCompilationResult.ImmediateResult<*>) { this }
+    val loggedData = this.loggedData
+
+    // Debug output for KT-64822 investigation
+    println("Compiler logged data:\n$loggedData")
+
+    check(loggedData is LoggedData.CompilationToolCall) { loggedData::class }
+    return normalizeOutput(loggedData.toolOutput, loggedData.exitCode)
+}
+
+private fun normalizeOutput(output: String, exitCode: ExitCode): String {
+    val dir = "compiler/testData/compileKotlinAgainstCustomBinaries/"
+    return AbstractCliTest.getNormalizedCompilerOutput(
+        output,
+        exitCode,
+        dir,
+        dir
+    )
+}
+
+internal fun AbstractNativeSimpleTest.compileLibrary(
+    settings: Settings,
+    source: File,
+    freeCompilerArgs: List<String> = emptyList(),
+    dependencies: List<TestCompilationArtifact.KLIB> = emptyList(),
+): TestCompilationResult<out TestCompilationArtifact.KLIB> {
+    val testCase = generateTestCaseWithSingleModule(source, TestCompilerArgs(freeCompilerArgs))
+    val compilation = LibraryCompilation(
+        settings = settings,
+        freeCompilerArgs = testCase.freeCompilerArgs,
+        sourceModules = testCase.modules,
+        dependencies = dependencies.map { it.asLibraryDependency() },
+        expectedArtifact = getLibraryArtifact(testCase, buildDir)
+    )
+    return compilation.result
+}
