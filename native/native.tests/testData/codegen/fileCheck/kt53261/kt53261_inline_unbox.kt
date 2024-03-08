@@ -6,7 +6,7 @@ import kotlinx.cinterop.*
 
 val arr: Array<String> = arrayOf("1")
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 @kotlinx.cinterop.ExperimentalForeignApi
 fun box(): String {
     println(arr.size.toByte() == arr[0].toByte())
@@ -62,11 +62,11 @@ fun box(): String {
 // CHECK-OPT-NOT: {{call|invoke}} double @"kfun:kotlin#<Double-unbox>
 // CHECK-OPT-NOT: {{call|invoke}} float @"kfun:kotlin#<Float-unbox>
 
-// CHECK-OPT-NOT: {{call|invoke}} i8* @"kfun:kotlin.native.internal#<NativePtr-unbox>
+// CHECK-OPT-NOT: {{call|invoke}} ptr @"kfun:kotlin.native.internal#<NativePtr-unbox>
 // CHECK-OPT-NOT: {{call|invoke}} i32 @"kfun:kotlin.native.concurrent#<Future-unbox>
 // CHECK-OPT-NOT: {{call|invoke}} i32 @"kfun:kotlin.native.concurrent#<Worker-unbox>
 // CHECK-OPT-NOT: {{call|invoke}} <4 x float> @"kfun:kotlin.native#<Vector128-unbox>
-// CHECK-OPT-NOT: {{call|invoke}} %struct.ObjHeader* @"kfun:kotlin#<Result-unbox>
+// CHECK-OPT-NOT: {{call|invoke}} ptr @"kfun:kotlin#<Result-unbox>
 
 // CHECK-LABEL: epilogue:
 // On APPLE targets, generated functions <T>ToNSNumber may contain non-converted invocations of unbox functions.
