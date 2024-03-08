@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
 import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType.VALUE_PARAMETER
 import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
+import org.jetbrains.kotlin.load.java.JavaDefaultQualifiers
 import org.jetbrains.kotlin.load.java.JavaTypeQualifiersByElementType
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
@@ -793,6 +794,14 @@ private class EnhancementSignatureParts(
 
     override val TypeParameterMarker.isFromJava: Boolean
         get() = (this as ConeTypeParameterLookupTag).symbol.fir.origin is FirDeclarationOrigin.Java
+
+    override fun getDefaultNullability(
+        referencedParameterBoundsNullability: NullabilityQualifierWithMigrationStatus?,
+        defaultTypeQualifiers: JavaDefaultQualifiers?
+    ): NullabilityQualifierWithMigrationStatus? {
+        return referencedParameterBoundsNullability?.takeIf { it.qualifier == NullabilityQualifier.NOT_NULL }
+            ?: defaultTypeQualifiers?.nullabilityQualifier
+    }
 }
 
 class FirEnhancedSymbolsStorage(private val cachesFactory: FirCachesFactory) : FirSessionComponent {
