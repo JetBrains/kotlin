@@ -61,7 +61,7 @@ fun <T : DecoratedExternalKotlinCompilation> DecoratedExternalKotlinTarget.creat
                 descriptor.friendArtifactResolver?.let { declaredResolver ->
                     DefaultKotlinCompilationFriendPathsResolver.FriendArtifactResolver { compilation ->
                         @Suppress("unchecked_cast")
-                        declaredResolver.resolveFriendPaths(compilation as T)
+                        declaredResolver.resolveFriendPaths(compilation.decoratedInstance as T)
                     }
                 }
             )

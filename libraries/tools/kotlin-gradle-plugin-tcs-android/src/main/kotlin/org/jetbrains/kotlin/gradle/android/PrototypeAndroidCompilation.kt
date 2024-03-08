@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.android
 
+import org.gradle.api.file.ConfigurableFileCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
@@ -27,5 +28,7 @@ class PrototypeAndroidCompilation(delegate: Delegate) : DecoratedExternalKotlinC
         get() = super.compilerOptions as HasCompilerOptions<KotlinJvmCompilerOptions>
 
     var androidCompilationSpecificStuff = 10
+
+    val extraFriendPaths: ConfigurableFileCollection = project.files()
 }
 
