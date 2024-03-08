@@ -53,10 +53,6 @@ abstract class AbstractXCTestExecutor(
         return stdout.toString("UTF-8").trim()
     }
 
-    private val frameworkPath: String by lazy {
-        "${targetPlatform()}/Developer/Library/Frameworks/"
-    }
-
     private val xcTestExecutablePath: String by lazy {
         "${targetPlatform()}/Developer/Library/Xcode/Agents/xctest"
     }
@@ -67,7 +63,6 @@ abstract class AbstractXCTestExecutor(
 
         val response = executor.execute(
             request.copying {
-                environment["DYLD_FRAMEWORK_PATH"] = frameworkPath
                 environment["KotlinNativeTestArgs"] = bundle.args.joinToString(" ")
                 executableAbsolutePath = xcTestExecutablePath
                 args.clear()
