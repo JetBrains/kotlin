@@ -81,16 +81,15 @@ fun Project.configureCommonPublicationSettingsForGradle(
                 .configureEach {
                     configureKotlinPomAttributes(project)
                     if (sbom && project.name !in internalPlugins) {
-                        val buildDirectory = project.layout.buildDirectory
                         if (name == "pluginMaven") {
                             val sbomTask = configureSbom(target = "PluginMaven")
-                            artifact(buildDirectory.file("spdx/PluginMaven/PluginMaven.spdx.json")) {
+                            artifact(sbomTask) {
                                 extension = "spdx.json"
                                 builtBy(sbomTask)
                             }
                         } else if (name == "Main") {
                             val sbomTask = configureSbom()
-                            artifact(buildDirectory.file("spdx/MainPublication/MainPublication.spdx.json")) {
+                            artifact(sbomTask) {
                                 extension = "spdx.json"
                                 builtBy(sbomTask)
                             }

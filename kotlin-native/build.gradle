@@ -492,7 +492,7 @@ def sbomBundleRegular = SbomKt.configureSbom(project, "BundleRegular", "Kotlin/N
 def sbomBundleRegularForPublish = tasks.register("sbomBundleRegularForPublish", Copy) {
     dependsOn(sbomBundleRegular)
     destinationDir = file("$buildDir/spdx/regular")
-    from(sbomBundleRegular.map { it.outputDirectory.file("BundleRegular.spdx.json") }) {
+    from(sbomBundleRegular) {
         rename(".*", "kotlin-native-${HostManager.platformName()}-${kotlinVersion}.spdx.json")
     }
 }
@@ -520,7 +520,7 @@ def sbomBundlePrebuilt = SbomKt.configureSbom(project,
 def sbomBundlePrebuiltForPublish = tasks.register("sbomBundlePrebuiltForPublish", Copy) {
     dependsOn(sbomBundlePrebuilt)
     destinationDir = file("$buildDir/spdx/prebuilt")
-    from(sbomBundlePrebuilt.map { it.outputDirectory.file("BundlePrebuilt.spdx.json") }) {
+    from(sbomBundlePrebuilt) {
         rename(".*", "kotlin-native-prebuilt-${HostManager.platformName()}-${kotlinVersion}.spdx.json")
     }
 }
@@ -806,7 +806,7 @@ publishing {
                     classifier = HostManager.platformName()
                     extension = (PlatformInfo.isWindows()) ? 'zip' : 'tar.gz'
                 }
-                mvn.artifact(sbomBundleRegular.map { it.outputDirectory.file("BundleRegular.spdx.json") }) {
+                mvn.artifact(sbomBundleRegular) {
                     classifier = HostManager.platformName()
                     extension = "spdx.json"
                 }
@@ -847,7 +847,7 @@ publishing {
                     classifier = HostManager.platformName()
                     extension = (PlatformInfo.isWindows()) ? 'zip' : 'tar.gz'
                 }
-                mvn.artifact(sbomBundlePrebuilt.map { it.outputDirectory.file("BundlePrebuilt.spdx.json") }) {
+                mvn.artifact(sbomBundlePrebuilt) {
                     classifier = HostManager.platformName()
                     extension = "spdx.json"
                 }
