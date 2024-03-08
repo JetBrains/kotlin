@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
-import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
-import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestRunnerType
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.DisabledTestsIfProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCases
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
@@ -48,51 +45,3 @@ class FirKotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
     @TestFactory
     fun default() = dynamicTestCase(TestCaseId.Named("default"))
 }
-
-// region kotlin-test with XCTest runner
-@Tag("kotlin-test")
-@Tag("xctest")
-@DisabledTestsIfProperty(
-    sourceLocations = ["*.kt"],
-    property = ClassLevelProperty.XCTEST_FRAMEWORK,
-    propertyValue = "" // Framework location is not set
-)
-@PredefinedTestCases(
-    TC(
-        name = "test-ios-launchTests",
-        runnerType = TestRunnerType.DEFAULT,
-        freeCompilerArgs = [STDLIB_IS_A_FRIEND],
-        sourceLocations = ["libraries/kotlin.test/common/src/test/kotlin/**.kt"]
-    )
-)
-@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
-@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "5m")
-class KotlinTestLibraryTestWithXCTest : AbstractNativeBlackBoxTest() {
-    @TestFactory
-    fun default() = dynamicTestCase(TestCaseId.Named("test-ios-launchTests"))
-}
-
-@Tag("kotlin-test")
-@Tag("frontend-fir")
-@Tag("xctest")
-@DisabledTestsIfProperty(
-    sourceLocations = ["*.kt"],
-    property = ClassLevelProperty.XCTEST_FRAMEWORK,
-    propertyValue = "" // Framework location is not set
-)
-@PredefinedTestCases(
-    TC(
-        name = "test-ios-launchTests",
-        runnerType = TestRunnerType.DEFAULT,
-        freeCompilerArgs = [STDLIB_IS_A_FRIEND],
-        sourceLocations = ["libraries/kotlin.test/common/src/test/kotlin/**.kt"]
-    )
-)
-@FirPipeline
-@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
-@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "5m")
-class FirKotlinTestLibraryTestWithXCTest : AbstractNativeBlackBoxTest() {
-    @TestFactory
-    fun default() = dynamicTestCase(TestCaseId.Named("test-ios-launchTests"))
-}
-// endregion

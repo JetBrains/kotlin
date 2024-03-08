@@ -14,8 +14,12 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.MutedOption
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.RunnerWithExecutor
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.NoopTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.Runner
+import org.jetbrains.kotlin.native.executors.ExecuteRequest
+import org.jetbrains.kotlin.native.executors.RunProcessResult
+import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -329,11 +333,33 @@ internal enum class CInterfaceMode(val compilerFlag: String) {
     NONE("-Xbinary=cInterfaceMode=none")
 }
 
-/**
- * XCTestRunner setting.
- *
- * @param frameworksPath is a linker path to the developer frameworks location.
- */
-internal class XCTestRunner(val frameworksPath: String) {
-    val isEnabled: Boolean = frameworksPath.isNotEmpty()
+internal class XCTestRunner(val isEnabled: Boolean, private val nativeTargets: KotlinNativeTargets) {
+    /**
+     * Path to the developer frameworks directory.
+     */
+    val frameworksPath: String by lazy {
+        "${targetPlatform()}/Developer/Library/Frameworks/"
+    }
+
+    private fun targetPlatform(): String {
+        val xcodeTarget = when (val target = nativeTargets.testTarget) {
+            KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64 -> "macosx"
+            KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64 -> "iphonesimulator"
+            KonanTarget.IOS_ARM64 -> "iphoneos"
+            else -> error("Target $target is not supported buy the executor")
+        }
+
+        val result = try {
+            runProcess(
+                "/usr/bin/xcrun",
+                "--sdk",
+                xcodeTarget,
+                "--show-sdk-platform-path"
+            )
+        } catch (t: Throwable) {
+            throw IllegalStateException("Failed to run /usr/bin/xcrun process", t)
+        }
+
+        return result.stdout.trim()
+    }
 }
