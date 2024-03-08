@@ -182,7 +182,6 @@ class ClassicFrontendFacade(
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun performJvmModuleResolve(
         module: TestModule,
         project: Project,
@@ -197,7 +196,7 @@ class ClassicFrontendFacade(
         val moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(project)
         configuration.getList(JVMConfigurationKeys.FRIEND_PATHS).forEach { moduleVisibilityManager.addFriendPath(it) }
 
-        val moduleTrace = NoScopeRecordCliBindingTrace()
+        val moduleTrace = NoScopeRecordCliBindingTrace(project)
         if (module.dependsOnDependencies.isEmpty()) {
             return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 project,
@@ -253,7 +252,6 @@ class ClassicFrontendFacade(
         return AnalysisResult.success(moduleTrace.bindingContext, moduleDescriptor)
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun performJsModuleResolve(
         project: Project,
         configuration: CompilerConfiguration,
@@ -310,7 +308,6 @@ class ClassicFrontendFacade(
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun performJsIrModuleResolve(
         module: TestModule,
         project: Project,
@@ -393,7 +390,7 @@ class ClassicFrontendFacade(
         friendsDescriptors: List<ModuleDescriptorImpl>,
         dependsOnDescriptors: List<ModuleDescriptorImpl>,
     ): AnalysisResult {
-        val moduleTrace = NoScopeRecordCliBindingTrace()
+        val moduleTrace = NoScopeRecordCliBindingTrace(project)
         val runtimeKlibsNames = NativeEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
         val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
         val runtimeKlibs = loadKlib(nativeFactories, runtimeKlibsNames, configuration).mapNotNull { it as? ModuleDescriptorImpl }
@@ -477,7 +474,6 @@ class ClassicFrontendFacade(
         override val refinesModuleInfos: List<ModuleInfo> = _moduleInfos.filter { it.module in module.allExpectedByModules }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun createModuleContext(
         module: TestModule,
         project: Project,

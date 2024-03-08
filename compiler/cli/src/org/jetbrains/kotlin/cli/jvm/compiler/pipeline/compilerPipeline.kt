@@ -209,10 +209,12 @@ fun generateCodeFromIr(
         input.configuration,
         input.configuration.get(CLIConfigurationKeys.PHASE_CONFIG),
     )
-    val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
+    val project = (environment.projectEnvironment as VfsBasedProjectEnvironment).project
+
+    val dummyBindingContext = NoScopeRecordCliBindingTrace(project).bindingContext
 
     val generationState = GenerationState.Builder(
-        (environment.projectEnvironment as VfsBasedProjectEnvironment).project, ClassBuilderFactories.BINARIES,
+        project, ClassBuilderFactories.BINARIES,
         input.irModuleFragment.descriptor, dummyBindingContext, input.configuration
     ).targetId(
         input.targetId

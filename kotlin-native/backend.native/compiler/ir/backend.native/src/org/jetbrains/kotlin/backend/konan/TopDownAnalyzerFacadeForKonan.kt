@@ -62,7 +62,7 @@ internal object TopDownAnalyzerFacadeForKonan {
             additionalPackages += functionInterfacePackageFragmentProvider(projectContext.storageManager, module)
         }
 
-        return analyzeFilesWithGivenTrace(files, BindingTraceContext(), moduleContext, context, projectContext, additionalPackages)
+        return analyzeFilesWithGivenTrace(files, BindingTraceContext(projectContext.project), moduleContext, context, projectContext, additionalPackages)
     }
 
     fun analyzeFilesWithGivenTrace(

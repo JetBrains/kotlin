@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 
-class CliTraceHolder : JvmCodeAnalyzerInitializer() {
+class CliTraceHolder(val project: Project) : JvmCodeAnalyzerInitializer() {
     lateinit var bindingContext: BindingContext
         private set
     lateinit var module: ModuleDescriptor
@@ -34,7 +35,7 @@ class CliTraceHolder : JvmCodeAnalyzerInitializer() {
         module: ModuleDescriptor,
         codeAnalyzer: KotlinCodeAnalyzer,
         languageVersionSettings: LanguageVersionSettings,
-        jvmTarget: JvmTarget
+        jvmTarget: JvmTarget,
     ) {
         this.bindingContext = trace.bindingContext
         this.module = module
@@ -49,13 +50,13 @@ class CliTraceHolder : JvmCodeAnalyzerInitializer() {
     }
 
     override fun createTrace(): BindingTraceContext {
-        return NoScopeRecordCliBindingTrace()
+        return NoScopeRecordCliBindingTrace(project)
     }
 }
 
 
 // TODO: needs better name + list of keys to skip somewhere
-class NoScopeRecordCliBindingTrace : CliBindingTrace() {
+class NoScopeRecordCliBindingTrace(project: Project) : CliBindingTrace(project) {
     override fun <K, V> record(slice: WritableSlice<K, V>, key: K, value: V) {
         if (slice == BindingContext.LEXICAL_SCOPE || slice == BindingContext.DATA_FLOW_INFO_BEFORE) {
             // In the compiler there's no need to keep scopes
@@ -69,7 +70,7 @@ class NoScopeRecordCliBindingTrace : CliBindingTrace() {
     }
 }
 
-open class CliBindingTrace @TestOnly constructor() : BindingTraceContext() {
+open class CliBindingTrace @TestOnly constructor(project: Project) : BindingTraceContext(project) {
     private var kotlinCodeAnalyzer: KotlinCodeAnalyzer? = null
 
     override fun toString(): String {

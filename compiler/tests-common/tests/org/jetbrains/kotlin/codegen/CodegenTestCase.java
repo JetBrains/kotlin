@@ -304,7 +304,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         try {
             GenerationState generationState = GenerationUtils.compileFiles(
                     myFiles.getPsiFiles(), myEnvironment, getClassBuilderFactory(),
-                    new NoScopeRecordCliBindingTrace()
+                    new NoScopeRecordCliBindingTrace(myEnvironment.getProject())
             );
             classFileFactory = generationState.getFactory();
 

@@ -244,7 +244,7 @@ class ObjCExportLazyImpl(
         val receiverType = topLevelDeclaration.receiverTypeReference ?: return null
         val fileScope = fileScopeProvider.getFileResolutionScope(topLevelDeclaration.containingKtFile)
 
-        val trace = BindingTraceContext() // TODO: revise.
+        val trace = BindingTraceContext(topLevelDeclaration.project) // TODO: revise.
 
         val kotlinReceiverType = typeResolver.resolveType(
             createHeaderScope(topLevelDeclaration, fileScope, trace),

@@ -49,7 +49,7 @@ internal fun constructAnnotation(psi: KtAnnotationEntry, targetClass: KClass<out
         DefaultBuiltIns.Instance
     )
     val evaluator = ConstantExpressionEvaluator(module, LanguageVersionSettingsImpl.DEFAULT, project)
-    val trace = BindingTraceContext()
+    val trace = BindingTraceContext(project)
 
     val valueArguments = psi.valueArguments.map { arg ->
         val expression = arg.getArgumentExpression()!!

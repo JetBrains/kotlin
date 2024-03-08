@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.diagnostics
 
 import com.google.common.collect.ImmutableSet
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
-import org.jetbrains.kotlin.util.ExtensionProvider
 
 interface DiagnosticSuppressor {
     fun isSuppressed(diagnostic: Diagnostic): Boolean
@@ -48,9 +48,9 @@ interface DiagnosticSuppressor {
     }
 }
 
-abstract class KotlinSuppressCache : AbstractKotlinSuppressCache<PsiElement>() {
+abstract class KotlinSuppressCache(project: Project?) : AbstractKotlinSuppressCache<PsiElement>() {
 
-    private val diagnosticSuppressors = ExtensionProvider.create(DiagnosticSuppressor.extensionPointName)
+    private val diagnosticSuppressors: List<DiagnosticSuppressor> = project?.let { DiagnosticSuppressor.getInstances(it) } ?: emptyList()
 
     val filter: (Diagnostic) -> Boolean = { diagnostic: Diagnostic ->
         !isSuppressed(DiagnosticSuppressRequest(diagnostic))
@@ -99,7 +99,7 @@ abstract class KotlinSuppressCache : AbstractKotlinSuppressCache<PsiElement>() {
         }
 
         if (request is DiagnosticSuppressRequest) {
-            for (suppressor in diagnosticSuppressors.get()) {
+            for (suppressor in diagnosticSuppressors) {
                 if (isSuppressedByExtension(suppressor, request.diagnostic)) return true
             }
         }
@@ -122,7 +122,7 @@ abstract class KotlinSuppressCache : AbstractKotlinSuppressCache<PsiElement>() {
     }
 }
 
-class BindingContextSuppressCache(val context: BindingContext) : KotlinSuppressCache() {
+class BindingContextSuppressCache(val context: BindingContext) : KotlinSuppressCache(context.project) {
     override fun getSuppressionAnnotations(annotated: PsiElement): List<AnnotationDescriptor> {
         val descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, annotated)
 

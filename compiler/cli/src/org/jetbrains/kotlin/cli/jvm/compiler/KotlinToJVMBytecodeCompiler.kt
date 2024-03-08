@@ -186,7 +186,7 @@ object KotlinToJVMBytecodeCompiler {
                 factory,
                 input,
                 fir2IrAndIrActualizerResult.irModuleFragment.descriptor,
-                NoScopeRecordCliBindingTrace().bindingContext,
+                NoScopeRecordCliBindingTrace(project).bindingContext,
                 FirJvmBackendClassResolver(fir2IrAndIrActualizerResult.components),
                 FirJvmBackendExtension(
                     fir2IrAndIrActualizerResult.components,
@@ -383,7 +383,7 @@ object KotlinToJVMBytecodeCompiler {
             TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 project,
                 sourceFiles,
-                NoScopeRecordCliBindingTrace(),
+                NoScopeRecordCliBindingTrace(project),
                 environment.configuration,
                 environment::createPackagePartProvider,
                 sourceModuleSearchScope = scope,

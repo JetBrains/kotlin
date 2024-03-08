@@ -133,7 +133,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
             val separateModules = groupedByModule.size == 1 && groupedByModule.keys.single() == null
             val result = analyzeModuleContents(
-                moduleContext, ktFiles, NoScopeRecordCliBindingTrace(),
+                moduleContext, ktFiles, NoScopeRecordCliBindingTrace(project),
                 languageVersionSettings, separateModules, loadJvmTarget(testFilesInModule)
             )
             if (oldModule != result.moduleDescriptor) {

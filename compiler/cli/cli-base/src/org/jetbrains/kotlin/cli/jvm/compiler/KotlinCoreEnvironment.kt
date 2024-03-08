@@ -90,6 +90,7 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.ModuleAnnotationsResolver
+import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor
 import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
 import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
@@ -726,6 +727,7 @@ class KotlinCoreEnvironment private constructor(
             TypeAttributeTranslatorExtension.registerExtensionPoint(project)
             AssignResolutionAltererExtension.registerExtensionPoint(project)
             FirAnalysisHandlerExtension.registerExtensionPoint(project)
+            DiagnosticSuppressor.registerExtensionPoint(project)
         }
 
         internal fun registerExtensionsFromPlugins(project: MockProject, configuration: CompilerConfiguration) {
@@ -820,7 +822,7 @@ class KotlinCoreEnvironment private constructor(
         @JvmStatic
         fun registerKotlinLightClassSupport(project: MockProject) {
             with(project) {
-                val traceHolder = CliTraceHolder()
+                val traceHolder = CliTraceHolder(project)
                 val cliLightClassGenerationSupport = CliLightClassGenerationSupport(traceHolder, project)
                 val kotlinAsJavaSupport = CliKotlinAsJavaSupport(project, traceHolder)
                 registerService(LightClassGenerationSupport::class.java, cliLightClassGenerationSupport)

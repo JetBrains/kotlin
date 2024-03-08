@@ -267,7 +267,7 @@ private fun analyze(sourceFiles: Collection<KtFile>, environment: KotlinCoreEnvi
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
             project,
             sourceFiles,
-            NoScopeRecordCliBindingTrace(),
+            NoScopeRecordCliBindingTrace(project),
             environment.configuration,
             environment::createPackagePartProvider
         )

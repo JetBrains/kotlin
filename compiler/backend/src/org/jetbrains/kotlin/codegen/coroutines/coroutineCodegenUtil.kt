@@ -127,7 +127,7 @@ fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
         call,
         newCandidateDescriptor,
         dispatchReceiver, extensionReceiver, explicitReceiverKind,
-        null, DelegatingBindingTrace(BindingTraceContext().bindingContext, "Temporary trace for unwrapped suspension function"),
+        null, DelegatingBindingTrace(BindingTraceContext(null).bindingContext, "Temporary trace for unwrapped suspension function"),
         TracingStrategy.EMPTY, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY)
     )
 

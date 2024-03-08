@@ -101,7 +101,7 @@ fun createModuleDescriptor(
 
     return FakeTopDownAnalyzerFacadeForNative.analyzeFilesWithGivenTrace(
         files = kotlinPsiFiles,
-        trace = NoScopeRecordCliBindingTrace(),
+        trace = NoScopeRecordCliBindingTrace(environment.project),
         languageVersionSettings = createLanguageVersionSettings(),
         moduleContext = projectContext.withModule(moduleDescriptor)
     ).moduleDescriptor
