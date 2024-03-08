@@ -72,7 +72,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 class FirSignatureEnhancement(
     private val owner: FirRegularClass,
     private val session: FirSession,
-    private val overridden: FirCallableDeclaration.() -> List<FirCallableDeclaration>
+    private val overridden: FirCallableDeclaration.() -> List<FirCallableDeclaration>,
 ) {
     /*
      * FirSignatureEnhancement may be created with library session which doesn't have single module data,
@@ -94,8 +94,15 @@ class FirSignatureEnhancement(
 
     private val enhancementsCache = session.enhancedSymbolStorage.cacheByOwner.getValue(owner.symbol, null)
 
-    fun enhancedFunction(function: FirFunctionSymbol<*>, name: Name?, precomputedOverridden: List<FirCallableDeclaration>? = null): FirFunctionSymbol<*> {
-        return enhancementsCache.enhancedFunctions.getValue(function, FirEnhancedSymbolsStorage.FunctionEnhancementContext(this, name, precomputedOverridden))
+    fun enhancedFunction(
+        function: FirFunctionSymbol<*>,
+        name: Name?,
+        precomputedOverridden: List<FirCallableDeclaration>? = null,
+    ): FirFunctionSymbol<*> {
+        return enhancementsCache.enhancedFunctions.getValue(
+            function,
+            FirEnhancedSymbolsStorage.FunctionEnhancementContext(this, name, precomputedOverridden)
+        )
     }
 
     fun enhancedProperty(property: FirVariableSymbol<*>, name: Name): FirVariableSymbol<*> {
@@ -108,7 +115,7 @@ class FirSignatureEnhancement(
     @PrivateForInline
     internal fun enhance(
         original: FirVariableSymbol<*>,
-        name: Name
+        name: Name,
     ): FirVariableSymbol<*> {
         when (val firElement = original.fir) {
             is FirEnumEntry -> {
@@ -217,7 +224,14 @@ class FirSignatureEnhancement(
 
         val firMethod = original.fir
         val enhancedParameters = enhanceTypeParameterBoundsForMethod(firMethod)
-        return enhanceMethod(firMethod, original.callableId, name, enhancedParameters, original is FirIntersectionOverrideFunctionSymbol, precomputedOverridden)
+        return enhanceMethod(
+            firMethod,
+            original.callableId,
+            name,
+            enhancedParameters,
+            original is FirIntersectionOverrideFunctionSymbol,
+            precomputedOverridden
+        )
     }
 
     private fun FirCallableSymbol<*>.isEnhanceable(): Boolean {
@@ -507,7 +521,7 @@ class FirSignatureEnhancement(
      */
     private fun performSecondRoundOfBoundsResolution(
         typeParameters: List<FirTypeParameterRef>,
-        initialBounds: List<List<FirTypeRef>>
+        initialBounds: List<List<FirTypeRef>>,
     ) {
         var currentIndex = 0
         for (typeParameter in typeParameters) {
@@ -627,7 +641,7 @@ class FirSignatureEnhancement(
     private fun enhanceReceiverType(
         ownerFunction: FirSimpleFunction,
         overriddenMembers: List<FirCallableDeclaration>,
-        defaultQualifiers: JavaTypeQualifiersByElementType?
+        defaultQualifiers: JavaTypeQualifiersByElementType?,
     ): FirResolvedTypeRef {
         return ownerFunction.enhanceValueParameter(
             overriddenMembers,
@@ -646,7 +660,7 @@ class FirSignatureEnhancement(
         defaultQualifiers: JavaTypeQualifiersByElementType?,
         predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?,
         ownerParameter: FirValueParameter,
-        index: Int
+        index: Int,
     ): FirResolvedTypeRef {
         return ownerFunction.enhanceValueParameter(
             overriddenMembers,
@@ -772,7 +786,7 @@ class FirSignatureEnhancement(
         defaultQualifiers: JavaTypeQualifiersByElementType?,
         typeInSignature: TypeInSignature,
         predefined: TypeEnhancementInfo?,
-        forAnnotationMember: Boolean
+        forAnnotationMember: Boolean,
     ): FirResolvedTypeRef = enhance(
         overriddenMembers,
         parameterContainer ?: this,
@@ -794,7 +808,7 @@ class FirSignatureEnhancement(
         containerApplicabilityType: AnnotationQualifierApplicabilityType,
         typeInSignature: TypeInSignature,
         predefined: TypeEnhancementInfo?,
-        forAnnotationMember: Boolean
+        forAnnotationMember: Boolean,
     ): FirResolvedTypeRef {
         val typeRef = typeInSignature.getTypeRef(this)
         val typeRefsFromOverridden = overriddenMembers.map { typeInSignature.getTypeRef(it) }
@@ -814,7 +828,7 @@ class FirSignatureEnhancement(
 
     private fun EnhancementSignatureParts.enhance(
         typeRef: FirTypeRef, typeRefsFromOverridden: List<FirTypeRef>,
-        mode: FirJavaTypeConversionMode, predefined: TypeEnhancementInfo? = null
+        mode: FirJavaTypeConversionMode, predefined: TypeEnhancementInfo? = null,
     ): FirResolvedTypeRef {
         val typeWithoutEnhancement = typeRef.toConeKotlinType(mode)
         val typesFromOverridden = typeRefsFromOverridden.map { it.toConeKotlinType(mode) }
@@ -853,7 +867,7 @@ private class EnhancementSignatureParts(
     override val isCovariant: Boolean,
     override val forceOnlyHeadTypeConstructor: Boolean,
     override val containerApplicabilityType: AnnotationQualifierApplicabilityType,
-    override val containerDefaultTypeQualifiers: JavaTypeQualifiersByElementType?
+    override val containerDefaultTypeQualifiers: JavaTypeQualifiersByElementType?,
 ) : AbstractSignatureParts<FirAnnotation>() {
     override val enableImprovementsInStrictMode: Boolean
         get() = true
@@ -920,7 +934,7 @@ class FirEnhancedSymbolsStorage(private val cachesFactory: FirCachesFactory) : F
                 postCompute = { _, enhancedVersion, enhancement ->
                     val enhancedVersionFir = enhancedVersion.fir
                     (enhancedVersionFir.initialSignatureAttr as? FirSimpleFunction)?.let {
-                        enhancedVersionFir.initialSignatureAttr = enhancement.enhancedFunction(it.symbol, it.name,).fir
+                        enhancedVersionFir.initialSignatureAttr = enhancement.enhancedFunction(it.symbol, it.name).fir
                     }
                 }
             )
