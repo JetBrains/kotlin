@@ -135,7 +135,7 @@ class FirPCLAInferenceSession(
         val system = (this as? FirResolvable)?.candidate()?.system ?: currentCommonSystem
 
         if (resolutionMode is ResolutionMode.ReceiverResolution) {
-            fixVariablesForMemberScope(resolvedType, system)?.let { additionalBindings += it }
+            fixCurrentResultIfTypeVariableAndReturnBinding(resolvedType, system)?.let { additionalBindings += it }
         }
 
         val substitutor = system.buildCurrentSubstitutor(additionalBindings) as ConeSubstitutor
@@ -146,19 +146,22 @@ class FirPCLAInferenceSession(
         }
     }
 
-    fun fixVariablesForMemberScope(
+    override fun getAndSemiFixCurrentResultIfTypeVariable(type: ConeKotlinType): ConeKotlinType? =
+        fixCurrentResultIfTypeVariableAndReturnBinding(type, currentCommonSystem)?.second
+
+    fun fixCurrentResultIfTypeVariableAndReturnBinding(
         type: ConeKotlinType,
         myCs: NewConstraintSystemImpl,
     ): Pair<ConeTypeVariableTypeConstructor, ConeKotlinType>? {
         return when (type) {
-            is ConeFlexibleType -> fixVariablesForMemberScope(type.lowerBound, myCs)
-            is ConeDefinitelyNotNullType -> fixVariablesForMemberScope(type.original, myCs)
-            is ConeTypeVariableType -> fixVariablesForMemberScope(type, myCs)
+            is ConeFlexibleType -> fixCurrentResultIfTypeVariableAndReturnBinding(type.lowerBound, myCs)
+            is ConeDefinitelyNotNullType -> fixCurrentResultIfTypeVariableAndReturnBinding(type.original, myCs)
+            is ConeTypeVariableType -> fixCurrentResultForNestedTypeVariable(type, myCs)
             else -> null
         }
     }
 
-    private fun fixVariablesForMemberScope(
+    private fun fixCurrentResultForNestedTypeVariable(
         type: ConeTypeVariableType,
         myCs: NewConstraintSystemImpl,
     ): Pair<ConeTypeVariableTypeConstructor, ConeKotlinType>? {

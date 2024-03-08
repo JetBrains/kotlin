@@ -867,7 +867,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val firClass = type.lookupTag.toSymbol(session)?.fir ?: return this
         if (firClass.typeParameters.isEmpty()) return this
 
-        val originalType = argument.unwrapExpression().resolvedType
+        val originalType = argument.unwrapExpression().resolvedType.let {
+            components.context.inferenceSession.getAndSemiFixCurrentResultIfTypeVariable(it) ?: it
+        }
+
         val outerClasses by lazy(LazyThreadSafetyMode.NONE) { firClass.symbol.getClassAndItsOuterClassesWhenLocal(session) }
         val newType = components.computeRepresentativeTypeForBareType(type, originalType)
             ?: if (

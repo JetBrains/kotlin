@@ -18,8 +18,8 @@ fun <X> withCallback(x: X, c: Controller<in X>, p: (X) -> Unit) {}
 fun main(a: A<String>) {
     val x = generate {
         withCallback(a, this) {
-            (it as <!NO_TYPE_ARGUMENTS_ON_RHS!>B<!>).<!UNRESOLVED_REFERENCE!>b<!>.length
-            it.<!UNRESOLVED_REFERENCE!>b<!>.length
+            (it as B).b.length
+            it.b.length
             it.a.length
         }
     }
