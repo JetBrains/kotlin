@@ -47141,6 +47141,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("whileLoopNotNull.kt")
+      public void testWhileLoopNotNull() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/smartcasts/whileLoopNotNull.kt");
+      }
+
+      @Test
       @TestMetadata("withChangesToNull.kt")
       public void testWithChangesToNull() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/smartcasts/withChangesToNull.kt");
