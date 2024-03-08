@@ -1280,40 +1280,16 @@ val IrFunction.allParameters: List<IrValueParameter>
 val IrFunction.allParametersCount: Int
     get() = if (this is IrConstructor) explicitParametersCount + 1 else explicitParametersCount
 
-private object BindToNewEmptySymbols : FakeOverrideBuilderStrategy(
+private object LoweringsFakeOverrideBuilderStrategy : FakeOverrideBuilderStrategy.BindToPrivateSymbols(
     friendModules = emptyMap(), // TODO: this is probably not correct. Should be fixed by KT-61384. But it's not important for current usages
-    unimplementedOverridesStrategy = IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
-) {
-    override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
-        function.acquireSymbol(IrSimpleFunctionSymbolImpl())
-    }
-
-    override fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, manglerCompatibleMode: Boolean) {
-        val propertySymbol = IrPropertySymbolImpl()
-        property.getter?.let { it.correspondingPropertySymbol = propertySymbol }
-        property.setter?.let { it.correspondingPropertySymbol = propertySymbol }
-
-        property.acquireSymbol(propertySymbol)
-
-        property.getter?.let {
-            it.correspondingPropertySymbol = property.symbol
-            linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override getter: $it"), manglerCompatibleMode)
-        }
-        property.setter?.let {
-            it.correspondingPropertySymbol = property.symbol
-            linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override setter: $it"), manglerCompatibleMode)
-        }
-    }
-
-    override fun <R> inFile(file: IrFile?, block: () -> R): R = block()
-}
+)
 
 fun IrClass.addFakeOverrides(
     typeSystem: IrTypeSystemContext,
     implementedMembers: List<IrOverridableMember> = emptyList(),
     ignoredParentSymbols: List<IrSymbol> = emptyList()
 ) {
-    val fakeOverrides = IrFakeOverrideBuilder(typeSystem, BindToNewEmptySymbols, emptyList())
+    val fakeOverrides = IrFakeOverrideBuilder(typeSystem, LoweringsFakeOverrideBuilderStrategy, emptyList())
         .buildFakeOverridesForClassUsingOverriddenSymbols(this, implementedMembers, compatibilityMode = false, ignoredParentSymbols)
     for (fakeOverride in fakeOverrides) {
         addChild(fakeOverride)

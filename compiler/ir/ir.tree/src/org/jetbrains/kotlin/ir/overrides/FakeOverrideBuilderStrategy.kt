@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
@@ -131,6 +133,30 @@ abstract class FakeOverrideBuilderStrategy(
      *   * [IrFunctionWithLateBinding.acquireSymbol] must be called inside on getter and setter of [property] argument, if they exist
      */
     protected abstract fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, manglerCompatibleMode: Boolean)
+
+    abstract class BindToPrivateSymbols(friendModules: Map<String, Collection<String>>) : FakeOverrideBuilderStrategy(
+        friendModules = friendModules,
+        unimplementedOverridesStrategy = IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
+    ) {
+        override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
+            function.acquireSymbol(IrSimpleFunctionSymbolImpl())
+        }
+
+        override fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, manglerCompatibleMode: Boolean) {
+            property.acquireSymbol(IrPropertySymbolImpl())
+
+            property.getter?.let {
+                it.correspondingPropertySymbol = property.symbol
+                linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override getter: $it"), manglerCompatibleMode)
+            }
+            property.setter?.let {
+                it.correspondingPropertySymbol = property.symbol
+                linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override setter: $it"), manglerCompatibleMode)
+            }
+        }
+
+        override fun <R> inFile(file: IrFile?, block: () -> R): R = block()
+    }
 }
 
 fun buildFakeOverrideMember(

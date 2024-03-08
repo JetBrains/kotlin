@@ -2,14 +2,14 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class Foo1<!>
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class Foo2<!>
+expect class Foo1
+expect class Foo2
 
 expect fun foo2(): Int
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect val s: String<!>
+expect val s: String
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect open class Foo3<!>
+expect open class Foo3
 
 // MODULE: m2-jvm()()(m1-common)
 
