@@ -58,7 +58,7 @@ object FirWasmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             WRONG_JS_INTEROP_TYPE,
             "Type ''{0}'' cannot be used in {1}. Only external, primitive, string and function types are supported in Kotlin/Wasm JS interop.",
-            TO_STRING, FirDiagnosticRenderers.RENDER_TYPE,
+            FirDiagnosticRenderers.RENDER_TYPE, TO_STRING
         )
         map.put(
             NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
