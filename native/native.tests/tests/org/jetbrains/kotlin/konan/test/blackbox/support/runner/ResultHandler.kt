@@ -165,6 +165,7 @@ internal fun doFileCheck(check: TestRunCheck.FileCheckMatcher, fileCheckDump: Fi
             "--input-file",
             fileCheckDump.absolutePath,
             "--check-prefixes", check.prefixes,
+            "--allow-unused-prefixes",
             "--allow-deprecated-dag-overlap" // TODO specify it via new test directive for `function_attributes_at_callsite.kt`
         )
     } catch (t: Throwable) {

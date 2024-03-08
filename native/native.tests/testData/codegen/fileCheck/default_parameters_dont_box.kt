@@ -10,7 +10,7 @@ fun defaultA(a: A = A(1), aa: A = A(1)) = a.i
 fun defaultB(b: B = B(A(1)), bb: B = B(A(1))) = b.a.i
 fun defaultC(c: C = C("1"), cc: C = C("1")) = c.s
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     // CHECK-LABEL: entry
     // CHECK-NOT: <Int-box>
