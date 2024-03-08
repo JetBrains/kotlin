@@ -54,7 +54,7 @@ class AnonymousObjectTransformer(
         val methodsToTransform = ArrayList<MethodNode>()
         val metadataReader = ReadKotlinClassHeaderAnnotationVisitor()
         lateinit var superClassName: String
-        var sourceInfo: String? = null
+        var debugFileName: String? = null
         var debugInfo: String? = null
         var debugMetadataAnnotation: AnnotationNode? = null
 
@@ -120,7 +120,7 @@ class AnonymousObjectTransformer(
             }
 
             override fun visitSource(source: String, debug: String?) {
-                sourceInfo = source
+                debugFileName = source
                 debugInfo = debug
             }
 
@@ -133,10 +133,9 @@ class AnonymousObjectTransformer(
 
         // When regenerating objects in inline lambdas, keep the old SMAP and don't remap the line numbers to
         // save time. The result is effectively the same anyway.
-        val debugInfoToParse = if (inliningContext.isInliningLambda) null else debugInfo
-        val (firstLine, lastLine) = (methodsToTransform + listOfNotNull(constructor)).lineNumberRange()
-        sourceMap = SMAPParser.parseOrCreateDefault(debugInfoToParse, sourceInfo, oldObjectType.internalName, firstLine, lastLine)
-        sourceMapper = SourceMapper(sourceMap.fileMappings.firstOrNull { it.name == sourceInfo }?.toSourceInfo())
+        sourceMap = debugInfo.takeIf { !inliningContext.isInliningLambda }?.let(SMAPParser::parseOrNull)
+            ?: SMAP.identityMapping(debugFileName, oldObjectType.internalName, methodsToTransform + listOfNotNull(constructor))
+        sourceMapper = SourceMapper(debugFileName, sourceMap)
 
         val allCapturedParamBuilder = ParametersBuilder.newBuilder()
         val constructorParamBuilder = ParametersBuilder.newBuilder()
@@ -201,8 +200,8 @@ class AnonymousObjectTransformer(
 
         if (GENERATE_SMAP && !inliningContext.isInliningLambda) {
             classBuilder.visitSMAP(sourceMapper, !state.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
-        } else if (sourceInfo != null) {
-            classBuilder.visitSource(sourceInfo!!, debugInfo)
+        } else if (debugFileName != null) {
+            classBuilder.visitSource(debugFileName!!, debugInfo)
         }
 
         innerClassNodes.forEach { node ->
