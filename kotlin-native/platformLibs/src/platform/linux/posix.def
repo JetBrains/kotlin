@@ -34,7 +34,11 @@ excludedFunctions = bindresvport6 __p_section __res_nisourserver __res_npquery \
 		    __erfcf __lgammaf __tgammaf __gammaf __lgammaf_r __rintf __nextafterf \
 		    __remainderf __scalbnf __ilogbf __scalblnf __nearbyintf __roundf __truncf \
 		    __remquof __lrintf __llrintf __lroundf __llroundf __fdimf __fmaxf __fminf \
-		    __fmaf __scalbf _ns_flagdata
+		    __fmaf __scalbf _ns_flagdata \
+		    lchmod pthread_attr_getstackaddr pthread_attr_setstackaddr siggetmask \
+		    sigreturn sigstack tmpnam tmpnam_r tempnam gtty stty mktemp getwd \
+		    setlogin revoke sys_errlist sys_nerr sys_nerr p_section res_npquery \
+		    res_nisourserver
 ---
 // cinterop -target linux -def klib/src/platform/linux/posix.def -o platform.posix.klib
 
