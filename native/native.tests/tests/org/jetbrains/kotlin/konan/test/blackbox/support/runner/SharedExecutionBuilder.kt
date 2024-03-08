@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BlackBoxTestInstances
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.SharedExecutionTestRunner
@@ -24,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @see SharedExecutionTestRunner
  */
 internal object SharedExecutionBuilder {
-    private val executableToSharedRun: ConcurrentHashMap<TestExecutable, TestRun> = ConcurrentHashMap()
+    private val executableToSharedRun: ConcurrentHashMap<TestCompilationArtifact.Executable, TestRun> = ConcurrentHashMap()
     private val testCasesToExecuteSeparately: ConcurrentHashMap<TestExecutable, MutableList<TestCase>> = ConcurrentHashMap()
 
     fun buildRunner(settings: Settings, executor: Executor, testRun: TestRun): AbstractRunner<Unit> {
@@ -40,7 +41,7 @@ internal object SharedExecutionBuilder {
             return RunnerWithExecutor(executor, testRun)
         }
 
-        val sharedTestRun = executableToSharedRun.computeIfAbsent(testRun.executable) {
+        val sharedTestRun = executableToSharedRun.computeIfAbsent(testRun.executable.executable) {
             // Get ignored tests to exclude them from run by adding the test filtering option
             val ignoredTests = if (testRun.testCase.extras is TestCase.WithTestRunnerExtras) {
                 testRun.testCase.extras.ignoredTests
@@ -90,10 +91,6 @@ internal object SharedExecutionBuilder {
 
             check(testCases != null && testRun.testCase in testCases) {
                 "Should be not empty and contain at least $testRun"
-            }
-
-            check(testCases.all { it.id.testCaseGroupId == testCaseGroupId }) {
-                "Got TestCases with different group ids. TestCases: $testCases"
             }
 
             // If the test run is expected to fail or timeout, it should not be executed with others.
