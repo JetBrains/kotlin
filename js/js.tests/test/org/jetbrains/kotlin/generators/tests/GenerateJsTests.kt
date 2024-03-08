@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.js.test.fir.*
 import org.jetbrains.kotlin.js.test.ir.*
-import org.jetbrains.kotlin.js.testOld.AbstractDceTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.js.test.fir.AbstractFirLightTreeJsIrTextTest
 import org.jetbrains.kotlin.js.test.ir.AbstractMultiModuleOrderTest
@@ -29,12 +28,6 @@ fun main(args: Array<String>) {
     //generateTestDataForReservedWords()
 
     generateTestGroupSuite(args) {
-        testGroup("js/js.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
-            testClass<AbstractDceTest> {
-                model("dce/", pattern = "(.+)\\.js", targetBackend = TargetBackend.JS)
-            }
-        }
-
         testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractClassicJsKlibEvolutionTest> {
                 model("klib/evolution", targetBackend = TargetBackend.JS_IR)
