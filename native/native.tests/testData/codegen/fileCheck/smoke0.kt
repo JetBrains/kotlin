@@ -7,11 +7,11 @@ fun id(a: Any?): Any? {
 // CHECK-LABEL: epilogue:
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
-    // CHECK: call %struct.ObjHeader* @"kfun:#id(kotlin.Any?){}kotlin.Any?"
+    // CHECK: call ptr @"kfun:#id(kotlin.Any?){}kotlin.Any?"
     val x = id("Hello")
-    // CHECK: call void @"kfun:kotlin.io#println(kotlin.Any?){}"(%struct.ObjHeader* {{.*}})
+    // CHECK: call void @"kfun:kotlin.io#println(kotlin.Any?){}"(ptr {{.*}})
     println(x)
 // CHECK-LABEL: epilogue:
     return "OK"
