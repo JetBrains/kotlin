@@ -21,14 +21,14 @@ suspend fun sInt(): Int = suspendCoroutineUninterceptedOrReturn { x ->
     COROUTINE_SUSPENDED
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s1#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s1#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
 suspend fun s1() {
     // CHECK-NOT: call void @"kfun:$s1COROUTINE${{[0-9]*}}#<init>
     println("s1")
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s2#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s2#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
 suspend fun s2() {
     // CHECK-NOT: call void @"kfun:$s2COROUTINE${{[0-9]*}}#<init>
     println("s2")
@@ -36,7 +36,7 @@ suspend fun s2() {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s3#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s3#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
 suspend fun s3() {
     // CHECK-NOT: call void @"kfun:$s3COROUTINE${{[0-9]*}}#<init>
     println("s3")
@@ -45,7 +45,7 @@ suspend fun s3() {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s4#suspend(kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s4#suspend(kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
 suspend fun s4(): Int {
     // CHECK-NOT: call void @"kfun:$s4COROUTINE${{[0-9]*}}#<init>
     println("s4")
@@ -53,7 +53,7 @@ suspend fun s4(): Int {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s5#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s5#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
 suspend fun s5() {
     // CHECK-NOT: call void @"kfun:$s5COROUTINE${{[0-9]*}}#<init>
     println("s5")
@@ -61,7 +61,7 @@ suspend fun s5() {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s6#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s6#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
 suspend fun s6() {
     // CHECK-NOT: call void @"kfun:$s6COROUTINE${{[0-9]*}}#<init>
     run {
@@ -71,7 +71,7 @@ suspend fun s6() {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s7#suspend(kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s7#suspend(kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
 suspend fun s7(): Int {
     // CHECK-NOT: call void @"kfun:$s7COROUTINE${{[0-9]*}}#<init>
     return run {
@@ -81,7 +81,7 @@ suspend fun s7(): Int {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s8#suspend(kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s8#suspend(kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
 suspend fun s8(): Int {
     // CHECK-NOT: call void @"kfun:$s8COROUTINE${{[0-9]*}}#<init>
     run {
@@ -91,7 +91,7 @@ suspend fun s8(): Int {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s9#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s9#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
 suspend fun s9() {
     // CHECK-NOT: call void @"kfun:$s9COROUTINE${{[0-9]*}}#<init>
     run {
@@ -104,7 +104,7 @@ suspend fun s9() {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s10#suspend(kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s10#suspend(kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
 suspend fun s10(): Int {
     // CHECK-NOT: call void @"kfun:$s10COROUTINE${{[0-9]*}}#<init>
     run {
@@ -117,7 +117,7 @@ suspend fun s10(): Int {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s11#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s11#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
 suspend fun s11() {
     // CHECK-NOT: call void @"kfun:$s11COROUTINE${{[0-9]*}}#<init>
     println("s11")
@@ -126,7 +126,7 @@ suspend fun s11() {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s12#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s12#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
 suspend fun s12() {
     // CHECK-NOT: call void @"kfun:$s12COROUTINE${{[0-9]*}}#<init>
     run {
@@ -137,7 +137,7 @@ suspend fun s12() {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s13#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s13#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
 suspend fun s13() {
     // CHECK-NOT: call void @"kfun:$s13COROUTINE${{[0-9]*}}#<init>
     run {
@@ -148,7 +148,7 @@ suspend fun s13() {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s14#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s14#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
 suspend fun s14() {
     // CHECK-NOT: call void @"kfun:$s14COROUTINE${{[0-9]*}}#<init>
     run {
@@ -159,7 +159,7 @@ suspend fun s14() {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s15#suspend(kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s15#suspend(kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
 @Suppress("UNREACHABLE_CODE")
 suspend fun s15(): Int {
     // CHECK-NOT: call void @"kfun:$s15COROUTINE${{[0-9]*}}#<init>
@@ -173,7 +173,7 @@ suspend fun s15(): Int {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s16#suspend(kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s16#suspend(kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
 suspend fun s16(): Int {
     // CHECK-NOT: call void @"kfun:$s16COROUTINE${{[0-9]*}}#<init>
     run outer@ {
@@ -186,7 +186,7 @@ suspend fun s16(): Int {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s17#suspend(kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s17#suspend(kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
 @Suppress("UNREACHABLE_CODE")
 suspend fun s17(): Int {
     // CHECK-NOT: call void @"kfun:$s17COROUTINE${{[0-9]*}}#<init>
@@ -200,7 +200,7 @@ suspend fun s17(): Int {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s18#suspend(kotlin.Boolean;kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s18#suspend(kotlin.Boolean;kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
 suspend fun s18(f: Boolean) {
     // CHECK-NOT: call void @"kfun:$s18COROUTINE${{[0-9]*}}#<init>
     if (f) {
@@ -213,7 +213,7 @@ suspend fun s18(f: Boolean) {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s19#suspend(kotlin.Boolean;kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s19#suspend(kotlin.Boolean;kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
 suspend fun s19(f: Boolean): Int {
     // CHECK-NOT: call void @"kfun:$s19COROUTINE${{[0-9]*}}#<init>
     if (f) {
@@ -226,7 +226,7 @@ suspend fun s19(f: Boolean): Int {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s20#suspend(kotlin.Boolean;kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s20#suspend(kotlin.Boolean;kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
 suspend fun s20(f: Boolean): Int {
     // CHECK-NOT: call void @"kfun:$s20COROUTINE${{[0-9]*}}#<init>
     return if (f) {
@@ -239,7 +239,7 @@ suspend fun s20(f: Boolean): Int {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s21#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s21#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
 suspend fun s21() {
     // CHECK-NOT: call void @"kfun:$s21COROUTINE${{[0-9]*}}#<init>
     try {
@@ -250,7 +250,7 @@ suspend fun s21() {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s22#suspend(kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s22#suspend(kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
 suspend fun s22(): Int {
     // CHECK-NOT: call void @"kfun:$s22COROUTINE${{[0-9]*}}#<init>
     try {
@@ -262,7 +262,7 @@ suspend fun s22(): Int {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s23#suspend(kotlin.Boolean;kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s23#suspend(kotlin.Boolean;kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
 suspend fun s23(f: Boolean) {
     // CHECK-NOT: call void @"kfun:$s23COROUTINE${{[0-9]*}}#<init>
     val x = run {
@@ -277,7 +277,7 @@ suspend fun s23(f: Boolean) {
 }
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#s24#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
+// CHECK-LABEL: define ptr @"kfun:#s24#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
 suspend fun s24() {
     // CHECK: call void @"kfun:$s24COROUTINE${{[0-9]*}}.<init>#internal
     sInt()
@@ -288,7 +288,7 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     builder {
         s1()

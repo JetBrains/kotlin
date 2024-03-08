@@ -2,7 +2,7 @@
 // FILECHECK_STAGE: CStubs
 
 var i = 1
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String = when(i) {
     0 -> "FAIL: 0"
     1 -> "OK"

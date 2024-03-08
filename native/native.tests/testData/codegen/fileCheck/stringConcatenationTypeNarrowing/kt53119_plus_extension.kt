@@ -4,64 +4,64 @@
 package codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension
 import kotlin.test.*
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#manualPlusExtensionAny
+// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#manualPlusExtensionAny
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
 
-// CHECK-OPT: call %struct.ObjHeader* @Kotlin_String_plusImpl
-// CHECK-OPT-NOT: call %struct.ObjHeader* @Kotlin_String_plusImpl
+// CHECK-OPT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
-// CHECK-OPT-NOT: call %struct.ObjHeader* @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
-// CHECK-OPT-NOT: call %struct.ObjHeader* @Kotlin_String_plusImpl
+// CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
 
-// CHECK: ret %struct.ObjHeader*
+// CHECK: ret ptr
 
 fun manualPlusExtensionAny(maybeStr: String?, maybeAny: kotlin.Any?): kotlin.String =
         maybeStr + maybeAny
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#manualPlusExtensionString
+// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#manualPlusExtensionString
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call %struct.ObjHeader* @Kotlin_String_plusImpl
-// CHECK-OPT-NOT: call %struct.ObjHeader* @Kotlin_String_plusImpl
+// CHECK-OPT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
 
-// CHECK-OPT-NOT: call %struct.ObjHeader* @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK: ret %struct.ObjHeader*
+// CHECK: ret ptr
 
 fun manualPlusExtensionString(maybeStr: String?, str: String): kotlin.String =
         maybeStr + str
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionAny
+// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionAny
 // CHECK-OPT-NOT: kfun:kotlin#plus__at__kotlin.String?(kotlin.Any?)
 
-// CHECK-OPT: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
-// CHECK-OPT: call %struct.ObjHeader* @Kotlin_String_plusImpl
-// CHECK-OPT-NOT: call %struct.ObjHeader* @Kotlin_String_plusImpl
+// CHECK-OPT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: kfun:kotlin#plus__at__kotlin.String?(kotlin.Any?)
-// CHECK-OPT-NOT: call %struct.ObjHeader* @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
 
-// CHECK: ret %struct.ObjHeader*
+// CHECK: ret ptr
 
 fun generatedPlusExtensionAny(maybeStr: String?, maybeAny: Any?): String {
     return "$maybeStr$maybeAny"
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionString
+// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionString
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call %struct.ObjHeader* @Kotlin_String_plusImpl
-// CHECK-OPT-NOT: call %struct.ObjHeader* @Kotlin_String_plusImpl
+// CHECK-OPT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
 
-// CHECK-OPT-NOT: call %struct.ObjHeader* @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK: ret %struct.ObjHeader*
+// CHECK: ret ptr
 
 fun generatedPlusExtensionString(maybeStr: String?, str: String): String {
     return "$maybeStr$str"
@@ -69,36 +69,36 @@ fun generatedPlusExtensionString(maybeStr: String?, str: String): String {
 
 data class Foo(val bar: Int)
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionFoo
+// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionFoo
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String
 
-// CHECK-OPT: call %struct.ObjHeader* @Kotlin_String_plusImpl
-// CHECK-OPT-NOT: call %struct.ObjHeader* @Kotlin_String_plusImpl
+// CHECK-OPT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
 
-// CHECK-OPT-NOT: call %struct.ObjHeader* @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK: ret %struct.ObjHeader*
+// CHECK: ret ptr
 
 fun generatedPlusExtensionFoo(maybeStr: String?, foo: Foo): String {
     return "$maybeStr$foo"
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionMaybeFoo
+// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionMaybeFoo
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String
-// CHECK-OPT: call %struct.ObjHeader* @Kotlin_String_plusImpl
-// CHECK-OPT-NOT: call %struct.ObjHeader* @Kotlin_String_plusImpl
-// CHECK-OPT-NOT: call %struct.ObjHeader* @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
 
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK: ret %struct.ObjHeader*
+// CHECK: ret ptr
 
 fun generatedPlusExtensionMaybeFoo(maybeStr: String?, foo: Foo?): String {
     return "$maybeStr$foo"

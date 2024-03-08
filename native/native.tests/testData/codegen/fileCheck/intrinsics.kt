@@ -15,7 +15,7 @@ fun ieee754(a: Float, b: Float): Boolean {
 // CHECK-LABEL: epilogue:
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     val x = and(1, 2)
     val y = ieee754(0.0f, 1.0f)

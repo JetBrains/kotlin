@@ -216,7 +216,7 @@ fun testSumOfCharProgression(): Int {
     return str.sumOf { it.code }
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     assertEquals(55, testIntSumOfIterableInt())
     assertEquals(55, testIntSumOfIterableIntTemporary())

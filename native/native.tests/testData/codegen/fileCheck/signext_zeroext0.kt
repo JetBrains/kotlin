@@ -130,25 +130,25 @@ fun checkInlineClasses() {
     id(CharWrapper('c'))
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#nullableId(kotlin.Byte?){}kotlin.Byte?"(%struct.ObjHeader* %0, %struct.ObjHeader** %1)
+// CHECK-LABEL: define ptr @"kfun:#nullableId(kotlin.Byte?){}kotlin.Byte?"(ptr %0, ptr %1)
 fun nullableId(arg: Byte?): Byte? {
     return arg
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#nullableId(CharWrapper?){}CharWrapper?"(%struct.ObjHeader* %0, %struct.ObjHeader** %1)
+// CHECK-LABEL: define ptr @"kfun:#nullableId(CharWrapper?){}CharWrapper?"(ptr %0, ptr %1)
 fun nullableId(arg: CharWrapper?): CharWrapper? {
     return arg
 }
 
 // Check that we don't pass primitive-specific attributes to their boxes
 fun checkBoxes() {
-    // CHECK: call %struct.ObjHeader* @"kfun:#nullableId(kotlin.Byte?){}kotlin.Byte?"(%struct.ObjHeader* {{.*}}, %struct.ObjHeader** {{.*}})
+    // CHECK: call ptr @"kfun:#nullableId(kotlin.Byte?){}kotlin.Byte?"(ptr {{.*}}, ptr {{.*}})
     nullableId(1.toByte())
-    // CHECK: call %struct.ObjHeader* @"kfun:#nullableId(CharWrapper?){}CharWrapper?"(%struct.ObjHeader* {{.*}}, %struct.ObjHeader** {{.*}})
+    // CHECK: call ptr @"kfun:#nullableId(CharWrapper?){}CharWrapper?"(ptr {{.*}}, ptr {{.*}})
     nullableId(CharWrapper('a'))
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     checkPrimitives()
     checkInlineClasses()

@@ -1,13 +1,13 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: CStubs
 
-// CHECK-AAPCS-OPT-LABEL: define i1 @"kfun:kotlin.ULongArray#equals(kotlin.Any?){}kotlin.Boolean"(%struct.ObjHeader* %0, %struct.ObjHeader* %1)
-// CHECK-DEFAULTABI-OPT-LABEL: define zeroext i1 @"kfun:kotlin.ULongArray#equals(kotlin.Any?){}kotlin.Boolean"(%struct.ObjHeader* %0, %struct.ObjHeader* %1)
-// CHECK-WINDOWSX64-OPT-LABEL: define zeroext i1 @"kfun:kotlin.ULongArray#equals(kotlin.Any?){}kotlin.Boolean"(%struct.ObjHeader* %0, %struct.ObjHeader* %1)
+// CHECK-AAPCS-OPT-LABEL: define i1 @"kfun:kotlin.ULongArray#equals(kotlin.Any?){}kotlin.Boolean"(ptr %0, ptr %1)
+// CHECK-DEFAULTABI-OPT-LABEL: define zeroext i1 @"kfun:kotlin.ULongArray#equals(kotlin.Any?){}kotlin.Boolean"(ptr %0, ptr %1)
+// CHECK-WINDOWSX64-OPT-LABEL: define zeroext i1 @"kfun:kotlin.ULongArray#equals(kotlin.Any?){}kotlin.Boolean"(ptr %0, ptr %1)
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 
-// CHECK-OPT: call %struct.ObjHeader* @"kfun:kotlin#<ULongArray-unbox>(kotlin.Any?){}kotlin.ULongArray?"
+// CHECK-OPT: call ptr @"kfun:kotlin#<ULongArray-unbox>(kotlin.Any?){}kotlin.ULongArray?"
 
 // CHECK-LABEL: epilogue:
 

@@ -24,7 +24,7 @@ fun testIntSumOfAsSequence(): Int {
     return asSequence.sumOf { it }
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     assertEquals(55, testIntSumOfSequence())
     assertEquals(55, testIntSumOfAsSequence())

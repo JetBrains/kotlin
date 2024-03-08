@@ -5,7 +5,7 @@ class C<T> {
     fun foo(x: T) = x
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 // CHECK-NOT: Int-box
 // CHECK-OPT-NOT: Int-unbox
 // CHECK-DEBUG: Int-unbox
