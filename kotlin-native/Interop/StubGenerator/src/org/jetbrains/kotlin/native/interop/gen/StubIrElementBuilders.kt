@@ -843,6 +843,7 @@ internal class GlobalStubBuilder(
         private val global: GlobalDecl
 ) : StubElementBuilder {
     override fun build(): List<StubIrElement> {
+        if (global.fullName in context.configuration.excludedFunctions) return emptyList()
         val mirror = context.mirror(global.type)
         val unwrappedType = global.type.unwrapTypedefs()
         val origin = StubOrigin.Global(global)
