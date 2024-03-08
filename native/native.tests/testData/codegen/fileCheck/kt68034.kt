@@ -21,7 +21,7 @@ inline fun ifaceHandler(seq: CharSequence): Int {
     return sum
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 // CHECK-LABEL: epilogue:
 fun box(): String {
     val result1 = wrapString("OK")
