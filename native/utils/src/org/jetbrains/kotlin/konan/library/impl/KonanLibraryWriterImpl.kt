@@ -18,28 +18,28 @@ import org.jetbrains.kotlin.library.impl.*
 class KonanLibraryLayoutForWriter(
     libFile: File,
     unzippedDir: File,
-    override val target: KonanTarget
+    override val target: KonanTarget,
 ) : KonanLibraryLayout, KotlinLibraryLayoutForWriter(libFile, unzippedDir)
 
 /**
  * Requires non-null [target].
  */
 class KonanLibraryWriterImpl(
-        moduleName: String,
-        versions: KotlinLibraryVersioning,
-        target: KonanTarget,
-        builtInsPlatform: BuiltInsPlatform,
-        nopack: Boolean = false,
-        shortName: String? = null,
+    moduleName: String,
+    versions: KotlinLibraryVersioning,
+    target: KonanTarget,
+    builtInsPlatform: BuiltInsPlatform,
+    nopack: Boolean = false,
+    shortName: String? = null,
 
-        val layout: KonanLibraryLayoutForWriter,
+    val layout: KonanLibraryLayoutForWriter,
 
-        base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, listOf(target.visibleName), nopack, shortName),
-        bitcode: BitcodeWriter = BitcodeWriterImpl(layout),
-        metadata: MetadataWriter = MetadataWriterImpl(layout),
-        ir: IrWriter = IrMonoliticWriterImpl(layout)
+    base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, listOf(target.visibleName), nopack, shortName),
+    bitcode: BitcodeWriter = BitcodeWriterImpl(layout),
+    metadata: MetadataWriter = MetadataWriterImpl(layout),
+    ir: IrWriter = IrMonoliticWriterImpl(layout),
 
-) : BaseWriter by base, BitcodeWriter by bitcode, MetadataWriter by metadata, IrWriter by ir, KonanLibraryWriter
+    ) : BaseWriter by base, BitcodeWriter by bitcode, MetadataWriter by metadata, IrWriter by ir, KonanLibraryWriter
 
 fun buildLibrary(
     natives: List<String>,
@@ -54,20 +54,20 @@ fun buildLibrary(
     nopack: Boolean,
     shortName: String?,
     manifestProperties: Properties?,
-    dataFlowGraph: ByteArray? // TODO (KT-66218): remove this property
+    dataFlowGraph: ByteArray?, // TODO (KT-66218): remove this property
 ): KonanLibraryLayout {
 
     val libFile = File(output)
     val unzippedDir = if (nopack) libFile else org.jetbrains.kotlin.konan.file.createTempDir("klib")
     val layout = KonanLibraryLayoutForWriter(libFile, unzippedDir, target)
     val library = KonanLibraryWriterImpl(
-            moduleName,
-            versions,
-            target,
-            BuiltInsPlatform.NATIVE,
-            nopack,
-            shortName,
-            layout
+        moduleName,
+        versions,
+        target,
+        BuiltInsPlatform.NATIVE,
+        nopack,
+        shortName,
+        layout
     )
 
     library.addMetadata(metadata)
