@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.UnsafeCall
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {

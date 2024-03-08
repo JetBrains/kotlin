@@ -4529,9 +4529,10 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.PROPERTY_AS_OPERATOR) { firDiagnostic ->
-        PropertyAsOperatorImpl(
-            firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a),
+    add(FirErrors.NOT_FUNCTION_AS_OPERATOR) { firDiagnostic ->
+        NotFunctionAsOperatorImpl(
+            firDiagnostic.a,
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

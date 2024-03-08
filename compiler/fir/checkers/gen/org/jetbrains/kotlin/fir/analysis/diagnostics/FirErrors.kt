@@ -796,7 +796,7 @@ object FirErrors {
     val IMPLICIT_BOXING_IN_IDENTITY_EQUALS: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> by warning2<KtElement, ConeKotlinType, ConeKotlinType>()
     val INC_DEC_SHOULD_NOT_RETURN_UNIT: KtDiagnosticFactory0 by error0<KtExpression>(SourceElementPositioningStrategies.OPERATOR)
     val ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT: KtDiagnosticFactory2<FirNamedFunctionSymbol, String> by error2<KtExpression, FirNamedFunctionSymbol, String>(SourceElementPositioningStrategies.OPERATOR)
-    val PROPERTY_AS_OPERATOR: KtDiagnosticFactory1<FirPropertySymbol> by error1<PsiElement, FirPropertySymbol>(SourceElementPositioningStrategies.OPERATOR)
+    val NOT_FUNCTION_AS_OPERATOR: KtDiagnosticFactory2<String, FirBasedSymbol<*>> by error2<PsiElement, String, FirBasedSymbol<*>>(SourceElementPositioningStrategies.OPERATOR)
     val DSL_SCOPE_VIOLATION: KtDiagnosticFactory1<FirBasedSymbol<*>> by error1<PsiElement, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
 
     // Type alias

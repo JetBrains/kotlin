@@ -89,10 +89,10 @@ enum class CandidateApplicability {
     RESOLVED_LOW_PRIORITY,
 
     /**
-     * Candidate is successful but uses property of functional type as an operator.
+     * Candidate is successful but uses property or object of functional type as an operator.
      * Tower resolve proceeds to next levels.
      */
-    K2_PROPERTY_AS_OPERATOR,
+    K2_NOT_FUNCTION_AS_OPERATOR,
 
     /**
      * Candidate is successful but uses new features that change resolve.

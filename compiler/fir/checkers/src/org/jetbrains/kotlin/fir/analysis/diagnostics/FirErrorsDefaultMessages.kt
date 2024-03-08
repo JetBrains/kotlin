@@ -451,6 +451,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_A_FUNCTION_LA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_A_LOOP_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_A_MULTIPLATFORM_COMPILATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_A_SUPERTYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_FUNCTION_AS_OPERATOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE
@@ -521,7 +522,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_SETTER_FO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_SETTER_FOR_OPEN_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_AS_OPERATOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALIZER_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALIZER_NO_BACKING_FIELD
@@ -2410,8 +2410,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             TO_STRING
         )
         map.put(
-            PROPERTY_AS_OPERATOR,
-            "Property ''{0}'' cannot be used as operator.",
+            NOT_FUNCTION_AS_OPERATOR,
+            "{0} ''{1}'' cannot be used as operator.",
+            STRING,
             SYMBOL
         )
         map.put(

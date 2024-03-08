@@ -124,15 +124,12 @@ class CandidateFactory private constructor(
             result.addDiagnostic(NoCompanionObject)
         }
         if (callInfo.origin == FirFunctionCallOrigin.Operator) {
-            val propertySymbol = when {
-                symbol is FirPropertySymbol -> symbol
-                callInfo.candidateForCommonInvokeReceiver != null -> callInfo.candidateForCommonInvokeReceiver.symbol as? FirPropertySymbol
-                else -> null
+            val normalizedSymbol = when (symbol) {
+                !is FirFunctionSymbol -> symbol
+                else -> callInfo.candidateForCommonInvokeReceiver?.symbol?.takeIf { it !is FirFunctionSymbol }
             }
-            if (propertySymbol != null) {
-                // Flag all property references that are resolved from an convention operator call.
-                result.addDiagnostic(PropertyAsOperator(propertySymbol))
-            }
+            // Flag all references that are resolved from an convention operator call.
+            normalizedSymbol?.let { result.addDiagnostic(NotFunctionAsOperator(normalizedSymbol)) }
         }
         if (symbol is FirPropertySymbol &&
             !context.session.languageVersionSettings.supportsFeature(LanguageFeature.PrioritizedEnumEntries)

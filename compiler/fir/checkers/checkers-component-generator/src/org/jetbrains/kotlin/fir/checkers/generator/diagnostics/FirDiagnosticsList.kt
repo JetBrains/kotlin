@@ -1585,8 +1585,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirNamedFunctionSymbol>("functionSymbol")
             parameter<String>("operator")
         }
-        val PROPERTY_AS_OPERATOR by error<PsiElement>(PositioningStrategy.OPERATOR) {
-            parameter<FirPropertySymbol>("property")
+        val NOT_FUNCTION_AS_OPERATOR by error<PsiElement>(PositioningStrategy.OPERATOR) {
+            parameter<String>("elementName")
+            parameter<FirBasedSymbol<*>>("elementSymbol")
         }
         val DSL_SCOPE_VIOLATION by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<FirBasedSymbol<*>>("calleeSymbol")

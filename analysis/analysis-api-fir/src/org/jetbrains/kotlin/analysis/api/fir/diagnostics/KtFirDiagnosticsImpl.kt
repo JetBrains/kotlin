@@ -3800,11 +3800,12 @@ internal class AssignmentOperatorShouldReturnUnitImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.AssignmentOperatorShouldReturnUnit
 
-internal class PropertyAsOperatorImpl(
-    override val property: KtVariableSymbol,
+internal class NotFunctionAsOperatorImpl(
+    override val elementName: String,
+    override val elementSymbol: KtSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.PropertyAsOperator
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.NotFunctionAsOperator
 
 internal class DslScopeViolationImpl(
     override val calleeSymbol: KtSymbol,

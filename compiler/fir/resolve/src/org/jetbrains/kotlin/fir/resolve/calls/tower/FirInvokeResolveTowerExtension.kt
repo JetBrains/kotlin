@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.FirPropertyAccessExpressionBuilder
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePropertyAsOperator
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeNotFunctionAsOperator
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal class FirInvokeResolveTowerExtension(
     private val context: ResolutionContext,
@@ -288,18 +289,26 @@ private fun BodyResolveComponents.createExplicitReceiverForInvoke(
     invokeBuiltinExtensionMode: Boolean,
     extensionReceiverExpression: FirExpression?
 ): FirExpression? {
+    val notFunctionAsOperatorDiagnostics = runIf (candidate.currentApplicability == CandidateApplicability.K2_NOT_FUNCTION_AS_OPERATOR) {
+        candidate.diagnostics.filterIsInstance<NotFunctionAsOperator>().map { ConeNotFunctionAsOperator(it.symbol) }
+    } ?: emptyList()
     return when (val symbol = candidate.symbol) {
         is FirCallableSymbol<*> -> createExplicitReceiverForInvokeByCallable(
-            candidate, info, invokeBuiltinExtensionMode, extensionReceiverExpression, symbol
+            candidate, info, invokeBuiltinExtensionMode, extensionReceiverExpression, symbol, notFunctionAsOperatorDiagnostics
         )
         is FirRegularClassSymbol -> buildResolvedQualifierForClass(
             symbol,
-            sourceElement = info.fakeSourceForImplicitInvokeCallReceiver
+            sourceElement = info.fakeSourceForImplicitInvokeCallReceiver,
+            nonFatalDiagnostics = notFunctionAsOperatorDiagnostics,
         )
         is FirTypeAliasSymbol -> {
             val type = symbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
             val expansionRegularClassSymbol = type.lookupTag.toSymbol(session) ?: return null
-            buildResolvedQualifierForClass(expansionRegularClassSymbol, sourceElement = symbol.fir.source)
+            buildResolvedQualifierForClass(
+                expansionRegularClassSymbol,
+                sourceElement = symbol.fir.source,
+                nonFatalDiagnostics = notFunctionAsOperatorDiagnostics,
+            )
         }
         else -> throw AssertionError()
     }
@@ -310,7 +319,8 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
     info: CallInfo,
     invokeBuiltinExtensionMode: Boolean,
     extensionReceiverExpression: FirExpression?,
-    symbol: FirCallableSymbol<*>
+    symbol: FirCallableSymbol<*>,
+    nonFatalDiagnostics: List<ConeNotFunctionAsOperator>,
 ): FirExpression {
     return FirPropertyAccessExpressionBuilder().apply {
         val fakeSource = info.fakeSourceForImplicitInvokeCallReceiver
@@ -337,9 +347,7 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
             explicitReceiver = info.explicitReceiver
         }
 
-        if (candidate.currentApplicability == CandidateApplicability.K2_PROPERTY_AS_OPERATOR) {
-            nonFatalDiagnostics.add(ConePropertyAsOperator(candidate.symbol as FirPropertySymbol))
-        }
+        this.nonFatalDiagnostics.addAll(nonFatalDiagnostics)
 
         candidate.updateSourcesOfReceivers()
 

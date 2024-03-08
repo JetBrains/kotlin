@@ -350,8 +350,8 @@ class ConeLocalVariableNoTypeOrInitializer(val variable: FirVariable) : ConeDiag
     override val reason: String get() = "Cannot infer variable type without initializer / getter / delegate"
 }
 
-class ConePropertyAsOperator(val symbol: FirPropertySymbol) : ConeDiagnostic {
-    override val reason: String get() = "Cannot use a property as an operator"
+class ConeNotFunctionAsOperator(val symbol: FirBasedSymbol<*>) : ConeDiagnostic {
+    override val reason: String get() = "Cannot use not function as an operator"
 }
 
 class ConeUnknownLambdaParameterTypeDiagnostic : ConeDiagnostic {
