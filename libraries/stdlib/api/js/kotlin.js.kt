@@ -205,7 +205,7 @@ public final annotation class EagerInitialization : kotlin.Annotation {
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION})
 @kotlin.annotation.MustBeDocumented
-@kotlin.SinceKotlin(version = "1.9")
+@kotlin.SinceKotlin(version = "2.0")
 public final annotation class ExperimentalJsCollectionsApi : kotlin.Annotation {
     public constructor ExperimentalJsCollectionsApi()
 }
