@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.coroutines.SuspendFunctionGenerationStrategy;
+import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.state.TypeMapperUtilsKt;
@@ -1305,7 +1306,7 @@ public class FunctionCodegen {
         if (((ClassDescriptor) container).getModality() == Modality.FINAL) return;
 
         Label end = new Label();
-        int handleIndex = (Type.getArgumentsAndReturnSizes(defaultMethod.getDescriptor()) >> 2) - 2; /*-1 for this, and -1 for handle*/
+        int handleIndex = InlineCodegenUtilsKt.argumentsSize(defaultMethod.getDescriptor(), true) - 1; // last argument
         iv.load(handleIndex, OBJECT_TYPE);
         iv.ifnull(end);
         AsmUtil.genThrow(

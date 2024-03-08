@@ -405,25 +405,7 @@ class ClassCodegen private constructor(
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
         )
         val mv = with(node) { visitor.newMethod(method.descriptorOrigin, access, name, desc, signature, exceptions.toTypedArray()) }
-        val smapCopier = SourceMapCopier(classSMAP, smap)
-
-        val smapCopyingVisitor = object : MethodVisitor(Opcodes.API_VERSION, mv) {
-            private val lineNumberMapping = mutableMapOf<Int, Int>()
-
-            override fun visitLineNumber(line: Int, start: Label) {
-                val newLine = smapCopier.mapLineNumber(line)
-                lineNumberMapping[line] = newLine
-                super.visitLineNumber(newLine, start)
-            }
-
-            override fun visitLocalVariable(name: String, descriptor: String, signature: String?, start: Label, end: Label, index: Int) {
-                if (state.configuration.getBoolean(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS) && isFakeLocalVariableForInline(name)) {
-                    val newName = updateCallSiteLineNumber(name, lineNumberMapping)
-                    return super.visitLocalVariable(newName, descriptor, signature, start, end, index)
-                }
-                super.visitLocalVariable(name, descriptor, signature, start, end, index)
-            }
-        }
+        val smapCopyingVisitor = SourceMapCopyingMethodVisitor(classSMAP, smap, mv)
 
         if (method.hasContinuation()) {
             // Generate a state machine within this method. The continuation class for it should be generated

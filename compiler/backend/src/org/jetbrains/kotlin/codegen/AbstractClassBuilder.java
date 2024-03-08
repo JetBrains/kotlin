@@ -118,11 +118,8 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
     public void done(boolean generateSmapCopyToAnnotation) {
         getVisitor().visitSource(sourceName, debugInfo);
         if (generateSmapCopyToAnnotation && debugInfo != null) {
-            AnnotationVisitor v =
-                    getVisitor().visitAnnotation(JvmAnnotationNames.SOURCE_DEBUG_EXTENSION_DESC, false).visitArray("value");
-            for (String part : CodegenUtilKt.splitStringConstant(debugInfo)) {
-                v.visit(null, part);
-            }
+            AnnotationVisitor v = getVisitor().visitAnnotation(JvmAnnotationNames.SOURCE_DEBUG_EXTENSION_DESC, false);
+            CodegenUtilKt.visitWithSplitting(v, "value", debugInfo);
             v.visitEnd();
         }
         getVisitor().visitEnd();

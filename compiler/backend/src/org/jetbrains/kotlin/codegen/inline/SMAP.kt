@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.codegen.inline
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap
 import org.jetbrains.kotlin.codegen.SourceInfo
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
+import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.LineNumberNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.util.*
@@ -76,6 +79,19 @@ class SourceMapCopier(val parent: SourceMapper, private val smap: SMAP, val call
         visitedLines.put(lineNumber, newLineNumber)
         return newLineNumber
     }
+}
+
+class SourceMapCopyingMethodVisitor(private val smapCopier: SourceMapCopier, mv: MethodVisitor) : MethodVisitor(Opcodes.API_VERSION, mv) {
+    constructor(target: SourceMapper, source: SMAP, mv: MethodVisitor) : this(SourceMapCopier(target, source), mv)
+
+    override fun visitLineNumber(line: Int, start: Label) =
+        super.visitLineNumber(smapCopier.mapLineNumber(line), start)
+
+    override fun visitLocalVariable(name: String, descriptor: String, signature: String?, start: Label, end: Label, index: Int) =
+        if (isFakeLocalVariableForInline(name))
+            super.visitLocalVariable(updateCallSiteLineNumber(name, smapCopier::mapLineNumber), descriptor, signature, start, end, index)
+        else
+            super.visitLocalVariable(name, descriptor, signature, start, end, index)
 }
 
 data class SourcePosition(val line: Int, val file: String, val path: String)

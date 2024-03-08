@@ -340,13 +340,10 @@ class InlineScopesGenerator {
     }
 }
 
-fun updateCallSiteLineNumber(name: String, lineNumberMapping: Map<Int, Int>): String =
-    updateCallSiteLineNumber(name) { lineNumberMapping[it] ?: it }
-
 fun updateCallSiteLineNumber(name: String, newLineNumber: Int): String =
     updateCallSiteLineNumber(name) { newLineNumber }
 
-private fun updateCallSiteLineNumber(name: String, calculate: (Int) -> Int): String {
+fun updateCallSiteLineNumber(name: String, calculate: (Int) -> Int): String {
     val (scopeNumber, callSiteLineNumber, surroundingScopeNumber) = name.getInlineScopeInfo() ?: return name
     if (callSiteLineNumber == null) {
         return name

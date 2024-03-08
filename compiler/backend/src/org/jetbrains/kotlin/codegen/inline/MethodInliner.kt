@@ -156,7 +156,6 @@ class MethodInliner(
         val fakeContinuationName = CoroutineTransformer.findFakeContinuationConstructorClassName(node)
         val markerShift = calcMarkerShift(parameters, node)
         var currentLineNumber = if (isInlineOnlyMethod) sourceMapper.callSite!!.line else -1
-        val lineNumberMapping = mutableMapOf<Int, Int>()
         val lambdaInliner = object : InlineAdapter(remappingMethodAdapter, parameters.argsSizeOnStack, sourceMapper) {
             private var transformationInfo: TransformationInfo? = null
             private var currentLabel: Label? = null
@@ -170,11 +169,6 @@ class MethodInliner(
                 if (!isInlineOnlyMethod) {
                     currentLineNumber = line
                 }
-
-                if (GENERATE_SMAP) {
-                    lineNumberMapping[line] = sourceMapper.mapLineNumber(line)
-                }
-
                 super.visitLineNumber(line, start)
             }
 
@@ -428,14 +422,14 @@ class MethodInliner(
 
         surroundInvokesWithSuspendMarkersIfNeeded(resultNode)
 
-        if (inliningContext.inlineScopesGenerator != null) {
-            updateCallSiteLineNumbers(resultNode, node, lineNumberMapping)
+        if (inliningContext.inlineScopesGenerator != null && GENERATE_SMAP) {
+            updateCallSiteLineNumbers(resultNode, node)
         }
 
         return resultNode
     }
 
-    private fun updateCallSiteLineNumbers(resultNode: MethodNode, inlinedNode: MethodNode, lineNumberMapping: Map<Int, Int>) {
+    private fun updateCallSiteLineNumbers(resultNode: MethodNode, inlinedNode: MethodNode) {
         val inlinedNodeLocalVariables = inlinedNode.localVariables ?: return
         val resultNodeLocalVariables = resultNode.localVariables ?: return
         if (inlinedNodeLocalVariables.isEmpty() || resultNodeLocalVariables.isEmpty()) {
@@ -462,7 +456,7 @@ class MethodInliner(
         for (variable in resultNodeLocalVariables) {
             val name = variable.name
             if (isFakeLocalVariableForInline(name) && name in markerVariableNamesFromInlinedNode) {
-                variable.name = updateCallSiteLineNumber(name, lineNumberMapping)
+                variable.name = updateCallSiteLineNumber(name) { sourceMapper.mapLineNumber(it) }
             }
         }
     }
