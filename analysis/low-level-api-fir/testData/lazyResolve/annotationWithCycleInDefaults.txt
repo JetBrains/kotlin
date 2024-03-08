@@ -1,0 +1,167 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] annotationWithCycleInDefaults.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class WithCycle : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/WithCycle.param] param: WithCycle = LAZY_EXPRESSION): R|WithCycle| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val param: WithCycle = R|<local>/param|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithCycle] get(): WithCycle
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class WithCycle : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/WithCycle.param] param: WithCycle = LAZY_EXPRESSION): R|WithCycle| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val param: WithCycle = R|<local>/param|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithCycle] get(): WithCycle
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class WithCycle : R|kotlin/Annotation| {
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=/WithCycle.param] param: WithCycle = LAZY_EXPRESSION): R|WithCycle| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val param: WithCycle = R|<local>/param|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithCycle] get(): WithCycle
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
+    public final? [ResolvedTo(COMPANION_GENERATION)] annotation class WithCycle : R|kotlin/Annotation| {
+        public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=/WithCycle.param] param: WithCycle = LAZY_EXPRESSION): R|WithCycle| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val param: WithCycle = R|<local>/param|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithCycle] get(): WithCycle
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
+    public final? [ResolvedTo(SUPER_TYPES)] annotation class WithCycle : R|kotlin/Annotation| {
+        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=/WithCycle.param] param: WithCycle = LAZY_EXPRESSION): R|WithCycle| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val param: WithCycle = R|<local>/param|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithCycle] get(): WithCycle
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
+    public final? [ResolvedTo(TYPES)] annotation class WithCycle : R|kotlin/Annotation| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = LAZY_EXPRESSION): R|WithCycle| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val param: WithCycle = R|<local>/param|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithCycle] get(): WithCycle
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
+    public final [ResolvedTo(STATUS)] annotation class WithCycle : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = LAZY_EXPRESSION): R|WithCycle| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val param: R|WithCycle| = R|<local>/param|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=WithCycle] get(): R|WithCycle|
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class WithCycle : R|kotlin/Annotation| {
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = LAZY_EXPRESSION): R|WithCycle| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val param: R|WithCycle| = R|<local>/param|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=WithCycle] get(): R|WithCycle|
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
+    public final [ResolvedTo(CONTRACTS)] annotation class WithCycle : R|kotlin/Annotation| {
+        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = LAZY_EXPRESSION): R|WithCycle| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val param: R|WithCycle| = R|<local>/param|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=WithCycle] get(): R|WithCycle|
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class WithCycle : R|kotlin/Annotation| {
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = LAZY_EXPRESSION): R|WithCycle| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val param: R|WithCycle| = R|<local>/param|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=WithCycle] get(): R|WithCycle|
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class WithCycle : R|kotlin/Annotation| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = LAZY_EXPRESSION): R|WithCycle| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val param: R|WithCycle| = R|<local>/param|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=WithCycle] get(): R|WithCycle|
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class WithCycle : R|kotlin/Annotation| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = LAZY_EXPRESSION): R|WithCycle| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val param: R|WithCycle| = R|<local>/param|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=WithCycle] get(): R|WithCycle|
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class WithCycle : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = R|/WithCycle.WithCycle|()): R|WithCycle| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val param: R|WithCycle| = R|<local>/param|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=WithCycle] get(): R|WithCycle|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithCycleInDefaults.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class WithCycle : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = R|/WithCycle.WithCycle|()): R|WithCycle| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val param: R|WithCycle| = R|<local>/param|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithCycle] get(): R|WithCycle|
+
+    }
