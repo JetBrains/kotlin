@@ -258,7 +258,7 @@ fun box() {
 // _ArraysWasm.kt:1695 $kotlin.collections.copyOfUninitializedElements (8, 18, 8)
 // _ArraysWasm.kt:1698 $kotlin.collections.copyOfUninitializedElements (17, 27, 17, 4)
 // _ArraysWasm.kt:1699 $kotlin.collections.copyOfUninitializedElements (4, 18, 26, 29, 40, 61, 48, 9, 9)
-// _Ranges.kt:1321 $kotlin.ranges.coerceAtMost (15, 22, 15, 36, 4)
+// _Ranges.kt:1322 $kotlin.ranges.coerceAtMost (15, 22, 15, 36, 4)
 // _ArraysWasm.kt:1228 $kotlin.collections.copyInto (35, 47, 57, 62, 17)
 // AbstractList.kt:119 $kotlin.collections.Companion.checkRangeIndexes (16, 28, 16, 33, 43, 33, 16, 28, 16, 33, 43, 33)
 // AbstractList.kt:122 $kotlin.collections.Companion.checkRangeIndexes (16, 28, 16, 16, 28, 16)

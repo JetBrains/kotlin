@@ -44,8 +44,8 @@ fun box(): String {
 // test.kt:9 $box (11, 11, 11, 11, 4)
 // ExternalWrapper.kt:200 $kotlin.wasm.internal.kotlinToJsStringAdapter
 // ExternalWrapper.kt:201 $kotlin.wasm.internal.kotlinToJsStringAdapter
-// Strings.kt:161 $kotlin.wasm.internal.kotlinToJsStringAdapter
-// Strings.kt:296 $kotlin.wasm.internal.kotlinToJsStringAdapter (52, 62, 52, 63)
+// Strings.kt:162 $kotlin.wasm.internal.kotlinToJsStringAdapter
+// Strings.kt:297 $kotlin.wasm.internal.kotlinToJsStringAdapter (52, 62, 52, 63)
 // String.kt:18 $kotlin.String.<get-length>
 // ExternalWrapper.kt:203 $kotlin.wasm.internal.kotlinToJsStringAdapter
 // String.kt:150 $kotlin.wasm.internal.kotlinToJsStringAdapter
@@ -69,7 +69,7 @@ fun box(): String {
 // MemoryAllocation.kt:72 $kotlin.wasm.unsafe.createAllocatorInTheNewScope (11, 4)
 // MemoryAllocation.kt:58 $kotlin.wasm.internal.kotlinToJsStringAdapter (8, 14)
 // MemoryAllocation.kt:160 $kotlin.wasm.internal.kotlinToJsStringAdapter (828, 739, 758, 784, 771, 803, 758, 739, 749, 749, 749, 820, 8580, 8584, 723, 882, 845, 915, 895, 932, 948, 963, 948, 932, 932, 932, 1251, 1261, 1276, 1291, 1276, 1306, 1220, 1353, 1364, 1379, 1364, 1394, 1332, 1325, 1325)
-// _Ranges.kt:1321 $kotlin.ranges.coerceAtMost (15, 22, 15, 54, 4)
+// _Ranges.kt:1322 $kotlin.ranges.coerceAtMost (15, 22, 15, 54, 4)
 // MemoryAllocation.kt:99 $kotlin.wasm.unsafe.ScopedMemoryAllocator.allocate
 // PreconditionsWasm.kt:29 $kotlin.wasm.unsafe.ScopedMemoryAllocator.allocate (2303, 2302, 2388, 2387, 2728, 2737, 2728, 2742, 2751, 2742, 2760, 2742)
 // PreconditionsWasm.kt:17 $kotlin.wasm.unsafe.ScopedMemoryAllocator.allocate (4, 4, 4)
