@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class Fir2IrConverter(
     private val moduleDescriptor: FirModuleDescriptor,
@@ -728,7 +729,13 @@ class Fir2IrConverter(
             session.lazyDeclarationResolver.disableLazyResolveContractChecks()
             val moduleDescriptor = FirModuleDescriptor.createSourceModuleDescriptor(session, kotlinBuiltIns)
             val components = Fir2IrComponentsStorage(
-                session, scopeSession, irFactory, fir2IrExtensions, fir2IrConfiguration, visibilityConverter,
+                session,
+                scopeSession,
+                irFactory,
+                fir2IrExtensions,
+                fir2IrConfiguration,
+                visibilityConverter,
+                runIf(fir2IrConfiguration.allowNonCachedDeclarations) { firFiles.toSet() },
                 { irBuiltins ->
                     IrFakeOverrideBuilder(
                         typeContextProvider(irBuiltins),
@@ -736,7 +743,11 @@ class Fir2IrConverter(
                         fir2IrExtensions.externalOverridabilityConditions
                     )
                 },
-                moduleDescriptor, commonMemberStorage, irMangler, specialSymbolProvider, initializedIrBuiltIns
+                moduleDescriptor,
+                commonMemberStorage,
+                irMangler,
+                specialSymbolProvider,
+                initializedIrBuiltIns
             )
 
             fir2IrExtensions.registerDeclarations(commonMemberStorage.symbolTable)

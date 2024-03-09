@@ -47,6 +47,18 @@ public class FirIdeNormalAnalysisLibraryBinaryModuleFirPluginPrototypeMultiBinar
     }
 
     @Test
+    @TestMetadata("annotationForFunctionOutOfCodeGenTarget.kt")
+    public void testAnnotationForFunctionOutOfCodeGenTarget() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiBinaryModule/annotationForFunctionOutOfCodeGenTarget.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationForFunctionOutOfCodeGenTarget2.kt")
+    public void testAnnotationForFunctionOutOfCodeGenTarget2() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiBinaryModule/annotationForFunctionOutOfCodeGenTarget2.kt");
+    }
+
+    @Test
     @TestMetadata("composableFunctionMultiModules.kt")
     public void testComposableFunctionMultiModules() throws Exception {
         runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiBinaryModule/composableFunctionMultiModules.kt");
