@@ -1460,6 +1460,18 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun maxWithOrThrow ([Ljava/lang/Object;Ljava/util/Comparator;)Ljava/lang/Object;
 	public static final fun maxWithOrThrow ([SLjava/util/Comparator;)S
 	public static final fun maxWithOrThrow ([ZLjava/util/Comparator;)Z
+	public static final fun median ([B)D
+	public static final fun median ([D)D
+	public static final fun median ([F)D
+	public static final fun median ([I)D
+	public static final fun median ([J)D
+	public static final fun median ([S)D
+	public static final fun medianOfByte ([Ljava/lang/Byte;)D
+	public static final fun medianOfDouble ([Ljava/lang/Double;)D
+	public static final fun medianOfFloat ([Ljava/lang/Float;)D
+	public static final fun medianOfInt ([Ljava/lang/Integer;)D
+	public static final fun medianOfLong ([Ljava/lang/Long;)D
+	public static final fun medianOfShort ([Ljava/lang/Short;)D
 	public static final synthetic fun min ([B)Ljava/lang/Byte;
 	public static final synthetic fun min ([C)Ljava/lang/Character;
 	public static final synthetic fun min ([D)Ljava/lang/Double;
@@ -2318,6 +2330,12 @@ public final class kotlin/collections/CollectionsKt {
 	public static final synthetic fun maxWith (Ljava/lang/Iterable;Ljava/util/Comparator;)Ljava/lang/Object;
 	public static final fun maxWithOrNull (Ljava/lang/Iterable;Ljava/util/Comparator;)Ljava/lang/Object;
 	public static final fun maxWithOrThrow (Ljava/lang/Iterable;Ljava/util/Comparator;)Ljava/lang/Object;
+	public static final fun medianOfByte (Ljava/lang/Iterable;)D
+	public static final fun medianOfDouble (Ljava/lang/Iterable;)D
+	public static final fun medianOfFloat (Ljava/lang/Iterable;)D
+	public static final fun medianOfInt (Ljava/lang/Iterable;)D
+	public static final fun medianOfLong (Ljava/lang/Iterable;)D
+	public static final fun medianOfShort (Ljava/lang/Iterable;)D
 	public static final synthetic fun min (Ljava/lang/Iterable;)Ljava/lang/Comparable;
 	public static final synthetic fun min (Ljava/lang/Iterable;)Ljava/lang/Double;
 	public static final synthetic fun min (Ljava/lang/Iterable;)Ljava/lang/Float;
@@ -5244,6 +5262,12 @@ public final class kotlin/sequences/SequencesKt {
 	public static final synthetic fun maxWith (Lkotlin/sequences/Sequence;Ljava/util/Comparator;)Ljava/lang/Object;
 	public static final fun maxWithOrNull (Lkotlin/sequences/Sequence;Ljava/util/Comparator;)Ljava/lang/Object;
 	public static final fun maxWithOrThrow (Lkotlin/sequences/Sequence;Ljava/util/Comparator;)Ljava/lang/Object;
+	public static final fun medianOfByte (Lkotlin/sequences/Sequence;)D
+	public static final fun medianOfDouble (Lkotlin/sequences/Sequence;)D
+	public static final fun medianOfFloat (Lkotlin/sequences/Sequence;)D
+	public static final fun medianOfInt (Lkotlin/sequences/Sequence;)D
+	public static final fun medianOfLong (Lkotlin/sequences/Sequence;)D
+	public static final fun medianOfShort (Lkotlin/sequences/Sequence;)D
 	public static final synthetic fun min (Lkotlin/sequences/Sequence;)Ljava/lang/Comparable;
 	public static final synthetic fun min (Lkotlin/sequences/Sequence;)Ljava/lang/Double;
 	public static final synthetic fun min (Lkotlin/sequences/Sequence;)Ljava/lang/Float;

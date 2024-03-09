@@ -87,4 +87,77 @@ object Numeric : TemplateGroupBase() {
         }
     }
 
+    val f_median = fn("median()") {
+        Family.defaultFamilies.forEach { family -> include(family, numericPrimitivesDefaultOrder) }
+    } builder {
+        doc {
+            """
+            Returns the median value of the elements in the ${f.collection}, or Double.NaN if the ${f.collection} is empty.
+            
+            It does so in linear time, based on [QuickSelect](https://en.wikipedia.org/wiki/Quickselect).
+            """
+        }
+        sample("samples.collections.Collections.Numeric.median")
+        returns("Double")
+        platformName("medianOf<T>")
+        body {
+            """
+            return with(toMutableList()) {
+                if (size == 0) {
+                    return Double.NaN
+                }
+            
+                fun swap(index1: Int, index2: Int) {
+                    val temp = get(index1)
+                    this[index1] = this[index2]
+                    this[index2] = temp
+                }
+            
+                fun partition(leftIndex: Int, rightIndex: Int): Int {
+                    val pivotIndex = (leftIndex + rightIndex) / 2
+                    val pivot = get(pivotIndex)
+                    swap(pivotIndex, rightIndex)
+                    var storageIndex = leftIndex
+                    for(i in leftIndex until rightIndex) {
+                        if(get(i) < pivot) {
+                            swap(i, storageIndex)
+                            storageIndex++
+                        }
+                    }
+                    swap(rightIndex, storageIndex)
+                    return storageIndex
+                }
+            
+                val midIndex = size / 2
+                var left = 0
+                var lastLeft = 0
+                var right = lastIndex
+                var pivotIndex = partition(left, right)
+                while (pivotIndex != midIndex) {
+                    if (pivotIndex > midIndex) {
+                        right = pivotIndex - 1
+                    } else {
+                        lastLeft = left
+                        left = pivotIndex + 1
+                    }
+                    pivotIndex = partition(left, right)
+                }
+                if (size % 2 == 0) {
+                    // The right-sided middle value was already found, now we need to find the biggest 
+                    // element to its left side. At this point, we're sure that the element is between
+                    // the lastLeft and midIndex, so just iterate through this range
+                    var currentMax = get(lastLeft)
+                    for (i in lastLeft until midIndex) {
+                        if (get(i) > currentMax)
+                            currentMax = get(i)
+                    }
+                    get(pivotIndex) * 0.5 + currentMax * 0.5
+                } else {
+                    get(pivotIndex).toDouble()
+                }
+            }
+            """
+        }
+    }
+
 }

@@ -1010,6 +1010,32 @@ class CollectionTest {
         expect(n.toDouble()/2) { range.average() }
     }
 
+    @Test fun median() {
+        assertTrue { listOf<Int>().average().isNaN() }
+        expect(1.0) { listOf(1).median() }
+        // Middle values = 1 and 3
+        expect(2.0) { listOf(3, 1).median() }
+        expect(2.0) { listOf(1, 3).median() }
+        // Middle value = 3
+        expect(3.0) { listOf(4.0, 1.0, 2.0, 3.0, 5.0).median() }
+        // Middle values = 4 and 4
+        expect(4.0) { listOf(5, 3, 4, 6, 4, 1).median() }
+        // Middle values = 5 and 6
+        expect(4.5) { listOf(1, 3, 5, 6, 4, 5).median() }
+        // Middle value = 3
+        expect(3.0) { listOf(1, 3, 7).median() }
+        expect(3.0) { listOf(1f, 7f, 3f).median() }
+        expect(0x3.toDouble()) { listOf(0x7, 0x1, 0x3).median() }
+        // Middle values = 3 and 5
+        expect(4.0) { listOf(1, 3, 7, 5).median() }
+        expect(4.0) { listOf(7, 5, 1, 3).median() }
+        expect(4.0) { listOf(5, 7, 1, 3).median() }
+        // Middle values = 5 and 6
+        expect(5.5) { listOf(10, 6, 4, 2, 7, 9, 5, 8, 3, 1).median() }
+        expect(5.5) { listOf(10, 4, 8, 2, 9, 7, 6, 4, 5, 1).median() }
+        expect(5.5) { listOf(1, 4, 8, 2, 7, 9, 6, 4, 5, 10).median() }
+    }
+
     @Test fun takeReturnsFirstNElements() {
         expect(listOf(1, 2, 3, 4, 5)) { (1..10).take(5) }
         expect(listOf(1, 2, 3, 4, 5)) { (1..10).toList().take(5) }

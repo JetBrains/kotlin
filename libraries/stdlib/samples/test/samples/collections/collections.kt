@@ -1033,4 +1033,20 @@ class Collections {
         }
 
     }
+
+    class Numeric {
+
+        @Sample
+        fun median() {
+            // When number of items is odd, takes the middle value
+            // Middle values = 3
+            val items = listOf(5, 3, 4, 1, 2)
+            assertPrints(items.median(), "3.0")
+
+            // When number of items is even, take the average between them
+            // Middle values = 3 and 4
+            val evenItems = listOf(5, 3, 4, 6, 2, 1)
+            assertPrints(evenItems.median(), "3.5")
+        }
+    }
 }

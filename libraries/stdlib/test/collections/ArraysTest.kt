@@ -578,6 +578,32 @@ class ArraysTest {
         // for each arr with size > 0  arr.average() = arr.sum().toDouble() / arr.size()
     }
 
+    @Test fun median() {
+        assertTrue { intArrayOf().average().isNaN() }
+        expect(1.0) { arrayOf(1).median() }
+        // Middle values = 1 and 3
+        expect(2.0) { arrayOf(3, 1).median() }
+        expect(2.0) { arrayOf(1, 3).median() }
+        // Middle value = 3
+        expect(3.0) { arrayOf(4.0, 1.0, 2.0, 3.0, 5.0).median() }
+        // Middle values = 4 and 4
+        expect(4.0) { arrayOf(5, 3, 4, 6, 4, 1).median() }
+        // Middle values = 5 and 6
+        expect(4.5) { arrayOf(1, 3, 5, 6, 4, 5).median() }
+        // Middle value = 3
+        expect(3.0) { arrayOf(1, 3, 7).median() }
+        expect(3.0) { arrayOf(1f, 7f, 3f).median() }
+        expect(0x3.toDouble()) { arrayOf(0x7, 0x1, 0x3).median() }
+        // Middle values = 3 and 5
+        expect(4.0) { arrayOf(1, 3, 7, 5).median() }
+        expect(4.0) { arrayOf(7, 5, 1, 3).median() }
+        expect(4.0) { arrayOf(5, 7, 1, 3).median() }
+        // Middle values = 5 and 6
+        expect(5.5) { arrayOf(10, 6, 4, 2, 7, 9, 5, 8, 3, 1).median() }
+        expect(5.5) { arrayOf(10, 4, 8, 2, 9, 7, 6, 4, 5, 1).median() }
+        expect(5.5) { arrayOf(1, 4, 8, 2, 7, 9, 6, 4, 5, 10).median() }
+    }
+
     @Test fun indexOfInPrimitiveArrays() {
         expect(-1) { byteArrayOf(1, 2, 3).indexOf(0) }
         expect(0) { byteArrayOf(1, 2, 3).indexOf(1) }

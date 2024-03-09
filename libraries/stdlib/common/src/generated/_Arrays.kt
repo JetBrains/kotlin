@@ -24228,6 +24228,720 @@ public fun DoubleArray.average(): Double {
 }
 
 /**
+ * Returns the median value of the elements in the array, or Double.NaN if the array is empty.
+ * 
+ * It does so in linear time, based on [QuickSelect](https://en.wikipedia.org/wiki/Quickselect).
+ */
+@kotlin.jvm.JvmName("medianOfByte")
+public fun Array<out Byte>.median(): Double {
+    return with(toMutableList()) {
+        if (size == 0) {
+            return Double.NaN
+        }
+        fun swap(index1: Int, index2: Int) {
+            val temp = get(index1)
+            this[index1] = this[index2]
+            this[index2] = temp
+        }
+        fun partition(leftIndex: Int, rightIndex: Int): Int {
+            val pivotIndex = (leftIndex + rightIndex) / 2
+            val pivot = get(pivotIndex)
+            swap(pivotIndex, rightIndex)
+            var storageIndex = leftIndex
+            for(i in leftIndex until rightIndex) {
+                if(get(i) < pivot) {
+                    swap(i, storageIndex)
+                    storageIndex++
+                }
+            }
+            swap(rightIndex, storageIndex)
+            return storageIndex
+        }
+        val midIndex = size / 2
+        var left = 0
+        var lastLeft = 0
+        var right = lastIndex
+        var pivotIndex = partition(left, right)
+        while (pivotIndex != midIndex) {
+            if (pivotIndex > midIndex) {
+                right = pivotIndex - 1
+            } else {
+                lastLeft = left
+                left = pivotIndex + 1
+            }
+            pivotIndex = partition(left, right)
+        }
+        if (size % 2 == 0) {
+            // The right-sided middle value was already found, now we need to find the biggest 
+            // element to its left side. At this point, we're sure that the element is between
+            // the lastLeft and midIndex, so just iterate through this range
+            var currentMax = get(lastLeft)
+            for (i in lastLeft until midIndex) {
+                if (get(i) > currentMax)
+                    currentMax = get(i)
+            }
+            get(pivotIndex) * 0.5 + currentMax * 0.5
+        } else {
+            get(pivotIndex).toDouble()
+        }
+    }
+}
+
+/**
+ * Returns the median value of the elements in the array, or Double.NaN if the array is empty.
+ * 
+ * It does so in linear time, based on [QuickSelect](https://en.wikipedia.org/wiki/Quickselect).
+ */
+@kotlin.jvm.JvmName("medianOfShort")
+public fun Array<out Short>.median(): Double {
+    return with(toMutableList()) {
+        if (size == 0) {
+            return Double.NaN
+        }
+        fun swap(index1: Int, index2: Int) {
+            val temp = get(index1)
+            this[index1] = this[index2]
+            this[index2] = temp
+        }
+        fun partition(leftIndex: Int, rightIndex: Int): Int {
+            val pivotIndex = (leftIndex + rightIndex) / 2
+            val pivot = get(pivotIndex)
+            swap(pivotIndex, rightIndex)
+            var storageIndex = leftIndex
+            for(i in leftIndex until rightIndex) {
+                if(get(i) < pivot) {
+                    swap(i, storageIndex)
+                    storageIndex++
+                }
+            }
+            swap(rightIndex, storageIndex)
+            return storageIndex
+        }
+        val midIndex = size / 2
+        var left = 0
+        var lastLeft = 0
+        var right = lastIndex
+        var pivotIndex = partition(left, right)
+        while (pivotIndex != midIndex) {
+            if (pivotIndex > midIndex) {
+                right = pivotIndex - 1
+            } else {
+                lastLeft = left
+                left = pivotIndex + 1
+            }
+            pivotIndex = partition(left, right)
+        }
+        if (size % 2 == 0) {
+            // The right-sided middle value was already found, now we need to find the biggest 
+            // element to its left side. At this point, we're sure that the element is between
+            // the lastLeft and midIndex, so just iterate through this range
+            var currentMax = get(lastLeft)
+            for (i in lastLeft until midIndex) {
+                if (get(i) > currentMax)
+                    currentMax = get(i)
+            }
+            get(pivotIndex) * 0.5 + currentMax * 0.5
+        } else {
+            get(pivotIndex).toDouble()
+        }
+    }
+}
+
+/**
+ * Returns the median value of the elements in the array, or Double.NaN if the array is empty.
+ * 
+ * It does so in linear time, based on [QuickSelect](https://en.wikipedia.org/wiki/Quickselect).
+ */
+@kotlin.jvm.JvmName("medianOfInt")
+public fun Array<out Int>.median(): Double {
+    return with(toMutableList()) {
+        if (size == 0) {
+            return Double.NaN
+        }
+        fun swap(index1: Int, index2: Int) {
+            val temp = get(index1)
+            this[index1] = this[index2]
+            this[index2] = temp
+        }
+        fun partition(leftIndex: Int, rightIndex: Int): Int {
+            val pivotIndex = (leftIndex + rightIndex) / 2
+            val pivot = get(pivotIndex)
+            swap(pivotIndex, rightIndex)
+            var storageIndex = leftIndex
+            for(i in leftIndex until rightIndex) {
+                if(get(i) < pivot) {
+                    swap(i, storageIndex)
+                    storageIndex++
+                }
+            }
+            swap(rightIndex, storageIndex)
+            return storageIndex
+        }
+        val midIndex = size / 2
+        var left = 0
+        var lastLeft = 0
+        var right = lastIndex
+        var pivotIndex = partition(left, right)
+        while (pivotIndex != midIndex) {
+            if (pivotIndex > midIndex) {
+                right = pivotIndex - 1
+            } else {
+                lastLeft = left
+                left = pivotIndex + 1
+            }
+            pivotIndex = partition(left, right)
+        }
+        if (size % 2 == 0) {
+            // The right-sided middle value was already found, now we need to find the biggest 
+            // element to its left side. At this point, we're sure that the element is between
+            // the lastLeft and midIndex, so just iterate through this range
+            var currentMax = get(lastLeft)
+            for (i in lastLeft until midIndex) {
+                if (get(i) > currentMax)
+                    currentMax = get(i)
+            }
+            get(pivotIndex) * 0.5 + currentMax * 0.5
+        } else {
+            get(pivotIndex).toDouble()
+        }
+    }
+}
+
+/**
+ * Returns the median value of the elements in the array, or Double.NaN if the array is empty.
+ * 
+ * It does so in linear time, based on [QuickSelect](https://en.wikipedia.org/wiki/Quickselect).
+ */
+@kotlin.jvm.JvmName("medianOfLong")
+public fun Array<out Long>.median(): Double {
+    return with(toMutableList()) {
+        if (size == 0) {
+            return Double.NaN
+        }
+        fun swap(index1: Int, index2: Int) {
+            val temp = get(index1)
+            this[index1] = this[index2]
+            this[index2] = temp
+        }
+        fun partition(leftIndex: Int, rightIndex: Int): Int {
+            val pivotIndex = (leftIndex + rightIndex) / 2
+            val pivot = get(pivotIndex)
+            swap(pivotIndex, rightIndex)
+            var storageIndex = leftIndex
+            for(i in leftIndex until rightIndex) {
+                if(get(i) < pivot) {
+                    swap(i, storageIndex)
+                    storageIndex++
+                }
+            }
+            swap(rightIndex, storageIndex)
+            return storageIndex
+        }
+        val midIndex = size / 2
+        var left = 0
+        var lastLeft = 0
+        var right = lastIndex
+        var pivotIndex = partition(left, right)
+        while (pivotIndex != midIndex) {
+            if (pivotIndex > midIndex) {
+                right = pivotIndex - 1
+            } else {
+                lastLeft = left
+                left = pivotIndex + 1
+            }
+            pivotIndex = partition(left, right)
+        }
+        if (size % 2 == 0) {
+            // The right-sided middle value was already found, now we need to find the biggest 
+            // element to its left side. At this point, we're sure that the element is between
+            // the lastLeft and midIndex, so just iterate through this range
+            var currentMax = get(lastLeft)
+            for (i in lastLeft until midIndex) {
+                if (get(i) > currentMax)
+                    currentMax = get(i)
+            }
+            get(pivotIndex) * 0.5 + currentMax * 0.5
+        } else {
+            get(pivotIndex).toDouble()
+        }
+    }
+}
+
+/**
+ * Returns the median value of the elements in the array, or Double.NaN if the array is empty.
+ * 
+ * It does so in linear time, based on [QuickSelect](https://en.wikipedia.org/wiki/Quickselect).
+ */
+@kotlin.jvm.JvmName("medianOfFloat")
+public fun Array<out Float>.median(): Double {
+    return with(toMutableList()) {
+        if (size == 0) {
+            return Double.NaN
+        }
+        fun swap(index1: Int, index2: Int) {
+            val temp = get(index1)
+            this[index1] = this[index2]
+            this[index2] = temp
+        }
+        fun partition(leftIndex: Int, rightIndex: Int): Int {
+            val pivotIndex = (leftIndex + rightIndex) / 2
+            val pivot = get(pivotIndex)
+            swap(pivotIndex, rightIndex)
+            var storageIndex = leftIndex
+            for(i in leftIndex until rightIndex) {
+                if(get(i) < pivot) {
+                    swap(i, storageIndex)
+                    storageIndex++
+                }
+            }
+            swap(rightIndex, storageIndex)
+            return storageIndex
+        }
+        val midIndex = size / 2
+        var left = 0
+        var lastLeft = 0
+        var right = lastIndex
+        var pivotIndex = partition(left, right)
+        while (pivotIndex != midIndex) {
+            if (pivotIndex > midIndex) {
+                right = pivotIndex - 1
+            } else {
+                lastLeft = left
+                left = pivotIndex + 1
+            }
+            pivotIndex = partition(left, right)
+        }
+        if (size % 2 == 0) {
+            // The right-sided middle value was already found, now we need to find the biggest 
+            // element to its left side. At this point, we're sure that the element is between
+            // the lastLeft and midIndex, so just iterate through this range
+            var currentMax = get(lastLeft)
+            for (i in lastLeft until midIndex) {
+                if (get(i) > currentMax)
+                    currentMax = get(i)
+            }
+            get(pivotIndex) * 0.5 + currentMax * 0.5
+        } else {
+            get(pivotIndex).toDouble()
+        }
+    }
+}
+
+/**
+ * Returns the median value of the elements in the array, or Double.NaN if the array is empty.
+ * 
+ * It does so in linear time, based on [QuickSelect](https://en.wikipedia.org/wiki/Quickselect).
+ */
+@kotlin.jvm.JvmName("medianOfDouble")
+public fun Array<out Double>.median(): Double {
+    return with(toMutableList()) {
+        if (size == 0) {
+            return Double.NaN
+        }
+        fun swap(index1: Int, index2: Int) {
+            val temp = get(index1)
+            this[index1] = this[index2]
+            this[index2] = temp
+        }
+        fun partition(leftIndex: Int, rightIndex: Int): Int {
+            val pivotIndex = (leftIndex + rightIndex) / 2
+            val pivot = get(pivotIndex)
+            swap(pivotIndex, rightIndex)
+            var storageIndex = leftIndex
+            for(i in leftIndex until rightIndex) {
+                if(get(i) < pivot) {
+                    swap(i, storageIndex)
+                    storageIndex++
+                }
+            }
+            swap(rightIndex, storageIndex)
+            return storageIndex
+        }
+        val midIndex = size / 2
+        var left = 0
+        var lastLeft = 0
+        var right = lastIndex
+        var pivotIndex = partition(left, right)
+        while (pivotIndex != midIndex) {
+            if (pivotIndex > midIndex) {
+                right = pivotIndex - 1
+            } else {
+                lastLeft = left
+                left = pivotIndex + 1
+            }
+            pivotIndex = partition(left, right)
+        }
+        if (size % 2 == 0) {
+            // The right-sided middle value was already found, now we need to find the biggest 
+            // element to its left side. At this point, we're sure that the element is between
+            // the lastLeft and midIndex, so just iterate through this range
+            var currentMax = get(lastLeft)
+            for (i in lastLeft until midIndex) {
+                if (get(i) > currentMax)
+                    currentMax = get(i)
+            }
+            get(pivotIndex) * 0.5 + currentMax * 0.5
+        } else {
+            get(pivotIndex).toDouble()
+        }
+    }
+}
+
+/**
+ * Returns the median value of the elements in the array, or Double.NaN if the array is empty.
+ * 
+ * It does so in linear time, based on [QuickSelect](https://en.wikipedia.org/wiki/Quickselect).
+ */
+public fun ByteArray.median(): Double {
+    return with(toMutableList()) {
+        if (size == 0) {
+            return Double.NaN
+        }
+        fun swap(index1: Int, index2: Int) {
+            val temp = get(index1)
+            this[index1] = this[index2]
+            this[index2] = temp
+        }
+        fun partition(leftIndex: Int, rightIndex: Int): Int {
+            val pivotIndex = (leftIndex + rightIndex) / 2
+            val pivot = get(pivotIndex)
+            swap(pivotIndex, rightIndex)
+            var storageIndex = leftIndex
+            for(i in leftIndex until rightIndex) {
+                if(get(i) < pivot) {
+                    swap(i, storageIndex)
+                    storageIndex++
+                }
+            }
+            swap(rightIndex, storageIndex)
+            return storageIndex
+        }
+        val midIndex = size / 2
+        var left = 0
+        var lastLeft = 0
+        var right = lastIndex
+        var pivotIndex = partition(left, right)
+        while (pivotIndex != midIndex) {
+            if (pivotIndex > midIndex) {
+                right = pivotIndex - 1
+            } else {
+                lastLeft = left
+                left = pivotIndex + 1
+            }
+            pivotIndex = partition(left, right)
+        }
+        if (size % 2 == 0) {
+            // The right-sided middle value was already found, now we need to find the biggest 
+            // element to its left side. At this point, we're sure that the element is between
+            // the lastLeft and midIndex, so just iterate through this range
+            var currentMax = get(lastLeft)
+            for (i in lastLeft until midIndex) {
+                if (get(i) > currentMax)
+                    currentMax = get(i)
+            }
+            get(pivotIndex) * 0.5 + currentMax * 0.5
+        } else {
+            get(pivotIndex).toDouble()
+        }
+    }
+}
+
+/**
+ * Returns the median value of the elements in the array, or Double.NaN if the array is empty.
+ * 
+ * It does so in linear time, based on [QuickSelect](https://en.wikipedia.org/wiki/Quickselect).
+ */
+public fun ShortArray.median(): Double {
+    return with(toMutableList()) {
+        if (size == 0) {
+            return Double.NaN
+        }
+        fun swap(index1: Int, index2: Int) {
+            val temp = get(index1)
+            this[index1] = this[index2]
+            this[index2] = temp
+        }
+        fun partition(leftIndex: Int, rightIndex: Int): Int {
+            val pivotIndex = (leftIndex + rightIndex) / 2
+            val pivot = get(pivotIndex)
+            swap(pivotIndex, rightIndex)
+            var storageIndex = leftIndex
+            for(i in leftIndex until rightIndex) {
+                if(get(i) < pivot) {
+                    swap(i, storageIndex)
+                    storageIndex++
+                }
+            }
+            swap(rightIndex, storageIndex)
+            return storageIndex
+        }
+        val midIndex = size / 2
+        var left = 0
+        var lastLeft = 0
+        var right = lastIndex
+        var pivotIndex = partition(left, right)
+        while (pivotIndex != midIndex) {
+            if (pivotIndex > midIndex) {
+                right = pivotIndex - 1
+            } else {
+                lastLeft = left
+                left = pivotIndex + 1
+            }
+            pivotIndex = partition(left, right)
+        }
+        if (size % 2 == 0) {
+            // The right-sided middle value was already found, now we need to find the biggest 
+            // element to its left side. At this point, we're sure that the element is between
+            // the lastLeft and midIndex, so just iterate through this range
+            var currentMax = get(lastLeft)
+            for (i in lastLeft until midIndex) {
+                if (get(i) > currentMax)
+                    currentMax = get(i)
+            }
+            get(pivotIndex) * 0.5 + currentMax * 0.5
+        } else {
+            get(pivotIndex).toDouble()
+        }
+    }
+}
+
+/**
+ * Returns the median value of the elements in the array, or Double.NaN if the array is empty.
+ * 
+ * It does so in linear time, based on [QuickSelect](https://en.wikipedia.org/wiki/Quickselect).
+ */
+public fun IntArray.median(): Double {
+    return with(toMutableList()) {
+        if (size == 0) {
+            return Double.NaN
+        }
+        fun swap(index1: Int, index2: Int) {
+            val temp = get(index1)
+            this[index1] = this[index2]
+            this[index2] = temp
+        }
+        fun partition(leftIndex: Int, rightIndex: Int): Int {
+            val pivotIndex = (leftIndex + rightIndex) / 2
+            val pivot = get(pivotIndex)
+            swap(pivotIndex, rightIndex)
+            var storageIndex = leftIndex
+            for(i in leftIndex until rightIndex) {
+                if(get(i) < pivot) {
+                    swap(i, storageIndex)
+                    storageIndex++
+                }
+            }
+            swap(rightIndex, storageIndex)
+            return storageIndex
+        }
+        val midIndex = size / 2
+        var left = 0
+        var lastLeft = 0
+        var right = lastIndex
+        var pivotIndex = partition(left, right)
+        while (pivotIndex != midIndex) {
+            if (pivotIndex > midIndex) {
+                right = pivotIndex - 1
+            } else {
+                lastLeft = left
+                left = pivotIndex + 1
+            }
+            pivotIndex = partition(left, right)
+        }
+        if (size % 2 == 0) {
+            // The right-sided middle value was already found, now we need to find the biggest 
+            // element to its left side. At this point, we're sure that the element is between
+            // the lastLeft and midIndex, so just iterate through this range
+            var currentMax = get(lastLeft)
+            for (i in lastLeft until midIndex) {
+                if (get(i) > currentMax)
+                    currentMax = get(i)
+            }
+            get(pivotIndex) * 0.5 + currentMax * 0.5
+        } else {
+            get(pivotIndex).toDouble()
+        }
+    }
+}
+
+/**
+ * Returns the median value of the elements in the array, or Double.NaN if the array is empty.
+ * 
+ * It does so in linear time, based on [QuickSelect](https://en.wikipedia.org/wiki/Quickselect).
+ */
+public fun LongArray.median(): Double {
+    return with(toMutableList()) {
+        if (size == 0) {
+            return Double.NaN
+        }
+        fun swap(index1: Int, index2: Int) {
+            val temp = get(index1)
+            this[index1] = this[index2]
+            this[index2] = temp
+        }
+        fun partition(leftIndex: Int, rightIndex: Int): Int {
+            val pivotIndex = (leftIndex + rightIndex) / 2
+            val pivot = get(pivotIndex)
+            swap(pivotIndex, rightIndex)
+            var storageIndex = leftIndex
+            for(i in leftIndex until rightIndex) {
+                if(get(i) < pivot) {
+                    swap(i, storageIndex)
+                    storageIndex++
+                }
+            }
+            swap(rightIndex, storageIndex)
+            return storageIndex
+        }
+        val midIndex = size / 2
+        var left = 0
+        var lastLeft = 0
+        var right = lastIndex
+        var pivotIndex = partition(left, right)
+        while (pivotIndex != midIndex) {
+            if (pivotIndex > midIndex) {
+                right = pivotIndex - 1
+            } else {
+                lastLeft = left
+                left = pivotIndex + 1
+            }
+            pivotIndex = partition(left, right)
+        }
+        if (size % 2 == 0) {
+            // The right-sided middle value was already found, now we need to find the biggest 
+            // element to its left side. At this point, we're sure that the element is between
+            // the lastLeft and midIndex, so just iterate through this range
+            var currentMax = get(lastLeft)
+            for (i in lastLeft until midIndex) {
+                if (get(i) > currentMax)
+                    currentMax = get(i)
+            }
+            get(pivotIndex) * 0.5 + currentMax * 0.5
+        } else {
+            get(pivotIndex).toDouble()
+        }
+    }
+}
+
+/**
+ * Returns the median value of the elements in the array, or Double.NaN if the array is empty.
+ * 
+ * It does so in linear time, based on [QuickSelect](https://en.wikipedia.org/wiki/Quickselect).
+ */
+public fun FloatArray.median(): Double {
+    return with(toMutableList()) {
+        if (size == 0) {
+            return Double.NaN
+        }
+        fun swap(index1: Int, index2: Int) {
+            val temp = get(index1)
+            this[index1] = this[index2]
+            this[index2] = temp
+        }
+        fun partition(leftIndex: Int, rightIndex: Int): Int {
+            val pivotIndex = (leftIndex + rightIndex) / 2
+            val pivot = get(pivotIndex)
+            swap(pivotIndex, rightIndex)
+            var storageIndex = leftIndex
+            for(i in leftIndex until rightIndex) {
+                if(get(i) < pivot) {
+                    swap(i, storageIndex)
+                    storageIndex++
+                }
+            }
+            swap(rightIndex, storageIndex)
+            return storageIndex
+        }
+        val midIndex = size / 2
+        var left = 0
+        var lastLeft = 0
+        var right = lastIndex
+        var pivotIndex = partition(left, right)
+        while (pivotIndex != midIndex) {
+            if (pivotIndex > midIndex) {
+                right = pivotIndex - 1
+            } else {
+                lastLeft = left
+                left = pivotIndex + 1
+            }
+            pivotIndex = partition(left, right)
+        }
+        if (size % 2 == 0) {
+            // The right-sided middle value was already found, now we need to find the biggest 
+            // element to its left side. At this point, we're sure that the element is between
+            // the lastLeft and midIndex, so just iterate through this range
+            var currentMax = get(lastLeft)
+            for (i in lastLeft until midIndex) {
+                if (get(i) > currentMax)
+                    currentMax = get(i)
+            }
+            get(pivotIndex) * 0.5 + currentMax * 0.5
+        } else {
+            get(pivotIndex).toDouble()
+        }
+    }
+}
+
+/**
+ * Returns the median value of the elements in the array, or Double.NaN if the array is empty.
+ * 
+ * It does so in linear time, based on [QuickSelect](https://en.wikipedia.org/wiki/Quickselect).
+ */
+public fun DoubleArray.median(): Double {
+    return with(toMutableList()) {
+        if (size == 0) {
+            return Double.NaN
+        }
+        fun swap(index1: Int, index2: Int) {
+            val temp = get(index1)
+            this[index1] = this[index2]
+            this[index2] = temp
+        }
+        fun partition(leftIndex: Int, rightIndex: Int): Int {
+            val pivotIndex = (leftIndex + rightIndex) / 2
+            val pivot = get(pivotIndex)
+            swap(pivotIndex, rightIndex)
+            var storageIndex = leftIndex
+            for(i in leftIndex until rightIndex) {
+                if(get(i) < pivot) {
+                    swap(i, storageIndex)
+                    storageIndex++
+                }
+            }
+            swap(rightIndex, storageIndex)
+            return storageIndex
+        }
+        val midIndex = size / 2
+        var left = 0
+        var lastLeft = 0
+        var right = lastIndex
+        var pivotIndex = partition(left, right)
+        while (pivotIndex != midIndex) {
+            if (pivotIndex > midIndex) {
+                right = pivotIndex - 1
+            } else {
+                lastLeft = left
+                left = pivotIndex + 1
+            }
+            pivotIndex = partition(left, right)
+        }
+        if (size % 2 == 0) {
+            // The right-sided middle value was already found, now we need to find the biggest 
+            // element to its left side. At this point, we're sure that the element is between
+            // the lastLeft and midIndex, so just iterate through this range
+            var currentMax = get(lastLeft)
+            for (i in lastLeft until midIndex) {
+                if (get(i) > currentMax)
+                    currentMax = get(i)
+            }
+            get(pivotIndex) * 0.5 + currentMax * 0.5
+        } else {
+            get(pivotIndex).toDouble()
+        }
+    }
+}
+
+/**
  * Returns the sum of all elements in the array.
  */
 @kotlin.jvm.JvmName("sumOfByte")
