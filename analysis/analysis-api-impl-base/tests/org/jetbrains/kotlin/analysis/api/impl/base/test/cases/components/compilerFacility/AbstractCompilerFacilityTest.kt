@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBase
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.BytecodeListingTextCollectingVisitor
@@ -27,10 +28,23 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.plugin.services.PluginRuntimeAnnotationsProvider
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
@@ -38,7 +52,10 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -75,7 +92,8 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
         val testFile = mainModule.files.single { it.name == mainFile.name }
 
-        val irCollector = CollectingIrGenerationExtension()
+        val checkComposableFunctions = mainModule.directives.contains(Directives.CHECK_COMPOSABLE_CALL)
+        val irCollector = CollectingIrGenerationExtension(checkComposableFunctions)
 
         val project = mainFile.project
         project.extensionArea.getExtensionPoint(IrGenerationExtension.extensionPointName)
@@ -108,6 +126,12 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
 
             if (result is KtCompilationResult.Success) {
                 testServices.assertions.assertEqualsToTestDataFileSibling(irCollector.result, extension = ".ir.txt")
+            }
+
+            if (checkComposableFunctions) {
+                testServices.assertions.assertEqualsToTestDataFileSibling(
+                    irCollector.composableFunctions.joinToString("\n"), extension = ".composable.txt"
+                )
             }
         }
     }
@@ -187,6 +211,10 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         val ATTACH_DUPLICATE_STDLIB by directive(
             "Attach the 'stdlib-jvm-minimal-for-test' library to simulate duplicate stdlib dependency"
         )
+
+        val CHECK_COMPOSABLE_CALL by directive(
+            "Check whether all functions of calls and getters of properties with MyComposable annotation are listed in *.composable.txt or not"
+        )
     }
 }
 
@@ -220,9 +248,11 @@ internal fun createCodeFragment(ktFile: KtFile, module: TestModule, testServices
     }
 }
 
-private class CollectingIrGenerationExtension : IrGenerationExtension {
+private class CollectingIrGenerationExtension(private val collectComposableFunctions: Boolean) : IrGenerationExtension {
     lateinit var result: String
         private set
+
+    val composableFunctions: MutableSet<String> = mutableSetOf()
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         assertFalse { ::result.isInitialized }
@@ -235,5 +265,41 @@ private class CollectingIrGenerationExtension : IrGenerationExtension {
         )
 
         result = moduleFragment.dump(dumpOptions)
+
+        if (collectComposableFunctions) {
+            moduleFragment.accept(ComposableCallVisitor { composableFunctions.add(it.name.asString()) }, null)
+        }
+    }
+
+    /**
+     * This class recursively visits all calls of functions and getters, and if the function or the getter used for a call has
+     * `MyComposable` annotation, it runs [handleComposable] for the function or the getter.
+     */
+    private class ComposableCallVisitor(private val handleComposable: (declaration: IrDeclarationWithName) -> Unit) : IrElementVisitorVoid {
+        val MyComposableClassId = ClassId(FqName("org.jetbrains.kotlin.fir.plugin"), FqName("MyComposable"), false)
+
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitCall(expression: IrCall) {
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            val function = expression.symbol.owner
+            if (function.containsComposableAnnotation()) {
+                handleComposable(function)
+            }
+        }
+
+        override fun visitFieldAccess(expression: IrFieldAccessExpression) {
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            val field = expression.symbol.owner
+            if (field.containsComposableAnnotation()) {
+                handleComposable(field)
+            }
+        }
+
+        private fun IrAnnotationContainer.containsComposableAnnotation() =
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            annotations.any { it.symbol.owner.parentClassId == MyComposableClassId }
     }
 }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.generators.*
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.IrLock
@@ -61,6 +62,24 @@ interface Fir2IrComponents {
     val configuration: Fir2IrConfiguration
 
     val annotationsFromPluginRegistrar: Fir2IrIrGeneratedDeclarationsRegistrar
+
+    /**
+     * A set of FIR files serving as input for the fir2ir ([Fir2IrConverter.createIrModuleFragment] function) for conversion to IR.
+     *
+     * We set annotations for IR objects, such as IrFunction, in two scenarios:
+     *  1. For FIR declared in library or precompiled: when creating IR object from FIR
+     *  2. For FIR declared in a source module: when filling contents of IR object in Fir2IrVisitor
+     *
+     * Since Fir2IrVisitor will recursively visit all FIR objects and generate IR objects for them, we handle the first scenario
+     * above as a corner case.
+     *
+     * However, when we use CodeGen analysis API, even FIRs declared in the source module can be out of the compile target files,
+     * because we can run the CodeGen only for a few files of the source module. We use [filesBeingCompiled] for that case
+     * to determine whether a given FIR is declared in a source file to be compiled or not for the CodeGen API. If it is not
+     * declared in a file to be compiled (i.e., target of CodeGen), we have to set annotations for IR when creating its IR like
+     * the first scenario above. We set [filesBeingCompiled] as `null` if we do not use the CodeGen analysis API.
+     */
+    val filesBeingCompiled: Set<FirFile>?
 
     interface Manglers {
         val irMangler: KotlinMangler.IrMangler

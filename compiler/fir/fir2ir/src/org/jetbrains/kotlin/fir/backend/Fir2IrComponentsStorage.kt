@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.generators.*
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
@@ -25,6 +26,7 @@ class Fir2IrComponentsStorage(
     override val extensions: Fir2IrExtensions,
     override val configuration: Fir2IrConfiguration,
     override val visibilityConverter: Fir2IrVisibilityConverter,
+    override val filesBeingCompiled: Set<FirFile>?,
     irFakeOverrideBuilderProvider: (IrBuiltIns) -> IrFakeOverrideBuilder,
     moduleDescriptor: FirModuleDescriptor,
     commonMemberStorage: Fir2IrCommonMemberStorage,

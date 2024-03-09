@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
-import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
@@ -26,6 +25,8 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -965,9 +966,17 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
     ) {
         if ((firAnnotationContainer as? FirDeclaration)?.let { it.isFromLibrary || it.isPrecompiled } == true
             || origin == IrDeclarationOrigin.FAKE_OVERRIDE
+            // When `firAnnotationContainer` is not in a compile target file, we will not fill contents for
+            // this annotation container later. Therefore, we have to set its annotations here.
+            || firAnnotationContainer.isDeclaredInFilesBeingCompiled()
         ) {
             annotationGenerator.generate(this, firAnnotationContainer)
         }
+    }
+
+    private fun FirAnnotationContainer.isDeclaredInFilesBeingCompiled(): Boolean {
+        if (filesBeingCompiled == null || this !is FirDeclaration) return false
+        return moduleData.session.firProvider.getContainingFile(symbol) !in filesBeingCompiled
     }
 }
 

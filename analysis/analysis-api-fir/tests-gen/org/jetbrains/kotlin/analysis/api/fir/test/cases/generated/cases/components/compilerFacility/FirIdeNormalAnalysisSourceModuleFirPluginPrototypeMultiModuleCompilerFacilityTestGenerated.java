@@ -46,6 +46,18 @@ public class FirIdeNormalAnalysisSourceModuleFirPluginPrototypeMultiModuleCompil
   }
 
   @Test
+  @TestMetadata("annotationForFunctionOutOfCodeGenTarget.kt")
+  public void testAnnotationForFunctionOutOfCodeGenTarget() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/annotationForFunctionOutOfCodeGenTarget.kt");
+  }
+
+  @Test
+  @TestMetadata("annotationForFunctionOutOfCodeGenTarget2.kt")
+  public void testAnnotationForFunctionOutOfCodeGenTarget2() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/annotationForFunctionOutOfCodeGenTarget2.kt");
+  }
+
+  @Test
   @TestMetadata("composableFunctionMultiModules.kt")
   public void testComposableFunctionMultiModules() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/composableFunctionMultiModules.kt");
