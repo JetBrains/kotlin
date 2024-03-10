@@ -52,6 +52,18 @@ public class DiagnosticsFirWasmTestGenerated extends AbstractDiagnosticsFirWasmT
     }
 
     @Test
+    @TestMetadata("complexCasesWithJsInteropTypes.kt")
+    public void testComplexCasesWithJsInteropTypes() {
+      runTest("compiler/testData/diagnostics/wasmTests/jsInterop/complexCasesWithJsInteropTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("correctJsInteropTypes.kt")
+    public void testCorrectJsInteropTypes() {
+      runTest("compiler/testData/diagnostics/wasmTests/jsInterop/correctJsInteropTypes.kt");
+    }
+
+    @Test
     @TestMetadata("definedExternally.kt")
     public void testDefinedExternally() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/definedExternally.kt");
@@ -124,9 +136,9 @@ public class DiagnosticsFirWasmTestGenerated extends AbstractDiagnosticsFirWasmT
     }
 
     @Test
-    @TestMetadata("types.kt")
-    public void testTypes() {
-      runTest("compiler/testData/diagnostics/wasmTests/jsInterop/types.kt");
+    @TestMetadata("wrongJsInteropTypes.kt")
+    public void testWrongJsInteropTypes() {
+      runTest("compiler/testData/diagnostics/wasmTests/jsInterop/wrongJsInteropTypes.kt");
     }
 
     @Test
