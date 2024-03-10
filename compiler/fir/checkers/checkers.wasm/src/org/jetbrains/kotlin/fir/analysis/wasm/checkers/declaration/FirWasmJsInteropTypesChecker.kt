@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.wasm.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.fir.analysis.wasm.checkers.hasValidJsCodeBody
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.isJsExportedDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
-import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.WasmStandardClassIds
@@ -46,114 +46,92 @@ object FirWasmJsInteropTypesChecker : FirBasicDeclarationChecker(MppCheckerKind.
             return
         }
 
-        // Skip enums to avoid reporting errors for synthetic static members with unsupported interop types.
-        // External enums errors are reported in a separate checker.
-        if (context.containingDeclarations.any { it is FirClass && it.isEnumClass }) {
-            return
+        // filter out compiler-generated declarations (data/enum methods, property accessors, primary constructors, etc.) to prevent
+        // 1) reporting excessive diagnostics
+        //    (e.g. on generated methods of external enum classes (which are handled by another checker))
+        // 2) reporting duplicate diagnostics
+        //    (e.g. on properties with generated accessors and type parameters of classes with generated primary constructors)
+        if (declaration.source is KtFakeSourceElement) return
+
+        fun ConeKotlinType.isSupportedInJsInterop(position: Position): Boolean {
+            if (isUnit || isNothing) {
+                // Unit and Nothing are supported in return type positions and unsupported in other type positions
+                return position == Position.RETURN_TYPE || position == Position.FUNCTION_TYPE_RETURN_TYPE
+            }
+
+            // primitive types, unsigned types, and String are supported (regardless of nullability)
+            if (isPrimitiveOrNullablePrimitive) return true
+            if (isUnsignedTypeOrNullableUnsignedType) return true
+            if (isString || isNullableString) return true
+
+            // type parameters' upper bounds should be checked separately on declaration-site
+            if (this is ConeTypeParameterType) return true
+
+            // function types themselves are supported
+            // (and their parameter and return types should be checked separately)
+            if (isBasicFunctionType(session)) return true
+
+            // aside from the aforementioned cases, only external types are supported
+            return toRegularClassSymbol(session)?.isEffectivelyExternal(session) == true
         }
 
-        fun ConeKotlinType.checkJsInteropType(
-            typePositionDescription: String,
-            source: KtSourceElement?,
-            isInFunctionReturnPosition: Boolean = false,
-        ) {
-            if (!isTypeSupportedInJsInterop(this, isInFunctionReturnPosition, session)) {
+        fun FirTypeRef.checkSupportInJsInterop(position: Position, fallbackSource: KtSourceElement?) {
+            val type = coneType.let {
+                val unexpandedType = if (position == Position.VARARG_VALUE_PARAMETER_TYPE) it.varargElementType() else it
+                unexpandedType.fullyExpandedType(session)
+            }
+
+            if (!type.isSupportedInJsInterop(position)) {
                 reporter.reportOn(
-                    source,
+                    source ?: fallbackSource,
                     FirWasmErrors.WRONG_JS_INTEROP_TYPE,
-                    this,
-                    typePositionDescription,
+                    type,
+                    position.description,
                     context
                 )
+                return
+            }
+
+            // although function types themselves are supported, their parameter and return types should be checked separately
+            val functionTypeRef = (this as? FirResolvedTypeRef)?.delegatedTypeRef as? FirFunctionTypeRef ?: return
+            with(functionTypeRef) {
+                parameters.map(FirFunctionTypeParameter::returnTypeRef).forEach { parameterTypeRef ->
+                    parameterTypeRef.checkSupportInJsInterop(Position.FUNCTION_TYPE_PARAMETER_TYPE, fallbackSource = functionTypeRef.source)
+                }
+                returnTypeRef.checkSupportInJsInterop(Position.FUNCTION_TYPE_RETURN_TYPE, fallbackSource = functionTypeRef.source)
             }
         }
 
-        fun FirTypeParameterRef.checkJsInteropTypeParameter() {
-            for (upperBound in this.symbol.resolvedBounds) {
-                upperBound.type.checkJsInteropType(
-                    "JS interop type parameter upper bound",
-                    upperBound.source ?: this.source
-                )
-            }
-        }
-
-        if (declaration is FirMemberDeclaration) {
+        if (declaration is FirTypeParameterRefsOwner) {
             for (typeParameter in declaration.typeParameters) {
-                typeParameter.checkJsInteropTypeParameter()
+                for (upperBound in typeParameter.symbol.resolvedBounds) {
+                    upperBound.checkSupportInJsInterop(Position.TYPE_PARAMETER_UPPER_BOUND, fallbackSource = typeParameter.source)
+                }
             }
         }
 
         when (declaration) {
             is FirProperty -> {
-                declaration.returnTypeRef.coneType.checkJsInteropType(
-                    "JS interop property",
-                    declaration.source
-                )
+                declaration.returnTypeRef.checkSupportInJsInterop(Position.PROPERTY_TYPE, fallbackSource = declaration.source)
             }
             is FirFunction -> {
-                for (parameter in declaration.valueParameters) {
-                    val type = parameter.returnTypeRef.coneType
-                    val varargElementTypeOrType = if (parameter.isVararg) type.varargElementType() else type
-                    varargElementTypeOrType.checkJsInteropType(
-                        "JS interop function parameter",
-                        parameter.source
-                    )
+                for (valueParameter in declaration.valueParameters) {
+                    val position = if (valueParameter.isVararg) Position.VARARG_VALUE_PARAMETER_TYPE else Position.VALUE_PARAMETER_TYPE
+                    valueParameter.returnTypeRef.checkSupportInJsInterop(position, fallbackSource = valueParameter.source)
                 }
-                declaration.returnTypeRef.coneType.checkJsInteropType(
-                    "JS interop function return",
-                    declaration.source,
-                    isInFunctionReturnPosition = true
-                )
+                declaration.returnTypeRef.checkSupportInJsInterop(Position.RETURN_TYPE, fallbackSource = declaration.source)
             }
-            else -> {}
+            else -> Unit
         }
     }
-}
 
-private fun isTypeSupportedInJsInterop(
-    unexpandedType: ConeKotlinType,
-    isInFunctionReturnPosition: Boolean,
-    session: FirSession,
-): Boolean {
-    val type = unexpandedType.fullyExpandedType(session)
-
-    if (type.isUnit || type.isNothing) {
-        return isInFunctionReturnPosition
+    private enum class Position(val description: String) {
+        TYPE_PARAMETER_UPPER_BOUND("upper bound of JS interop type parameter"),
+        PROPERTY_TYPE("type of JS interop property"),
+        VALUE_PARAMETER_TYPE("value parameter type of JS interop function"),
+        VARARG_VALUE_PARAMETER_TYPE("value parameter type of JS interop function"),
+        RETURN_TYPE("return type of JS interop function"),
+        FUNCTION_TYPE_PARAMETER_TYPE("parameter type of JS interop function type"),
+        FUNCTION_TYPE_RETURN_TYPE("return type of JS interop function type"),
     }
-
-    val nonNullable = type.withNullability(ConeNullability.NOT_NULL, session.typeContext)
-
-    if (nonNullable.isPrimitive || nonNullable.isUnsignedType || nonNullable.isString) {
-        return true
-    }
-
-    // Interop type parameters upper bounds should be checked
-    // on declaration site separately
-    if (nonNullable is ConeTypeParameterType) {
-        return true
-    }
-
-    val regularClassSymbol = nonNullable.toRegularClassSymbol(session)
-    if (regularClassSymbol?.isEffectivelyExternal(session) == true) {
-        return true
-    }
-
-    if (type.isBasicFunctionType(session)) {
-        val arguments = type.typeArguments
-        for (i in 0 until arguments.lastIndex) {
-            val argType = arguments[i].type ?: return false
-            if (!isTypeSupportedInJsInterop(argType, isInFunctionReturnPosition = false, session)) {
-                return false
-            }
-        }
-
-        val returnType = arguments.last().type ?: return false
-        return isTypeSupportedInJsInterop(
-            returnType,
-            isInFunctionReturnPosition = true,
-            session
-        )
-    }
-
-    return false
 }

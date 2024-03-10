@@ -17,12 +17,12 @@ external fun complexFunctionTypesWithNullableTypes(
 )
 
 external fun complexFunctionTypesWithWrongTypes(
-    <!WRONG_JS_INTEROP_TYPE!>f1: ((Any?, Byte?, Unit?, Int?, CharSequence?, Float?, IntArray?, Char?, String?, EI?, EC?, EO?) -> Unit)?<!>,
-    <!WRONG_JS_INTEROP_TYPE!>f2: ((Boolean?) -> ((Any?) -> ((Float?) -> ((CharSequence?) -> EI)?)?)?)?<!>,
-    <!WRONG_JS_INTEROP_TYPE!>f3: ((((((((Boolean?) -> Unit?)?) -> Float?)?) -> IntArray?)?) -> EI?)?<!>,
+    f1: ((<!WRONG_JS_INTEROP_TYPE!>Any?<!>, Byte?, <!WRONG_JS_INTEROP_TYPE!>Unit?<!>, Int?, <!WRONG_JS_INTEROP_TYPE!>CharSequence?<!>, Float?, <!WRONG_JS_INTEROP_TYPE!>IntArray?<!>, Char?, String?, EI?, EC?, EO?) -> Unit)?,
+    f2: ((Boolean?) -> ((<!WRONG_JS_INTEROP_TYPE!>Any?<!>) -> ((Float?) -> ((<!WRONG_JS_INTEROP_TYPE!>CharSequence?<!>) -> EI)?)?)?)?,
+    f3: ((((((((Boolean?) -> <!WRONG_JS_INTEROP_TYPE!>Unit?<!>)?) -> Float?)?) -> <!WRONG_JS_INTEROP_TYPE!>IntArray?<!>)?) -> EI?)?,
 )
 
 external fun <T> typeParameterWithUpperBoundsWithDifferentJsInteropCorrectness(arg: T): T where T : EI, T : <!WRONG_JS_INTEROP_TYPE!>Any<!>
 
-<!WRONG_JS_INTEROP_TYPE!>fun jsCodeFunctionWithBlockBody(<!WRONG_JS_INTEROP_TYPE!>x: Any<!>): Any<!> { js("return x;") }
-<!WRONG_JS_INTEROP_TYPE!>val jsCodeProperty: Any<!> = js("1")
+fun jsCodeFunctionWithBlockBody(x: <!WRONG_JS_INTEROP_TYPE!>Any<!>): <!WRONG_JS_INTEROP_TYPE!>Any<!> { js("return x;") }
+val jsCodeProperty: <!WRONG_JS_INTEROP_TYPE!>Any<!> = js("1")
