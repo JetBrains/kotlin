@@ -26,22 +26,25 @@ object FirWasmJsInteropTypesChecker : FirBasicDeclarationChecker(MppCheckerKind.
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         val session = context.session
 
-        fun isExternalJsInteropDeclaration() =
-            declaration.symbol.isEffectivelyExternal(session) &&
-                    !declaration.annotations.hasAnnotation(WasmStandardClassIds.Annotations.WasmImport, session)
+        fun isExternalJsInteropDeclaration(): Boolean {
+            val isEffectivelyExternal = declaration.symbol.isEffectivelyExternal(session)
+            val hasWasmImportAnnotation = declaration.annotations.hasAnnotation(WasmStandardClassIds.Annotations.WasmImport, session)
+            return isEffectivelyExternal && !hasWasmImportAnnotation
+        }
 
-        fun isJsCodeDeclaration() =
-            (declaration is FirSimpleFunction && declaration.hasValidJsCodeBody()) ||
-                    (declaration is FirProperty && declaration.hasValidJsCodeBody())
+        fun isJsCodeDeclaration(): Boolean {
+            return when (declaration) {
+                is FirSimpleFunction -> declaration.hasValidJsCodeBody()
+                is FirProperty -> declaration.hasValidJsCodeBody()
+                else -> false
+            }
+        }
 
-        fun isJsExportDeclaration() =
-            declaration is FirSimpleFunction && isJsExportedDeclaration(declaration, session)
-
-        // Interop type restriction rules apply uniformly to external, js("code"), and @JsExport declarations
+        // Interop type restriction rules apply uniformly to external, js("code"), and @JsExport declarations.
         if (
             !isExternalJsInteropDeclaration() &&
             !isJsCodeDeclaration() &&
-            !isJsExportDeclaration()
+            !isJsExportedDeclaration(declaration, session)
         ) {
             return
         }
