@@ -9,76 +9,76 @@ object UserDefinedObject
 
 external fun wrongJsInteropTypes(
     // Unit and Nothing
-    <!WRONG_JS_INTEROP_TYPE!>unit: Unit<!>,
-    <!WRONG_JS_INTEROP_TYPE!>nothing: Nothing<!>,
+    unit: <!WRONG_JS_INTEROP_TYPE!>Unit<!>,
+    nothing: <!WRONG_JS_INTEROP_TYPE!>Nothing<!>,
     // built-in types
-    <!WRONG_JS_INTEROP_TYPE!>any: Any<!>,
-    <!WRONG_JS_INTEROP_TYPE!>number: Number<!>,
-    <!WRONG_JS_INTEROP_TYPE!>charSequence: CharSequence<!>,
-    <!WRONG_JS_INTEROP_TYPE!>specializedArray: IntArray<!>,
-    <!WRONG_JS_INTEROP_TYPE!>pair: Pair<Int, Int><!>,
-    <!WRONG_JS_INTEROP_TYPE!>list: List<Int><!>,
-    <!WRONG_JS_INTEROP_TYPE!>genericArray: Array<Int><!>,
+    any: <!WRONG_JS_INTEROP_TYPE!>Any<!>,
+    number: <!WRONG_JS_INTEROP_TYPE!>Number<!>,
+    charSequence: <!WRONG_JS_INTEROP_TYPE!>CharSequence<!>,
+    specializedArray: <!WRONG_JS_INTEROP_TYPE!>IntArray<!>,
+    pair: <!WRONG_JS_INTEROP_TYPE!>Pair<Int, Int><!>,
+    list: <!WRONG_JS_INTEROP_TYPE!>List<Int><!>,
+    genericArray: <!WRONG_JS_INTEROP_TYPE!>Array<Int><!>,
     // user-defined types
-    <!WRONG_JS_INTEROP_TYPE!>userDefinedInterface: UserDefinedInterface<!>,
-    <!WRONG_JS_INTEROP_TYPE!>userDefinedOpenClass: UserDefinedOpenClass<!>,
-    <!WRONG_JS_INTEROP_TYPE!>userDefinedObject: UserDefinedObject<!>,
+    userDefinedInterface: <!WRONG_JS_INTEROP_TYPE!>UserDefinedInterface<!>,
+    userDefinedOpenClass: <!WRONG_JS_INTEROP_TYPE!>UserDefinedOpenClass<!>,
+    userDefinedObject: <!WRONG_JS_INTEROP_TYPE!>UserDefinedObject<!>,
 )
 
 external fun wrongNullableJsInteropTypes(
     // Unit and Nothing
-    <!WRONG_JS_INTEROP_TYPE!>unit: Unit?<!>,
-    <!WRONG_JS_INTEROP_TYPE!>nothing: Nothing?<!>,
+    unit: <!WRONG_JS_INTEROP_TYPE!>Unit?<!>,
+    nothing: <!WRONG_JS_INTEROP_TYPE!>Nothing?<!>,
     // built-in types
-    <!WRONG_JS_INTEROP_TYPE!>any: Any?<!>,
-    <!WRONG_JS_INTEROP_TYPE!>number: Number?<!>,
-    <!WRONG_JS_INTEROP_TYPE!>charSequence: CharSequence?<!>,
-    <!WRONG_JS_INTEROP_TYPE!>specializedArray: IntArray?<!>,
-    <!WRONG_JS_INTEROP_TYPE!>pair: Pair<Int, Int>?<!>,
-    <!WRONG_JS_INTEROP_TYPE!>list: List<Int>?<!>,
-    <!WRONG_JS_INTEROP_TYPE!>genericArray: Array<Int>?<!>,
+    any: <!WRONG_JS_INTEROP_TYPE!>Any?<!>,
+    number: <!WRONG_JS_INTEROP_TYPE!>Number?<!>,
+    charSequence: <!WRONG_JS_INTEROP_TYPE!>CharSequence?<!>,
+    specializedArray: <!WRONG_JS_INTEROP_TYPE!>IntArray?<!>,
+    pair: <!WRONG_JS_INTEROP_TYPE!>Pair<Int, Int>?<!>,
+    list: <!WRONG_JS_INTEROP_TYPE!>List<Int>?<!>,
+    genericArray: <!WRONG_JS_INTEROP_TYPE!>Array<Int>?<!>,
     // user-defined types
-    <!WRONG_JS_INTEROP_TYPE!>userDefinedInterface: UserDefinedInterface?<!>,
-    <!WRONG_JS_INTEROP_TYPE!>userDefinedOpenClass: UserDefinedOpenClass?<!>,
-    <!WRONG_JS_INTEROP_TYPE!>userDefinedObject: UserDefinedObject?<!>,
+    userDefinedInterface: <!WRONG_JS_INTEROP_TYPE!>UserDefinedInterface?<!>,
+    userDefinedOpenClass: <!WRONG_JS_INTEROP_TYPE!>UserDefinedOpenClass?<!>,
+    userDefinedObject: <!WRONG_JS_INTEROP_TYPE!>UserDefinedObject?<!>,
 )
 
 
 // wrong JS interop types as return types
 
 // built-in types
-<!WRONG_JS_INTEROP_TYPE!>external fun anyAsReturnType(): Any<!>
-<!WRONG_JS_INTEROP_TYPE!>external fun numberAsReturnType(): Number<!>
-<!WRONG_JS_INTEROP_TYPE!>external fun charSequenceAsReturnType(): CharSequence<!>
-<!WRONG_JS_INTEROP_TYPE!>external fun specializedArrayAsReturnType(): IntArray<!>
-<!WRONG_JS_INTEROP_TYPE!>external fun pairAsReturnType(): Pair<Int, Int><!>
-<!WRONG_JS_INTEROP_TYPE!>external fun listAsReturnType(): List<Int><!>
-<!WRONG_JS_INTEROP_TYPE!>external fun genericArrayAsReturnType(): Array<Int><!>
+external fun anyAsReturnType(): <!WRONG_JS_INTEROP_TYPE!>Any<!>
+external fun numberAsReturnType(): <!WRONG_JS_INTEROP_TYPE!>Number<!>
+external fun charSequenceAsReturnType(): <!WRONG_JS_INTEROP_TYPE!>CharSequence<!>
+external fun specializedArrayAsReturnType(): <!WRONG_JS_INTEROP_TYPE!>IntArray<!>
+external fun pairAsReturnType(): <!WRONG_JS_INTEROP_TYPE!>Pair<Int, Int><!>
+external fun listAsReturnType(): <!WRONG_JS_INTEROP_TYPE!>List<Int><!>
+external fun genericArrayAsReturnType(): <!WRONG_JS_INTEROP_TYPE!>Array<Int><!>
 
 // user-defined types
-<!WRONG_JS_INTEROP_TYPE!>external fun userDefinedInterfaceAsReturnType(): UserDefinedInterface<!>
-<!WRONG_JS_INTEROP_TYPE!>external fun userDefinedOpenClassAsReturnType(): UserDefinedOpenClass<!>
-<!WRONG_JS_INTEROP_TYPE!>external fun userDefinedObjectAsReturnType(): UserDefinedObject<!>
+external fun userDefinedInterfaceAsReturnType(): <!WRONG_JS_INTEROP_TYPE!>UserDefinedInterface<!>
+external fun userDefinedOpenClassAsReturnType(): <!WRONG_JS_INTEROP_TYPE!>UserDefinedOpenClass<!>
+external fun userDefinedObjectAsReturnType(): <!WRONG_JS_INTEROP_TYPE!>UserDefinedObject<!>
 
 
 // wrong JS interop types as vararg parameter types
 
 // Unit (Nothing is not allowed in vararg parameters)
-external fun unitAsVarargParameterType(<!WRONG_JS_INTEROP_TYPE!>vararg args: Unit<!>)
+external fun unitAsVarargParameterType(vararg args: <!WRONG_JS_INTEROP_TYPE!>Unit<!>)
 
 // built-in types
-external fun anyAsVarargParameterType(<!WRONG_JS_INTEROP_TYPE!>vararg args: Any<!>)
-external fun numberAsVarargParameterType(<!WRONG_JS_INTEROP_TYPE!>vararg args: Number<!>)
-external fun charSequenceAsVarargParameterType(<!WRONG_JS_INTEROP_TYPE!>vararg args: CharSequence<!>)
-external fun specializedArrayAsVarargParameterType(<!WRONG_JS_INTEROP_TYPE!>vararg args: IntArray<!>)
-external fun pairAsVarargParameterType(<!WRONG_JS_INTEROP_TYPE!>vararg args: Pair<Int, Int><!>)
-external fun listAsVarargParameterType(<!WRONG_JS_INTEROP_TYPE!>vararg args: List<Int><!>)
-external fun genericArrayAsVarargParameterType(<!WRONG_JS_INTEROP_TYPE!>vararg args: Array<Int><!>)
+external fun anyAsVarargParameterType(vararg args: <!WRONG_JS_INTEROP_TYPE!>Any<!>)
+external fun numberAsVarargParameterType(vararg args: <!WRONG_JS_INTEROP_TYPE!>Number<!>)
+external fun charSequenceAsVarargParameterType(vararg args: <!WRONG_JS_INTEROP_TYPE!>CharSequence<!>)
+external fun specializedArrayAsVarargParameterType(vararg args: <!WRONG_JS_INTEROP_TYPE!>IntArray<!>)
+external fun pairAsVarargParameterType(vararg args: <!WRONG_JS_INTEROP_TYPE!>Pair<Int, Int><!>)
+external fun listAsVarargParameterType(vararg args: <!WRONG_JS_INTEROP_TYPE!>List<Int><!>)
+external fun genericArrayAsVarargParameterType(vararg args: <!WRONG_JS_INTEROP_TYPE!>Array<Int><!>)
 
 // user-defined types
-external fun userDefinedInterfaceAsVarargParameterType(<!WRONG_JS_INTEROP_TYPE!>vararg args: UserDefinedInterface<!>)
-external fun userDefinedOpenClassAsVarargParameterType(<!WRONG_JS_INTEROP_TYPE!>vararg args: UserDefinedOpenClass<!>)
-external fun userDefinedObjectAsVarargParameterType(<!WRONG_JS_INTEROP_TYPE!>vararg args: UserDefinedObject<!>)
+external fun userDefinedInterfaceAsVarargParameterType(vararg args: <!WRONG_JS_INTEROP_TYPE!>UserDefinedInterface<!>)
+external fun userDefinedOpenClassAsVarargParameterType(vararg args: <!WRONG_JS_INTEROP_TYPE!>UserDefinedOpenClass<!>)
+external fun userDefinedObjectAsVarargParameterType(vararg args: <!WRONG_JS_INTEROP_TYPE!>UserDefinedObject<!>)
 
 
 external fun <
@@ -115,101 +115,101 @@ external fun <
 
 external class WrongJsInteropTypesAsClassTypeParameterUpperBounds<
         // Unit (Nothing as an upper bound results in an empty intersection type)
-        TUnit: <!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>Unit<!>,
+        TUnit: <!WRONG_JS_INTEROP_TYPE!>Unit<!>,
         // built-in types
-        TAny: <!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>Any<!>,
-        TNumber: <!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>Number<!>,
-        TCharSequence: <!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>CharSequence<!>,
-        TSpecializedArray: <!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>IntArray<!>,
-        TPair: <!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>Pair<Int, Int><!>,
-        TList: <!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>List<Int><!>,
-        TGenericArray: <!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>Array<Int><!>,
+        TAny: <!WRONG_JS_INTEROP_TYPE!>Any<!>,
+        TNumber: <!WRONG_JS_INTEROP_TYPE!>Number<!>,
+        TCharSequence: <!WRONG_JS_INTEROP_TYPE!>CharSequence<!>,
+        TSpecializedArray: <!WRONG_JS_INTEROP_TYPE!>IntArray<!>,
+        TPair: <!WRONG_JS_INTEROP_TYPE!>Pair<Int, Int><!>,
+        TList: <!WRONG_JS_INTEROP_TYPE!>List<Int><!>,
+        TGenericArray: <!WRONG_JS_INTEROP_TYPE!>Array<Int><!>,
         // user-defined types
-        TUserDefinedInterface: <!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>UserDefinedInterface<!>,
-        TUserDefinedOpenClass: <!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>UserDefinedOpenClass<!>,
-        TUserDefinedObject: <!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>UserDefinedObject<!>,
+        TUserDefinedInterface: <!WRONG_JS_INTEROP_TYPE!>UserDefinedInterface<!>,
+        TUserDefinedOpenClass: <!WRONG_JS_INTEROP_TYPE!>UserDefinedOpenClass<!>,
+        TUserDefinedObject: <!WRONG_JS_INTEROP_TYPE!>UserDefinedObject<!>,
         // type parameter with implicit upper bound
-        <!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>TTypeParameterWithImplicitUpperBound<!>
+        <!WRONG_JS_INTEROP_TYPE!>TTypeParameterWithImplicitUpperBound<!>
 >
 
 
 // wrong JS interop types as property types
 
 // Unit and Nothing
-<!WRONG_JS_INTEROP_TYPE!>external val unitProperty: Unit<!>
-<!WRONG_JS_INTEROP_TYPE!>external val nothingProperty: Nothing<!>
+external val unitProperty: <!WRONG_JS_INTEROP_TYPE!>Unit<!>
+external val nothingProperty: <!WRONG_JS_INTEROP_TYPE!>Nothing<!>
 
 // built-in types
-<!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>external val anyProperty: Any<!>
-<!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>external val numberProperty: Number<!>
-<!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>external val charSequenceProperty: CharSequence<!>
-<!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>external val specializedArrayProperty: IntArray<!>
-<!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>external val pairProperty: Pair<Int, Int><!>
-<!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>external val listProperty: List<Int><!>
-<!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>external val genericArrayProperty: Array<Int><!>
+external val anyProperty: <!WRONG_JS_INTEROP_TYPE!>Any<!>
+external val numberProperty: <!WRONG_JS_INTEROP_TYPE!>Number<!>
+external val charSequenceProperty: <!WRONG_JS_INTEROP_TYPE!>CharSequence<!>
+external val specializedArrayProperty: <!WRONG_JS_INTEROP_TYPE!>IntArray<!>
+external val pairProperty: <!WRONG_JS_INTEROP_TYPE!>Pair<Int, Int><!>
+external val listProperty: <!WRONG_JS_INTEROP_TYPE!>List<Int><!>
+external val genericArrayProperty: <!WRONG_JS_INTEROP_TYPE!>Array<Int><!>
 
 // user-defined types
-<!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>external val userDefinedInterfaceProperty: UserDefinedInterface<!>
-<!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>external val userDefinedOpenClassProperty: UserDefinedOpenClass<!>
-<!WRONG_JS_INTEROP_TYPE, WRONG_JS_INTEROP_TYPE!>external val userDefinedObjectProperty: UserDefinedObject<!>
+external val userDefinedInterfaceProperty: <!WRONG_JS_INTEROP_TYPE!>UserDefinedInterface<!>
+external val userDefinedOpenClassProperty: <!WRONG_JS_INTEROP_TYPE!>UserDefinedOpenClass<!>
+external val userDefinedObjectProperty: <!WRONG_JS_INTEROP_TYPE!>UserDefinedObject<!>
 
 
 external fun wrongJsInteropTypesAsFunctionTypeParameterTypes(
-    <!WRONG_JS_INTEROP_TYPE!>unitAndNothing: (Unit, Nothing) -> Unit<!>,
-    <!WRONG_JS_INTEROP_TYPE!>builtInTypes: (Any, Number, CharSequence, IntArray, Pair<Int, Int>, List<Int>, Array<Int>) -> Unit<!>,
-    <!WRONG_JS_INTEROP_TYPE!>userDefinedTypes: (UserDefinedInterface, UserDefinedOpenClass, UserDefinedObject) -> Unit<!>,
+    unitAndNothing: (<!WRONG_JS_INTEROP_TYPE!>Unit<!>, <!WRONG_JS_INTEROP_TYPE!>Nothing<!>) -> Unit,
+    builtInTypes: (<!WRONG_JS_INTEROP_TYPE!>Any<!>, <!WRONG_JS_INTEROP_TYPE!>Number<!>, <!WRONG_JS_INTEROP_TYPE!>CharSequence<!>, <!WRONG_JS_INTEROP_TYPE!>IntArray<!>, <!WRONG_JS_INTEROP_TYPE!>Pair<Int, Int><!>, <!WRONG_JS_INTEROP_TYPE!>List<Int><!>, <!WRONG_JS_INTEROP_TYPE!>Array<Int><!>) -> Unit,
+    userDefinedTypes: (<!WRONG_JS_INTEROP_TYPE!>UserDefinedInterface<!>, <!WRONG_JS_INTEROP_TYPE!>UserDefinedOpenClass<!>, <!WRONG_JS_INTEROP_TYPE!>UserDefinedObject<!>) -> Unit,
 )
 
 external fun wrongJsInteropTypesAsFunctionTypeReturnTypes(
     // built-in types
-    <!WRONG_JS_INTEROP_TYPE!>any: () -> Any<!>,
-    <!WRONG_JS_INTEROP_TYPE!>number: () -> Number<!>,
-    <!WRONG_JS_INTEROP_TYPE!>charSequence: () -> CharSequence<!>,
-    <!WRONG_JS_INTEROP_TYPE!>specializedArray: () -> IntArray<!>,
-    <!WRONG_JS_INTEROP_TYPE!>pair: () -> Pair<Int, Int><!>,
-    <!WRONG_JS_INTEROP_TYPE!>list: () -> List<Int><!>,
-    <!WRONG_JS_INTEROP_TYPE!>genericArray: () -> Array<Int><!>,
+    any: () -> <!WRONG_JS_INTEROP_TYPE!>Any<!>,
+    number: () -> <!WRONG_JS_INTEROP_TYPE!>Number<!>,
+    charSequence: () -> <!WRONG_JS_INTEROP_TYPE!>CharSequence<!>,
+    specializedArray: () -> <!WRONG_JS_INTEROP_TYPE!>IntArray<!>,
+    pair: () -> <!WRONG_JS_INTEROP_TYPE!>Pair<Int, Int><!>,
+    list: () -> <!WRONG_JS_INTEROP_TYPE!>List<Int><!>,
+    genericArray: () -> <!WRONG_JS_INTEROP_TYPE!>Array<Int><!>,
     // user-defined types
-    <!WRONG_JS_INTEROP_TYPE!>userDefinedInterface: () -> UserDefinedInterface<!>,
-    <!WRONG_JS_INTEROP_TYPE!>userDefinedOpenClass: () -> UserDefinedOpenClass<!>,
-    <!WRONG_JS_INTEROP_TYPE!>userDefinedObject: () -> UserDefinedObject<!>,
+    userDefinedInterface: () -> <!WRONG_JS_INTEROP_TYPE!>UserDefinedInterface<!>,
+    userDefinedOpenClass: () -> <!WRONG_JS_INTEROP_TYPE!>UserDefinedOpenClass<!>,
+    userDefinedObject: () -> <!WRONG_JS_INTEROP_TYPE!>UserDefinedObject<!>,
 )
 
 fun wrongJsInteropTypesInJsCodeFunction(
     // Unit and Nothing
-    <!WRONG_JS_INTEROP_TYPE!>unit: Unit<!>,
-    <!WRONG_JS_INTEROP_TYPE!>nothing: Nothing<!>,
+    unit: <!WRONG_JS_INTEROP_TYPE!>Unit<!>,
+    nothing: <!WRONG_JS_INTEROP_TYPE!>Nothing<!>,
     // built-in types
-    <!WRONG_JS_INTEROP_TYPE!>any: Any<!>,
-    <!WRONG_JS_INTEROP_TYPE!>number: Number<!>,
-    <!WRONG_JS_INTEROP_TYPE!>charSequence: CharSequence<!>,
-    <!WRONG_JS_INTEROP_TYPE!>specializedArray: IntArray<!>,
-    <!WRONG_JS_INTEROP_TYPE!>pair: Pair<Int, Int><!>,
-    <!WRONG_JS_INTEROP_TYPE!>list: List<Int><!>,
-    <!WRONG_JS_INTEROP_TYPE!>genericArray: Array<Int><!>,
+    any: <!WRONG_JS_INTEROP_TYPE!>Any<!>,
+    number: <!WRONG_JS_INTEROP_TYPE!>Number<!>,
+    charSequence: <!WRONG_JS_INTEROP_TYPE!>CharSequence<!>,
+    specializedArray: <!WRONG_JS_INTEROP_TYPE!>IntArray<!>,
+    pair: <!WRONG_JS_INTEROP_TYPE!>Pair<Int, Int><!>,
+    list: <!WRONG_JS_INTEROP_TYPE!>List<Int><!>,
+    genericArray: <!WRONG_JS_INTEROP_TYPE!>Array<Int><!>,
     // user-defined types
-    <!WRONG_JS_INTEROP_TYPE!>userDefinedInterface: UserDefinedInterface<!>,
-    <!WRONG_JS_INTEROP_TYPE!>userDefinedOpenClass: UserDefinedOpenClass<!>,
-    <!WRONG_JS_INTEROP_TYPE!>userDefinedObject: UserDefinedObject<!>,
+    userDefinedInterface: <!WRONG_JS_INTEROP_TYPE!>UserDefinedInterface<!>,
+    userDefinedOpenClass: <!WRONG_JS_INTEROP_TYPE!>UserDefinedOpenClass<!>,
+    userDefinedObject: <!WRONG_JS_INTEROP_TYPE!>UserDefinedObject<!>,
 ): Nothing = js("42")
 
 @JsExport
 fun wrongJsInteropTypesInJsExportFunction(
     // Unit and Nothing
-    <!WRONG_JS_INTEROP_TYPE!>unit: Unit<!>,
-    <!WRONG_JS_INTEROP_TYPE!>nothing: Nothing<!>,
+    unit: <!WRONG_JS_INTEROP_TYPE!>Unit<!>,
+    nothing: <!WRONG_JS_INTEROP_TYPE!>Nothing<!>,
     // built-in types
-    <!WRONG_JS_INTEROP_TYPE!>any: Any<!>,
-    <!WRONG_JS_INTEROP_TYPE!>number: Number<!>,
-    <!WRONG_JS_INTEROP_TYPE!>charSequence: CharSequence<!>,
-    <!WRONG_JS_INTEROP_TYPE!>specializedArray: IntArray<!>,
-    <!WRONG_JS_INTEROP_TYPE!>pair: Pair<Int, Int><!>,
-    <!WRONG_JS_INTEROP_TYPE!>list: List<Int><!>,
-    <!WRONG_JS_INTEROP_TYPE!>genericArray: Array<Int><!>,
+    any: <!WRONG_JS_INTEROP_TYPE!>Any<!>,
+    number: <!WRONG_JS_INTEROP_TYPE!>Number<!>,
+    charSequence: <!WRONG_JS_INTEROP_TYPE!>CharSequence<!>,
+    specializedArray: <!WRONG_JS_INTEROP_TYPE!>IntArray<!>,
+    pair: <!WRONG_JS_INTEROP_TYPE!>Pair<Int, Int><!>,
+    list: <!WRONG_JS_INTEROP_TYPE!>List<Int><!>,
+    genericArray: <!WRONG_JS_INTEROP_TYPE!>Array<Int><!>,
     // user-defined types
-    <!WRONG_JS_INTEROP_TYPE!>userDefinedInterface: UserDefinedInterface<!>,
-    <!WRONG_JS_INTEROP_TYPE!>userDefinedOpenClass: UserDefinedOpenClass<!>,
-    <!WRONG_JS_INTEROP_TYPE!>userDefinedObject: UserDefinedObject<!>,
+    userDefinedInterface: <!WRONG_JS_INTEROP_TYPE!>UserDefinedInterface<!>,
+    userDefinedOpenClass: <!WRONG_JS_INTEROP_TYPE!>UserDefinedOpenClass<!>,
+    userDefinedObject: <!WRONG_JS_INTEROP_TYPE!>UserDefinedObject<!>,
 ) {}
 
 
@@ -230,18 +230,18 @@ typealias AliasedUserDefinedObject = UserDefinedObject
 
 external fun aliasedWrongJsInteropTypes(
     // Unit and Nothing
-    <!WRONG_JS_INTEROP_TYPE!>unit: AliasedUnit<!>,
-    <!WRONG_JS_INTEROP_TYPE!>nothing: AliasedNothing<!>,
+    unit: <!WRONG_JS_INTEROP_TYPE!>AliasedUnit<!>,
+    nothing: <!WRONG_JS_INTEROP_TYPE!>AliasedNothing<!>,
     // built-in types
-    <!WRONG_JS_INTEROP_TYPE!>any: AliasedAny<!>,
-    <!WRONG_JS_INTEROP_TYPE!>number: AliasedNumber<!>,
-    <!WRONG_JS_INTEROP_TYPE!>charSequence: AliasedCharSequence<!>,
-    <!WRONG_JS_INTEROP_TYPE!>specializedArray: AliasedSpecializedArray<!>,
-    <!WRONG_JS_INTEROP_TYPE!>pair: AliasedPair<!>,
-    <!WRONG_JS_INTEROP_TYPE!>list: AliasedList<!>,
-    <!WRONG_JS_INTEROP_TYPE!>genericArray: AliasedGenericArray<!>,
+    any: <!WRONG_JS_INTEROP_TYPE!>AliasedAny<!>,
+    number: <!WRONG_JS_INTEROP_TYPE!>AliasedNumber<!>,
+    charSequence: <!WRONG_JS_INTEROP_TYPE!>AliasedCharSequence<!>,
+    specializedArray: <!WRONG_JS_INTEROP_TYPE!>AliasedSpecializedArray<!>,
+    pair: <!WRONG_JS_INTEROP_TYPE!>AliasedPair<!>,
+    list: <!WRONG_JS_INTEROP_TYPE!>AliasedList<!>,
+    genericArray: <!WRONG_JS_INTEROP_TYPE!>AliasedGenericArray<!>,
     // user-defined types
-    <!WRONG_JS_INTEROP_TYPE!>userDefinedInterface: AliasedUserDefinedInterface<!>,
-    <!WRONG_JS_INTEROP_TYPE!>userDefinedOpenClass: AliasedUserDefinedOpenClass<!>,
-    <!WRONG_JS_INTEROP_TYPE!>userDefinedObject: AliasedUserDefinedObject<!>,
+    userDefinedInterface: <!WRONG_JS_INTEROP_TYPE!>AliasedUserDefinedInterface<!>,
+    userDefinedOpenClass: <!WRONG_JS_INTEROP_TYPE!>AliasedUserDefinedOpenClass<!>,
+    userDefinedObject: <!WRONG_JS_INTEROP_TYPE!>AliasedUserDefinedObject<!>,
 )
