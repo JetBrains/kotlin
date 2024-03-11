@@ -141,7 +141,7 @@ apiValidation {
 By default, binary compatibility validator analyzes project output class files from `build/classes` directory when building an API dump.
 If you pack these classes into an output jar not in a regular way, for example, by excluding certain classes, applying `shadow` plugin, and so on,
 the API dump built from the original class files may no longer reflect the resulting jar contents accurately.
-In that case, it makes sense to use the resulting jar as an input of the `apuBuild` task:
+In that case, it makes sense to use the resulting jar as an input of the `apiBuild` task:
 
 Kotlin
 ```kotlin
