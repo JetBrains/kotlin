@@ -44072,6 +44072,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("companionVsStaticScope.kt")
+        public void testCompanionVsStaticScope() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/ambiguousTypeReferences/companionVsStaticScope.kt");
+        }
+
+        @Test
         @TestMetadata("constructorCase.kt")
         public void testConstructorCase() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/ambiguousTypeReferences/constructorCase.kt");
