@@ -78,11 +78,9 @@ void gc::mark::ConcurrentMark::runMainInSTW() {
         }
     } while (!tryTerminateMark(everSharedBatches));
 
-    for (auto& thread : *lockedMutatorsList_) {
-        thread.gc().impl().gc().mark().markQueue().destroy();
-    }
-
-    endMarkingEpoch();
+    // By this point mutator mark queues may not be populated anymore.
+    // However, some threads may still try to enqueue a marked object, before they observe the barrier disablement.
+    // Thus, mark queue destruction takes place only later below.
 
     gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle(), mm::SpecialRefRegistry::instance());
 
@@ -94,6 +92,11 @@ void gc::mark::ConcurrentMark::runMainInSTW() {
     }
 
     barriers::disableBarriers();
+
+    for (auto& thread : *lockedMutatorsList_) {
+        thread.gc().impl().gc().mark().markQueue().destroy();
+    }
+    endMarkingEpoch();
 }
 
 void gc::mark::ConcurrentMark::runOnMutator(mm::ThreadData&) {
