@@ -94,6 +94,7 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
     override fun configure(config: Closure<*>): Task {
         super.configure(config)
 
+        notCompatibleWithConfigurationCache("This task uses Task.project at execution time")
         // Set Gradle properties for the better navigation
         group = LifecycleBasePlugin.VERIFICATION_GROUP
         description = "Kotlin/Native test infrastructure task"
