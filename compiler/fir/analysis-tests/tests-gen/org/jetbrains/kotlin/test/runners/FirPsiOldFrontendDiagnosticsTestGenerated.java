@@ -11879,12 +11879,6 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
-      @TestMetadata("missingNames.kt")
-      public void testMissingNames() {
-        runTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/missingNames.kt");
-      }
-
-      @Test
       @TestMetadata("vararg.kt")
       public void testVararg() {
         runTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/vararg.kt");
@@ -16510,6 +16504,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("kt59041.kt")
       public void testKt59041() {
         runTest("compiler/testData/diagnostics/tests/incompleteCode/kt59041.kt");
+      }
+
+      @Test
+      @TestMetadata("missingNames.kt")
+      public void testMissingNames() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/missingNames.kt");
       }
 
       @Test
