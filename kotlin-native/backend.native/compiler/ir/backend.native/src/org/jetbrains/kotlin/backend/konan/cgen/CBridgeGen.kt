@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.backend.konan.cgen
 
 import org.jetbrains.kotlin.backend.common.lower.at
@@ -23,6 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.objcinterop.getObjCMethodInfo
 import org.jetbrains.kotlin.ir.objcinterop.isObjCMetaClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol

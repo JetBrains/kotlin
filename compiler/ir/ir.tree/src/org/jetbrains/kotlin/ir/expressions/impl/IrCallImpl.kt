@@ -40,47 +40,5 @@ class IrCallImpl(
     override var attributeOwnerId: IrAttributeContainer = this
     override var originalBeforeInline: IrAttributeContainer? = null
 
-    companion object {
-        @ObsoleteDescriptorBasedAPI
-        fun fromSymbolDescriptor(
-            startOffset: Int,
-            endOffset: Int,
-            type: IrType,
-            symbol: IrSimpleFunctionSymbol,
-            typeArgumentsCount: Int = symbol.descriptor.typeParametersCount,
-            valueArgumentsCount: Int = symbol.descriptor.valueParameters.size + symbol.descriptor.contextReceiverParameters.size,
-            origin: IrStatementOrigin? = null,
-            superQualifierSymbol: IrClassSymbol? = null,
-        ) =
-            IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol)
-
-        fun fromSymbolOwner(
-            startOffset: Int,
-            endOffset: Int,
-            type: IrType,
-            symbol: IrSimpleFunctionSymbol,
-            typeArgumentsCount: Int = symbol.owner.typeParameters.size,
-            valueArgumentsCount: Int = symbol.owner.valueParameters.size,
-            origin: IrStatementOrigin? = null,
-            superQualifierSymbol: IrClassSymbol? = null,
-        ) =
-            IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol)
-
-        fun fromSymbolOwner(
-            startOffset: Int,
-            endOffset: Int,
-            symbol: IrSimpleFunctionSymbol
-        ) =
-            IrCallImpl(
-                startOffset,
-                endOffset,
-                symbol.owner.returnType,
-                symbol,
-                typeArgumentsCount = symbol.owner.typeParameters.size,
-                valueArgumentsCount = symbol.owner.valueParameters.size,
-                origin = null,
-                superQualifierSymbol = null
-            )
-
-    }
+    companion object
 }
