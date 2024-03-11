@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlong
 import org.jetbrains.kotlin.test.services.AbstractEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorJs
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorWasi
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
@@ -64,6 +64,12 @@ abstract class AbstractFirWasmDiagnosticTestBase(
                 ::FirResolvedTypesVerifier,
                 ::FirScopeDumpHandler,
             )
+        }
+
+        forTestsMatching("compiler/testData/diagnostics/wasmTests/multiplatform/*") {
+            defaultDirectives {
+                LanguageSettingsDirectives.LANGUAGE + "+MultiPlatformProjects"
+            }
         }
     }
 }
