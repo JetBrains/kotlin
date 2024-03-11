@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
@@ -129,6 +130,8 @@ internal fun SymbolLightClassBase.createConstructors(
     }
 
     for (constructor in constructors) {
+        ProgressManager.checkCanceled()
+
         if (constructor.isHiddenOrSynthetic()) continue
 
         result.add(
@@ -212,6 +215,8 @@ internal fun SymbolLightClassBase.createMethods(
     fun KtAnalysisSession.handleDeclaration(declaration: KtCallableSymbol) {
         when (declaration) {
             is KtFunctionSymbol -> {
+                ProgressManager.checkCanceled()
+
                 if (declaration.hasReifiedParameters || declaration.isHiddenOrSynthetic()) return
                 if (declaration.name.isSpecial) return
 
@@ -290,6 +295,8 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     onlyJvmStatic: Boolean = false,
     suppressStatic: Boolean = false,
 ) {
+    ProgressManager.checkCanceled()
+
     if (declaration is KtKotlinPropertySymbol && declaration.isConst) return
     if (declaration.name.isSpecial) return
 
@@ -405,6 +412,8 @@ internal fun SymbolLightClassBase.createField(
     isStatic: Boolean,
     result: MutableList<KtLightField>
 ) {
+    ProgressManager.checkCanceled()
+
     if (declaration.name.isSpecial) return
     if (!hasBackingField(declaration)) return
 
