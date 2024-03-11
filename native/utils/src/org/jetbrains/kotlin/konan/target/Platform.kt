@@ -64,14 +64,20 @@ class PlatformManager private constructor(private val serialized: Serialized) :
 
     private fun writeReplace(): Any = serialized
 
+    /**
+     * This class inherits Serializable to put it into a `org.gradle.api.provider.Property`, which is necessary in kotlin.git build.
+     * It is not necessary to maintain the stable and predictably changing `serialVersionUUID` for this class (read below why).
+     *
+     * # Why serialVersionUUID doesn't matter
+     * Gradle uses Serializable for Gradle Configuration Cache. Whenever a buildscript classpath changes, Gradle entirely discards that
+     * cache and re-builds it from scratch. So, whenever any changes in [PlatformManager.Serialized]-class happen, the cache will be
+     * rebuild from scratch.
+     * So, there cases where we try to deserialize a binary representation of [PlatformManager.Serialized] with a class with a newer
+     * version should be impossible.
+     */
     private data class Serialized(
         val distribution: Distribution,
     ) : java.io.Serializable {
-        companion object {
-            // TODO(discuss on review): bump UID? Do something else? How this Serialized is used?
-            private const val serialVersionUID: Long = 0L
-        }
-
         private fun readResolve(): Any = PlatformManager(this)
     }
 }
