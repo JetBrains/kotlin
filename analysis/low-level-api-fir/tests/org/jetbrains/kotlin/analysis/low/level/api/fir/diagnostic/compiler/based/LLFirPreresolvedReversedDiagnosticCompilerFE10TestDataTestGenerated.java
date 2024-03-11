@@ -11960,12 +11960,6 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
-        @TestMetadata("require.kt")
-        public void testRequire() {
-          runTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/require.kt");
-        }
-
-        @Test
         @TestMetadata("traitFunctionOverriddenByProperty.kt")
         public void testTraitFunctionOverriddenByProperty() {
           runTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/traitFunctionOverriddenByProperty.kt");
@@ -12267,12 +12261,6 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         @TestMetadata("trait.kt")
         public void testTrait() {
           runTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/trait.kt");
-        }
-
-        @Test
-        @TestMetadata("withErrorTypes.kt")
-        public void testWithErrorTypes() {
-          runTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/withErrorTypes.kt");
         }
       }
 
