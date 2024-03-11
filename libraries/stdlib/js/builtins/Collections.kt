@@ -208,7 +208,7 @@ public interface List<out E> : Collection<E> {
 
     @ExperimentalJsExport
     @ExperimentalJsCollectionsApi
-    @SinceKotlin("1.9")
+    @SinceKotlin("2.0")
     public companion object {
         public fun <E> fromJsArray(array: JsReadonlyArray<E>): List<E> = createListFrom(array)
     }
@@ -291,7 +291,7 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
 
     @ExperimentalJsExport
     @ExperimentalJsCollectionsApi
-    @SinceKotlin("1.9")
+    @SinceKotlin("2.0")
     public companion object {
         public fun <E> fromJsArray(array: JsReadonlyArray<E>): MutableList<E> = createMutableListFrom(array)
     }
@@ -328,7 +328,7 @@ public interface Set<out E> : Collection<E> {
 
     @ExperimentalJsExport
     @ExperimentalJsCollectionsApi
-    @SinceKotlin("1.9")
+    @SinceKotlin("2.0")
     public companion object {
         public fun <E> fromJsSet(set: JsReadonlySet<E>): Set<E> = createSetFrom(set)
     }
@@ -375,7 +375,7 @@ public interface MutableSet<E> : Set<E>, MutableCollection<E> {
 
     @ExperimentalJsExport
     @ExperimentalJsCollectionsApi
-    @SinceKotlin("1.9")
+    @SinceKotlin("2.0")
     public companion object {
         public fun <E> fromJsSet(set: JsReadonlySet<E>): MutableSet<E> = createMutableSetFrom(set)
     }
@@ -459,7 +459,7 @@ public interface Map<K, out V> {
 
     @ExperimentalJsExport
     @ExperimentalJsCollectionsApi
-    @SinceKotlin("1.9")
+    @SinceKotlin("2.0")
     public companion object {
         public fun <K, V> fromJsMap(map: JsReadonlyMap<K, V>): Map<K, V> = createMapFrom(map)
     }
@@ -537,7 +537,7 @@ public interface MutableMap<K, V> : Map<K, V> {
 
     @ExperimentalJsExport
     @ExperimentalJsCollectionsApi
-    @SinceKotlin("1.9")
+    @SinceKotlin("2.0")
     public companion object {
         public fun <K, V> fromJsMap(map: JsReadonlyMap<K, V>): MutableMap<K, V> = createMutableMapFrom(map)
     }

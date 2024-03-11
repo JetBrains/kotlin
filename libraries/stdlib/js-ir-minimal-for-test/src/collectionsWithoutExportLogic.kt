@@ -2,18 +2,9 @@
  * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:OptIn(ExperimentalJsExport::class)
-@file:Suppress(
-    "NON_ABSTRACT_FUNCTION_WITH_NO_BODY",
-    "MUST_BE_INITIALIZED_OR_BE_ABSTRACT",
-    "EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE",
-    "PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED",
-    "WRONG_MODIFIER_TARGET",
-    "EXPOSED_FUNCTION_RETURN_TYPE",
-    "EXPOSED_PARAMETER_TYPE"
-)
-
 package kotlin.collections
+
+// The minimal version of the collections to exclude the quite big part related to all the implementations for the interfaces
 
 public interface Iterable<out T> {
     public operator fun iterator(): Iterator<T>
