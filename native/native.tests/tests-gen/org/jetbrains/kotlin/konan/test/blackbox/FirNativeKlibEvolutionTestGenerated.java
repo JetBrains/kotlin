@@ -35,6 +35,12 @@ public class FirNativeKlibEvolutionTestGenerated extends AbstractNativeKlibEvolu
   }
 
   @Test
+  @TestMetadata("addCrossinline.kt")
+  public void testAddCrossinline() {
+    runTest("compiler/testData/klib/evolution/addCrossinline.kt");
+  }
+
+  @Test
   @TestMetadata("addDefaultImplementations.kt")
   public void testAddDefaultImplementations() {
     runTest("compiler/testData/klib/evolution/addDefaultImplementations.kt");
