@@ -15,7 +15,6 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
         where Element : AbstractElement<Element, ElementField, Implementation>,
               Implementation : AbstractImplementation<Implementation, Element, BuilderField>,
               BuilderField : AbstractField<*>,
-              BuilderField : AbstractFieldWithDefaultValue<*>,
               ElementField : AbstractField<ElementField> {
 
     companion object {
