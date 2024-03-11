@@ -17,10 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.konan.KonanToolRunner
 
 /** Base class for both interop and compiler tasks. */
 abstract class KonanBuildingTask: KonanArtifactWithLibrariesTask(), KonanBuildingSpec {
-
-    @get:Internal
-    internal abstract val toolRunner: KonanToolRunner
-
     override fun init(config: KonanBuildingConfig<*>, destinationDir: File, artifactName: String, target: KonanTarget) {
         super.init(config, destinationDir, artifactName, target)
     }

@@ -28,11 +28,6 @@ import javax.inject.Inject
 
 abstract class KonanInteropTask @Inject constructor(private val workerExecutor: WorkerExecutor) : KonanBuildingTask(), KonanInteropSpec {
 
-    private val interopRunner = KonanCliInteropRunner(project, KonanCliRunnerIsolatedClassLoadersService.attachingToTask(this), project.konanExtension.jvmArgs)
-
-    @get:Internal
-    override val toolRunner: KonanToolRunner = interopRunner
-
     override fun init(config: KonanBuildingConfig<*>, destinationDir: File, artifactName: String, target: KonanTarget) {
         super.init(config, destinationDir, artifactName, target)
         this.notCompatibleWithConfigurationCache("Unsupported inputs")
@@ -183,7 +178,11 @@ abstract class KonanInteropTask @Inject constructor(private val workerExecutor: 
         }
     }
 
+    @get:Internal
+    val isolatedClassLoadersService = KonanCliRunnerIsolatedClassLoadersService.attachingToTask(this)
+
     override fun run() {
+        val interopRunner = KonanCliInteropRunner(project, isolatedClassLoadersService, project.konanExtension.jvmArgs)
         interopRunner.init(target)
 
         destinationDir.mkdirs()
@@ -193,13 +192,13 @@ abstract class KonanInteropTask @Inject constructor(private val workerExecutor: 
         val args = buildArgs()
         if (enableParallel) {
             val workQueue = workerExecutor.noIsolation()
-            interchangeBox[this.path] = toolRunner
+            interchangeBox[this.path] = interopRunner
             workQueue.submit(RunTool::class.java) {
                 taskName = path
                 this.args = args
             }
         } else {
-            toolRunner.run(args)
+            interopRunner.run(args)
         }
     }
 }
