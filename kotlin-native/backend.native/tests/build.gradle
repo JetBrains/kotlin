@@ -1038,26 +1038,6 @@ interopTest("interop_workerSignals") {
     interop = "workerSignals"
 }
 
-/*
-TODO: This test isn't run automatically
-tasks.register("interop_echo_server", RunInteropKonanTest) {
-    disabled = PlatformInfo.isWasmTarget(project) || PlatformInfo.isWindowsTarget(project)
-    run = false
-    source = "interop/basics/echo_server.kt"
-    interop = 'sockets'
-}
-*/
-
-/*
-TODO: This test isn't run automatically
-standaloneTest("interop_opengl_teapot") {
-    enabled = PlatformInfo.isAppleTarget(project) && project.testTarget != 'ios_x64'  // No GLUT in iOS
-    dependsOnPlatformLibs(it as Task)
-    run = false
-    source = "interop/basics/opengl_teapot.kt"
-}
-*/
-
 if (PlatformInfo.isAppleTarget(project)) {
     standaloneTest("interop_objc_kt61441") {
         source = "interop/objc/kt61441.kt"
