@@ -373,6 +373,7 @@ open class KonanStandaloneTest : KonanLocalTest() {
 open class KonanDriverTest : KonanStandaloneTest() {
     override fun configure(config: Closure<*>): Task {
         super.configure(config)
+        notCompatibleWithConfigurationCache("This task uses Task.project at execution time")
         doFirst { konan() }
         doBeforeBuild?.let { doFirst(it) }
         return this
