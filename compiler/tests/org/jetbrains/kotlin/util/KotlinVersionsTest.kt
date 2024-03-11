@@ -43,6 +43,7 @@ class KotlinVersionsTest : KtUsefulTestCase() {
             }
         }
 
+        //test
         fun String.toVersionOrNull(source: String): Version? {
             val result = versionPattern.matchEntire(this) ?: return null
             val (major, minor, _, patch) = result.destructured
