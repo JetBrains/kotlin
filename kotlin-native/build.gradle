@@ -387,8 +387,7 @@ targetList.each { target ->
 }
 
 tasks.register("distPlatformLibs") {
-    dependsOn ':kotlin-native:platformLibs:hostInstall'
-    dependsOn ':kotlin-native:platformLibs:hostCache'
+    dependsOn("${hostName}PlatformLibs")
 }
 
 tasks.register("dist") {
