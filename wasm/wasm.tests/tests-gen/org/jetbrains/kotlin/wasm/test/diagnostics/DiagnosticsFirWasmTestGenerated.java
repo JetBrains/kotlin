@@ -239,6 +239,22 @@ public class DiagnosticsFirWasmTestGenerated extends AbstractDiagnosticsFirWasmT
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/wasmTests/multiplatform")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Multiplatform {
+    @Test
+    @TestMetadata("ActualExternalTypeAsJsInteropType.kt")
+    public void testActualExternalTypeAsJsInteropType() {
+      runTest("compiler/testData/diagnostics/wasmTests/multiplatform/ActualExternalTypeAsJsInteropType.kt");
+    }
+
+    @Test
+    public void testAllFilesPresentInMultiplatform() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests/multiplatform"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/wasmTests/wasmInterop")
   @TestDataPath("$PROJECT_ROOT")
   public class WasmInterop {
