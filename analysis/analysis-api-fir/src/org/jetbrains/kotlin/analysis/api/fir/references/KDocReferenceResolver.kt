@@ -407,7 +407,7 @@ internal object KDocReferenceResolver {
 
     context(KtAnalysisSession)
     private fun MutableCollection<KtSymbol>.collectSymbolsByClassId(classId: ClassId) {
-        getClassOrObjectSymbolByClassId(classId)?.let(::add)
+        (getClassOrObjectSymbolByClassId(classId) ?: getTypeAliasByClassId(classId))?.let(::add)
     }
 
     context(KtAnalysisSession)

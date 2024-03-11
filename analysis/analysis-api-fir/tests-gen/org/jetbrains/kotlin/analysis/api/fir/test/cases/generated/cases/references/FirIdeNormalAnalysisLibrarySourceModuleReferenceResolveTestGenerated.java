@@ -1904,6 +1904,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleReferenceResolveTestGenerate
         }
 
         @Test
+        @TestMetadata("callableFromTypealias.kt")
+        public void testCallableFromTypealias() {
+          runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/callableFromTypealias.kt");
+        }
+
+        @Test
         @TestMetadata("functionFromClass.kt")
         public void testFunctionFromClass() {
           runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/functionFromClass.kt");
@@ -2226,6 +2232,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleReferenceResolveTestGenerate
         public void testTopLevelFunctionFromStdlibByShortName() {
           runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/fromOtherFile/TopLevelFunctionFromStdlibByShortName.kt");
         }
+
+        @Test
+        @TestMetadata("TypealiasFromOtherFileByFullName.kt")
+        public void testTypealiasFromOtherFileByFullName() {
+          runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/fromOtherFile/TypealiasFromOtherFileByFullName.kt");
+        }
+
+        @Test
+        @TestMetadata("TypealiasFromOtherFileByShortName.kt")
+        public void testTypealiasFromOtherFileByShortName() {
+          runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/fromOtherFile/TypealiasFromOtherFileByShortName.kt");
+        }
       }
 
       @Nested
@@ -2271,6 +2289,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleReferenceResolveTestGenerate
         @TestMetadata("TopLevelFunctionFromStdlibByShortName.kt")
         public void testTopLevelFunctionFromStdlibByShortName() {
           runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib/TopLevelFunctionFromStdlibByShortName.kt");
+        }
+
+        @Test
+        @TestMetadata("TypealiasFromStdlibByFullName.kt")
+        public void testTypealiasFromStdlibByFullName() {
+          runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib/TypealiasFromStdlibByFullName.kt");
+        }
+
+        @Test
+        @TestMetadata("TypealiasFromStdlibByShortName.kt")
+        public void testTypealiasFromStdlibByShortName() {
+          runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib/TypealiasFromStdlibByShortName.kt");
         }
       }
     }
