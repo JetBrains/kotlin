@@ -23,3 +23,29 @@ method global$fun_test_properties$fun_take$T_class_global$class_Foo$return$T_Uni
   local0$x := anonymous$1 + anonymous$2
   label label$ret$0
 }
+
+/interface.kt:(330,340): info: Generated Viper text for createImpl:
+field class_Impl$member_number: Int
+
+method class_First$getter_number(this: Ref) returns (ret: Int)
+
+
+method class_Impl$constructor$fun_take$T_Int$return$T_class_global$class_Impl(local$number: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Impl())
+  ensures acc(ret.class_Impl$member_number, wildcard)
+  ensures ret.class_Impl$member_number == local$number
+
+
+method class_Second$getter_number(this: Ref) returns (ret: Int)
+
+
+method global$fun_createImpl$fun_take$$return$T_Unit()
+  returns (ret$0: dom$Unit)
+{
+  var local0$impl: Ref
+  var local0$implField: Int
+  local0$impl := class_Impl$constructor$fun_take$T_Int$return$T_class_global$class_Impl(-1)
+  local0$implField := local0$impl.class_Impl$member_number
+  label label$ret$0
+}

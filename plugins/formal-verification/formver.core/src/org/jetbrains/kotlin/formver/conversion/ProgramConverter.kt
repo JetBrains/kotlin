@@ -114,7 +114,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                 newEmbedding.initSuperTypes(symbol.resolvedSuperTypes.map(::embedType))
 
                 // Phase 3
-                val properties = symbol.declarationSymbols.filterIsInstance<FirPropertySymbol>()
+                val properties = symbol.propertySymbols
                 newEmbedding.initFields(properties.mapNotNull { processBackingFields(it, newEmbedding) }.toMap())
 
                 // Phase 4
@@ -166,8 +166,26 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         properties[symbol.callableId.embedMemberPropertyName()] ?: error("Unknown property ${symbol.callableId}")
     }
 
+    private fun <R> FirPropertySymbol.withConstructorParam(action: FirPropertySymbol.(FirValueParameterSymbol) -> R): R? =
+        correspondingValueParameterFromPrimaryConstructor?.let { param ->
+            action(param)
+        }
+
+    private fun extractConstructorParamsAsFields(symbol: FirFunctionSymbol<*>): Map<FirValueParameterSymbol, FieldEmbedding> {
+        if (symbol !is FirConstructorSymbol || !symbol.isPrimary)
+            return emptyMap()
+        val constructedClassSymbol = symbol.resolvedReturnType.toRegularClassSymbol(session) ?: return emptyMap()
+        val constructedClass = embedClass(constructedClassSymbol)
+
+        return constructedClassSymbol.propertySymbols.mapNotNull { propertySymbol ->
+            propertySymbol.withConstructorParam { paramSymbol ->
+                constructedClass.findField(callableId.embedUnscopedPropertyName())?.let { paramSymbol to it }
+            }
+        }.toMap()
+    }
+
     override fun embedFunctionSignature(symbol: FirFunctionSymbol<*>): FunctionSignature {
-        val retType = symbol.resolvedReturnTypeRef.type
+        val retType = embedType(symbol.resolvedReturnTypeRef.type)
         val receiverType = symbol.receiverType
         return object : FunctionSignature {
             // TODO: figure out whether we want a symbol here and how to get it.
@@ -176,9 +194,12 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             override val params = symbol.valueParameterSymbols.map {
                 FirVariableEmbedding(it.embedName(), embedType(it.resolvedReturnType), it)
             }
-            override val returnType = embedType(retType)
+            override val returnType = retType
         }
     }
+
+    private val FirRegularClassSymbol.propertySymbols : List<FirPropertySymbol>
+        get() = this.declarationSymbols.filterIsInstance<FirPropertySymbol>()
 
     private fun embedFullSignature(symbol: FirFunctionSymbol<*>): FullNamedFunctionSignature {
         val subSignature = object : NamedFunctionSignature, FunctionSignature by embedFunctionSignature(symbol) {
@@ -186,6 +207,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             override val sourceName: String?
                 get() = super<NamedFunctionSignature>.sourceName
         }
+        val constructorParamSymbolsToFields = extractConstructorParamsAsFields(symbol)
         val contractVisitor = ContractDescriptionConversionVisitor(this@ProgramConverter, subSignature)
 
         return object : FullNamedFunctionSignature, NamedFunctionSignature by subSignature {
@@ -203,8 +225,16 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                     subSignature.stdLibPostConditions(returnVariable) +
                     primaryConstructorInvariants(returnVariable)
 
+            fun primaryConstructorInvariants(returnVariable: VariableEmbedding) =
+                params.mapNotNull { param ->
+                    constructorParamSymbolsToFields[param.symbol]?.let { field ->
+                        (field.accessPolicy == AccessPolicy.ALWAYS_READABLE).ifTrue {
+                            EqCmp(FieldAccess(returnVariable, field), param)
+                        }
+                    }
+                }
+
             override val declarationSource: KtSourceElement? = symbol.source
-            override val isPrimaryConstructor = symbol is FirConstructorSymbol && symbol.isPrimary
         }
     }
 
@@ -222,10 +252,8 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
      */
     private fun processBackingFields(symbol: FirPropertySymbol, embedding: ClassTypeEmbedding): Pair<SimpleKotlinName, FieldEmbedding>? {
         val unscopedName = symbol.callableId.embedUnscopedPropertyName()
-        // This field is already registered in the supertype: we don't need to know about it.
-        if (embedding.findAncestorField(unscopedName) != null) return null
         val name = symbol.callableId.embedMemberPropertyName()
-
+        embedding.findAncestorField(unscopedName)?.let { return null }
         val backingField = name.specialEmbedding() ?: symbol.hasBackingField.ifTrue {
             UserFieldEmbedding(
                 name,

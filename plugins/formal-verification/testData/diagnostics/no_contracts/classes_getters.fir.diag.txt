@@ -5,7 +5,7 @@ method class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_I
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_IntWrapper())
   ensures acc(ret.class_IntWrapper$member_n, wildcard)
-  ensures ret.class_IntWrapper$member_n == old(local$n)
+  ensures ret.class_IntWrapper$member_n == local$n
 
 
 method class_IntWrapper$getter_succ(this: Ref) returns (ret: Int)
@@ -38,7 +38,7 @@ method class_Bar$constructor$fun_take$T_class_global$class_Foo$return$T_class_gl
   ensures acc(local$f.class_Foo$member_b, wildcard)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
   ensures acc(ret.class_Bar$member_f, wildcard)
-  ensures ret.class_Bar$member_f == old(local$f)
+  ensures ret.class_Bar$member_f == local$f
 
 
 method class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(local$a: Int,
@@ -47,8 +47,8 @@ method class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Fo
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
   ensures acc(ret.class_Foo$member_a, wildcard)
   ensures acc(ret.class_Foo$member_b, wildcard)
-  ensures ret.class_Foo$member_a == old(local$a)
-  ensures ret.class_Foo$member_b == old(local$b)
+  ensures ret.class_Foo$member_a == local$a
+  ensures ret.class_Foo$member_b == local$b
 
 
 method global$fun_testCascadeGetter$fun_take$$return$T_Unit()
@@ -81,7 +81,7 @@ method class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_I
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_IntWrapper())
   ensures acc(ret.class_IntWrapper$member_n, wildcard)
-  ensures ret.class_IntWrapper$member_n == old(local$n)
+  ensures ret.class_IntWrapper$member_n == local$n
 
 
 method class_IntWrapper$getter_succ(this: Ref) returns (ret: Int)
@@ -95,7 +95,7 @@ method class_IntWrapperContainer$constructor$fun_take$T_class_global$class_IntWr
   ensures acc(local$i.class_IntWrapper$member_n, wildcard)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_IntWrapperContainer())
   ensures acc(ret.class_IntWrapperContainer$member_i, wildcard)
-  ensures ret.class_IntWrapperContainer$member_i == old(local$i)
+  ensures ret.class_IntWrapperContainer$member_i == local$i
 
 
 method global$fun_testCascadeCustomGetters$fun_take$$return$T_Unit()

@@ -128,6 +128,11 @@ fun <R> TypeEmbedding.flatMapUniqueFields(action: (SimpleKotlinName, FieldEmbedd
     }
 }
 
+fun <R> TypeEmbedding.mapNotNullUniqueFields(action: (SimpleKotlinName, FieldEmbedding) -> R?): List<R> =
+    flatMapUniqueFields { name, field ->
+        action(name, field)?.let { listOf(it) } ?: emptyList()
+    }
+
 data object UnitTypeEmbedding : TypeEmbedding {
     override val runtimeType = TypeDomain.unitType()
     override val viperType: Type = UnitDomain.toType()

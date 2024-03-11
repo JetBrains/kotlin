@@ -334,6 +334,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("inheritance_fields.kt")
+        public void testInheritance_fields() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/inheritance_fields.kt");
+        }
+
+        @Test
         @TestMetadata("inline.kt")
         public void testInline() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/inline.kt");

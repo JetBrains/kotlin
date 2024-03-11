@@ -52,7 +52,7 @@ method class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(loca
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
   ensures acc(ret.class_Bar$member_a, wildcard)
-  ensures ret.class_Bar$member_a == old(local$a)
+  ensures ret.class_Bar$member_a == local$a
 
 
 method global$fun_primaryAndSecondConstructor$fun_take$$return$T_Unit()

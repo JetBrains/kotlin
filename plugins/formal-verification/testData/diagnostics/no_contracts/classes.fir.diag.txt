@@ -9,8 +9,8 @@ method class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Fo
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
   ensures acc(ret.class_Foo$member_a, wildcard)
   ensures acc(ret.class_Foo$member_b, wildcard)
-  ensures ret.class_Foo$member_a == old(local$a)
-  ensures ret.class_Foo$member_b == old(local$b)
+  ensures ret.class_Foo$member_a == local$a
+  ensures ret.class_Foo$member_b == local$b
 
 
 method global$fun_createFoo$fun_take$$return$T_class_global$class_Foo()
@@ -42,7 +42,7 @@ method class_Bar$constructor$fun_take$NT_class_global$class_Bar$return$T_class_g
     acc((dom$Casting$cast(local$a, dom$Type$global$class_Bar()): Ref).class_Bar$member_a, wildcard)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
   ensures acc(ret.class_Bar$member_a, wildcard)
-  ensures ret.class_Bar$member_a == old(local$a)
+  ensures ret.class_Bar$member_a == local$a
 
 
 method global$fun_createBar$fun_take$$return$T_Unit()
@@ -64,7 +64,7 @@ method class_Baz$constructor$fun_take$T_Int$return$T_class_global$class_Baz(loca
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Baz())
   ensures acc(ret.class_Baz$member_c, wildcard)
   ensures acc(ret.class_Baz$member_a, wildcard)
-  ensures ret.class_Baz$member_c == old(local$c)
+  ensures ret.class_Baz$member_c == local$c
 
 
 method global$fun_createBaz$fun_take$$return$T_Unit()

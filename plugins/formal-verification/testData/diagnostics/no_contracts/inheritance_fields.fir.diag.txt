@@ -1,0 +1,100 @@
+/inheritance_fields.kt:(208,215): info: Generated Viper text for createB:
+field class_A$member_fieldNotOverride: Ref
+
+field class_A$member_fieldOverride: Ref
+
+method class_B$constructor$fun_take$T_class_global$class_FieldB$return$T_class_global$class_B(local$fieldOverride: Ref)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_B())
+  ensures acc(ret.class_A$member_fieldNotOverride, wildcard)
+  ensures acc(ret.class_A$member_fieldOverride, wildcard)
+  ensures ret.class_A$member_fieldOverride == local$fieldOverride
+
+
+method class_FieldB$constructor$fun_take$$return$T_class_global$class_FieldB()
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_FieldB())
+
+
+method global$fun_createB$fun_take$$return$T_Unit()
+  returns (ret$0: dom$Unit)
+{
+  var local0$fieldB: Ref
+  var local0$b: Ref
+  var local0$fieldOverride: Ref
+  var anonymous$0: Ref
+  var local0$fieldNotOverride: Ref
+  local0$fieldB := class_FieldB$constructor$fun_take$$return$T_class_global$class_FieldB()
+  local0$b := class_B$constructor$fun_take$T_class_global$class_FieldB$return$T_class_global$class_B(local0$fieldB)
+  anonymous$0 := local0$b.class_A$member_fieldOverride
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$0): dom$Type), dom$Type$global$class_FieldA())
+  local0$fieldOverride := (dom$Casting$cast(anonymous$0, dom$Type$global$class_FieldB()): Ref)
+  local0$fieldNotOverride := local0$b.class_A$member_fieldNotOverride
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local0$fieldNotOverride): dom$Type),
+    dom$Type$global$class_C())
+  label label$ret$0
+}
+
+/inheritance_fields.kt:(680,696): info: Generated Viper text for createBFsAndNoBF:
+field class_FirstBackingFieldClass$member_x: Int
+
+method class_FirstBackingFieldClass$constructor$fun_take$$return$T_class_global$class_FirstBackingFieldClass()
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_FirstBackingFieldClass())
+  ensures acc(ret.class_FirstBackingFieldClass$member_x, wildcard)
+
+
+method class_NoBackingFieldClass$constructor$fun_take$$return$T_class_global$class_NoBackingFieldClass()
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_NoBackingFieldClass())
+  ensures acc(ret.class_FirstBackingFieldClass$member_x, wildcard)
+
+
+method class_NoBackingFieldClass$getter_x(this: Ref) returns (ret: Int)
+  requires acc(this.class_FirstBackingFieldClass$member_x, wildcard)
+  ensures acc(this.class_FirstBackingFieldClass$member_x, wildcard)
+
+
+method class_SecondBackingFieldClass$constructor$fun_take$T_Int$return$T_class_global$class_SecondBackingFieldClass(local$x: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_SecondBackingFieldClass())
+  ensures acc(ret.class_FirstBackingFieldClass$member_x, wildcard)
+  ensures ret.class_FirstBackingFieldClass$member_x == local$x
+
+
+method global$fun_createBFsAndNoBF$fun_take$$return$T_Unit()
+  returns (ret$0: dom$Unit)
+{
+  var local0$fbf: Ref
+  var local0$fbfx: Int
+  var local0$nbf: Ref
+  var local0$nbfx: Int
+  var local0$sbf: Ref
+  var local0$sbfx: Int
+  local0$fbf := class_FirstBackingFieldClass$constructor$fun_take$$return$T_class_global$class_FirstBackingFieldClass()
+  local0$fbfx := local0$fbf.class_FirstBackingFieldClass$member_x
+  local0$nbf := class_NoBackingFieldClass$constructor$fun_take$$return$T_class_global$class_NoBackingFieldClass()
+  local0$nbfx := class_NoBackingFieldClass$getter_x(local0$nbf)
+  local0$sbf := class_SecondBackingFieldClass$constructor$fun_take$T_Int$return$T_class_global$class_SecondBackingFieldClass(10)
+  local0$sbfx := local0$sbf.class_FirstBackingFieldClass$member_x
+  label label$ret$0
+}
+
+/inheritance_fields.kt:(1019,1026): info: Generated Viper text for createY:
+field class_X$member_a: Int
+
+method class_Y$constructor$fun_take$T_Int$return$T_class_global$class_Y(local$a: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Y())
+  ensures acc(ret.class_X$member_a, wildcard)
+
+
+method global$fun_createY$fun_take$$return$T_Unit()
+  returns (ret$0: dom$Unit)
+{
+  var local0$y: Ref
+  var local0$ya: Int
+  local0$y := class_Y$constructor$fun_take$T_Int$return$T_class_global$class_Y(10)
+  local0$ya := local0$y.class_X$member_a
+  label label$ret$0
+}
