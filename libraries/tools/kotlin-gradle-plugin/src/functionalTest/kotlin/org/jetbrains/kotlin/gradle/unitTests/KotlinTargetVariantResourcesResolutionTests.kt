@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.util.assertThrows
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 class KotlinTargetVariantResourcesResolutionTests {
 
@@ -356,7 +358,10 @@ class KotlinTargetVariantResourcesResolutionTests {
     fun `test KT66393 - resolving resources with java-api dependencies in native configuration`() {
         val resolutionStrategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration
         val rootProject = buildProject()
-        val producer = rootProject.createSubproject("producer") {
+        val producer = rootProject.createSubproject(
+            "producer",
+            resolutionStrategy = resolutionStrategy,
+        ) {
             kotlin {
                 linuxArm64()
                 sourceSets.commonMain {
@@ -364,10 +369,12 @@ class KotlinTargetVariantResourcesResolutionTests {
                         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0")
                     }
                 }
-                setMppResourcesResolutionStrategy(resolutionStrategy)
             }
         }
-        val consumer = rootProject.createSubproject("consumer") {
+        val consumer = rootProject.createSubproject(
+            "consumer",
+            resolutionStrategy = resolutionStrategy,
+        ) {
             kotlin {
                 linuxArm64()
                 sourceSets.commonMain {
@@ -375,7 +382,6 @@ class KotlinTargetVariantResourcesResolutionTests {
                         implementation(project(":${producer.name}"))
                     }
                 }
-                setMppResourcesResolutionStrategy(resolutionStrategy)
             }
         }
 
@@ -387,6 +393,23 @@ class KotlinTargetVariantResourcesResolutionTests {
             resolutionStrategy.resourceArchives(
                 consumer.multiplatformExtension.linuxArm64().compilations.getByName("main")
             ).files
+        )
+    }
+
+    @Test
+    fun `test resources configuration - only exists in projects with resources configuration strategy`() {
+        val rootProject = buildProject()
+        assertNotNull(
+            rootProject.createSubproject(
+                "resourcesConfiguration",
+                resolutionStrategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration,
+            ) { kotlin { linuxArm64() } }.configurations.findByName("linuxArm64ResourcesPath")
+        )
+        assertNull(
+            rootProject.createSubproject(
+                "variantReselection",
+                resolutionStrategy = KotlinTargetResourcesResolutionStrategy.VariantReselection,
+            ) { kotlin { linuxArm64() } }.configurations.findByName("linuxArm64ResourcesPath")
         )
     }
 
@@ -487,7 +510,6 @@ class KotlinTargetVariantResourcesResolutionTests {
         dependencyScope = dependencyScope,
         strategy = resolutionStrategy,
         assert = { consumer: Project, producer: Project ->
-            consumer.setMppResourcesResolutionStrategy(resolutionStrategy)
             assertEquals(
                 expectedResult(consumer, producer),
                 filterResolvedFiles(
@@ -507,12 +529,15 @@ class KotlinTargetVariantResourcesResolutionTests {
         assert: (consumer: Project, producer: Project) -> Unit,
     ) {
         val rootProject = buildProject()
-        val producer = rootProject.createSubproject("producer") {
+        val producer = rootProject.createSubproject(
+            "producer",
+            resolutionStrategy = strategy,
+        ) {
             kotlin { producerTarget() }
         }
         val consumer = rootProject.createSubproject(
             "consumer",
-            preApplyCode = { setMppResourcesResolutionStrategy(strategy) }
+            resolutionStrategy = strategy,
         ) {
             kotlin {
                 consumerTarget()
@@ -542,9 +567,9 @@ class KotlinTargetVariantResourcesResolutionTests {
         val rootProject = buildProject()
         val producer = rootProject.createSubproject(
             "producer",
+            resolutionStrategy = resolutionStrategy,
             preApplyCode = {
                 enableMppResourcesPublication(true)
-                setMppResourcesResolutionStrategy(resolutionStrategy)
             }
         ) {
             kotlin { targetProvider() }
@@ -552,9 +577,9 @@ class KotlinTargetVariantResourcesResolutionTests {
 
         val middle = rootProject.createSubproject(
             "middle",
+            resolutionStrategy = resolutionStrategy,
             preApplyCode = {
                 enableMppResourcesPublication(middlePublishesResources)
-                setMppResourcesResolutionStrategy(resolutionStrategy)
             }
         ) {
             kotlin {
@@ -569,9 +594,9 @@ class KotlinTargetVariantResourcesResolutionTests {
 
         val consumer = rootProject.createSubproject(
             "consumer",
+            resolutionStrategy = resolutionStrategy,
             preApplyCode = {
                 enableMppResourcesPublication(consumerPublishesResources)
-                setMppResourcesResolutionStrategy(resolutionStrategy)
             }
         ) {
             kotlin {
@@ -581,7 +606,6 @@ class KotlinTargetVariantResourcesResolutionTests {
                         dependencyScope()(dependencies.project(":${middle.name}"))
                     }
                 }
-                setMppResourcesResolutionStrategy(resolutionStrategy)
             }
         }
 
@@ -605,14 +629,18 @@ class KotlinTargetVariantResourcesResolutionTests {
 
     private fun ProjectInternal.createSubproject(
         name: String,
-        preApplyCode: Project.() -> Unit = {},
+        preApplyCode: Project.() -> Unit = { },
+        resolutionStrategy: KotlinTargetResourcesResolutionStrategy,
         code: Project.() -> Unit = {},
     ) = buildProjectWithMPPAndStdlib(
         projectBuilder = {
             withParent(this@createSubproject)
             withName(name)
         },
-        preApplyCode = preApplyCode,
+        preApplyCode = {
+            preApplyCode()
+            setMppResourcesResolutionStrategy(resolutionStrategy)
+        },
         code = code,
     )
 
