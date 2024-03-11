@@ -17,7 +17,6 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
@@ -374,4 +373,4 @@ internal abstract class FrameworkCopy : DefaultTask() {
 }
 
 @DisableCachingByDefault(because = "Caching breaks symlinks inside frameworks")
-internal abstract class EmbedAndSignTask : FrameworkCopy(), UsesKotlinToolingDiagnostics
+internal abstract class EmbedAndSignTask : FrameworkCopy()
