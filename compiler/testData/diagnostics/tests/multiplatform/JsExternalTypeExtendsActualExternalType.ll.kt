@@ -4,7 +4,7 @@
 
 expect interface ExternalInterface
 
-external class ExternalClass: ExternalInterface
+external class <!EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE!>ExternalClass<!>: ExternalInterface
 
 // MODULE: js()()(commonjs)
 // TARGET_PLATFORM: JS
