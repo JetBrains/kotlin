@@ -151,12 +151,16 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
 
     @Override
     public void visitSMAP(@NotNull SourceMapper smap, boolean backwardsCompatibleSyntax) {
-        if (!GENERATE_SMAP) return;
-
-        List<FileMapping> fileMappings = smap.getResultMappings();
-        if (fileMappings.isEmpty()) return;
-
-        visitSource(fileMappings.get(0).getName(), SMAPBuilder.INSTANCE.build(fileMappings, backwardsCompatibleSyntax));
+        if (GENERATE_SMAP && !smap.isTrivial()) {
+            List<FileMapping> fileMappings = smap.getResultMappings();
+            visitSource(fileMappings.get(0).getName(), SMAPBuilder.INSTANCE.build(fileMappings, backwardsCompatibleSyntax));
+        } else {
+            SourceInfo sourceInfo = smap.getSourceInfo();
+            if (sourceInfo == null) return;
+            String fileName = sourceInfo.getSourceFileName();
+            if (fileName == null) return;
+            visitSource(fileName, null);
+        }
     }
 
     @Override

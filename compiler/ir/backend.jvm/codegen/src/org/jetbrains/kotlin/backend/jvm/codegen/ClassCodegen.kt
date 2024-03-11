@@ -73,7 +73,6 @@ class ClassCodegen private constructor(
     private val parentClassCodegen by lazy {
         (parentFunction?.parentAsClass ?: irClass.parent as? IrClass)?.let { getOrCreate(it, context) }
     }
-    private val withinInline: Boolean by lazy { parentClassCodegen?.withinInline == true || parentFunction?.isInline == true }
     private val metadataSerializer: MetadataSerializer by lazy {
         context.backendExtension.createSerializer(
             context, irClass, type, visitor.serializationBindings, parentClassCodegen?.metadataSerializer
@@ -202,13 +201,7 @@ class ClassCodegen private constructor(
 
         generateKotlinMetadataAnnotation()
 
-        if (withinInline || !smap.isTrivial) {
-            visitor.visitSMAP(smap, !config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
-        } else {
-            smap.sourceInfo!!.sourceFileName?.let {
-                visitor.visitSource(it, null)
-            }
-        }
+        visitor.visitSMAP(smap, !config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
 
         reifiedTypeParametersUsages.mergeAll(irClass.reifiedTypeParameters)
 
