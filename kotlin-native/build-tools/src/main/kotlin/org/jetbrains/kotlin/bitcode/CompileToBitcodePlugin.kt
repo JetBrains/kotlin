@@ -240,13 +240,12 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             }
             compilationDatabase.target(_target) {
                 entry {
-                    val compileTask = this@apply.get()
-                    val args = listOf(execClang.resolveExecutable(compileTask.compiler.get())) + compileTask.compilerFlags.get() + execClang.clangArgsForCppRuntime(target.name)
-                    directory.set(compileTask.workingDirectory)
-                    files.setFrom(compileTask.inputFiles)
-                    arguments.set(args)
+                    val compileTask: TaskProvider<ClangFrontend> = this@apply
+                    directory.set(compileTask.flatMap { it.workingDirectory })
+                    files.setFrom(compileTask.map { it.inputFiles })
+                    arguments.set(compileTask.map { listOf(execClang.resolveExecutable(it.compiler.get())) + it.compilerFlags.get() + execClang.clangArgsForCppRuntime(target.name) })
                     // Only the location of output file matters, compdb does not depend on the compilation result.
-                    output.set(compileTask.outputDirectory.locationOnly.map { it.asFile.absolutePath })
+                    output.set(compileTask.flatMap { it.outputDirectory.locationOnly.map { it.asFile.absolutePath }})
                 }
                 task.configure {
                     // Compile task depends on the toolchain (including headers) and on the source code (e.g. googletest).
@@ -264,6 +263,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
          */
         val task = project.tasks.register<LlvmLink>("llvmLink${module.name.capitalized}${name.capitalized}${_target.toString().capitalized}").apply {
             configure {
+                notCompatibleWithConfigurationCache("When GoogleTest are not downloaded llvm-link is missing arguments")
                 this.description = "Link '${module.name}' bitcode files (${this@SourceSet.name} sources) into a single bitcode file for $_target"
                 this.inputFiles.from(compileTask)
                 this.outputFile.set(this@SourceSet.outputFile)
