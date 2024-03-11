@@ -622,6 +622,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
+    @TestMetadata("identity.kt")
+    public void testIdentity() {
+      runTest("native/native.tests/testData/codegen/enum/identity.kt");
+    }
+
+    @Test
     @TestMetadata("isFrozen.kt")
     public void testIsFrozen() {
       runTest("native/native.tests/testData/codegen/enum/isFrozen.kt");
@@ -666,6 +672,23 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     @TestMetadata("stackNotAllocatedString.kt")
     public void testStackNotAllocatedString() {
       runTest("native/native.tests/testData/codegen/escapeAnalysis/stackNotAllocatedString.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("native/native.tests/testData/codegen/exceptions")
+  @TestDataPath("$PROJECT_ROOT")
+  @UseExtTestCaseGroupProvider()
+  public class Exceptions {
+    @Test
+    public void testAllFilesPresentInExceptions() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/exceptions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+    }
+
+    @Test
+    @TestMetadata("throw_cleanup.kt")
+    public void testThrow_cleanup() {
+      runTest("native/native.tests/testData/codegen/exceptions/throw_cleanup.kt");
     }
   }
 
@@ -1032,6 +1055,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     @Test
     public void testAllFilesPresentInInitializers() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/initializers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+    }
+
+    @Test
+    @TestMetadata("initializers6.kt")
+    public void testInitializers6() {
+      runTest("native/native.tests/testData/codegen/initializers/initializers6.kt");
     }
 
     @Test
@@ -1482,6 +1511,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
+    @TestMetadata("compileTime.kt")
+    public void testCompileTime() {
+      runTest("native/native.tests/testData/codegen/objectDeclaration/compileTime.kt");
+    }
+
+    @Test
     @TestMetadata("globalConstants_checkComputedField.kt")
     public void testGlobalConstants_checkComputedField() {
       runTest("native/native.tests/testData/codegen/objectDeclaration/globalConstants_checkComputedField.kt");
@@ -1579,6 +1614,41 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
       public void testCallOnValueOverPrimitiveClass() {
         runTest("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues/callOnValueOverPrimitiveClass.kt");
       }
+    }
+  }
+
+  @Nested
+  @TestMetadata("native/native.tests/testData/codegen/variables")
+  @TestDataPath("$PROJECT_ROOT")
+  @UseExtTestCaseGroupProvider()
+  public class Variables {
+    @Test
+    public void testAllFilesPresentInVariables() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/variables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+    }
+
+    @Test
+    @TestMetadata("var1.kt")
+    public void testVar1() {
+      runTest("native/native.tests/testData/codegen/variables/var1.kt");
+    }
+
+    @Test
+    @TestMetadata("var2.kt")
+    public void testVar2() {
+      runTest("native/native.tests/testData/codegen/variables/var2.kt");
+    }
+
+    @Test
+    @TestMetadata("var3.kt")
+    public void testVar3() {
+      runTest("native/native.tests/testData/codegen/variables/var3.kt");
+    }
+
+    @Test
+    @TestMetadata("var4.kt")
+    public void testVar4() {
+      runTest("native/native.tests/testData/codegen/variables/var4.kt");
     }
   }
 

@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.konan.test.blackbox;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider;
 import org.junit.jupiter.api.Tag;
+import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty;
+import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,8 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/stress/testData")
 @TestDataPath("$PROJECT_ROOT")
+@Tag("stress")
+@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "5m")
 @UseStandardTestCaseGroupProvider()
 @Tag("frontend-fir")
 @FirPipeline()
@@ -30,8 +34,20 @@ public class FirNativeStressTestGenerated extends AbstractNativeBlackBoxTest {
   }
 
   @Test
+  @TestMetadata("array_out_of_memory.kt")
+  public void testArray_out_of_memory() {
+    runTest("native/native.tests/stress/testData/array_out_of_memory.kt");
+  }
+
+  @Test
   @TestMetadata("kt63423_dispose_on_main_stress.kt")
   public void testKt63423_dispose_on_main_stress() {
     runTest("native/native.tests/stress/testData/kt63423_dispose_on_main_stress.kt");
+  }
+
+  @Test
+  @TestMetadata("stress_gc_allocations.kt")
+  public void testStress_gc_allocations() {
+    runTest("native/native.tests/stress/testData/stress_gc_allocations.kt");
   }
 }

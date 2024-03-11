@@ -448,11 +448,12 @@ internal fun parseProgramArguments(registeredDirectives: RegisteredDirectives): 
 internal fun parseOutputRegex(registeredDirectives: RegisteredDirectives): TestRunCheck.OutputMatcher? {
     if (OUTPUT_REGEX !in registeredDirectives)
         return null
-    val regexStr = registeredDirectives.singleValue(OUTPUT_REGEX)
-    val regex = regexStr.toRegex(RegexOption.DOT_MATCHES_ALL)
+    val regexes = registeredDirectives[OUTPUT_REGEX].map { it.toRegex(RegexOption.DOT_MATCHES_ALL) }
     return TestRunCheck.OutputMatcher {
-        assertTrue(regex.matches(it)) {
-            "Regex `$regex` failed to match `$it`"
+        regexes.forEach { regex ->
+            assertTrue(regex.matches(it)) {
+                "Regex `$regex` failed to match `$it`"
+            }
         }
         true
     }

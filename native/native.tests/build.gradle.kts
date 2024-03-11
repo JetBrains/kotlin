@@ -56,6 +56,7 @@ val debuggerTest = nativeTest("debuggerTest", "debugger")
 val cachesTest = nativeTest("cachesTest", "caches")
 val klibTest = nativeTest("klibTest", "klib")
 val standaloneTest = nativeTest("standaloneTest", "standalone")
+val gcTest = nativeTest("gcTest", "gc")
 
 val testTags = findProperty("kotlin.native.tests.tags")?.toString()
 // Note: arbitrary JUnit tag expressions can be used in this property.

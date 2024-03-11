@@ -38,6 +38,12 @@ public class NativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest {
   }
 
   @Test
+  @TestMetadata("initRuntimeInGlobal.kt")
+  public void testInitRuntimeInGlobal() {
+    runTest("native/native.tests/testData/standalone/initRuntimeInGlobal.kt");
+  }
+
+  @Test
   @TestMetadata("kt56048.kt")
   public void testKt56048() {
     runTest("native/native.tests/testData/standalone/kt56048.kt");
@@ -62,6 +68,42 @@ public class NativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("cleaner_in_main_with_checker.kt")
+    public void testCleaner_in_main_with_checker() {
+      runTest("native/native.tests/testData/standalone/checkers/cleaner_in_main_with_checker.kt");
+    }
+
+    @Test
+    @TestMetadata("cleaner_in_main_without_checker.kt")
+    public void testCleaner_in_main_without_checker() {
+      runTest("native/native.tests/testData/standalone/checkers/cleaner_in_main_without_checker.kt");
+    }
+
+    @Test
+    @TestMetadata("cleaner_in_tls_main_with_checker.kt")
+    public void testCleaner_in_tls_main_with_checker() {
+      runTest("native/native.tests/testData/standalone/checkers/cleaner_in_tls_main_with_checker.kt");
+    }
+
+    @Test
+    @TestMetadata("cleaner_in_tls_main_without_checker.kt")
+    public void testCleaner_in_tls_main_without_checker() {
+      runTest("native/native.tests/testData/standalone/checkers/cleaner_in_tls_main_without_checker.kt");
+    }
+
+    @Test
+    @TestMetadata("cleaner_leak_with_checker.kt")
+    public void testCleaner_leak_with_checker() {
+      runTest("native/native.tests/testData/standalone/checkers/cleaner_leak_with_checker.kt");
+    }
+
+    @Test
+    @TestMetadata("cleaner_leak_without_checker.kt")
+    public void testCleaner_leak_without_checker() {
+      runTest("native/native.tests/testData/standalone/checkers/cleaner_leak_without_checker.kt");
+    }
+
+    @Test
     @TestMetadata("leakMemoryWithRunningThreadChecked.kt")
     public void testLeakMemoryWithRunningThreadChecked() {
       runTest("native/native.tests/testData/standalone/checkers/leakMemoryWithRunningThreadChecked.kt");
@@ -71,6 +113,36 @@ public class NativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest {
     @TestMetadata("leakMemoryWithRunningThreadUnchecked.kt")
     public void testLeakMemoryWithRunningThreadUnchecked() {
       runTest("native/native.tests/testData/standalone/checkers/leakMemoryWithRunningThreadUnchecked.kt");
+    }
+
+    @Test
+    @TestMetadata("leak_memory.kt")
+    public void testLeak_memory() {
+      runTest("native/native.tests/testData/standalone/checkers/leak_memory.kt");
+    }
+
+    @Test
+    @TestMetadata("leak_memory_test_runner.kt")
+    public void testLeak_memory_test_runner() {
+      runTest("native/native.tests/testData/standalone/checkers/leak_memory_test_runner.kt");
+    }
+
+    @Test
+    @TestMetadata("leak_memory_with_worker_termination.kt")
+    public void testLeak_memory_with_worker_termination() {
+      runTest("native/native.tests/testData/standalone/checkers/leak_memory_with_worker_termination.kt");
+    }
+
+    @Test
+    @TestMetadata("leak_worker.kt")
+    public void testLeak_worker() {
+      runTest("native/native.tests/testData/standalone/checkers/leak_worker.kt");
+    }
+
+    @Test
+    @TestMetadata("worker_threadlocal_no_leak.kt")
+    public void testWorker_threadlocal_no_leak() {
+      runTest("native/native.tests/testData/standalone/checkers/worker_threadlocal_no_leak.kt");
     }
   }
 
@@ -197,6 +269,31 @@ public class NativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest {
   }
 
   @Nested
+  @TestMetadata("native/native.tests/testData/standalone/runtimeLogging")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("standalone")
+  @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
+  @UseStandardTestCaseGroupProvider()
+  public class RuntimeLogging {
+    @Test
+    public void testAllFilesPresentInRuntimeLogging() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/standalone/runtimeLogging"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("logging.kt")
+    public void testLogging() {
+      runTest("native/native.tests/testData/standalone/runtimeLogging/logging.kt");
+    }
+
+    @Test
+    @TestMetadata("logging_override.kt")
+    public void testLogging_override() {
+      runTest("native/native.tests/testData/standalone/runtimeLogging/logging_override.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("native/native.tests/testData/standalone/termination")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("standalone")
@@ -236,6 +333,12 @@ public class NativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest {
     @TestMetadata("processUnhandledException.kt")
     public void testProcessUnhandledException() {
       runTest("native/native.tests/testData/standalone/termination/processUnhandledException.kt");
+    }
+
+    @Test
+    @TestMetadata("terminateMainThreadWorker.kt")
+    public void testTerminateMainThreadWorker() {
+      runTest("native/native.tests/testData/standalone/termination/terminateMainThreadWorker.kt");
     }
 
     @Test
@@ -293,9 +396,51 @@ public class NativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("unhandledExceptionInCurrentWorkerExecuteAfter.kt")
+    public void testUnhandledExceptionInCurrentWorkerExecuteAfter() {
+      runTest("native/native.tests/testData/standalone/termination/unhandledExceptionInCurrentWorkerExecuteAfter.kt");
+    }
+
+    @Test
+    @TestMetadata("unhandledExceptionInCurrentWorkerExecuteAfterWithHook.kt")
+    public void testUnhandledExceptionInCurrentWorkerExecuteAfterWithHook() {
+      runTest("native/native.tests/testData/standalone/termination/unhandledExceptionInCurrentWorkerExecuteAfterWithHook.kt");
+    }
+
+    @Test
     @TestMetadata("unhandledExceptionInForeignThread.kt")
     public void testUnhandledExceptionInForeignThread() {
       runTest("native/native.tests/testData/standalone/termination/unhandledExceptionInForeignThread.kt");
+    }
+
+    @Test
+    @TestMetadata("unhandledExceptionInWorkerExecute.kt")
+    public void testUnhandledExceptionInWorkerExecute() {
+      runTest("native/native.tests/testData/standalone/termination/unhandledExceptionInWorkerExecute.kt");
+    }
+
+    @Test
+    @TestMetadata("unhandledExceptionInWorkerExecuteAfter.kt")
+    public void testUnhandledExceptionInWorkerExecuteAfter() {
+      runTest("native/native.tests/testData/standalone/termination/unhandledExceptionInWorkerExecuteAfter.kt");
+    }
+
+    @Test
+    @TestMetadata("unhandledExceptionInWorkerExecuteAfterQuiet.kt")
+    public void testUnhandledExceptionInWorkerExecuteAfterQuiet() {
+      runTest("native/native.tests/testData/standalone/termination/unhandledExceptionInWorkerExecuteAfterQuiet.kt");
+    }
+
+    @Test
+    @TestMetadata("unhandledExceptionInWorkerExecuteAfterWithHook.kt")
+    public void testUnhandledExceptionInWorkerExecuteAfterWithHook() {
+      runTest("native/native.tests/testData/standalone/termination/unhandledExceptionInWorkerExecuteAfterWithHook.kt");
+    }
+
+    @Test
+    @TestMetadata("unhandledExceptionInWorkerExecuteQuiet.kt")
+    public void testUnhandledExceptionInWorkerExecuteQuiet() {
+      runTest("native/native.tests/testData/standalone/termination/unhandledExceptionInWorkerExecuteQuiet.kt");
     }
   }
 }
