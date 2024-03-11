@@ -41,19 +41,8 @@ class IrCallImpl(
     override var originalBeforeInline: IrAttributeContainer? = null
 
     companion object {
-        @ObsoleteDescriptorBasedAPI
-        fun fromSymbolDescriptor(
-            startOffset: Int,
-            endOffset: Int,
-            type: IrType,
-            symbol: IrSimpleFunctionSymbol,
-            typeArgumentsCount: Int = symbol.descriptor.typeParametersCount,
-            valueArgumentsCount: Int = symbol.descriptor.valueParameters.size + symbol.descriptor.contextReceiverParameters.size,
-            origin: IrStatementOrigin? = null,
-            superQualifierSymbol: IrClassSymbol? = null,
-        ) =
-            IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol)
-
+        // Temporary API for compatible-compose, to be removed soon.
+        // Note: It cannot be marked with @Deprecated, because some usages in kotlin compiler pick this declaration up while it still exists.
         fun fromSymbolOwner(
             startOffset: Int,
             endOffset: Int,
@@ -65,22 +54,5 @@ class IrCallImpl(
             superQualifierSymbol: IrClassSymbol? = null,
         ) =
             IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol)
-
-        fun fromSymbolOwner(
-            startOffset: Int,
-            endOffset: Int,
-            symbol: IrSimpleFunctionSymbol
-        ) =
-            IrCallImpl(
-                startOffset,
-                endOffset,
-                symbol.owner.returnType,
-                symbol,
-                typeArgumentsCount = symbol.owner.typeParameters.size,
-                valueArgumentsCount = symbol.owner.valueParameters.size,
-                origin = null,
-                superQualifierSymbol = null
-            )
-
     }
 }
