@@ -266,6 +266,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("JsExternalTypeExtendsActualExternalType.kt")
+  public void testJsExternalTypeExtendsActualExternalType() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/JsExternalTypeExtendsActualExternalType.kt");
+  }
+
+  @Test
   @TestMetadata("kt54827.kt")
   public void testKt54827() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/kt54827.kt");
