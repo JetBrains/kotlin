@@ -44909,12 +44909,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
-      @TestMetadata("jvmNamesDuplicate.kt")
-      public void testJvmNamesDuplicate() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/jvmNamesDuplicate.kt");
-      }
-
-      @Test
       @TestMetadata("jvmOverloads.kt")
       public void testJvmOverloads() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/jvmOverloads.kt");

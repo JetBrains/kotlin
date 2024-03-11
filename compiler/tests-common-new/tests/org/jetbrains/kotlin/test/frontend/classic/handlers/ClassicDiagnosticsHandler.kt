@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.getJvmSignatureDiagnostics
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
@@ -44,14 +45,17 @@ class ClassicDiagnosticsHandler(testServices: TestServices) : ClassicFrontendAna
 
     private val reporter = ClassicDiagnosticReporter(testServices)
 
-    @OptIn(ExperimentalStdlibApi::class)
     override fun processModule(module: TestModule, info: ClassicFrontendOutputArtifact) {
-        var allDiagnostics = info.analysisResult.bindingContext.diagnostics + computeJvmSignatureDiagnostics(info)
+        var allDiagnostics = info.analysisResult.bindingContext.diagnostics.toList()
         if (AdditionalFilesDirectives.CHECK_TYPE in module.directives) {
             allDiagnostics = allDiagnostics.filter { it.factory.name != Errors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS.name }
         }
         if (LanguageSettingsDirectives.API_VERSION in module.directives) {
             allDiagnostics = allDiagnostics.filter { it.factory.name != Errors.NEWER_VERSION_IN_SINCE_KOTLIN.name }
+        }
+
+        if (allDiagnostics.none { it.severity == Severity.ERROR }) {
+            allDiagnostics = allDiagnostics + computeJvmSignatureDiagnostics(info)
         }
 
         val diagnosticsPerFile = allDiagnostics.groupBy { it.psiFile }

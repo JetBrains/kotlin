@@ -34,7 +34,7 @@ fun foo8(x: Any?) {
     val <!NAME_SHADOWING!>x<!>: (<!NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES!>@Foo<!> () -> Unit)? = {}
 }
 
-fun foo9(x: (<!NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES!>@Foo<!> () -> Unit)?) = x as Iterable<(<!NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES!>@Foo<!> () -> Unit?)?>?
+fun foo9(x: (<!NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES!>@Foo<!> () -> Unit)?) = x as Iterable<(<!NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES!>@<!DEBUG_INFO_MISSING_UNRESOLVED!>Foo<!><!> () -> Unit?)?>?
 
 fun foo10(x: @[Foo] () -> Unit) = x as Iterable<@Foo() () -> Unit>?
 

@@ -295,6 +295,12 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
       }
 
       @Test
+      @TestMetadata("genericFunctions.kt")
+      public void testGenericFunctions() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/genericFunctions.kt");
+      }
+
+      @Test
       @TestMetadata("genericType.kt")
       public void testGenericType() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/genericType.kt");
@@ -304,6 +310,12 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
       @TestMetadata("inheritFromTwoTraits.kt")
       public void testInheritFromTwoTraits() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/inheritFromTwoTraits.kt");
+      }
+
+      @Test
+      @TestMetadata("inheritGenericMethodsWithDifferentSubstitution.kt")
+      public void testInheritGenericMethodsWithDifferentSubstitution() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/inheritGenericMethodsWithDifferentSubstitution.kt");
       }
 
       @Test
@@ -514,6 +526,44 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
       @TestMetadata("declarationClash.kt")
       public void testDeclarationClash() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/inlineClasses/declarationClash.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop")
+    @TestDataPath("$PROJECT_ROOT")
+    public class JavaInterop {
+      @Test
+      public void testAllFilesPresentInJavaInterop() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("inheritFromJavaCollectionSubclassWithContainsOverload.kt")
+      public void testInheritFromJavaCollectionSubclassWithContainsOverload() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/inheritFromJavaCollectionSubclassWithContainsOverload.kt");
+      }
+
+      @Test
+      @TestMetadata("supertypeDifferentParameterNullability.kt")
+      public void testSupertypeDifferentParameterNullability() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/supertypeDifferentParameterNullability.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmName")
+    @TestDataPath("$PROJECT_ROOT")
+    public class JvmName {
+      @Test
+      public void testAllFilesPresentInJvmName() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmName"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("conflictsWIthJvmNameInClass.kt")
+      public void testConflictsWIthJvmNameInClass() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmName/conflictsWIthJvmNameInClass.kt");
       }
     }
 

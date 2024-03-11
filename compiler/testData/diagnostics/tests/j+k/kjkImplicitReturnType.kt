@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-66048
 // IGNORE_REVERSED_RESOLVE
 // ^KT-66392
@@ -58,6 +59,6 @@ class B : Java1() {
     override val b: <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.b
     override var c: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.c
     override var d: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.d
-    <!ACCIDENTAL_OVERRIDE!>override var e: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>String?<!><!> = super.e
-    <!ACCIDENTAL_OVERRIDE!>override var f: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>String?<!><!> = super.f
+    override var e: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.e
+    override var f: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.f
 }
