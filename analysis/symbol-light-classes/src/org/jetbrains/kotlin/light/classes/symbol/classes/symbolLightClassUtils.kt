@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.util.*
 
@@ -546,16 +547,12 @@ internal fun KtSymbolWithMembers.createInnerClasses(
     containingClass: SymbolLightClassBase,
     classOrObject: KtClassOrObject?
 ): List<SymbolLightClassBase> {
-    val result = ArrayList<SymbolLightClassBase>()
+    val result = SmartList<SymbolLightClassBase>()
 
-    // workaround for ClassInnerStuffCache not supporting classes with null names, see KT-13927
-    // inner classes with null names can't be searched for and can't be used from java anyway
-    // we can't prohibit creating light classes with null names either since they can contain members
-
-    getStaticDeclaredMemberScope().getClassifierSymbols().filterIsInstance<KtNamedClassOrObjectSymbol>().mapTo(result) {
+    getStaticDeclaredMemberScope().getClassifierSymbols().filterIsInstance<KtNamedClassOrObjectSymbol>().mapNotNullTo(result) {
         val classOrObjectDeclaration = it.sourcePsiSafe<KtClassOrObject>()
         if (classOrObjectDeclaration != null) {
-            createLightClassNoCache(classOrObjectDeclaration, containingClass.ktModule)
+            classOrObjectDeclaration.toLightClass() as? SymbolLightClassBase
         } else {
             createLightClassNoCache(it, ktModule = containingClass.ktModule, manager)
         }
