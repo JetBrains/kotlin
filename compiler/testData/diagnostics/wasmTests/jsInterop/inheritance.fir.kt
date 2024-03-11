@@ -25,4 +25,4 @@ external interface EI2
 
 typealias TA1 = EI2
 
-external class <!EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE!>EC4<!> : TA1
+external class EC4 : TA1

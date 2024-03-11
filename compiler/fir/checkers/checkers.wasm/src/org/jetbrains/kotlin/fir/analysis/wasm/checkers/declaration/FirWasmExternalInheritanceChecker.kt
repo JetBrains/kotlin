@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.types.coneType
@@ -38,7 +39,7 @@ sealed class FirWasmExternalInheritanceChecker(mppKind: MppCheckerKind) : FirCla
         val session = context.session
         val isCurrentClassExternal = declaration.symbol.isEffectivelyExternal(session)
         for (superTypeRef in declaration.superTypeRefs) {
-            val superClass = superTypeRef.toClassLikeSymbol(session) ?: continue
+            val superClass = (superTypeRef.toClassLikeSymbol(session)?.fullyExpandedClass(session) ?: continue)
             if (superClass.classId == StandardClassIds.Any) continue  // External classes can extend Any
 
             val isSuperClassExternal = superClass.isEffectivelyExternal(session)
