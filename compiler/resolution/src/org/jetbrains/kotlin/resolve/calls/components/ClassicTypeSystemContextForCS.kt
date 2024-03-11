@@ -99,10 +99,15 @@ class ClassicTypeSystemContextForCS(
         return isContainedInInvariantOrContravariantPositions
     }
 
-    override fun newTypeCheckerState(errorTypesEqualToAnything: Boolean, stubTypesEqualToAnything: Boolean): TypeCheckerState {
+    override fun newTypeCheckerState(
+        errorTypesEqualToAnything: Boolean,
+        stubTypesEqualToAnything: Boolean,
+        mapPlatformTypesToKotlin: Boolean
+    ): TypeCheckerState {
         return createClassicTypeCheckerState(
             errorTypesEqualToAnything,
             stubTypesEqualToAnything,
+            mapPlatformTypesToKotlin,
             typeSystemContext = this,
             kotlinTypeRefiner = kotlinTypeRefiner
         )

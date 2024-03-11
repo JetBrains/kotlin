@@ -39,6 +39,7 @@ open class ClassicTypeCheckerState(
 ) : TypeCheckerState(
     isErrorTypeEqualsToAnything,
     isStubTypeEqualsToAnything,
+    mapPlatformTypesToKotlin = false,
     allowedTypeVariable = true,
     typeSystemContext,
     kotlinTypePreparator,
@@ -48,6 +49,7 @@ open class ClassicTypeCheckerState(
 fun createClassicTypeCheckerState(
     isErrorTypeEqualsToAnything: Boolean,
     isStubTypeEqualsToAnything: Boolean = true,
+    mapPlatformTypesToKotlin: Boolean = false,
     typeSystemContext: ClassicTypeSystemContext = SimpleClassicTypeSystemContext,
     kotlinTypePreparator: KotlinTypePreparator = KotlinTypePreparator.Default,
     kotlinTypeRefiner: KotlinTypeRefiner = KotlinTypeRefiner.Default
@@ -55,6 +57,7 @@ fun createClassicTypeCheckerState(
     return TypeCheckerState(
         isErrorTypeEqualsToAnything,
         isStubTypeEqualsToAnything,
+        mapPlatformTypesToKotlin = mapPlatformTypesToKotlin,
         allowedTypeVariable = true,
         typeSystemContext,
         kotlinTypePreparator,

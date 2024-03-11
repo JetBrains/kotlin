@@ -17,11 +17,12 @@ import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.text
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 internal fun FirExpression.unwrapToMoreUsefulExpression() = when (this) {
@@ -62,7 +63,7 @@ internal fun ConeKotlinType.isEnum(session: FirSession) = toRegularClassSymbol(s
 internal fun ConeKotlinType.isClass(session: FirSession) = toRegularClassSymbol(session) != null
 
 internal fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
-    val bounds = collectUpperBounds().map { type -> type.toKotlinTypeIfPlatform(session).replaceArgumentsWithStarProjections() }
+    val bounds = collectUpperBounds().map { it.replaceArgumentsWithStarProjections() }
     val type = bounds.ifNotEmpty { ConeTypeIntersector.intersectTypes(session.typeContext, this) }
         ?: session.builtinTypes.nullableAnyType.type
     val notNullType = type.withNullability(ConeNullability.NOT_NULL, session.typeContext)
@@ -79,11 +80,6 @@ internal fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
         // In K1's intersector, `canHaveSubtypes()` is called for `nullabilityStripped`.
         withNullability(ConeNullability.NOT_NULL, session.typeContext).canHaveSubtypesAccordingToK1(session),
     )
-}
-
-internal fun ConeClassLikeType.toKotlinTypeIfPlatform(session: FirSession): ConeClassLikeType {
-    val kotlinClassId = session.platformClassMapper.getCorrespondingKotlinClass(lookupTag.classId)
-    return kotlinClassId?.constructClassLikeType(typeArguments, isNullable, attributes) ?: this
 }
 
 internal class ArgumentInfo(
@@ -116,11 +112,19 @@ internal fun FirExpression.toArgumentInfo(context: CheckerContext) =
         context.session,
     )
 
-private fun TypeInfo.isSubtypeOf(other: TypeInfo, context: CheckerContext) =
-    notNullType.isSubtypeOf(other.notNullType, context.session)
+internal fun FirSession.createTypeCheckerStateWithPlatformClassMapper(): TypeCheckerState =
+    typeContext.newTypeCheckerState(
+        errorTypesEqualToAnything = false,
+        stubTypesEqualToAnything = false,
+        mapPlatformTypesToKotlin = true,
+    )
+
+private fun TypeInfo.isSubtypeOf(other: TypeInfo, state: TypeCheckerState) =
+    AbstractTypeChecker.isSubtypeOf(state, notNullType, other.notNullType)
 
 internal fun areUnrelated(a: TypeInfo, b: TypeInfo, context: CheckerContext): Boolean {
-    return !a.isSubtypeOf(b, context) && !b.isSubtypeOf(a, context)
+    val typeCheckerState = context.session.createTypeCheckerStateWithPlatformClassMapper()
+    return !a.isSubtypeOf(b, typeCheckerState) && !b.isSubtypeOf(a, typeCheckerState)
 }
 
 internal fun areRelated(a: TypeInfo, b: TypeInfo, context: CheckerContext): Boolean = !areUnrelated(a, b, context)

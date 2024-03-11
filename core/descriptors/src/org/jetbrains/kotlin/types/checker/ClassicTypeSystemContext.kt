@@ -442,9 +442,13 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun newTypeCheckerState(
         errorTypesEqualToAnything: Boolean,
-        stubTypesEqualToAnything: Boolean
+        stubTypesEqualToAnything: Boolean,
+        mapPlatformTypesToKotlin: Boolean
     ): TypeCheckerState {
-        return createClassicTypeCheckerState(errorTypesEqualToAnything, stubTypesEqualToAnything, typeSystemContext = this)
+        return createClassicTypeCheckerState(
+            errorTypesEqualToAnything, stubTypesEqualToAnything, mapPlatformTypesToKotlin,
+            typeSystemContext = this,
+        )
     }
 
     override fun nullableNothingType(): SimpleTypeMarker {
