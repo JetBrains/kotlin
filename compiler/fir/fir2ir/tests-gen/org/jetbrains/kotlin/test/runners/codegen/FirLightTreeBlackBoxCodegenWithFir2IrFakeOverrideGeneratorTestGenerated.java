@@ -21286,6 +21286,12 @@ public class FirLightTreeBlackBoxCodegenWithFir2IrFakeOverrideGeneratorTestGener
     }
 
     @Test
+    @TestMetadata("charAtAndOverloadWithAbstractGet.kt")
+    public void testCharAtAndOverloadWithAbstractGet() {
+      runTest("compiler/testData/codegen/box/fir/charAtAndOverloadWithAbstractGet.kt");
+    }
+
+    @Test
     @TestMetadata("ClassBuilder.kt")
     public void testClassBuilder() {
       runTest("compiler/testData/codegen/box/fir/ClassBuilder.kt");

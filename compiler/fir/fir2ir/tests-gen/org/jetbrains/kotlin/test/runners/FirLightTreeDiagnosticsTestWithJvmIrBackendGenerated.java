@@ -551,6 +551,12 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("charAtAndOverloadWithAbstractGet.kt")
+      public void testCharAtAndOverloadWithAbstractGet() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/charAtAndOverloadWithAbstractGet.kt");
+      }
+
+      @Test
       @TestMetadata("inheritFromJavaCollectionSubclassWithContainsOverload.kt")
       public void testInheritFromJavaCollectionSubclassWithContainsOverload() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/inheritFromJavaCollectionSubclassWithContainsOverload.kt");
