@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.compiler.plugin
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
@@ -25,9 +26,24 @@ abstract class CompilerPluginRegistrar {
         val registeredExtensions: Map<ProjectExtensionDescriptor<*>, List<Any>>
             get() = _registeredExtensions
 
+        private val _disposables = mutableListOf<PluginDisposable>()
+        val disposables: List<PluginDisposable>
+            get() = _disposables
+
         fun <T : Any> ProjectExtensionDescriptor<T>.registerExtension(extension: T) {
             _registeredExtensions.getOrPut(this, ::mutableListOf).add(extension)
         }
+
+        /**
+         * Passed [disposable] will be called at the end of compilation
+         */
+        fun registerDisposable(disposable: PluginDisposable) {
+            _disposables += disposable
+        }
+    }
+
+    fun interface PluginDisposable {
+        fun dispose()
     }
 
     abstract val supportsK2: Boolean
@@ -46,6 +62,9 @@ fun CompilerPluginRegistrar.ExtensionStorage.registerInProject(
                 throw IllegalStateException(errorMessage(extension), e)
             }
         }
+    }
+    for (disposable in disposables) {
+        Disposer.register(project) { disposable.dispose() }
     }
 }
 
