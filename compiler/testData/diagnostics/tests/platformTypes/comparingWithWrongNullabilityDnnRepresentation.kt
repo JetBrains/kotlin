@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // FULL_JDK
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
+// LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN
 
 import java.util.Comparator;
 

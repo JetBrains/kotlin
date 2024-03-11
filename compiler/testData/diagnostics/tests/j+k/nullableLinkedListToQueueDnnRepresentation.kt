@@ -1,5 +1,5 @@
 // FULL_JDK
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
+// LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN
 // ISSUE: KT-65184
 
 // FILE: A.java

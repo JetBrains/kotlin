@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.fir.java
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -111,7 +113,21 @@ private fun JavaType?.toConeTypeProjection(
             }
             val upperBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, lowerBound)
 
-            if (isRaw) ConeRawType.create(lowerBound, upperBound) else ConeFlexibleType(lowerBound, upperBound)
+            val finalLowerBound = when {
+                !session.languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN) ->
+                    lowerBound
+                lowerBound is ConeTypeParameterType ->
+                    ConeDefinitelyNotNullType.create(
+                        lowerBound, session.typeContext,
+                        // Upper bounds might be not initialized properly yet, so we force creating DefinitelyNotNullType
+                        // It should not affect semantics, since it would be still a valid type anyway
+                        avoidComprehensiveCheck = true,
+                    ) ?: lowerBound
+
+                else -> lowerBound
+            }
+
+            if (isRaw) ConeRawType.create(finalLowerBound, upperBound) else ConeFlexibleType(finalLowerBound, upperBound)
         }
 
         is JavaArrayType -> {

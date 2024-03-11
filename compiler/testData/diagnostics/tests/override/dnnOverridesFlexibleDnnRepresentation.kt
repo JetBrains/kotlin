@@ -1,5 +1,4 @@
-// FIR_IDENTICAL
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
+// LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN
 // ISSUE: KT-58933
 // FILE: J.java
 public interface J<T> {

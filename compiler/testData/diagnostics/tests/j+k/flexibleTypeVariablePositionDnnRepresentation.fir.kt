@@ -1,5 +1,4 @@
-// FIR_IDENTICAL
-// !LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
+// !LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN
 // ISSUE: KT-59138
 // SKIP_TXT
 // FILE: JavaClass.java
@@ -18,6 +17,6 @@ fun bar(n: Number?) {
 
     // in K1 & K2, it is resolved to nullable takeN
     // in K2 with DNN representation ON, it would be resolved to not-nullable and may fail with NPE
-    takeN(JavaClass.simpleId(n)).div(1)
-    takeN(JavaClass.simpleId(n)).<!UNRESOLVED_REFERENCE!>length<!>
+    takeN(JavaClass.simpleId(n)).<!UNRESOLVED_REFERENCE!>div<!>(1)
+    takeN(JavaClass.simpleId(n)).length
 }

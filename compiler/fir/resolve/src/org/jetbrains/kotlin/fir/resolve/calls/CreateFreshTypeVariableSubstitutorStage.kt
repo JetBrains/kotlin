@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
@@ -166,6 +168,9 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     }
 
     private fun FirTypeParameterRef.shouldBeFlexible(context: ConeTypeContext): Boolean {
+        if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN)) {
+            return false
+        }
         return symbol.resolvedBounds.any {
             val type = it.coneType
             type is ConeFlexibleType || with(context) {

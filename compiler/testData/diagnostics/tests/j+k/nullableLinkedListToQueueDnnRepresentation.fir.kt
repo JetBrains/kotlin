@@ -1,5 +1,5 @@
 // FULL_JDK
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
+// LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN
 // ISSUE: KT-65184
 
 // FILE: A.java
@@ -29,12 +29,12 @@ class X {
 }
 
 fun test(x : X) {
-    x.bar(<!TYPE_MISMATCH!>LinkedList<String?>()<!>)
-    bar(<!TYPE_MISMATCH!>B<String?>()<!>)
+    x.bar(LinkedList<String?>())
+    bar(B<String?>())
     func(A<B<String>>())
-    func(<!TYPE_MISMATCH!>A<B<String?>>()<!>)
-    func(<!TYPE_MISMATCH!>A<B<String?>?>()<!>)
-    func(<!TYPE_MISMATCH!>A<B<String>?>()<!>)
+    func(<!ARGUMENT_TYPE_MISMATCH!>A<B<String?>>()<!>)
+    func(<!ARGUMENT_TYPE_MISMATCH!>A<B<String?>?>()<!>)
+    func(<!ARGUMENT_TYPE_MISMATCH!>A<B<String>?>()<!>)
 }
 
 class C {
@@ -42,5 +42,5 @@ class C {
 }
 
 fun test(c: C, jj: LinkedList<String?>) {
-    c.bar(<!TYPE_MISMATCH!>jj<!>)
+    c.bar(jj)
 }

@@ -21829,9 +21829,21 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("flexibleTypeVariablePositionDnnRepresentation.kt")
+      public void testFlexibleTypeVariablePositionDnnRepresentation() {
+        runTest("compiler/testData/diagnostics/tests/j+k/flexibleTypeVariablePositionDnnRepresentation.kt");
+      }
+
+      @Test
       @TestMetadata("futureGet.kt")
       public void testFutureGet() {
         runTest("compiler/testData/diagnostics/tests/j+k/futureGet.kt");
+      }
+
+      @Test
+      @TestMetadata("futureGetDnnRepresentation.kt")
+      public void testFutureGetDnnRepresentation() {
+        runTest("compiler/testData/diagnostics/tests/j+k/futureGetDnnRepresentation.kt");
       }
 
       @Test
@@ -22108,6 +22120,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       @TestMetadata("nullableLinkedListToQueue.kt")
       public void testNullableLinkedListToQueue() {
         runTest("compiler/testData/diagnostics/tests/j+k/nullableLinkedListToQueue.kt");
+      }
+
+      @Test
+      @TestMetadata("nullableLinkedListToQueueDnnRepresentation.kt")
+      public void testNullableLinkedListToQueueDnnRepresentation() {
+        runTest("compiler/testData/diagnostics/tests/j+k/nullableLinkedListToQueueDnnRepresentation.kt");
       }
 
       @Test
@@ -23161,6 +23179,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         @TestMetadata("notNullTypeParameterWithKotlinNullable.kt")
         public void testNotNullTypeParameterWithKotlinNullable() {
           runTest("compiler/testData/diagnostics/tests/j+k/types/notNullTypeParameterWithKotlinNullable.kt");
+        }
+
+        @Test
+        @TestMetadata("notNullTypeParameterWithKotlinNullableDnnRepresentation.kt")
+        public void testNotNullTypeParameterWithKotlinNullableDnnRepresentation() {
+          runTest("compiler/testData/diagnostics/tests/j+k/types/notNullTypeParameterWithKotlinNullableDnnRepresentation.kt");
         }
 
         @Test
@@ -28693,6 +28717,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("dnnOverridesFlexibleDnnRepresentation.kt")
+      public void testDnnOverridesFlexibleDnnRepresentation() {
+        runTest("compiler/testData/diagnostics/tests/override/dnnOverridesFlexibleDnnRepresentation.kt");
+      }
+
+      @Test
       @TestMetadata("DuplicateMethod.kt")
       public void testDuplicateMethod() {
         runTest("compiler/testData/diagnostics/tests/override/DuplicateMethod.kt");
@@ -29305,6 +29335,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("comparingWithWrongNullabilityDnnRepresentation.kt")
+      public void testComparingWithWrongNullabilityDnnRepresentation() {
+        runTest("compiler/testData/diagnostics/tests/platformTypes/comparingWithWrongNullabilityDnnRepresentation.kt");
+      }
+
+      @Test
       @TestMetadata("delegateByComplexInheritance.kt")
       public void testDelegateByComplexInheritance() {
         runTest("compiler/testData/diagnostics/tests/platformTypes/delegateByComplexInheritance.kt");
@@ -29691,6 +29727,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         @TestMetadata("singleton.kt")
         public void testSingleton() {
           runTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/singleton.kt");
+        }
+
+        @Test
+        @TestMetadata("singletonDnnRepresentation.kt")
+        public void testSingletonDnnRepresentation() {
+          runTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/singletonDnnRepresentation.kt");
         }
 
         @Test
@@ -33202,6 +33244,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       @TestMetadata("sameCandidatesFromKotlinAndJavaInOneScope.kt")
       public void testSameCandidatesFromKotlinAndJavaInOneScope() {
         runTest("compiler/testData/diagnostics/tests/samConversions/sameCandidatesFromKotlinAndJavaInOneScope.kt");
+      }
+
+      @Test
+      @TestMetadata("sameConversionToGenericWrongNullabilityDnnRepresentation.kt")
+      public void testSameConversionToGenericWrongNullabilityDnnRepresentation() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/sameConversionToGenericWrongNullabilityDnnRepresentation.kt");
       }
 
       @Test
