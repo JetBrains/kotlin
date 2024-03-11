@@ -808,7 +808,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             mode = arguments.partialLinkageMode,
             logLevel = arguments.partialLinkageLogLevel,
             compilerModeAllowsUsingPartialLinkage =
-            /* no PL when producing KLIB */ arguments.includes != null,
+                /* disabled for WASM for now */ !arguments.wasm && /* no PL when producing KLIB */ arguments.includes != null,
             onWarning = { messageCollector.report(WARNING, it) },
             onError = { messageCollector.report(ERROR, it) }
         )

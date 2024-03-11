@@ -46,9 +46,6 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
         builder: DeclarationIrBuilder
     ): IrExpression {
         when (val symbol = call.symbol) {
-            irBuiltins.linkageErrorSymbol -> {
-                return irCall(call, context.wasmSymbols.throwLinkageError)
-            }
             irBuiltins.ieee754equalsFunByOperandType[irBuiltins.floatClass] -> {
                 if (call.getValueArgument(0)!!.type.isNullable() || call.getValueArgument(1)!!.type.isNullable()) {
                     return irCall(call, symbols.nullableFloatIeee754Equals)
