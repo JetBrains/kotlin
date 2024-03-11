@@ -73,7 +73,7 @@ sealed class Field : AbstractField<Field>() {
 
 // ----------- Field with default -----------
 
-class FieldWithDefault(override val origin: Field) : Field(), AbstractFieldWithDefaultValue<Field> {
+class FieldWithDefault(override val origin: Field) : Field() {
     override val name: String get() = origin.name
     override val typeRef: TypeRefWithNullability get() = origin.typeRef
     override var isVolatile: Boolean = origin.isVolatile

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.generators.tree.ListField as AbstractListField
 sealed class Field(
     override val name: String,
     override var isMutable: Boolean,
-) : AbstractField<Field>(), AbstractFieldWithDefaultValue<Field> {
+) : AbstractField<Field>() {
     sealed class UseFieldAsParameterInIrFactoryStrategy {
 
         data object No : UseFieldAsParameterInIrFactoryStrategy()
