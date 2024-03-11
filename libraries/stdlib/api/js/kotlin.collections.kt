@@ -10344,7 +10344,7 @@ public interface List<out E> : kotlin.collections.Collection<E> {
 
     @kotlin.js.ExperimentalJsExport
     @kotlin.js.ExperimentalJsCollectionsApi
-    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.SinceKotlin(version = "2.0")
     public companion object of List {
         public final fun <E> fromJsArray(array: kotlin.js.collections.JsReadonlyArray<E>): kotlin.collections.List<E>
     }
@@ -10396,7 +10396,7 @@ public interface Map<K, out V> {
 
     @kotlin.js.ExperimentalJsExport
     @kotlin.js.ExperimentalJsCollectionsApi
-    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.SinceKotlin(version = "2.0")
     public companion object of Map {
         public final fun <K, V> fromJsMap(map: kotlin.js.collections.JsReadonlyMap<K, V>): kotlin.collections.Map<K, V>
     }
@@ -10466,7 +10466,7 @@ public interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections
 
     @kotlin.js.ExperimentalJsExport
     @kotlin.js.ExperimentalJsCollectionsApi
-    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.SinceKotlin(version = "2.0")
     public companion object of MutableList {
         public final fun <E> fromJsArray(array: kotlin.js.collections.JsReadonlyArray<E>): kotlin.collections.MutableList<E>
     }
@@ -10506,7 +10506,7 @@ public interface MutableMap<K, V> : kotlin.collections.Map<K, V> {
 
     @kotlin.js.ExperimentalJsExport
     @kotlin.js.ExperimentalJsCollectionsApi
-    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.SinceKotlin(version = "2.0")
     public companion object of MutableMap {
         public final fun <K, V> fromJsMap(map: kotlin.js.collections.JsReadonlyMap<K, V>): kotlin.collections.MutableMap<K, V>
     }
@@ -10538,7 +10538,7 @@ public interface MutableSet<E> : kotlin.collections.Set<E>, kotlin.collections.M
 
     @kotlin.js.ExperimentalJsExport
     @kotlin.js.ExperimentalJsCollectionsApi
-    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.SinceKotlin(version = "2.0")
     public companion object of MutableSet {
         public final fun <E> fromJsSet(set: kotlin.js.collections.JsReadonlySet<E>): kotlin.collections.MutableSet<E>
     }
@@ -10565,7 +10565,7 @@ public interface Set<out E> : kotlin.collections.Collection<E> {
 
     @kotlin.js.ExperimentalJsExport
     @kotlin.js.ExperimentalJsCollectionsApi
-    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.SinceKotlin(version = "2.0")
     public companion object of Set {
         public final fun <E> fromJsSet(set: kotlin.js.collections.JsReadonlySet<E>): kotlin.collections.Set<E>
     }
