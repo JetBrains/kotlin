@@ -314,6 +314,12 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
     }
 
     @Test
+    @TestMetadata("augmentedArrayAssigment.kt")
+    public void testAugmentedArrayAssigment() {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment/augmentedArrayAssigment.kt");
+    }
+
+    @Test
     @TestMetadata("readArrayElement.kt")
     public void testReadArrayElement() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment/readArrayElement.kt");
