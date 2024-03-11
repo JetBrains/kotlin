@@ -14,8 +14,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleXcodeTasks
-import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
 import org.jetbrains.kotlin.gradle.utils.mapToFile
 import org.jetbrains.kotlin.gradle.utils.runCommand
@@ -24,7 +22,7 @@ import java.io.File
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
-internal abstract class BuildSyntheticProjectWithSwiftExportPackage : DefaultTask() {
+internal abstract class BuildSPMSwiftExportPackage : DefaultTask() {
 
     @get:Inject
     abstract val providerFactory: ProviderFactory
@@ -45,73 +43,64 @@ internal abstract class BuildSyntheticProjectWithSwiftExportPackage : DefaultTas
 
     @get:Optional
     @get:Input
-    val targetDeviceIdentifier: Provider<String> get() = providerFactory.environmentVariable("TARGET_DEVICE_IDENTIFIER")
+    val targetDeviceIdentifier: Provider<String>
+        get() = providerFactory.environmentVariable("TARGET_DEVICE_IDENTIFIER")
 
     @get:Input
-    val platformName: Provider<String> get() = providerFactory.environmentVariable("PLATFORM_NAME")
+    val platformName: Provider<String>
+        get() = providerFactory.environmentVariable("PLATFORM_NAME")
 
     @get:OutputDirectory
-    val syntheticInterfacesPath: Provider<Directory> get() = syntheticProjectDirectory.map { it.dir("dd-interfaces") }
+    val syntheticInterfacesPath: Provider<Directory>
+        get() = syntheticProjectDirectory.map { it.dir("dd-interfaces") }
 
-    private val syntheticObjectFilesDirectory get() = syntheticProjectDirectory.map { it.dir("dd-o-files") }
+    private val syntheticObjectFilesDirectory
+        get() = syntheticProjectDirectory.map { it.dir("dd-o-files") }
 
     @get:OutputFile
-    val syntheticLibraryPath: Provider<RegularFile> get() = syntheticObjectFilesDirectory.map { it.file("lib${swiftLibraryName.get()}.a") }
+    val syntheticLibraryPath: Provider<RegularFile>
+        get() = syntheticObjectFilesDirectory.map { it.file("lib${swiftLibraryName.get()}.a") }
 
     @get:OutputDirectory
-    val syntheticBuildIntermediatesPath: Provider<File> get() = syntheticProjectDirectory.map { it.dir("dd-other") }.mapToFile()
+    val syntheticBuildIntermediatesPath: Provider<File>
+        get() = syntheticProjectDirectory.map { it.dir("dd-other") }.mapToFile()
 
     @get:Internal
     abstract val syntheticProjectDirectory: DirectoryProperty
 
     @TaskAction
     fun run() {
-        val syntheticProjectPath = setUpSyntheticProject()
-        val syntheticObjectFilesDirectory = buildSyntheticProject(syntheticProjectPath)
+        val syntheticObjectFilesDirectory = buildSyntheticProject()
         packObjectFilesIntoLibrary(syntheticObjectFilesDirectory)
     }
 
-    private fun setUpSyntheticProject(): File {
-        val syntheticForSpm = syntheticProjectDirectory.get().asFile
-        val syntheticProjectPath = syntheticForSpm.resolve("synthetic.xcodeproj")
-        syntheticProjectPath.mkdirs()
-
-        val pbxprojPath = syntheticProjectPath.resolve("project.pbxproj")
-        val syntheticProjectTemplate =
-            AppleXcodeTasks.javaClass.getResourceAsStream("/spm/project.pbxproj") ?: error("Missing synthetic project resource")
-
-        pbxprojPath.outputStream().writer().use { pbxprojWriter ->
-            syntheticProjectTemplate.reader().forEachLine { line ->
-                pbxprojWriter
-                    .append(line.replace(SYNTHETIC_PROJECT_MARKER, swiftApiModuleName.get()))
-                    .appendLine()
-            }
-        }
-        return syntheticProjectPath
-    }
-
-    private fun buildSyntheticProject(syntheticProjectPath: File): File {
+    private fun buildSyntheticProject(): File {
         val syntheticObjectFilesDirectory = this.syntheticObjectFilesDirectory.get().asFile
         val intermediatesDestination = mapOf(
             // Thin/universal object files
             "TARGET_BUILD_DIR" to syntheticObjectFilesDirectory.canonicalPath,
             // .swiftmodule interface
-            "BUILT_PRODUCTS_DIR" to syntheticInterfacesPath.get().asFile.canonicalPath
+            "BUILT_PRODUCTS_DIR" to syntheticInterfacesPath.get().asFile.canonicalPath,
         )
         val inheritedBuildSettings = inheritedBuildSettingsFromEnvironment.mapValues {
             it.value.get()
         }
 
+        val workingDir = syntheticProjectDirectory.flatMap {
+            it.dir(swiftApiModuleName)
+        }.mapToFile()
+
         // FIXME: This will not work with dynamic libraries
         runCommand(
             listOf(
                 "xcodebuild",
-                "build",
                 "-derivedDataPath", syntheticBuildIntermediatesPath.get().canonicalPath,
-                "-project", syntheticProjectPath.canonicalPath,
-                "-scheme", swiftLibraryName.get(),
+                "-scheme", swiftApiModuleName.get(),
                 "-destination", destination(),
-            ) + (inheritedBuildSettings + intermediatesDestination).map { (k, v) -> "$k=$v" }
+            ) + (inheritedBuildSettings + intermediatesDestination).map { (k, v) -> "$k=$v" },
+            processConfiguration = {
+                directory(workingDir.get())
+            }
         )
         return syntheticObjectFilesDirectory
     }
@@ -149,9 +138,4 @@ internal abstract class BuildSyntheticProjectWithSwiftExportPackage : DefaultTas
 
         return "generic/platform=$platform"
     }
-
-    companion object {
-        const val SYNTHETIC_PROJECT_MARKER = "<SwiftExportModuleName>"
-    }
-
 }

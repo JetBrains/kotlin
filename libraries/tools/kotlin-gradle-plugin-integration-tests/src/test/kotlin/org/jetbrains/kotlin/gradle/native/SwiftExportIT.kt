@@ -53,8 +53,8 @@ class SwiftExportIT : KGPBaseTest() {
                 assertTasksExecuted(":shared:compileSwiftExportMainKotlinIosArm64")
                 assertTasksExecuted(":shared:linkSwiftExportBinaryDebugStaticIosArm64")
                 assertTasksExecuted(":shared:iosArm64DebugGenerateSPMPackage")
-                assertTasksExecuted(":shared:iosArm64DebugBuildSyntheticProject")
-                assertTasksExecuted(":shared:iosArm64DebugCopySyntheticProjectIntermediates")
+                assertTasksExecuted(":shared:iosArm64DebugBuildSPMPackage")
+                assertTasksExecuted(":shared:iosArm64DebugCopySPMIntermediates")
                 assertTasksSkipped(":shared:embedAndSignAppleFrameworkForXcode")
 
                 assertDirectoryInProjectExists("shared/build/iosArm64DebugSPMPackage")

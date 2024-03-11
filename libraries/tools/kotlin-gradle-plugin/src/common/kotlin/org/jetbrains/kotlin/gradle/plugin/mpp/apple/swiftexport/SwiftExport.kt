@@ -203,11 +203,11 @@ private fun Project.registerSyntheticProjectBuild(
     swiftApiLibraryName: Provider<String>,
     syntheticBuildRoot: Provider<Directory>,
     packageGenerationTask: TaskProvider<*>,
-): TaskProvider<BuildSyntheticProjectWithSwiftExportPackage> {
-    val buildTaskName = taskNamePrefix + "BuildSyntheticProject"
-    val syntheticProjectBuild = locateOrRegisterTask<BuildSyntheticProjectWithSwiftExportPackage>(buildTaskName) { task ->
+): TaskProvider<BuildSPMSwiftExportPackage> {
+    val buildTaskName = taskNamePrefix + "BuildSPMPackage"
+    val syntheticProjectBuild = locateOrRegisterTask<BuildSPMSwiftExportPackage>(buildTaskName) { task ->
         task.group = BasePlugin.BUILD_GROUP
-        task.description = "Builds $taskNamePrefix synthetic project"
+        task.description = "Builds $taskNamePrefix SPM package"
         task.swiftApiModuleName.set(swiftApiModuleName)
         task.swiftLibraryName.set(swiftApiLibraryName)
         task.syntheticProjectDirectory.convention(syntheticBuildRoot)
@@ -220,12 +220,12 @@ private fun Project.registerCopyTask(
     taskNamePrefix: String,
     staticLibrary: StaticLibrary,
     packageGenerationTask: TaskProvider<GenerateSPMPackageFromSwiftExport>,
-    syntheticProjectBuild: TaskProvider<BuildSyntheticProjectWithSwiftExportPackage>,
+    syntheticProjectBuild: TaskProvider<BuildSPMSwiftExportPackage>,
 ): TaskProvider<*> {
-    val copyTaskName = taskNamePrefix + "CopySyntheticProjectIntermediates"
+    val copyTaskName = taskNamePrefix + "CopySPMIntermediates"
     val copyTask = locateOrRegisterTask<CopySwiftExportIntermediatesForConsumer>(copyTaskName) { task ->
         task.group = BasePlugin.BUILD_GROUP
-        task.description = "Copy $taskNamePrefix synthetic project intermediates"
+        task.description = "Copy $taskNamePrefix SPM intermediates"
         task.includeBridgeDirectory.convention(layout.file(packageGenerationTask.map { it.headerBridgeIncludePath }))
         task.includeKotlinRuntimeDirectory.convention(layout.file(packageGenerationTask.map { it.kotlinRuntimeIncludePath }))
         task.kotlinLibraryPath.convention(layout.file(staticLibrary.linkTaskProvider.flatMap { it.outputFile }))
