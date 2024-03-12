@@ -206,7 +206,7 @@ class AnalyzerWithCompilerReport(
 
             if (hasPrereleaseClasses) {
                 messageCollector.report(
-                    ERROR,
+                    WARNING,
                     "Pre-release classes were found in dependencies. " +
                             "Remove them from the classpath, recompile with a release compiler " +
                             "or use '-Xskip-prerelease-check' to suppress errors"
