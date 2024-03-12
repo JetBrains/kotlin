@@ -152,7 +152,7 @@ class ControlFlowGraphBuilder {
         fir: E,
         name: String,
         kind: ControlFlowGraph.Kind,
-        nodes: (E) -> Pair<EnterNode, ExitNode>
+        nodes: (E) -> Pair<EnterNode, ExitNode>,
     ): EnterNode where EnterNode : CFGNode<T>, EnterNode : GraphEnterNodeMarker, ExitNode : CFGNode<T>, ExitNode : GraphExitNodeMarker {
         val graph = ControlFlowGraph(fir as? FirDeclaration, name, kind).also { graphs.push(it) }
         val (enterNode, exitNode) = nodes(fir)
@@ -928,7 +928,7 @@ class ControlFlowGraphBuilder {
 
     fun exitWhenExpression(
         whenExpression: FirWhenExpression,
-        callCompleted: Boolean
+        callCompleted: Boolean,
     ): Pair<WhenExitNode, WhenSyntheticElseBranchNode?> {
         val whenExitNode = whenExitNodes.pop()
         // exit from last condition node still on stack
@@ -1023,7 +1023,7 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitLeftBinaryLogicExpressionArgument(
-        binaryLogicExpression: FirBinaryLogicExpression
+        binaryLogicExpression: FirBinaryLogicExpression,
     ): Pair<CFGNode<FirBinaryLogicExpression>, CFGNode<FirBinaryLogicExpression>> {
         val (leftExitNode, rightEnterNode) = when (binaryLogicExpression.kind) {
             LogicOperationKind.AND ->
@@ -1274,7 +1274,7 @@ class ControlFlowGraphBuilder {
 
         if (call is FirFunctionCall) {
             val enterNode = createFunctionCallArgumentsEnterNode(call)
-            val exitNode = createFunctionCallArgumentsExitNode(call, enterNode)
+            val exitNode = createFunctionCallArgumentsExitNode(call, explicitReceiverExitNode = enterNode)
 
             exitFunctionCallArgumentsNodes.push(exitNode)
             addNewSimpleNode(enterNode)
@@ -1290,6 +1290,22 @@ class ControlFlowGraphBuilder {
         val splitNode = argumentListSplitNodes.pop()?.also { addNewSimpleNode(it) }
         val exitNode = exitFunctionCallArgumentsNodes.pop()?.also { addNewSimpleNode(it) }
         return splitNode to exitNode
+    }
+
+    /**
+     * Saves the last node as the currents exit function arguments call
+     * explicit receiver.
+     *
+     * If the exit node is null this function does nothing.
+     * There is no corresponding enterCall for this function.
+     *
+     * This is later used to rewind the implicit receiver stack to the point
+     * before function arguments have been resolved so that casts within the
+     * call arguments do not affect the method resolution.
+     */
+    fun exitCallExplicitReceiver() {
+        val exitNode = exitFunctionCallArgumentsNodes.topOrNull()
+        exitNode?.explicitReceiverExitNode = lastNode
     }
 
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean): FunctionCallNode {
@@ -1521,7 +1537,7 @@ class ControlFlowGraphBuilder {
         propagateDeadness: Boolean = true,
         isDead: Boolean = false,
         preferredKind: EdgeKind = EdgeKind.Forward,
-        label: EdgeLabel = NormalPath
+        label: EdgeLabel = NormalPath,
     ) {
         val kind = if (isDead || from.isDead || to.isDead) {
             if (preferredKind.isBack) EdgeKind.DeadBackward else EdgeKind.DeadForward

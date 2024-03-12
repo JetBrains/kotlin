@@ -69,12 +69,12 @@ class DataFlowAnalyzerContext(session: FirSession) {
 @OptIn(DfaInternals::class)
 abstract class FirDataFlowAnalyzer(
     protected val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
-    private val context: DataFlowAnalyzerContext
+    private val context: DataFlowAnalyzerContext,
 ) {
     companion object {
         fun createFirDataFlowAnalyzer(
             components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
-            dataFlowAnalyzerContext: DataFlowAnalyzerContext
+            dataFlowAnalyzerContext: DataFlowAnalyzerContext,
         ): FirDataFlowAnalyzer =
             object : FirDataFlowAnalyzer(components, dataFlowAnalyzerContext) {
                 override val receiverStack: PersistentImplicitReceiverStack
@@ -486,7 +486,7 @@ abstract class FirDataFlowAnalyzer(
         expression: FirEqualityOperatorCall,
         operand: FirExpression,
         const: FirLiteralExpression<*>,
-        isEq: Boolean
+        isEq: Boolean,
     ) {
         if (const.kind == ConstantValueKind.Null) {
             return processEqNull(flow, expression, operand, isEq)
@@ -921,11 +921,15 @@ abstract class FirDataFlowAnalyzer(
         if (exitNode != null) {
             exitNode.mergeIncomingFlow()
 
-            // Reset implicit receivers back to their state *before* call arguments as tower resolve will use receiver types to lookup
-            // functions after call arguments have been processed.
+            // Reset implicit receivers back to their state *before* call arguments but after explicit receiver
+            // as tower resolve will use receiver types to lookup functions after call arguments have been processed.
             // TODO(KT-64094): Consider moving logic to tower resolution instead.
-            resetSmartCastPositionTo(exitNode.enterNode.flow)
+            resetSmartCastPositionTo(exitNode.explicitReceiverExitNode.flow)
         }
+    }
+
+    fun exitCallExplicitReceiver() {
+        graphBuilder.exitCallExplicitReceiver()
     }
 
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean) {

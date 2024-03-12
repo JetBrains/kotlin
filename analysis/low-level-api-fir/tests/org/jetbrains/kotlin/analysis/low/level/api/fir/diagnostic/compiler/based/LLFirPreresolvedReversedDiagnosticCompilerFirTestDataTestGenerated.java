@@ -4927,6 +4927,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
         }
 
         @Test
+        @TestMetadata("smartCastingExplicitReceiver.kt")
+        public void testSmartCastingExplicitReceiver() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/receivers/smartCastingExplicitReceiver.kt");
+        }
+
+        @Test
         @TestMetadata("thisOfExtensionProperty.kt")
         public void testThisOfExtensionProperty() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/receivers/thisOfExtensionProperty.kt");

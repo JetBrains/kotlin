@@ -718,7 +718,7 @@ class FunctionCallArgumentsEnterNode(owner: ControlFlowGraph, override val fir: 
 class FunctionCallArgumentsExitNode(
     owner: ControlFlowGraph,
     override val fir: FirFunctionCall,
-    val enterNode: FunctionCallArgumentsEnterNode,
+    var explicitReceiverExitNode: CFGNode<*>,
     level: Int,
 ) : CFGNode<FirFunctionCall>(owner, level), ExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
