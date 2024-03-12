@@ -165,10 +165,9 @@ object AbstractExpectActualChecker {
         val expectSupertypes = expectClassSymbol.superTypes.filterNot { it.typeConstructor().isAnyConstructor() }
         val actualType = actualClassSymbol.defaultType
         return expectSupertypes.all { expectSupertype ->
-            actualTypeIsSubtypeOfExpectType(
-                expectType = substitutor.safeSubstitute(expectSupertype),
-                actualType = actualType
-            )
+            val expectType = substitutor.safeSubstitute(expectSupertype)
+            isSubtypeOf(superType = expectType, subType = actualType) &&
+                    !isSubtypeOf(superType = actualType, subType = expectType)
         }
     }
 

@@ -24766,6 +24766,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("actualTypealiasCycle.kt")
+      public void testActualTypealiasCycle() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/actualTypealiasCycle.kt");
+      }
+
+      @Test
       @TestMetadata("actualTypealiasForNotExpectClass.kt")
       public void testActualTypealiasForNotExpectClass() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/actualTypealiasForNotExpectClass.kt");

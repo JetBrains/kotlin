@@ -33,6 +33,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("actualTypealiasCycle.kt")
+  public void testActualTypealiasCycle() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/actualTypealiasCycle.kt");
+  }
+
+  @Test
   @TestMetadata("actualTypealiasForNotExpectClass.kt")
   public void testActualTypealiasForNotExpectClass() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/actualTypealiasForNotExpectClass.kt");

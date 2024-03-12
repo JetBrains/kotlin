@@ -131,9 +131,9 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
         dynamicTypesEqualToAnything: Boolean = true
     ): Boolean
 
-    fun actualTypeIsSubtypeOfExpectType(
-        expectType: KotlinTypeMarker,
-        actualType: KotlinTypeMarker
+    fun isSubtypeOf(
+        superType: KotlinTypeMarker,
+        subType: KotlinTypeMarker
     ): Boolean
 
     fun RegularClassSymbolMarker.isNotSamInterface(): Boolean
