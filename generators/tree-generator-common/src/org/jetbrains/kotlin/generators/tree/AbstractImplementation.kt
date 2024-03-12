@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -73,11 +73,11 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
     }
 
     private fun withDefault(field: Field) =
-        !field.isFinal && (field.defaultValueInImplementation != null || field.defaultValueInBase != null || field.isLateinit)
+        !field.isFinal && (field.defaultValueInImplementation != null || field.isLateinit)
 
     val fieldsInConstructor by lazy { allFields.filterNot(::withDefault) }
 
-    val fieldsInBody by lazy { allFields.filter(::withDefault).filter { it.defaultValueInBase == null } }
+    val fieldsInBody by lazy { allFields.filter(::withDefault) }
 
     var requiresOptIn = false
 

@@ -32,7 +32,6 @@ sealed class Field(
 
     override var withGetter: Boolean = false
 
-    override var defaultValueInBase: String? = null
     override var defaultValueInImplementation: String? = null
     override var defaultValueInBuilder: String?
         get() = null
@@ -58,7 +57,6 @@ sealed class Field(
     override fun updateFieldsInCopy(copy: Field) {
         super.updateFieldsInCopy(copy)
         copy.withGetter = withGetter
-        copy.defaultValueInBase = defaultValueInBase
         copy.defaultValueInImplementation = defaultValueInImplementation
         copy.customUseInIrFactoryStrategy = customUseInIrFactoryStrategy
         copy.customSetter = customSetter
