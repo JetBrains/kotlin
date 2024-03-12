@@ -606,25 +606,6 @@ object IrTree : AbstractTreeBuilder() {
 
         +symbol(packageFragmentSymbolType)
         +field("packageFqName", type<FqName>())
-
-        generationCallback = {
-            println()
-            print()
-            println(
-                """
-                @Deprecated(
-                    message = "Please use `packageFqName` instead",
-                    replaceWith = ReplaceWith("packageFqName"),
-                    level = DeprecationLevel.ERROR,
-                )
-                var fqName: FqName
-                    get() = packageFqName
-                    set(value) {
-                        packageFqName = value
-                    }
-            """.replaceIndent(currentIndent)
-            )
-        }
     }
     val externalPackageFragment: Element by element(Declaration) {
         transformByChildren = true
