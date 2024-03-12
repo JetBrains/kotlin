@@ -109,6 +109,6 @@ abstract class GitDownloadTask @Inject constructor(
         }
 
         // Delete the .git directory of the cloned repo to avoid adding it to IDEA's VCS roots.
-        fileOperations.delete(outputDirectory.dir(".git"))
+        outputDirectory.dir(".git").get().asFile.deleteRecursively()
     }
 }
