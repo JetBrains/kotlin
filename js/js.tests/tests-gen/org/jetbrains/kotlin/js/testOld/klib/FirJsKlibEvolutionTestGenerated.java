@@ -100,6 +100,11 @@ public class FirJsKlibEvolutionTestGenerated extends AbstractFirJsKlibEvolutionT
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/evolution"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
   }
 
+  @TestMetadata("changeAmountOfTypeParameters.kt")
+  public void testChangeAmountOfTypeParameters() {
+    runTest("compiler/testData/klib/evolution/changeAmountOfTypeParameters.kt");
+  }
+
   @TestMetadata("changeBaseClassOrder.kt")
   public void testChangeBaseClassOrder() {
     runTest("compiler/testData/klib/evolution/changeBaseClassOrder.kt");

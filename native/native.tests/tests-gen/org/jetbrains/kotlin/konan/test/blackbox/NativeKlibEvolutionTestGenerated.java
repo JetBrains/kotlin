@@ -108,6 +108,12 @@ public class NativeKlibEvolutionTestGenerated extends AbstractNativeKlibEvolutio
   }
 
   @Test
+  @TestMetadata("changeAmountOfTypeParameters.kt")
+  public void testChangeAmountOfTypeParameters() {
+    runTest("compiler/testData/klib/evolution/changeAmountOfTypeParameters.kt");
+  }
+
+  @Test
   @TestMetadata("changeBaseClassOrder.kt")
   public void testChangeBaseClassOrder() {
     runTest("compiler/testData/klib/evolution/changeBaseClassOrder.kt");
