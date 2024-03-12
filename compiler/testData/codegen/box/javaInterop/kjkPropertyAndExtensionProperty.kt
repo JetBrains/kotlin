@@ -1,4 +1,5 @@
-// ISSUE: KT-65373, KT-65464
+// TARGET_BACKEND: JVM
+// IGNORE_BACKEND_K1: JVM, JVM_IR
 
 // FILE: J.java
 public class J extends D {}
@@ -55,16 +56,24 @@ class F2 : JOverridesRegular() {
     }
 }
 
-class <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>F3<!> : JOverridesExtension() {
+class F3 : JOverridesExtension() {
     fun test() {
         a
         "".a
     }
 }
 
-class <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>F4<!> : JOVerridesBoth() {
+class F4 : JOVerridesBoth() {
     fun test() {
         a
         "".a
     }
+}
+
+fun box(): String {
+    F().test()
+    F2().test()
+    F3().test()
+    F4().test()
+    return "OK"
 }

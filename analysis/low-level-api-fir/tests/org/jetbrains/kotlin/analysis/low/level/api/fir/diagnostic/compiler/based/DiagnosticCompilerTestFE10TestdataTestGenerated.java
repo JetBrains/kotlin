@@ -21961,12 +21961,6 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
-      @TestMetadata("kjkPropertyAndExtensionProperty.kt")
-      public void testKjkPropertyAndExtensionProperty() {
-        runTest("compiler/testData/diagnostics/tests/j+k/kjkPropertyAndExtensionProperty.kt");
-      }
-
-      @Test
       @TestMetadata("kjkRawTypeWithKotlinUpperBound.kt")
       public void testKjkRawTypeWithKotlinUpperBound() {
         runTest("compiler/testData/diagnostics/tests/j+k/kjkRawTypeWithKotlinUpperBound.kt");

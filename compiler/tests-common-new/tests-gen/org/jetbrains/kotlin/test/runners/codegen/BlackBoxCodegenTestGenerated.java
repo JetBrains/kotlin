@@ -31544,6 +31544,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
 
     @Test
+    @TestMetadata("kjkPropertyAndExtensionProperty.kt")
+    public void testKjkPropertyAndExtensionProperty() {
+      runTest("compiler/testData/codegen/box/javaInterop/kjkPropertyAndExtensionProperty.kt");
+    }
+
+    @Test
     @TestMetadata("kt43217.kt")
     public void testKt43217() {
       runTest("compiler/testData/codegen/box/javaInterop/kt43217.kt");

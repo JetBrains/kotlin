@@ -545,6 +545,12 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("kjkPropertyAndExtensionProperty.kt")
+      public void testKjkPropertyAndExtensionProperty() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/kjkPropertyAndExtensionProperty.kt");
+      }
+
+      @Test
       @TestMetadata("supertypeDifferentParameterNullability.kt")
       public void testSupertypeDifferentParameterNullability() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/supertypeDifferentParameterNullability.kt");

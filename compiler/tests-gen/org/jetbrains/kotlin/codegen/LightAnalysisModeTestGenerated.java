@@ -28241,6 +28241,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/javaInterop/invisibleFake2.kt");
     }
 
+    @TestMetadata("kjkPropertyAndExtensionProperty.kt")
+    public void ignoreKjkPropertyAndExtensionProperty() {
+      runTest("compiler/testData/codegen/box/javaInterop/kjkPropertyAndExtensionProperty.kt");
+    }
+
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }

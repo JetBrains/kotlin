@@ -33553,6 +33553,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
     }
 
     @Test
+    @TestMetadata("kjkPropertyAndExtensionProperty.kt")
+    public void testKjkPropertyAndExtensionProperty() {
+      runTest("compiler/testData/codegen/box/javaInterop/kjkPropertyAndExtensionProperty.kt");
+    }
+
+    @Test
     @TestMetadata("kjkWithRawTypes.kt")
     public void testKjkWithRawTypes() {
       runTest("compiler/testData/codegen/box/javaInterop/kjkWithRawTypes.kt");
