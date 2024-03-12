@@ -22454,12 +22454,6 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
-        @TestMetadata("charAtAndOverload.kt")
-        public void testCharAtAndOverload() {
-          runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/charAtAndOverload.kt");
-        }
-
-        @Test
         @TestMetadata("charAtAndOverloadWithoutExplicitOverride.kt")
         public void testCharAtAndOverloadWithoutExplicitOverride() {
           runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/charAtAndOverloadWithoutExplicitOverride.kt");
@@ -22565,12 +22559,6 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         @TestMetadata("nonDirectHiddenOverride.kt")
         public void testNonDirectHiddenOverride() {
           runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/nonDirectHiddenOverride.kt");
-        }
-
-        @Test
-        @TestMetadata("overridesBuiltinNoMagic.kt")
-        public void testOverridesBuiltinNoMagic() {
-          runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/overridesBuiltinNoMagic.kt");
         }
 
         @Test
@@ -25960,12 +25948,6 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("ConflictingOverloadsIdenticalFunsInClass.kt")
       public void testConflictingOverloadsIdenticalFunsInClass() {
         runTest("compiler/testData/diagnostics/tests/overload/ConflictingOverloadsIdenticalFunsInClass.kt");
-      }
-
-      @Test
-      @TestMetadata("ConflictingOverloadsIdenticalFunsTPInClass.kt")
-      public void testConflictingOverloadsIdenticalFunsTPInClass() {
-        runTest("compiler/testData/diagnostics/tests/overload/ConflictingOverloadsIdenticalFunsTPInClass.kt");
       }
 
       @Test
@@ -42594,24 +42576,6 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         runTest("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/jvmNames.kt");
       }
 
-      @Test
-      @TestMetadata("jvmOverloads.kt")
-      public void testJvmOverloads() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/jvmOverloads.kt");
-      }
-
-      @Test
-      @TestMetadata("jvmStaticInClassObject.kt")
-      public void testJvmStaticInClassObject() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/jvmStaticInClassObject.kt");
-      }
-
-      @Test
-      @TestMetadata("jvmStaticInObject.kt")
-      public void testJvmStaticInObject() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/jvmStaticInObject.kt");
-      }
-
       @Nested
       @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/statics")
       @TestDataPath("$PROJECT_ROOT")
@@ -42619,24 +42583,6 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         @Test
         public void testAllFilesPresentInStatics() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/statics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-        }
-
-        @Test
-        @TestMetadata("jjk.kt")
-        public void testJjk() {
-          runTest("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/statics/jjk.kt");
-        }
-
-        @Test
-        @TestMetadata("jk.kt")
-        public void testJk() {
-          runTest("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/statics/jk.kt");
-        }
-
-        @Test
-        @TestMetadata("jkjk.kt")
-        public void testJkjk() {
-          runTest("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/statics/jkjk.kt");
         }
 
         @Test

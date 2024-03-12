@@ -1,5 +1,5 @@
 // SCOPE_DUMP: KA:get
-// RENDER_DIAGNOSTICS_FULL_TEXT
+// RENDER_ALL_DIAGNOSTICS_FULL_TEXT
 
 // FILE: A.java
 abstract public class A implements CharSequence {
@@ -17,8 +17,8 @@ abstract public class A implements CharSequence {
 }
 
 // FILE: main.kt
-abstract class <!CONFLICTING_JVM_DECLARATIONS!>KA<!> : A() {
-    <!CONFLICTING_JVM_DECLARATIONS!>override fun get(index: Int)<!> = 'O'
+abstract class KA : A() {
+    override fun <!ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE!>get<!>(index: Int) = 'O'
 }
 
 fun foo(a: A, ka: KA) {

@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 // FILE: A.java
@@ -17,12 +18,12 @@ public class B extends A {
 
 open class K : B() {
     companion object {
-        @JvmStatic
-        fun foo() {}
+        <!ACCIDENTAL_OVERRIDE!>@JvmStatic
+        fun foo() {}<!>
         @JvmStatic
         fun foo(a: Any) {}
-        @JvmStatic
-        fun bar(i: Int) {}
+        <!ACCIDENTAL_OVERRIDE!>@JvmStatic
+        fun bar(i: Int) {}<!>
         @JvmStatic
         fun bar(i: String) {}
         @JvmStatic

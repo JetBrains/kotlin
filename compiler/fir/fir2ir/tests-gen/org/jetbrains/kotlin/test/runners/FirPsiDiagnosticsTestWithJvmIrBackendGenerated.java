@@ -289,6 +289,12 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
       }
 
       @Test
+      @TestMetadata("differentTypeParameterLists.kt")
+      public void testDifferentTypeParameterLists() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/differentTypeParameterLists.kt");
+      }
+
+      @Test
       @TestMetadata("extensionProperties.kt")
       public void testExtensionProperties() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/extensionProperties.kt");
@@ -539,6 +545,12 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
       }
 
       @Test
+      @TestMetadata("charAtAndOverload.kt")
+      public void testCharAtAndOverload() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/charAtAndOverload.kt");
+      }
+
+      @Test
       @TestMetadata("inheritFromJavaCollectionSubclassWithContainsOverload.kt")
       public void testInheritFromJavaCollectionSubclassWithContainsOverload() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/inheritFromJavaCollectionSubclassWithContainsOverload.kt");
@@ -548,6 +560,12 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
       @TestMetadata("kjkPropertyAndExtensionProperty.kt")
       public void testKjkPropertyAndExtensionProperty() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/kjkPropertyAndExtensionProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("overridesBuiltinNoMagic.kt")
+      public void testOverridesBuiltinNoMagic() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/overridesBuiltinNoMagic.kt");
       }
 
       @Test
@@ -570,6 +588,62 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
       @TestMetadata("conflictsWIthJvmNameInClass.kt")
       public void testConflictsWIthJvmNameInClass() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmName/conflictsWIthJvmNameInClass.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmOverloads")
+    @TestDataPath("$PROJECT_ROOT")
+    public class JvmOverloads {
+      @Test
+      public void testAllFilesPresentInJvmOverloads() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmOverloads"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("jvmOverloads.kt")
+      public void testJvmOverloads() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmOverloads/jvmOverloads.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmStatic")
+    @TestDataPath("$PROJECT_ROOT")
+    public class JvmStatic {
+      @Test
+      public void testAllFilesPresentInJvmStatic() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("jjk.kt")
+      public void testJjk() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmStatic/jjk.kt");
+      }
+
+      @Test
+      @TestMetadata("jk.kt")
+      public void testJk() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmStatic/jk.kt");
+      }
+
+      @Test
+      @TestMetadata("jkjk.kt")
+      public void testJkjk() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmStatic/jkjk.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmStaticInCompanionObject.kt")
+      public void testJvmStaticInCompanionObject() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmStatic/jvmStaticInCompanionObject.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmStaticInObject.kt")
+      public void testJvmStaticInObject() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmStatic/jvmStaticInObject.kt");
       }
     }
 

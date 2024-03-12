@@ -1,8 +1,10 @@
+// WITH_STDLIB
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+
 open class Base {
     fun `foo$default`(i: Int, mask: Int, mh: Any) {}
 }
 
 object Derived : Base() {
-    @JvmStatic fun foo(i: Int = 0) {}
+    @JvmStatic <!ACCIDENTAL_OVERRIDE!>fun foo(i: Int = 0) {}<!>
 }
