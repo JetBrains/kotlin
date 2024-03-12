@@ -30820,12 +30820,6 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         runTest("compiler/testData/diagnostics/tests/redeclarations/TypeAliasVsProperty.kt");
       }
 
-      @Test
-      @TestMetadata("typeParameterWithTwoBounds.kt")
-      public void testTypeParameterWithTwoBounds() {
-        runTest("compiler/testData/diagnostics/tests/redeclarations/typeParameterWithTwoBounds.kt");
-      }
-
       @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension")
       @TestDataPath("$PROJECT_ROOT")
@@ -41898,12 +41892,6 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
     }
 
     @Test
-    @TestMetadata("jvmFieldAndJavaGetter.kt")
-    public void testJvmFieldAndJavaGetter() {
-      runTest("compiler/testData/diagnostics/testsWithStdLib/jvmFieldAndJavaGetter.kt");
-    }
-
-    @Test
     @TestMetadata("kt54410.kt")
     public void testKt54410() {
       runTest("compiler/testData/diagnostics/testsWithStdLib/kt54410.kt");
@@ -42483,12 +42471,6 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         @Test
         public void testAllFilesPresentInJvmField() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-        }
-
-        @Test
-        @TestMetadata("clashWithCompanionObjectField.kt")
-        public void testClashWithCompanionObjectField() {
-          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField/clashWithCompanionObjectField.kt");
         }
 
         @Test
