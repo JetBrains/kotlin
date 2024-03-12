@@ -243,7 +243,7 @@ class FirCallResolver(
         isUsedAsGetClassReceiver: Boolean,
         callSite: FirElement,
         resolutionMode: ResolutionMode,
-    ): FirStatement {
+    ): FirExpression {
         return resolveVariableAccessAndSelectCandidateImpl(
             qualifiedAccess,
             isUsedAsReceiver,
@@ -260,7 +260,7 @@ class FirCallResolver(
         isUsedAsGetClassReceiver: Boolean,
         callSite: FirElement = qualifiedAccess,
         acceptCandidates: (Collection<Candidate>) -> Boolean,
-    ): FirStatement {
+    ): FirExpression {
         val callee = qualifiedAccess.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccess
 
         @Suppress("NAME_SHADOWING")

@@ -191,7 +191,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             isUsedAsGetClassReceiver: Boolean,
             callSite: FirElement,
             data: ResolutionMode,
-        ): FirStatement {
+        ): FirQualifiedAccessExpression {
             qualifiedAccessExpression.resolveFromImportScope()
             return qualifiedAccessExpression
         }

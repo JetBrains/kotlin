@@ -96,7 +96,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         data: ResolutionMode,
         isUsedAsReceiver: Boolean,
         isUsedAsGetClassReceiver: Boolean,
-    ): FirStatement {
+    ): FirExpression {
         if (qualifiedAccessExpression.isResolved && qualifiedAccessExpression.calleeReference !is FirSimpleNamedReference) {
             return qualifiedAccessExpression
         }
@@ -159,8 +159,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     data,
                 )
 
-                fun FirStatement.alsoRecordLookup() = also {
-                    if (transformedCallee is FirExpression && transformedCallee.isResolved) {
+                fun FirExpression.alsoRecordLookup() = also {
+                    if (transformedCallee.isResolved) {
                         session.lookupTracker?.recordTypeResolveAsLookup(
                             transformedCallee.resolvedType, callee.source, components.file.source
                         )
@@ -212,7 +212,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             qualifiedAccessExpression.replaceExplicitReceiver(
                 transformQualifiedAccessExpression(
                     explicitReceiver, ResolutionMode.ReceiverResolution, isUsedAsReceiver = true, isUsedAsGetClassReceiver = false
-                ) as FirExpression
+                )
             )
             return qualifiedAccessExpression
         }
@@ -233,7 +233,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         isUsedAsGetClassReceiver: Boolean,
         callSite: FirElement,
         data: ResolutionMode,
-    ): FirStatement {
+    ): FirExpression {
         return callResolver.resolveVariableAccessAndSelectCandidate(
             qualifiedAccessExpression, isUsedAsReceiver, isUsedAsGetClassReceiver, callSite, data
         )
@@ -1105,7 +1105,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             is FirPropertyAccessExpression ->
                 transformQualifiedAccessExpression(
                     explicitReceiver, ResolutionMode.ReceiverResolution.ForCallableReference, isUsedAsReceiver = true, isUsedAsGetClassReceiver = false
-                ) as FirExpression
+                )
             else ->
                 explicitReceiver?.transformSingle(this, ResolutionMode.ReceiverResolution.ForCallableReference)
         }.apply {
@@ -1146,7 +1146,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 if (argument is FirPropertyAccessExpression)
                     transformQualifiedAccessExpression(
                         argument, dataForLhs, isUsedAsReceiver = true, isUsedAsGetClassReceiver = true
-                    ) as FirExpression
+                    )
                 else
                     argument.transform(this, dataForLhs)
 
