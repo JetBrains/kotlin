@@ -74,7 +74,6 @@ import org.junit.Assert
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
-import java.util.*
 import java.util.function.Predicate
 import java.util.regex.Pattern
 
@@ -206,7 +205,6 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 moduleBindingContext,
                 implementingModulesBindings,
                 actualText,
-                shouldSkipJvmSignatureDiagnostics(groupedByModule) || isCommonModule,
                 languageVersionSettingsByModule[module]!!,
                 moduleDescriptor
             )
@@ -352,9 +350,6 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             KotlinTestUtils.assertEqualsToFile(expectedFile, actualText.toString())
         }
     }
-
-    protected open fun shouldSkipJvmSignatureDiagnostics(groupedByModule: Map<TestModule?, List<TestFile>>): Boolean =
-        groupedByModule.size > 1
 
     private fun checkLazyResolveLog(lazyOperationsLog: LazyOperationsLog, testDataFile: File): Throwable? =
         try {
