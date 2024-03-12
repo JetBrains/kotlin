@@ -63,8 +63,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.kotlin.test.InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIXES;
-import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTarget;
+import static org.jetbrains.kotlin.test.InTextDirectivesUtils.*;
 
 public class KotlinTestUtils {
     public static String TEST_MODULE_NAME = "test-module";
@@ -82,6 +81,13 @@ public class KotlinTestUtils {
     private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;
 
     private static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*[!]?([A-Z_0-9]+)(:[ \\t]*(.*))?$", Pattern.MULTILINE);
+
+    /**
+     * This directive removes checks if ignored test actually passes or not
+     * It is very hacky and supposed to be use only in cases when some test passes in one configuration and fails in the other,
+     *   and both those configurations share the same ignore directive
+     */
+    private static final String DONT_CHECK_IGNORED = "DONT_CHECK_IGNORED";
 
     private KotlinTestUtils() {
     }
@@ -571,7 +577,9 @@ public class KotlinTestUtils {
                 return;
             }
 
-            if (isIgnored) {
+            boolean dontCheckIgnored = InTextDirectivesUtils.isDirectiveDefined(textWithDirectives(testDataFile), DONT_CHECK_IGNORED);
+
+            if (isIgnored && !dontCheckIgnored) {
                 StringBuilder directivesToRemove = new StringBuilder();
                 if (AUTOMATICALLY_UNMUTE_PASSED_TESTS) {
                     for (String ignoreDirective: ignoreDirectives){
