@@ -39,6 +39,7 @@ const val KLIB_PROPERTY_IR_PROVIDER = "ir_provider"
  * Copy-pasted to `kotlin-native/build-tools/src/main/kotlin/org/jetbrains/kotlin/Utils.kt`
  */
 const val KLIB_PROPERTY_NATIVE_TARGETS = "native_targets"
+const val KLIB_PROPERTY_WASM_TARGET = "wasm_target"
 
 // Commonizer-specific:
 /**
@@ -139,6 +140,9 @@ val BaseKotlinLibrary.irProviderName: String?
 
 val BaseKotlinLibrary.nativeTargets: List<String>
     get() = manifestProperties.propertyList(KLIB_PROPERTY_NATIVE_TARGETS)
+
+val BaseKotlinLibrary.wasmTarget: String?
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_WASM_TARGET)
 
 val KotlinLibrary.containsErrorCode: Boolean
     get() = manifestProperties.getProperty(KLIB_PROPERTY_CONTAINS_ERROR_CODE) == "true"

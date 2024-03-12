@@ -725,7 +725,6 @@ fun serializeModuleIntoKlib(
 const val KLIB_PROPERTY_JS_OUTPUT_NAME = "jsOutputName"
 const val KLIB_PROPERTY_SERIALIZED_IR_FILE_FINGERPRINTS = "serializedIrFileFingerprints"
 const val KLIB_PROPERTY_SERIALIZED_KLIB_FINGERPRINT = "serializedKlibFingerprint"
-const val KLIB_PROPERTY_WASM_TARGET = "wasm_target"
 
 fun <SourceFile> shouldGoToNextIcRound(
     compilerConfiguration: CompilerConfiguration,
