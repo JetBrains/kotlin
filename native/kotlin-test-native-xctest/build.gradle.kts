@@ -79,16 +79,16 @@ abstract class DevFrameworkPathValueSource : ValueSource<String, DevFrameworkPat
  */
 fun registerCopyFrameworkTask(target: KonanTarget): TaskProvider<Sync> =
     tasks.register<Sync>("${target}FrameworkCopy") {
+        into(layout.buildDirectory.dir("$target/Frameworks"))
         from(
             providers.of(DevFrameworkPathValueSource::class) {
                 parameters {
                     konanTarget = target
                 }
-            }.map {
-                Paths.get(it).resolve("XCTest.framework")
             }
-        )
-        into(layout.buildDirectory.dir("$target/Frameworks/XCTest.framework"))
+        ) {
+            include("XCTest.framework/**")
+        }
     }
 
 // endregion
@@ -167,7 +167,7 @@ nativeTargets.forEach { target ->
             builtBy(cinteropKlibTask)
         }
         // Add a path to a directory that contains copied framework to share it with test infrastructure
-        add(kotlinTestNativeXCTest.name, frameworkCopyTask.map { it.destinationDir.parentFile }) {
+        add(kotlinTestNativeXCTest.name, frameworkCopyTask.map { it.destinationDir }) {
             classifier = "${targetName}Frameworks"
             builtBy(frameworkCopyTask)
         }
