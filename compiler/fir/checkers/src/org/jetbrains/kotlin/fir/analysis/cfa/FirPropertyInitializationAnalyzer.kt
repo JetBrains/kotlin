@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.cfa.util.previousCfgNodes
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.hasDiagnosticKind
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph.Kind
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
@@ -154,10 +156,17 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
                 val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: continue
                 if (!symbol.isVal || node.fir.unwrapLValue()?.hasMatchingReceiver() != true || symbol !in properties) continue
 
-                if (getValue(node).values.any { it[symbol]?.canBeRevisited() == true }) {
+                val info = getValue(node)
+                if (info.values.any { it[symbol]?.canBeRevisited() == true }) {
                     reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
                 } else if (scope != scopes[symbol]) {
                     reporter.reportOn(node.fir.lValue.source, capturedInitializationError, symbol, context)
+                } else if (!symbol.isLocal && !node.owner.isInline(until = symbol.getContainingSymbol(context.session))) {
+                    // If the assignment is inside INVOKE_ONCE lambda and the lambda is not inlined,
+                    // backend generates either separate function or separate class for the lambda.
+                    // If we try to initialize non-static final field there, we will get exception at
+                    // runtime, since we can initialize such fields only inside constructors.
+                    reporter.reportOn(node.fir.lValue.source, FirErrors.NON_INLINE_MEMBER_VAL_INITIALIZATION, symbol, context)
                 }
             }
 
@@ -209,3 +218,30 @@ private val Kind.doNotReportUninitializedVariableForInitialization: Boolean
         Kind.Function, Kind.AnonymousFunction, Kind.LocalFunction -> true
         else -> false
     }
+
+/**
+ * Determine if this declaration is evaluated inline. This is distinct from [evaluatedInPlace], as the declaration must also be inlined by
+ * the compiler.
+ */
+private val FirDeclaration.evaluatedInline: Boolean
+    get() = when (this) {
+        is FirAnonymousFunction -> inlineStatus == InlineStatus.Inline
+        is FirConstructor -> true // child of class initialization graph
+        is FirFunction, is FirClass -> false
+        else -> true // property initializer, etc.
+    }
+
+/**
+ * Checks that [ControlFlowGraph.declaration] is [evaluatedInline], and also recursively check all
+ * parent [ControlFlowGraph]s.
+ *
+ * @param until will stop recursion if [ControlFlowGraph.declaration] matches the specified symbol.
+ * This is used to stop recursion when there are nested declarations (like a local class), and we
+ * only need to check until that nested declaration.
+ */
+private fun ControlFlowGraph.isInline(until: FirBasedSymbol<*>?): Boolean {
+    val declaration = declaration
+    if (declaration?.symbol == until) return true
+    if (declaration?.evaluatedInline != true) return false
+    return enterNode.previousNodes.all { it.owner.isInline(until) }
+}

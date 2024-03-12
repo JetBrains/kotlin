@@ -2818,6 +2818,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val property: KtVariableSymbol
     }
 
+    interface NonInlineMemberValInitialization : KtFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = NonInlineMemberValInitialization::class
+        val property: KtVariableSymbol
+    }
+
     interface SetterProjectedOut : KtFirDiagnostic<KtBinaryExpression> {
         override val diagnosticClass get() = SetterProjectedOut::class
         val property: KtVariableSymbol

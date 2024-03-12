@@ -2214,6 +2214,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             VARIABLE_NAME
         )
         map.put(
+            FirErrors.NON_INLINE_MEMBER_VAL_INITIALIZATION,
+            "Initialization of captured member values must be inlined.",
+            VARIABLE_NAME
+        )
+        map.put(
             SETTER_PROJECTED_OUT,
             "Setter for ''{0}'' is removed by type projection.",
             VARIABLE_NAME

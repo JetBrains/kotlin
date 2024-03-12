@@ -3393,6 +3393,12 @@ internal class CapturedMemberValInitializationImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.CapturedMemberValInitialization
 
+internal class NonInlineMemberValInitializationImpl(
+    override val property: KtVariableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.NonInlineMemberValInitialization
+
 internal class SetterProjectedOutImpl(
     override val property: KtVariableSymbol,
     firDiagnostic: KtPsiDiagnostic,
