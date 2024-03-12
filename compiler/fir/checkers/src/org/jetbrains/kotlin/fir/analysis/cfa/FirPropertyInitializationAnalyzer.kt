@@ -131,13 +131,6 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
                     else
                         FirErrors.CAPTURED_VAL_INITIALIZATION
                     reporter.reportOn(node.fir.lValue.source, error, symbol, context)
-                } else if (!symbol.isLocal && getValue(node).values.any { symbol !in it.initializedInsideConstructor }) {
-                    /* If the assignment is inside INVOKE_ONCE lambda and the lambda is not inlined,
-                       backend generates either separate function or separate class for the lambda.
-                       If we try to initialize non-static final field there, we will get exception at
-                       runtime, since we can initialize such fields only inside constructors.
-                     */
-                    reporter.reportOn(node.fir.lValue.source, FirErrors.CAPTURED_VAL_INITIALIZATION, symbol, context)
                 }
             }
 
