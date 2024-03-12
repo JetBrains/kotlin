@@ -17,7 +17,7 @@ inline fun <T, R> Flow<T>.flatMapLatest(crossinline transform: suspend (value: T
 
 fun <T> flowOf(value: T): Flow<T> = Flow { collector -> collector.emit(value) }
 
-inline fun <T, R> Flow<T>.map(crossinline transform: suspend (value: T) -> R): Flow<R> = Flow { collector ->
+inline fun <T, R> Flow<T>.map(crossinline transform: suspend (<!REPEATED_ANNOTATION, REPEATED_ANNOTATION, REPEATED_ANNOTATION, REPEATED_ANNOTATION!>value: T<!>) -> R): Flow<R> = Flow { collector ->
     collect { collector.emit(transform(it)) }
 }
 

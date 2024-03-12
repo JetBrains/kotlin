@@ -23,7 +23,7 @@ fun <T> foo(bar: () -> T) {
 
 @Target(AnnotationTarget.TYPE)
 annotation class Ann
-<!REPEATED_ANNOTATION, REPEATED_ANNOTATION!>
+<!REPEATED_ANNOTATION, REPEATED_ANNOTATION, REPEATED_ANNOTATION!>
 fun baz(): @Ann <!REPEATED_ANNOTATION, REPEATED_ANNOTATION!>@Ann<!> String = "12"
 fun qux() = Some.foo()[0]
 

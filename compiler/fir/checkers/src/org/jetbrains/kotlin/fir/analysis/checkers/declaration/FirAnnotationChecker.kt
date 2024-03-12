@@ -94,7 +94,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                 checkRepeatedAnnotationsInProperty(declaration, context, reporter)
             }
 
-            if (declaration.source?.kind is KtRealSourceElementKind && declaration.returnTypeRef.source?.kind is KtRealSourceElementKind) {
+            if (declaration.source?.kind is KtRealSourceElementKind) {
                 checkRepeatedAnnotations(declaration.returnTypeRef.coneTypeSafe(), context, reporter)
             }
         } else if (declaration is FirTypeAlias) {
