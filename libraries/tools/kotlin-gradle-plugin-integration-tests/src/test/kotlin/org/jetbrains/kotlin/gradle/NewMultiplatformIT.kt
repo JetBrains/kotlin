@@ -1100,7 +1100,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
             appProject.setupWorkingDir(false)
             appProject.projectDir.copyRecursively(projectDir.resolve("sample-app"))
 
-            gradleSettingsScript().writeText("include 'sample-app'") // disables feature preview 'GRADLE_METADATA', resets rootProject name
+            gradleSettingsScript().writeText("include 'sample-app'")
             gradleBuildScript("sample-app").modify {
                 it.replace("'com.example:sample-lib:1.0'", "project(':')") + "\n" + """
                 apply plugin: 'maven-publish'
@@ -1114,7 +1114,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 """.trimIndent()
             }
 
-            gradleSettingsScript().appendText("\nenableFeaturePreview(\"GRADLE_METADATA\")")
             // Add a dependency that is resolved with metadata:
             gradleBuildScript("sample-app").appendText(
                 "\n" + """

@@ -6,5 +6,3 @@ pluginManagement {
 }
 
 rootProject.name = "third-party-lib"
-
-enableFeaturePreview("GRADLE_METADATA")
