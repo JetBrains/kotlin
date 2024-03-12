@@ -309,7 +309,9 @@ FILE: [ResolvedTo(IMPORTS)] superQualifierTypeArgsInDelegatedConstructorLocalCla
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] superQualifierTypeArgsInDelegatedConstructorLocalClass.kt
     public abstract [ResolvedTo(STATUS)] interface B<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-        public open [ResolvedTo(STATUS)] fun f(): <implicit> { LAZY_BLOCK }
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun f(): R|kotlin/Boolean| {
+            ^f Boolean(true)
+        }
 
     }
     public open [ResolvedTo(STATUS)] class A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
@@ -328,7 +330,7 @@ FILE: [ResolvedTo(IMPORTS)] superQualifierTypeArgsInDelegatedConstructorLocalCla
         public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
             local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|one/A<one/D>| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
-                    super<R|one/A<one/D>|>(this@R|one/C|.super<<ERROR TYPE REF: Wrong number of type arguments>>.<Unresolved name: f>#())
+                    super<R|one/A<one/D>|>(this@R|one/C|.super<R|one/B<kotlin/Int>|>.R|SubstitutionOverride<one/B.f: R|kotlin/Boolean|>|())
                 }
 
             }
@@ -361,7 +363,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superQualifierTypeArgsInDelegatedConstructorLoc
         public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
             local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|one/A<one/D>| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
-                    super<R|one/A<one/D>|>(this@R|one/C|.super<<ERROR TYPE REF: Wrong number of type arguments>>.<Unresolved name: f>#())
+                    super<R|one/A<one/D>|>(this@R|one/C|.super<R|one/B<kotlin/Int>|>.R|SubstitutionOverride<one/B.f: R|kotlin/Boolean|>|())
                 }
 
             }

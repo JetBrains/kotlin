@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface B<T> {
     fun f() = true
 }
