@@ -21,8 +21,6 @@ abstract class AbstractField<Field : AbstractField<Field>> {
 
     abstract val isFinal: Boolean
 
-    open var isLateinit: Boolean = false
-
     abstract val isParameter: Boolean
 
     open val arbitraryImportables: MutableList<Importable> = mutableListOf()
@@ -49,9 +47,8 @@ abstract class AbstractField<Field : AbstractField<Field>> {
     open val containsElement: Boolean
         get() = typeRef is ElementOrRef<*> || this is ListField && baseType is ElementOrRef<*>
 
-    abstract var defaultValueInImplementation: String?
+    open var implementationDefaultStrategy: ImplementationDefaultStrategy = ImplementationDefaultStrategy.Required
     abstract var defaultValueInBuilder: String?
-    abstract var withGetter: Boolean
 
     abstract var customSetter: String?
 
@@ -102,7 +99,6 @@ abstract class AbstractField<Field : AbstractField<Field>> {
 
     protected open fun updateFieldsInCopy(copy: Field) {
         copy.kDoc = kDoc
-        copy.isLateinit = isLateinit
         copy.arbitraryImportables += arbitraryImportables
         copy.optInAnnotation = optInAnnotation
         copy.replaceOptInAnnotation = replaceOptInAnnotation
@@ -112,5 +108,15 @@ abstract class AbstractField<Field : AbstractField<Field>> {
         copy.fromParent = fromParent
         copy.useInBaseTransformerDetection = useInBaseTransformerDetection
         copy.overriddenTypes += overriddenTypes
+        copy.implementationDefaultStrategy = implementationDefaultStrategy
+    }
+
+    sealed interface ImplementationDefaultStrategy {
+        data object Required : ImplementationDefaultStrategy
+        data object Lateinit : ImplementationDefaultStrategy
+        data class DefaultValue(
+            val value: String,
+            val withGetter: Boolean,
+        ) : ImplementationDefaultStrategy
     }
 }

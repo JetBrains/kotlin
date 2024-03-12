@@ -178,7 +178,7 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
         fun isLateinit(vararg fields: String) {
             fields.forEach {
                 val field = getField(it)
-                field.isLateinit = true
+                field.implementationDefaultStrategy = AbstractField.ImplementationDefaultStrategy.Lateinit
             }
         }
 
@@ -380,16 +380,19 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
                 }
 
             fun applyConfiguration() {
-                field.withGetter = withGetter
                 field.customSetter = customSetter
                 isMutable?.let { field.isMutable = it }
 
+                var value = value
                 when {
-                    value != null -> field.defaultValueInImplementation = value
+                    value != null -> field.implementationDefaultStrategy =
+                        AbstractField.ImplementationDefaultStrategy.DefaultValue(value, withGetter)
                     delegate != null -> {
                         val actualDelegateField = getField(delegate!!)
                         val name = delegateCall ?: field.name
-                        field.defaultValueInImplementation = "${actualDelegateField.name}${actualDelegateField.call()}$name"
+                        value = "${actualDelegateField.name}${actualDelegateField.call()}$name"
+                        field.implementationDefaultStrategy =
+                            AbstractField.ImplementationDefaultStrategy.DefaultValue(value, withGetter)
                     }
                 }
             }

@@ -16,11 +16,7 @@ abstract class Field(
     override val origin: Field
         get() = this
 
-    override var withGetter: Boolean = false
-
     override var customSetter: String? = null
-
-    override var defaultValueInImplementation: String? = null
 
     override var defaultValueInBuilder: String? = null
 
@@ -38,9 +34,7 @@ abstract class Field(
 
     override fun updateFieldsInCopy(copy: Field) {
         super.updateFieldsInCopy(copy)
-        copy.withGetter = withGetter
         copy.customSetter = customSetter
-        copy.defaultValueInImplementation = defaultValueInImplementation
         copy.isFinal = isFinal
     }
 }

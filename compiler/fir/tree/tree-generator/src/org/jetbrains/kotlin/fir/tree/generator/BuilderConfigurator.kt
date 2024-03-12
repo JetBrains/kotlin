@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirBuilderConfigurator
+import org.jetbrains.kotlin.generators.tree.AbstractField
 
 object BuilderConfigurator : AbstractFirBuilderConfigurator<FirTreeBuilder>(FirTreeBuilder.elements) {
     override fun configureBuilders() = with(FirTreeBuilder) {
@@ -422,7 +423,7 @@ object BuilderConfigurator : AbstractFirBuilderConfigurator<FirTreeBuilder>(FirT
 
         configureFieldInAllLeafBuilders(
             field = "resolvePhase",
-            fieldPredicate = { it.defaultValueInImplementation == null }
+            fieldPredicate = { it.implementationDefaultStrategy !is AbstractField.ImplementationDefaultStrategy.DefaultValue }
         ) {
             default(it, "FirResolvePhase.RAW_FIR")
         }

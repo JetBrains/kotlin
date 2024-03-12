@@ -52,7 +52,7 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, 
                 withIndent {
                     for (field in filterFields(element)) {
                         if (field.isParameter) continue
-                        if (!field.withGetter && field.defaultValueInImplementation == null && field.isFinal && field.fromParent) {
+                        if (field.isFinal && field.fromParent) {
                             continue
                         }
                         if (separateFieldsWithBlankLine) println()

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeImplementationConfigurator
+import org.jetbrains.kotlin.generators.tree.AbstractField
 import org.jetbrains.kotlin.generators.tree.ImplementationKind.Object
 import org.jetbrains.kotlin.generators.tree.ImplementationKind.OpenClass
 
@@ -650,7 +651,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         configureFieldInAllImplementations(
             fieldName = "typeRef",
             implementationPredicate = { it.typeName !in implementationWithConfigurableTypeRef },
-            fieldPredicate = { it.defaultValueInImplementation == null }
+            fieldPredicate = { it.implementationDefaultStrategy !is AbstractField.ImplementationDefaultStrategy.DefaultValue }
         ) {
             default(it, "FirImplicitTypeRefImplWithoutSource")
             additionalImports(firImplicitTypeWithoutSourceType)
@@ -659,7 +660,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         configureFieldInAllImplementations(
             fieldName = "lValueTypeRef",
             implementationPredicate = { it.typeName in "FirVariableAssignmentImpl" },
-            fieldPredicate = { it.defaultValueInImplementation == null }
+            fieldPredicate = { it.implementationDefaultStrategy !is AbstractField.ImplementationDefaultStrategy.DefaultValue }
         ) {
             default(it, "FirImplicitTypeRefImplWithoutSource")
             additionalImports(firImplicitTypeWithoutSourceType)
