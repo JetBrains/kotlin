@@ -38875,6 +38875,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       public void testNoFalsePositiveAbstractToArray() {
         runTest("compiler/testData/diagnostics/tests/testsWithJava21/noFalsePositiveAbstractToArray.kt");
       }
+
+      @Test
+      @TestMetadata("otherHiddenInDeclaring.kt")
+      public void testOtherHiddenInDeclaring() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/otherHiddenInDeclaring.kt");
+      }
     }
 
     @Nested
