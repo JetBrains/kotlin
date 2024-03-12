@@ -27,6 +27,7 @@ class ProgramWithDependencyOnCompiler(
             K2JVMCompiler(),
             listOf(
                 programSource.path,
+                "-Xskip-prerelease-check",
                 "-d", program.absolutePath,
                 "-cp", PathUtil.kotlinPathsForDistDirectory.compilerPath.absolutePath,
             ),
