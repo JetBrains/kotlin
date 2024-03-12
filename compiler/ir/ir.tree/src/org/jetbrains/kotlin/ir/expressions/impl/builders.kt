@@ -5,76 +5,497 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.typeParametersCount
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.allTypeParameters
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.expressions.typeParametersCount
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.util.allTypeParameters
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 
-startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    origin: IrStatementOrigin? = null,
-
+fun IrBlockImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
     origin: IrStatementOrigin? = null,
-
-    startOffset: Int,
-    endOffset: Int,
+) = IrBlockImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    origin = origin,
 )
 
+fun IrBlockImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
     origin: IrStatementOrigin? = null,
-)
+    statements: List<IrStatement>,
+) = IrBlockImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    origin = origin,
+).apply {
+    this.statements.addAll(statements)
 }
 
+fun IrBranchImpl(
+    startOffset: Int,
+    endOffset: Int,
+    condition: IrExpression,
+    result: IrExpression,
+) = IrBranchImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    condition = condition,
+    result = result,
+)
+
+fun IrBranchImpl(
+    condition: IrExpression,
+    result: IrExpression,
+) = IrBranchImpl(
+    constructorIndicator = null,
+    startOffset = condition.startOffset,
+    endOffset = result.endOffset,
+    condition = condition,
+    result = result,
+)
+
+fun IrBreakImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    loop: IrLoop,
+) = IrBreakImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    loop = loop,
+)
+
+fun IrCompositeImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    origin: IrStatementOrigin? = null,
+) = IrCompositeImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    origin = origin,
+)
+
+fun IrCatchImpl(
+    startOffset: Int,
+    endOffset: Int,
+    catchParameter: IrVariable,
+) = IrCatchImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    catchParameter = catchParameter,
+)
+
+fun IrCatchImpl(
+    startOffset: Int,
+    endOffset: Int,
+    catchParameter: IrVariable,
+    result: IrExpression,
+) = IrCatchImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    catchParameter = catchParameter,
+).apply {
+    this.result = result
+}
+
+fun IrClassReferenceImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrClassifierSymbol,
+    classType: IrType,
+) = IrClassReferenceImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    classType = classType,
+)
+
+fun IrConstantArrayImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    initElements: List<IrConstantValue>,
+) = IrConstantArrayImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+).apply {
+    elements.addAll(initElements)
+}
+
+fun IrConstantObjectImpl(
+    startOffset: Int,
+    endOffset: Int,
+    constructor: IrConstructorSymbol,
+    initValueArguments: List<IrConstantValue>,
+    initTypeArguments: List<IrType>,
+    type: IrType = constructor.owner.constructedClassType,
+) = IrConstantObjectImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    constructor = constructor,
+    type = type,
+).apply {
+    valueArguments.addAll(initValueArguments)
+    typeArguments.addAll(initTypeArguments)
+}
+
+fun IrConstantPrimitiveImpl(
+    startOffset: Int,
+    endOffset: Int,
+    value: IrConst<*>,
+) = IrConstantPrimitiveImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    value = value,
+    type = value.type,
+)
+
+fun <T> IrConstImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    kind: IrConstKind<T>,
+    value: T,
+) = IrConstImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    kind = kind,
+    value = value,
+)
+
+fun IrContinueImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    loop: IrLoop,
+) = IrContinueImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    loop = loop,
+)
+
+fun IrDoWhileLoopImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    origin: IrStatementOrigin?,
+) = IrDoWhileLoopImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    origin = origin,
+)
+
+fun IrDynamicMemberExpressionImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    memberName: String,
+    receiver: IrExpression,
+) = IrDynamicMemberExpressionImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    memberName = memberName,
+    receiver = receiver,
+)
+
+fun IrDynamicOperatorExpressionImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    operator: IrDynamicOperator,
+) = IrDynamicOperatorExpressionImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    operator = operator,
+)
+
+fun IrElseBranchImpl(
+    startOffset: Int,
+    endOffset: Int,
+    condition: IrExpression,
+    result: IrExpression,
+) = IrElseBranchImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    condition = condition,
+    result = result,
+)
+
+fun IrElseBranchImpl(
+    condition: IrExpression,
+    result: IrExpression,
+) = IrElseBranchImpl(
+    constructorIndicator = null,
+    startOffset = condition.startOffset,
+    endOffset = result.endOffset,
+    condition = condition,
+    result = result,
+)
+
+fun IrErrorCallExpressionImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    description: String,
+) = IrErrorCallExpressionImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    description = description,
+)
+
+fun IrErrorExpressionImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    description: String,
+) = IrErrorExpressionImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    description = description,
+)
+
+fun IrFunctionExpressionImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    function: IrSimpleFunction,
+    origin: IrStatementOrigin,
+) = IrFunctionExpressionImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    function = function,
+    origin = origin,
+)
+
+fun IrGetClassImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    argument: IrExpression,
+) = IrGetClassImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    argument = argument,
+)
+
+fun IrGetEnumValueImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrEnumEntrySymbol,
+) = IrGetEnumValueImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+)
+
+fun IrGetFieldImpl(
     startOffset: Int,
     endOffset: Int,
     symbol: IrFieldSymbol,
     type: IrType,
     origin: IrStatementOrigin? = null,
+    superQualifierSymbol: IrClassSymbol? = null,
+) = IrGetFieldImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    symbol = symbol,
+    type = type,
+    origin = origin,
+    superQualifierSymbol = superQualifierSymbol,
 )
 
+fun IrGetFieldImpl(
     startOffset: Int,
     endOffset: Int,
+    symbol: IrFieldSymbol,
     type: IrType,
+    receiver: IrExpression?,
     origin: IrStatementOrigin? = null,
+    superQualifierSymbol: IrClassSymbol? = null,
+) = IrGetFieldImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    symbol = symbol,
+    type = type,
+    origin = origin,
+    superQualifierSymbol = superQualifierSymbol,
+).apply {
+    this.receiver = receiver
 }
 
-    type: IrType,
-    origin: IrStatementOrigin? = null,
-)
-
+fun IrGetObjectValueImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
+    symbol: IrClassSymbol,
+) = IrGetObjectValueImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+)
 
+fun IrGetValueImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrValueSymbol,
+    origin: IrStatementOrigin? = null,
+) = IrGetValueImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    origin = origin,
+)
+
+fun IrGetValueImpl(
+    startOffset: Int,
+    endOffset: Int,
+    symbol: IrValueSymbol,
+    origin: IrStatementOrigin? = null,
+) = IrGetValueImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = symbol.owner.type,
+    symbol = symbol,
+    origin = origin,
+)
+
+fun IrInlinedFunctionBlockImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    inlineCall: IrFunctionAccessExpression,
+    inlinedElement: IrElement,
+    origin: IrStatementOrigin? = null,
+) = IrInlinedFunctionBlockImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    inlineCall = inlineCall,
+    inlinedElement = inlinedElement,
+    origin = origin,
+)
+
+fun IrInlinedFunctionBlockImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    inlineCall: IrFunctionAccessExpression,
+    inlinedElement: IrElement,
+    origin: IrStatementOrigin?,
+    statements: List<IrStatement>,
+) = IrInlinedFunctionBlockImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    inlineCall = inlineCall,
+    inlinedElement = inlinedElement,
+    origin = origin,
+).apply {
+    this.statements.addAll(statements)
+}
+
+fun IrInstanceInitializerCallImpl(
     startOffset: Int,
     endOffset: Int,
     classSymbol: IrClassSymbol,
     type: IrType,
+) = IrInstanceInitializerCallImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    classSymbol = classSymbol,
+    type = type,
+)
 
+fun IrRawFunctionReferenceImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
     symbol: IrFunctionSymbol,
+) = IrRawFunctionReferenceImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+)
+
+fun IrReturnableBlockImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrReturnableBlockSymbol,
     origin: IrStatementOrigin? = null,
+) = IrReturnableBlockImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    origin = origin,
 )
 
 fun IrReturnableBlockImpl(
@@ -155,10 +576,184 @@ fun IrSetValueImpl(
     )
 }
 
+fun IrSpreadElementImpl(
+    startOffset: Int,
+    endOffset: Int,
+    expression: IrExpression,
+) = IrSpreadElementImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    expression = expression,
+)
+
+fun IrStringConcatenationImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+) = IrStringConcatenationImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+)
+
+fun IrStringConcatenationImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    arguments: Collection<IrExpression>,
+) = IrStringConcatenationImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+).apply {
+    this.arguments.addAll(arguments)
+}
+
+fun IrSuspendableExpressionImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    suspensionPointId: IrExpression,
+    result: IrExpression,
+) = IrSuspendableExpressionImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    suspensionPointId = suspensionPointId,
+    result = result,
+)
+
+fun IrSuspensionPointImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    suspensionPointIdParameter: IrVariable,
+    result: IrExpression,
+    resumeResult: IrExpression,
+) = IrSuspensionPointImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    suspensionPointIdParameter = suspensionPointIdParameter,
+    result = result,
+    resumeResult = resumeResult,
+)
+
+fun IrSyntheticBodyImpl(
+    startOffset: Int,
+    endOffset: Int,
+    kind: IrSyntheticBodyKind,
+) = IrSyntheticBodyImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    kind = kind,
+)
+
+fun IrThrowImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    value: IrExpression,
+) = IrThrowImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    value = value,
+)
+
+fun IrTryImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+) = IrTryImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+)
+
+fun IrTryImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    tryResult: IrExpression,
+    catches: List<IrCatch>,
+    finallyExpression: IrExpression?,
+) = IrTryImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+).apply {
+    this.tryResult = tryResult
+    this.catches.addAll(catches)
+    this.finallyExpression = finallyExpression
+}
+
+fun IrTypeOperatorCallImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    operator: IrTypeOperator,
+    typeOperand: IrType,
+    argument: IrExpression,
+) = IrTypeOperatorCallImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    operator = operator,
+    typeOperand = typeOperand,
+    argument = argument,
+)
+
+fun IrVarargImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    varargElementType: IrType,
+) = IrVarargImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    varargElementType = varargElementType,
+)
+
+fun IrVarargImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    varargElementType: IrType,
+    elements: List<IrVarargElement>,
+) = IrVarargImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    varargElementType = varargElementType,
+).apply {
+    this.elements.addAll(elements)
+}
+
+fun IrWhenImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
     origin: IrStatementOrigin? = null,
+) = IrWhenImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    origin = origin,
 )
 
 fun IrWhenImpl(
@@ -191,7 +786,6 @@ fun IrWhileLoopImpl(
 )
 
 
-
 @ObsoleteDescriptorBasedAPI
 fun IrCallImpl.Companion.fromSymbolDescriptor(
     startOffset: Int,
@@ -202,7 +796,7 @@ fun IrCallImpl.Companion.fromSymbolDescriptor(
     valueArgumentsCount: Int = symbol.descriptor.valueParameters.size + symbol.descriptor.contextReceiverParameters.size,
     origin: IrStatementOrigin? = null,
     superQualifierSymbol: IrClassSymbol? = null,
-) =
+): IrCallImpl =
     IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol)
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
@@ -215,14 +809,14 @@ fun IrCallImpl.Companion.fromSymbolOwner(
     valueArgumentsCount: Int = symbol.owner.valueParameters.size,
     origin: IrStatementOrigin? = null,
     superQualifierSymbol: IrClassSymbol? = null,
-) =
+): IrCallImpl =
     IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol)
 
 fun IrCallImpl.Companion.fromSymbolOwner(
     startOffset: Int,
     endOffset: Int,
     symbol: IrSimpleFunctionSymbol,
-) =
+): IrCallImpl =
     IrCallImpl(
         startOffset,
         endOffset,
@@ -314,7 +908,8 @@ fun IrDelegatingConstructorCallImpl.Companion.fromSymbolDescriptor(
     symbol: IrConstructorSymbol,
     typeArgumentsCount: Int = symbol.descriptor.typeParametersCount,
     valueArgumentsCount: Int = symbol.descriptor.valueParameters.size + symbol.descriptor.contextReceiverParameters.size,
-) = IrDelegatingConstructorCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount)
+): IrDelegatingConstructorCallImpl =
+    IrDelegatingConstructorCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount)
 
 @UnsafeDuringIrConstructionAPI
 fun IrDelegatingConstructorCallImpl.Companion.fromSymbolOwner(
@@ -324,7 +919,8 @@ fun IrDelegatingConstructorCallImpl.Companion.fromSymbolOwner(
     symbol: IrConstructorSymbol,
     typeArgumentsCount: Int = symbol.owner.allTypeParameters.size,
     valueArgumentsCount: Int = symbol.owner.valueParameters.size,
-) = IrDelegatingConstructorCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount)
+): IrDelegatingConstructorCallImpl =
+    IrDelegatingConstructorCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount)
 
 
 @ObsoleteDescriptorBasedAPI
@@ -336,7 +932,7 @@ fun IrFunctionReferenceImpl.Companion.fromSymbolDescriptor(
     typeArgumentsCount: Int,
     reflectionTarget: IrFunctionSymbol?,
     origin: IrStatementOrigin? = null,
-) = IrFunctionReferenceImpl(
+): IrFunctionReferenceImpl = IrFunctionReferenceImpl(
     startOffset, endOffset,
     type,
     symbol,
@@ -354,7 +950,7 @@ fun IrFunctionReferenceImpl.Companion.fromSymbolOwner(
     typeArgumentsCount: Int,
     reflectionTarget: IrFunctionSymbol?,
     origin: IrStatementOrigin? = null,
-) = IrFunctionReferenceImpl(
+): IrFunctionReferenceImpl = IrFunctionReferenceImpl(
     startOffset, endOffset,
     type,
     symbol,
@@ -362,3 +958,4 @@ fun IrFunctionReferenceImpl.Companion.fromSymbolOwner(
     symbol.owner.valueParameters.size,
     reflectionTarget,
     origin
+)
