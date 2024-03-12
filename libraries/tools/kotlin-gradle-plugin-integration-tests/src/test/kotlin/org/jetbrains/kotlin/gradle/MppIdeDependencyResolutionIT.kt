@@ -98,13 +98,21 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
             resolveIdeDependencies("dep-with-cinterop") { dependencies ->
                 dependencies["commonMain"].cinteropDependencies()
-                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
+                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(ios_x64, linux_arm64, linux_x64\\)")))
                 dependencies["commonTest"].cinteropDependencies()
-                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
+                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(ios_x64, linux_arm64, linux_x64\\)")))
                 dependencies["linuxX64Main"].cinteropDependencies().assertMatches(binaryCoordinates(Regex("a:dep.*linux_x64")))
                 dependencies["linuxArm64Main"].cinteropDependencies().assertMatches(binaryCoordinates(Regex("a:dep.*linux_arm64")))
                 dependencies["linuxX64Test"].cinteropDependencies().assertMatches(binaryCoordinates(Regex("a:dep.*linux_x64")))
                 dependencies["linuxArm64Test"].cinteropDependencies().assertMatches(binaryCoordinates(Regex("a:dep.*linux_arm64")))
+
+                val iosX64MainDependencies = dependencies["iosX64Main"].cinteropDependencies()
+                if (HostManager.hostIsMac) {
+                    iosX64MainDependencies.assertMatches(binaryCoordinates(Regex("a:dep.*ios_x64")))
+                } else {
+                    if (iosX64MainDependencies.isNotEmpty())
+                        fail("Expected no dependencies (resolved & unresolved) for iosX64Cinterops on non-MacOS Host")
+                }
             }
 
             resolveIdeDependencies("client-for-binary-dep") { dependencies ->
