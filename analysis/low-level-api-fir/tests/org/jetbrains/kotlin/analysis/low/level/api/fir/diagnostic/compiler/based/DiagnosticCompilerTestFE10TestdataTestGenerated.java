@@ -41934,12 +41934,6 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
     }
 
     @Test
-    @TestMetadata("RedeclarationMainInMultiFileClass.kt")
-    public void testRedeclarationMainInMultiFileClass() {
-      runTest("compiler/testData/diagnostics/testsWithStdLib/RedeclarationMainInMultiFileClass.kt");
-    }
-
-    @Test
     @TestMetadata("RenameOnImportHidesDefaultImport.kt")
     public void testRenameOnImportHidesDefaultImport() {
       runTest("compiler/testData/diagnostics/testsWithStdLib/RenameOnImportHidesDefaultImport.kt");
