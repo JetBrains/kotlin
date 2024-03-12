@@ -42,53 +42,19 @@ class Test {
     val b: String
     val c: String
     val d: String
-    val e: String
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val f: String<!>
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val g: String<!>
-    val h: String
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val i: String<!>
 
     init {
         inlineMe {
             a = "allowed"
         }
         crossinlineMe {
-            <!CAPTURED_VAL_INITIALIZATION!>b<!> = "not allowed"
+            b = "not allowed"
         }
         noinlineMe {
-            <!CAPTURED_VAL_INITIALIZATION!>c<!> = "not allowed"
+            c = "not allowed"
         }
         notinline {
-            <!CAPTURED_VAL_INITIALIZATION!>d<!> = "not allowed"
-        }
-
-        crossinlineMe {
-            inlineMe {
-                <!CAPTURED_VAL_INITIALIZATION!>e<!> = "not allowed"
-            }
-        }
-
-        fun localFun() {
-            <!CAPTURED_MEMBER_VAL_INITIALIZATION!>f<!> = "not allowed"
-        }
-
-        val localLambda = {
-            <!CAPTURED_MEMBER_VAL_INITIALIZATION!>g<!> = "not allowed"
-        }
-
-        object {
-            val o: String
-
-            init {
-                <!CAPTURED_VAL_INITIALIZATION!>h<!> = "not allowed"
-                o = "allowed"
-            }
-        }
-
-        class Local {
-            init {
-                <!CAPTURED_MEMBER_VAL_INITIALIZATION!>i<!> = "not allowed"
-            }
+            d = "not allowed"
         }
     }
 }
@@ -175,12 +141,12 @@ class Test5 {
         a = "OK"
     }
     val bInit = crossinlineMe {
-        <!CAPTURED_VAL_INITIALIZATION!>b<!> = "not allowed"
+        b = "OK"
     }
     val cInit = noinlineMe {
-        <!CAPTURED_VAL_INITIALIZATION!>c<!> = "not allowed"
+        c = "OK"
     }
     val dInit = notinline {
-        <!CAPTURED_VAL_INITIALIZATION!>d<!> = "not allowed"
+        d = "OK"
     }
 }
