@@ -68,11 +68,9 @@ fun box() {
 // test.kt:28 $box (8, 8, 8, 8, 11, 11, 11, 11, 4)
 // test.kt:5 $foo (8, 23, 8)
 // test.kt:6 $foo (12, 22, 22, 22, 22)
-// Any.kt:34 $kotlin.Any.equals (20, 26, 8, 32, 20, 26, 8, 32)
 // test.kt:10 $foo (14, 8, 8)
 // test.kt:11 $foo (12, 22, 22, 22, 22)
 // test.kt:13 $foo
-// Primitives.kt:1363 $kotlin.Int__equals-impl (48, 48)
 // test.kt:15 $foo (8, 23, 8)
 // test.kt:16 $foo (12, 22, 22, 22, 22)
 // test.kt:20 $foo (14, 8, 8)

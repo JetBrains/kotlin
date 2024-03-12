@@ -171,15 +171,6 @@ fun box() {
 // test.kt:22 $foo
 // test.kt:43 $box (13, 4)
 // test.kt:44 $box
-// Exceptions.kt:16 $kotlin.Exception.<init> (34, 4, 41, 34, 4, 41, 34, 4, 41)
-// Throwable.kt:23 $kotlin.Throwable.<init> (32, 38, 27, 43, 32, 38, 27, 43, 32, 38, 27, 43)
-// Throwable.kt:18 $kotlin.Throwable.<init> (28, 62, 28, 62, 28, 62)
-// Throwable.kt:25 $kotlin.Throwable.<init> (50, 50, 50)
-// ExternalWrapper.kt:226 $kotlin.wasm.internal.jsCheckIsNullOrUndefinedAdapter (18, 8, 32, 33, 18, 8, 32, 33, 18, 8, 32, 33)
-// Throwable.kt:27 $kotlin.Throwable.<init> (34, 34, 34)
-// Throwable.kt:39 $kotlin.Throwable.<init> (69, 69, 69)
-// Throwable.kt:49 $kotlin.Throwable.<init> (1, 1, 1)
-// Exceptions.kt:20 $kotlin.Exception.<init> (1, 1, 1)
 // test.kt:19 $foo
 // test.kt:20 $foo
 // test.kt:45 $box (13, 4)

@@ -42,7 +42,7 @@ class SourceMapGenerator(
         val pathResolver =
             SourceFilePathResolver.create(sourceMapsInfo.sourceRoots, sourceMapsInfo.sourceMapPrefix, sourceMapsInfo.outputDir)
 
-        var prev: SourceLocation? = null
+        var prev: SourceLocation.Location? = null
         var prevGeneratedLine = 0
 
         for (mapping in sourceLocationMappings) {
@@ -59,7 +59,8 @@ class SourceMapGenerator(
             }
 
             when (sourceLocation) {
-                is SourceLocation.NoLocation -> sourceMapBuilder.addEmptyMapping(generatedLocation.column)
+                // TODO: add the ignored location into "ignoreList" in future
+                is SourceLocation.NoLocation, is SourceLocation.IgnoredLocation -> sourceMapBuilder.addEmptyMapping(generatedLocation.column)
                 is SourceLocation.Location -> {
                     sourceLocation.apply {
                         // TODO resulting path goes too deep since temporary directory we compiled first is deeper than final destination.

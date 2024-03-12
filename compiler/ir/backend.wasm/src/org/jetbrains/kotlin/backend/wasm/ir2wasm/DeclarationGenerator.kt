@@ -471,7 +471,7 @@ class DeclarationGenerator(
                 initValue,
                 wasmExpressionGenerator,
                 context,
-                declaration.getSourceLocation(declaration.fileOrNull?.fileEntry)
+                declaration.getSourceLocation(declaration.fileOrNull)
             )
         } else {
             generateDefaultInitializerForType(wasmType, wasmExpressionGenerator)

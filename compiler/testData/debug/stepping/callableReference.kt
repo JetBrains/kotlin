@@ -39,7 +39,6 @@ fun f(block: () -> Unit) {
 
 // EXPECTATIONS WASM
 // test.kt:4 $box (12, 12, 12, 4)
-// ClosureBoxes.kt:9 $kotlin.wasm.internal.ClosureBoxBoolean.<init> (33, 52)
 // test.kt:5 $box (6, 6, 4)
 // test.kt:11 $f
 // test.kt:6 $box$lambda.invoke (8, 12, 8, 16)

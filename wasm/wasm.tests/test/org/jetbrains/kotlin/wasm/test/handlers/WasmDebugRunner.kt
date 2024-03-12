@@ -131,7 +131,8 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
                     toolArgs = listOf("--enable-inspector", "--allow-natives-syntax")
                 )
                 val debuggerSteps = FrameParser(result).parse().mapNotNull { frame ->
-                    val pausedLocation = sourceMap.segmentForGeneratedLocation(frame.pausedLocation.line, frame.pausedLocation.column)
+                    val pausedLocation = sourceMap
+                        .findSegmentForTheGeneratedLocation(frame.pausedLocation.line, frame.pausedLocation.column)
                         ?.takeIf { it.sourceLineNumber >= 0 }
 
                     pausedLocation?.sourceFileName?.let { sourceFileName ->
@@ -177,6 +178,14 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
 
         writeToFilesAndRunTest("dev", artifacts.compilerResult)
         writeToFilesAndRunTest("dce", artifacts.compilerResultWithDCE)
+    }
+
+    private fun SourceMap.findSegmentForTheGeneratedLocation(lineNumber: Int, columnNumber: Int): SourceMapSegment? {
+        val group = groups.getOrNull(lineNumber)?.takeIf { it.segments.isNotEmpty() } ?: return null
+        return group.segments
+            .indexOfLast { columnNumber >= it.generatedColumnNumber }
+            .takeIf { it >= 0 }
+            ?.let(group.segments::get)
     }
 
     private val WasmCompilerResult.parsedSourceMaps: SourceMap
