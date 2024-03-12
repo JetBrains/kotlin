@@ -606,14 +606,23 @@ object IrTree : AbstractTreeBuilder() {
 
         +symbol(packageFragmentSymbolType)
         +field("packageFqName", type<FqName>())
-        +field("fqName", type<FqName>()) {
-            defaultValueInBase = "packageFqName"
-            customSetter = "packageFqName = value"
-            withGetter = true
-            deprecation = Deprecated(
-                "Please use `packageFqName` instead",
-                ReplaceWith("packageFqName"),
-                DeprecationLevel.ERROR,
+
+        generationCallback = {
+            println()
+            print()
+            println(
+                """
+                @Deprecated(
+                    message = "Please use `packageFqName` instead",
+                    replaceWith = ReplaceWith("packageFqName"),
+                    level = DeprecationLevel.ERROR,
+                )
+                var fqName: FqName
+                    get() = packageFqName
+                    set(value) {
+                        packageFqName = value
+                    }
+            """.replaceIndent(currentIndent)
             )
         }
     }
