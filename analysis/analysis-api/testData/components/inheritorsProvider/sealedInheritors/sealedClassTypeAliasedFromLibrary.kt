@@ -1,6 +1,8 @@
 // MODULE: lib
 // MODULE_KIND: LibraryBinary
 // FILE: MySealedClass.kt
+package foo.bar
+
 sealed class MySealedClass
 
 typealias T1 = MySealedClass
@@ -13,4 +15,4 @@ class ThreeSealedChild : T2()
 // MODULE: main(lib)
 // FILE: main.kt
 
-// class: MySealedClass
+// class: foo/bar/MySealedClass

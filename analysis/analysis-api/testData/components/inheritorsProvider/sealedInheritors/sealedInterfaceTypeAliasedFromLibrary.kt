@@ -1,6 +1,8 @@
 // MODULE: lib
 // MODULE_KIND: LibraryBinary
 // FILE: MySealedInterface.kt
+package foo.bar
+
 sealed interface MySealedInterface
 
 typealias T1 = MySealedInterface
@@ -13,4 +15,4 @@ class ThreeSealedChild : T2
 // MODULE: main(lib)
 // FILE: main.kt
 
-// class: MySealedInterface
+// class: foo/bar/MySealedInterface

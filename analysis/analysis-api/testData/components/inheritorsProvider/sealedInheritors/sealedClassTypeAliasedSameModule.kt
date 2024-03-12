@@ -1,3 +1,5 @@
+package foo.bar
+
 sealed class MySealedClass
 
 typealias T1 = MySealedClass
@@ -7,4 +9,4 @@ class OneSealedChild : MySealedClass()
 class TwoSealedChild : T1()
 class ThreeSealedChild : T2()
 
-// class: MySealedClass
+// class: foo/bar/MySealedClass

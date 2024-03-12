@@ -1,8 +1,8 @@
-/OneSealedChild
-class OneSealedChild : MySealedClass()
+foo/bar/OneSealedChild
+class OneSealedChild : foo.bar.MySealedClass()
 
-/ThreeSealedChild
-class ThreeSealedChild : T2()
+foo/bar/ThreeSealedChild
+class ThreeSealedChild : foo.bar.T2()
 
-/TwoSealedChild
-class TwoSealedChild : T1()
+foo/bar/TwoSealedChild
+class TwoSealedChild : foo.bar.T1()

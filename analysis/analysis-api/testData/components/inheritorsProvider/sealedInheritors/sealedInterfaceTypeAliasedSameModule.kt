@@ -1,3 +1,5 @@
+package foo.bar
+
 sealed interface MySealedInterface
 
 typealias T1 = MySealedInterface
@@ -7,4 +9,4 @@ class OneSealedChild : MySealedInterface
 class TwoSealedChild : T1
 class ThreeSealedChild : T2
 
-// class: MySealedInterface
+// class: foo/bar/MySealedInterface

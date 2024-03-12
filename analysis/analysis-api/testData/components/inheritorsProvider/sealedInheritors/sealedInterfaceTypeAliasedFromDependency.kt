@@ -1,5 +1,7 @@
 // MODULE: dependency
 // FILE: MySealedInterface.kt
+package foo.bar
+
 sealed interface MySealedInterface
 
 typealias T1 = MySealedInterface
@@ -12,4 +14,4 @@ class ThreeSealedChild : T2
 // MODULE: main(dependency)
 // FILE: main.kt
 
-// class: MySealedInterface
+// class: foo/bar/MySealedInterface

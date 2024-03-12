@@ -1,5 +1,5 @@
-/OneSealedChild
-class OneSealedChild : MySealedInterface
+foo/bar/OneSealedChild
+class OneSealedChild : foo.bar.MySealedInterface
 
-/TwoSealedChild
-class TwoSealedChild : MySealedInterface
+foo/bar/TwoSealedChild
+class TwoSealedChild : foo.bar.MySealedInterface
