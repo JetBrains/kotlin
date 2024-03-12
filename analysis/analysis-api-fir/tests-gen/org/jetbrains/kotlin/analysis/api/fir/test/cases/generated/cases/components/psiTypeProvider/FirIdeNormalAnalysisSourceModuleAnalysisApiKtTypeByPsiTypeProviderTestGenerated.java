@@ -58,6 +58,24 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiKtTypeByPsiTypeProviderT
   }
 
   @Test
+  @TestMetadata("methodTypeParameterWithKotlinUseSite.kt")
+  public void testMethodTypeParameterWithKotlinUseSite() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/methodTypeParameterWithKotlinUseSite.kt");
+  }
+
+  @Test
+  @TestMetadata("methodTypeParameterWithMethodUseSite.kt")
+  public void testMethodTypeParameterWithMethodUseSite() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/methodTypeParameterWithMethodUseSite.kt");
+  }
+
+  @Test
+  @TestMetadata("methodTypeParameterWithTypeParameterUseSite.kt")
+  public void testMethodTypeParameterWithTypeParameterUseSite() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/methodTypeParameterWithTypeParameterUseSite.kt");
+  }
+
+  @Test
   @TestMetadata("methodTypeParameters.kt")
   public void testMethodTypeParameters() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/methodTypeParameters.kt");
@@ -79,6 +97,18 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiKtTypeByPsiTypeProviderT
   @TestMetadata("primitive.kt")
   public void testPrimitive() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/primitive.kt");
+  }
+
+  @Test
+  @TestMetadata("typeParameterWithKotlinUseSite.kt")
+  public void testTypeParameterWithKotlinUseSite() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeParameterWithKotlinUseSite.kt");
+  }
+
+  @Test
+  @TestMetadata("typeParameterWithMethodUseSite.kt")
+  public void testTypeParameterWithMethodUseSite() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeParameterWithMethodUseSite.kt");
   }
 
   @Test
