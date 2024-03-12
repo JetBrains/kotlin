@@ -629,7 +629,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         assignmentOperatorStatement.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
         dataFlowAnalyzer.enterCallArguments(assignmentOperatorStatement, listOf(assignmentOperatorStatement.rightArgument))
-        val leftArgument = assignmentOperatorStatement.leftArgument.transformSingle(transformer, ResolutionMode.ContextIndependent)
+        val leftArgument = assignmentOperatorStatement.leftArgument
+            .transformAsExplicitReceiver(ResolutionMode.ReceiverResolution, isUsedAsGetClassReceiver = false)
         val rightArgument = assignmentOperatorStatement.rightArgument.transformSingle(transformer, ResolutionMode.ContextDependent)
         dataFlowAnalyzer.exitCallArguments()
 

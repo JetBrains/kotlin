@@ -59,7 +59,7 @@ fun test() {
     X()
 
     X.<!UNRESOLVED_REFERENCE!>plusAssign<!>("")
-    X += ""
+    X <!UNRESOLVED_REFERENCE!>+=<!> ""
     X<!NO_GET_METHOD!>[X]<!> += ""
 
     // Must resolve to property
