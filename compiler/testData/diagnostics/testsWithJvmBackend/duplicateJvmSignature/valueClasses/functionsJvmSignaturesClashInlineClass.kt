@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
@@ -24,14 +25,14 @@ fun testNullableVsNonNull1(s: Str?) {}
 fun testNullableVsNonNull2(ns: NStr) {}
 fun testNullableVsNonNull2(ns: NStr?) {}
 
-fun testFunVsExt(x: X) {}
-fun X.testFunVsExt() {}
+<!CONFLICTING_JVM_DECLARATIONS!>fun testFunVsExt(x: X) {}<!>
+<!CONFLICTING_JVM_DECLARATIONS!>fun X.testFunVsExt() {}<!>
 
-fun testNonGenericVsGeneric(x: X, y: Number) {}
-fun <T : Number> testNonGenericVsGeneric(x: X, y: T) {}
+<!CONFLICTING_JVM_DECLARATIONS!>fun testNonGenericVsGeneric(x: X, y: Number) {}<!>
+<!CONFLICTING_JVM_DECLARATIONS!>fun <T : Number> testNonGenericVsGeneric(x: X, y: T) {}<!>
 
 class C<TC : Number> {
-    fun testNonGenericVsGeneric(x: X, y: Number) {}
-    fun <T : Number> testNonGenericVsGeneric(x: X, y: T) {}
-    fun testNonGenericVsGeneric(x: X, y: TC) {}
+    <!CONFLICTING_JVM_DECLARATIONS!>fun testNonGenericVsGeneric(x: X, y: Number) {}<!>
+    <!CONFLICTING_JVM_DECLARATIONS!>fun <T : Number> testNonGenericVsGeneric(x: X, y: T) {}<!>
+    <!CONFLICTING_JVM_DECLARATIONS!>fun testNonGenericVsGeneric(x: X, y: TC) {}<!>
 }

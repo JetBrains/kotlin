@@ -774,9 +774,39 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
       }
 
       @Test
+      @TestMetadata("changingNullabilityOfOrdinaryClassIsBinaryCompatibleChange.kt")
+      public void testChangingNullabilityOfOrdinaryClassIsBinaryCompatibleChange() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses/changingNullabilityOfOrdinaryClassIsBinaryCompatibleChange.kt");
+      }
+
+      @Test
+      @TestMetadata("constructorsJvmSignaturesClash.kt")
+      public void testConstructorsJvmSignaturesClash() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses/constructorsJvmSignaturesClash.kt");
+      }
+
+      @Test
+      @TestMetadata("constructorsJvmSignaturesClashInlineClass.kt")
+      public void testConstructorsJvmSignaturesClashInlineClass() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses/constructorsJvmSignaturesClashInlineClass.kt");
+      }
+
+      @Test
       @TestMetadata("declarationClash.kt")
       public void testDeclarationClash() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses/declarationClash.kt");
+      }
+
+      @Test
+      @TestMetadata("functionsJvmSignaturesClash.kt")
+      public void testFunctionsJvmSignaturesClash() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses/functionsJvmSignaturesClash.kt");
+      }
+
+      @Test
+      @TestMetadata("functionsJvmSignaturesClashInlineClass.kt")
+      public void testFunctionsJvmSignaturesClashInlineClass() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses/functionsJvmSignaturesClashInlineClass.kt");
       }
     }
   }

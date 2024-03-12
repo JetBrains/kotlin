@@ -21045,27 +21045,9 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
-      @TestMetadata("changingNullabilityOfOrdinaryClassIsBinaryCompatibleChange.kt")
-      public void testChangingNullabilityOfOrdinaryClassIsBinaryCompatibleChange() {
-        runTest("compiler/testData/diagnostics/tests/inlineClasses/changingNullabilityOfOrdinaryClassIsBinaryCompatibleChange.kt");
-      }
-
-      @Test
-      @TestMetadata("constructorsJvmSignaturesClash.kt")
-      public void testConstructorsJvmSignaturesClash() {
-        runTest("compiler/testData/diagnostics/tests/inlineClasses/constructorsJvmSignaturesClash.kt");
-      }
-
-      @Test
       @TestMetadata("delegatedPropertyInInlineClass.kt")
       public void testDelegatedPropertyInInlineClass() {
         runTest("compiler/testData/diagnostics/tests/inlineClasses/delegatedPropertyInInlineClass.kt");
-      }
-
-      @Test
-      @TestMetadata("functionsJvmSignaturesClash.kt")
-      public void testFunctionsJvmSignaturesClash() {
-        runTest("compiler/testData/diagnostics/tests/inlineClasses/functionsJvmSignaturesClash.kt");
       }
 
       @Test
@@ -37963,12 +37945,6 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
-      @TestMetadata("constructorsJvmSignaturesClash.kt")
-      public void testConstructorsJvmSignaturesClash() {
-        runTest("compiler/testData/diagnostics/tests/valueClasses/constructorsJvmSignaturesClash.kt");
-      }
-
-      @Test
       @TestMetadata("defaultParameters.kt")
       public void testDefaultParameters() {
         runTest("compiler/testData/diagnostics/tests/valueClasses/defaultParameters.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
@@ -37978,12 +37954,6 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("delegatedPropertyInValueClass.kt")
       public void testDelegatedPropertyInValueClass() {
         runTest("compiler/testData/diagnostics/tests/valueClasses/delegatedPropertyInValueClass.kt");
-      }
-
-      @Test
-      @TestMetadata("functionsJvmSignaturesClash.kt")
-      public void testFunctionsJvmSignaturesClash() {
-        runTest("compiler/testData/diagnostics/tests/valueClasses/functionsJvmSignaturesClash.kt");
       }
 
       @Test
