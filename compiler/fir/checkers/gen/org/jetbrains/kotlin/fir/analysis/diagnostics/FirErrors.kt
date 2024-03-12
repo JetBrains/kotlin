@@ -895,7 +895,7 @@ object FirErrors {
 
     // Compatibility issues
     val INCOMPATIBLE_CLASS: KtDiagnosticFactory2<String, IncompatibleVersionErrorData<*>> by error2<PsiElement, String, IncompatibleVersionErrorData<*>>()
-    val PRE_RELEASE_CLASS: KtDiagnosticFactory1<String> by error1<PsiElement, String>()
+    val PRE_RELEASE_CLASS: KtDiagnosticFactory1<String> by warning1<PsiElement, String>()
     val IR_WITH_UNSTABLE_ABI_COMPILED_CLASS: KtDiagnosticFactory1<String> by error1<PsiElement, String>()
 
     // Builder inference
