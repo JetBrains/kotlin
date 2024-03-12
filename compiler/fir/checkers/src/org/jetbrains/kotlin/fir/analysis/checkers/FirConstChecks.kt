@@ -213,7 +213,11 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
                     }
                     propertySymbol.isLocal -> return ConstantArgumentKind.NOT_CONST
                     propertyAccessExpression.getExpandedType().classId == StandardClassIds.KClass -> return ConstantArgumentKind.NOT_KCLASS_LITERAL
-                    propertySymbol.isConst -> return ConstantArgumentKind.VALID_CONST
+                    propertySymbol.isConst -> {
+                        propertyAccessExpression.dispatchReceiver.takeIf { it !is FirThisReceiverExpression }?.accept(this, data)?.ifNotValidConst { return it }
+                        propertyAccessExpression.extensionReceiver.takeIf { it !is FirThisReceiverExpression }?.accept(this, data)?.ifNotValidConst { return it }
+                        return ConstantArgumentKind.VALID_CONST
+                    }
                 }
 
                 // Ok, because we only look at the structure, not resolution-dependent properties.
