@@ -31,9 +31,10 @@ interface TestVersions {
         const val G_8_4 = "8.4"
         const val G_8_5 = "8.5"
         const val G_8_6 = "8.6"
+        const val G_8_7 = "8.7"
 
         const val MIN_SUPPORTED = minSupportedGradleVersion
-        const val MAX_SUPPORTED = G_8_6
+        const val MAX_SUPPORTED = G_8_7
     }
 
     object Kotlin {
@@ -72,8 +73,8 @@ interface TestVersions {
         AGP_80(AGP.AGP_80, GradleVersion.version(Gradle.G_8_0), GradleVersion.version(Gradle.G_8_0), JavaVersion.VERSION_17),
         AGP_81(AGP.AGP_81, GradleVersion.version(Gradle.G_8_1), GradleVersion.version(Gradle.G_8_4), JavaVersion.VERSION_17),
         AGP_82(AGP.AGP_82, GradleVersion.version(Gradle.G_8_2), GradleVersion.version(Gradle.G_8_4), JavaVersion.VERSION_17),
-        AGP_83(AGP.AGP_83, GradleVersion.version(Gradle.G_8_4), GradleVersion.version(Gradle.G_8_6), JavaVersion.VERSION_17),
-        AGP_84(AGP.AGP_84, GradleVersion.version(Gradle.G_8_4), GradleVersion.version(Gradle.G_8_6), JavaVersion.VERSION_17),
+        AGP_83(AGP.AGP_83, GradleVersion.version(Gradle.G_8_4), GradleVersion.version(Gradle.G_8_7), JavaVersion.VERSION_17),
+        AGP_84(AGP.AGP_84, GradleVersion.version(Gradle.G_8_4), GradleVersion.version(Gradle.G_8_7), JavaVersion.VERSION_17),
         ;
     }
 

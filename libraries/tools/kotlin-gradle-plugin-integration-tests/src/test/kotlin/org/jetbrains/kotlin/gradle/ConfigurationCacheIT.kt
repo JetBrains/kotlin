@@ -127,7 +127,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @DisplayName("Configuration cache works with Kotlin Native bundle and its dependencies downloading")
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.G_7_4,
-        additionalVersions = [TestVersions.Gradle.G_7_6],
+        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_6],
     )
     @OsCondition(
         supportedOn = [OS.LINUX, OS.MAC], // disabled on Windows because of tmp dir problem KT-62761
@@ -324,7 +324,7 @@ abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
     }
 
     protected fun buildOptionsToAvoidKT66423(gradleVersion: GradleVersion, konanTempDir: Path) =
-        if (gradleVersion == GradleVersion.version(TestVersions.Gradle.G_8_6)) {
+        if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_6)) {
             defaultBuildOptions.copy(
                 konanDataDir = konanDir,
                 nativeOptions = super.defaultBuildOptions.nativeOptions.copy(

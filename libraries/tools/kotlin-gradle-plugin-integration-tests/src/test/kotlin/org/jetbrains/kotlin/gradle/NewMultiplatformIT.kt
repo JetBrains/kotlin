@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
@@ -499,7 +500,12 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 )
             }
 
-            build("clean", "build", "run", "shadowJar") {
+            build(
+                "clean", "build", "run", "shadowJar",
+                options = defaultBuildOptions().suppressDeprecationWarningsOn("KT-66542: withJava() produces deprecation warning") {
+                    GradleVersion.version(chooseWrapperVersionOrFinishTest()) >= GradleVersion.version(TestVersions.Gradle.G_8_7)
+                }
+            ) {
                 assertSuccessful()
                 val expectedMainClasses =
                     classesWithoutJava + setOf(

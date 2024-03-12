@@ -38,7 +38,16 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
     @DisplayName("Compile code with kotlinx.serialization K2 against old K1 library without enum factory support (KT-57704).")
     @GradleTest
     fun `test kotlinx serialization K2 against K1 library`(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
-        project("kotlinxSerializationK2AgainstK1Lib/lib", gradleVersion, localRepoDir = tempDir) {
+        project(
+            projectName = "kotlinxSerializationK2AgainstK1Lib/lib",
+            gradleVersion = gradleVersion,
+            localRepoDir = tempDir,
+            buildOptions = defaultBuildOptions.suppressDeprecationWarningsSinceGradleVersion(
+                TestVersions.Gradle.G_8_7,
+                gradleVersion,
+                "KGP 1.7.20 produces deprecation warning in Gradle 8.7"
+            )
+        ) {
             build(":publish") {
                 assertTasksExecuted(":publish")
                 val publishedLib = tempDir.resolve("com/example/serialization_lib/serialization_lib/1.0")
