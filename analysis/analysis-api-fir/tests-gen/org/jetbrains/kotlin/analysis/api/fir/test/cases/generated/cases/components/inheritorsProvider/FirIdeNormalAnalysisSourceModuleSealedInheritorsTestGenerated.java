@@ -82,6 +82,18 @@ public class FirIdeNormalAnalysisSourceModuleSealedInheritorsTestGenerated exten
   }
 
   @Test
+  @TestMetadata("sealedInheritorWrongPackageFromDependency.kt")
+  public void testSealedInheritorWrongPackageFromDependency() {
+    runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedInheritorWrongPackageFromDependency.kt");
+  }
+
+  @Test
+  @TestMetadata("sealedInheritorWrongPackageSameModule.kt")
+  public void testSealedInheritorWrongPackageSameModule() {
+    runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedInheritorWrongPackageSameModule.kt");
+  }
+
+  @Test
   @TestMetadata("sealedInterfaceFromDependency.kt")
   public void testSealedInterfaceFromDependency() {
     runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedInterfaceFromDependency.kt");
