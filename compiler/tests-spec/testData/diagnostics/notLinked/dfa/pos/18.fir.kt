@@ -25,9 +25,9 @@ fun case_2(x: Unit?) {
         if (x === null) continue
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>x<!>.funAny()
@@ -50,9 +50,9 @@ fun case_4(x: Number?) {
         if (x !== null) else { break }
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.funAny()
@@ -67,9 +67,9 @@ fun case_5(x: Char?, y: Nothing?, f: Boolean) {
         if (x != y) else continue
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funAny()
@@ -84,9 +84,9 @@ fun case_6(x: Object?, f: Boolean) {
         if (x !== implicitNullableNothingProperty) else { continue }
         <!DEBUG_INFO_EXPRESSION_TYPE("Object? & Object")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Object? & Object")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("Object? & Object")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Object? & Object")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Object? & Object")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("Object? & Object")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Object? & Object")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Object? & Object")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("Object? & Object")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("Object? & Object")!>x<!>.funAny()
@@ -101,9 +101,9 @@ fun case_7(x: Class?, list: List<Int>) {
         if (x === implicitNullableNothingProperty || false || false || false) { break }
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.funAny()
@@ -136,9 +136,9 @@ fun case_10(x: Float?) {
         if (true && true && true && x !== null) else break
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>x<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>x<!><!UNSAFE_CALL!>.<!>funAny()
@@ -153,9 +153,9 @@ fun case_11(x: Out<*>?, list: List<Int>) {
         if (x == null) continue
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<*>? & Out<*>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<*>? & Out<*>")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<*>? & Out<*>")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Out<*>? & Out<*>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<*>? & Out<*>")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<*>? & Out<*>")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Out<*>? & Out<*>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<*>? & Out<*>")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<*>? & Out<*>")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<*>? & Out<*>")!>x<!>.funAny()
@@ -179,9 +179,9 @@ fun case_13(x: Map<out Number, *>?) {
         if (x != null) else continue
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<out kotlin.Number, *>? & kotlin.collections.Map<out kotlin.Number, *>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<out kotlin.Number, *>? & kotlin.collections.Map<out kotlin.Number, *>")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<out kotlin.Number, *>? & kotlin.collections.Map<out kotlin.Number, *>")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<out kotlin.Number, *>? & kotlin.collections.Map<out kotlin.Number, *>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<out kotlin.Number, *>? & kotlin.collections.Map<out kotlin.Number, *>")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<out kotlin.Number, *>? & kotlin.collections.Map<out kotlin.Number, *>")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<out kotlin.Number, *>? & kotlin.collections.Map<out kotlin.Number, *>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<out kotlin.Number, *>? & kotlin.collections.Map<out kotlin.Number, *>")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<out kotlin.Number, *>? & kotlin.collections.Map<out kotlin.Number, *>")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<out kotlin.Number, *>? & kotlin.collections.Map<out kotlin.Number, *>")!>x<!>.funAny()
@@ -196,9 +196,9 @@ fun case_14(x: MutableCollection<in Number>?, r: IntRange) {
         if (x !== null) else { break }
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<in kotlin.Number>? & kotlin.collections.MutableCollection<in kotlin.Number>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<in kotlin.Number>? & kotlin.collections.MutableCollection<in kotlin.Number>")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<in kotlin.Number>? & kotlin.collections.MutableCollection<in kotlin.Number>")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<in kotlin.Number>? & kotlin.collections.MutableCollection<in kotlin.Number>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<in kotlin.Number>? & kotlin.collections.MutableCollection<in kotlin.Number>")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<in kotlin.Number>? & kotlin.collections.MutableCollection<in kotlin.Number>")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<in kotlin.Number>? & kotlin.collections.MutableCollection<in kotlin.Number>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<in kotlin.Number>? & kotlin.collections.MutableCollection<in kotlin.Number>")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<in kotlin.Number>? & kotlin.collections.MutableCollection<in kotlin.Number>")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<in kotlin.Number>? & kotlin.collections.MutableCollection<in kotlin.Number>")!>x<!>.funAny()
@@ -236,9 +236,9 @@ fun <T>case_17(x: T?, f: Boolean) {
         if (x === implicitNullableNothingProperty || false) { break }
         <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funAny()
@@ -253,9 +253,9 @@ fun <T>case_18(x: T, f: Boolean) {
         if (false || false || false || x == nullableNothingProperty) break
         <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.funAny()
@@ -270,9 +270,9 @@ fun <K, V>case_19(map: MutableMap<K, V>, y: Nothing?) {
         if (k !== implicitNullableNothingProperty && true && v != y) else { break }
         <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>.funAny()
@@ -280,9 +280,9 @@ fun <K, V>case_19(map: MutableMap<K, V>, y: Nothing?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("K & K!!")!>k<!>.funNullableAny()
         <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.funAny()
@@ -297,9 +297,9 @@ fun <K, V: K>case_20(map: MutableMap<K?, V>) {
         if (true && true && true && k !== null && v != null && true) else continue
         <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.funAny()
@@ -307,9 +307,9 @@ fun <K, V: K>case_20(map: MutableMap<K?, V>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.funNullableAny()
         <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("V & V!!")!>v<!>.funAny()
@@ -325,9 +325,9 @@ fun <K, V>case_21(map: MutableMap<out K?, in V>) {
         if (v === null || false) break
         <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.funAny()
@@ -335,9 +335,9 @@ fun <K, V>case_21(map: MutableMap<out K?, in V>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("K? & K?!!")!>k<!>.funNullableAny()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>v<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>v<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>v<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>v<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>v<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>v<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>v<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>v<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>v<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>v<!>.funAny()
@@ -352,9 +352,9 @@ fun <T> case_22(x: T?) {
         if (x === null) break
         <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funAny()
@@ -369,9 +369,9 @@ fun <T> case_23(x: Inv<in T>?) {
         if (x !== null) else continue
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<in T>? & Inv<in T>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<in T>? & Inv<in T>")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<in T>? & Inv<in T>")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<in T>? & Inv<in T>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<in T>? & Inv<in T>")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<in T>? & Inv<in T>")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<in T>? & Inv<in T>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<in T>? & Inv<in T>")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<in T>? & Inv<in T>")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<in T>? & Inv<in T>")!>x<!>.funAny()
@@ -386,9 +386,9 @@ fun <T> case_24(x: Inv<out T?>?, y: Nothing?) {
         if (x !== y && true) else continue
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>.funAny()
@@ -407,9 +407,9 @@ fun <T> case_25(x: Inv<out T?>?, y: Nothing?, z: List<Int>) {
         }
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>? & Inv<out T?>")!>x<!>.funAny()

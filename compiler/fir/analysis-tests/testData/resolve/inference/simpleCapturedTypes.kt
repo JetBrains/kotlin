@@ -13,9 +13,9 @@ private fun getSetterInfos(kc: KC<out Ann>) {
     id(kc).x.foo()
 
     kc.idR().x.foo()
-    kc.idP.x.foo()
+    kc.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>idP<!>.x.foo()
 
     val x1 = id(kc)
     val x2 = kc.idR()
-    val x3 = kc.idP
+    val x3 = kc.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>idP<!>
 }

@@ -14,7 +14,7 @@ fun foo(p: Box<Res>) {
     p.value.invoke() // OK
     p.value() // OK
 
-    p.foo.invoke() // OK
+    p.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>foo<!>.invoke() // OK
     // Error in K1, OK in K2
-    p.foo()
+    p.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>foo<!>()
 }

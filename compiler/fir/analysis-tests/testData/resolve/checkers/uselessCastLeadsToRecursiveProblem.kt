@@ -12,7 +12,7 @@ val <T : C> KClass<T>.extProp1
 val A.extProp1
     get() = when (this) {
         is B -> "I'm B"
-        is C -> (this <!USELESS_CAST!>as C<!>)::class.extProp1
+        is C -> (this <!USELESS_CAST!>as C<!>)::class.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>extProp1<!>
         else -> "I don't know who I am.."
     }
 
@@ -22,6 +22,6 @@ val <T : C> KClass<T>.extProp2
 val A.extProp2
     get() = when (this) {
         is B -> "I'm B"
-        is C -> this::class.extProp2
+        is C -> this::class.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>extProp2<!>
         else -> "I don't know who I am.."
     }

@@ -9,7 +9,7 @@
 fun testYield() {
     val arg: UserKlass = UserKlass()
     val buildee = build {
-        variable = arg
+        <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>variable<!> = arg
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests

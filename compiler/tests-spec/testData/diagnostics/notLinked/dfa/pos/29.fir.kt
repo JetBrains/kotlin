@@ -60,7 +60,7 @@ fun case_4(x: Class?) {
 
 // TESTCASE NUMBER: 5
 fun <T> case_5(x: T) {
-    if (x?.propNullableT != null) {
+    if (x?.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!> != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>
     }
 }

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !LANGUAGE: +ForbidUsingExtensionPropertyTypeParameterInDelegate
 
 class Delegate<T : Any> {

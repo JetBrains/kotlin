@@ -20,9 +20,13 @@
 
 /newListMethods.fir.kt:(1103,1110): warning: This declaration overrides a deprecated member but is not marked as deprecated itself. Please add the '@Deprecated' annotation or suppress the diagnostic.
 
+/newListMethods.fir.kt:(796,801): error: Property access cannot have explicit type arguments.
+
 /newListMethods.fir.kt:(1138,1145): warning: 'fun getLast(): T!' is deprecated. This declaration will be renamed in a future version of Kotlin. Please consider using the 'last()' stdlib extension if the collection supports fast random access.
 
 /newListMethods.fir.kt:(1270,1278): error: Unresolved reference 'getFirst'.
+
+/newListMethods.fir.kt:(903,907): error: Property access cannot have explicit type arguments.
 
 /newListMethods.fir.kt:(1287,1292): error: Function invocation 'first()' expected.
 

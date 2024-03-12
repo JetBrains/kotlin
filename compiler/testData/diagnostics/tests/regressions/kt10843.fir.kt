@@ -1,6 +1,6 @@
 // NI_EXPECTED_FILE
 // See EA-76890 / KT-10843: NPE during analysis
-fun lambda(x : Int?) = x?.<!FUNCTION_CALL_EXPECTED!>let<!> <!UNRESOLVED_REFERENCE!>l<!> {
+fun lambda(x : Int?) = x?.<!CANNOT_INFER_PARAMETER_TYPE, EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, FUNCTION_CALL_EXPECTED!>let<!> <!UNRESOLVED_REFERENCE!>l<!> {
     <!CANNOT_INFER_PARAMETER_TYPE!>y<!> ->
     if (y <!UNRESOLVED_REFERENCE!>><!> 0) return@l x
     y

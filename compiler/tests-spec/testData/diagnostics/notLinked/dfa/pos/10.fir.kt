@@ -17,9 +17,9 @@ fun case_1() {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funAny()
@@ -35,9 +35,9 @@ fun case_2() {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funAny()
@@ -53,9 +53,9 @@ fun case_3() {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funAny()
@@ -71,9 +71,9 @@ fun case_4() {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funAny()
@@ -89,9 +89,9 @@ fun case_5() {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.funAny()
@@ -107,9 +107,9 @@ fun case_6() {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>x<!>.funAny()
@@ -127,9 +127,9 @@ fun case_7() {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funAny()
@@ -147,9 +147,9 @@ fun case_8() {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funAny()
@@ -167,9 +167,9 @@ fun case_9() {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funAny()
@@ -187,9 +187,9 @@ fun case_10() {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funAny()
@@ -207,9 +207,9 @@ fun case_11() {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funAny()
@@ -227,9 +227,9 @@ fun case_12() {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funAny()
@@ -251,9 +251,9 @@ fun case_13() {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.funAny()
@@ -263,9 +263,9 @@ fun case_13() {
         if (y != null) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.funAny()
@@ -284,9 +284,9 @@ fun case_14() {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.funAny()
@@ -296,9 +296,9 @@ fun case_14() {
         if (y != null) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.funAny()
@@ -317,9 +317,9 @@ fun case_15() {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.funAny()
@@ -329,9 +329,9 @@ fun case_15() {
         if (y != null) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.funAny()
@@ -354,9 +354,9 @@ fun case_16() {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.funAny()
@@ -366,9 +366,9 @@ fun case_16() {
         if (y != null) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.funAny()
@@ -387,9 +387,9 @@ fun case_17() {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>? & Out<kotlin.Number?>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>? & Out<kotlin.Number?>")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>? & Out<kotlin.Number?>")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>? & Out<kotlin.Number?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>? & Out<kotlin.Number?>")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>? & Out<kotlin.Number?>")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>? & Out<kotlin.Number?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>? & Out<kotlin.Number?>")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>? & Out<kotlin.Number?>")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>? & Out<kotlin.Number?>")!>x<!>.funAny()
@@ -399,9 +399,9 @@ fun case_17() {
         if (y != null) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>.funAny()
@@ -423,9 +423,9 @@ fun case_18() {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>")!>x<!>.equals(null)
-    <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>")!>x<!>.propT
+    <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>")!>x<!>.propAny
-    <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>")!>x<!>.propNullableT
+    <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>")!>x<!>.propNullableAny
     <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>")!>x<!>.funT()
     <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Number?>")!>x<!>.funAny()
@@ -435,9 +435,9 @@ fun case_18() {
     if (y != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>y<!>.funAny()
@@ -454,9 +454,9 @@ fun case_19() {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>")!>x<!>.equals(null)
-    <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>")!>x<!>.propT
+    <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>")!>x<!>.propAny
-    <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>")!>x<!>.propNullableT
+    <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>")!>x<!>.propNullableAny
     <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>")!>x<!>.funT()
     <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>")!>x<!>.funAny()
@@ -466,9 +466,9 @@ fun case_19() {
     if (y != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>.funAny()
@@ -486,9 +486,9 @@ fun case_20(y: Int?) {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funAny()
@@ -506,9 +506,9 @@ fun case_21(y: Int?) {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funAny()
@@ -526,9 +526,9 @@ fun case_22(y: Int?) {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funAny()
@@ -546,9 +546,9 @@ fun case_23(y: Int?) {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.funAny()
@@ -566,9 +566,9 @@ fun case_24(y: Int) {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?>? & Out<kotlin.Int?>")!>x<!>.funAny()
@@ -591,9 +591,9 @@ fun case_25(y: Int) {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funAny()
@@ -616,9 +616,9 @@ fun case_26(y: Int) {
     if (x != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funAny()

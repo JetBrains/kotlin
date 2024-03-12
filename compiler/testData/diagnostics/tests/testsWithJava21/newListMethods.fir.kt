@@ -47,10 +47,10 @@ fun foo(x: MutableList<String>, y: ArrayList<String>, z: A<String>) {
     x.addFirst("")
     x.addLast("")
     x.<!UNRESOLVED_REFERENCE!>getFirst<!>()
-    x.<!FUNCTION_CALL_EXPECTED!>first<!> // synthetic property for getFirst()
+    x.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, FUNCTION_CALL_EXPECTED!>first<!> // synthetic property for getFirst()
     x.first() // stdlib extension on List
     x.<!UNRESOLVED_REFERENCE!>getLast<!>()
-    x.<!FUNCTION_CALL_EXPECTED!>last<!>
+    x.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, FUNCTION_CALL_EXPECTED!>last<!>
     x.last()
     x.<!DEBUG_INFO_CALL("fqName: kotlin.collections.MutableList.removeFirst; typeCall: function")!>removeFirst()<!>
     x.<!DEBUG_INFO_CALL("fqName: kotlin.collections.MutableList.removeLast; typeCall: function")!>removeLast()<!>

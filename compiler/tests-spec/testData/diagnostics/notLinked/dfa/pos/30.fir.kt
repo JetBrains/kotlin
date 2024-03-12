@@ -131,9 +131,9 @@ fun case_8(x: Class) {
 }
 // TESTCASE NUMBER: 9
 fun <T> case_9(x: T) {
-    if (x!!.propNullableT != null) {
+    if (x!!.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!> != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>
-        x.propNullableT
+        x.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
     }
 }
 

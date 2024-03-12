@@ -16,7 +16,7 @@ interface PersistentStateComponent<T>
 
 fun <T> deserializeAndLoadState(
     component: PersistentStateComponent<T>,
-    clazz: Class<T> = ComponentSerializationUtil.getStateClass(component::class.java)
+    clazz: Class<T> = ComponentSerializationUtil.getStateClass(component::class.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>java<!>)
 ) {}
 
 fun use(beforeRunTask: BeforeRunTask<*>) {

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // SKIP_TXT
 // FILE: MyAnn.java
 import java.lang.annotation.ElementType;

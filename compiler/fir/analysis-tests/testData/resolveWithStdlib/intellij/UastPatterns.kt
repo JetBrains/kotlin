@@ -25,7 +25,7 @@ interface UReferenceExpression : UExpression
 fun injectionHostOrReferenceExpression(): UExpressionPattern.Capture<UExpression> =
     uExpression().filter { it is UReferenceExpression }
 
-fun uExpression(): UExpressionPattern.Capture<UExpression> = expressionCapture(UExpression::class.java)
+fun uExpression(): UExpressionPattern.Capture<UExpression> = expressionCapture(UExpression::class.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>java<!>)
 
 fun <T : UExpression> expressionCapture(clazz: Class<T>): UExpressionPattern.Capture<T> = UExpressionPattern.Capture(clazz)
 

@@ -7,8 +7,8 @@ fun bar(x: List<String>) {
     x.<!UNRESOLVED_REFERENCE!>removeLast<!>()
     x.<!UNRESOLVED_REFERENCE!>getFirst<!>()
     x.<!UNRESOLVED_REFERENCE!>getLast<!>()
-    x.<!FUNCTION_CALL_EXPECTED!>first<!>
-    x.<!FUNCTION_CALL_EXPECTED!>last<!>
+    x.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, FUNCTION_CALL_EXPECTED!>first<!>
+    x.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, FUNCTION_CALL_EXPECTED!>last<!>
 }
 
 // Additional test for other SequenceCollection inheritor

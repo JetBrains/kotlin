@@ -6,7 +6,7 @@ internal class TowerDataElementsForName() {
     val reversedFilteredLocalScopes by lazy(LazyThreadSafetyMode.NONE) {
         @OptIn(ExperimentalStdlibApi::class)
         buildList {
-            for (i in lastIndex downTo 0) {
+            for (i in <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>lastIndex<!> downTo 0) {
                 add("")
             }
         }
@@ -19,7 +19,7 @@ internal class TowerDataElementsForName2() {
         val reversedFilteredLocalScopes by lazy(LazyThreadSafetyMode.NONE) {
             @OptIn(ExperimentalStdlibApi::class)
             buildList {
-                for (i in lastIndex downTo 0) {
+                for (i in <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>lastIndex<!> downTo 0) {
                     add("")
                 }
             }
@@ -32,11 +32,11 @@ internal class TowerDataElementsForName3() {
     val reversedFilteredLocalScopes by lazy(LazyThreadSafetyMode.NONE) {
         @OptIn(ExperimentalStdlibApi::class)
         buildList l1@ {
-            for (i in lastIndex downTo 0) {
+            for (i in <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>lastIndex<!> downTo 0) {
                 val reversedFilteredLocalScopes by lazy(LazyThreadSafetyMode.NONE) {
                     @OptIn(ExperimentalStdlibApi::class)
                     buildList {
-                        for (i in lastIndex downTo 0) {
+                        for (i in <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>lastIndex<!> downTo 0) {
                         add("")
                         this@l1.add("")
                     }
@@ -54,7 +54,7 @@ internal class TowerDataElementsForName4() {
             val reversedFilteredLocalScopes by lazy(LazyThreadSafetyMode.NONE) {
                 @OptIn(ExperimentalStdlibApi::class)
                 buildList {
-                    for (i in lastIndex downTo 0) {
+                    for (i in <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>lastIndex<!> downTo 0) {
                         add("")
                         this@l1.add("")
                     }

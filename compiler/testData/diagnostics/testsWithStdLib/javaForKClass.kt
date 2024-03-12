@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !CHECK_TYPE
 
 // FILE: A.java

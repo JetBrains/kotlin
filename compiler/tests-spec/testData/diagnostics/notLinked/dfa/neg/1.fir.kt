@@ -16,9 +16,9 @@ fun case_1(x: Any?) {
     if (x != null is Boolean) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>funAny()
@@ -33,9 +33,9 @@ fun case_3() {
     else {
         Object.prop_1
         Object.prop_1<!UNSAFE_CALL!>.<!>equals(null)
-        Object.prop_1.propT
+        Object.prop_1.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         Object.prop_1<!UNSAFE_CALL!>.<!>propAny
-        Object.prop_1.propNullableT
+        Object.prop_1.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         Object.prop_1.propNullableAny
         Object.prop_1.funT()
         Object.prop_1<!UNSAFE_CALL!>.<!>funAny()
@@ -49,9 +49,9 @@ fun case_4(x: Char?) {
     if (x != null || <!USELESS_IS_CHECK!>false is Boolean<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!><!UNSAFE_CALL!>.<!>funAny()
@@ -66,9 +66,9 @@ fun case_5() {
 
     if (<!FORBIDDEN_IDENTITY_EQUALS!>x !== <!USELESS_IS_CHECK!>null is Boolean?<!><!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!>
     if (<!SENSELESS_COMPARISON!>x !== null == null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
-    if (<!SENSELESS_COMPARISON!>x !== null == null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!>.propT
+    if (<!SENSELESS_COMPARISON!>x !== null == null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
     if (<!SENSELESS_COMPARISON!>x !== null == null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!><!UNSAFE_CALL!>.<!>propAny
-    if (<!SENSELESS_COMPARISON!>x !== null == null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!>.propNullableT
+    if (<!SENSELESS_COMPARISON!>x !== null == null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
     if (<!SENSELESS_COMPARISON!>x !== null == null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!>.propNullableAny
     if (<!SENSELESS_COMPARISON!>x !== null == null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!>.funT()
     if (<!SENSELESS_COMPARISON!>x !== null == null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!><!UNSAFE_CALL!>.<!>funAny()
@@ -83,9 +83,9 @@ fun case_6(x: EmptyClass?) {
     if (<!USELESS_IS_CHECK!>(x != null && !y) is Boolean<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyClass?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyClass?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("EmptyClass?")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("EmptyClass?")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyClass?")!>x<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("EmptyClass?")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("EmptyClass?")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyClass?")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyClass?")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyClass?")!>x<!><!UNSAFE_CALL!>.<!>funAny()
@@ -99,9 +99,9 @@ fun case_7() {
     if (nullableNumberProperty != null || <!EQUALITY_NOT_APPLICABLE, SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Nothing?")!>nullableNumberProperty<!> != null is Boolean<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumberProperty<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumberProperty<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumberProperty<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumberProperty<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumberProperty<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumberProperty<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumberProperty<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumberProperty<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumberProperty<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumberProperty<!><!UNSAFE_CALL!>.<!>funAny()
@@ -134,9 +134,9 @@ fun case_10() {
         if (<!SENSELESS_COMPARISON!>a.prop_4 != null !== null<!>) {
             a.prop_4
             a.prop_4<!UNSAFE_CALL!>.<!>equals(null)
-            a.prop_4.propT
+            a.prop_4.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
             a.prop_4<!UNSAFE_CALL!>.<!>propAny
-            a.prop_4.propNullableT
+            a.prop_4.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
             a.prop_4.propNullableAny
             a.prop_4.funT()
             a.prop_4<!UNSAFE_CALL!>.<!>funAny()
@@ -158,9 +158,9 @@ fun case_11(x: TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!>, y: Typ
                 if (<!EQUALITY_NOT_APPLICABLE!>t != null is Boolean<!>) {
                     <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>
                     <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>.equals(null)
-                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>.propT
+                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
                     <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!><!UNSAFE_CALL!>.<!>propAny
-                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>.propNullableT
+                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
                     <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>.propNullableAny
                     <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>.funT()
                     <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!><!UNSAFE_CALL!>.<!>funAny()
@@ -177,9 +177,9 @@ fun case_12(x: TypealiasNullableStringIndirect, y: TypealiasNullableStringIndire
     if (<!DEPRECATED_IDENTITY_EQUALS!><!USELESS_IS_CHECK!>(x == null) !is Boolean<!> === false<!>) "1"
     else if (<!USELESS_IS_CHECK!>(<!SENSELESS_COMPARISON!>y === null !== null<!>) is Boolean<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>
     else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.equals(null)
-    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.propT
+    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
     else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!><!UNSAFE_CALL!>.<!>propAny
-    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.propNullableT
+    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
     else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.propNullableAny
     else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.funT()
     else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!><!UNSAFE_CALL!>.<!>funAny()
@@ -249,9 +249,9 @@ fun case_15(x: EmptyObject) {
     val <!UNUSED_VARIABLE!>t<!> = if (<!FORBIDDEN_IDENTITY_EQUALS!>x === <!USELESS_IS_CHECK!><!USELESS_IS_CHECK!>null is Boolean is Boolean<!> is Boolean<!><!>) "" else {
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>.funAny()
@@ -266,14 +266,14 @@ fun case_16() {
 
     if (<!SENSELESS_COMPARISON!>x != <!USELESS_IS_CHECK!><!USELESS_IS_CHECK!><!USELESS_IS_CHECK!><!USELESS_IS_CHECK!>null !is Boolean !is Boolean<!> !is Boolean<!> !is Boolean<!> !is Boolean<!><!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing")!>x<!><!UNSAFE_CALL!>.<!>java
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing")!>x<!><!UNSAFE_CALL!>.<!><!CANNOT_INFER_PARAMETER_TYPE, EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>java<!>
     }
 }
 
 // TESTCASE NUMBER: 17
 val case_17 = if (nullableIntProperty == null == true == false) 0 else {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>nullableIntProperty<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>nullableIntProperty<!><!UNSAFE_CALL!>.<!><!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>java<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>nullableIntProperty<!><!UNSAFE_CALL!>.<!><!CANNOT_INFER_PARAMETER_TYPE, EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>java<!>
 }
 
 //TESTCASE NUMBER: 18
@@ -281,9 +281,9 @@ fun case_18(a: DeepObject.A.B.C.D.E.F.G.J?) {
     if (<!SENSELESS_COMPARISON!>a != null !== null<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!><!UNSAFE_CALL!>.<!>funAny()
@@ -315,9 +315,9 @@ fun case_19(b: Boolean) {
     if (<!EQUALITY_NOT_APPLICABLE!>a != null !is Boolean<!> && <!EQUALITY_NOT_APPLICABLE!>a<!UNSAFE_CALL!>.<!>B19 != null is Boolean<!> && <!EQUALITY_NOT_APPLICABLE!>a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19 != null is Boolean<!> && <!SENSELESS_COMPARISON!>a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19<!UNSAFE_CALL!>.<!>D19 != null == null<!> && <!SENSELESS_COMPARISON!>a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19<!UNSAFE_CALL!>.<!>D19<!UNSAFE_CALL!>.<!>x != null !== null<!>) {
         a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19<!UNSAFE_CALL!>.<!>D19<!UNSAFE_CALL!>.<!>x
         a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19<!UNSAFE_CALL!>.<!>D19<!UNSAFE_CALL!>.<!>x<!UNSAFE_CALL!>.<!>equals(null)
-        a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19<!UNSAFE_CALL!>.<!>D19<!UNSAFE_CALL!>.<!>x.propT
+        a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19<!UNSAFE_CALL!>.<!>D19<!UNSAFE_CALL!>.<!>x.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19<!UNSAFE_CALL!>.<!>D19<!UNSAFE_CALL!>.<!>x<!UNSAFE_CALL!>.<!>propAny
-        a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19<!UNSAFE_CALL!>.<!>D19<!UNSAFE_CALL!>.<!>x.propNullableT
+        a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19<!UNSAFE_CALL!>.<!>D19<!UNSAFE_CALL!>.<!>x.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19<!UNSAFE_CALL!>.<!>D19<!UNSAFE_CALL!>.<!>x.propNullableAny
         a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19<!UNSAFE_CALL!>.<!>D19<!UNSAFE_CALL!>.<!>x.funT()
         a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19<!UNSAFE_CALL!>.<!>D19<!UNSAFE_CALL!>.<!>x<!UNSAFE_CALL!>.<!>funAny()
@@ -341,9 +341,9 @@ fun case_20(b: Boolean) {
     if (<!FORBIDDEN_IDENTITY_EQUALS!>a.B19.C19.D19 !== null !is Boolean<!>) {
         a.B19.C19.D19
         a.B19.C19.D19<!UNSAFE_CALL!>.<!>equals(null)
-        a.B19.C19.D19.propT
+        a.B19.C19.D19.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         a.B19.C19.D19<!UNSAFE_CALL!>.<!>propAny
-        a.B19.C19.D19.propNullableT
+        a.B19.C19.D19.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         a.B19.C19.D19.propNullableAny
         a.B19.C19.D19.funT()
         a.B19.C19.D19<!UNSAFE_CALL!>.<!>funAny()
@@ -357,9 +357,9 @@ fun case_21() {
     if (<!FORBIDDEN_IDENTITY_EQUALS!>EnumClassWithNullableProperty.B.prop_1 !== null is Boolean<!> == <!USELESS_IS_CHECK!>true !is Boolean<!> != true) {
         EnumClassWithNullableProperty.B.prop_1
         EnumClassWithNullableProperty.B.prop_1<!UNSAFE_CALL!>.<!>equals(null)
-        EnumClassWithNullableProperty.B.prop_1.propT
+        EnumClassWithNullableProperty.B.prop_1.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         EnumClassWithNullableProperty.B.prop_1<!UNSAFE_CALL!>.<!>propAny
-        EnumClassWithNullableProperty.B.prop_1.propNullableT
+        EnumClassWithNullableProperty.B.prop_1.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         EnumClassWithNullableProperty.B.prop_1.propNullableAny
         EnumClassWithNullableProperty.B.prop_1.funT()
         EnumClassWithNullableProperty.B.prop_1<!UNSAFE_CALL!>.<!>funAny()
@@ -373,9 +373,9 @@ fun case_22(a: (() -> Unit)?) {
     if (<!EQUALITY_NOT_APPLICABLE!>a != null !is Boolean<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>()<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>()<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>()<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>()<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>()<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>()<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>()<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>()<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>()<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>()<!>.funAny()
@@ -391,9 +391,9 @@ fun case_23(a: ((Float) -> Int?)?, b: Float?) {
         if (x != null) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.funAny()
@@ -409,9 +409,9 @@ fun case_24(a: ((() -> Unit) -> Unit)?, b: (() -> Unit)?) =
         <!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>b<!>)
         <!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>(<!ARGUMENT_TYPE_MISMATCH!>b<!>)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>b<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>b<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>b<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>b<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>b<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>b<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>b<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>b<!>.funT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>b<!><!UNSAFE_CALL!>.<!>funAny()
@@ -435,9 +435,9 @@ fun case_25(b: Boolean) {
         if (<!DEPRECATED_IDENTITY_EQUALS!>z != null !== false<!>) {
             <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>? & <anonymous>")!>z<!>.a
             <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>? & <anonymous>")!>z<!>.a.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>? & <anonymous>")!>z<!>.a.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>? & <anonymous>")!>z<!>.a.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>? & <anonymous>")!>z<!>.a.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>? & <anonymous>")!>z<!>.a.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>? & <anonymous>")!>z<!>.a.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>? & <anonymous>")!>z<!>.a.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>? & <anonymous>")!>z<!>.a.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>? & <anonymous>")!>z<!>.a.funAny()
@@ -454,9 +454,9 @@ fun case_26(a: ((Float) -> Int?)?, b: Float?) {
         if (<!DEPRECATED_IDENTITY_EQUALS!>x != null == true === false<!>) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>.propNullableAny
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>.funT()
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>funAny()
@@ -472,9 +472,9 @@ fun case_27() {
     else {
         Object.prop_1
         Object.prop_1<!UNSAFE_CALL!>.<!>equals(null)
-        Object.prop_1.propT
+        Object.prop_1.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propT<!>
         Object.prop_1<!UNSAFE_CALL!>.<!>propAny
-        Object.prop_1.propNullableT
+        Object.prop_1.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>propNullableT<!>
         Object.prop_1.propNullableAny
         Object.prop_1.funT()
         Object.prop_1<!UNSAFE_CALL!>.<!>funAny()

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 //KT-580 Type inference failed
 
 package whats.the.difference

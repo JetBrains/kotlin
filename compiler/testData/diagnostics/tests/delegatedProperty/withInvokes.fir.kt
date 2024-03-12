@@ -12,11 +12,11 @@ val <X3> C<X3>.getValue: D<X3> get() = TODO()
 operator fun <X4> D<X4>.invoke(x: Any?, y: Any?): X4 = TODO()
 
 fun foo(a: A<String>, c: C<String>) {
-    val x1 by <!NOT_FUNCTION_AS_OPERATOR!>a<!>
+    val x1 by <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, NOT_FUNCTION_AS_OPERATOR, TYPE_ARGUMENTS_NOT_ALLOWED!>a<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x1<!>
     x1.length
 
-    val y1 by <!NOT_FUNCTION_AS_OPERATOR!>c<!>
+    val y1 by <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, NOT_FUNCTION_AS_OPERATOR, TYPE_ARGUMENTS_NOT_ALLOWED!>c<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>y1<!>
     y1.length
 }

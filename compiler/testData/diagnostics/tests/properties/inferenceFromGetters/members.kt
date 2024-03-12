@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !CHECK_TYPE
 class A {
     val x get() = 1

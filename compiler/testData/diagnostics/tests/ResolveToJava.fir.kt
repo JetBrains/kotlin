@@ -22,10 +22,10 @@ fun test(l : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<Int><!>) {
 
   val <!UNUSED_VARIABLE!>f<!> : java.io.File? = null
 
-  Collections.<!FUNCTION_CALL_EXPECTED!>emptyList<!>
+  Collections.<!CANNOT_INFER_PARAMETER_TYPE, EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, FUNCTION_CALL_EXPECTED!>emptyList<!>
   Collections.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, FUNCTION_CALL_EXPECTED!>emptyList<!><Int>
   Collections.emptyList<Int>()
-  Collections.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
+  Collections.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
 
   checkSubtype<Set<Int>?>(Collections.singleton<Int>(1))
   Collections.singleton<Int>(<!ARGUMENT_TYPE_MISMATCH!>1.0<!>)

@@ -20,7 +20,7 @@ fun test() {
 }
 
 class MyTest {
-    private val klass = this::class.java
+    private val klass = this::class.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>java<!>
 
     private val logger = Logger.getInstance(klass)
 }
