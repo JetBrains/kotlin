@@ -32372,6 +32372,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/multiplatform/expectProperty.kt");
     }
 
+    @TestMetadata("kt57391.kt")
+    public void testKt57391() {
+      runTest("compiler/testData/codegen/box/multiplatform/kt57391.kt");
+    }
+
     @TestMetadata("kt60854.kt")
     public void testKt60854() {
       runTest("compiler/testData/codegen/box/multiplatform/kt60854.kt");
