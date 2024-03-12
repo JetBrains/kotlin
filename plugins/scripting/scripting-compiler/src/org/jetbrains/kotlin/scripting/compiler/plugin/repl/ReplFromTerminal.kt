@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import org.jetbrains.kotlin.cli.common.repl.replUnescapeLineBreaks
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.runtime.components.tryLoadClass
@@ -26,7 +27,7 @@ import java.util.concurrent.Future
 
 class ReplFromTerminal(
     projectEnvironment: JavaCoreProjectEnvironment,
-    compilerConfiguration: CompilerConfiguration,
+    private val compilerConfiguration: CompilerConfiguration,
     private val replConfiguration: ReplConfiguration
 ) {
     private val replInitializer: Future<ReplInterpreter> = Executors.newSingleThreadExecutor().submit(Callable {
@@ -47,6 +48,9 @@ class ReplFromTerminal(
                     "Welcome to Kotlin version ${KotlinCompilerVersion.VERSION} " +
                             "(JRE ${System.getProperty("java.runtime.version")})"
                 )
+                if (compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
+                    printlnWelcomeMessage("Warning: REPL is not yet compatible with the Kotlin version ${KotlinCompilerVersion.VERSION}, using '-language-version 1.9'.")
+                }
                 printlnWelcomeMessage("Type :help for help, :quit for quit")
             }
 
