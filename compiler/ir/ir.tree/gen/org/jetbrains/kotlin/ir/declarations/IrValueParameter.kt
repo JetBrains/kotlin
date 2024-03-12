@@ -24,6 +24,8 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ParameterDescriptor
 
+    abstract val isAssignable: Boolean
+
     abstract override val symbol: IrValueParameterSymbol
 
     abstract var index: Int

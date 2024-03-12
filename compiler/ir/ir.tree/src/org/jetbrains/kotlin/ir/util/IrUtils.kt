@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -1591,3 +1591,13 @@ fun IrElement.sourceElement(): AbstractKtSourceElement? =
 
 fun IrFunction.isTopLevelInPackage(name: String, packageFqName: FqName) =
     this.name.asString() == name && parent.kotlinFqName == packageFqName
+
+val IrValueDeclaration.isAssignable: Boolean
+    get() = when (this) {
+        is IrValueParameter -> isAssignable
+        // Variables are assignable by default. This means that they can be used in [IrSetValue].
+        // Variables are assigned in the IR even though they are not 'var' in the input. Hence
+        // the separate assignability flag.
+        is IrVariable -> true
+        else -> error("Unexpected IrValueDeclaration class $this")
+    }

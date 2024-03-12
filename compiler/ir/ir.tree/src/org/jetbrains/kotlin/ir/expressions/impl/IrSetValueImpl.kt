@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
+import org.jetbrains.kotlin.ir.util.isAssignable
 
 class IrSetValueImpl internal constructor(
     @Suppress("UNUSED_PARAMETER")

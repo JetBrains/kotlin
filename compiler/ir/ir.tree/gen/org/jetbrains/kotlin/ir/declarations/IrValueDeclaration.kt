@@ -23,6 +23,4 @@ interface IrValueDeclaration : IrDeclarationWithName, IrSymbolOwner {
     override val symbol: IrValueSymbol
 
     var type: IrType
-
-    val isAssignable: Boolean
 }
