@@ -297,7 +297,6 @@ internal val functionInliningPhase = makeIrModulePhase(
         FunctionInlining(
             context,
             innerClassesSupport = context.innerClassesSupport,
-            alwaysCreateTemporaryVariablesForArguments = true,
             regenerateInlinedAnonymousObjects = true,
             inlineArgumentsWithOriginalOffset = true
         )

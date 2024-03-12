@@ -80,7 +80,6 @@ class FunctionInlining(
     private val inlineFunctionResolver: InlineFunctionResolver = InlineFunctionResolver.TRIVIAL,
     private val innerClassesSupport: InnerClassesSupport? = null,
     private val insertAdditionalImplicitCasts: Boolean = false,
-    private val alwaysCreateTemporaryVariablesForArguments: Boolean = false,
     private val regenerateInlinedAnonymousObjects: Boolean = false,
     private val inlineArgumentsWithOriginalOffset: Boolean = false,
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
@@ -769,9 +768,7 @@ class FunctionInlining(
 
                 // Arguments may reference the previous ones - substitute them.
                 val variableInitializer = argument.argumentExpression.transform(substitutor, data = null)
-                val shouldCreateTemporaryVariable =
-                    (alwaysCreateTemporaryVariablesForArguments && !parameter.isInlineParameter()) ||
-                            argument.shouldBeSubstitutedViaTemporaryVariable()
+                val shouldCreateTemporaryVariable = !parameter.isInlineParameter() || argument.shouldBeSubstitutedViaTemporaryVariable()
 
                 if (shouldCreateTemporaryVariable) {
                     val newVariable = createTemporaryVariable(parameter, variableInitializer, argument.isDefaultArg, callee)
@@ -835,9 +832,7 @@ class FunctionInlining(
                 }
             )
 
-            if (alwaysCreateTemporaryVariablesForArguments) {
-                variable.name = Name.identifier(parameter.name.asStringStripSpecialMarkers())
-            }
+            variable.name = Name.identifier(parameter.name.asStringStripSpecialMarkers())
 
             return variable
         }

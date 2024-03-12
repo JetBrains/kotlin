@@ -207,7 +207,6 @@ private val functionInliningPhase = makeIrModulePhase(
             it,
             JsInlineFunctionResolver(it),
             it.innerClassesSupport,
-            alwaysCreateTemporaryVariablesForArguments = true,
             inlineArgumentsWithOriginalOffset = true,
         )
     },

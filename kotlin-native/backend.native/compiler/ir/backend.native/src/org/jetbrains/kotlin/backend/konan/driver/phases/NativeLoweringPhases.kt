@@ -347,7 +347,6 @@ private val inlinePhase = createFileLoweringPhase(
                     FunctionInlining(
                             context.context,
                             NativeInlineFunctionResolver(context.context, context),
-                            alwaysCreateTemporaryVariablesForArguments = true,
                             insertAdditionalImplicitCasts = true,
                     ).lower(irFile)
                 }
