@@ -6,61 +6,14 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
-import org.jetbrains.kotlin.asJava.classes.safeIsScript
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
-
-fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics): Diagnostics? {
-    fun getDiagnosticsForClass(ktClassOrObject: KtClassOrObject): Diagnostics {
-        val outermostClass = getOutermostClassOrObject(ktClassOrObject)
-        return CliExtraDiagnosticsProvider.forClassOrObject(outermostClass)
-    }
-
-    fun doGetDiagnostics(): Diagnostics? {
-        if ((element.containingFile as? KtFile)?.safeIsScript() == true) return null
-
-        var parent = element.parent
-        if (element is KtPropertyAccessor) {
-            parent = parent?.parent
-        }
-        if (element is KtParameter && element.hasValOrVar()) {
-            // property declared in constructor
-            val parentClass = (parent?.parent?.parent as? KtClass)
-            if (parentClass != null) {
-                return getDiagnosticsForClass(parentClass)
-            }
-        }
-        if (element is KtClassOrObject) {
-            return getDiagnosticsForClass(element)
-        }
-
-        when (parent) {
-            is KtFile -> {
-                return CliExtraDiagnosticsProvider.forFacade(parent)
-            }
-
-            is KtClassBody -> {
-                val parentsParent = parent.getParent()
-
-                if (parentsParent is KtClassOrObject) {
-                    return getDiagnosticsForClass(parentsParent)
-                }
-            }
-        }
-        return null
-    }
-
-    val result = doGetDiagnostics() ?: return null
-
-    return FilteredJvmDiagnostics(result, otherDiagnostics)
-}
 
 class FilteredJvmDiagnostics(val jvmDiagnostics: Diagnostics, val otherDiagnostics: Diagnostics) : Diagnostics by jvmDiagnostics {
     companion object {
