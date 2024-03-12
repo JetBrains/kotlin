@@ -213,7 +213,6 @@ abstract class CompileToExecutable : DefaultTask() {
     @get:Input
     abstract val linkerArgs: ListProperty<String>
 
-    @Internal
     fun linkCommands(): List<List<String>> =
     // Getting link commands requires presence of a target toolchain.
             // Thus we cannot get them at the configuration stage because the toolchain may be not downloaded yet.

@@ -110,6 +110,7 @@ abstract class KonanBuildingConfig<T : KonanBuildingTask>(
             init(this@KonanBuildingConfig, outputDescription.destinationDir, outputDescription.artifactName, target)
             group = BasePlugin.BUILD_GROUP
             description = generateTaskDescription(this)
+            notCompatibleWithConfigurationCache("")
         }
 
     private fun createAggregateTask(): TaskProvider<Task> =
