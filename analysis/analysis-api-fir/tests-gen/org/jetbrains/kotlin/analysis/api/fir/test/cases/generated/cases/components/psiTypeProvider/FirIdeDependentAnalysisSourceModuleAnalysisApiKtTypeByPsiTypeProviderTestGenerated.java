@@ -100,6 +100,18 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiKtTypeByPsiTypeProvid
   }
 
   @Test
+  @TestMetadata("typeAnnotation.kt")
+  public void testTypeAnnotation() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAnnotationOnString.kt")
+  public void testTypeAnnotationOnString() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeAnnotationOnString.kt");
+  }
+
+  @Test
   @TestMetadata("typeParameterWithKotlinUseSite.kt")
   public void testTypeParameterWithKotlinUseSite() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeParameterWithKotlinUseSite.kt");
