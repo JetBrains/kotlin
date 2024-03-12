@@ -106,15 +106,15 @@ class JvmAbiOutputExtension(
                             override fun map(internalName: String): String =
                                 internalName.also { innerClassesToKeep.add(it) }
                         })
+                        val parsingOptions = if (removeDebugInfo) ClassReader.SKIP_DEBUG else 0
                         ClassReader(outputFile.asByteArray()).accept(object : ClassVisitor(Opcodes.API_VERSION, remapper) {
                             private val keptFields = mutableListOf<FieldNode>()
                             private val keptMethods = mutableListOf<MethodNode>()
                             private val innerClassInfos = mutableMapOf<String, InnerClassInfo>()
 
                             override fun visitSource(source: String?, debug: String?) {
-                                sourceFile = source.takeIf { !removeDebugInfo }
-                                sourceMap = debug.takeIf { !removeDebugInfo && !prune }
-                                    ?.let(SMAPParser::parseOrNull)
+                                sourceFile = source
+                                sourceMap = debug.takeIf { !prune }?.let(SMAPParser::parseOrNull)
                                     ?.let { SourceMapCopier(SourceMapper(sourceFile, it), it) }
                             }
 
@@ -147,13 +147,10 @@ class JvmAbiOutputExtension(
                                     keptMethods += it
                                 }
 
-                                return when {
-                                    info != AbiMethodInfo.KEEP && access and (Opcodes.ACC_NATIVE or Opcodes.ACC_ABSTRACT) == 0 ->
-                                        BodyStrippingMethodVisitor(node)
-                                    removeDebugInfo ->
-                                        DebugInfoRemovingMethodVisitor(node)
-                                    else -> node
-                                }
+                                return if (info != AbiMethodInfo.KEEP && access and (Opcodes.ACC_NATIVE or Opcodes.ACC_ABSTRACT) == 0)
+                                    BodyStrippingMethodVisitor(node)
+                                else
+                                    node
                             }
 
                             // Remove inner classes which are not present in the abi jar.
@@ -220,7 +217,7 @@ class JvmAbiOutputExtension(
 
                                 super.visitEnd()
                             }
-                        }, 0)
+                        }, parsingOptions)
 
                         SimpleOutputBinaryFile(outputFile.sourceFiles, outputFile.relativePath, writer.toByteArray())
                     }
@@ -266,13 +263,7 @@ private class BodyStrippingMethodVisitor(visitor: MethodVisitor) : MethodVisitor
             visitMaxs(0, 0)
             visitEnd()
         }
-        // Only instructions and locals follow after `visitCode`.
+        // Only instructions, frames, try-catch, and locals follow after `visitCode`.
         mv = null
     }
-}
-
-private class DebugInfoRemovingMethodVisitor(visitor: MethodVisitor) : MethodVisitor(Opcodes.API_VERSION, visitor) {
-    override fun visitLineNumber(line: Int, start: Label?) {}
-
-    override fun visitLocalVariable(name: String?, descriptor: String?, signature: String?, start: Label?, end: Label?, index: Int) {}
 }
