@@ -81,7 +81,6 @@ class FunctionInlining(
     private val innerClassesSupport: InnerClassesSupport? = null,
     private val insertAdditionalImplicitCasts: Boolean = false,
     private val regenerateInlinedAnonymousObjects: Boolean = false,
-    private val inlineArgumentsWithOriginalOffset: Boolean = false,
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
     private var containerScope: ScopeWithIr? = null
     private val elementsWithLocationToPatch = hashSetOf<IrGetValue>()
@@ -412,8 +411,8 @@ class FunctionInlining(
                     is IrConstructor -> {
                         val classTypeParametersCount = inlinedFunction.parentAsClass.typeParameters.size
                         IrConstructorCallImpl.fromSymbolOwner(
-                            if (inlineArgumentsWithOriginalOffset) irFunctionReference.startOffset else irCall.startOffset,
-                            if (inlineArgumentsWithOriginalOffset) irFunctionReference.endOffset else irCall.endOffset,
+                            irFunctionReference.startOffset,
+                            irFunctionReference.endOffset,
                             functionReferenceReturnType,
                             inlinedFunction.symbol,
                             classTypeParametersCount,
@@ -422,8 +421,8 @@ class FunctionInlining(
                     }
                     is IrSimpleFunction ->
                         IrCallImpl(
-                            if (inlineArgumentsWithOriginalOffset) irFunctionReference.startOffset else irCall.startOffset,
-                            if (inlineArgumentsWithOriginalOffset) irFunctionReference.endOffset else irCall.endOffset,
+                            irFunctionReference.startOffset,
+                            irFunctionReference.endOffset,
                             functionReferenceReturnType,
                             inlinedFunction.symbol,
                             inlinedFunction.typeParameters.size,
