@@ -422,7 +422,7 @@ object BuilderConfigurator : AbstractFirBuilderConfigurator<FirTreeBuilder>(FirT
 
         configureFieldInAllLeafBuilders(
             field = "resolvePhase",
-            fieldPredicate = { it.defaultValueInImplementation == null }
+            fieldPredicate = { it.implementationDefaultStrategy !is AbstractField.ImplementationDefaultStrategy.DefaultValue }
         ) {
             default(it, "FirResolvePhase.RAW_FIR")
         }

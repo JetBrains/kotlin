@@ -9,11 +9,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.printer.VariableKind
 import org.jetbrains.kotlin.generators.tree.printer.printBlock
 import org.jetbrains.kotlin.generators.tree.printer.printPropertyDeclaration
-import org.jetbrains.kotlin.generators.tree.printer.printKDoc
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
-import java.lang.reflect.Modifier.isVolatile
 
 abstract class AbstractFieldPrinter<Field : AbstractField<*>>(
     private val printer: SmartPrinter,
@@ -42,7 +39,9 @@ abstract class AbstractFieldPrinter<Field : AbstractField<*>>(
         modality: Modality? = null,
     ) {
         printer.run {
-            val defaultValue = if (inImplementation) field.defaultValueInImplementation else null
+            val defaultValue = if (inImplementation)
+                field.implementationDefaultStrategy as? AbstractField.ImplementationDefaultStrategy.DefaultValue
+            else null
             printPropertyDeclaration(
                 name = field.name,
                 type = actualTypeOfField(field),
@@ -51,19 +50,19 @@ abstract class AbstractFieldPrinter<Field : AbstractField<*>>(
                 visibility = field.visibility,
                 modality = modality,
                 override = override,
-                isLateinit = (inImplementation || field.isFinal) && field.isLateinit,
+                isLateinit = (inImplementation || field.isFinal) && field.implementationDefaultStrategy is AbstractField.ImplementationDefaultStrategy.Lateinit,
                 isVolatile = (inImplementation || field.isFinal) && field.isVolatile,
                 optInAnnotation = field.optInAnnotation,
                 printOptInWrapped = wrapOptInAnnotations && defaultValue != null,
                 deprecation = field.deprecation,
                 kDoc = field.kDoc.takeIf { !inImplementation },
-                initializer = defaultValue.takeUnless { field.withGetter }
+                initializer = defaultValue?.takeUnless { it.withGetter }?.value
             )
             println()
 
-            if (defaultValue != null && field.withGetter) {
+            if (defaultValue != null && defaultValue.withGetter) {
                 withIndent {
-                    println("get() = $defaultValue")
+                    println("get() = ${defaultValue.value}")
                 }
             }
 

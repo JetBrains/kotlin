@@ -300,7 +300,7 @@ internal class ImplementationPrinter(
                 val newValue = "new$capitalizedFieldName"
                 generateReplace(field, forceNullable = field.useNullableForReplace) {
                     when {
-                        field.withGetter -> {}
+                        (field.implementationDefaultStrategy as? AbstractField.ImplementationDefaultStrategy.DefaultValue)?.withGetter == true -> {}
 
                         field.origin is FieldList && !field.isMutableOrEmptyList -> {
                             println("${field.name}.clear()")

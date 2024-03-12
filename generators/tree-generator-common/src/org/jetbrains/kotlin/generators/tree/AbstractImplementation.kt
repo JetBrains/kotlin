@@ -75,7 +75,7 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
     }
 
     private fun withDefault(field: Field) =
-        !field.isFinal && (field.defaultValueInImplementation != null || field.isLateinit)
+        !field.isFinal && field.implementationDefaultStrategy !is AbstractField.ImplementationDefaultStrategy.Required
 
     val fieldsInConstructor by lazy { allFields.filterNot(::withDefault) }
 
