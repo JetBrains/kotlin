@@ -1402,6 +1402,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("superQualifierTypeArgsInDelegatedConstructorCall.kt")
+    public void testSuperQualifierTypeArgsInDelegatedConstructorCall() {
+      runTest("compiler/testData/diagnostics/tests/superQualifierTypeArgsInDelegatedConstructorCall.kt");
+    }
+
+    @Test
     @TestMetadata("SupertypeListChecks.kt")
     public void testSupertypeListChecks() {
       runTest("compiler/testData/diagnostics/tests/SupertypeListChecks.kt");

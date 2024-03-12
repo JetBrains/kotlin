@@ -601,6 +601,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("superQualifierTypeArgsInDelegatedConstructorInnerClass.kt")
+  public void testSuperQualifierTypeArgsInDelegatedConstructorInnerClass() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/superQualifierTypeArgsInDelegatedConstructorInnerClass.kt");
+  }
+
+  @Test
+  @TestMetadata("superQualifierTypeArgsInDelegatedConstructorLocalClass.kt")
+  public void testSuperQualifierTypeArgsInDelegatedConstructorLocalClass() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/superQualifierTypeArgsInDelegatedConstructorLocalClass.kt");
+  }
+
+  @Test
   @TestMetadata("superTypes.kt")
   public void testSuperTypes() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/superTypes.kt");
