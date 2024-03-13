@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.copy
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
-import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.plugin.*
@@ -278,6 +276,8 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         val hasTypeParams = owner.typeParameterSymbols.isNotEmpty()
         val serializerKind = if (hasTypeParams) ClassKind.CLASS else ClassKind.OBJECT
         val serializerFirClass = createNestedClass(owner, SerialEntityNames.SERIALIZER_CLASS_NAME, SerializationPluginKey, serializerKind) {
+            modality = Modality.FINAL
+
             for (parameter in owner.typeParameterSymbols) {
                 typeParameter(parameter.name)
             }
@@ -292,11 +292,10 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                     isNullable = false
                 )
             }
+        }.apply {
+            excludeFromJsExport()
+            markAsDeprecatedHidden()
         }
-        // TODO: add deprecate hidden
-        // serializerFirClass.replaceAnnotations(listOf(Annotations.create(listOf(KSerializerDescriptorResolver.createDeprecatedHiddenAnnotation(thisDescriptor.module)))))
-        serializerFirClass.excludeFromJsExport()
-
         return serializerFirClass.symbol
     }
 

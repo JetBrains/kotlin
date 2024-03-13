@@ -36,7 +36,7 @@ FILE: privatePropertiesSerialization.kt
 
         }
 
-        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Parent>| {
+        @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Parent>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Parent|): R|kotlin/Unit|
 
             public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Parent|
@@ -67,7 +67,7 @@ FILE: privatePropertiesSerialization.kt
 
         }
 
-        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Derived>| {
+        @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Derived>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Derived|): R|kotlin/Unit|
 
             public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Derived|

@@ -37,7 +37,7 @@ FILE: metaSerializable.kt
 
         }
 
-        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Project1>| {
+        @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Project1>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Project1|): R|kotlin/Unit|
 
             public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Project1|
@@ -74,7 +74,7 @@ FILE: metaSerializable.kt
 
         }
 
-        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Project2>| {
+        @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Project2>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Project2|): R|kotlin/Unit|
 
             public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Project2|
@@ -108,7 +108,7 @@ FILE: metaSerializable.kt
 
         }
 
-        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Wrapper>| {
+        @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Wrapper>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Wrapper|): R|kotlin/Unit|
 
             public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Wrapper|
@@ -145,7 +145,7 @@ FILE: metaSerializable.kt
 
         }
 
-        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Project3>| {
+        @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Project3>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Project3|): R|kotlin/Unit|
 
             public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Project3|
@@ -205,7 +205,7 @@ FILE: metaSerializable.kt
 
             }
 
-            public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<TestSealed.A>| {
+            @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<TestSealed.A>| {
                 public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|TestSealed.A|): R|kotlin/Unit|
 
                 public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|TestSealed.A|
@@ -240,7 +240,7 @@ FILE: metaSerializable.kt
 
             }
 
-            public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<TestSealed.B>| {
+            @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<TestSealed.B>| {
                 public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|TestSealed.B|): R|kotlin/Unit|
 
                 public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|TestSealed.B|
@@ -290,7 +290,7 @@ FILE: metaSerializable.kt
 
             }
 
-            public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<TestAbstract.A>| {
+            @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<TestAbstract.A>| {
                 public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|TestAbstract.A|): R|kotlin/Unit|
 
                 public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|TestAbstract.A|
@@ -325,7 +325,7 @@ FILE: metaSerializable.kt
 
             }
 
-            public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<TestAbstract.B>| {
+            @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<TestAbstract.B>| {
                 public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|TestAbstract.B|): R|kotlin/Unit|
 
                 public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|TestAbstract.B|
