@@ -178,6 +178,8 @@ internal class FirInvokeResolveTowerExtension(
                     invokeReceiverCandidate, info, invokeBuiltinExtensionMode, extensionReceiverExpression
                 ) ?: continue
 
+            if (invokeReceiverExpression.resolvedType is ConeErrorType) continue
+
             val invokeFunctionInfo =
                 info.copy(
                     explicitReceiver = invokeReceiverExpression,

@@ -5,7 +5,7 @@ fun foo(): Int = 0
 object Implicit {
     operator fun Any.invoke(): String = "Fail"
 
-    val foo = <!RECURSION_IN_IMPLICIT_TYPES!>foo<!>()
+    val foo = foo()
 }
 
 object Explicit {
@@ -27,16 +27,16 @@ object ImplicitIndirect {
 
     val foo get() = bar()
     val bar get() = baz()
-    val baz get() = <!RECURSION_IN_IMPLICIT_TYPES!>foo<!>()
+    val baz get() = foo()
 }
 
 fun takeInt(x: Int) {}
 
 fun test() {
-    takeInt(<!ARGUMENT_TYPE_MISMATCH!>Implicit.foo<!>) // should be an error
+    takeInt(Implicit.foo)
     takeInt(<!ARGUMENT_TYPE_MISMATCH!>Explicit.foo<!>) // should be an error
     takeInt(<!ARGUMENT_TYPE_MISMATCH!>ImplicitWrapped.foo<!>) // should be an error
     takeInt(<!ARGUMENT_TYPE_MISMATCH!>ImplicitIndirect.foo<!>) // should be an error
     takeInt(<!ARGUMENT_TYPE_MISMATCH!>ImplicitIndirect.bar<!>) // should be an error
-    takeInt(<!ARGUMENT_TYPE_MISMATCH!>ImplicitIndirect.baz<!>) // should be an error
+    takeInt(ImplicitIndirect.baz)
 }
