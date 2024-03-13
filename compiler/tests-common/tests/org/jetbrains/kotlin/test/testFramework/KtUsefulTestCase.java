@@ -42,10 +42,8 @@ import org.opentest4j.FileInfo;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -856,24 +854,6 @@ public abstract class KtUsefulTestCase extends TestCase {
             throwableName = thr.getClass().getName();
         }
         assertNull(throwableName);
-    }
-
-    protected boolean annotatedWith(@NotNull Class<? extends Annotation> annotationClass) {
-        Class<?> aClass = getClass();
-        String methodName = "test" + getTestName(false);
-        boolean methodChecked = false;
-        while (aClass != null && aClass != Object.class) {
-            if (aClass.getAnnotation(annotationClass) != null) return true;
-            if (!methodChecked) {
-                Method method = ReflectionUtil.getDeclaredMethod(aClass, methodName);
-                if (method != null) {
-                    if (method.getAnnotation(annotationClass) != null) return true;
-                    methodChecked = true;
-                }
-            }
-            aClass = aClass.getSuperclass();
-        }
-        return false;
     }
 
     @NotNull
