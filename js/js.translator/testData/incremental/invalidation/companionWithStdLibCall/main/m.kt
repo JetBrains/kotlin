@@ -5,7 +5,7 @@ fun box(stepId: Int): String {
         1 -> if (x != 32) return "Fail, x == $x"
         2 -> if (x != 0) return "Fail, x == $x"
         3 -> if (x != 0) return "Fail, x == $x"
-        else -> return "Unkown"
+        else -> return "Unknown"
     }
     return "OK"
 }
