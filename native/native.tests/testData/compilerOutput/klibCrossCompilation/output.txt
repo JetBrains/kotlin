@@ -1,11 +1,14 @@
-error: compilation failed: Target ios_arm64 is not available on the linux_x64 host
+error: compilation failed: Key ios_arm64 is missing in the map.
 
  * Source files: hello.kt
  * Compiler version: $VERSION$
  * Output kind: LIBRARY
 
-exception: java.lang.IllegalStateException: Target ios_arm64 is not available on the linux_x64 host
-	at org.jetbrains.kotlin.backend.konan.KonanConfig.<init>(KonanConfig.kt:276)
+exception: java.util.NoSuchElementException: Key ios_arm64 is missing in the map.
+	at kotlin.collections.MapsKt__MapWithDefaultKt.getOrImplicitDefaultNullable(MapWithDefault.kt:24)
+	at kotlin.collections.MapsKt__MapsKt.getValue(Maps.kt:360)
+	at org.jetbrains.kotlin.konan.target.PlatformManager.platform(Platform.kt:50)
+	at org.jetbrains.kotlin.backend.konan.KonanConfig.<init>(KonanConfig.kt:281)
 	at org.jetbrains.kotlin.backend.konan.KonanDriver.run(KonanDriver.kt:90)
 	at org.jetbrains.kotlin.cli.bc.K2Native.runKonanDriver(K2Native.kt:152)
 	at org.jetbrains.kotlin.cli.bc.K2Native.doExecute(K2Native.kt:69)
@@ -60,21 +63,6 @@ exception: java.lang.IllegalStateException: Target ios_arm64 is not available on
 	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
 	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService$ExclusiveTask.compute(ForkJoinPoolHierarchicalTestExecutorService.java:202)
 	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService.invokeAll(ForkJoinPoolHierarchicalTestExecutorService.java:146)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
-	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService$ExclusiveTask.compute(ForkJoinPoolHierarchicalTestExecutorService.java:202)
-	at java.util.concurrent.RecursiveAction.exec(RecursiveAction.java:189)
-	at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:289)
-	at java.util.concurrent.ForkJoinTask.doJoin(ForkJoinTask.java:389)
-	at java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:719)
-	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService.joinConcurrentTasksInReverseOrderToEnableWorkStealing(ForkJoinPoolHierarchicalTestExecutorService.java:179)
-	at org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService.invokeAll(ForkJoinPoolHierarchicalTestExecutorService.java:153)
 	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
 	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
 	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)

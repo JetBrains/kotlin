@@ -274,8 +274,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
     init {
-        if (!platformManager.isEnabled(target)) {
-            error("Target ${target.visibleName} is not available on the ${HostManager.hostName} host")
+        // NB: producing LIBRARY is enabled on any combination of hosts/targets
+        if (produce != CompilerOutputKind.LIBRARY && !platformManager.isEnabled(target)) {
+            error("Target ${target.visibleName} is not available for output kind '${produce}' on the ${HostManager.hostName} host")
         }
     }
 
