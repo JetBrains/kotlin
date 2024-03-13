@@ -211,7 +211,7 @@ internal fun AbstractNativeSimpleTest.generateTestCaseWithSingleModule(
     freeCompilerArgs: TestCompilerArgs = TestCompilerArgs.EMPTY,
     extras: TestCase.Extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT),
 ): TestCase {
-    val moduleName: String = moduleDir?.name ?: LAUNCHER_MODULE_NAME
+    val moduleName: String = moduleDir?.name?.removeSuffix(".kt") ?: LAUNCHER_MODULE_NAME
     val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
 
     moduleDir?.walkTopDown()
@@ -333,8 +333,8 @@ private fun AbstractNativeSimpleTest.compileToExecutableInOneStage(
     return compilation.result
 }
 
-internal fun getLibraryArtifact(testCase: TestCase, outputDir: File) =
-    TestCompilationArtifact.KLIB(outputDir.resolve(testCase.modules.first().name + ".klib"))
+internal fun getLibraryArtifact(testCase: TestCase, outputDir: File, packed: Boolean = true) =
+    TestCompilationArtifact.KLIB(outputDir.resolve(testCase.modules.first().name + if (packed) ".klib" else ""))
 
 private fun AbstractNativeSimpleTest.getExecutableArtifact() =
     TestCompilationArtifact.Executable(buildDir.resolve("app." + testRunSettings.get<KotlinNativeTargets>().testTarget.family.exeSuffix))
