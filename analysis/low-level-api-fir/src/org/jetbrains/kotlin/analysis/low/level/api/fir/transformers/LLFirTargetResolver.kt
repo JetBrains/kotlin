@@ -77,7 +77,7 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 internal sealed class LLFirTargetResolver(
     protected val resolveTarget: LLFirResolveTarget,
     val resolverPhase: FirResolvePhase,
-    private val isJumpingPhase: Boolean = false,
+    private val requiresJumpingLock: Boolean = false,
 ) : LLFirResolveTargetVisitor {
     val resolveTargetSession: LLFirSession get() = resolveTarget.session
     val resolveTargetScopeSession: ScopeSession get() = resolveTargetSession.getScopeSession()
@@ -286,7 +286,7 @@ internal sealed class LLFirTargetResolver(
 
         if (doResolveWithoutLock(target)) return
 
-        if (isJumpingPhase) {
+        if (requiresJumpingLock) {
             checkThatResolvedAtLeastToPreviousPhase(target)
             lockProvider.withJumpingLock(
                 target,
@@ -324,11 +324,11 @@ internal sealed class LLFirTargetResolver(
      *
      * Allowed only for non-jumping phases.
      *
-     * @see isJumpingPhase
+     * @see requiresJumpingLock
      */
     protected inline fun performCustomResolveUnderLock(target: FirElementWithResolveState, crossinline action: () -> Unit) {
         checkThatResolvedAtLeastToPreviousPhase(target)
-        requireWithAttachment(!isJumpingPhase, { "This function cannot be called for jumping phase" }) {
+        requireWithAttachment(!requiresJumpingLock, { "This function cannot be called with enabled jumping lock" }) {
             withFirEntry("target", target)
         }
 

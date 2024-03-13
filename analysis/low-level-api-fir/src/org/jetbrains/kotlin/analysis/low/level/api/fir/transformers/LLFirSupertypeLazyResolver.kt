@@ -69,7 +69,7 @@ private class LLFirSuperTypeTargetResolver(
     target: LLFirResolveTarget,
     private val supertypeComputationSession: LLFirSupertypeComputationSession = LLFirSupertypeComputationSession(target.session),
     private val visitedElements: MutableSet<FirElementWithResolveState> = hashSetOf(),
-) : LLFirTargetResolver(target, FirResolvePhase.SUPER_TYPES, isJumpingPhase = false) {
+) : LLFirTargetResolver(target, FirResolvePhase.SUPER_TYPES) {
     private val supertypeResolver = object : FirSupertypeResolverVisitor(
         session = resolveTargetSession,
         supertypeComputationSession = supertypeComputationSession,

@@ -97,7 +97,7 @@ private class LLFirStatusTargetResolver(
     target: LLFirResolveTarget,
     private val statusComputationSession: LLStatusComputationSession = LLStatusComputationSession(target.session),
     private val resolveMode: StatusResolveMode,
-) : LLFirTargetResolver(target, FirResolvePhase.STATUS, isJumpingPhase = false) {
+) : LLFirTargetResolver(target, FirResolvePhase.STATUS) {
     private val transformer = Transformer(resolveTargetSession, resolveTargetScopeSession)
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)

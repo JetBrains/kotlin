@@ -19,8 +19,8 @@ internal sealed class LLFirAbstractBodyTargetResolver(
     resolveTarget: LLFirResolveTarget,
     resolvePhase: FirResolvePhase,
     protected val llImplicitBodyResolveComputationSession: LLImplicitBodyResolveComputationSession = LLImplicitBodyResolveComputationSession(),
-    isJumpingPhase: Boolean = false,
-) : LLFirTargetResolver(resolveTarget, resolvePhase, isJumpingPhase) {
+    requiresJumpingLock: Boolean = false,
+) : LLFirTargetResolver(resolveTarget, resolvePhase, requiresJumpingLock) {
     protected fun createReturnTypeCalculator(): LLFirReturnTypeCalculatorWithJump = LLFirReturnTypeCalculatorWithJump(
         resolveTargetScopeSession,
         llImplicitBodyResolveComputationSession,
