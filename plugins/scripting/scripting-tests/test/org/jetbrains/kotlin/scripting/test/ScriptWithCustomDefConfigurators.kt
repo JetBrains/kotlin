@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.StringDirective
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
@@ -30,9 +31,15 @@ class ScriptWithCustomDefEnvironmentConfigurator(testServices: TestServices) : E
         configuration.addJvmClasspathRoots(testScriptDefinitionClasspath)
         val dirSplitRegex = Regex(" *, *")
         ScriptingTestDirectives.directivesToPassViaEnvironment.forEach { (directive, envName) ->
-            module.directives[directive].flatMap { it.split(dirSplitRegex).filter { it.isNotEmpty() } }.let {
-                if (it.isNotEmpty()) {
-                    configuration.put(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION, envName, it)
+            if (directive is StringDirective) {
+                module.directives[directive].flatMap { it.split(dirSplitRegex).filter { it.isNotEmpty() } }.let {
+                    if (it.isNotEmpty()) {
+                        configuration.put(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION, envName, it)
+                    }
+                }
+            } else {
+                if (directive in module.directives) {
+                    configuration.put(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION, envName, "true")
                 }
             }
         }
