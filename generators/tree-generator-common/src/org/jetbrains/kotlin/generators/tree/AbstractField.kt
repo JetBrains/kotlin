@@ -47,7 +47,7 @@ abstract class AbstractField<Field : AbstractField<Field>> {
     open val containsElement: Boolean
         get() = typeRef is ElementOrRef<*> || this is ListField && baseType is ElementOrRef<*>
 
-    open var implementationDefaultStrategy: ImplementationDefaultStrategy = ImplementationDefaultStrategy.Required
+    open var implementationDefaultStrategy: ImplementationDefaultStrategy? = null
     abstract var defaultValueInBuilder: String?
 
     abstract var customSetter: String?

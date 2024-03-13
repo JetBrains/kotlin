@@ -55,7 +55,7 @@ class IrFunctionWithLateBindingImpl @IrImplementationDetail constructor(
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor
-        get() = symbol.descriptor
+        get() = _symbol?.descriptor ?: this.toIrBasedDescriptor()
 
     override lateinit var returnType: IrType
 

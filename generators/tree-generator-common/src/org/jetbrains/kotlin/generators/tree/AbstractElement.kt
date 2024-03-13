@@ -172,10 +172,6 @@ abstract class AbstractElement<Element, Field, Implementation>(
      */
     val additionalImports = mutableListOf<Importable>()
 
-    final override fun get(fieldName: String): Field? {
-        return allFields.firstOrNull { it.name == fieldName }
-    }
-
     @Suppress("UNCHECKED_CAST")
     final override fun copy(nullable: Boolean) =
         ElementRef(this as Element, args, nullable)

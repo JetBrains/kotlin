@@ -36,7 +36,7 @@ internal class ImplementationPrinter(printer: SmartPrinter) : AbstractImplementa
             implementation.element.elementAncestorsAndSelfDepthFirst().any { it == IrTree.symbolOwner } &&
             implementation.bindOwnedSymbol
         ) {
-            val symbolField = implementation["symbol"]
+            val symbolField = implementation.getOrNull("symbol")
             if (symbolField != null) {
                 println()
                 print("init")

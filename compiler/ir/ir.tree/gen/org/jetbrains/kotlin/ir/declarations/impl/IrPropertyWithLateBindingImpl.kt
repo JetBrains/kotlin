@@ -53,7 +53,7 @@ class IrPropertyWithLateBindingImpl @IrImplementationDetail constructor(
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: PropertyDescriptor
-        get() = symbol.descriptor
+        get() = _symbol?.descriptor ?: this.toIrBasedDescriptor()
 
     override val symbol: IrPropertySymbol
         get() = _symbol ?: error("$this has not acquired a symbol yet")

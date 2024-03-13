@@ -12,7 +12,18 @@ interface FieldContainer<out Field : AbstractField<*>> {
      */
     val allFields: List<Field>
 
-    operator fun get(fieldName: String): Field?
+    fun getOrNull(fieldName: String): Field? {
+        return allFields.firstOrNull { it.name == fieldName }
+    }
+
+    operator fun get(fieldName: String): Field {
+        val result = getOrNull(fieldName)
+        requireNotNull(result) {
+            "Field \"$fieldName\" not found in fields of $this\nExisting fields:\n" +
+                    allFields.joinToString(separator = "\n  ", prefix = "  ") { it.name }
+        }
+        return result
+    }
 
     val hasAcceptMethod: Boolean
         get() = false

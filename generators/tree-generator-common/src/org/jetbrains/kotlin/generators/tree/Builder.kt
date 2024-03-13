@@ -15,11 +15,6 @@ sealed class Builder<BuilderField, Element> : FieldContainer<BuilderField>, Type
 
     abstract val uselessFields: List<BuilderField>
 
-    override fun get(fieldName: String): BuilderField {
-        return allFields.firstOrNull { it.name == fieldName }
-            ?: throw IllegalArgumentException("Builder $typeName doesn't contains field $fieldName")
-    }
-
     private val fieldsFromParentIndex: Map<String, Boolean> by lazy {
         mutableMapOf<String, Boolean>().apply {
             for (field in allFields + uselessFields) {

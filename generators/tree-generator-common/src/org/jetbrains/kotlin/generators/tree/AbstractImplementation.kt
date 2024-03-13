@@ -70,10 +70,6 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
 
     var constructorParameterOrderOverride: List<String>? = null
 
-    override fun get(fieldName: String): Field? {
-        return allFields.firstOrNull { it.name == fieldName }
-    }
-
     private fun withDefault(field: Field) =
         !field.isFinal && field.implementationDefaultStrategy !is AbstractField.ImplementationDefaultStrategy.Required
 
