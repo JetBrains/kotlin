@@ -39473,9 +39473,39 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("importFromTypeAliasExtendedInvokableObject.kt")
+      public void testImportFromTypeAliasExtendedInvokableObject() {
+        runTest("compiler/testData/diagnostics/tests/typealias/importFromTypeAliasExtendedInvokableObject.kt");
+      }
+
+      @Test
+      @TestMetadata("importFromTypeAliasFunctionReference.kt")
+      public void testImportFromTypeAliasFunctionReference() {
+        runTest("compiler/testData/diagnostics/tests/typealias/importFromTypeAliasFunctionReference.kt");
+      }
+
+      @Test
+      @TestMetadata("importFromTypeAliasInvokableObject.kt")
+      public void testImportFromTypeAliasInvokableObject() {
+        runTest("compiler/testData/diagnostics/tests/typealias/importFromTypeAliasInvokableObject.kt");
+      }
+
+      @Test
+      @TestMetadata("importFromTypeAliasNestedObjectFunMember.kt")
+      public void testImportFromTypeAliasNestedObjectFunMember() {
+        runTest("compiler/testData/diagnostics/tests/typealias/importFromTypeAliasNestedObjectFunMember.kt");
+      }
+
+      @Test
       @TestMetadata("importFromTypeAliasObject.kt")
       public void testImportFromTypeAliasObject() {
         runTest("compiler/testData/diagnostics/tests/typealias/importFromTypeAliasObject.kt");
+      }
+
+      @Test
+      @TestMetadata("importFromTypeAliasObjectProperties.kt")
+      public void testImportFromTypeAliasObjectProperties() {
+        runTest("compiler/testData/diagnostics/tests/typealias/importFromTypeAliasObjectProperties.kt");
       }
 
       @Test
