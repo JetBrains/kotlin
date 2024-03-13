@@ -26,10 +26,10 @@ fun foo(ll: java.util.LinkedList<String>, al: ArrayList<String>, ad: ArrayDeque<
     ad.addFirst("")
     ad.addLast("")
     ad.<!UNRESOLVED_REFERENCE!>getFirst<!>()
-    ad.<!DEPRECATION_ERROR!>first<!>
+    ad.<!FUNCTION_CALL_EXPECTED!>first<!>
     ad.first()
     ad.<!UNRESOLVED_REFERENCE!>getLast<!>()
-    ad.<!DEPRECATION_ERROR!>last<!>
+    ad.<!FUNCTION_CALL_EXPECTED!>last<!>
     ad.last()
     ad.<!DEBUG_INFO_CALL("fqName: kotlin.collections.ArrayDeque.removeFirst; typeCall: function")!>removeFirst()<!>
     ad.<!DEBUG_INFO_CALL("fqName: kotlin.collections.ArrayDeque.removeLast; typeCall: function")!>removeLast()<!>

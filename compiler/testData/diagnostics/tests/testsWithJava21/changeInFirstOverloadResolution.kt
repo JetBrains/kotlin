@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-65235
 
 class Scope {
@@ -10,6 +11,6 @@ fun somewhere() {
     val x: String = listOf("a").first()
 
     scope {
-        val y: String = <!TYPE_MISMATCH!>listOf("a").<!TYPE_MISMATCH!><!DEPRECATION_ERROR!>first<!>()<!><!>
+        val y: String = listOf("a").first()
     }
 }
