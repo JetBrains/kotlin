@@ -141,8 +141,25 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
             containingDeclarationSymbol !is FirSyntheticFunctionSymbol &&
             typeParameter.shouldBeFlexible(session.typeContext)
         ) {
-            val notNullType = type.withNullability(ConeNullability.NOT_NULL, session.typeContext) as ConeSimpleKotlinType
-            ConeFlexibleType(notNullType, notNullType.withNullability(ConeNullability.NULLABLE, session.typeContext))
+            when (type) {
+                is ConeSimpleKotlinType -> ConeFlexibleType(
+                    type.withNullability(ConeNullability.NOT_NULL, session.typeContext),
+                    type.withNullability(ConeNullability.NULLABLE, session.typeContext)
+                )
+                /*
+                 * ConeFlexibleTypes have to be handled here
+                 * at least because MapTypeArguments special-cases ConeRawTypes without explicit arguments (KT-54666)
+                 * which allows them to get past the NoExplicitArguments optimization
+                 * in CreateFreshTypeVariableSubstitutorStage.check
+                 *
+                 * (it might be safe to just return the same flexible type without explicitly enforcing flexibility,
+                 * but better safe than sorry when dealing with raw types)
+                 */
+                is ConeFlexibleType -> ConeFlexibleType(
+                    type.lowerBound.withNullability(ConeNullability.NOT_NULL, session.typeContext),
+                    type.upperBound.withNullability(ConeNullability.NULLABLE, session.typeContext)
+                )
+            }
         } else {
             type
         }
