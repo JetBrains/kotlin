@@ -1,5 +1,5 @@
 fun box(): String {
-    return <!INAPPLICABLE_CANDIDATE!>someFunction<!><SomeEnum>()
+    return <!INAPPLICABLE_CANDIDATE, UPPER_BOUND_VIOLATED!>someFunction<!><SomeEnum>()
 }
 
 interface SomeInterface <V> {
