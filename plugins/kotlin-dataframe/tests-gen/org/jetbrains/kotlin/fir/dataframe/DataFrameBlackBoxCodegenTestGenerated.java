@@ -27,6 +27,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("dataRowSchemaApi.kt")
+  public void testDataRowSchemaApi() {
+    runTest("testData/box/dataRowSchemaApi.kt");
+  }
+
+  @Test
   @TestMetadata("diff.kt")
   public void testDiff() {
     runTest("testData/box/diff.kt");

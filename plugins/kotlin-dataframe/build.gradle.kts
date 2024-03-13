@@ -69,6 +69,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
     kotlinOptions {
         freeCompilerArgs += listOf("-Xfriend-paths=${project(":core").projectDir}")
         freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi"
+        freeCompilerArgs += "-Xcontext-receivers"
     }
 }
 

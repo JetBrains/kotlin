@@ -93,6 +93,7 @@ class FirDataFrameExtensionRegistrar(
             CandidateInterceptor(path, it, generator::nextName)
         }
         +::TokenGenerator
+        +::DataRowSchemaSupertype
     }
 }
 
