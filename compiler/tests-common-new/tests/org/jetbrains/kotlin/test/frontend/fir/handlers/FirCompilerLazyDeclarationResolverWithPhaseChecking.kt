@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.frontend.fir.handlers
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.isItAllowedToCallLazyResolveTo
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.symbols.FirLazyResolveContractViolationException
 
@@ -53,7 +54,7 @@ class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationRe
         // However, now we keep more strict invariant here,
         // because we don't want to hide some cases when transformers violate phase contract directly
         // but due to usage of already resolved stdlib classes we don't see it
-        if (requestedPhase >= currentPhase) {
+        if (!currentPhase.isItAllowedToCallLazyResolveTo(requestedPhase)) {
             exceptions += FirLazyResolveContractViolationException(
                 currentPhase = currentPhase,
                 requestedPhase = requestedPhase,

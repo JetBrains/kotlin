@@ -46,6 +46,7 @@ package org.jetbrains.kotlin.fir.declarations
  * 2. The compiler **must not request and cannot rely on any information from the higher phases**.
  *   For example, during the [STATUS] phase, we cannot access information regarding implicit types
  *   as they will only be calculated during the [IMPLICIT_TYPES_BODY_RESOLVE] phase.
+ *   See [isItAllowedToCallLazyResolveTo] as a reference.
  *
  * 3. The compiler **can request and rely on the information from the current phase only during *jumping phases***.
  *   For example, during the [TYPES] phase,
@@ -227,3 +228,28 @@ val FirResolvePhase.isBodyResolve: Boolean
         FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> true
         else -> false
     }
+
+/**
+ * See [FirResolvePhase] KDoc for more details about resolution contacts.
+ *
+ * @param this The current phase
+ * @param requestedPhase The requested phase
+ *
+ * @see FirResolvePhase
+ * @see org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
+ * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+ */
+fun FirResolvePhase.isItAllowedToCallLazyResolveTo(requestedPhase: FirResolvePhase): Boolean = when {
+    // It is fine to call lazy resolution for all phases less than our
+    this > requestedPhase -> true
+
+    // It is legal only in specific cases
+    this == requestedPhase -> when (requestedPhase) {
+        // The resolver can jump into Java initializer during this phase,
+        // which can jump into the Kotlin world again, and we cannot provide the initial context
+        FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> true
+        else -> false
+    }
+
+    else -> false
+}

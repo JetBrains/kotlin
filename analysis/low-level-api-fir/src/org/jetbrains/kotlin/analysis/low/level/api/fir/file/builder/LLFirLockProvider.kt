@@ -200,7 +200,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         actionUnderLock: () -> Unit,
         actionOnCycle: () -> Unit,
     ) {
-        checker.lazyResolveToPhaseInside(phase, isJumpingPhase = true) {
+        checker.lazyResolveToPhaseInside(phase) {
             target.withJumpingLockImpl(phase, actionUnderLock, actionOnCycle)
         }
     }
