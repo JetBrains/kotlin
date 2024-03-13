@@ -515,6 +515,13 @@ private val objectDeclarationLoweringPhase = makeIrModulePhase(
     prerequisite = setOf(enumClassCreateInitializerLoweringPhase, staticCallableReferenceLoweringPhase)
 )
 
+private val invokeStaticInitializersPhase = makeIrModulePhase(
+    ::InvokeStaticInitializersLowering,
+    name = "IntroduceStaticInitializersLowering",
+    description = "Invoke companion object's initializers from companion object in object constructor",
+    prerequisite = setOf(objectDeclarationLoweringPhase)
+)
+
 private val objectUsageLoweringPhase = makeIrModulePhase(
     ::ObjectUsageLowering,
     name = "ObjectUsageLowering",
@@ -754,6 +761,7 @@ val loweringList = listOf(
     builtInsLoweringPhase,
 
     virtualDispatchReceiverExtractionPhase,
+    invokeStaticInitializersPhase,
     staticMembersLoweringPhase,
     inlineObjectsWithPureInitializationLoweringPhase,
     validateIrAfterLowering,
