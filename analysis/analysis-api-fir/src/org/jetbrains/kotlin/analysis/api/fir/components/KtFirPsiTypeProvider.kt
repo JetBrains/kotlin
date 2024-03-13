@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.*
-import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
@@ -64,7 +63,6 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.updateArgumentModeFromAnnotations
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.text.StringCharacterIterator
 
 internal class KaFirPsiTypeProvider(
     override val analysisSession: KaFirSession,
@@ -348,10 +346,9 @@ private fun ConeKotlinType.asPsiTypeElement(
     if (canonicalSignature.contains("L<error>")) return null
     if (canonicalSignature.contains(SpecialNames.NO_NAME_PROVIDED.asString())) return null
 
-    val signature = StringCharacterIterator(canonicalSignature)
-    val javaType = SignatureParsing.parseTypeString(signature, StubBuildingVisitor.GUESSING_MAPPER)
-    val typeInfo = TypeInfo.fromString(javaType, false)
-    val typeText = TypeInfo.createTypeText(typeInfo) ?: return null
+    val signature = SignatureParsing.CharIterator(canonicalSignature)
+    val typeInfo = SignatureParsing.parseTypeStringToTypeInfo(signature, StubBuildingVisitor.GUESSING_PROVIDER)
+    val typeText = typeInfo.text() ?: return null
 
     return SyntheticTypeElement(useSitePosition, typeText)
 }

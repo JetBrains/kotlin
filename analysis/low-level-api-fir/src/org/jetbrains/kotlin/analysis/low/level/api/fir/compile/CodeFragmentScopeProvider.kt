@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFac
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.org.objectweb.asm.Type
-import java.text.StringCharacterIterator
 
 val FirSession.codeFragmentScopeProvider: CodeFragmentScopeProvider by FirSession.sessionComponentAccessor()
 
@@ -50,9 +49,9 @@ class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionCom
         val project = ktCodeFragment.project
         val javaElementSourceFactory = JavaElementSourceFactory.getInstance(project)
 
-        val signatureIterator = StringCharacterIterator(typeDescriptor)
-        val typeString = SignatureParsing.parseTypeString(signatureIterator, StubBuildingVisitor.GUESSING_MAPPER)
-        val psiType = ClsTypeElementImpl(ktCodeFragment, typeString, '\u0000').type
+        val signatureIterator = SignatureParsing.CharIterator(typeDescriptor)
+        val typeInfo = SignatureParsing.parseTypeStringToTypeInfo(signatureIterator, StubBuildingVisitor.GUESSING_PROVIDER)
+        val psiType = ClsTypeElementImpl(ktCodeFragment, typeInfo.text(), '\u0000').type
         val javaType = JavaTypeImpl.create(psiType, javaElementSourceFactory.createTypeSource(psiType))
 
         val javaTypeRef = buildJavaTypeRef {

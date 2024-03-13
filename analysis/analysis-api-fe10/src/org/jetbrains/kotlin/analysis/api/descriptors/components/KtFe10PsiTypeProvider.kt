@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiTypeElement
 import com.intellij.psi.SyntheticElement
-import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import java.lang.UnsupportedOperationException
-import java.text.StringCharacterIterator
 
 internal class KaFe10PsiTypeProvider(
     override val analysisSession: KaFe10Session
@@ -129,10 +127,9 @@ internal class KaFe10PsiTypeProvider(
         if (canonicalSignature.contains("L<error>")) return null
         if (canonicalSignature.contains(SpecialNames.NO_NAME_PROVIDED.asString())) return null
 
-        val signature = StringCharacterIterator(canonicalSignature)
-        val javaType = SignatureParsing.parseTypeString(signature, StubBuildingVisitor.GUESSING_MAPPER)
-        val typeInfo = TypeInfo.fromString(javaType, false)
-        val typeText = TypeInfo.createTypeText(typeInfo) ?: return null
+        val signature = SignatureParsing.CharIterator(canonicalSignature)
+        val typeInfo = SignatureParsing.parseTypeStringToTypeInfo(signature, StubBuildingVisitor.GUESSING_PROVIDER)
+        val typeText = typeInfo.text() ?: return null
 
         return SyntheticTypeElement(useSitePosition, typeText)
     }
