@@ -18896,6 +18896,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
+    @TestMetadata("mutualInline.kt")
+    public void testMutualInline() {
+      runTest("compiler/testData/codegen/box/inline/mutualInline.kt");
+    }
+
+    @Test
     @TestMetadata("propertyAccessorInline.kt")
     public void testPropertyAccessorInline() {
       runTest("compiler/testData/codegen/box/inline/propertyAccessorInline.kt");

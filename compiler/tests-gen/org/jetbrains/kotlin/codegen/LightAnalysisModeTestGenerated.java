@@ -20728,6 +20728,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/inline/localObjectReturnedFromWhen.kt");
     }
 
+    @TestMetadata("mutualInline.kt")
+    public void testMutualInline() {
+      runTest("compiler/testData/codegen/box/inline/mutualInline.kt");
+    }
+
     @TestMetadata("propertyAccessorInline.kt")
     public void testPropertyAccessorInline() {
       runTest("compiler/testData/codegen/box/inline/propertyAccessorInline.kt");
