@@ -36695,6 +36695,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("changeInFirstOverloadResolution.kt")
+      public void testChangeInFirstOverloadResolution() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/changeInFirstOverloadResolution.kt");
+      }
+
+      @Test
       @TestMetadata("globalExtensionForHiddenInDeclaringMethod.kt")
       public void testGlobalExtensionForHiddenInDeclaringMethod() {
         runTest("compiler/testData/diagnostics/tests/testsWithJava21/globalExtensionForHiddenInDeclaringMethod.kt");
