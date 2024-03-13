@@ -27,6 +27,7 @@ abstract class AbstractField<Field : AbstractField<Field>> {
     open val arbitraryImportables: MutableList<Importable> = mutableListOf()
 
     open var optInAnnotation: ClassRef<*>? = null
+    open var replaceOptInAnnotation: ClassRef<*>? = null
 
     abstract var isMutable: Boolean
     open val withGetter: Boolean get() = false
@@ -102,6 +103,7 @@ abstract class AbstractField<Field : AbstractField<Field>> {
         copy.isLateinit = isLateinit
         copy.arbitraryImportables += arbitraryImportables
         copy.optInAnnotation = optInAnnotation
+        copy.replaceOptInAnnotation = replaceOptInAnnotation
         copy.isMutable = isMutable
         copy.deprecation = deprecation
         copy.visibility = visibility

@@ -905,6 +905,8 @@ open class PsiRawFirBuilder(
                         buildOrLazyExpression((argument as? PsiElement)?.toFirSourceElement()) { argument.toFirExpression() }
                     arguments += when (argument) {
                         is KtLambdaArgument -> argumentExpression.apply {
+                            // TODO(KT-66553) remove and set in builder
+                            @OptIn(RawFirApi::class)
                             (this as? FirAnonymousFunctionExpression)?.replaceIsTrailingLambda(true)
                         }
                         else -> argumentExpression

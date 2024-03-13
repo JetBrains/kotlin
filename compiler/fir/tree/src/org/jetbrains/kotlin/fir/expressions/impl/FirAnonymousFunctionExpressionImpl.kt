@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.expressions.RawFirApi
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
@@ -42,6 +43,7 @@ internal class FirAnonymousFunctionExpressionImpl(
         anonymousFunction.replaceAnnotations(newAnnotations)
     }
 
+    @RawFirApi
     override fun replaceIsTrailingLambda(newIsTrailingLambda: Boolean) {
         isTrailingLambda = newIsTrailingLambda
     }

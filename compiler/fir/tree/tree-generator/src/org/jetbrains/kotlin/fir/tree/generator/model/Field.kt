@@ -103,6 +103,10 @@ class FieldWithDefault(override val origin: Field) : Field(), AbstractFieldWithD
         get() = origin.optInAnnotation
         set(_) {}
 
+    override var replaceOptInAnnotation: ClassRef<*>?
+        get() = origin.replaceOptInAnnotation
+        set(_) {}
+
     override var defaultValueInImplementation: String? = origin.defaultValueInImplementation
     override var defaultValueInBuilder: String? = null
     override var isMutable: Boolean = origin.isMutable

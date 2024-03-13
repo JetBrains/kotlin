@@ -332,7 +332,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         anonymousFunctionExpression.configure {
             +field(anonymousFunction).withTransform()
-            +booleanField("isTrailingLambda", withReplace = true)
+            +booleanField("isTrailingLambda", withReplace = true).apply {
+                replaceOptInAnnotation = rawFirApi
+            }
         }
 
         typeParameter.configure {

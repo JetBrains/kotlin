@@ -117,7 +117,12 @@ fun SmartPrinter.printFunctionDeclaration(
     override: Boolean = false,
     isInline: Boolean = false,
     allParametersOnSeparateLines: Boolean = false,
+    optInAnnotation: ClassRef<*>? = null,
 ) {
+    optInAnnotation?.let {
+        println("@", it.render())
+    }
+
     if (visibility != Visibility.PUBLIC) {
         print(visibility.name.toLowerCaseAsciiOnly(), " ")
     }
