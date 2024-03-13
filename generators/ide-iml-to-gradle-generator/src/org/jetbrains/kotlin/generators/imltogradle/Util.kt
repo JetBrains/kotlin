@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.generators.imltogradle
 
+import com.intellij.openapi.util.JDOMUtil
 import org.jdom.Element
-import org.jdom.input.SAXBuilder
 import org.jetbrains.jps.model.JpsElementFactory
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
@@ -37,7 +37,7 @@ fun String.trimMarginWithInterpolations(): String {
 }
 
 fun File.readXml(): Element {
-    return inputStream().use { SAXBuilder().build(it).rootElement }
+    return inputStream().use { JDOMUtil.load(it) }
 }
 
 suspend fun SequenceScope<Element>.visit(element: Element) {
