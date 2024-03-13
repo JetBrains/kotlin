@@ -82,6 +82,7 @@ class Distribution private constructor(private val serialized: Serialized) : jav
 
     val kotlinRuntimeForSwiftHome = "$konanHome/konan/swift_export/kotlin_runtime"
     val kotlinRuntimeForSwiftModuleMap = "$kotlinRuntimeForSwiftHome/module.modulemap"
+    val kotlinRuntimeForSwiftHeader = "$kotlinRuntimeForSwiftHome/KotlinBase.h"
 
     fun defaultNatives(target: KonanTarget) = "$konanHome/konan/targets/${target.visibleName}/native"
 

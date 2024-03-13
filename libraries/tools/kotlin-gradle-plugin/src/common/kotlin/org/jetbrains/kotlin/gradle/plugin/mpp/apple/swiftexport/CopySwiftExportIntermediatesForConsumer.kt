@@ -43,11 +43,15 @@ internal abstract class CopySwiftExportIntermediatesForConsumer @Inject construc
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val syntheticLibraryPath: RegularFileProperty
+    abstract val packageLibraryPath: RegularFileProperty
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val syntheticInterfacesPath: RegularFileProperty
+    abstract val packageInterfacesPath: RegularFileProperty
+
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val frameworkPath: RegularFileProperty
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -79,8 +83,8 @@ internal abstract class CopySwiftExportIntermediatesForConsumer @Inject construc
     fun copy() {
         fileSystem.copy {
             it.from(kotlinLibraryPath)
-            it.from(syntheticInterfacesPath)
-            it.from(syntheticLibraryPath)
+            it.from(packageInterfacesPath)
+            it.from(packageLibraryPath)
             it.into(builtProductsDirectory)
         }
         fileSystem.copy {

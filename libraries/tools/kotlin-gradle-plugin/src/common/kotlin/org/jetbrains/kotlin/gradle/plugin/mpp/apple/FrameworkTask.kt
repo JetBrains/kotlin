@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.*
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
@@ -21,7 +23,8 @@ import javax.inject.Inject
 
 @DisableCachingByDefault
 internal abstract class FrameworkTask @Inject constructor(
-    private val execOperations: ExecOperations
+    private val execOperations: ExecOperations,
+    private val providerFactory: ProviderFactory,
 ) : DefaultTask() {
     init {
         onlyIf { HostManager.hostIsMac }
@@ -31,11 +34,6 @@ internal abstract class FrameworkTask @Inject constructor(
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val binary: RegularFileProperty
-
-    @get:Optional
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val umbrella: RegularFileProperty
 
     @get:Optional
     @get:InputFiles
@@ -49,58 +47,81 @@ internal abstract class FrameworkTask @Inject constructor(
     abstract val bundleIdentifier: Property<String>
 
     @get:Input
-    abstract val sdkName: Property<String>
+    val platformName: Provider<String>
+        get() = providerFactory.environmentVariable("PLATFORM_NAME")
 
-    @get:OutputDirectory
+    @get:Internal
     abstract val frameworkPath: DirectoryProperty
 
-    private val frameworkRootPath: File
-        get() = frameworkPath.getFile().resolve("${frameworkName.get()}.framework")
+    @get:OutputDirectory
+    val frameworkRootPath: Provider<Directory>
+        get() = frameworkPath.map { it.dir("${frameworkName.get()}.framework") }
 
-    private val modulePath: File
-        get() = frameworkRootPath.resolve("Modules")
+    private val modulePath: Provider<Directory>
+        get() = frameworkRootPath.map { it.dir("Modules") }
 
-    private val headerPath: File
-        get() = frameworkRootPath.resolve("Headers")
+    private val headerPath: Provider<Directory>
+        get() = frameworkRootPath.map { it.dir("Headers") }
 
     @TaskAction
     fun assembleFramework() {
-        if (frameworkRootPath.exists()) {
-            frameworkRootPath.deleteRecursivelyOrThrow()
+        frameworkRootPath.getFile().apply {
+            if (exists()) {
+                deleteRecursivelyOrThrow()
+            }
         }
-        modulePath.createDirectory()
-        headerPath.createDirectory()
+
+        modulePath.getFile().createDirectory()
+        headerPath.getFile().createDirectory()
 
         copyBinary()
         copyHeaders()
-        createModuleMap()
+        createModuleMap(createUmbrella())
         createInfoPlist()
     }
 
     private fun copyBinary() {
         binary.getFile().copyTo(
-            frameworkRootPath.resolve(frameworkName.get())
+            frameworkRootPath.getFile().resolve(frameworkName.get())
         )
     }
 
-    private fun createModuleMap() {
-        val umbrellaHeader = umbrella.map { "umbrella header \"${it.asFile.name}\"" }.get()
+    private fun createUmbrella(): File? {
+        if (headers.asFileTree.isEmpty) {
+            return null
+        }
 
-        modulePath.resolve("module.modulemap").writeText(
+        val umbrellaHeader = headerPath.getFile().resolve("${frameworkName.get()}.h").apply {
+            writeText(
+                """
+                |/*
+                |* Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+                |*/
+                |
+                |${
+                    headers.asFileTree.joinToString("\n") {
+                        """
+                        |#import "${it.name}"
+                        """.trimMargin()
+                    }
+                }
+                """.trimMargin()
+            )
+        }
+
+        return umbrellaHeader
+    }
+
+    private fun createModuleMap(umbrella: File?) {
+        val umbrellaHeader = umbrella?.let { "umbrella header \"${it.name}\"" }
+
+        modulePath.getFile().resolve("module.modulemap").writeText(
             """
             |framework module ${frameworkName.get()} {
             |   $umbrellaHeader
             |
             |   export *
             |   module * { export * }
-            | 
-            |${
-                headers.asFileTree.joinToString("\n") {
-                    """
-                    |   header "${it.name}"
-                    """.trimMargin()
-                }
-            }
             |
             |   use Foundation
             |   requires objc    
@@ -115,12 +136,12 @@ internal abstract class FrameworkTask @Inject constructor(
             "CFBundleInfoDictionaryVersion" to "6.0",
             "CFBundlePackageType" to "FMWK",
             "CFBundleVersion" to "1",
-            "DTSDKName" to sdkName.get(),
+            "DTSDKName" to platformName.get(),
             "CFBundleExecutable" to frameworkName.get(),
             "CFBundleName" to frameworkName.get()
         )
 
-        val outputFile = frameworkRootPath.resolve("Info.plist")
+        val outputFile = frameworkRootPath.getFile().resolve("Info.plist")
 
         processPlist(outputFile, execOperations) {
             info.forEach {
@@ -131,13 +152,9 @@ internal abstract class FrameworkTask @Inject constructor(
 
     private fun copyHeaders() {
         headers.forEach {
-            it.copyTo(headerPath.resolve(it.name), true)
+            it.copyTo(
+                headerPath.getFile().resolve(it.name)
+            )
         }
-
-        val umbrella = this.umbrella.getFile()
-        umbrella.copyTo(
-            headerPath.resolve(umbrella.name),
-            true
-        )
     }
 }
