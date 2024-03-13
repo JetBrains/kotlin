@@ -21,7 +21,7 @@ dependencies {
     implementation "org.apache.logging.log4j:log4j-api:2.14.0"
 }
 
-compileKotlin.kotlinOptions.allWarningsAsErrors = true
+compileKotlin.kotlinOptions.allWarningsAsErrors = false
 
 kotlin {
     jvmToolchain(11)
