@@ -216,12 +216,6 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
-    @TestMetadata("leakMemoryWithRunningThreadUnchecked.kt")
-    public void testLeakMemoryWithRunningThreadUnchecked() {
-      runTest("native/native.tests/testData/codegen/cinterop/leakMemoryWithRunningThreadUnchecked.kt");
-    }
-
-    @Test
     @TestMetadata("toKString.kt")
     public void testToKString() {
       runTest("native/native.tests/testData/codegen/cinterop/toKString.kt");

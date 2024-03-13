@@ -1,10 +1,11 @@
-// TARGET_BACKEND: NATIVE
+// EXIT_CODE: !0
+// OUTPUT_REGEX: Cannot run checkers when there are 1 alive runtimes at the shutdown.*
 // MODULE: cinterop
-// FILE: leakMemoryWithRunningThreadUnchecked.def
+// FILE: leakMemory.def
 ---
 void test_RunInNewThread(void (*)());
 
-// FILE: leakMemoryWithRunningThreadUnchecked.h
+// FILE: leakMemory.h
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -15,8 +16,8 @@ void test_RunInNewThread(void (*)());
 }
 #endif
 
-// FILE: leakMemoryWithRunningThreadUnchecked.cpp
-#include "leakMemoryWithRunningThreadUnchecked.h"
+// FILE: leakMemory.cpp
+#include "leakMemory.h"
 
 #include <atomic>
 #include <thread>
@@ -32,7 +33,6 @@ extern "C" void test_RunInNewThread(void (*f)()) {
     while (!haveRun) {}
 }
 
-
 // MODULE: main(cinterop)
 // FILE: main.kt
 @file:OptIn(
@@ -41,7 +41,7 @@ extern "C" void test_RunInNewThread(void (*f)()) {
     kotlinx.cinterop.ExperimentalForeignApi::class
 )
 
-import leakMemoryWithRunningThreadUnchecked.*
+import leakMemory.*
 import kotlin.concurrent.AtomicInt
 import kotlin.native.concurrent.*
 import kotlin.native.Platform
@@ -51,22 +51,18 @@ import kotlinx.cinterop.*
 val global = AtomicInt(0)
 
 fun ensureInititalized() {
-    // Only needed with the legacy MM. TODO: Remove when legacy MM is gone.
-    kotlin.native.initRuntimeIfNeeded()
     // Leak memory
     StableRef.create(Any())
     global.value = 1
 }
 
-fun box(): String {
+fun main() {
     Platform.isMemoryLeakCheckerActive = true
-    kotlin.native.runtime.Debugging.forceCheckedShutdown = false
+    kotlin.native.runtime.Debugging.forceCheckedShutdown = true
     assertTrue(global.value == 0)
     // Created a thread, made sure Kotlin is initialized there.
     test_RunInNewThread(staticCFunction(::ensureInititalized))
     assertTrue(global.value == 1)
-    // Now exiting. With unchecked shutdown, we exit quietly, even though there're
+    // Now exiting. With checked shutdown we will fail, complaining there're
     // unfinished threads with runtimes.
-
-    return "OK"
 }

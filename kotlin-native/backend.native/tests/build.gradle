@@ -973,80 +973,9 @@ createInterop("kt43502") {
     }
 }
 
-createInterop("leakMemoryWithRunningThread") {
-    it.defFile 'interop/leakMemoryWithRunningThread/leakMemory.def'
-    it.headers "$projectDir/interop/leakMemoryWithRunningThread/leakMemory.h"
-    it.extraOpts "-Xcompile-source", "$projectDir/interop/leakMemoryWithRunningThread/leakMemory.cpp"
-}
-
-createInterop("workerSignals") {
-    it.defFile "interop/workerSignals/workerSignals.def"
-    it.headers "$projectDir/interop/workerSignals/workerSignals.h"
-    it.extraOpts "-Xcompile-source", "$projectDir/interop/workerSignals/workerSignals.cpp"
-}
-
 createInterop("exceptions_throwThroughBridge") {
     it.defFile "interop/exceptions/throwThroughBridge.def"
     it.extraOpts "-Xcompile-source", "$projectDir/interop/exceptions/throwThroughBridgeInterop.cpp"
-}
-
-/**
- * Creates a task for the interop test. Configures runner and adds library and test build tasks.
- */
-Task interopTestBase(String name, boolean multiFile, boolean interop2ForMainOnly, Closure<KonanInteropTest> configureClosure) {
-    return KotlinNativeTestKt.createTest(project, name, KonanInteropTest) { KonanInteropTest task ->
-        task.configure(configureClosure)
-        if (task.enabled) {
-            konanArtifacts {
-                def targetName = target.name
-                def interopLib = task.interop
-                def interopLib2 = task.interop2
-                UtilsKt.dependsOnKonanBuildingTask(task, interopLib, target)
-                if (interopLib2 != null) UtilsKt.dependsOnKonanBuildingTask(task, interopLib2, target)
-
-                def lib = "lib$name"
-                def hasIntermediateLib = task.lib != null
-                if (hasIntermediateLib) {
-                    // build a library from KonanInteropTest::lib property
-                    library(lib, targets: [targetName]) {
-                        libraries {
-                            artifact interopLib
-                            if (interopLib2 != null && !interop2ForMainOnly) artifact interopLib2
-                        }
-                        srcFiles task.lib
-                        baseDir  "$testOutputLocal/$name"
-                        extraOpts task.flags
-                        extraOpts project.globalTestArgs.findAll { !it.contains("-Xpartial-linkage") }
-                    }
-                    UtilsKt.dependsOnKonanBuildingTask(task, lib, target)
-                }
-
-                program(name, targets: [targetName]) {
-                    libraries {
-                        artifact interopLib
-                        if (interopLib2 != null) artifact interopLib2
-                        if (hasIntermediateLib)
-                            klibFile file("$testOutputLocal/$name/$targetName/${lib}.klib")
-                    }
-                    srcFiles multiFile ? fileTree(task.source) { include '**/*.kt' } : task.getSources()
-                    baseDir "$testOutputLocal/$name"
-                    linkerOpts "-L${project.layout.buildDirectory.get().asFile}"
-                    extraOpts task.flags
-                    extraOpts project.globalTestArgs
-                }
-            }
-            task.dependsOn(nativeDependencies.llvmDependency)
-            task.dependsOn(nativeDependencies.targetDependency(target))
-        }
-    }
-}
-
-Task interopTest(String name, Closure<KonanInteropTest> configureClosure) {
-    return interopTestBase(name, false, false, configureClosure)
-}
-
-Task interopTestMultifile(String name, Closure<KonanInteropTest> configureClosure) {
-    return interopTestBase(name, true, false, configureClosure)
 }
 
 standaloneTest("interop_objc_allocException") {
@@ -1061,19 +990,6 @@ dynamicTest("interop_kt43502") {
     source = "interop/kt43502/main.kt"
     cSource = "$projectDir/interop/kt43502/main.c"
     useGoldenData = true
-}
-
-interopTest("interop_leakMemoryWithRunningThreadChecked") {
-    interop = 'leakMemoryWithRunningThread'
-    source = "interop/leakMemoryWithRunningThread/checked.kt"
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = { s -> s.contains("Cannot run checkers when there are 1 alive runtimes at the shutdown") }
-}
-
-interopTest("interop_workerSignals") {
-    disabled = project.testTarget == 'mingw_x64' // cross-thread signalling does not work on Windows
-    source = "interop/workerSignals/workerSignals.kt"
-    interop = "workerSignals"
 }
 
 if (PlatformInfo.isAppleTarget(project)) {

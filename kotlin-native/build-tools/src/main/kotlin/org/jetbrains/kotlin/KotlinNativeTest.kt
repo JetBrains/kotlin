@@ -416,22 +416,6 @@ open class KonanDriverTest : KonanStandaloneTest() {
     }
 }
 
-open class KonanInteropTest : KonanStandaloneTest() {
-    /**
-     * Name of the interop library
-     */
-    @Input
-    lateinit var interop: String
-
-    @Input
-    @Optional
-    var interop2: String? = null
-
-    @Input
-    @Optional
-    var lib: String? = null
-}
-
 /**
  * Test task to check a library built by `-produce dynamic`.
  * C source code should contain `testlib` as a reference to a testing library.

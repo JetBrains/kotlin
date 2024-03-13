@@ -46,6 +46,39 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
     runTest("native/native.tests/testData/standalone/kt56048.kt");
   }
 
+  @Test
+  @TestMetadata("workerSignals.kt")
+  public void testWorkerSignals() {
+    runTest("native/native.tests/testData/standalone/workerSignals.kt");
+  }
+
+  @Nested
+  @TestMetadata("native/native.tests/testData/standalone/checkers")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("standalone")
+  @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
+  @UseStandardTestCaseGroupProvider()
+  @Tag("frontend-fir")
+  @FirPipeline()
+  public class Checkers {
+    @Test
+    public void testAllFilesPresentInCheckers() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/standalone/checkers"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("leakMemoryWithRunningThreadChecked.kt")
+    public void testLeakMemoryWithRunningThreadChecked() {
+      runTest("native/native.tests/testData/standalone/checkers/leakMemoryWithRunningThreadChecked.kt");
+    }
+
+    @Test
+    @TestMetadata("leakMemoryWithRunningThreadUnchecked.kt")
+    public void testLeakMemoryWithRunningThreadUnchecked() {
+      runTest("native/native.tests/testData/standalone/checkers/leakMemoryWithRunningThreadUnchecked.kt");
+    }
+  }
+
   @Nested
   @TestMetadata("native/native.tests/testData/standalone/console")
   @TestDataPath("$PROJECT_ROOT")
