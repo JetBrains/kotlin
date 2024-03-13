@@ -49,7 +49,6 @@ sourceSets["main"].kotlin {
     srcDir("../../../shared/src/library/kotlin")
     srcDir("../../../shared/src/main/kotlin")
     srcDir("../../benchmarks/shared/src/main/kotlin/report")
-    srcDir("../../../../native/utils/src")
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {

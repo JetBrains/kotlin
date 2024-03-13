@@ -48,7 +48,6 @@ sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourc
     kotlin.srcDir("../../../../shared/src/library/kotlin")
     kotlin.srcDir("../../../../shared/src/main/kotlin")
     kotlin.srcDir("../../../benchmarks/shared/src/main/kotlin/report")
-    kotlin.srcDir("../../../../../native/utils/src")
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
