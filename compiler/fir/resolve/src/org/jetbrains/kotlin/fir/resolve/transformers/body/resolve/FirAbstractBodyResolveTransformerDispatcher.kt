@@ -28,6 +28,7 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
     scopeSession: ScopeSession,
     val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve.Default,
     outerBodyResolveContext: BodyResolveContext? = null,
+    expandTypeAliases: Boolean,
 ) : FirAbstractBodyResolveTransformer(phase) {
 
     open val preserveCFGForClasses: Boolean get() = !implicitTypeOnly
@@ -37,7 +38,7 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
     final override val context: BodyResolveContext =
         outerBodyResolveContext ?: BodyResolveContext(returnTypeCalculator, DataFlowAnalyzerContext(session))
     final override val components: BodyResolveTransformerComponents =
-        BodyResolveTransformerComponents(session, scopeSession, this, context)
+        BodyResolveTransformerComponents(session, scopeSession, this, context, expandTypeAliases)
 
     final override val resolutionContext: ResolutionContext = ResolutionContext(session, components, context)
 

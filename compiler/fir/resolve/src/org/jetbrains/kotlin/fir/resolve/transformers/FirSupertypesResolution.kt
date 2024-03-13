@@ -400,7 +400,12 @@ open class FirSupertypeResolverVisitor(
         supertypeComputationSession.startComputingSupertypes(classLikeDeclaration)
         val scopes = prepareScopes(classLikeDeclaration, forStaticNestedClass = false)
 
-        val transformer = FirSpecificTypeResolverTransformer(session, supertypeSupplier = supertypeComputationSession.supertypesSupplier)
+        val transformer = FirSpecificTypeResolverTransformer(
+            session,
+            supertypeSupplier = supertypeComputationSession.supertypesSupplier,
+            // They will be unwrapped later during this phase.
+            expandTypeAliases = false,
+        )
 
         val newUseSiteFile =
             if (classLikeDeclaration.isLocalClassOrAnonymousObject()) @OptIn(PrivateForInline::class) useSiteFile

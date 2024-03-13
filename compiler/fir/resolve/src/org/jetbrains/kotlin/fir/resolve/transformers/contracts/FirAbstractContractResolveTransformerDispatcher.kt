@@ -50,6 +50,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
     scopeSession,
     returnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve.Contract,
     outerBodyResolveContext = outerBodyResolveContext,
+    expandTypeAliases = true,
 ) {
     final override val expressionsTransformer: FirExpressionsResolveTransformer =
         FirExpressionsResolveTransformer(this)

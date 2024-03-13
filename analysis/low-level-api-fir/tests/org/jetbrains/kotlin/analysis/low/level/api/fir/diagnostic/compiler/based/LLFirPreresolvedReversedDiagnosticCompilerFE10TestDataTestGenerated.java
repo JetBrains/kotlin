@@ -256,6 +256,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("compilerRequiredAnnotationAsTypealias.kt")
+    public void testCompilerRequiredAnnotationAsTypealias() {
+      runTest("compiler/testData/diagnostics/tests/compilerRequiredAnnotationAsTypealias.kt");
+    }
+
+    @Test
     @TestMetadata("conflictingOverloadsPrivateFunctions.kt")
     public void testConflictingOverloadsPrivateFunctions() {
       runTest("compiler/testData/diagnostics/tests/conflictingOverloadsPrivateFunctions.kt");

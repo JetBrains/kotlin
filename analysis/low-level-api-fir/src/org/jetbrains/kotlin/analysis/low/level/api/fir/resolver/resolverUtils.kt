@@ -46,6 +46,7 @@ internal open class StubBodyResolveTransformerComponents(
     scopeSession,
     transformer,
     context,
+    expandTypeAliases = true,
 ) {
     override val dataFlowAnalyzer: FirDataFlowAnalyzer
         get() = object : FirDataFlowAnalyzer(this@StubBodyResolveTransformerComponents, context.dataFlowAnalyzerContext) {

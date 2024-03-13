@@ -45,6 +45,7 @@ open class FirAnnotationArgumentsTransformer(
     scopeSession,
     outerBodyResolveContext = outerBodyResolveContext,
     returnTypeCalculator = returnTypeCalculator,
+    expandTypeAliases = true,
 ) {
     final override val expressionsTransformer: FirExpressionsResolveTransformer = FirExpressionTransformerForAnnotationArguments(this)
 

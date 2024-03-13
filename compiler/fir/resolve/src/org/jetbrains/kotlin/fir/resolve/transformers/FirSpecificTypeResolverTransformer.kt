@@ -36,7 +36,8 @@ class FirSpecificTypeResolverTransformer(
     override val session: FirSession,
     private val errorTypeAsResolved: Boolean = true,
     private val resolveDeprecations: Boolean = true,
-    private val supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default
+    private val supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
+    private val expandTypeAliases: Boolean,
 ) : FirAbstractTreeTransformer<ScopeClassDeclaration>(phase = FirResolvePhase.SUPER_TYPES) {
     private val typeResolver = session.typeResolver
 
@@ -88,8 +89,7 @@ class FirSpecificTypeResolverTransformer(
         withBareTypes(allowed = false) {
             typeRef.transformChildren(this, data)
         }
-        val (resolvedType, diagnostic) = resolveType(typeRef, data)
-
+        val (resolvedType, diagnostic) = resolveType(typeRef, data, expandTypeAliases)
         return transformType(typeRef, resolvedType, diagnostic, data)
     }
 
@@ -126,6 +126,7 @@ class FirSpecificTypeResolverTransformer(
     private fun FirSpecificTypeResolverTransformer.resolveType(
         typeRef: FirTypeRef,
         scopeClassDeclaration: ScopeClassDeclaration,
+        expandTypeAliases: Boolean = true,
     ): FirTypeResolutionResult {
         return typeResolver.resolveType(
             typeRef,
@@ -134,7 +135,8 @@ class FirSpecificTypeResolverTransformer(
             isOperandOfIsOperator,
             resolveDeprecations,
             currentFile,
-            supertypeSupplier
+            supertypeSupplier,
+            expandTypeAliases,
         )
     }
 

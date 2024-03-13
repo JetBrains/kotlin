@@ -55,6 +55,9 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS,
         scopeSession = scopeSession,
         implicitTypeOnly = false,
+        // This transformer is only used for COMPILER_REQUIRED_ANNOTATIONS, which is <=SUPER_TYPES,
+        // so we can't yet expand typealiases.
+        expandTypeAliases = false,
     ) {
         override val expressionsTransformer: FirExpressionsResolveTransformer = FirEnumAnnotationArgumentsTransformer(this)
         override val declarationsTransformer: FirDeclarationsResolveTransformer? = null
@@ -287,6 +290,9 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         session,
         errorTypeAsResolved = false,
         resolveDeprecations = false,
+        // This transformer is only used for COMPILER_REQUIRED_ANNOTATIONS, which is <=SUPER_TYPES,
+        // so we can't yet expand typealiases.
+        expandTypeAliases = false,
     )
 
     @PrivateForInline
