@@ -87,6 +87,9 @@ void gc::mark::ConcurrentMark::runMainInSTW() {
     gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle(), mm::SpecialRefRegistry::instance());
 
     if (!terminateInSTW) {
+        // Mutator threads execute weak barrier in "native" state. This hack maes them stop with the rest of the world.
+        std::unique_lock markTerminationGuard(markTerminationMutex_);
+
         stopTheWorld(gcHandle(), "GC stop the world #2: prepare to sweep");
     }
 

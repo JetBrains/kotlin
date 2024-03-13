@@ -187,13 +187,19 @@ ALWAYS_INLINE ObjHeader* gc::barriers::weakRefReadBarrier(std::atomic<ObjHeader*
         auto phase = currentPhase();
         BarriersLogDebug(phase, "Weak read %p", weak);
 
+        // The weak read protector switches the thread state to native, thus making this code able to execute during STW.
+        // However, this is only possible with the disabled barriers.
+        // Be extra cautious not to access or modify heap structure here. e.g. do not allocate objects
+        AssertThreadState(ThreadState::kNative);
+        RuntimeAssert(!mm::IsThreadSuspensionRequested() || phase == BarriersPhase::kDisabled, "Unexpected barriers phase during STW: %s", toString(phase));
+
         if (__builtin_expect(phase == BarriersPhase::kMarkClosure, false)) {
             weakRefReadInMarkSlowPath(weak);
         } else {
             if (__builtin_expect(phase == BarriersPhase::kWeakProcessing, false)) {
                 // TODO reread the referee here under the barrier guard
                 //      if `disableBarriers` would be possible outside of STW
-                return weakRefReadInWeakSweepSlowPath(weakReferee);
+                return weakRefReadInWeakSweepSlowPath(weak);
             }
         }
         return weak;
