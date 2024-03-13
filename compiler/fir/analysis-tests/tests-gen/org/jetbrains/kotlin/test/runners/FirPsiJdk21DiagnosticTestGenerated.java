@@ -25,6 +25,12 @@ public class FirPsiJdk21DiagnosticTestGenerated extends AbstractFirPsiJdk21Diagn
     }
 
     @Test
+    @TestMetadata("changeInFirstOverloadResolution.kt")
+    public void testChangeInFirstOverloadResolution() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJdk21/changeInFirstOverloadResolution.kt");
+    }
+
+    @Test
     @TestMetadata("implementationsForSequencedCollection.kt")
     public void testImplementationsForSequencedCollection() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJdk21/implementationsForSequencedCollection.kt");
