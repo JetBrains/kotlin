@@ -25,10 +25,12 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKi
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.DEFAULT_MODULE_NAME
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import java.io.File
@@ -72,15 +74,39 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
             .map { testPathFull.resolve(it) }
         ktSources.forEach { muteTestIfNecessary(it) }
 
-        val cSources = testPathFull.list()!!
-            .filter { it.endsWith(".c") }
-            .map { testPathFull.resolve(it) }
+        val (clangMode, cSources) = run {
+            val cSources = testPathFull.list()!!
+                .filter { it.endsWith(".c") }
+                .map { testPathFull.resolve(it) }
+
+            val cppSources = testPathFull.list()!!
+                .filter { it.endsWith(".cpp") }
+                .map { testPathFull.resolve(it) }
+
+            if (cSources.isNotEmpty() && cppSources.isNotEmpty()) {
+                error("CExportTest does not support mixing .c and .cpp files")
+            }
+
+            if (cppSources.isEmpty()) {
+                ClangMode.C to cSources
+            } else {
+                ClangMode.CXX to cppSources
+            }
+        }
 
         val goldenData = testPathFull.list()!!
             .singleOrNull { it.endsWith(".out") }
             ?.let { testPathFull.resolve(it) }
 
-        val testCase = generateCExportTestCase(testPathFull, ktSources, goldenData = goldenData)
+        val regexes = testPathFull.list()!!
+            .singleOrNull { it.endsWith(".out.re") }
+            ?.let { testPathFull.resolve(it) }
+
+        val exitCode = testPathFull.list()!!
+            .singleOrNull { it == "exitCode" }
+            ?.let { testPathFull.resolve(it).readText() }
+
+        val testCase = generateCExportTestCase(testPathFull, ktSources, goldenData = goldenData, regexes = regexes, exitCode = exitCode)
         val binaryLibrary = testCompilationFactory.testCaseToBinaryLibrary(
             testCase,
             testRunSettings,
@@ -96,6 +122,7 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
         val libraryName = binaryLibrary.libraryFile.nameWithoutExtension.substringAfter("lib")
         val clangResult = compileWithClang(
             clangDistribution = ClangDistribution.Llvm,
+            clangMode = clangMode,
             sourceFiles = cSources,
             includeDirectories = includeDirectories,
             outputFile = executableFile,
@@ -113,7 +140,7 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
         runExecutableAndVerify(testCase, testExecutable)
     }
 
-    private fun generateCExportTestCase(testPathFull: File, sources: List<File>, goldenData: File? = null): TestCase {
+    private fun generateCExportTestCase(testPathFull: File, sources: List<File>, goldenData: File? = null, regexes: File? = null, exitCode: String? = null): TestCase {
         val moduleName: String = testPathFull.name
         val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet(), emptySet())
         sources.forEach { module.files += TestFile.createCommitted(it, module) }
@@ -127,9 +154,29 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
                 "-opt-in", "kotlinx.cinterop.ExperimentalForeignApi",
             )),
             nominalPackageName = PackageName(moduleName),
-            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).copy(
-                outputDataFile = goldenData?.let { TestRunCheck.OutputDataFile(file = it) }
-            ),
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).run {
+                copy(
+                    outputDataFile = goldenData?.let { TestRunCheck.OutputDataFile(file = it) },
+                    outputMatcher = regexes?.let { regexesFile ->
+                        val regexes = regexesFile.readLines().map { it.toRegex(RegexOption.DOT_MATCHES_ALL) }
+                        TestRunCheck.OutputMatcher {
+                            regexes.forEach { regex ->
+                                assertTrue(regex.matches(it)) {
+                                    "Regex `$regex` failed to match `$it`"
+                                }
+                            }
+                            true
+                        }
+                    },
+                    exitCodeCheck = exitCode?.let {
+                        if (it == "!0") {
+                            TestRunCheck.ExitCode.AnyNonZero
+                        } else {
+                            TestRunCheck.ExitCode.Expected(it.toInt())
+                        }
+                    } ?: exitCodeCheck
+                )
+            },
             extras = TestCase.NoTestRunnerExtras(entryPoint = "main")
         ).apply {
             initialize(null, null)

@@ -283,7 +283,7 @@ sealed interface TestRunCheck {
 data class TestRunChecks(
     val executionTimeoutCheck: ExecutionTimeout,
     val testFiltering: TestFiltering,
-    private val exitCodeCheck: ExitCode?,
+    val exitCodeCheck: ExitCode?,
     val outputDataFile: OutputDataFile?,
     val outputMatcher: OutputMatcher?,
     val fileCheckMatcher: FileCheckMatcher?,
