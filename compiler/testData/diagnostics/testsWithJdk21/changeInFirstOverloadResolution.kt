@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // WITH_STDLIB
 // ISSUE: KT-65235
 
@@ -11,6 +12,6 @@ fun somewhere() {
     val x: String = listOf("a").first()
 
     scope {
-        val y: String = <!TYPE_MISMATCH!>listOf("a").<!TYPE_MISMATCH!><!DEPRECATION_ERROR!>first<!>()<!><!>
+        val y: String = listOf("a").first()
     }
 }

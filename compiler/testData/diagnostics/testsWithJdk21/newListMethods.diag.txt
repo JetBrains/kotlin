@@ -1,13 +1,13 @@
 /newListMethods.kt:26:7: error: unresolved reference: getFirst
     x.getFirst()
       ^
-/newListMethods.kt:27:7: error: using 'getter for first: E!' is an error. 'getFirst()' member of List is redundant in Kotlin and might be removed soon. Please use 'first()' stdlib extension instead
+/newListMethods.kt:27:7: error: function invocation 'first()' expected
     x.first // synthetic property for getFirst()
       ^
 /newListMethods.kt:29:7: error: unresolved reference: getLast
     x.getLast()
       ^
-/newListMethods.kt:30:7: error: using 'getter for last: E!' is an error. 'getLast()' member of List is redundant in Kotlin and might be removed soon. Please use 'last()' stdlib extension instead
+/newListMethods.kt:30:7: error: function invocation 'last()' expected
     x.last
       ^
 
