@@ -3362,6 +3362,18 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
       }
 
       @Test
+      @TestMetadata("intersectionWithGenericOnComplexHierarchy.kt")
+      public void testIntersectionWithGenericOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/intersectionWithGenericOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithGenericOverride.kt")
+      public void testIntersectionWithGenericOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/intersectionWithGenericOverride.kt");
+      }
+
+      @Test
       @TestMetadata("staticOverrideOnComplexHierarchy.kt")
       public void testStaticOverrideOnComplexHierarchy() {
         runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/staticOverrideOnComplexHierarchy.kt");
@@ -3389,6 +3401,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
       @TestMetadata("staticOverrideOnKJKJ.kt")
       public void testStaticOverrideOnKJKJ() {
         runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/staticOverrideOnKJKJ.kt");
+      }
+
+      @Test
+      @TestMetadata("substitutionStaticOverride.kt")
+      public void testSubstitutionStaticOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/substitutionStaticOverride.kt");
       }
     }
 
