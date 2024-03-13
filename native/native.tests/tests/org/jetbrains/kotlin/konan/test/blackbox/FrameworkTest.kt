@@ -204,6 +204,24 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun testKT66565_usingModuleMapSyntaxInKotlinModuleNameMakesImportableModule() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val reservedModuleMapSyntax = "umbrella"
+        val testName = "kt66565"
+        generateObjCFramework(testName, moduleName = reservedModuleMapSyntax)
+        SwiftCompilation(
+            testRunSettings,
+            listOf(testSuiteDir.resolve(testName).resolve("$testName.swift")),
+            TestCompilationArtifact.BinaryLibrary(buildDir.resolve("swiftObject")),
+            listOf(
+                "-c",
+                "-F", buildDir.absolutePath
+            ),
+            outputFile = { library -> library.libraryFile }
+        ).result.assertSuccess()
+    }
+
+    @Test
     fun testStacktrace() {
         val testName = "stacktrace"
         Assumptions.assumeFalse(testRunSettings.get<OptimizationMode>() == OptimizationMode.OPT)
@@ -468,13 +486,14 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         testCompilerArgs: List<String> = emptyList(),
         givenDependencies: Set<TestModule.Given> = emptySet(),
         checks: TestRunChecks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
+        moduleName: String = name.replaceFirstChar { it.uppercase() },
     ): TestCase {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
 
         val testCase = generateObjCFrameworkTestCase(
             TestKind.STANDALONE_NO_TR,
             extras,
-            name.replaceFirstChar { it.uppercase() },
+            moduleName,
             listOf(testSuiteDir.resolve(name).resolve("$name.kt")),
             TestCompilerArgs(testCompilerArgs + listOf("-Xbinary=bundleId=$name")),
             givenDependencies,

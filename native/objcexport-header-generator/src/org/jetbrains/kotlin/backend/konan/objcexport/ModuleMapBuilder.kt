@@ -12,7 +12,7 @@ package org.jetbrains.kotlin.backend.konan.objcexport
  */
 class ModuleMapBuilder {
     fun build(frameworkName: String, moduleDependencies: Set<String>): String = buildString {
-        appendLine("framework module $frameworkName {")
+        appendLine("framework module \"$frameworkName\" {")
         appendLine("    umbrella header \"$frameworkName.h\"")
         appendLine()
         appendLine("    export *")

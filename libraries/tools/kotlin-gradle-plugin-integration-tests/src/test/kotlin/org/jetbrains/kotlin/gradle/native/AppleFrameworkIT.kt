@@ -50,7 +50,7 @@ class AppleFrameworkIT : KGPBaseTest() {
                 assertDirectoryInProjectExists("shared/build/builtProductsDir/sdk.framework.dSYM")
                 assertFileInProjectContains(
                     "shared/build/builtProductsDir/sdk.framework/Modules/module.modulemap",
-                    "framework module sdk",
+                    "framework module \"sdk\"",
                 )
                 assertDirectoryInProjectDoesNotExist("shared/build/xcode-frameworks/sdk.framework")
             }
@@ -103,7 +103,7 @@ class AppleFrameworkIT : KGPBaseTest() {
                 assertDirectoryInProjectExists("shared/build/xcode-frameworks/Release/iphonesimulator/sdk.framework.dSYM")
                 assertFileInProjectContains(
                     "shared/build/xcode-frameworks/Release/iphonesimulator/sdk.framework/Modules/module.modulemap",
-                    "framework module sdk",
+                    "framework module \"sdk\"",
                 )
             }
         }

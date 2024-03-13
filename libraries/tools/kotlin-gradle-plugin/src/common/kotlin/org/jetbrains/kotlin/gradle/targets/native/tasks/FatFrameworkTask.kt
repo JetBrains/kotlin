@@ -370,7 +370,7 @@ internal constructor(
 
     private fun createModuleFile(outputFile: File, frameworkName: String) {
         outputFile.writeText("""
-            framework module $frameworkName {
+            framework module "$frameworkName" {
                 umbrella header "$frameworkName.h"
 
                 export *
