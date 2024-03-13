@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.DebugMode
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_ERRORS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
@@ -65,7 +66,13 @@ class JsIrBackendFacade(
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
-        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR))
+        // Unless this is a test with the IGNORE_ERRORS directive.
+        configuration.setupPartialLinkageConfig(
+            PartialLinkageConfig(
+                if (IGNORE_ERRORS in module.directives) PartialLinkageMode.DISABLE else PartialLinkageMode.ENABLE,
+                PartialLinkageLogLevel.ERROR
+            )
+        )
 
         val isMainModule = JsEnvironmentConfigurator.isMainModule(module, testServices)
         if (!isMainModule) return null
