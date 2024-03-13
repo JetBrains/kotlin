@@ -280,13 +280,15 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
     }
 
-    val platform = platformManager.platform(target).apply {
-        if (configuration.getBoolean(KonanConfigKeys.CHECK_DEPENDENCIES)) {
-            downloadDependencies()
+    val platform by lazy {
+        platformManager.platform(target).apply {
+            if (configuration.getBoolean(KonanConfigKeys.CHECK_DEPENDENCIES)) {
+                downloadDependencies()
+            }
         }
     }
 
-    internal val clang = platform.clang
+    internal val clang by lazy { platform.clang }
 
     internal val produce get() = configuration.get(KonanConfigKeys.PRODUCE)!!
 
