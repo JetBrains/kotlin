@@ -210,6 +210,32 @@ abstract class AbstractJavaModulesIntegrationTest(
         module("moduleD", listOf(c, b, a))
     }
 
+    fun testInheritedDeclarationFromTwiceTransitiveDependency() {
+        // module A <-t- module B <-t- module C <--- module D
+
+        // Java: class A { String ok() { /* ... */ } }
+        val a = module("moduleA")
+
+        // Java: class B extends A
+        val b = module("moduleB", listOf(a))
+
+        val c = module("moduleC", listOf(a, b))
+
+        // Java: new B().ok()
+        // Kotlin: B().ok()
+        val d = module("moduleD", listOf(a, b, c))
+
+        // validate the run-time behavior of Java-compiled code for the sake of comparison
+        val (javaStdout, javaStderr) = runModule("moduleD/d.JavaMain", listOf(d, c, b, a))
+        assertEquals("", javaStderr)
+        assertEquals("OK", javaStdout)
+
+        // test the run-time behavior of Kotlin-compiled code
+        val (kotlinStdout, kotlinStderr) = runModule("moduleD/d.KotlinMainKt", listOf(d, c, b, a))
+        assertEquals("", kotlinStderr)
+        assertEquals("OK", kotlinStdout)
+    }
+
     fun testSpecifyPathToModuleInfoInArguments() {
         val a = module("moduleA")
 

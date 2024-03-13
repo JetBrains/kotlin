@@ -77,7 +77,7 @@ class JavaModuleGraph(finder: JavaModuleFinder) {
                 is JavaModule.Explicit -> {
                     for ((dependencyModuleName, isTransitive) in module.moduleInfo.requires) {
                         if (dependencyModuleName == dependencyName) return true
-                        if (isTransitive && dfs(dependencyName)) return true
+                        if (isTransitive && dfs(dependencyModuleName)) return true
                     }
                     return false
                 }
