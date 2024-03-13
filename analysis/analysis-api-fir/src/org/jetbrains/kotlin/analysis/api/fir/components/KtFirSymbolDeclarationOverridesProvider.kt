@@ -182,6 +182,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
         return isSubClassOf(
             subClass = subClass.firSymbol.fir as FirClass,
             superClass = superClass.firSymbol.fir as FirClass,
+            rootModuleSession,
             allowIndirectSubtyping,
         )
     }

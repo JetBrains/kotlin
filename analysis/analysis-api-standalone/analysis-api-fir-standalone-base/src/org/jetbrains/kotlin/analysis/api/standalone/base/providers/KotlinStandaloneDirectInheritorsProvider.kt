@@ -101,7 +101,7 @@ class KotlinStandaloneDirectInheritorsProvider(private val project: Project) : K
 
         // `KotlinDirectInheritorsProvider`'s interface guarantees that `getDirectKotlinInheritors` is only called from lazy resolution to
         // `SEALED_CLASS_INHERITORS` or later, so `isSubClassOf` resolving to `SUPER_TYPES` is legal.
-        return isSubClassOf(candidateFirClass, baseFirClass, allowIndirectSubtyping = false)
+        return isSubClassOf(candidateFirClass, baseFirClass, candidateFirClass.moduleData.session, allowIndirectSubtyping = false)
     }
 
     private fun KtClassOrObject.toFirSymbol(classId: ClassId, ktModule: KtModule): FirClassLikeSymbol<*>? {
