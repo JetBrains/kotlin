@@ -8,15 +8,19 @@ package org.jetbrains.kotlinx.serialization.compiler.fir
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.deserialization.buildFirConstant
+import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.createSubstitutionForSupertype
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.dfa.symbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
@@ -28,9 +32,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.konan.isNative
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.dependencySerializationInfoProvider
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
@@ -280,4 +286,79 @@ fun FirDeclaration.excludeFromJsExport() {
     }
 
     replaceAnnotations(annotations + jsExportIgnoreAnnotationCall)
+}
+
+//context(FirExtension)
+//fun FirDeclaration.markAsDeprecatedHidden(): FirAnnotationCall = buildAnnotationCall {
+//    val deprecatedAnno = session.symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.Annotations.Deprecated) as FirRegularClassSymbol
+//    val annoCtor = deprecatedAnno.primaryConstructorSymbol(session) ?: error("Cannot find constructor for kotlin.Deprecated annotation")
+//
+//    annotationTypeRef = deprecatedAnno.defaultType().toFirResolvedTypeRef()
+//    containingDeclarationSymbol = this@markAsDeprecatedHidden.symbol
+//    calleeReference = buildResolvedNamedReference {
+//        name = deprecatedAnno.name
+//        resolvedSymbol = annoCtor
+//    }
+//
+//    argumentMapping = buildAnnotationArgumentMapping {
+//        mapping[Name.identifier("message")] = buildLiteralExpression
+//    }
+//
+//}
+
+context(FirExtension)
+fun FirDeclaration.createDeprecatedAnnotation(): FirAnnotationCall {
+    val deprecatedAnno =
+        session.symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.Annotations.Deprecated) as FirRegularClassSymbol
+    val annoCtor = deprecatedAnno.primaryConstructorSymbol(session) ?: error("Cannot find constructor for kotlin.Deprecated annotation")
+//    val replaceWithAnno =
+//        session.symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.Annotations.ReplaceWith) as FirRegularClassSymbol
+//    val replaceWithAnnoCtor =
+//        replaceWithAnno.primaryConstructorSymbol(session) ?: error("Cannot find constructor for kotlin.ReplaceWith annotation")
+//
+//    val replaceWithExpr = buildAnnotationCall {
+//        annotationTypeRef = replaceWithAnno.defaultType().toFirResolvedTypeRef()
+////        argumentList = buildResolvedArgumentList(linkedMapOf())
+//        calleeReference = buildResolvedNamedReference {
+//            name = replaceWithAnno.name
+//            resolvedSymbol = replaceWithAnnoCtor
+//        }
+//
+//        containingDeclarationSymbol = this@createDeprecatedAnnotation.symbol
+//
+//        argumentMapping = buildAnnotationArgumentMapping {
+//            mapping[Name.identifier("")]
+//
+//        }
+//    }
+
+    return buildAnnotationCall {
+        annotationTypeRef = deprecatedAnno.defaultType().toFirResolvedTypeRef()
+        containingDeclarationSymbol = this@createDeprecatedAnnotation.symbol
+        calleeReference = buildResolvedNamedReference {
+            name = deprecatedAnno.name
+            resolvedSymbol = annoCtor
+        }
+
+        argumentMapping = buildAnnotationArgumentMapping {
+            mapping[Name.identifier("message")] = buildLiteralExpression(
+                null,
+                ConstantValueKind.String,
+                "This synthesized declaration should not be used directly",
+                setType = true
+            )
+            // TODO: it has default value, we probably do not need to pass it?
+//            mapping[Name.identifier("replaceWith")] = replaceWithExpr
+            // It has nothing to do with enums deserialization, but it is simply easier to build it this way.
+            mapping[Name.identifier("level")] = buildEnumEntryDeserializedAccessExpression {
+                enumClassId = StandardClassIds.DeprecationLevel
+                enumEntryName = Name.identifier("HIDDEN")
+            }.toQualifiedPropertyAccessExpression(session)
+        }
+    }.also { it.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.CompilerRequiredAnnotations) }
+}
+
+context(FirExtension)
+fun FirDeclaration.markAsDeprecatedHidden() {
+    replaceAnnotations(annotations + listOf(createDeprecatedAnnotation()))
 }

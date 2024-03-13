@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
+import org.jetbrains.kotlin.fir.declarations.getDeprecationsProviderFromAccessors
 import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.extensions.*
@@ -281,6 +282,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             for (parameter in owner.typeParameterSymbols) {
                 typeParameter(parameter.name)
             }
+//            getDeprecationsProviderFromAccessors()
             superType { typeParameters ->
                 generatedSerializerId.constructClassLikeType(
                     arrayOf(
@@ -292,10 +294,12 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                     isNullable = false
                 )
             }
+        }.apply {
+            excludeFromJsExport()
+            markAsDeprecatedHidden()
         }
-        // TODO: add deprecate hidden
         // serializerFirClass.replaceAnnotations(listOf(Annotations.create(listOf(KSerializerDescriptorResolver.createDeprecatedHiddenAnnotation(thisDescriptor.module)))))
-        serializerFirClass.excludeFromJsExport()
+//        serializerFirClass.excludeFromJsExport()
 
         return serializerFirClass.symbol
     }
