@@ -214,14 +214,16 @@ internal fun AbstractNativeSimpleTest.compileLibrary(
     source: File,
     freeCompilerArgs: List<String> = emptyList(),
     dependencies: List<TestCompilationArtifact.KLIB> = emptyList(),
+    packed: Boolean = true,
 ): TestCompilationResult<out TestCompilationArtifact.KLIB> {
-    val testCase = generateTestCaseWithSingleModule(source, TestCompilerArgs(freeCompilerArgs))
+    val testCompilerArgs = if (packed) TestCompilerArgs(freeCompilerArgs) else TestCompilerArgs(freeCompilerArgs + "-nopack")
+    val testCase = generateTestCaseWithSingleModule(source, testCompilerArgs)
     val compilation = LibraryCompilation(
         settings = settings,
         freeCompilerArgs = testCase.freeCompilerArgs,
         sourceModules = testCase.modules,
         dependencies = dependencies.map { it.asLibraryDependency() },
-        expectedArtifact = getLibraryArtifact(testCase, buildDir)
+        expectedArtifact = getLibraryArtifact(testCase, buildDir, packed)
     )
     return compilation.result
 }
