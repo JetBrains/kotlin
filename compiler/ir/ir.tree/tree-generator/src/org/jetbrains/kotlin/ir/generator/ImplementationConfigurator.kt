@@ -17,42 +17,72 @@ import org.jetbrains.kotlin.utils.withIndent
 
 object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
     override fun configure(model: Model): Unit = with(IrTree) {
+        allImplOf(declaration) {
+            isLateinit("parent")
+            isMutable("parent")
+        }
+
+        allImplOf(attributeContainer) {
+            default("attributeOwnerId", "this")
+            defaultNull("originalBeforeInline")
+        }
+
+        allImplOf(metadataSourceOwner) {
+            defaultNull("metadata")
+        }
+
+        allImplOf(mutableAnnotationContainer) {
+            defaultEmptyList("annotations")
+        }
+
+        allImplOf(overridableDeclaration) {
+            defaultEmptyList("overriddenSymbols")
+        }
+
+        allImplOf(typeParametersContainer) {
+            defaultEmptyList("typeParameters")
+        }
+
+        allImplOf(statementContainer) {
+            default("statements", "ArrayList(2)")
+        }
+
+        allImplOf(declaration) {
+            default("descriptor", "symbol.descriptor", withGetter = true)
+        }
+
         impl(anonymousInitializer) {
             isLateinit("body")
         }
 
-        impl(simpleFunction, "IrFunctionImpl") {
-            defaultEmptyList("valueParameters")
-            defaultNull("dispatchReceiverParameter", "extensionReceiverParameter", "body", "correspondingPropertySymbol")
-            default("contextReceiverParametersCount", "0")
-            isLateinit("returnType")
-        }
-        impl(functionWithLateBinding) {
-            defaultEmptyList("valueParameters")
-            defaultNull("dispatchReceiverParameter", "extensionReceiverParameter", "body", "correspondingPropertySymbol")
-            default("contextReceiverParametersCount", "0")
-            isLateinit("returnType")
-            defaultNull("containerSource", withGetter = true)
-            configureDeclarationWithLateBindinig(simpleFunctionSymbolType)
-        }
-
-        impl(constructor) {
+        allImplOf(function) {
             defaultEmptyList("valueParameters")
             defaultNull("dispatchReceiverParameter", "extensionReceiverParameter", "body")
             default("contextReceiverParametersCount", "0")
             isLateinit("returnType")
         }
 
+        allImplOf(simpleFunction) {
+            defaultNull("correspondingPropertySymbol")
+        }
+
+        impl(simpleFunction, "IrFunctionImpl")
+
+        impl(functionWithLateBinding) {
+            configureDeclarationWithLateBindinig(simpleFunctionSymbolType)
+        }
+
         impl(field) {
             defaultNull("initializer", "correspondingPropertySymbol")
         }
 
-        impl(property) {
+        allImplOf(property) {
             defaultNull("backingField", "getter", "setter")
         }
+
+        impl(property)
+
         impl(propertyWithLateBinding) {
-            defaultNull("backingField", "getter", "setter")
-            defaultNull("containerSource", withGetter = true)
             configureDeclarationWithLateBindinig(propertySymbolType)
         }
 
@@ -177,6 +207,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             value = "_symbol?.descriptor ?: this.toIrBasedDescriptor()"
             withGetter = true
         }
+        defaultNull("containerSource", withGetter = true)
         implementation.generationCallback = {
             println()
             printPropertyDeclaration(
@@ -203,45 +234,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
     }
 
     override fun configureAllImplementations(model: Model) {
-        configureFieldInAllImplementations("parent") {
-            isLateinit("parent")
-            isMutable("parent")
-        }
-
-        configureFieldInAllImplementations("attributeOwnerId") {
-            default(it, "this")
-        }
-        configureFieldInAllImplementations("originalBeforeInline") {
-            defaultNull(it)
-        }
-
-        configureFieldInAllImplementations("metadata") {
-            defaultNull(it)
-        }
-
-        configureFieldInAllImplementations("annotations") {
-            defaultEmptyList(it)
-        }
-
-        configureFieldInAllImplementations("overriddenSymbols") {
-            defaultEmptyList(it)
-        }
-
-        configureFieldInAllImplementations("typeParameters") {
-            defaultEmptyList(it)
-        }
-
-        configureFieldInAllImplementations("statements") {
-            default(it, "ArrayList(2)")
-        }
-
-        configureFieldInAllImplementations(
-            "descriptor",
-            { impl -> impl.allFields.any { it.name == "symbol" } && impl.element != IrTree.errorDeclaration }
-        ) {
-            default(it, "symbol.descriptor", withGetter = true)
-        }
-
         configureFieldInAllImplementations(
             fieldName = null,
             fieldPredicate = { it is ListField && it.isChild && it.listType == StandardTypes.mutableList }

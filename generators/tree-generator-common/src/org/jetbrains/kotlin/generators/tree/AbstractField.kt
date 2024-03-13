@@ -47,7 +47,17 @@ abstract class AbstractField<Field : AbstractField<Field>> {
     open val containsElement: Boolean
         get() = typeRef is ElementOrRef<*> || this is ListField && baseType is ElementOrRef<*>
 
-    open var implementationDefaultStrategy: ImplementationDefaultStrategy = ImplementationDefaultStrategy.Required
+    /**
+     * Indicates how the field will be initialized.
+     *
+     * Null value means that the initialization strategy has not been explicitly configured,
+     * and it will be inherited from an ancestor element, or assigned a default strategy
+     * of [ImplementationDefaultStrategy.Required].
+     *
+     * @see org.jetbrains.kotlin.generators.tree.config.AbstractImplementationConfigurator.inheritImplementationFieldSpecifications .
+     */
+    open var implementationDefaultStrategy: ImplementationDefaultStrategy? = null
+
     abstract var defaultValueInBuilder: String?
 
     abstract var customSetter: String?

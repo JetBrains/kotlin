@@ -651,7 +651,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         configureFieldInAllImplementations(
             fieldName = "typeRef",
             implementationPredicate = { it.typeName !in implementationWithConfigurableTypeRef },
-            fieldPredicate = { it.implementationDefaultStrategy !is AbstractField.ImplementationDefaultStrategy.DefaultValue }
+            fieldPredicate = { it.implementationDefaultStrategy!!.defaultValue != null }
         ) {
             default(it, "FirImplicitTypeRefImplWithoutSource")
             additionalImports(firImplicitTypeWithoutSourceType)
@@ -660,7 +660,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         configureFieldInAllImplementations(
             fieldName = "lValueTypeRef",
             implementationPredicate = { it.typeName in "FirVariableAssignmentImpl" },
-            fieldPredicate = { it.implementationDefaultStrategy !is AbstractField.ImplementationDefaultStrategy.DefaultValue }
+            fieldPredicate = { it.implementationDefaultStrategy!!.defaultValue != null }
         ) {
             default(it, "FirImplicitTypeRefImplWithoutSource")
             additionalImports(firImplicitTypeWithoutSourceType)

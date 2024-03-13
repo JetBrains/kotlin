@@ -201,7 +201,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
 
     private fun BuilderField.needBackingField(fieldIsUseless: Boolean) =
         !nullable && origin !is ListField && if (fieldIsUseless) {
-            implementationDefaultStrategy !is AbstractField.ImplementationDefaultStrategy.DefaultValue
+            implementationDefaultStrategy?.defaultValue == null
         } else {
             defaultValueInBuilder == null
         }
@@ -216,7 +216,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
         fieldIsUseless: Boolean,
     ): Pair<Boolean, Boolean> {
         if (
-            (field.implementationDefaultStrategy as? AbstractField.ImplementationDefaultStrategy.DefaultValue)?.withGetter == true
+            field.implementationDefaultStrategy?.withGetter == true
             && !fieldIsUseless || field.invisibleField
         ) return false to false
         if (field.origin is ListField) {
@@ -225,7 +225,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
             return true to false
         }
         val defaultValue = if (fieldIsUseless)
-            (field.implementationDefaultStrategy as AbstractField.ImplementationDefaultStrategy.DefaultValue).value
+            field.implementationDefaultStrategy!!.defaultValue
         else
             field.defaultValueInBuilder
 

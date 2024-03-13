@@ -110,7 +110,7 @@ class FieldWithDefault(override val origin: Field) : Field() {
         get() = origin.replaceOptInAnnotation
         set(_) {}
 
-    override var implementationDefaultStrategy: ImplementationDefaultStrategy = origin.implementationDefaultStrategy
+    override var implementationDefaultStrategy: ImplementationDefaultStrategy? = origin.implementationDefaultStrategy
     override var defaultValueInBuilder: String? = null
     override var isMutable: Boolean = origin.isMutable
     override val isMutableOrEmptyList: Boolean

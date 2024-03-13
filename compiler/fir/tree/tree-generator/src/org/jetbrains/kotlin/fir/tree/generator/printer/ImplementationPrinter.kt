@@ -102,9 +102,9 @@ internal class ImplementationPrinter(
                         for (field in walkableFields) {
                             when (field.name) {
                                 "explicitReceiver" -> {
-                                    val explicitReceiver = implementation["explicitReceiver"]!!
-                                    val dispatchReceiver = implementation["dispatchReceiver"]!!
-                                    val extensionReceiver = implementation["extensionReceiver"]!!
+                                    val explicitReceiver = implementation["explicitReceiver"]
+                                    val dispatchReceiver = implementation["dispatchReceiver"]
+                                    val extensionReceiver = implementation["extensionReceiver"]
                                     println(
                                         """
                                     |${explicitReceiver.acceptString()}
@@ -168,9 +168,9 @@ internal class ImplementationPrinter(
                         for (field in transformableChildren) {
                             when {
                                 field.name == "explicitReceiver" -> {
-                                    val explicitReceiver = implementation["explicitReceiver"]!!
-                                    val dispatchReceiver = implementation["dispatchReceiver"]!!
-                                    val extensionReceiver = implementation["extensionReceiver"]!!
+                                    val explicitReceiver = implementation["explicitReceiver"]
+                                    val dispatchReceiver = implementation["dispatchReceiver"]
+                                    val extensionReceiver = implementation["extensionReceiver"]
                                     if (explicitReceiver.isMutable) {
                                         println("explicitReceiver = explicitReceiver${explicitReceiver.call()}transform(transformer, data)")
                                     }
@@ -300,7 +300,7 @@ internal class ImplementationPrinter(
                 val newValue = "new$capitalizedFieldName"
                 generateReplace(field, forceNullable = field.useNullableForReplace) {
                     when {
-                        (field.implementationDefaultStrategy as? AbstractField.ImplementationDefaultStrategy.DefaultValue)?.withGetter == true -> {}
+                        field.implementationDefaultStrategy!!.withGetter -> {}
 
                         field.origin is FieldList && !field.isMutableOrEmptyList -> {
                             println("${field.name}.clear()")

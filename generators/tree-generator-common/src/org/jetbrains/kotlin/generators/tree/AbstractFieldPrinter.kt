@@ -56,13 +56,13 @@ abstract class AbstractFieldPrinter<Field : AbstractField<*>>(
                 printOptInWrapped = wrapOptInAnnotations && defaultValue != null,
                 deprecation = field.deprecation,
                 kDoc = field.kDoc.takeIf { !inImplementation },
-                initializer = defaultValue?.takeUnless { it.withGetter }?.value
+                initializer = defaultValue?.takeUnless { it.withGetter }?.defaultValue
             )
             println()
 
             if (defaultValue != null && defaultValue.withGetter) {
                 withIndent {
-                    println("get() = ${defaultValue.value}")
+                    println("get() = ${defaultValue.defaultValue}")
                 }
             }
 
