@@ -264,7 +264,7 @@ class FirCallResolver(
         val callee = qualifiedAccess.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccess
 
         @Suppress("NAME_SHADOWING")
-        val qualifiedAccess = qualifiedAccess.let(transformer::transformExplicitReceiver)
+        val qualifiedAccess = qualifiedAccess.let(transformer::transformExplicitReceiverOf)
         val nonFatalDiagnosticFromExpression = (qualifiedAccess as? FirPropertyAccessExpression)?.nonFatalDiagnostics
 
         val basicResult by lazy(LazyThreadSafetyMode.NONE) {
