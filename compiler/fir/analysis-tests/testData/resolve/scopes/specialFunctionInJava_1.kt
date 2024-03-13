@@ -28,14 +28,15 @@ public abstract class Some extends Number implements MyNumber {
  * MyNumber.toByte(2', renamed) overrides ???
  */
 
+// FILE: main.kt
 fun test(some: Some) {
     some.toByte()
     some.toShort()
     some.toInt()
     some.toLong()
 
-    some.byteValue()
-    some.shortValue()
-    some.intValue()
-    some.longValue()
+    some.<!UNRESOLVED_REFERENCE!>byteValue<!>()
+    some.<!UNRESOLVED_REFERENCE!>shortValue<!>()
+    some.<!UNRESOLVED_REFERENCE!>intValue<!>()
+    some.<!UNRESOLVED_REFERENCE!>longValue<!>()
 }

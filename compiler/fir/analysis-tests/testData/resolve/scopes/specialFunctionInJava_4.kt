@@ -22,7 +22,7 @@ public abstract class Some extends Number implements MyNumber {
  * Some.toByte() (3', renamed) overrides Number.toByte & MyNumber.toByte(2', renamed)
  * MyNumber.toByte(2', renamed) overrides ???
  */
-
+// FILE: main.kt
 fun test(some: Some) {
     some.toByte()
 }
