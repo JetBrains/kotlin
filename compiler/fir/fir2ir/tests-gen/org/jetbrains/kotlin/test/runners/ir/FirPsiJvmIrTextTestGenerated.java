@@ -2839,6 +2839,18 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
         }
 
         @Test
+        @TestMetadata("inheritJavaListSubclass.kt")
+        public void testInheritJavaListSubclass() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/inheritJavaListSubclass.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritJavaUtilList.kt")
+        public void testInheritJavaUtilList() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/inheritJavaUtilList.kt");
+        }
+
+        @Test
         @TestMetadata("intersectionListOverrideKJJ.kt")
         public void testIntersectionListOverrideKJJ() {
           runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/intersectionListOverrideKJJ.kt");

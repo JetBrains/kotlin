@@ -524,13 +524,16 @@ class FakeOverrideGenerator(
         }
 
         return scope.directOverridden(symbol).map {
-            // Unwrapping should happen only for fake overrides members from the same class, not from supertypes
-            if (it.fir.isSubstitutionOverride && containingClass.isRealOwnerOf(it))
-                it.originalForSubstitutionOverride!!
-            else
-                it
+            it.unwrapRenamedForOverride().unwrapSubstitutionOverride(containingClass)
         }
     }
+
+    private inline fun <reified S : FirCallableSymbol<*>> S.unwrapSubstitutionOverride(containingClass: ConeClassLikeLookupTag): S =
+        // Unwrapping should happen only for fake overrides members from the same class, not from supertypes
+        if (containingClass.isRealOwnerOf(this) && fir.isSubstitutionOverride) originalForSubstitutionOverride!! else this
+
+    private inline fun <reified S : FirCallableSymbol<*>> S.unwrapRenamedForOverride(): S =
+        if (origin == FirDeclarationOrigin.RenamedForOverride) fir.initialSignatureAttr?.symbol as? S ?: this else this
 
     internal fun getOverriddenSymbolsForFakeOverride(function: IrSimpleFunction): List<IrSimpleFunctionSymbol>? {
         val baseSymbols = baseFunctionSymbols[function.symbol] ?: return null

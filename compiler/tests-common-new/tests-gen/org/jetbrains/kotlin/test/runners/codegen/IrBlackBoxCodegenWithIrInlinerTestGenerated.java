@@ -8976,6 +8976,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
     }
 
     @Test
+    @TestMetadata("irrelevantImplCharSequenceWithExtraSupertype.kt")
+    public void testIrrelevantImplCharSequenceWithExtraSupertype() {
+      runTest("compiler/testData/codegen/box/collections/irrelevantImplCharSequenceWithExtraSupertype.kt");
+    }
+
+    @Test
     @TestMetadata("irrelevantImplMutableList.kt")
     public void testIrrelevantImplMutableList() {
       runTest("compiler/testData/codegen/box/collections/irrelevantImplMutableList.kt");
