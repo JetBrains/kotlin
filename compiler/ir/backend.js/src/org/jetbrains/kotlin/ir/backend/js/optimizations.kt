@@ -19,14 +19,16 @@ import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.RecursiveJsVisitor
 import org.jetbrains.kotlin.js.inline.clean.ClassPostProcessor
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 fun optimizeProgramByIr(
     modules: Iterable<IrModuleFragment>,
     context: JsIrBackendContext,
+    moduleKind: ModuleKind,
     removeUnusedAssociatedObjects: Boolean
 ) {
     val dceDumpNameCache = DceDumpNameCache() // in JS mode only DCE Graph could be dumped
-    eliminateDeadDeclarations(modules, context, removeUnusedAssociatedObjects, dceDumpNameCache)
+    eliminateDeadDeclarations(modules, context, moduleKind, removeUnusedAssociatedObjects, dceDumpNameCache)
 
     val phaseConfig = PhaseConfig(jsOptimizationPhases)
     val phaserState = PhaserState<IrModuleFragment>()

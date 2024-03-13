@@ -17,15 +17,17 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun eliminateDeadDeclarations(
     modules: Iterable<IrModuleFragment>,
     context: JsIrBackendContext,
+    moduleKind: ModuleKind,
     removeUnusedAssociatedObjects: Boolean = true,
     dceDumpNameCache: DceDumpNameCache,
 ) {
-    val allRoots = buildRoots(modules, context)
+    val allRoots = buildRoots(modules, context, moduleKind)
 
     val printReachabilityInfo =
         context.configuration.getBoolean(JSConfigurationKeys.PRINT_REACHABILITY_INFO) ||
@@ -91,7 +93,11 @@ private fun IrDeclaration.addRootsTo(
     }
 }
 
-private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackendContext): List<IrDeclaration> = buildList {
+private fun buildRoots(
+    modules: Iterable<IrModuleFragment>,
+    context: JsIrBackendContext,
+    moduleKind: ModuleKind
+): List<IrDeclaration> = buildList {
     val declarationsCollector = object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement): Unit = element.acceptChildrenVoid(this)
         override fun visitBody(body: IrBody): Unit = Unit // Skip
@@ -119,6 +125,11 @@ private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackend
         ?.let { add(it) }
 
     addIfNotNull(context.intrinsics.void.owner.backingField)
+
+    if (moduleKind == ModuleKind.UMD) {
+        add(context.intrinsics.globalThis.owner)
+    }
+
     addAll(context.testFunsPerFile.values)
     addAll(context.additionalExportedDeclarations)
 }
