@@ -10,6 +10,11 @@ import java.io.File
 sealed interface TestCompilationArtifact {
     val logFile: File
 
+    data class UnpackedKlib(val root: File) : TestCompilationArtifact {
+        override val logFile: File
+            get() = root.resolveSibling("${root.name}.log")
+    }
+
     data class KLIB(val klibFile: File) : TestCompilationArtifact {
         val path: String get() = klibFile.path
 
