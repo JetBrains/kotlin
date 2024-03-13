@@ -615,6 +615,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         // Please update KmpModuleSorterTest#buildDependenciesToTest if the logic of collecting dependencies changes
         val dependencyModules = buildSet {
             addAll(module.directRegularDependencies)
+            addAll(module.directFriendDependencies)
 
             // The dependency provider needs to have access to all direct and indirect `dependsOn` dependencies, as `dependsOn`
             // dependencies are transitive.
