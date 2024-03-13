@@ -1,0 +1,3 @@
+// GRADLE_LIKE_SCRIPT
+
+val projectApi = <!RECURSION_IN_IMPLICIT_TYPES!>projectApi<!> { <!UNRESOLVED_REFERENCE!>it<!> }

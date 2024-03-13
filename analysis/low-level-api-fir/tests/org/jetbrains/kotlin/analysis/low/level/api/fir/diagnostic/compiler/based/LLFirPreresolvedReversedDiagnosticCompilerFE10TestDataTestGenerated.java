@@ -28149,6 +28149,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("implicitInvokeOnPropertyInItsInitializer2.kt")
+      public void testImplicitInvokeOnPropertyInItsInitializer2() {
+        runTest("compiler/testData/diagnostics/tests/operatorsOverloading/implicitInvokeOnPropertyInItsInitializer2.kt");
+      }
+
+      @Test
       @TestMetadata("incForAssignmentSmartCast.kt")
       public void testIncForAssignmentSmartCast() {
         runTest("compiler/testData/diagnostics/tests/operatorsOverloading/incForAssignmentSmartCast.kt");
