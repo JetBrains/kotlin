@@ -1,6 +1,10 @@
-// ISSUE: KT-65789
+// ISSUE: KT-65789, KT-58920
 // LANGUAGE: -PrioritizedEnumEntries
-// FIR_DUMP
+// WITH_REFLECT
+
+import kotlin.reflect.*
+
+fun <T> take(arg: T): T = arg
 
 enum class SomeClass {
     FIRST, LAST;
@@ -15,5 +19,6 @@ enum class SomeClass {
 
 val resultValues = SomeClass.<!OVERLOAD_RESOLUTION_AMBIGUITY!>values<!>()
 val resultValuesRef = SomeClass::<!OVERLOAD_RESOLUTION_AMBIGUITY!>values<!>
-val resultEntries = SomeClass.entries
-val resultEntriesRef = SomeClass::entries
+
+val resultEntries = take<SomeClass.entries.Companion>(SomeClass.entries)
+val resultEntriesRef = take<KFunction0<SomeClass.entries>>(SomeClass::entries)

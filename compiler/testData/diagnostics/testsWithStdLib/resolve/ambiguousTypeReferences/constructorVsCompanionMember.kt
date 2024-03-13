@@ -1,9 +1,10 @@
 // FIR_IDENTICAL
 // ISSUE: KT-65789
 // DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
-// FIR_DUMP
 
 package bar
+
+fun <T> take(arg: T): T = arg
 
 class Owner {
     companion object {
@@ -16,16 +17,16 @@ class Owner {
 
         class Bar(val str: String?)
 
-        val foo = Foo("1") // K1/K2: function
-        val bar = Bar("2") // K1/K2: function
+        val foo = take<Unit>(Foo("1"))
+        val bar = take<Unit>(Bar("2"))
     }
 
-    val foo = Foo("3") // K1/K2: constructor
-    val bar = Bar("4") // K1/K2: constructor
+    val foo = take<Owner.Companion.Foo>(Foo("3"))
+    val bar = take<Owner.Companion.Bar>(Bar("4"))
 }
 
-val ownerFoo = Owner.Foo("1") // K1/K2: function
-val ownerCompanionFoo = Owner.Companion.Foo("2") // K1/K2: constructor
+val ownerFoo = take<Unit>(Owner.Foo("1"))
+val ownerCompanionFoo = take<Owner.Companion.Foo>(Owner.Companion.Foo("2"))
 
-val ownerBar = Owner.Bar("3") // K1/K2: function
-val ownerCompanionBar = Owner.Companion.Bar("4") // K1/K2: constructor
+val ownerBar = take<Unit>(Owner.Bar("3"))
+val ownerCompanionBar = take<Owner.Companion.Bar>(Owner.Companion.Bar("4"))
