@@ -695,8 +695,9 @@ fun serializeModuleIntoKlib(
         if (jsOutputName != null) {
             p.setProperty(KLIB_PROPERTY_JS_OUTPUT_NAME, jsOutputName)
         }
-        wasmTarget?.let {
-            p.setProperty(KLIB_PROPERTY_WASM_TARGET, it.name.toLowerCaseAsciiOnly())
+        val wasmTargets = listOfNotNull(/* in the future there might be multiple WASM targets */ wasmTarget)
+        if (wasmTargets.isNotEmpty()) {
+            p.setProperty(KLIB_PROPERTY_WASM_TARGETS, wasmTargets.joinToString(" ") { it.alias })
         }
         if (containsErrorCode) {
             p.setProperty(KLIB_PROPERTY_CONTAINS_ERROR_CODE, "true")
