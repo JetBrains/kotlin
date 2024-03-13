@@ -1,5 +1,4 @@
-// SEPARATE_SIGNATURE_DUMP_FOR_K2
-// ^ Different type of s - KT-65603
+// FIR_IDENTICAL
 
 class A {
     private abstract class B {

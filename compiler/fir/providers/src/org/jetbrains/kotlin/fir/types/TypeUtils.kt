@@ -361,8 +361,7 @@ fun FirDeclaration.visibilityForApproximation(container: FirDeclaration?): Visib
     val containerVisibility =
         if (container == null || container is FirFile || container is FirScript) Visibilities.Public
         else (container as? FirRegularClass)?.visibility ?: Visibilities.Local
-    if (containerVisibility == Visibilities.Local || visibility == Visibilities.Local) return Visibilities.Local
-    if (containerVisibility == Visibilities.Private) return Visibilities.Private
+    if (containerVisibility == Visibilities.Local) return Visibilities.Local
     return visibility
 }
 
