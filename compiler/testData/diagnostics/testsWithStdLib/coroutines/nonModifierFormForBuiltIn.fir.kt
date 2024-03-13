@@ -1,15 +1,15 @@
 // SKIP_TXT
 
 fun bar() {
-    suspend {
+    <!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspend<!> {
         println()
     }
 
-    @Ann suspend {
+    @Ann <!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspend<!> {
         println()
     }
 
-    suspend @Ann {
+    <!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspend<!> @Ann {
         println()
     }
 

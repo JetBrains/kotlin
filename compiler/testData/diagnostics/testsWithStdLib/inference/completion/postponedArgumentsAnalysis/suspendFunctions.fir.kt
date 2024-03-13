@@ -8,10 +8,10 @@ fun <T: suspend (Int) -> Unit, K: T> takeSuspend(x: T, y: K) = x
 fun <T: (Int) -> Unit, K: T> takeSimpleFunction(x: T, y: K) = x
 
 fun main() {
-    select(suspend {}, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>{}<!>)
-    select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>{}<!>, suspend {})
-    select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>id {}<!>, suspend {})
-    select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>id {}<!>, id(suspend {}))
+    select(<!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspend<!> {}, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>{}<!>)
+    select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>{}<!>, <!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspend<!> {})
+    select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>id {}<!>, <!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspend<!> {})
+    select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>id {}<!>, id(<!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspend<!> {}))
     select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction0<kotlin.Unit>")!>id {}<!>, id<suspend () -> Unit> {})
 
     takeSuspend(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>id { it }<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>{ x -> x }<!>)
@@ -20,6 +20,6 @@ fun main() {
 
     // Here, the error should be
     val x2: (Int) -> Unit = <!INITIALIZER_TYPE_MISMATCH!>takeSuspend(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>id <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>{ it }<!><!>, <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>{ x -> x }<!>)<!>
-    val x3: suspend (Int) -> Unit = takeSimpleFunction(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>id <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>{ it }<!><!>, <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>{ x -> x }<!>)
+    val x3: suspend (Int) -> Unit = <!UPPER_BOUND_VIOLATED!>takeSimpleFunction<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>id <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>{ it }<!><!>, <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>{ x -> x }<!>)
     val x4: (Int) -> Unit = takeSimpleFunction(<!ARGUMENT_TYPE_MISMATCH!>id<suspend (Int) -> Unit> {}<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Int, kotlin.Unit>")!>{}<!>)
 }

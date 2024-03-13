@@ -1,5 +1,7 @@
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -USELESS_IS_CHECK
 // SKIP_TXT
+
 import kotlin.concurrent.withLock
 
 val lock = java.util.concurrent.locks.ReentrantLock()
@@ -25,7 +27,7 @@ fun test() {
         synchronized(getLock()) {
             println("")
         }
-        synchronized(suspend { getLock() } ()) {
+        synchronized(<!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspend<!> { getLock() } ()) {
             println("")
         }
         synchronized(run { getLock() }) {

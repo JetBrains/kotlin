@@ -13,7 +13,7 @@ class Player
             suspend fun launch2() {
                 pumpEvents()
             }
-            suspend {
+            <!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspend<!> {
                 pumpEvents()
             }
             run {

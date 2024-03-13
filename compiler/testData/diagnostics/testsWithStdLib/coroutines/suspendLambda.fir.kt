@@ -4,7 +4,7 @@ import kotlin.coroutines.*
 fun <T> foo(): Continuation<T> = null!!
 
 fun bar() {
-    suspend {
+    <!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspend<!> {
         println()
     }.startCoroutine(foo<Unit>())
 }
