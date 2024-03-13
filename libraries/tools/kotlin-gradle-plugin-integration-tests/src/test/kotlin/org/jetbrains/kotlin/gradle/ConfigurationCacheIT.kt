@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 
@@ -69,9 +70,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     )
     @GradleTest
     fun testMppWithMavenPublish(gradleVersion: GradleVersion) {
-        // with Configuration Cache we currently have such problem KT-66423
-        val buildOptions = buildOptionsToAvoidKT66423(gradleVersion)
-        project("new-mpp-lib-and-app/sample-lib", gradleVersion, buildOptions = buildOptions) {
+        project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             val publishedTargets = listOf("kotlinMultiplatform", "jvm6", "nodeJs", "linux64", "mingw64")
             testConfigurationCacheOf(
                 *(publishedTargets.map { ":publish${it.replaceFirstChar { it.uppercaseChar() }}PublicationToMavenRepository" }
@@ -89,9 +88,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     )
     @GradleTest
     fun testAllMetadataJarWithConfigurationCache(gradleVersion: GradleVersion) {
-        // with Configuration Cache we currently have such problem KT-66423
-        val buildOptions = buildOptionsToAvoidKT66423(gradleVersion)
-        project("new-mpp-lib-and-app/sample-lib", gradleVersion, buildOptions = buildOptions) {
+        project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             testConfigurationCacheOf(":allMetadataJar")
         }
     }
@@ -104,9 +101,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     )
     @GradleTest
     fun testCommonizer(gradleVersion: GradleVersion) {
-        // with Configuration Cache we currently have such problem KT-66423
-        val buildOptions = buildOptionsToAvoidKT66423(gradleVersion)
-        project("native-configuration-cache", gradleVersion, buildOptions = buildOptions) {
+        project("native-configuration-cache", gradleVersion) {
             build(":cleanNativeDistributionCommonization")
 
             build(":lib:compileCommonMainKotlinMetadata") {
@@ -129,15 +124,39 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     }
 
     @NativeGradlePluginTests
+    @DisplayName("Configuration cache works with Kotlin Native bundle and its dependencies downloading")
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_4,
+        additionalVersions = [TestVersions.Gradle.G_7_6],
+    )
+    @OsCondition(
+        supportedOn = [OS.LINUX, OS.MAC], // disabled on Windows because of tmp dir problem KT-62761
+        enabledOnCI = [OS.LINUX, OS.MAC],
+    )
+    @GradleTest
+    fun testWithDownloadingKotlinNativeAndDependencies(gradleVersion: GradleVersion, @TempDir konanTempDir: Path) {
+        // with Configuration Cache we currently have such problem KT-66423
+        val buildOptions = buildOptionsToAvoidKT66423(gradleVersion, konanTempDir)
+        project("native-configuration-cache", gradleVersion, buildOptions = buildOptions) {
+
+            build(":lib:compileCommonMainKotlinMetadata") {
+                assertConfigurationCacheStored()
+            }
+
+            build(":lib:compileCommonMainKotlinMetadata") {
+                assertConfigurationCacheReused()
+            }
+        }
+    }
+
+    @NativeGradlePluginTests
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.G_7_4,
         additionalVersions = [TestVersions.Gradle.G_7_6],
     )
     @GradleTest
     fun testCInteropCommonizer(gradleVersion: GradleVersion) {
-        // with Configuration Cache we currently have such problem KT-66423
-        val buildOptions = buildOptionsToAvoidKT66423(gradleVersion)
-        project("native-configuration-cache", gradleVersion, buildOptions = buildOptions) {
+        project("native-configuration-cache", gradleVersion) {
             testConfigurationCacheOf(":lib:commonizeCInterop")
         }
     }
@@ -287,18 +306,8 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
 abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
 
-    @TempDir
-    lateinit var konanDataTempDir: Path
-
-    override val defaultBuildOptions
-        get() = super.defaultBuildOptions.copy(
-            configurationCache = true,
-            konanDataDir = konanDataTempDir,
-            nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
-                // set the KGP's default Kotlin Native version, because in CI we don't have K/N versions in maven repo for each build
-                version = null
-            )
-        )
+    override val defaultBuildOptions =
+        super.defaultBuildOptions.copy(configurationCache = true)
 
     protected fun TestProject.testConfigurationCacheOf(
         vararg taskNames: String,
@@ -314,7 +323,7 @@ abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
         )
     }
 
-    protected fun buildOptionsToAvoidKT66423(gradleVersion: GradleVersion) =
+    protected fun buildOptionsToAvoidKT66423(gradleVersion: GradleVersion, konanTempDir: Path) =
         if (gradleVersion == GradleVersion.version(TestVersions.Gradle.G_8_6)) {
             defaultBuildOptions.copy(
                 konanDataDir = konanDir,
@@ -322,5 +331,12 @@ abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
                     version = System.getProperty("kotlinNativeVersion")
                 )
             )
-        } else defaultBuildOptions
+        } else defaultBuildOptions.copy(
+            configurationCache = true,
+            konanDataDir = konanTempDir,
+            nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
+                // set the KGP's default Kotlin Native version, because in CI we don't have K/N versions in maven repo for each build
+                version = null
+            )
+        )
 }

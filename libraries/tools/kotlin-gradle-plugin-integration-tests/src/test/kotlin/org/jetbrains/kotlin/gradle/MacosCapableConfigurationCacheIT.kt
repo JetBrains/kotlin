@@ -54,9 +54,7 @@ class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
             )
         }
 
-        // with Configuration Cache we currently have such problem KT-66423
-        val buildOptions = buildOptionsToAvoidKT66423(gradleVersion)
-        project("native-configuration-cache", gradleVersion, buildOptions = buildOptions) {
+        project("native-configuration-cache", gradleVersion) {
             testConfigurationCacheOf(
                 "build",
                 executedTaskNames = expectedTasks,
