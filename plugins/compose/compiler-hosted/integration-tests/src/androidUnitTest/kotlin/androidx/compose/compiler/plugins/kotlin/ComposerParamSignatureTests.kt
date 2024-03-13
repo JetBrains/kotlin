@@ -1046,6 +1046,7 @@ class ComposerParamSignatureTests(useFir: Boolean) : AbstractCodegenSignatureTes
         """,
         """
             public abstract class CompositionLocal2 {
+              PERMITTEDSUBCLASS ProvidableCompositionLocal2
               private <init>()V
               public final getCurrent(Landroidx/compose/runtime/Composer;I)Ljava/lang/Object;
               public final foo(Landroidx/compose/runtime/Composer;I)V

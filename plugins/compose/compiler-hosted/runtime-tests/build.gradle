@@ -22,7 +22,7 @@ plugins {
 }
 
 androidXMultiplatform {
-    jvm()
+    desktop()
 
     sourceSets {
         commonMain {
@@ -39,13 +39,13 @@ androidXMultiplatform {
             }
         }
 
-        jvmMain {
+        desktopMain {
             dependsOn(commonMain)
             dependencies {
             }
         }
 
-        jvmTest {
+        desktopTest {
             dependsOn(commonTest)
             dependencies {
             }

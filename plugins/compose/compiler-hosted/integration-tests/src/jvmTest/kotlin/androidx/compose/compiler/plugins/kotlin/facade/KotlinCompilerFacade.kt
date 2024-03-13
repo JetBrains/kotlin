@@ -114,7 +114,7 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
                 put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE_NAME)
                 put(JVMConfigurationKeys.IR, true)
                 put(JVMConfigurationKeys.VALIDATE_IR, true)
-                put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
+                put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_17)
                 put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, TestMessageCollector)
                 put(IrMessageLogger.IR_MESSAGE_LOGGER, IrMessageCollector(TestMessageCollector))
                 updateConfiguration()
