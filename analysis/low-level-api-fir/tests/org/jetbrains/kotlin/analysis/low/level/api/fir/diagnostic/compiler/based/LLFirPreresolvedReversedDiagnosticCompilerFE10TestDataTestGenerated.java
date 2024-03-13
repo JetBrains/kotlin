@@ -22201,6 +22201,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("rawTypeCrash.kt")
+      public void testRawTypeCrash() {
+        runTest("compiler/testData/diagnostics/tests/j+k/rawTypeCrash.kt");
+      }
+
+      @Test
       @TestMetadata("rawTypeScope.kt")
       public void testRawTypeScope() {
         runTest("compiler/testData/diagnostics/tests/j+k/rawTypeScope.kt");
