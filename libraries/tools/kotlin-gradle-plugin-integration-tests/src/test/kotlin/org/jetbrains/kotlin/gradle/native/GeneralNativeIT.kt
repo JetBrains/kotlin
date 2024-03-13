@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import com.intellij.openapi.util.JDOMUtil
 import com.intellij.testFramework.TestDataFile
 import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
-import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.internals.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
@@ -702,7 +702,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
             fun assertStacktrace(taskName: String, targetName: String) {
                 val testReport = projectPath.resolve("build/test-results/$taskName/TEST-org.foo.test.TestKt.xml").toFile()
-                val stacktrace = SAXBuilder().build(testReport).rootElement
+                val stacktrace = JDOMUtil.load(testReport)
                     .getChildren("testcase")
                     .single { it.getAttribute("name").value == "fail" || it.getAttribute("name").value == "fail[$targetName]" }
                     .getChild("failure")

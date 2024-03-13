@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.spec.utils.spec
 
-import org.jdom.input.SAXBuilder
+import com.intellij.openapi.util.JDOMUtil
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.io.BufferedInputStream
@@ -28,15 +28,14 @@ object HtmlSpecLoader {
     }
 
     private fun getLastSpecVersion(): Pair<String, String> {
-        val sax = SAXBuilder()
-        val buildInfo = sax.build(
+        val buildInfo = JDOMUtil.load(
             URL("$TC_URL/$TC_PATH_PREFIX/buildType:(id:$SPEC_DOCS_TC_CONFIGURATION_ID),count:1,status:SUCCESS?branch=$STABLE_BRANCH")
         )
-        val artifactsLink = (buildInfo.rootElement.children.find { it.name == "artifacts" })!!.getAttribute("href").value
-        val artifacts = sax.build(URL(TC_URL + artifactsLink))
+        val artifactsLink = (buildInfo.children.find { it.name == "artifacts" })!!.getAttribute("href").value
+        val artifacts = JDOMUtil.load(URL(TC_URL + artifactsLink))
         val pattern = Pattern.compile("""kotlin-spec-(?<specVersion>latest)-(?<buildNumber>[1-9]\d*)\.zip""")
 
-        val artifactNameMatches = artifacts.rootElement.children
+        val artifactNameMatches = artifacts.children
             .map { it.getAttribute("name").value }
             .mapNotNull { pattern.matcher(it) }
             .single { it.find() }

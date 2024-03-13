@@ -76,6 +76,7 @@ dependencies {
 
     testImplementation(project(":kotlin-compiler-embeddable"))
     testImplementation(intellijJDom())
+    testImplementation(intellijPlatformUtil())
     testImplementation(project(":compiler:cli-common"))
     testImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
     // testCompileOnly dependency on non-shaded artifacts is needed for IDE support
