@@ -34,6 +34,7 @@ interface ResolverForModuleComputationTracker {
     fun onResolverComputed(moduleInfo: ModuleInfo)
 
     companion object {
+        @Suppress("DEPRECATION") // KT-68390
         fun getInstance(project: Project): ResolverForModuleComputationTracker? =
             project.getComponent(ResolverForModuleComputationTracker::class.java) ?: null
     }
