@@ -77,6 +77,8 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     JS_TARGET_MODE(CONCAT, AllowedListAnonymizer(listOf("both", "browser", "nodejs", "none"))),
     JS_OUTPUT_GRANULARITY(OVERRIDE, RegexControlled("(whole_program|per_module|per_file)", false)),
 
+    WASM_TARGET(CONCAT, AllowedListAnonymizer(listOf("js", "wasi"))),
+
     // Compiler parameters
     JVM_DEFAULTS(CONCAT, AllowedListAnonymizer(listOf("disable", "enable", "compatibility", "all", "all-compatibility"))),
     USE_OLD_BACKEND(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
@@ -86,6 +88,7 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
 
     companion object {
         // Version 2: removed deprecated K/N targets from MPP_PLATFORMS
-        const val VERSION = 2
+        // Version 3: added wasm targets: js and wasi
+        const val VERSION = 3
     }
 }
