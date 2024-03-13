@@ -238,18 +238,34 @@ val FirResolvePhase.isBodyResolve: Boolean
  * @see FirResolvePhase
  * @see org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
  * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+ * @see isItAllowedToCallLazyResolveToTheSamePhase
  */
 fun FirResolvePhase.isItAllowedToCallLazyResolveTo(requestedPhase: FirResolvePhase): Boolean = when {
     // It is fine to call lazy resolution for all phases less than our
     this > requestedPhase -> true
 
     // It is legal only in specific cases
-    this == requestedPhase -> when (requestedPhase) {
-        // The resolver can jump into Java initializer during this phase,
-        // which can jump into the Kotlin world again, and we cannot provide the initial context
-        FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> true
-        else -> false
-    }
+    this == requestedPhase -> isItAllowedToCallLazyResolveToTheSamePhase
 
     else -> false
 }
+
+/**
+ * Note: not all ***jumping phases*** can be [isItAllowedToCallLazyResolveToTheSamePhase],
+ * but all [isItAllowedToCallLazyResolveToTheSamePhase] phases are ***jumping phases***
+ * due to the implementation details.
+ *
+ * @return **true** if it is allowed to call [lazyResolveToPhase][org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase]
+ * into the same phase
+ *
+ * @see org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
+ * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+ */
+val FirResolvePhase.isItAllowedToCallLazyResolveToTheSamePhase: Boolean
+    get() = when (this) {
+        // The resolver can jump into Java initializer during this phase,
+        // which can jump into the Kotlin world again, and we cannot provide the initial context
+        FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> true
+
+        else -> false
+    }

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.destructuringDeclarationContainerVariable
+import org.jetbrains.kotlin.fir.declarations.isItAllowedToCallLazyResolveToTheSamePhase
 import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
@@ -77,11 +78,11 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 internal sealed class LLFirTargetResolver(
     protected val resolveTarget: LLFirResolveTarget,
     val resolverPhase: FirResolvePhase,
-    private val requiresJumpingLock: Boolean = false,
 ) : LLFirResolveTargetVisitor {
     val resolveTargetSession: LLFirSession get() = resolveTarget.session
     val resolveTargetScopeSession: ScopeSession get() = resolveTargetSession.getScopeSession()
     private val lockProvider: LLFirLockProvider get() = LLFirGlobalResolveComponents.getInstance(resolveTargetSession).lockProvider
+    private val requiresJumpingLock: Boolean get() = resolverPhase.isItAllowedToCallLazyResolveToTheSamePhase
 
     private val _containingDeclarations = mutableListOf<FirDeclaration>()
 
