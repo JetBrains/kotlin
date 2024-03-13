@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.internal.os.OperatingSystem
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
@@ -455,6 +456,26 @@ class MppCompositeBuildIT : KGPBaseTest() {
         ) {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
             build("projects")
+        }
+    }
+
+    @GradleTest
+    fun `KT-65315 composite project with resources in metadata klib`(gradleVersion: GradleVersion) {
+        val producer = project("mpp-composite-build/kt65315_with_resources_in_metadata_klib/producer", gradleVersion)
+
+        project(
+            "mpp-composite-build/kt65315_with_resources_in_metadata_klib/consumer",
+            gradleVersion,
+        ) {
+            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+
+            build(":consumerA:assemble") {
+                assertTasksExecuted(":consumerA:compileCommonMainKotlinMetadata")
+                assertTasksExecuted(":consumerA:compileNativeMainKotlinMetadata")
+                if (OperatingSystem.current().isMacOsX) {
+                    assertTasksExecuted(":consumerA:compileAppleMainKotlinMetadata")
+                }
+            }
         }
     }
 }
