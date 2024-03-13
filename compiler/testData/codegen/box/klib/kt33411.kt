@@ -1,8 +1,7 @@
 // IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE && target=linux_x64
 // IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE && target=linux_x64
 // IGNORE_BACKEND_K1: JVM, JVM_IR
-// DONT_CHECK_IGNORED
-//   LightAnalysisModeTestGenerated passes because it doesn't compile the body of function `box` actually
+// IGNORE_LIGHT_ANALYSIS
 
 // ISSUE: KT-33411, KT-66338
 
