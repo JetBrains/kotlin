@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-65038
 
 // MODULE: base1

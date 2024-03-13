@@ -22,7 +22,8 @@ abstract class FirTypeResolver : FirSessionComponent {
         resolveDeprecations: Boolean,
         // Note: sometimes we don't have useSiteFile in IDE context
         useSiteFile: FirFile?,
-        supertypeSupplier: SupertypeSupplier
+        supertypeSupplier: SupertypeSupplier,
+        expandTypeAliases: Boolean = true,
     ): FirTypeResolutionResult
 }
 
