@@ -7,13 +7,15 @@ package kotlin.time
 
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 import kotlin.concurrent.getOrSet
 
 internal actual val durationAssertionsEnabled: Boolean = Duration::class.java.desiredAssertionStatus()
 
 private val precisionFormats = Array(4) { ThreadLocal<DecimalFormat>() }
 
-private fun createFormatForDecimals(decimals: Int) = DecimalFormat("0").apply {
+private fun createFormatForDecimals(decimals: Int) = DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ROOT)).apply {
     if (decimals > 0) minimumFractionDigits = decimals
     roundingMode = RoundingMode.HALF_UP
 }
