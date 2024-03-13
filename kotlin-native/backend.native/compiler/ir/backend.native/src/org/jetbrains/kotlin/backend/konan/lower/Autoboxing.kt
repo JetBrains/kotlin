@@ -54,11 +54,16 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     // TODO: should we handle the cases when expression type
     // is not equal to e.g. called function return type?
 
-    override fun IrExpression.useInTypeOperator(operator: IrTypeOperator, typeOperand: IrType): IrExpression {
-        return if (operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT ||
-                   operator == IrTypeOperator.IMPLICIT_INTEGER_COERCION) {
-            this
-        } else {
+    override fun IrExpression.useInTypeOperator(operator: IrTypeOperator, typeOperand: IrType) = when {
+        operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT || operator == IrTypeOperator.IMPLICIT_INTEGER_COERCION -> this
+        insertSafeCasts && operator == IrTypeOperator.IMPLICIT_CAST -> {
+            if (typeOperand.isInlinedNative())
+                this.useAs(context.irBuiltIns.anyNType)
+                        .useAs(typeOperand)
+            else
+                this.useAs(typeOperand)
+        }
+        else -> {
             // Codegen expects the argument of type-checking operator to be an object reference:
             this.useAs(context.irBuiltIns.anyNType)
         }
@@ -90,18 +95,21 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     override fun IrExpression.useAs(type: IrType): IrExpression {
-        return this.useAs(type, skipTypeCheck = false)
+        return this.useAs(type, forceSkipTypeCheck = false)
     }
 
-    private fun IrExpression.useAs(type: IrType, skipTypeCheck: Boolean): IrExpression {
-        if (this is IrTypeOperatorCall && (this.operator == IrTypeOperator.CAST || this.operator == IrTypeOperator.IMPLICIT_CAST))
-            return this.adaptIfNecessary(actualType = context.irBuiltIns.anyNType, type, skipTypeCheck = true)
-
+    private fun IrExpression.useAs(type: IrType, forceSkipTypeCheck: Boolean): IrExpression {
+        val skipTypeCheck = forceSkipTypeCheck || !insertSafeCasts || (this as? IrTypeOperatorCall)?.operator == IrTypeOperator.CAST
         val actualType = when (this) {
             is IrGetField -> this.symbol.owner.type
             is IrCall -> when (this.symbol) {
                 symbols.reinterpret -> this.getTypeArgument(1)!!
                 else -> this.callTarget.returnType
+            }
+            is IrTypeOperatorCall -> when (this.operator) {
+                IrTypeOperator.CAST -> context.irBuiltIns.anyNType
+                IrTypeOperator.IMPLICIT_CAST -> if (insertSafeCasts) this.type else context.irBuiltIns.anyNType
+                else -> this.type
             }
             else -> this.type
         }
@@ -129,7 +137,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     override fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression): IrExpression {
         val target = expression.target
         return useAs(target.dispatchReceiverParameter!!.type,
-                skipTypeCheck = currentFunction?.bridgeTarget == target) // A bridge cannot be called on an improper receiver.
+                forceSkipTypeCheck = currentFunction?.bridgeTarget == target) // A bridge cannot be called on an improper receiver.
     }
 
     override fun IrExpression.useAsExtensionReceiver(expression: IrFunctionAccessExpression): IrExpression {
