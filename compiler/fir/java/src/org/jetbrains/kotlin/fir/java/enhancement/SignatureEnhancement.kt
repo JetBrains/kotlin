@@ -891,7 +891,7 @@ private class EnhancementSignatureParts(
         get() = ((this as? ConeLookupTagBasedType)?.lookupTag as? ConeClassLikeLookupTag)?.classId?.asSingleFqName()?.toUnsafe()
 
     override val KotlinTypeMarker.enhancedForWarnings: KotlinTypeMarker?
-        get() = null // TODO: implement enhancement for warnings
+        get() = (this as ConeKotlinType).enhancedTypeForWarning
 
     override fun KotlinTypeMarker.isEqual(other: KotlinTypeMarker): Boolean =
         AbstractTypeChecker.equalTypes(session.typeContext, this, other)

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: NullnessUnspecifiedTypeParameter.java
 import org.jspecify.annotations.*;
 
