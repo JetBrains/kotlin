@@ -161,7 +161,7 @@ fun case_8(x: TypealiasNullableString) {
 }
 
 // TESTCASE NUMBER: 9
-fun case_9(x: TypealiasNullableString?, y: Nothing?) {
+fun case_9(x: TypealiasNullableString<!REDUNDANT_NULLABLE!>?<!>, y: Nothing?) {
     if (x === y) {
 
     } else if (false) {
@@ -200,7 +200,7 @@ fun case_10() {
 }
 
 // TESTCASE NUMBER: 11
-fun case_11(x: TypealiasNullableString?, y: TypealiasNullableString) {
+fun case_11(x: TypealiasNullableString<!REDUNDANT_NULLABLE!>?<!>, y: TypealiasNullableString) {
     val z = null
     val u: TypealiasNullableString = null
     val v = null
@@ -261,7 +261,7 @@ fun case_13(x: EmptyClass12_48?, z: Nothing?) =
 
 // TESTCASE NUMBER: 14
 class Case14 {
-    val x: TypealiasNullableString?
+    val x: TypealiasNullableString<!REDUNDANT_NULLABLE!>?<!>
     init {
         x = TypealiasNullableString()
     }
@@ -808,7 +808,7 @@ fun case_43(x: TypealiasNullableString) {
  * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28329
  */
-fun case_44(x: TypealiasNullableString?, z1: Nothing?) {
+fun case_44(x: TypealiasNullableString<!REDUNDANT_NULLABLE!>?<!>, z1: Nothing?) {
     if (true && true && true && true && x !== z1) {
 
     } else if (false) {
@@ -839,7 +839,7 @@ fun case_45() {
 }
 
 // TESTCASE NUMBER: 46
-fun case_46(x: TypealiasNullableString?, y: TypealiasNullableString) {
+fun case_46(x: TypealiasNullableString<!REDUNDANT_NULLABLE!>?<!>, y: TypealiasNullableString) {
     val t: TypealiasNullableString = null
     <!CAN_BE_VAL!>var<!> z: Nothing? = null
 
@@ -887,7 +887,7 @@ fun case_48(x: EmptyClass12_48?, z: Nothing?) =
 
 // TESTCASE NUMBER: 49
 class Case49 {
-    val x: TypealiasNullableString?
+    val x: TypealiasNullableString<!REDUNDANT_NULLABLE!>?<!>
     init {
         x = TypealiasNullableString()
     }
