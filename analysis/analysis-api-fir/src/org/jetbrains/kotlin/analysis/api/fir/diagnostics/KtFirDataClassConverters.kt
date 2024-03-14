@@ -349,6 +349,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.DEPRECATION_FROM_DATA_CLASS_PROPERTY) { firDiagnostic ->
+        DeprecationFromDataClassPropertyImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.VERSION_REQUIREMENT_DEPRECATION_ERROR) { firDiagnostic ->
         VersionRequirementDeprecationErrorImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),

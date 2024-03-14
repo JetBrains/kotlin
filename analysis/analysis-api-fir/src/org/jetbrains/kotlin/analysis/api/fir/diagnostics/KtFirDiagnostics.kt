@@ -288,6 +288,12 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val message: String
     }
 
+    interface DeprecationFromDataClassProperty : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = DeprecationFromDataClassProperty::class
+        val reference: KtSymbol
+        val message: String
+    }
+
     interface VersionRequirementDeprecationError : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = VersionRequirementDeprecationError::class
         val reference: KtSymbol

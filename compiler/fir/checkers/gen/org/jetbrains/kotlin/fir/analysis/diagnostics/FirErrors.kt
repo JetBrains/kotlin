@@ -179,6 +179,7 @@ object FirErrors {
     val NO_THIS: KtDiagnosticFactory0 by error0<PsiElement>()
     val DEPRECATION_ERROR: KtDiagnosticFactory2<FirBasedSymbol<*>, String> by error2<PsiElement, FirBasedSymbol<*>, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DEPRECATION: KtDiagnosticFactory2<FirBasedSymbol<*>, String> by warning2<PsiElement, FirBasedSymbol<*>, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val DEPRECATION_FROM_DATA_CLASS_PROPERTY: KtDiagnosticFactory2<FirBasedSymbol<*>, String> by warning2<PsiElement, FirBasedSymbol<*>, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val VERSION_REQUIREMENT_DEPRECATION_ERROR: KtDiagnosticFactory4<FirBasedSymbol<*>, Version, String, String> by error4<PsiElement, FirBasedSymbol<*>, Version, String, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val VERSION_REQUIREMENT_DEPRECATION: KtDiagnosticFactory4<FirBasedSymbol<*>, Version, String, String> by warning4<PsiElement, FirBasedSymbol<*>, Version, String, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val TYPEALIAS_EXPANSION_DEPRECATION_ERROR: KtDiagnosticFactory3<FirBasedSymbol<*>, FirBasedSymbol<*>, String> by error3<PsiElement, FirBasedSymbol<*>, FirBasedSymbol<*>, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)

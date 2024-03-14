@@ -331,6 +331,13 @@ internal class DeprecationImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.Deprecation
 
+internal class DeprecationFromDataClassPropertyImpl(
+    override val reference: KtSymbol,
+    override val message: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.DeprecationFromDataClassProperty
+
 internal class VersionRequirementDeprecationErrorImpl(
     override val reference: KtSymbol,
     override val version: Version,
