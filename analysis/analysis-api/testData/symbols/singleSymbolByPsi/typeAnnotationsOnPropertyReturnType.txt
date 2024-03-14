@@ -19,7 +19,7 @@ KaKotlinPropertySymbol:
           psi: KtAnnotationEntry
       ]
       typeArguments: []
-      type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
+      type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  {@R|Anno3|()  SecondTypeAlias=} BaseInterface
     symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertyReturnType.kt)
@@ -51,7 +51,7 @@ KaKotlinPropertySymbol:
           psi: KtAnnotationEntry
       ]
       typeArguments: []
-      type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
+      type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  {@R|Anno3|()  SecondTypeAlias=} BaseInterface
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -88,7 +88,7 @@ KaKotlinPropertySymbol:
         psi: KtAnnotationEntry
     ]
     typeArguments: []
-    type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
+    type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  {@R|Anno3|()  SecondTypeAlias=} BaseInterface
   setter: null
   symbolKind: TOP_LEVEL
   typeParameters: []

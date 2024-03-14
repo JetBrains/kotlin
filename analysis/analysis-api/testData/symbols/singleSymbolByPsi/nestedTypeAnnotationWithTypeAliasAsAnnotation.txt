@@ -40,11 +40,11 @@ KaFunctionSymbol:
               BaseAnnotation()
                 psi: KtAnnotationEntry
             ]
-            type: @R|SecondTypeAlias|()  T
+            type: @R|@R|Anno1|(LAZY_EXPRESSION)  @R|Anno2|()  {SecondTypeAlias=} BaseAnnotation|()  T
         ]
-        type: kotlin/collections/List<@R|SecondTypeAlias|()  T>
+        type: kotlin/collections/List<@R|@R|Anno1|(LAZY_EXPRESSION)  @R|Anno2|()  {SecondTypeAlias=} BaseAnnotation|()  T>
     ]
-    type: kotlin/collections/List<kotlin/collections/List<@R|SecondTypeAlias|()  T>>?
+    type: kotlin/collections/List<kotlin/collections/List<@R|@R|Anno1|(LAZY_EXPRESSION)  @R|Anno2|()  {SecondTypeAlias=} BaseAnnotation|()  T>>?
   symbolKind: TOP_LEVEL
   typeParameters: [
     KaTypeParameterSymbol(T)

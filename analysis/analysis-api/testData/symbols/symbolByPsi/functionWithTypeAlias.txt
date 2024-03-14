@@ -92,7 +92,7 @@ KaFunctionSymbol:
       returnType: KaUsualClassType:
         annotationsList: []
         typeArguments: []
-        type: TypeAlias
+        type: {TypeAlias=} A
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)

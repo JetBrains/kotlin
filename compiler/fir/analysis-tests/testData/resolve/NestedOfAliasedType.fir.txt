@@ -15,7 +15,7 @@ FILE: NestedOfAliasedType.kt
     public final typealias TA = R|A|
     public final class B : R|TA| {
         public constructor(): R|B| {
-            super<R|TA|>()
+            super<R|{TA=} A|>()
         }
 
         public final class NestedInB : R|A.Nested| {

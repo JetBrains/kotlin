@@ -70,7 +70,7 @@ class My {
 val ZERO: Int = 0
 
 fun main() {
-    val <!UNUSED_VARIABLE!>id<!>: Id = 11
+    val <!UNUSED_VARIABLE!>id<!>: <!REDUNDANT_EXPLICIT_TYPE!>Id<!> = 11
 }
 
 typealias Id = Int

@@ -34,7 +34,7 @@ digraph tryCatch_kt {
                 subgraph cluster_6 {
                     color=blue
                     11 [label="Catch enter"];
-                    12 [label="Variable declaration: e: R|kotlin/RuntimeException|"];
+                    12 [label="Variable declaration: e: R|{kotlin/RuntimeException=} java/lang/RuntimeException|"];
                     subgraph cluster_7 {
                         color=blue
                         13 [label="Enter block"];
@@ -47,7 +47,7 @@ digraph tryCatch_kt {
                 subgraph cluster_8 {
                     color=blue
                     18 [label="Catch enter"];
-                    19 [label="Variable declaration: e: R|kotlin/Exception|"];
+                    19 [label="Variable declaration: e: R|{kotlin/Exception=} java/lang/Exception|"];
                     subgraph cluster_9 {
                         color=blue
                         20 [label="Enter block"];
@@ -112,7 +112,7 @@ digraph tryCatch_kt {
                 subgraph cluster_15 {
                     color=blue
                     36 [label="Catch enter"];
-                    37 [label="Variable declaration: e: R|kotlin/Exception|"];
+                    37 [label="Variable declaration: e: R|{kotlin/Exception=} java/lang/Exception|"];
                     subgraph cluster_16 {
                         color=blue
                         38 [label="Enter block"];
@@ -233,7 +233,7 @@ digraph tryCatch_kt {
                             subgraph cluster_33 {
                                 color=blue
                                 88 [label="Catch enter"];
-                                89 [label="Variable declaration: e: R|kotlin/Exception|"];
+                                89 [label="Variable declaration: e: R|{kotlin/Exception=} java/lang/Exception|"];
                                 subgraph cluster_34 {
                                     color=blue
                                     90 [label="Enter block"];
@@ -246,7 +246,7 @@ digraph tryCatch_kt {
                             subgraph cluster_35 {
                                 color=blue
                                 95 [label="Catch enter"];
-                                96 [label="Variable declaration: e: R|kotlin/RuntimeException|"];
+                                96 [label="Variable declaration: e: R|{kotlin/RuntimeException=} java/lang/RuntimeException|"];
                                 subgraph cluster_36 {
                                     color=blue
                                     97 [label="Enter block"];

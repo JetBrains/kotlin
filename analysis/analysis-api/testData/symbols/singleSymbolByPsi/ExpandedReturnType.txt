@@ -23,7 +23,7 @@ KaFunctionSymbol:
   returnType: KaUsualClassType:
     annotationsList: []
     typeArguments: []
-    type: Base
+    type: {SecondAlias=} Base
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []

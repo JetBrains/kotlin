@@ -33,7 +33,7 @@ KaFunctionSymbol:
           psi: KtAnnotationEntry
       ]
       typeArguments: []
-      type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
+      type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  {@R|Anno3|()  SecondTypeAlias=} BaseInterface
     getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnFunctionReceiverType.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null

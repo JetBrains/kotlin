@@ -78,7 +78,7 @@ fun case_7() {
 
 // TESTCASE NUMBER: 8
 fun case_8(x: TypealiasString) {
-    if (<!SENSELESS_COMPARISON!>x == null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & kotlin.Nothing")!>x<!> == null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & kotlin.Nothing")!>x<!>
+    if (<!SENSELESS_COMPARISON!>x == null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.Nothing")!>x<!> == null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.Nothing")!>x<!>
 }
 
 // TESTCASE NUMBER: 9
@@ -86,7 +86,7 @@ fun case_9(x: TypealiasString) {
     if (<!SENSELESS_COMPARISON!>x != null<!>) {
 
     } else if (false) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & kotlin.Nothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.Nothing")!>x<!>
     }
 }
 
@@ -111,7 +111,7 @@ fun case_11(x: TypealiasString, y: TypealiasString) {
         if (<!SENSELESS_COMPARISON!>y == null<!>) {
             if (<!SENSELESS_COMPARISON!>stringProperty != null<!>) {
                 if (false || false || false || <!SENSELESS_COMPARISON!>z == null<!> || false) {
-                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & kotlin.Nothing")!>x<!>
+                    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.Nothing")!>x<!>
                 }
             }
         }
@@ -120,7 +120,7 @@ fun case_11(x: TypealiasString, y: TypealiasString) {
 
 // TESTCASE NUMBER: 12
 fun case_12(x: TypealiasString, y: TypealiasString) = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>if (<!SENSELESS_COMPARISON!>x != null<!>) "1"
-    else if (<!SENSELESS_COMPARISON!>y !== null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & kotlin.Nothing")!>x<!>
+    else if (<!SENSELESS_COMPARISON!>y !== null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.Nothing")!>x<!>
     else "-1"<!>
 
 // TESTCASE NUMBER: 13
@@ -178,7 +178,7 @@ fun case_14() {
 // TESTCASE NUMBER: 15
 fun case_15(x: TypealiasString) {
     val t = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>if (true && <!SENSELESS_COMPARISON!>x != null<!>) "" else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x<!>
     }<!>
 }
 
@@ -187,7 +187,7 @@ fun case_16() {
     val x: TypealiasNothing = return
 
     if (<!SENSELESS_COMPARISON!>x == null<!>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>
     }
 }
 

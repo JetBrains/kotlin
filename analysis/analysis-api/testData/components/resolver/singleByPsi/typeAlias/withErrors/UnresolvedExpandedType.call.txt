@@ -8,13 +8,13 @@ KtNameReferenceExpression(67,70): 'foo'
         signature = KaFunctionLikeSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = main/foo(t: main.T): kotlin.Unit
+          symbol = main/foo(t: ERROR CLASS: Symbol not found for A): kotlin.Unit
           valueParameters = [
             KaVariableLikeSignature:
               name = t
               receiverType = null
-              returnType = main.T
-              symbol = t: main.T
+              returnType = ERROR CLASS: Symbol not found for A
+              symbol = t: ERROR CLASS: Symbol not found for A
               callableId = null
           ]
           callableId = main/foo
@@ -23,7 +23,7 @@ KtNameReferenceExpression(67,70): 'foo'
         2 -> (KaVariableLikeSignature:
           name = t
           receiverType = null
-          returnType = main.T
-          symbol = t: main.T
+          returnType = ERROR CLASS: Symbol not found for A
+          symbol = t: ERROR CLASS: Symbol not found for A
           callableId = null)
       }

@@ -34,7 +34,7 @@ KaPropertySetterSymbol:
           psi: KtAnnotationEntry
       ]
       typeArguments: []
-      type: @R|Anno1|()  @R|Anno2|()  @R|Anno4|()  BaseInterface
+      type: @R|Anno1|()  @R|Anno2|()  @R|Anno4|()  {@R|Anno4|()  SecondTypeAlias=} BaseInterface
     symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertySetterParameterTypeWithAnotherAnnotation.kt)
@@ -73,7 +73,7 @@ KaPropertySetterSymbol:
             psi: KtAnnotationEntry
         ]
         typeArguments: []
-        type: @R|Anno1|()  @R|Anno2|()  @R|Anno4|()  BaseInterface
+        type: @R|Anno1|()  @R|Anno2|()  @R|Anno4|()  {@R|Anno4|()  SecondTypeAlias=} BaseInterface
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertySetterParameterTypeWithAnotherAnnotation.kt)

@@ -44,7 +44,7 @@ KaFunctionSymbol:
       returnType: KaUsualClassType:
         annotationsList: []
         typeArguments: []
-        type: Base
+        type: {SecondAlias=} Base
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(ExpandedParameterType.kt)
