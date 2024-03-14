@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @Deprecated("", level = DeprecationLevel.ERROR)
 class DeprecatedClass
 
