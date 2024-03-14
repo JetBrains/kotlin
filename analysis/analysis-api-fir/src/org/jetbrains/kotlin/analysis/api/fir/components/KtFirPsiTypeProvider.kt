@@ -13,6 +13,7 @@ import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtil
+import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.components.KtPsiTypeProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.jvm.buildJavaTypeRef
+import org.jetbrains.kotlin.light.classes.symbol.annotations.annotateByKtType
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeImpl
 import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeParameterImpl
@@ -94,6 +96,38 @@ internal class KtFirPsiTypeProvider(
                 useSitePosition,
                 allowErrorTypes,
             )
+    }
+
+    override fun asPsiType(
+        type: KtType,
+        useSitePosition: PsiElement,
+        allowErrorTypes: Boolean,
+        mode: KtTypeMappingMode,
+        isAnnotationMethod: Boolean,
+        suppressWildcards: Boolean?,
+        preserveAnnotations: Boolean,
+    ): PsiType? {
+        val typeElement = asPsiTypeElement(
+            type = type,
+            useSitePosition = useSitePosition,
+            mode = mode,
+            isAnnotationMethod = isAnnotationMethod,
+            suppressWildcards = suppressWildcards,
+            allowErrorTypes = allowErrorTypes,
+        ) ?: return null
+
+        val psiType = typeElement.type
+        if (!preserveAnnotations) return psiType
+
+        @OptIn(KtAnalysisNonPublicApi::class)
+        return with(analysisSession) {
+            annotateByKtType(
+                psiType = psiType,
+                ktType = type,
+                psiContext = typeElement,
+                modifierListAsParent = null,
+            )
+        }
     }
 
     private fun KtTypeMappingMode.toTypeMappingMode(
@@ -195,7 +229,7 @@ internal class KtFirPsiTypeProvider(
 private fun ConeKotlinType.simplifyType(
     session: FirSession,
     useSitePosition: PsiElement,
-    visited: MutableSet<ConeKotlinType> = mutableSetOf()
+    visited: MutableSet<ConeKotlinType> = mutableSetOf(),
 ): ConeKotlinType {
     // E.g., Wrapper<T> : Comparable<Wrapper<T>>
     if (!visited.add(this)) return this
@@ -235,7 +269,7 @@ private fun ConeKotlinType.needLocalTypeApproximation(
     visibilityForApproximation: Visibility,
     isInlineFunction: Boolean,
     session: FirSession,
-    useSitePosition: PsiElement
+    useSitePosition: PsiElement,
 ): Boolean {
     if (!shouldApproximateAnonymousTypesOfNonLocalDeclaration(visibilityForApproximation, isInlineFunction)) return false
     val localTypes: List<ConeKotlinType> = if (isLocal(session)) listOf(this) else {
@@ -309,7 +343,7 @@ private fun ConeKotlinType.asPsiTypeElement(
     session: FirSession,
     mode: TypeMappingMode,
     useSitePosition: PsiElement,
-    allowErrorTypes: Boolean
+    allowErrorTypes: Boolean,
 ): PsiTypeElement? {
     if (this !is SimpleTypeMarker) return null
 
@@ -373,7 +407,7 @@ private class AnonymousTypesSubstitutor(
     }
 
     private fun ConeKotlinType.hasRecursiveTypeArgument(
-        visited: MutableSet<ConeKotlinType> = mutableSetOf()
+        visited: MutableSet<ConeKotlinType> = mutableSetOf(),
     ): Boolean {
         if (typeArguments.isEmpty()) return false
         if (!visited.add(this)) return true

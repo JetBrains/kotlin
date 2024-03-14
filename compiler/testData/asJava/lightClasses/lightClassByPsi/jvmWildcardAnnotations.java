@@ -45,22 +45,22 @@ public final class ContainerForPropertyAndAccessors /* ContainerForPropertyAndAc
   private Out<? extends Open> bar;
 
   @org.jetbrains.annotations.NotNull()
-  private final In<? super java.lang.Object> simpleIn;
+  private final In<@kotlin.jvm.JvmWildcard() ? super java.lang.Object> simpleIn;
 
   @org.jetbrains.annotations.NotNull()
-  private final Out<? extends Final> simpleOut;
+  private final Out<@kotlin.jvm.JvmWildcard() ? extends Final> simpleOut;
 
   @org.jetbrains.annotations.NotNull()
   private final Out<Out<Out<Open>>> deepOpen;
 
   @org.jetbrains.annotations.NotNull()
-  public final In<? super java.lang.Object> getSimpleIn();//  getSimpleIn()
+  public final @kotlin.jvm.JvmSuppressWildcards(suppress = false) Out<? extends Open> getZoo(@org.jetbrains.annotations.NotNull() Out<? extends Out<? extends Out<? extends Open>>>);//  getZoo(Out<? extends Out<? extends Out<? extends Open>>>)
 
   @org.jetbrains.annotations.NotNull()
-  public final Out<? extends Final> getSimpleOut();//  getSimpleOut()
+  public final In<@kotlin.jvm.JvmWildcard() ? super java.lang.Object> getSimpleIn();//  getSimpleIn()
 
   @org.jetbrains.annotations.NotNull()
-  public final Out<? extends Open> getZoo(@org.jetbrains.annotations.NotNull() Out<? extends Out<? extends Out<? extends Open>>>);//  getZoo(Out<? extends Out<? extends Out<? extends Open>>>)
+  public final Out<@kotlin.jvm.JvmWildcard() ? extends Final> getSimpleOut();//  getSimpleOut()
 
   @org.jetbrains.annotations.NotNull()
   public final Out<Open> getBar();//  getBar()

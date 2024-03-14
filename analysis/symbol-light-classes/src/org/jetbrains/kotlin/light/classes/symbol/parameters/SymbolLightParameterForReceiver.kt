@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
 import com.intellij.psi.util.TypeConversionUtil
+import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
@@ -93,8 +94,10 @@ internal class SymbolLightParameterForReceiver private constructor(
                 ktType.typeMappingMode(),
                 suppressWildcards = receiver.suppressWildcard() ?: method.suppressWildcards(),
             )?.let {
+                @OptIn(KtAnalysisNonPublicApi::class)
                 annotateByKtType(it.type, ktType, it, modifierList)
             }
+
             if (method is SymbolLightAnnotationsMethod) {
                 val erased = TypeConversionUtil.erasure(psiType)
                 val name = erased.canonicalText

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
@@ -84,6 +85,7 @@ internal abstract class SymbolLightParameterCommon(
                     ktType.typeMappingMode(),
                     suppressWildcards = parameterSymbol.suppressWildcardMode(),
                 )?.let {
+                    @OptIn(KtAnalysisNonPublicApi::class)
                     annotateByKtType(it.type, ktType, it, modifierList)
                 }
             } ?: nonExistentType()

@@ -22,6 +22,16 @@ public abstract class KtPsiTypeProvider : KtAnalysisSessionComponent() {
         allowErrorTypes: Boolean,
     ): PsiTypeElement?
 
+    public abstract fun asPsiType(
+        type: KtType,
+        useSitePosition: PsiElement,
+        allowErrorTypes: Boolean,
+        mode: KtTypeMappingMode,
+        isAnnotationMethod: Boolean,
+        suppressWildcards: Boolean?,
+        preserveAnnotations: Boolean,
+    ): PsiType?
+
     public abstract fun asKtType(
         psiType: PsiType,
         useSitePosition: PsiElement
@@ -54,6 +64,10 @@ public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
      *   `null` is no-op by default, i.e., their suppression/appearance is determined by type annotations.
      *
      * Note: [PsiTypeElement] is JVM conception, so this method will return `null` for non-JVM platforms.
+     *
+     * @return [PsiTypeElement] without type annotations if mapping is successful
+     *
+     * @see asPsiType
      */
     public fun KtType.asPsiTypeElement(
         useSitePosition: PsiElement,
@@ -63,23 +77,30 @@ public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
         suppressWildcards: Boolean? = null,
     ): PsiTypeElement? = withValidityAssertion {
         analysisSession.psiTypeProvider.asPsiTypeElement(
-            this,
-            useSitePosition,
-            mode,
-            isAnnotationMethod,
-            suppressWildcards,
-            allowErrorTypes,
+            type = this,
+            useSitePosition = useSitePosition,
+            mode = mode,
+            isAnnotationMethod = isAnnotationMethod,
+            suppressWildcards = suppressWildcards,
+            allowErrorTypes = allowErrorTypes,
         )
     }
 
     /**
      * Converts the given [KtType] to [PsiType] under [useSitePosition] context.
      *
-     * This simply unwraps [PsiTypeElement] returned from [asPsiTypeElement].
-     * Use this version if type annotation is not required. Otherwise, use [asPsiTypeElement] to get [PsiTypeElement] as an owner of
-     * annotations on [PsiType] and annotate the resulting [PsiType] with proper [PsiAnnotation][com.intellij.psi.PsiAnnotation].
-     *
      * Note: [PsiType] is JVM conception, so this method will return `null` for non-JVM platforms.
+     *
+     * @receiver type to convert
+     *
+     * @param useSitePosition is used to determine if the given [KtType] needs to be approximated.
+     * For instance, if the given type is local yet available in the same scope of use site,
+     * we can still use such a local type.
+     * Otherwise, e.g., exposed to public as a return type, the resulting type will be approximated accordingly.
+     *
+     * @param allowErrorTypes if **false** the result will be null in the case of an error type inside the [type][this]
+     *
+     * @param preserveAnnotations if **true** the result [PsiType] will have converted annotations from the original [type][this]
      */
     public fun KtType.asPsiType(
         useSitePosition: PsiElement,
@@ -87,14 +108,18 @@ public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
         mode: KtTypeMappingMode = KtTypeMappingMode.DEFAULT,
         isAnnotationMethod: Boolean = false,
         suppressWildcards: Boolean? = null,
-    ): PsiType? =
-        asPsiTypeElement(
-            useSitePosition,
-            allowErrorTypes,
-            mode,
-            isAnnotationMethod,
-            suppressWildcards,
-        )?.type
+        preserveAnnotations: Boolean = true,
+    ): PsiType? = withValidityAssertion {
+        analysisSession.psiTypeProvider.asPsiType(
+            type = this,
+            useSitePosition = useSitePosition,
+            allowErrorTypes = allowErrorTypes,
+            mode = mode,
+            isAnnotationMethod = isAnnotationMethod,
+            suppressWildcards = suppressWildcards,
+            preserveAnnotations = preserveAnnotations,
+        )
+    }
 
     /**
      * Converts given [PsiType] to [KtType].

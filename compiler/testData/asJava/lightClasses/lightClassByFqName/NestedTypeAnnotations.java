@@ -1,12 +1,12 @@
 public final class Nested /* foo.Nested*/ {
   @org.jetbrains.annotations.Nullable()
-  private java.util.List<? extends java.util.List<java.lang.String>> property = null /* initializer type: null */;
+  private @foo.MyAnno(s = "outer") java.util.List<@foo.MyAnno(s = "middle") ? extends java.util.List<java.lang.String>> property = null /* initializer type: null */;
 
   @org.jetbrains.annotations.Nullable()
   public final @foo.MyAnno(s = "outer") java.util.List<@foo.MyAnno(s = "middle") java.util.List<@foo.AnotherAnnotation(k = foo.Nested.class) java.lang.String>> function(@org.jetbrains.annotations.NotNull() @foo.MyAnno(s = "outer") java.util.List<@foo.MyAnno(s = "middle") ? extends java.util.List<java.lang.String>>, @org.jetbrains.annotations.NotNull() @foo.MyAnno(s = "outer") java.util.List<@foo.MyAnno(s = "middle") ? extends java.util.List<java.lang.String>>);//  function(@foo.MyAnno(s = "outer") java.util.List<@foo.MyAnno(s = "middle") ? extends java.util.List<java.lang.String>>, @foo.MyAnno(s = "outer") java.util.List<@foo.MyAnno(s = "middle") ? extends java.util.List<java.lang.String>>)
 
   @org.jetbrains.annotations.Nullable()
-  public final java.util.List<java.util.List<java.lang.String>> getProperty();//  getProperty()
+  public final @foo.MyAnno(s = "outer") java.util.List<@foo.MyAnno(s = "middle") java.util.List<@foo.AnotherAnnotation(k = foo.Nested.class) java.lang.String>> getProperty();//  getProperty()
 
   public  Nested();//  .ctor()
 

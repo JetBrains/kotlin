@@ -33,6 +33,7 @@ dependencies {
     implementation(project(":analysis:analysis-api-providers"))
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:kt-references"))
+    implementation(project(":analysis:symbol-light-classes"))
 
     testImplementation(projectTests(":analysis:low-level-api-fir"))
     testImplementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
@@ -53,7 +54,6 @@ dependencies {
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(project(":analysis:symbol-light-classes"))
 }
 
 sourceSets {
