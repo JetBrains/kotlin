@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.cfa.util
 
+import kotlinx.collections.immutable.mutate
 import kotlinx.collections.immutable.persistentMapOf
-import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.contracts.description.MarkedEventOccurrencesRange
+import org.jetbrains.kotlin.contracts.description.canBeVisited
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.expressions.dispatchReceiver
@@ -57,7 +59,7 @@ class PropertyInitializationInfoCollector(
         if (receiver != expectedReceiver) return dataForNode
         val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: return dataForNode
         if (symbol !in localProperties) return dataForNode
-        return addRange(dataForNode, symbol, EventOccurrencesRange.EXACTLY_ONCE)
+        return dataForNode.addRange(symbol, MarkedEventOccurrencesRange.ExactlyOnce(node))
     }
 
     override fun visitVariableDeclarationNode(
@@ -69,9 +71,9 @@ class PropertyInitializationInfoCollector(
             expectedReceiver != null ->
                 dataForNode
             node.fir.initializer == null && node.fir.delegate == null ->
-                overwriteRange(dataForNode, node.fir.symbol, EventOccurrencesRange.ZERO)
+                dataForNode.removeRange(node.fir.symbol)
             else ->
-                overwriteRange(dataForNode, node.fir.symbol, EventOccurrencesRange.EXACTLY_ONCE)
+                dataForNode.overwriteRange(node.fir.symbol, MarkedEventOccurrencesRange.ExactlyOnce(node))
         }
     }
 
@@ -84,7 +86,7 @@ class PropertyInitializationInfoCollector(
         // Otherwise it is
         val dataForNode = visitNode(node, data)
         if (node.firstPreviousNode is PropertyInitializerEnterNode) return dataForNode
-        return overwriteRange(dataForNode, node.fir.symbol, EventOccurrencesRange.EXACTLY_ONCE)
+        return dataForNode.overwriteRange(node.fir.symbol, MarkedEventOccurrencesRange.ExactlyOnce(node))
     }
 
     // --------------------------------------------------
@@ -106,7 +108,7 @@ class PropertyInitializationInfoCollector(
             else -> return result
         }
         return declaredVariableSymbolsInCapturedScope.fold(data) { filteredData, variableSymbol ->
-            removeRange(filteredData, variableSymbol)
+            filteredData.removeRange(variableSymbol)
         }
     }
 
@@ -124,55 +126,43 @@ class PropertyInitializationInfoCollector(
     }
 }
 
-internal fun <S : ControlFlowInfo<S, K, EventOccurrencesRange>, K : Any> addRange(
-    pathAwareInfo: PathAwareControlFlowInfo<S>,
+internal fun <S : EventOccurrencesRangeInfo<S, K>, K : Any> PathAwareControlFlowInfo<S>.addRange(
     key: K,
-    range: EventOccurrencesRange,
-): PathAwareControlFlowInfo<S> {
-    // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
-    // after (if key is p1):
-    //   { |-> { p1 |-> PI1 + r }, l1 |-> { p1 |-> r, p2 |-> PI2 } }
-    return updateRange(pathAwareInfo, key) { existingKind -> existingKind + range }
-}
-
-private fun <S : ControlFlowInfo<S, K, EventOccurrencesRange>, K : Any> overwriteRange(
-    pathAwareInfo: PathAwareControlFlowInfo<S>,
-    key: K,
-    range: EventOccurrencesRange,
-): PathAwareControlFlowInfo<S> {
-    // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
-    // after (if key is p1):
-    //   { |-> { p1 |-> r }, l1 |-> { p1 |-> r, p2 |-> PI2 } }
-    return updateRange(pathAwareInfo, key) { range }
-}
-
-private inline fun <S : ControlFlowInfo<S, K, EventOccurrencesRange>, K : Any> updateRange(
-    pathAwareInfo: PathAwareControlFlowInfo<S>,
-    key: K,
-    computeNewRange: (EventOccurrencesRange) -> EventOccurrencesRange,
-): PathAwareControlFlowInfo<S> {
-    var resultMap = persistentMapOf<EdgeLabel, S>()
-    // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
-    for ((label, dataPerLabel) in pathAwareInfo) {
-        val existingKind = dataPerLabel[key] ?: EventOccurrencesRange.ZERO
-        val kind = computeNewRange.invoke(existingKind)
-        resultMap = resultMap.put(label, dataPerLabel.put(key, kind))
+    range: EventOccurrencesRangeAtNode,
+): PathAwareControlFlowInfo<S> =
+    if (!range.canBeVisited()) this else mutate {
+        // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
+        // after (if key is p1):
+        //   { |-> { p1 |-> PI1 + r }, l1 |-> { p1 |-> r, p2 |-> PI2 } }
+        for ((label, dataPerLabel) in this) {
+            val newRange = dataPerLabel[key]?.let { oldRange ->
+                // Can discard the old location since the sum can only be `ExactlyOnce` or `AtMostOnce`
+                // if the old range is `Zero`.
+                (oldRange.withoutMarker + range.withoutMarker).at(range.location)
+            } ?: range
+            it[label] = dataPerLabel.put(key, newRange)
+        }
     }
-    // after (if key is p1):
-    //   { |-> { p1 |-> computeNewRange(PI1) }, l1 |-> { p1 |-> r, p2 |-> PI2 } }
-    return resultMap
-}
 
-private fun <S : ControlFlowInfo<S, K, EventOccurrencesRange>, K : Any> removeRange(
-    pathAwareInfo: PathAwareControlFlowInfo<S>,
+private fun <S : EventOccurrencesRangeInfo<S, K>, K : Any> PathAwareControlFlowInfo<S>.overwriteRange(
     key: K,
-): PathAwareControlFlowInfo<S> {
-    var resultMap = persistentMapOf<EdgeLabel, S>()
-    // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
-    for ((label, dataPerLabel) in pathAwareInfo) {
-        resultMap = resultMap.put(label, dataPerLabel.remove(key))
+    range: EventOccurrencesRangeAtNode,
+): PathAwareControlFlowInfo<S> =
+    mutate {
+        // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
+        // after (if key is p1):
+        //   { |-> { p1 |-> r }, l1 |-> { p1 |-> r, p2 |-> PI2 } }
+        for ((label, dataPerLabel) in this) {
+            it[label] = dataPerLabel.put(key, range)
+        }
     }
-    // after (if key is p1):
-    //   { |-> { }, l1 |-> { p2 |-> PI2 } }
-    return resultMap
-}
+
+private fun <S : EventOccurrencesRangeInfo<S, K>, K : Any> PathAwareControlFlowInfo<S>.removeRange(key: K): PathAwareControlFlowInfo<S> =
+    mutate {
+        // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
+        // after (if key is p1):
+        //   { |-> { }, l1 |-> { p2 |-> PI2 } }
+        for ((label, dataPerLabel) in this) {
+            it[label] = dataPerLabel.remove(key)
+        }
+    }

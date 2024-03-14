@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.cfa.util
 
 import kotlinx.collections.immutable.PersistentMap
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 
 abstract class ControlFlowInfo<S : ControlFlowInfo<S, K, V>, K : Any, V : Any> protected constructor(
     protected val map: PersistentMap<K, V>,
@@ -33,7 +34,5 @@ abstract class ControlFlowInfo<S : ControlFlowInfo<S, K, V>, K : Any, V : Any> p
         return constructor(map.remove(key))
     }
 
-    abstract fun merge(other: S): S
-
-    abstract fun plus(other: S): S
+    abstract fun merge(other: S, node: CFGNode<*>): S
 }

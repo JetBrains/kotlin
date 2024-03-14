@@ -127,7 +127,8 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
         override val constructor: (PersistentMap<FirPropertySymbol, VariableStatus>) -> VariableStatusInfo =
             ::VariableStatusInfo
 
-        override fun merge(other: VariableStatusInfo): VariableStatusInfo {
+        override fun merge(other: VariableStatusInfo, node: CFGNode<*>): VariableStatusInfo {
+            // TODO, KT-59834: not sure what to do if `node.isUnion`
             var result = this
             for (symbol in keys.union(other.keys)) {
                 val kind1 = this[symbol] ?: VariableStatus.UNUSED
@@ -137,9 +138,6 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
             }
             return result
         }
-
-        override fun plus(other: VariableStatusInfo): VariableStatusInfo =
-            merge(other) // TODO, KT-59834: not sure
     }
 
     private class ValueWritesWithoutReading(
