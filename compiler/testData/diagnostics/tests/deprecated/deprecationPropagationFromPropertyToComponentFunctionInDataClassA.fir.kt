@@ -1,4 +1,4 @@
-// LANGUAGE: +PropagatePropertyDeprecationToComponentFunctionInDataClass
+// LANGUAGE: -PropagatePropertyDeprecationToComponentFunctionInDataClass
 
 data class DataKlass(
     val supported: Int,
@@ -14,8 +14,8 @@ data class DataKlass(
 
 fun test(arg: DataKlass) {
     val a = arg.component1()
-    val b = arg.component2()
-    val c = arg.component3()
-    val d = arg.component4()
-    val e = arg.component5()
+    val b = arg.<!DEPRECATION!>component2<!>()
+    val c = arg.<!DEPRECATION!>component3<!>()
+    val d = arg.<!DEPRECATION_FROM_DATA_CLASS_PROPERTY!>component4<!>()
+    val e = arg.<!DEPRECATION_FROM_DATA_CLASS_PROPERTY!>component5<!>()
 }

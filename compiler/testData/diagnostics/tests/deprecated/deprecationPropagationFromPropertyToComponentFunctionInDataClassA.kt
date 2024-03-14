@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: -PropagatePropertyDeprecationToComponentFunctionInDataClass
 
 data class DataKlass(

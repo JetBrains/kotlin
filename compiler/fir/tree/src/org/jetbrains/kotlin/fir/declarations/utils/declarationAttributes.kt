@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DataClassResolver
 
 private object IsFromVarargKey : FirDeclarationDataKey()
 private object IsReferredViaField : FirDeclarationDataKey()
@@ -122,3 +124,17 @@ val FirProperty.correspondingValueParameterFromPrimaryConstructor: FirValueParam
         val reference = initializer.calleeReference as? FirPropertyFromParameterResolvedNamedReference ?: return null
         return reference.resolvedSymbol as? FirValueParameterSymbol
     }
+
+fun FirBasedSymbol<*>.asDataClassComponentFunction(): FirNamedFunctionSymbol? {
+    if (this !is FirNamedFunctionSymbol) return null
+    if (origin != FirDeclarationOrigin.Synthetic.DataClassMember) return null
+    if (!DataClassResolver.isComponentLike(name)) return null
+    return this
+}
+
+val FirNamedFunctionSymbol.dataClassPropertySymbol: FirPropertySymbol?
+    get() = fir.dataClassPropertySymbol
+
+fun FirBasedSymbol<*>.takeDataClassPropertyIfDataClassComponentFunction(): FirBasedSymbol<*> {
+    return this.asDataClassComponentFunction()?.fir?.dataClassPropertySymbol ?: this
+}

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
@@ -16,10 +17,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isLhsOfAssignment
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FutureApiDeprecationInfo
-import org.jetbrains.kotlin.fir.declarations.RequireKotlinDeprecationInfo
-import org.jetbrains.kotlin.fir.declarations.getDeprecation
-import org.jetbrains.kotlin.fir.declarations.getOwnDeprecation
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.asDataClassComponentFunction
+import org.jetbrains.kotlin.fir.declarations.utils.dataClassPropertySymbol
+import org.jetbrains.kotlin.fir.declarations.utils.takeDataClassPropertyIfDataClassComponentFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.resolved
@@ -59,6 +60,34 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
             }
             else -> {
                 reportApiStatusIfNeeded(source, referencedSymbol, context, reporter, callSite = expression)
+            }
+        }
+
+        if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.PropagatePropertyDeprecationToComponentFunctionInDataClass)) {
+            referencedSymbol.asDataClassComponentFunction()?.dataClassPropertySymbol?.let { dataClassPropertySymbol ->
+                val dataClassPropertyDeprecation = dataClassPropertySymbol.getDeprecation(context.session, expression)
+                when (dataClassPropertyDeprecation?.deprecationLevel) {
+                    null -> Unit
+                    DeprecationLevelValue.WARNING -> {
+                        reporter.reportOn(
+                            source,
+                            FirErrors.DEPRECATION,
+                            dataClassPropertySymbol,
+                            dataClassPropertyDeprecation.message ?: "",
+                            context
+                        )
+                    }
+                    else -> {
+                        reporter.reportOn(
+                            source,
+                            FirErrors.DEPRECATION_FROM_DATA_CLASS_PROPERTY,
+                            dataClassPropertySymbol,
+                            dataClassPropertyDeprecation.message ?: "",
+                            context
+                        )
+                    }
+                }
+
             }
         }
 
@@ -129,9 +158,15 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
         reporter: DiagnosticReporter,
         callSite: FirElement? = null,
     ) {
-        val deprecation = getWorstDeprecation(callSite, referencedSymbol, context) ?: return
-        val isTypealiasExpansion = deprecation.isTypealiasExpansionOf(referencedSymbol, callSite, context)
-        reportApiStatus(source, referencedSymbol, isTypealiasExpansion, deprecation, reporter, context)
+        val deprecationSourceSymbol: FirBasedSymbol<*>
+        if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.PropagatePropertyDeprecationToComponentFunctionInDataClass)) {
+            deprecationSourceSymbol = referencedSymbol.takeDataClassPropertyIfDataClassComponentFunction()
+        } else {
+            deprecationSourceSymbol = referencedSymbol
+        }
+        val deprecation = getWorstDeprecation(callSite, deprecationSourceSymbol, context) ?: return
+        val isTypealiasExpansion = deprecation.isTypealiasExpansionOf(deprecationSourceSymbol, callSite, context)
+        reportApiStatus(source, deprecationSourceSymbol, isTypealiasExpansion, deprecation, reporter, context)
     }
 
     private fun DeprecationInfo.isTypealiasExpansionOf(

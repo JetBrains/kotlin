@@ -26,7 +26,7 @@ data class DataKlass(
 
 fun test(simpleKlass: SimpleKlass, dataKlass: DataKlass) {
     val (s1, <!DEPRECATION!>s2<!>, <!DEPRECATION!>s3<!>, <!DEPRECATION_ERROR!>s4<!>, s5) = <!COMPONENT_FUNCTION_MISSING!>simpleKlass<!>
-    val (d1, d2, d3, d4, d5) = dataKlass
+    val (d1, <!DEPRECATION!>d2<!>, <!DEPRECATION!>d3<!>, <!DEPRECATION_FROM_DATA_CLASS_PROPERTY!>d4<!>, <!DEPRECATION_FROM_DATA_CLASS_PROPERTY!>d5<!>) = dataKlass
     val (_, <!DEPRECATION!>_<!>, <!DEPRECATION!>_<!>, <!DEPRECATION_ERROR!>_<!>, _) = <!COMPONENT_FUNCTION_MISSING!>simpleKlass<!>
-    val (_, _, _, _, _) = dataKlass
+    val (_, <!DEPRECATION!>_<!>, <!DEPRECATION!>_<!>, <!DEPRECATION_FROM_DATA_CLASS_PROPERTY!>_<!>, <!DEPRECATION_FROM_DATA_CLASS_PROPERTY!>_<!>) = dataKlass
 }

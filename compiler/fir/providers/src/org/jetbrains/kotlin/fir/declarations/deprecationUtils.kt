@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
@@ -13,13 +14,11 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.declarations.utils.takeDataClassPropertyIfDataClassComponentFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.name.Name
@@ -207,8 +206,7 @@ fun FirBasedSymbol<*>.getDeprecationForCallSite(
     vararg sites: AnnotationUseSiteTarget,
 ): DeprecationInfo? {
     return when (this) {
-        !is FirTypeAliasSymbol -> getOwnDeprecationForCallSite(session.languageVersionSettings, *sites)
-        else -> {
+        is FirTypeAliasSymbol -> {
             var worstDeprecationInfo = getOwnDeprecationForCallSite(session.languageVersionSettings, *sites)
             val visited = mutableMapOf<ConeKotlinType, DeprecationInfo?>()
 
@@ -226,6 +224,15 @@ fun FirBasedSymbol<*>.getDeprecationForCallSite(
             }
 
             worstDeprecationInfo
+        }
+        else -> {
+            val deprecationSourceSymbol: FirBasedSymbol<*>
+            if (session.languageVersionSettings.supportsFeature(LanguageFeature.PropagatePropertyDeprecationToComponentFunctionInDataClass)) {
+                deprecationSourceSymbol = takeDataClassPropertyIfDataClassComponentFunction()
+            } else {
+                deprecationSourceSymbol = this
+            }
+            deprecationSourceSymbol.getOwnDeprecationForCallSite(session.languageVersionSettings, *sites)
         }
     }
 }
