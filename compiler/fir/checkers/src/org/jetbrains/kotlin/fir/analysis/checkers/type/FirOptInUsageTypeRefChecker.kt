@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.getContainingClassLookupTag
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 
@@ -32,10 +30,12 @@ object FirOptInUsageTypeRefChecker : FirTypeRefChecker(MppCheckerKind.Common) {
         val source = typeRef.source
         val delegatedTypeRef = (typeRef as? FirResolvedTypeRef)?.delegatedTypeRef
         if (source?.kind !is KtRealSourceElementKind) return
-        val coneType = typeRef.coneTypeSafe<ConeClassLikeType>() ?: return
-        val symbol = typeRef.findSymbol(context.session) ?: return
+        // ConeClassLikeType filters out all delegatedTypeRefs from here
+        val expandedTypealiasType = typeRef.coneTypeSafe<ConeClassLikeType>() ?: return
+        val coneType = expandedTypealiasType.abbreviatedTypeOrSelf as? ConeClassLikeType ?: return
+        val symbol = coneType.toSymbol(context.session) ?: return
 
-        val typeAliasExpandedSymbol = (symbol as? FirTypeAliasSymbol)?.resolvedExpandedTypeRef?.findSymbol(context.session)
+        val typeAliasExpandedSymbol = expandedTypealiasType.takeIf { it.isTypealiasExpansion }?.toSymbol(context.session)
         val processedSymbol = typeAliasExpandedSymbol ?: symbol
 
         val classId = processedSymbol.classId
@@ -74,12 +74,6 @@ object FirOptInUsageTypeRefChecker : FirTypeRefChecker(MppCheckerKind.Common) {
             fromSetter = false,
             dispatchReceiverType = null
         )
-
-    private fun FirTypeRef.findSymbol(session: FirSession): FirClassLikeSymbol<*>? {
-        // coneTypeSafe filters out all delegatedTypeRefs from here
-        val coneType = coneTypeSafe<ConeClassLikeType>() ?: return null
-        return coneType.lookupTag.toSymbol(session)
-    }
 
     private tailrec fun FirClassLikeSymbol<*>.checkContainingClasses(
         source: KtSourceElement,
