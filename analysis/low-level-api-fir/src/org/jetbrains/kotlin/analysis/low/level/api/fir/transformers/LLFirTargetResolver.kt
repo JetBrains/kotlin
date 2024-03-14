@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.destructuringDeclarationContainerVariable
-import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.utils.dataClassPropertySymbol
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.originalIfFakeOverrideOrDelegated
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -178,11 +178,7 @@ internal sealed class LLFirTargetResolver(
              * [org.jetbrains.kotlin.fir.resolve.transformers.AbstractFirStatusResolveTransformer.transformProperty]
              */
             DataClassResolver.isComponentLike(function.name) -> {
-                val property = containingClass(function).declarations.firstNotNullOfOrNull { declaration ->
-                    (declaration as? FirProperty)?.takeIf { it.componentFunctionSymbol?.fir == function }
-                }
-
-                property?.lazyResolveToPhase(resolverPhase)
+                function.dataClassPropertySymbol?.lazyResolveToPhase(resolverPhase)
             }
 
             // copy method shares the return type of generated properties as the return type

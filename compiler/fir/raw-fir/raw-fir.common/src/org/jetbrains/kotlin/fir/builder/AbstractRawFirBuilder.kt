@@ -1003,7 +1003,8 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                     dispatchReceiverType = currentDispatchReceiverType()
                     // Refer to FIR backend ClassMemberGenerator for body generation.
                 }.also {
-                    firProperty.componentFunctionSymbol = it.symbol
+                    firProperty.dataClassComponentFunctionSymbol = it.symbol
+                    it.dataClassPropertySymbol = firProperty.symbol
                 }
                 classBuilder.addDeclaration(componentFunction)
             }

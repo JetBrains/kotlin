@@ -66,15 +66,15 @@ FILE: for.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? [ComponentFunctionSymbolKey=/Some.component1, IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+        public? final? [DataClassComponentFunctionSymbolKey=/Some.component1, IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
             public? [ContainingClassKey=Some] get(): Int
 
-        public? final? [ComponentFunctionSymbolKey=/Some.component2, IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+        public? final? [DataClassComponentFunctionSymbolKey=/Some.component2, IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
             public? [ContainingClassKey=Some] get(): Int
 
-        public? final operator fun component1(): Int
+        public? final operator [DataClassPropertySymbolKey=/Some.x] fun component1(): Int
 
-        public? final operator fun component2(): Int
+        public? final operator [DataClassPropertySymbolKey=/Some.y] fun component2(): Int
 
         public final fun copy(x: Int = this@R|/Some|.R|/Some.x|, y: Int = this@R|/Some|.R|/Some.y|): R|Some|
 

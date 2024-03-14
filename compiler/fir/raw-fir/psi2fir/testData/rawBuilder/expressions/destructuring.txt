@@ -4,20 +4,20 @@ FILE: destructuring.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? [ComponentFunctionSymbolKey=/Some.component1, IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+        public? final? [DataClassComponentFunctionSymbolKey=/Some.component1, IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
             public? [ContainingClassKey=Some] get(): Int
 
-        public? final? [ComponentFunctionSymbolKey=/Some.component2, IsFromPrimaryConstructor=true] val second: Double = R|<local>/second|
+        public? final? [DataClassComponentFunctionSymbolKey=/Some.component2, IsFromPrimaryConstructor=true] val second: Double = R|<local>/second|
             public? [ContainingClassKey=Some] get(): Double
 
-        public? final? [ComponentFunctionSymbolKey=/Some.component3, IsFromPrimaryConstructor=true] val third: String = R|<local>/third|
+        public? final? [DataClassComponentFunctionSymbolKey=/Some.component3, IsFromPrimaryConstructor=true] val third: String = R|<local>/third|
             public? [ContainingClassKey=Some] get(): String
 
-        public? final operator fun component1(): Int
+        public? final operator [DataClassPropertySymbolKey=/Some.first] fun component1(): Int
 
-        public? final operator fun component2(): Double
+        public? final operator [DataClassPropertySymbolKey=/Some.second] fun component2(): Double
 
-        public? final operator fun component3(): String
+        public? final operator [DataClassPropertySymbolKey=/Some.third] fun component3(): String
 
         public final fun copy(first: Int = this@R|/Some|.R|/Some.first|, second: Double = this@R|/Some|.R|/Some.second|, third: String = this@R|/Some|.R|/Some.third|): R|Some|
 

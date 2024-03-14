@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
+import org.jetbrains.kotlin.fir.declarations.utils.dataClassComponentFunctionSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -488,9 +488,9 @@ abstract class AbstractFirStatusResolveTransformer(
             )
         }
 
-        property.componentFunctionSymbol?.let { componentFunction ->
-            if (componentFunction.fir.status.visibility == Visibilities.Unknown) {
-                componentFunction.fir.replaceStatus(componentFunction.fir.status.copy(visibility = property.visibility))
+        property.dataClassComponentFunctionSymbol?.let { dataClassComponentFunction ->
+            if (dataClassComponentFunction.fir.status.visibility == Visibilities.Unknown) {
+                dataClassComponentFunction.fir.replaceStatus(dataClassComponentFunction.fir.status.copy(visibility = property.visibility))
             }
         }
     }

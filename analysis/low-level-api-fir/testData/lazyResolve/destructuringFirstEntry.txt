@@ -17,15 +17,15 @@ FILE: [ResolvedTo(RAW_FIR)] destructuringFirstEntry.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? final? [ResolvedTo(RAW_FIR)] [DataClassComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? final? [ResolvedTo(RAW_FIR)] [DataClassComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+            public? final operator [ResolvedTo(RAW_FIR)] [DataClassPropertySymbolKey=/MyPair.i] fun component1(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+            public? final operator [ResolvedTo(RAW_FIR)] [DataClassPropertySymbolKey=/MyPair.b] fun component2(): Int
 
             public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
 
@@ -61,15 +61,15 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? final? [ResolvedTo(RAW_FIR)] [DataClassComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? final? [ResolvedTo(RAW_FIR)] [DataClassComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+            public? final operator [ResolvedTo(RAW_FIR)] [DataClassPropertySymbolKey=/MyPair.i] fun component1(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+            public? final operator [ResolvedTo(RAW_FIR)] [DataClassPropertySymbolKey=/MyPair.b] fun component2(): Int
 
             public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
 
@@ -105,15 +105,15 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? final? [ResolvedTo(RAW_FIR)] [DataClassComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? final? [ResolvedTo(RAW_FIR)] [DataClassComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+            public? final operator [ResolvedTo(RAW_FIR)] [DataClassPropertySymbolKey=/MyPair.i] fun component1(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+            public? final operator [ResolvedTo(RAW_FIR)] [DataClassPropertySymbolKey=/MyPair.b] fun component2(): Int
 
             public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
 
@@ -149,15 +149,15 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? final? [ResolvedTo(RAW_FIR)] [DataClassComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? final? [ResolvedTo(RAW_FIR)] [DataClassComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+            public? final operator [ResolvedTo(RAW_FIR)] [DataClassPropertySymbolKey=/MyPair.i] fun component1(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+            public? final operator [ResolvedTo(RAW_FIR)] [DataClassPropertySymbolKey=/MyPair.b] fun component2(): Int
 
             public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
 
@@ -193,15 +193,15 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? final? [ResolvedTo(RAW_FIR)] [DataClassComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? final? [ResolvedTo(RAW_FIR)] [DataClassComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+            public? final operator [ResolvedTo(RAW_FIR)] [DataClassPropertySymbolKey=/MyPair.i] fun component1(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+            public? final operator [ResolvedTo(RAW_FIR)] [DataClassPropertySymbolKey=/MyPair.b] fun component2(): Int
 
             public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
 
@@ -237,15 +237,15 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? final? [ResolvedTo(RAW_FIR)] [DataClassComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? final? [ResolvedTo(RAW_FIR)] [DataClassComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+            public? final operator [ResolvedTo(RAW_FIR)] [DataClassPropertySymbolKey=/MyPair.i] fun component1(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+            public? final operator [ResolvedTo(RAW_FIR)] [DataClassPropertySymbolKey=/MyPair.b] fun component2(): Int
 
             public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
 
@@ -281,15 +281,15 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? final? [ResolvedTo(RAW_FIR)] [DataClassComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? final? [ResolvedTo(RAW_FIR)] [DataClassComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+            public? final operator [ResolvedTo(RAW_FIR)] [DataClassPropertySymbolKey=/MyPair.i] fun component1(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+            public? final operator [ResolvedTo(RAW_FIR)] [DataClassPropertySymbolKey=/MyPair.b] fun component2(): Int
 
             public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
 
@@ -325,15 +325,15 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? final? [ResolvedTo(RAW_FIR)] [DataClassComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? final? [ResolvedTo(RAW_FIR)] [DataClassComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+            public? final operator [ResolvedTo(RAW_FIR)] [DataClassPropertySymbolKey=/MyPair.i] fun component1(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+            public? final operator [ResolvedTo(RAW_FIR)] [DataClassPropertySymbolKey=/MyPair.b] fun component2(): Int
 
             public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
 
@@ -369,15 +369,15 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? final? [ResolvedTo(RAW_FIR)] [DataClassComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? final? [ResolvedTo(RAW_FIR)] [DataClassComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+            public? final operator [ResolvedTo(RAW_FIR)] [DataClassPropertySymbolKey=/MyPair.i] fun component1(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+            public? final operator [ResolvedTo(RAW_FIR)] [DataClassPropertySymbolKey=/MyPair.b] fun component2(): Int
 
             public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
 
@@ -413,15 +413,15 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public final [ResolvedTo(CONTRACTS)] [DataClassComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
                 public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
 
-            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+            public final [ResolvedTo(STATUS)] [DataClassComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
 
-            public final operator [ResolvedTo(CONTRACTS)] fun component1(): R|kotlin/Int|
+            public final operator [ResolvedTo(CONTRACTS)] [DataClassPropertySymbolKey=/MyPair.i] fun component1(): R|kotlin/Int|
 
-            public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+            public final operator [ResolvedTo(STATUS)] [DataClassPropertySymbolKey=/MyPair.b] fun component2(): R|kotlin/Int|
 
             public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
 
@@ -457,15 +457,15 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public final [ResolvedTo(CONTRACTS)] [DataClassComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
                 public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
 
-            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+            public final [ResolvedTo(STATUS)] [DataClassComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
 
-            public final operator [ResolvedTo(CONTRACTS)] fun component1(): R|kotlin/Int|
+            public final operator [ResolvedTo(CONTRACTS)] [DataClassPropertySymbolKey=/MyPair.i] fun component1(): R|kotlin/Int|
 
-            public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+            public final operator [ResolvedTo(STATUS)] [DataClassPropertySymbolKey=/MyPair.b] fun component2(): R|kotlin/Int|
 
             public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
 
@@ -501,15 +501,15 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public final [ResolvedTo(CONTRACTS)] [DataClassComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
                 public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
 
-            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+            public final [ResolvedTo(STATUS)] [DataClassComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
 
-            public final operator [ResolvedTo(CONTRACTS)] fun component1(): R|kotlin/Int|
+            public final operator [ResolvedTo(CONTRACTS)] [DataClassPropertySymbolKey=/MyPair.i] fun component1(): R|kotlin/Int|
 
-            public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+            public final operator [ResolvedTo(STATUS)] [DataClassPropertySymbolKey=/MyPair.b] fun component2(): R|kotlin/Int|
 
             public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
 
@@ -545,15 +545,15 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public final [ResolvedTo(CONTRACTS)] [DataClassComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
                 public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
 
-            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+            public final [ResolvedTo(STATUS)] [DataClassComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
 
-            public final operator [ResolvedTo(CONTRACTS)] fun component1(): R|kotlin/Int|
+            public final operator [ResolvedTo(CONTRACTS)] [DataClassPropertySymbolKey=/MyPair.i] fun component1(): R|kotlin/Int|
 
-            public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+            public final operator [ResolvedTo(STATUS)] [DataClassPropertySymbolKey=/MyPair.b] fun component2(): R|kotlin/Int|
 
             public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
 
@@ -589,15 +589,15 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructuringFirstEntry.kts
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public final [ResolvedTo(BODY_RESOLVE)] [DataClassComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
 
-            public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+            public final [ResolvedTo(BODY_RESOLVE)] [DataClassComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
 
-            public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/Int|
+            public final operator [ResolvedTo(BODY_RESOLVE)] [DataClassPropertySymbolKey=/MyPair.i] fun component1(): R|kotlin/Int|
 
-            public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|kotlin/Int|
+            public final operator [ResolvedTo(BODY_RESOLVE)] [DataClassPropertySymbolKey=/MyPair.b] fun component2(): R|kotlin/Int|
 
             public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int| = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int| = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
 

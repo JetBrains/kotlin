@@ -12,15 +12,15 @@ FILE: [ResolvedTo(IMPORTS)] entryInDestructuringDeclaration.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=/X.component1, IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+        public final [ResolvedTo(CONTRACTS)] [DataClassComponentFunctionSymbolKey=/X.component1, IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=X] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=/X.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+        public final [ResolvedTo(CONTRACTS)] [DataClassComponentFunctionSymbolKey=/X.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=X] get(): R|kotlin/Int|
 
-        public final operator [ResolvedTo(CONTRACTS)] fun component1(): R|kotlin/Int|
+        public final operator [ResolvedTo(CONTRACTS)] [DataClassPropertySymbolKey=/X.a] fun component1(): R|kotlin/Int|
 
-        public final operator [ResolvedTo(CONTRACTS)] fun component2(): R|kotlin/Int|
+        public final operator [ResolvedTo(CONTRACTS)] [DataClassPropertySymbolKey=/X.b] fun component2(): R|kotlin/Int|
 
         public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] a: R|kotlin/Int| = this@R|/X|.R|/X.a|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|/X|.R|/X.b|): R|X|
 
