@@ -18964,6 +18964,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("forkInWhen.kt")
+        public void testForkInWhen() {
+          runTest("compiler/testData/diagnostics/tests/inference/forks/forkInWhen.kt");
+        }
+
+        @Test
         @TestMetadata("nestedCallVariableFixation.kt")
         public void testNestedCallVariableFixation() {
           runTest("compiler/testData/diagnostics/tests/inference/forks/nestedCallVariableFixation.kt");
