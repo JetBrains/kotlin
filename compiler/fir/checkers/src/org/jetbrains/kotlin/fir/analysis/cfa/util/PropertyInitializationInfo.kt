@@ -21,16 +21,11 @@ abstract class EventOccurrencesRangeInfo<E : EventOccurrencesRangeInfo<E, K>, K 
     override fun merge(other: E, node: CFGNode<*>): E {
         @Suppress("UNCHECKED_CAST")
         var result = this as E
-
         val isUnion = node.isUnion
-        if (isUnion) {
-            // Special case: union with nothing is a no-op. Note that this is not the case
-            // for non-union nodes, where all lower bounds on the non-empty side should become 0.
-            if (result.isEmpty()) return other
-            if (other.isEmpty()) return result
-        }
-
-        for (symbol in keys.union(other.keys)) {
+        if (isUnion && isEmpty()) return other
+        // For union nodes, iterating over keys not present in the other branch is pointless as the result
+        // is unchanged. For non-union nodes, lower bounds for keys only present on one side become 0.
+        for (symbol in (if (isUnion) other.keys else keys union other.keys)) {
             val kind1 = this[symbol] ?: MarkedEventOccurrencesRange.Zero
             val kind2 = other[symbol] ?: MarkedEventOccurrencesRange.Zero
             val newKind = if (kind1.location != null && kind1 == kind2) {
