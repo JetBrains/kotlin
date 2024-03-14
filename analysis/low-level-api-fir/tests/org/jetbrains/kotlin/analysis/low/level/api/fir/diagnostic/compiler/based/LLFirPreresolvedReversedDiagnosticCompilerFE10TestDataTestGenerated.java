@@ -11579,6 +11579,18 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("deprecatedDestructuringDeclarationVariablesA.kt")
+      public void testDeprecatedDestructuringDeclarationVariablesA() {
+        runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedDestructuringDeclarationVariablesA.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecatedDestructuringDeclarationVariablesB.kt")
+      public void testDeprecatedDestructuringDeclarationVariablesB() {
+        runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedDestructuringDeclarationVariablesB.kt");
+      }
+
+      @Test
       @TestMetadata("deprecatedEnumEntry.kt")
       public void testDeprecatedEnumEntry() {
         runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedEnumEntry.kt");
@@ -11639,6 +11651,42 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("deprecationPropagationFromExplicitlyPropertyToComponentFunctionInDataClassA.kt")
+      public void testDeprecationPropagationFromExplicitlyPropertyToComponentFunctionInDataClassA() {
+        runTest("compiler/testData/diagnostics/tests/deprecated/deprecationPropagationFromExplicitlyPropertyToComponentFunctionInDataClassA.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecationPropagationFromExplicitlyPropertyToComponentFunctionInDataClassB.kt")
+      public void testDeprecationPropagationFromExplicitlyPropertyToComponentFunctionInDataClassB() {
+        runTest("compiler/testData/diagnostics/tests/deprecated/deprecationPropagationFromExplicitlyPropertyToComponentFunctionInDataClassB.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecationPropagationFromPropertyGetterToComponentFunctionInDataClassA.kt")
+      public void testDeprecationPropagationFromPropertyGetterToComponentFunctionInDataClassA() {
+        runTest("compiler/testData/diagnostics/tests/deprecated/deprecationPropagationFromPropertyGetterToComponentFunctionInDataClassA.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecationPropagationFromPropertyGetterToComponentFunctionInDataClassB.kt")
+      public void testDeprecationPropagationFromPropertyGetterToComponentFunctionInDataClassB() {
+        runTest("compiler/testData/diagnostics/tests/deprecated/deprecationPropagationFromPropertyGetterToComponentFunctionInDataClassB.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecationPropagationFromPropertyToComponentFunctionInDataClassA.kt")
+      public void testDeprecationPropagationFromPropertyToComponentFunctionInDataClassA() {
+        runTest("compiler/testData/diagnostics/tests/deprecated/deprecationPropagationFromPropertyToComponentFunctionInDataClassA.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecationPropagationFromPropertyToComponentFunctionInDataClassB.kt")
+      public void testDeprecationPropagationFromPropertyToComponentFunctionInDataClassB() {
+        runTest("compiler/testData/diagnostics/tests/deprecated/deprecationPropagationFromPropertyToComponentFunctionInDataClassB.kt");
+      }
+
+      @Test
       @TestMetadata("duplicatedOverrideDeprecationOnProperty.kt")
       public void testDuplicatedOverrideDeprecationOnProperty() {
         runTest("compiler/testData/diagnostics/tests/deprecated/duplicatedOverrideDeprecationOnProperty.kt");
@@ -11672,6 +11720,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       @TestMetadata("imports.kt")
       public void testImports() {
         runTest("compiler/testData/diagnostics/tests/deprecated/imports.kt");
+      }
+
+      @Test
+      @TestMetadata("isolationOfPropertyDeprecationFromComponentFunctionInNonDataClass.kt")
+      public void testIsolationOfPropertyDeprecationFromComponentFunctionInNonDataClass() {
+        runTest("compiler/testData/diagnostics/tests/deprecated/isolationOfPropertyDeprecationFromComponentFunctionInNonDataClass.kt");
       }
 
       @Test
