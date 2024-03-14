@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.fir.types.*
 
 object RedundantNullableChecker : FirTypeRefChecker(MppCheckerKind.Common) {
     override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (typeRef !is FirResolvedTypeRef || typeRef.isMarkedNullable != true) return
+        if (typeRef !is FirResolvedTypeRef || !typeRef.coneType.abbreviatedTypeOrSelf.isMarkedNullable) return
 
-        var symbol = typeRef.toClassLikeSymbol(context.session)
+        var symbol = typeRef.coneType.abbreviatedTypeOrSelf.toSymbol(context.session)
         if (symbol is FirTypeAliasSymbol) {
             while (symbol is FirTypeAliasSymbol) {
                 val resolvedExpandedTypeRef = symbol.resolvedExpandedTypeRef
