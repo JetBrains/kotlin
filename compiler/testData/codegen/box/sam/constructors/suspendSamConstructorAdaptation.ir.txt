@@ -27,20 +27,20 @@ FILE fqName:<root> fileName:/suspendSamConstructorAdaptation.kt
       CALL 'public final fun func (f: <root>.FunInterface): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         f: BLOCK type=<root>.FunInterface origin=SUSPEND_CONVERSION
           FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion0 visibility:local modality:FINAL <> ($receiver:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [suspend]
-            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function0<kotlin.Unit>
+            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:$callee type:kotlin.Function0<kotlin.Unit>
             BLOCK_BODY
               CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
-                $this: GET_VAR 'callee: kotlin.Function0<kotlin.Unit> declared in <root>.box.suspendConversion0' type=kotlin.Function0<kotlin.Unit> origin=null
+                $this: GET_VAR '$callee: kotlin.Function0<kotlin.Unit> declared in <root>.box.suspendConversion0' type=kotlin.Function0<kotlin.Unit> origin=null
           TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
             FUNCTION_REFERENCE 'local final fun suspendConversion0 (): kotlin.Unit declared in <root>.box' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
               $receiver: GET_VAR 'val lambda: kotlin.Function0<kotlin.Unit> declared in <root>.box' type=kotlin.Function0<kotlin.Unit> origin=null
       CALL 'public final fun func (f: <root>.FunInterface): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         f: BLOCK type=<root>.FunInterface origin=SUSPEND_CONVERSION
           FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion1 visibility:local modality:FINAL <> ($receiver:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit [suspend]
-            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:callee type:kotlin.Function0<kotlin.Unit>
+            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION name:$callee type:kotlin.Function0<kotlin.Unit>
             BLOCK_BODY
               CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
-                $this: GET_VAR 'callee: kotlin.Function0<kotlin.Unit> declared in <root>.box.suspendConversion1' type=kotlin.Function0<kotlin.Unit> origin=null
+                $this: GET_VAR '$callee: kotlin.Function0<kotlin.Unit> declared in <root>.box.suspendConversion1' type=kotlin.Function0<kotlin.Unit> origin=null
           TYPE_OP type=<root>.FunInterface origin=SAM_CONVERSION typeOperand=<root>.FunInterface
             FUNCTION_REFERENCE 'local final fun suspendConversion1 (): kotlin.Unit declared in <root>.box' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
               $receiver: GET_VAR 'val lambda: kotlin.Function0<kotlin.Unit> declared in <root>.box' type=kotlin.Function0<kotlin.Unit> origin=null

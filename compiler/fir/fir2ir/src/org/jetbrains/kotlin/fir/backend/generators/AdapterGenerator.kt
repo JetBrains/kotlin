@@ -647,7 +647,7 @@ internal class AdapterGenerator(
             symbolTable.enterScope(irAdapterFunction)
             irAdapterFunction.extensionReceiverParameter = createAdapterParameter(
                 irAdapterFunction,
-                Name.identifier("callee"),
+                Name.identifier("\$callee"),
                 UNDEFINED_PARAMETER_INDEX,
                 argumentType,
                 IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION

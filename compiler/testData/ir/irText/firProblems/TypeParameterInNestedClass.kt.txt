@@ -21,7 +21,7 @@ object Retry {
   fun <W : Any?> withExponentialBackoff(action: Function0<W>): Builder<W> {
     return Builder<W>(action = { // BLOCK
       local suspend fun Function0<W>.suspendConversion0(): W {
-        return callee.invoke()
+        return $callee.invoke()
       }
 
       action::suspendConversion0
