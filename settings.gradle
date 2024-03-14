@@ -418,7 +418,12 @@ include ":compiler:build-tools:kotlin-build-tools-api",
         ":compiler:build-tools:kotlin-build-tools-impl",
         ":compiler:build-tools:kotlin-build-tools-api-tests"
 
-// Experimental modules, should be placed into plugins/compose-compiler-plugin folder
+include ":plugins:compose-compiler-plugin:temp",
+        ":plugins:compose-compiler-plugin:temp:compiler",
+        ":plugins:compose-compiler-plugin:temp:compiler:integration-tests",
+        ":plugins:compose-compiler-plugin:temp:compiler-hosted"
+
+// Experimental modules (will be deleted after a transition period), should be placed into plugins/compose-compiler-plugin folder
 include ":plugins:compose-compiler-plugin:compiler",
         ":plugins:compose-compiler-plugin:compiler:integration-tests",
         ":plugins:compose-compiler-plugin:compiler-hosted",
@@ -860,6 +865,11 @@ project(':kotlin-atomicfu-compiler-plugin').projectDir = file("$rootDir/plugins/
 project(':kotlin-atomicfu-compiler-plugin-embeddable').projectDir = file("$rootDir/plugins/atomicfu/atomicfu-compiler-embeddable")
 project(':kotlinx-atomicfu-runtime').projectDir = file("$rootDir/plugins/atomicfu/atomicfu-runtime")
 project(':atomicfu').projectDir = file("$rootDir/libraries/tools/atomicfu")
+
+project(':plugins:compose-compiler-plugin:temp').projectDir = file("$rootDir/plugins/compose")
+project(':plugins:compose-compiler-plugin:temp:compiler').projectDir = file("$rootDir/plugins/compose/compiler")
+project(':plugins:compose-compiler-plugin:temp:compiler:integration-tests').projectDir = file("$rootDir/plugins/compose/compiler/integration-tests")
+project(':plugins:compose-compiler-plugin:temp:compiler-hosted').projectDir = file("$rootDir/plugins/compose/compiler-hosted")
 
 project(':kotlin-scripting-ide-services-unshaded').projectDir = "$rootDir/plugins/scripting/scripting-ide-services" as File
 project(':kotlin-scripting-ide-services-test').projectDir = "$rootDir/plugins/scripting/scripting-ide-services-test" as File
