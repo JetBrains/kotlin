@@ -48,7 +48,7 @@ FILE: propertiesAndInitBlocks.kt
     public final val x4: R|kotlin/Int| = try {
         Int(1)
     }
-    catch (e: R|kotlin/Exception|) {
+    catch (e: R|{kotlin/Exception=} java/lang/Exception|) {
         Int(2)
     }
     finally {

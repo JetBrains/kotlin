@@ -27,7 +27,7 @@ FILE: labelClashesWithContextReceivers.fir.kt
             this@R|/TypedThis.baz|
         }
 
-        public final fun R|Extension|.bar(): R|kotlin/Unit| {
+        public final fun R|{Extension=} TypedThis|.bar(): R|kotlin/Unit| {
             this@R|/TypedThis|
         }
 

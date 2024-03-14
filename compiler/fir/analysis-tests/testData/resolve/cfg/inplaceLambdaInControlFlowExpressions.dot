@@ -182,7 +182,7 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
                 subgraph cluster_23 {
                     color=blue
                     63 [label="Catch enter"];
-                    64 [label="Variable declaration: e: R|kotlin/Exception|"];
+                    64 [label="Variable declaration: e: R|{kotlin/Exception=} java/lang/Exception|"];
                     subgraph cluster_24 {
                         color=blue
                         65 [label="Enter block"];

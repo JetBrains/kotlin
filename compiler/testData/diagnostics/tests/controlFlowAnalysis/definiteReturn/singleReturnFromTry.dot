@@ -371,7 +371,7 @@ digraph singleReturnFromTry_kt {
                 subgraph cluster_44 {
                     color=blue
                     119 [label="Catch enter"];
-                    120 [label="Variable declaration: e: R|kotlin/Exception|"];
+                    120 [label="Variable declaration: e: R|{kotlin/Exception=} java/lang/Exception|"];
                     subgraph cluster_45 {
                         color=blue
                         121 [label="Enter block"];

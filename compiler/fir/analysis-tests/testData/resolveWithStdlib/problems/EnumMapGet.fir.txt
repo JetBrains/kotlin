@@ -1,5 +1,5 @@
 FILE: EnumMapGet.kt
     public final typealias SomeEnumMap = R|java/util/EnumMap<kotlin/String, kotlin/String?>|
-    public final fun test(map: R|SomeEnumMap|, qualifier: R|kotlin/String?|): R|kotlin/Unit| {
+    public final fun test(map: R|{SomeEnumMap=} java/util/EnumMap<kotlin/String, kotlin/String?>|, qualifier: R|kotlin/String?|): R|kotlin/Unit| {
         lval result: R|kotlin/String?| = R|<local>/map|.R|SubstitutionOverride<java/util/EnumMap.get: R|@EnhancedNullability kotlin/String?|>|(R|<local>/qualifier|)
     }

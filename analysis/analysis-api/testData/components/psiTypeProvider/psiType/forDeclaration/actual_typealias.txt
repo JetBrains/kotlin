@@ -1,2 +1,2 @@
-KtType: Foo
+KtType: kotlin.Int
 PsiType: int

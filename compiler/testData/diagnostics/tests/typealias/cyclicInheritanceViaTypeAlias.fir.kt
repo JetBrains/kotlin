@@ -4,4 +4,4 @@ class A : <!CYCLIC_INHERITANCE_HIERARCHY!>B<!>() {
 
 typealias ANested<T> = <!RECURSIVE_TYPEALIAS_EXPANSION!>A.Nested<T><!>
 
-open class B : <!CYCLIC_INHERITANCE_HIERARCHY, UNRESOLVED_REFERENCE!>ANested<Int><!>()
+open class B : <!CYCLIC_INHERITANCE_HIERARCHY!>ANested<Int><!>()

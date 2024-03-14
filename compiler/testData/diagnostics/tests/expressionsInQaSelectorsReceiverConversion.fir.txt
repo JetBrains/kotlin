@@ -3,6 +3,6 @@ FILE: expressionsInQaSelectorsReceiverConversion.fir.kt
         R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|><Inapplicable(INAPPLICABLE): kotlin/Function1.invoke>#|(Int(2))
     }
     public final typealias TA = R|kotlin/Int.() -> kotlin/Int|
-    public final fun rest(f: R|TA|): R|kotlin/Unit| {
+    public final fun rest(f: R|{TA=} kotlin/Int.() -> kotlin/Int|): R|kotlin/Unit| {
         R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(Int(2))
     }

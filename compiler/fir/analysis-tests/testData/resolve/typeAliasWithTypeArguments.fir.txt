@@ -29,25 +29,25 @@ FILE: typeAliasWithTypeArguments.kt
         R|<local>/inv|.R|SubstitutionOverride</Inv.k: R|A|>|()
         R|<local>/inv|.R|SubstitutionOverride</Inv.t: R|B|>|()
     }
-    public final fun test_0(inv: R|Inv0|): R|kotlin/Unit| {
+    public final fun test_0(inv: R|{Inv0=} Inv<A, B>|): R|kotlin/Unit| {
         R|<local>/inv|.R|SubstitutionOverride</Inv.k: R|A|>|().R|/A.foo|()
         R|<local>/inv|.R|SubstitutionOverride</Inv.t: R|B|>|().R|/B.bar|()
     }
-    public final fun test_1(inv: R|Inv1<B>|): R|kotlin/Unit| {
+    public final fun test_1(inv: R|{Inv1<B>=} Inv<A, B>|): R|kotlin/Unit| {
         R|<local>/inv|.R|SubstitutionOverride</Inv.k: R|A|>|().R|/A.foo|()
         R|<local>/inv|.R|SubstitutionOverride</Inv.t: R|B|>|().R|/B.bar|()
     }
-    public final fun test_2(inv: R|Inv2<A, B>|): R|kotlin/Unit| {
+    public final fun test_2(inv: R|{Inv2<A, B>=} Inv<A, B>|): R|kotlin/Unit| {
         R|<local>/inv|.R|SubstitutionOverride</Inv.k: R|A|>|().R|/A.foo|()
         R|<local>/inv|.R|SubstitutionOverride</Inv.t: R|B|>|().R|/B.bar|()
     }
-    public final fun test_3(inv: R|Inv3<A, B, C>|): R|kotlin/Unit| {
+    public final fun test_3(inv: R|{Inv3<A, B, C>=} Inv<A, C>|): R|kotlin/Unit| {
         R|<local>/inv|.R|SubstitutionOverride</Inv.k: R|A|>|().R|/A.foo|()
         R|<local>/inv|.R|SubstitutionOverride</Inv.t: R|C|>|().<Unresolved name: bar>#()
         R|<local>/inv|.R|SubstitutionOverride</Inv.t: R|C|>|().R|/C.baz|()
     }
     public final typealias Inv02<A1, B1, C1> = R|Inv<Inv<A1, B1>, C1>|
-    public final fun test_4(inv: R|Inv02<A, B, C>|): R|kotlin/Unit| {
+    public final fun test_4(inv: R|{Inv02<A, B, C>=} Inv<Inv<A, B>, C>|): R|kotlin/Unit| {
         R|<local>/inv|.R|SubstitutionOverride</Inv.k: R|Inv<A, B>|>|().R|SubstitutionOverride</Inv.k: R|A|>|().R|/A.foo|()
         R|<local>/inv|.R|SubstitutionOverride</Inv.k: R|Inv<A, B>|>|().R|SubstitutionOverride</Inv.t: R|B|>|().R|/B.bar|()
         R|<local>/inv|.R|SubstitutionOverride</Inv.t: R|C|>|().R|/C.baz|()
@@ -69,17 +69,17 @@ FILE: typeAliasWithTypeArguments.kt
     public final typealias In1<X> = R|In<X>|
     public final typealias Out1<X> = R|Out<X>|
     public final typealias Invariant1<X> = R|Invariant<X>|
-    public final fun test_5(a: R|A|, in1: R|In1<A>|, in2: R|In1<in A>|, in3: R|In1<out A>|): R|kotlin/Unit| {
+    public final fun test_5(a: R|A|, in1: R|{In1<A>=} In<A>|, in2: R|{In1<in A>=} In<in A>|, in3: R|{In1<out A>=} In<out A>|): R|kotlin/Unit| {
         R|<local>/in1|.R|SubstitutionOverride</In.take: R|kotlin/Unit|>|(R|<local>/a|)
         R|<local>/in2|.R|SubstitutionOverride</In.take: R|kotlin/Unit|>|(R|<local>/a|)
         R|<local>/in3|.<Unresolved name: take>#(R|<local>/a|)
     }
-    public final fun test_6(a: R|A|, out1: R|Out1<A>|, out2: R|Out1<in A>|, out3: R|Out1<out A>|): R|kotlin/Unit| {
+    public final fun test_6(a: R|A|, out1: R|{Out1<A>=} Out<A>|, out2: R|{Out1<in A>=} Out<in A>|, out3: R|{Out1<out A>=} Out<out A>|): R|kotlin/Unit| {
         R|<local>/out1|.R|SubstitutionOverride</Out.value: R|A|>|().R|/A.foo|()
         R|<local>/out2|.<Unresolved name: value>#().<Unresolved name: foo>#()
         R|<local>/out3|.R|SubstitutionOverride</Out.value: R|A|>|().R|/A.foo|()
     }
-    public final fun test_7(a: R|A|, inv1: R|Invariant1<A>|, inv2: R|Invariant1<in A>|, inv3: R|Invariant1<out A>|): R|kotlin/Unit| {
+    public final fun test_7(a: R|A|, inv1: R|{Invariant1<A>=} Invariant<A>|, inv2: R|{Invariant1<in A>=} Invariant<in A>|, inv3: R|{Invariant1<out A>=} Invariant<out A>|): R|kotlin/Unit| {
         R|<local>/inv1|.R|SubstitutionOverride</Invariant.value: R|A|>|().R|/A.foo|()
         R|<local>/inv2|.R|SubstitutionOverride</Invariant.value: R|CapturedType(in A)|>|().<Unresolved name: foo>#()
         R|<local>/inv3|.R|SubstitutionOverride</Invariant.value: R|CapturedType(out A)|>|().R|/A.foo|()

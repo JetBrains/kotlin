@@ -44,7 +44,7 @@ FILE: labelClashes.fir.kt
             this@R|/TypedThis|
         }
 
-        public final fun R|Extension|.bar(): R|kotlin/Unit| {
+        public final fun R|{Extension=} TypedThis|.bar(): R|kotlin/Unit| {
             this@R|/TypedThis|
         }
 

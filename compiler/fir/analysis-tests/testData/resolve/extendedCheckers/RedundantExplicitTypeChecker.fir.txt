@@ -95,6 +95,6 @@ FILE: RedundantExplicitTypeChecker.kt
     public final val ZERO: R|kotlin/Int| = Int(0)
         public get(): R|kotlin/Int|
     public final fun main(): R|kotlin/Unit| {
-        lval id: R|Id| = Int(11)
+        lval id: R|{Id=} kotlin/Int| = Int(11)
     }
     public final typealias Id = R|kotlin/Int|

@@ -23,7 +23,7 @@ KtFunctionSymbol:
   returnType: KtUsualClassType:
     annotationsList: []
     ownTypeArguments: []
-    type: Base
+    type: {SecondAlias=} Base
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
