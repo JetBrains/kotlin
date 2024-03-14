@@ -20,9 +20,9 @@ dependencies {
 
     compileOnly(intellijCore())
 
-    testImplementation(commonDependency("junit:junit"))
-    val platformVersion = commonDependencyVersion("org.junit", "junit-bom")
-    testImplementation("org.junit.vintage:junit-vintage-engine:$platformVersion")
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit4)
+    testRuntimeOnly(libs.junit.vintage.engine)
 }
 
 optInToIrSymbolInternals()
