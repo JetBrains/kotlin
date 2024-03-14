@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacade
 import org.jetbrains.kotlin.daemon.common.CompilerId
 import org.jetbrains.kotlin.daemon.common.configureDaemonJVMOptions
 import org.jetbrains.kotlin.daemon.common.filterExtractProps
-import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
 import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import org.jetbrains.kotlin.incremental.extractKotlinSourcesFromFreeCompilerArguments
@@ -39,9 +38,11 @@ import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
 import java.io.File
+import java.net.URL
 import java.net.URLClassLoader
 import java.rmi.RemoteException
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.io.path.toPath
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 private val ExitCode.asCompilationResult
@@ -53,7 +54,14 @@ private val ExitCode.asCompilationResult
         else -> error("Unexpected exit code: $this")
     }
 
-private fun getCurrentClasspath() = (CompilationServiceImpl::class.java.classLoader as URLClassLoader).urLs.map { File(it.file) }
+private fun getCurrentClasspath() = (CompilationServiceImpl::class.java.classLoader as URLClassLoader).urLs.map { transformUrlToFile(it) }
+
+/**
+ * Transforms a given URL to a File object with proper handling of escapable characters like whitespace, hashbang.
+ *
+ * Example: URL containing "some%20path" should be transformed to a File object pointing to "some path"
+ */
+private fun transformUrlToFile(url: URL) = url.toURI().toPath().toFile()
 
 internal object CompilationServiceImpl : CompilationService {
     private val buildIdToSessionFlagFile: MutableMap<ProjectId, File> = ConcurrentHashMap()
@@ -208,7 +216,7 @@ internal object CompilationServiceImpl : CompilationService {
             loggerAdapter,
             false,
             daemonJVMOptions = jvmOptions
-        ) ?: error("Can't get connection")
+        ) ?: return ExitCode.INTERNAL_ERROR.asCompilationResult
         val daemonCompileOptions = compilationConfiguration.asDaemonCompilationOptions
         val exitCode = daemon.compile(
             sessionId,
