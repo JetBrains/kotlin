@@ -49,6 +49,7 @@ public object KotlinSignatureUtils : JvmSignatureUtils {
         } ?: emptyMap()
     }
 
+    override fun Annotations.Annotation.isIgnored(): Boolean = this in ignoredAnnotations
 
     public val PrimitiveJavaType.dri: DRI get() = DRI("kotlin", name.capitalize())
 
