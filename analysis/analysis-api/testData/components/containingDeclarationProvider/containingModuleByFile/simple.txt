@@ -1,0 +1,2 @@
+File: simple.kt
+Module: Sources of main (KtSourceModuleImpl)

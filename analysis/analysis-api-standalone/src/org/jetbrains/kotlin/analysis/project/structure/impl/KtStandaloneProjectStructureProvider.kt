@@ -44,20 +44,24 @@ internal class KtStandaloneProjectStructureProvider(
             ?: return ktNotUnderContentRootModuleWithoutPsiFile
 
         val virtualFile = containingFile.virtualFile
-            ?: error("${containingFile.name} is not a physical file")
-
-        if (virtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
+        if (virtualFile != null && virtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
             return builtinsModule
         }
 
         computeSpecialModule(containingFile)?.let { return it }
 
+        if (virtualFile == null) {
+            throw KotlinExceptionWithAttachments("Cannot find a KtModule for a non-physical file")
+                .withPsiAttachment("containingFile", containingFile)
+                .withAttachment("contextualModule", contextualModule?.asDebugString())
+        }
+
         return allKtModules.firstOrNull { module -> virtualFile in module.contentScope }
-            ?: throw KotlinExceptionWithAttachments("Cannot find KtModule; see the attachment for more details.")
-                .withAttachment(
-                    virtualFile.path,
-                    allKtModules.joinToString(separator = System.lineSeparator()) { it.asDebugString() }
-                )
+            ?: throw KotlinExceptionWithAttachments("Cannot find a KtModule for the VirtualFile")
+                .withPsiAttachment("containingFile", containingFile)
+                .withAttachment("contextualModule", contextualModule?.asDebugString())
+                .withAttachment("path", virtualFile.path)
+                .withAttachment("modules", allKtModules.joinToString(separator = System.lineSeparator()) { it.asDebugString() })
     }
 
     internal val binaryModules: List<KtBinaryModule> by lazy {

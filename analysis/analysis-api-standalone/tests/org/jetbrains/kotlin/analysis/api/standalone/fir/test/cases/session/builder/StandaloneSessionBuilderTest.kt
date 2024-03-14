@@ -16,12 +16,18 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtLocalVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
+import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
+import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -33,6 +39,7 @@ import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.nio.file.Paths
+import kotlin.test.assertEquals
 
 @OptIn(KtAnalysisApiInternals::class)
 class StandaloneSessionBuilderTest : TestWithDisposable() {
@@ -289,5 +296,89 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val ktFile = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
         val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
         ktCallExpression.assertIsCallOf(CallableId(FqName.ROOT, Name.identifier("foo")))
+    }
+
+    @Test
+    fun testCodeFragment() {
+        val root = "codeFragment"
+
+        lateinit var contextModule: KtSourceModule
+        val session = buildStandaloneAnalysisAPISession(disposable) {
+            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
+
+            buildKtModuleProvider {
+                platform = JvmPlatforms.defaultJvmPlatform
+                contextModule = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath(root))
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "context"
+                    }
+                )
+            }
+        }
+
+        val contextFile = session.modulesWithFiles.getValue(contextModule).single() as KtFile
+        val contextElement = contextFile.findDescendantOfType<KtVariableDeclaration> { it.name == "y" }!!
+
+        val project = contextFile.project
+        val codeFragment = KtExpressionCodeFragment(project, "fragment.kt", "x - 1", imports = null, contextElement)
+
+        val codeFragmentModule = ProjectStructureProvider.getModule(project, codeFragment, contextualModule = contextModule)
+        requireIsInstance<KtDanglingFileModule>(codeFragmentModule)
+        assertEquals(codeFragmentModule.contextModule, contextModule)
+
+        analyze(codeFragment) {
+            val fileSymbol = codeFragment.getFileSymbol()
+            assertEquals(fileSymbol.getContainingModule(), codeFragmentModule)
+
+            val referenceExpression = codeFragment.findDescendantOfType<KtSimpleNameExpression> { it.text == "x" }!!
+            val variableSymbol = referenceExpression.mainReference.resolveToSymbol()
+            assert(variableSymbol is KtLocalVariableSymbol)
+        }
+    }
+
+    @Test
+    fun testNonPhysicalFile() {
+        val root = "nonPhysicalFile"
+
+        lateinit var contextModule: KtSourceModule
+        val session = buildStandaloneAnalysisAPISession(disposable) {
+            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
+
+            buildKtModuleProvider {
+                platform = JvmPlatforms.defaultJvmPlatform
+                contextModule = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath(root))
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "context"
+                    }
+                )
+            }
+        }
+
+        val contextFile = session.modulesWithFiles.getValue(contextModule).single() as KtFile
+
+        val project = contextFile.project
+
+        val dummyFile = KtPsiFactory
+            .contextual(contextFile, markGenerated = false, eventSystemEnabled = false)
+            .createFile("dummy.kt", "fun usage() { test() }")
+
+        assert(dummyFile.virtualFile == null)
+
+        val dummyModule = ProjectStructureProvider.getModule(project, dummyFile, contextualModule = null)
+        requireIsInstance<KtDanglingFileModule>(dummyModule)
+        assertEquals(dummyModule.contextModule, contextModule)
+
+        analyze(dummyFile) {
+            val fileSymbol = dummyFile.getFileSymbol()
+            assertEquals(fileSymbol.getContainingModule(), dummyModule)
+
+            val callExpression = dummyFile.findDescendantOfType<KtCallExpression>()!!
+            val call = callExpression.resolveCall()?.successfulFunctionCallOrNull() ?: error("Call inside a dummy file is unresolved")
+            assert(call.symbol is KtFunctionSymbol)
+        }
     }
 }
