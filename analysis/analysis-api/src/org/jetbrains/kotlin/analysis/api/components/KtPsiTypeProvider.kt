@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -99,8 +99,11 @@ public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
     /**
      * Converts given [PsiType] to [KtType].
      *
-     * @receiver PsiType to be converted.
-     * @return The converted KtType, or null if conversion is not possible e.g., [PsiType] is not resolved
+     * [useSitePosition] may be used to clarify how to resolve some parts of [PsiType].
+     * For instance, it can be used to collect type parameters and use them during the conversion.
+     *
+     * @receiver [PsiType] to be converted.
+     * @return The converted [KtType], or null if conversion is not possible e.g., [PsiType] is not resolved
      */
     public fun PsiType.asKtType(useSitePosition: PsiElement): KtType? = withValidityAssertion {
         analysisSession.psiTypeProvider.asKtType(this, useSitePosition)
