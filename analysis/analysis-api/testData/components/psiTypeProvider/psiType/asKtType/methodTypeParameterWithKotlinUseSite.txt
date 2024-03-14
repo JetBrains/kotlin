@@ -1,2 +1,2 @@
-PsiType: PsiType:TYPE
+PsiType: TYPE
 KtType: TYPE

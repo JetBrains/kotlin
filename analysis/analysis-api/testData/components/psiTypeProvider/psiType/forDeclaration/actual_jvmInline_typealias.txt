@@ -1,2 +1,2 @@
 KtType: PointerKeyboardModifiers
-PsiType: PsiType:int
+PsiType: int

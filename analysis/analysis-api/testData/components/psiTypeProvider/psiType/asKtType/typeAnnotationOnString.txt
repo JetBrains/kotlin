@@ -1,2 +1,2 @@
-PsiType: PsiType:String
+PsiType: java.lang.@MyAnno String
 KtType: @MyAnno kotlin.String?

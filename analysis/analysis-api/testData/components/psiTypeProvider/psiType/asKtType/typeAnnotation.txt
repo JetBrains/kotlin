@@ -1,2 +1,2 @@
-PsiType: PsiType:KotlinClass
+PsiType: @MyAnno KotlinClass
 KtType: @MyAnno KotlinClass?
