@@ -28,33 +28,33 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiBinaryModule")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisLibraryBinaryModuleFirPluginPrototypeMultiBinaryModuleCompilerFacilityTestGenerated extends AbstractFirPluginPrototypeMultiBinaryModuleCompilerFacilityTest {
-  @NotNull
-  @Override
-  public AnalysisApiTestConfigurator getConfigurator() {
-    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-      new AnalysisApiTestConfiguratorFactoryData(
-        FrontendKind.Fir,
-        TestModuleKind.LibraryBinary,
-        AnalysisSessionMode.Normal,
-        AnalysisApiMode.Ide
-      )
-    );
-  }
+    @NotNull
+    @Override
+    public AnalysisApiTestConfigurator getConfigurator() {
+        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+            new AnalysisApiTestConfiguratorFactoryData(
+                FrontendKind.Fir,
+                TestModuleKind.LibraryBinary,
+                AnalysisSessionMode.Normal,
+                AnalysisApiMode.Ide
+            )
+        );
+    }
 
-  @Test
-  public void testAllFilesPresentInFirPluginPrototypeMultiBinaryModule() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiBinaryModule"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
-  }
+    @Test
+    public void testAllFilesPresentInFirPluginPrototypeMultiBinaryModule() throws Exception {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiBinaryModule"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
 
-  @Test
-  @TestMetadata("composableFunctionMultiModules.kt")
-  public void testComposableFunctionMultiModules() {
-    runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiBinaryModule/composableFunctionMultiModules.kt");
-  }
+    @Test
+    @TestMetadata("composableFunctionMultiModules.kt")
+    public void testComposableFunctionMultiModules() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiBinaryModule/composableFunctionMultiModules.kt");
+    }
 
-  @Test
-  @TestMetadata("composableFunctionMultiModules2.kt")
-  public void testComposableFunctionMultiModules2() {
-    runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiBinaryModule/composableFunctionMultiModules2.kt");
-  }
+    @Test
+    @TestMetadata("composableFunctionMultiModules2.kt")
+    public void testComposableFunctionMultiModules2() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiBinaryModule/composableFunctionMultiModules2.kt");
+    }
 }

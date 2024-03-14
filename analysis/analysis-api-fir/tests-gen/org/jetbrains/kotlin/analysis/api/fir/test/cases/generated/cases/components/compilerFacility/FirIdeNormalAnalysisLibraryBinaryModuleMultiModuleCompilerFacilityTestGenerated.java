@@ -28,27 +28,27 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/compilerFacility/compilationMultiBinaryModule")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisLibraryBinaryModuleMultiModuleCompilerFacilityTestGenerated extends AbstractMultiModuleCompilerFacilityTest {
-  @NotNull
-  @Override
-  public AnalysisApiTestConfigurator getConfigurator() {
-    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-      new AnalysisApiTestConfiguratorFactoryData(
-        FrontendKind.Fir,
-        TestModuleKind.LibraryBinary,
-        AnalysisSessionMode.Normal,
-        AnalysisApiMode.Ide
-      )
-    );
-  }
+    @NotNull
+    @Override
+    public AnalysisApiTestConfigurator getConfigurator() {
+        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+            new AnalysisApiTestConfiguratorFactoryData(
+                FrontendKind.Fir,
+                TestModuleKind.LibraryBinary,
+                AnalysisSessionMode.Normal,
+                AnalysisApiMode.Ide
+            )
+        );
+    }
 
-  @Test
-  public void testAllFilesPresentInCompilationMultiBinaryModule() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilationMultiBinaryModule"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
-  }
+    @Test
+    public void testAllFilesPresentInCompilationMultiBinaryModule() throws Exception {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilationMultiBinaryModule"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
 
-  @Test
-  @TestMetadata("dependencyBetweenBinaryLibraries.kt")
-  public void testDependencyBetweenBinaryLibraries() {
-    runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiBinaryModule/dependencyBetweenBinaryLibraries.kt");
-  }
+    @Test
+    @TestMetadata("dependencyBetweenBinaryLibraries.kt")
+    public void testDependencyBetweenBinaryLibraries() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiBinaryModule/dependencyBetweenBinaryLibraries.kt");
+    }
 }
