@@ -42,7 +42,7 @@ fun test3() {
 }
 
 @ClassMarker
-fun test4(t: T) {}
+fun test4(t: <!OPT_IN_USAGE_ERROR!>T<!>) {}
 
 @TypeAliasMarker
 fun test5(t: <!OPT_IN_USAGE_ERROR!>T<!>) {}

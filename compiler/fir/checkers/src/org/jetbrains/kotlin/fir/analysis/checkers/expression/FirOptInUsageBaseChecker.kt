@@ -205,13 +205,13 @@ object FirOptInUsageBaseChecker {
             )
         } else {
             // Without coneTypeSafe v fails in MT test (FirRenderer.kt)
-            returnTypeRef.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
-            receiverParameter?.typeRef?.coneType.addExperimentalities(context, result, visited)
+            returnTypeRef.coneTypeSafe<ConeKotlinType>()?.abbreviatedTypeOrSelf.addExperimentalities(context, result, visited)
+            receiverParameter?.typeRef?.coneType?.abbreviatedTypeOrSelf.addExperimentalities(context, result, visited)
         }
         dispatchReceiverType?.addExperimentalities(context, result, visited)
         if (this is FirFunction) {
             valueParameters.forEach {
-                it.returnTypeRef.coneType.addExperimentalities(context, result, visited)
+                it.returnTypeRef.coneType.abbreviatedTypeOrSelf.addExperimentalities(context, result, visited)
             }
 
             // Handling data class 'componentN' function

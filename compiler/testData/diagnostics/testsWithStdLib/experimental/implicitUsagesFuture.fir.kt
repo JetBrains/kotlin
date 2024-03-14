@@ -78,9 +78,9 @@ fun main() {
     <!OPT_IN_USAGE_ERROR!>YourList<!>().add("")
 }
 
-fun my2(my: <!OPT_IN_USAGE_ERROR!>MyList<!>) {}
+fun my2(my: MyList) {}
 
-fun my3(my: YourList) {}
+fun my3(my: <!OPT_IN_USAGE_ERROR!>YourList<!>) {}
 
 @Marker
 class C {
