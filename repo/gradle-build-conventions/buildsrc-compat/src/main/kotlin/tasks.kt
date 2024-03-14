@@ -212,6 +212,11 @@ fun Project.projectTest(
             "-Djna.nosys=true"
         )
 
+        val nativeMemoryTracking = project.providers.gradleProperty("kotlin.build.test.process.NativeMemoryTracking")
+        if (nativeMemoryTracking.isPresent) {
+            jvmArgs("-XX:NativeMemoryTracking=${nativeMemoryTracking.get()}")
+        }
+
         val junit5ParallelTestWorkers =
             project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution ?: Runtime.getRuntime().availableProcessors()
 
