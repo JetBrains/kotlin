@@ -63,7 +63,7 @@ if (expectedLog != actualLog) {
     println "Expected log (from ${new File(basedir, "expected.log").absolutePath}):"
     println expectedLog
     println ""
-    //return false
+    return false
 } else {
     println "Log comparison succeeded"
 }
