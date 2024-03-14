@@ -70,7 +70,7 @@ class UnnamedTaskInputsIT : KGPBaseTest() {
 
             build("assemble") {
                 assertNoUnnamedInputsOutputs()
-                //assertNoBuildWarnings(expectedK2KaptWarnings)
+                assertNoBuildWarnings(expectedK2KaptWarnings)
             }
         }
     }
