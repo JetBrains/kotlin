@@ -71,13 +71,13 @@ typealias Out1<X> = Out<X>
 typealias Invariant1<X> = Invariant<X>
 
 
-fun test_5(a: A, in1: In1<A>, in2: In1<<!REDUNDANT_PROJECTION!>in<!> A>, in3: In1<<!CONFLICTING_PROJECTION!>out<!> A>) {
+fun test_5(a: A, in1: In1<A>, in2: In1<<!REDUNDANT_PROJECTION!>in<!> A>, in3: In1<<!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>out<!> A>) {
     in1.take(a)
     in2.take(a)
     in3.<!UNRESOLVED_REFERENCE!>take<!>(a)
 }
 
-fun test_6(a: A, out1: Out1<A>, out2: Out1<<!CONFLICTING_PROJECTION!>in<!> A>, out3: Out1<<!REDUNDANT_PROJECTION!>out<!> A>) {
+fun test_6(a: A, out1: Out1<A>, out2: Out1<<!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>in<!> A>, out3: Out1<<!REDUNDANT_PROJECTION!>out<!> A>) {
     out1.value().foo()
     out2.<!UNRESOLVED_REFERENCE!>value<!>().foo()
     out3.value().foo()

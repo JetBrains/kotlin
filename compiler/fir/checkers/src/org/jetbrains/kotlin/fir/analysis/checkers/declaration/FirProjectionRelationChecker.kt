@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentsTypeRefAndSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.Variance
@@ -46,8 +45,8 @@ object FirProjectionRelationChecker : FirBasicDeclarationChecker(MppCheckerKind.
         reporter: DiagnosticReporter
     ) {
         if (typeRef.source?.kind?.shouldSkipErrorTypeReporting != false) return
-        val type = typeRef.coneTypeSafe<ConeClassLikeType>()
-        val fullyExpandedType = type?.fullyExpandedType(context.session) ?: return
+        val type = typeRef.coneType.abbreviatedTypeOrSelf as? ConeClassLikeType ?: return
+        val fullyExpandedType = typeRef.coneType
         val declaration = fullyExpandedType.toSymbol(context.session) as? FirRegularClassSymbol ?: return
         val typeParameters = declaration.typeParameterSymbols
         val typeArguments = type.typeArguments
