@@ -1,12 +1,12 @@
 CharBuffer:
   [Enhancement]: public abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /CharBuffer [id: 0]
-  [Enhancement]: /* hidden due to clash */ public final operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /CharBuffer [id: 0]
+  [Enhancement]: /* hidden due to clash */ public final operator fun get(index: R|kotlin/Int|): R|kotlin/Char| [initial: public final fun charAt(index: R|kotlin/Int|): R|kotlin/Char|] from Java enhancement scope for /CharBuffer [id: 0]
     [Library]: public abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Use site scope of kotlin/CharSequence [id: 1]
 
 CharBufferX:
   [Enhancement]: public abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /CharBufferX [id: 0]
     [Enhancement]: public abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /X [id: 1]
-  [Enhancement]: /* hidden due to clash */ public final operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /CharBufferX [id: 0]
+  [Enhancement]: /* hidden due to clash */ public final operator fun get(index: R|kotlin/Int|): R|kotlin/Char| [initial: public final fun charAt(index: R|kotlin/Int|): R|kotlin/Char|] from Java enhancement scope for /CharBufferX [id: 0]
     [Library]: public abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Use site scope of kotlin/CharSequence [id: 1]
 
 NonCharSequenceBuffer:

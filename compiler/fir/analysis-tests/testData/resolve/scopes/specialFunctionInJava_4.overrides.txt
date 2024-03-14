@@ -1,7 +1,7 @@
 Some:
-  [Enhancement]: public abstract operator fun toByte(): R|kotlin/Byte| from Java enhancement scope for /Some [id: 0]
+  [Enhancement]: public abstract operator fun toByte(): R|kotlin/Byte| [initial: public abstract fun byteValue(): R|kotlin/Byte|] from Java enhancement scope for /Some [id: 0]
     [Library]: public abstract fun toByte(): R|kotlin/Byte| from Use site scope of kotlin/Number [id: 1]
-    [RenamedForOverride]: public abstract fun toByte(): R|kotlin/Byte| from Java enhancement scope for /MyNumber [id: 2]
+    [RenamedForOverride]: public abstract fun toByte(): R|kotlin/Byte| [initial: public abstract fun byteValue(): R|kotlin/Byte|] from Java enhancement scope for /MyNumber [id: 2]
       [Enhancement]: public abstract fun byteValue(): R|kotlin/Byte| from Java enhancement scope for /MyBaseNumber [id: 3]
 
 MyNumber:

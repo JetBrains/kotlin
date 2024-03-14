@@ -1,5 +1,5 @@
 SomeMap:
-  [Enhancement]: public abstract fun containsKey(key: R|K3!|): R|kotlin/Boolean| from Java enhancement scope for /SomeMap [id: 0]
+  [Enhancement]: public abstract fun containsKey(key: R|K3!|): R|kotlin/Boolean| [initial: public abstract fun containsKey(key: R|kotlin/Any!|): R|kotlin/Boolean|] from Java enhancement scope for /SomeMap [id: 0]
     [SubstitutionOverride(DeclarationSite)]: public abstract override fun containsKey(key: R|K3!|): R|kotlin/Boolean| from Substitution scope for [Use site scope of kotlin/collections/MutableMap] for type SomeMap<K3, V3> [id: 1]
       [SubstitutionOverride(DeclarationSite)]: public abstract override fun containsKey(key: R|K|): R|kotlin/Boolean| from Use site scope of kotlin/collections/MutableMap [id: 2]
         [SubstitutionOverride(DeclarationSite)]: public abstract override fun containsKey(key: R|K|): R|kotlin/Boolean| from Substitution scope for [Use site scope of kotlin/collections/Map] for type kotlin/collections/MutableMap<K, V> [id: 2]
@@ -22,7 +22,7 @@ SomeMap:
           [Library]: public abstract operator fun get(key: R|K|): R|V?| from Use site scope of kotlin/collections/Map [id: 3]
     [SubstitutionOverride(DeclarationSite)]: public abstract override operator fun get(key: R|K3!|): R|V3!| from Substitution scope for [Java enhancement scope for /MyMap] for type SomeMap<K3, V3> [id: 4]
       [Enhancement]: public abstract operator fun get(key: R|K2!|): R|V2!| from Java enhancement scope for /MyMap [id: 5]
-  [Enhancement]: public abstract fun remove(key: R|K3!|): R|@EnhancedNullability V3?| from Java enhancement scope for /SomeMap [id: 0]
+  [Enhancement]: public abstract fun remove(key: R|K3!|): R|@EnhancedNullability V3?| [initial: public abstract fun remove(key: R|kotlin/Any!|): R|V3!|] from Java enhancement scope for /SomeMap [id: 0]
     [SubstitutionOverride(DeclarationSite)]: public abstract override fun remove(key: R|K3!|): R|V3?| from Substitution scope for [Use site scope of kotlin/collections/MutableMap] for type SomeMap<K3, V3> [id: 1]
       [Library]: public abstract fun remove(key: R|K|): R|V?| from Use site scope of kotlin/collections/MutableMap [id: 2]
   [SubstitutionOverride(DeclarationSite)]: public open override fun remove(key: R|K3!|, value: R|V3!|): R|kotlin/Boolean| from Java enhancement scope for /SomeMap [id: 0]

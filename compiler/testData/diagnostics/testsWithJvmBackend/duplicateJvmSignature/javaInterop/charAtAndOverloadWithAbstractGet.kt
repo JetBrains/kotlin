@@ -1,4 +1,5 @@
 // ISSUE: KT-66463
+// SCOPE_DUMP: B:get
 
 // FILE: A.java
 public abstract class A implements CharSequence {

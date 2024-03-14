@@ -5,8 +5,8 @@ A:
         [Library]: public abstract fun removeAt(index: R|kotlin/Int|): R|E| from Use site scope of kotlin/collections/AbstractMutableList [id: 2]
           [SubstitutionOverride(DeclarationSite)]: public abstract override fun removeAt(index: R|kotlin/Int|): R|E| from Substitution scope for [Use site scope of kotlin/collections/MutableList] for type kotlin/collections/AbstractMutableList<E> [id: 3]
             [Library]: public abstract fun removeAt(index: R|kotlin/Int|): R|E| from Use site scope of kotlin/collections/MutableList [id: 4]
-          [SubstitutionOverride(DeclarationSite)]: public open override operator fun removeAt(p0: R|kotlin/Int|): R|E!| from Substitution scope for [Java enhancement scope for java/util/AbstractList] for type kotlin/collections/AbstractMutableList<E> [id: 5]
-            [Enhancement]: public open operator fun removeAt(p0: R|kotlin/Int|): R|E!| from Java enhancement scope for java/util/AbstractList [id: 6]
+          [SubstitutionOverride(DeclarationSite)]: public open override operator fun removeAt(p0: R|kotlin/Int|): R|E!| [initial: public open fun remove(p0: R|kotlin/Int|): R|E!|] from Substitution scope for [Java enhancement scope for java/util/AbstractList] for type kotlin/collections/AbstractMutableList<E> [id: 5]
+            [Enhancement]: public open operator fun removeAt(p0: R|kotlin/Int|): R|E!| [initial: public open fun remove(p0: R|kotlin/Int|): R|E!|] from Java enhancement scope for java/util/AbstractList [id: 6]
               [SubstitutionOverride(DeclarationSite)]: public abstract override fun removeAt(index: R|kotlin/Int|): R|E!| from Substitution scope for [Use site scope of kotlin/collections/MutableList] for type java/util/AbstractList<E> [id: 7]
                 [Library]: public abstract fun removeAt(index: R|kotlin/Int|): R|E| from Use site scope of kotlin/collections/MutableList [id: 4]
 

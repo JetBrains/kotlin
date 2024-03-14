@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.frontend.fir.handlers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.initialSignatureAttr
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -151,6 +152,12 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
         }
         val renderedDeclaration = FirRenderer.noAnnotationBodiesAccessorAndArguments().renderElementAsString(declaration).trim()
         print(renderedDeclaration)
+        val initialSignatureAttr = declaration.initialSignatureAttr
+        if (initialSignatureAttr != null) {
+            print(" [initial: ")
+            print(FirRenderer.noAnnotationBodiesAccessorAndArguments().renderElementAsString(initialSignatureAttr).trim())
+            print("]")
+        }
         print(" from $scope")
         println(" [id: ${counter.getIndex(declaration.symbol)}]")
     }
