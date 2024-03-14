@@ -1,3 +1,4 @@
+error: pre-release classes were found in dependencies. Remove them from the classpath, recompile with a release compiler or use '-Xskip-prerelease-check' to suppress errors
 compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJs/source.kt:8:28: error: unresolved reference: method
     val methodCall = param.method()
                            ^^^^^^
