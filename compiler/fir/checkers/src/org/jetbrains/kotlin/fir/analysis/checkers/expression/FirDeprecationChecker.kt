@@ -53,17 +53,13 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
 
         val source = resolvedReference.source ?: expression.source
 
-        if (expression is FirDelegatedConstructorCall) {
-            // Report deprecations on the constructor itself, not on the declaring class as that will be handled by FirDeprecatedTypeChecker
-            val constructorOnlyDeprecation = referencedSymbol.getDeprecation(context.session, expression) ?: return
-            val isTypealiasExpansion = expression.constructedTypeRef.firClassLike(context.session)?.symbol is FirTypeAliasSymbol
-
-            reportApiStatus(
-                source, referencedSymbol, isTypealiasExpansion,
-                constructorOnlyDeprecation, reporter, context
-            )
-        } else {
-            reportApiStatusIfNeeded(source, referencedSymbol, context, reporter, callSite = expression)
+        when (expression) {
+            is FirDelegatedConstructorCall -> {
+                reportApiStatusOfDelegatedCallConstructorIfNeeded(source, expression, referencedSymbol, context, reporter)
+            }
+            else -> {
+                reportApiStatusIfNeeded(source, referencedSymbol, context, reporter, callSite = expression)
+            }
         }
 
         reportCallToDeprecatedOverrideOfHidden(expression, source, referencedSymbol, reporter, context)
@@ -111,6 +107,19 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
 
         return containers.getOrNull(size - 1) == fir // For `provideDelegate`, the call will be in the initializer
                 || containers.getOrNull(size - 2) == fir // For `getValue`, the call will be in the accessor
+    }
+
+    private fun reportApiStatusOfDelegatedCallConstructorIfNeeded(
+        source: KtSourceElement?,
+        delegatedConstructorCall: FirDelegatedConstructorCall,
+        referencedConstructorSymbol: FirBasedSymbol<*>,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        // report deprecation of the constructor itself, not of the declaring class (as that will be handled by FirDeprecatedTypeChecker)
+        val constructorOnlyDeprecation = referencedConstructorSymbol.getDeprecation(context.session, delegatedConstructorCall) ?: return
+        val isTypealiasExpansion = delegatedConstructorCall.constructedTypeRef.firClassLike(context.session)?.symbol is FirTypeAliasSymbol
+        reportApiStatus(source, referencedConstructorSymbol, isTypealiasExpansion, constructorOnlyDeprecation, reporter, context)
     }
 
     internal fun reportApiStatusIfNeeded(
