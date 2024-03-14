@@ -1,7 +1,5 @@
 // FIR_IDENTICAL
 // ISSUE: KT-66048
-// IGNORE_REVERSED_RESOLVE
-// ^KT-66392
 
 // FILE: Java1.java
 public class Java1 extends KotlinClass  {

@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.SyntheticPropertiesCacheKey
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
@@ -890,10 +892,7 @@ class JavaClassUseSiteMemberScope(
     }
 
     private fun FirTypeRef.probablyJavaTypeRefToConeType(): ConeKotlinType {
-        return when (this) {
-            is FirJavaTypeRef -> toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
-            else -> coneType
-        }
+        return toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
     }
 
     // It's either overrides Collection.contains(Object) or Collection.containsAll(Collection<?>) or similar methods

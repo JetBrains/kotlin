@@ -21985,6 +21985,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("kjkimplicitTypesCrash.kt")
+      public void testKjkimplicitTypesCrash() {
+        runTest("compiler/testData/diagnostics/tests/j+k/kjkimplicitTypesCrash.kt");
+      }
+
+      @Test
       @TestMetadata("kt1402.kt")
       public void testKt1402() {
         runTest("compiler/testData/diagnostics/tests/j+k/kt1402.kt");
