@@ -52,9 +52,9 @@ public class FirIdeNormalAnalysisLibraryBinaryModuleMultiModuleCompilerFacilityT
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiBinaryModule/dependencyBetweenBinaryLibraries.kt");
     }
 
-  @Test
-  @TestMetadata("javaAnnotationWithVararg.kt")
-  public void testJavaAnnotationWithVararg() {
-    runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiBinaryModule/javaAnnotationWithVararg.kt");
-  }
+    @Test
+    @TestMetadata("javaAnnotationWithVararg.kt")
+    public void testJavaAnnotationWithVararg() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiBinaryModule/javaAnnotationWithVararg.kt");
+    }
 }
