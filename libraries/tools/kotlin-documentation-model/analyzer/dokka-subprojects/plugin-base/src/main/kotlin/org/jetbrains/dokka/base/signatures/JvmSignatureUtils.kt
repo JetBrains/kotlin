@@ -21,6 +21,8 @@ public interface JvmSignatureUtils {
 
     public fun <T : Documentable> WithExtraProperties<T>.modifiers(): SourceSetDependent<Set<ExtraModifiers>>
 
+    public fun Annotations.Annotation.isIgnored(): Boolean
+
     public fun Collection<ExtraModifiers>.toSignatureString(): String =
         joinToString("") { it.name.toLowerCase() + " " }
 
@@ -71,7 +73,7 @@ public interface JvmSignatureUtils {
         else -> null
     }?.let {
         it.entries.forEach {
-            it.value.filter { it !in ignored && it.mustBeDocumented }.takeIf { it.isNotEmpty() }?.let { annotations ->
+            it.value.filter { it.mustBeDocumented && it !in ignored }.takeIf { it.isNotEmpty() }?.let { annotations ->
                 group(sourceSets = setOf(it.key), styles = styles, kind = ContentKind.Annotations) {
                     annotations.forEach {
                         operation(it)
