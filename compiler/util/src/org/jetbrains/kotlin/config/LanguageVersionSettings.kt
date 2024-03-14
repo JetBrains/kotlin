@@ -285,17 +285,14 @@ enum class LanguageFeature(
 
     // 2.0
 
-    EnhanceNullabilityOfPrimitiveArrays(KOTLIN_2_0, kind = BUG_FIX), // KT-54521
-
     /**
-     * This feature is highly related to ForbidInferringTypeVariablesIntoEmptyIntersection and while they belong to the same LV,
-     * they might be used interchangeably.
-     *
-     * But there might be the case that we may postpone ForbidInferringTypeVariablesIntoEmptyIntersection but leave AllowEmptyIntersectionsInResultTypeResolver in 2.0.
-     * In that case, we would stick to the simple behavior of just inferring empty intersection (without complicated logic of filtering out expected constraints),
-     * but we would report a warning instead of an error (until ForbidInferringTypeVariablesIntoEmptyIntersection is enabled).
+     * This feature is highly related to ForbidInferringTypeVariablesIntoEmptyIntersection.
+     * It replaces a complicated logic of filtering out expected type constraints with simple inference of empty intersections.
+     * However, inferred empty intersections are going to result in warnings instead of errors
+     * until ForbidInferringTypeVariablesIntoEmptyIntersection is enabled.
      */
     AllowEmptyIntersectionsInResultTypeResolver(KOTLIN_2_0, kind = OTHER), // KT-51221
+    EnhanceNullabilityOfPrimitiveArrays(KOTLIN_2_0, kind = BUG_FIX), // KT-54521
     ProhibitSmartcastsOnPropertyFromAlienBaseClassInheritedInInvisibleClass(KOTLIN_2_0, kind = BUG_FIX), // KT-57290
     ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound(KOTLIN_2_0, kind = BUG_FIX), // KT-47986
     ProhibitUseSiteGetTargetAnnotations(KOTLIN_2_0, kind = BUG_FIX), // KT-15470
@@ -310,6 +307,7 @@ enum class LanguageFeature(
     DfaBooleanVariables(KOTLIN_2_0), // KT-25747
     LightweightLambdas(KOTLIN_2_0, kind = OTHER), // KT-45375
     ObjCSignatureOverrideAnnotation(KOTLIN_2_0, sinceApiVersion = ApiVersion.KOTLIN_2_0, kind = OTHER), // KT-61323
+
     // 2.1
 
     ReferencesToSyntheticJavaProperties(KOTLIN_2_1), // KT-8575
