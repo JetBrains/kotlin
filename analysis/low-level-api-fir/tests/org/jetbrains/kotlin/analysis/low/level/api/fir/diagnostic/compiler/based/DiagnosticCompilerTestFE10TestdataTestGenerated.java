@@ -27010,6 +27010,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         public void testJvmInlineExpectValueClass() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/jvmInlineExpectValueClass.kt");
         }
+
+        @Test
+        @TestMetadata("valueClassNotFinal.kt")
+        public void testValueClassNotFinal() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassNotFinal.kt");
+        }
+
+        @Test
+        @TestMetadata("valueClassWithInapplicableParameterType.kt")
+        public void testValueClassWithInapplicableParameterType() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithInapplicableParameterType.kt");
+        }
       }
 
       @Nested
