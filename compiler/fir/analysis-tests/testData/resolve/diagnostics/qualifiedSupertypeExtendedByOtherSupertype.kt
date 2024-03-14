@@ -26,8 +26,8 @@ class Test2 : IDerived<String>, AliasedIBase {
     fun test() {
         super<<!QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE!>IBase<!>>.foo()
         super<<!QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE!>IBase<!>>.bar()
-        super<<!NOT_A_SUPERTYPE!>AliasedIBase<!>>.foo()
-        super<<!NOT_A_SUPERTYPE!>AliasedIBase<!>>.bar()
+        super<<!QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE!>AliasedIBase<!>>.foo()
+        super<<!QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE!>AliasedIBase<!>>.bar()
         super<IDerived>.foo()
         super<IDerived>.bar()
         super<IDerived>.qux()
