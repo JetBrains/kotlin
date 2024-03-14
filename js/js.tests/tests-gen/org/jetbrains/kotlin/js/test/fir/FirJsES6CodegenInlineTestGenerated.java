@@ -4577,6 +4577,12 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     }
 
     @Test
+    @TestMetadata("inlinePassthroughWithSuspendConversion.kt")
+    public void testInlinePassthroughWithSuspendConversion() {
+      runTest("compiler/testData/codegen/boxInline/suspend/inlinePassthroughWithSuspendConversion.kt");
+    }
+
+    @Test
     @TestMetadata("inlineSuspendOfCrossinlineOrdinary.kt")
     public void testInlineSuspendOfCrossinlineOrdinary() {
       runTest("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfCrossinlineOrdinary.kt");

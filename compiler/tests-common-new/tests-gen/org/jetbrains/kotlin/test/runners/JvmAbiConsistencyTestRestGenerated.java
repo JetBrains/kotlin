@@ -5318,6 +5318,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       }
 
       @Test
+      @TestMetadata("inlinePassthroughWithSuspendConversion.kt")
+      public void testInlinePassthroughWithSuspendConversion() {
+        runTest("compiler/testData/codegen/boxInline/suspend/inlinePassthroughWithSuspendConversion.kt");
+      }
+
+      @Test
       @TestMetadata("inlineSuspendContinuation.kt")
       public void testInlineSuspendContinuation() {
         runTest("compiler/testData/codegen/boxInline/suspend/inlineSuspendContinuation.kt");
