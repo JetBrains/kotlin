@@ -40,6 +40,12 @@ public class FirNativeStressTestGenerated extends AbstractNativeBlackBoxTest {
   }
 
   @Test
+  @TestMetadata("kt62920.kt")
+  public void testKt62920() {
+    runTest("native/native.tests/stress/testData/kt62920.kt");
+  }
+
+  @Test
   @TestMetadata("kt63423_dispose_on_main_stress.kt")
   public void testKt63423_dispose_on_main_stress() {
     runTest("native/native.tests/stress/testData/kt63423_dispose_on_main_stress.kt");
