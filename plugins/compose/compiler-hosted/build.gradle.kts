@@ -25,7 +25,7 @@ dependencies {
     testRuntimeOnly(libs.junit.vintage.engine)
 }
 
-optInToIrSymbolInternals()
+optInToUnsafeDuringIrConstructionAPI()
 
 kotlin.jvmToolchain(11)
 
