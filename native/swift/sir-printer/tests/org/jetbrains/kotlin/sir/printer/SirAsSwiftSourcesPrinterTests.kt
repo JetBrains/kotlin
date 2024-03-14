@@ -461,6 +461,157 @@ class SirAsSwiftSourcesPrinterTests {
     }
 
     @Test
+    fun `should print class with constructor`() {
+
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildClass {
+                    origin = SirOrigin.Unknown
+                    name = "Foo"
+
+                    declarations.add(
+                        buildInit {
+                            origin = SirOrigin.Unknown
+                            kind = SirCallableKind.INSTANCE_METHOD
+                            initKind = SirInitializerKind.ORDINARY
+                            visibility = SirVisibility.PUBLIC
+                            isFailable = true
+                            parameters.addAll(
+                                listOf(
+                                    SirParameter(
+                                        argumentName = "arg1",
+                                        type = SirNominalType(SirSwiftModule.bool)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg2",
+                                        type = SirNominalType(SirSwiftModule.int8)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg3",
+                                        type = SirNominalType(SirSwiftModule.int16)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg4",
+                                        type = SirNominalType(SirSwiftModule.int32)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg5",
+                                        type = SirNominalType(SirSwiftModule.int64)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg6",
+                                        type = SirNominalType(SirSwiftModule.double)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg7",
+                                        type = SirNominalType(SirSwiftModule.float)
+                                    ),
+                                )
+                            )
+                        }
+                    )
+
+                    declarations.add(
+                        buildInit {
+                            origin = SirOrigin.Unknown
+                            kind = SirCallableKind.INSTANCE_METHOD
+                            initKind = SirInitializerKind.ORDINARY
+                            visibility = SirVisibility.PUBLIC
+                            isFailable = false
+                            parameters.addAll(
+                                listOf(
+                                    SirParameter(
+                                        argumentName = "arg1",
+                                        type = SirNominalType(SirSwiftModule.uint8)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg2",
+                                        type = SirNominalType(SirSwiftModule.uint16)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg3",
+                                        type = SirNominalType(SirSwiftModule.uint32)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg4",
+                                        type = SirNominalType(SirSwiftModule.uint64)
+                                    ),
+                                )
+                            )
+                        }
+                    )
+
+                    declarations.add(
+                        buildInit {
+                            origin = SirOrigin.Unknown
+                            kind = SirCallableKind.INSTANCE_METHOD
+                            initKind = SirInitializerKind.REQUIRED
+                            visibility = SirVisibility.PUBLIC
+                            isFailable = false
+                            parameters.addAll(
+                                listOf(
+                                    SirParameter(
+                                        argumentName = "arg1",
+                                        type = SirNominalType(SirSwiftModule.uint8)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg2",
+                                        type = SirNominalType(SirSwiftModule.uint16)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg3",
+                                        type = SirNominalType(SirSwiftModule.uint32)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg4",
+                                        type = SirNominalType(SirSwiftModule.uint64)
+                                    ),
+                                )
+                            )
+                        }
+                    )
+
+                    declarations.add(
+                        buildInit {
+                            origin = SirOrigin.Unknown
+                            kind = SirCallableKind.INSTANCE_METHOD
+                            initKind = SirInitializerKind.CONVENIENCE
+                            visibility = SirVisibility.PUBLIC
+                            isFailable = false
+                            parameters.addAll(
+                                listOf(
+                                    SirParameter(
+                                        argumentName = "arg1",
+                                        type = SirNominalType(SirSwiftModule.uint8)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg2",
+                                        type = SirNominalType(SirSwiftModule.uint16)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg3",
+                                        type = SirNominalType(SirSwiftModule.uint32)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg4",
+                                        type = SirNominalType(SirSwiftModule.uint64)
+                                    ),
+                                )
+                            )
+                        }
+                    )
+                }
+            )
+        }
+
+        runTest(
+            module,
+            "testData/class_with_init"
+        )
+    }
+
+    @Test
     fun `should print class with variable`() {
 
         val module = buildModule {

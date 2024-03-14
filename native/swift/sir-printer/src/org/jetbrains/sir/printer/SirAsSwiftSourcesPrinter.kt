@@ -102,19 +102,7 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
             function.name.swiftIdentifier,
             "("
         )
-        if (function.parameters.isNotEmpty()) {
-            println()
-            withIndent {
-                function.parameters.forEachIndexed { index, sirParameter ->
-                    print(sirParameter.swift)
-                    if (index != function.parameters.lastIndex) {
-                        println(",")
-                    } else {
-                        println()
-                    }
-                }
-            }
-        }
+        printParameters(function.parameters)
         print(
             ")",
             " -> ",
@@ -123,6 +111,26 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
         println(" {")
         withIndent {
             printFunctionBody(function.body).forEach {
+                println(it)
+            }
+        }
+        println("}")
+    }
+
+    override fun visitInit(init: SirInit): Unit = with(printer) {
+        init.documentation?.let { println(it) }
+        printVisibility(init)
+        printInitKind(init.initKind)
+        print("init")
+        "?".takeIf { init.isFailable }?.let { print(it) }
+        print("(")
+        printParameters(init.parameters)
+        print(
+            ")"
+        )
+        println(" {")
+        withIndent {
+            printFunctionBody(init.body).forEach {
                 println(it)
             }
         }
@@ -184,6 +192,16 @@ internal fun SmartPrinter.printVisibility(decl: SirDeclaration) {
     )
 }
 
+internal fun SmartPrinter.printInitKind(decl: SirInitializerKind) {
+    print(
+        when (decl) {
+            SirInitializerKind.ORDINARY -> ""
+            SirInitializerKind.REQUIRED -> "required "
+            SirInitializerKind.CONVENIENCE -> "convenience "
+        }
+    )
+}
+
 internal fun SmartPrinter.printCallableKind(callableKind: SirCallableKind) {
     print(
         when (callableKind) {
@@ -194,3 +212,20 @@ internal fun SmartPrinter.printCallableKind(callableKind: SirCallableKind) {
         }
     )
 }
+
+internal fun SmartPrinter.printParameters(params: List<SirParameter>): Unit = params
+    .takeIf { it.isNotEmpty() }
+    ?.let {
+        println()
+        withIndent {
+            params.forEachIndexed { index, sirParameter ->
+                print(sirParameter.swift)
+                if (index != params.lastIndex) {
+                    println(",")
+                } else {
+                    println()
+                }
+            }
+        }
+    }
+    ?: Unit

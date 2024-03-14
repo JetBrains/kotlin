@@ -4,10 +4,22 @@ import KotlinRuntime
 public enum namespace {
     public enum deeper {
         public class NAMESPACED_CLASS {
+            public init() {
+                fatalError()
+            }
         }
         public class Foo {
+            public init() {
+                fatalError()
+            }
             public class INSIDE_CLASS {
+                public init() {
+                    fatalError()
+                }
                 public class DEEPER_INSIDE_CLASS {
+                    public init() {
+                        fatalError()
+                    }
                     public func foo() -> Swift.Bool {
                         fatalError()
                     }
@@ -61,9 +73,18 @@ public enum namespace {
         }
     }
     public class NAMESPACED_CLASS {
+        public init() {
+            fatalError()
+        }
     }
     public class Foo {
+        public init() {
+            fatalError()
+        }
         public class INSIDE_CLASS {
+            public init() {
+                fatalError()
+            }
         }
         public func foo() -> Swift.Bool {
             fatalError()
@@ -84,8 +105,24 @@ public enum namespace {
     }
 }
 
+public class ClassWithNonPublicConstructor {
+}
+
 public class Foo {
+    public init(
+        a: Swift.Int32
+    ) {
+        fatalError()
+    }
+    public init(
+        f: Swift.Float
+    ) {
+        fatalError()
+    }
     public class INSIDE_CLASS {
+        public init() {
+            fatalError()
+        }
         public func my_func() -> Swift.Bool {
             fatalError()
         }

@@ -34,6 +34,8 @@ private abstract class PsiToSirTranslation<T>(
 ) : KtVisitor<T, Unit?>() {
     abstract override fun visitClassOrObject(classOrObject: KtClassOrObject, data: Unit?): T
     abstract override fun visitNamedFunction(function: KtNamedFunction, data: Unit?): T
+    abstract override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: Unit?): T
+    abstract override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: Unit?): T
     abstract override fun visitProperty(property: KtProperty, data: Unit?): T
 }
 
@@ -49,6 +51,14 @@ private class PsiToSirTranslationCollector(
 
     override fun visitNamedFunction(function: KtNamedFunction) {
         function.checkAndTranslate(null)
+    }
+
+    override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor) {
+        constructor.checkAndTranslate(null)
+    }
+
+    override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor) {
+        constructor.checkAndTranslate(null)
     }
 
     override fun visitProperty(property: KtProperty) {
@@ -82,8 +92,20 @@ private class PsiToSirTranslatableChecker(
         return functionIsPublicAndTopLevel && functionSymbolIsTranslatable
     }
 
+    override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: Unit?): Boolean {
+        return constructor.isConsumable()
+    }
+
+    override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: Unit?): Boolean {
+        return constructor.isConsumable()
+    }
+
     override fun visitProperty(property: KtProperty, data: Unit?): Boolean {
         return property.isPublic
+    }
+
+    private fun KtConstructor<*>.isConsumable(): Boolean {
+        return isPublic
     }
 }
 
@@ -97,6 +119,14 @@ private class PsiToSirElementTranslation(
 
     override fun visitNamedFunction(function: KtNamedFunction, data: Unit?): SirDeclaration = with(analysisSession) {
         buildSirFunctionFromPsi(function)
+    }
+
+    override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: Unit?): SirDeclaration = with(analysisSession) {
+        buildSirConstructorFromPsi(constructor)
+    }
+
+    override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: Unit?): SirDeclaration = with(analysisSession) {
+        buildSirConstructorFromPsi(constructor)
     }
 
     override fun visitProperty(property: KtProperty, data: Unit?): SirDeclaration = with(analysisSession) {
@@ -118,6 +148,32 @@ internal fun buildSirClassFromPsi(classOrObject: KtClassOrObject): SirNamedDecla
                 PsiToSirElementTranslation(analysisSession),
             )
         )
+
+        // HACK to support default constructors.
+        // todo: We should rework builder from PSI to AnalysisApi during KT-66310
+        val constructors = symbol.getMemberScope().getConstructors()
+        if (constructors.count() == 1 && constructors.first().psi == classOrObject) {
+            declarations.add(
+                0,
+                buildInit {
+                    val constructorSymbol = constructors.first()
+                    origin = KotlinSource(constructorSymbol)
+
+                    kind = constructorSymbol.sirCallableKind
+                    isFailable = false
+                    initKind = SirInitializerKind.ORDINARY
+
+                    constructorSymbol.valueParameters.mapTo(parameters) {
+                        SirParameter(
+                            argumentName = it.name.asString(),
+                            type = buildSirNominalType(it.returnType)
+                        )
+                    }
+
+                    documentation = null
+                }
+            )
+        }
     }.also { resultedClass ->
         resultedClass.declarations.forEach { decl -> decl.parent = resultedClass }
     }
@@ -140,6 +196,25 @@ internal fun buildSirFunctionFromPsi(function: KtNamedFunction): SirFunction = b
         )
     }
     returnType = buildSirNominalType(symbol.returnType)
+    documentation = function.docComment?.text
+}
+
+context(KtAnalysisSession)
+internal fun buildSirConstructorFromPsi(function: KtConstructor<*>): SirInit = buildInit {
+    val symbol = function.getConstructorSymbol()
+    origin = KotlinSource(symbol)
+
+    kind = symbol.sirCallableKind
+    isFailable = false
+    initKind = SirInitializerKind.ORDINARY
+
+    symbol.valueParameters.mapTo(parameters) {
+        SirParameter(
+            argumentName = it.name.asString(),
+            type = buildSirNominalType(it.returnType)
+        )
+    }
+
     documentation = function.docComment?.text
 }
 
@@ -213,8 +288,9 @@ private val KtCallableSymbol.sirCallableKind: SirCallableKind
                 SirCallableKind.STATIC_METHOD
             }
         }
-        KtSymbolKind.CLASS_MEMBER, KtSymbolKind.ACCESSOR -> SirCallableKind.INSTANCE_METHOD
+        KtSymbolKind.CLASS_MEMBER, KtSymbolKind.ACCESSOR
+        -> SirCallableKind.INSTANCE_METHOD
         KtSymbolKind.LOCAL,
-        KtSymbolKind.SAM_CONSTRUCTOR ->
-            TODO("encountered callable kind($symbolKind) that is not translatable currently. Fix this crash during KT-65980.")
+        KtSymbolKind.SAM_CONSTRUCTOR
+        -> TODO("encountered callable kind($symbolKind) that is not translatable currently. Fix this crash during KT-65980.")
     }

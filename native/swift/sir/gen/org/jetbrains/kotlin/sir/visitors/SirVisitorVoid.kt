@@ -86,6 +86,14 @@ abstract class SirVisitorVoid : SirVisitor<Unit, Nothing?>() {
         visitDeclaration(callable)
     }
 
+    final override fun visitInit(init: SirInit, data: Nothing?) {
+        visitInit(init)
+    }
+
+    open fun visitInit(init: SirInit) {
+        visitCallable(init)
+    }
+
     final override fun visitFunction(function: SirFunction, data: Nothing?) {
         visitFunction(function)
     }

@@ -68,6 +68,12 @@ abstract class SirTransformerVoid : SirTransformer<Nothing?>() {
     final override fun transformCallable(callable: SirCallable, data: Nothing?): SirDeclaration =
         transformCallable(callable)
 
+    open fun transformInit(init: SirInit): SirDeclaration =
+        transformCallable(init)
+
+    final override fun transformInit(init: SirInit, data: Nothing?): SirDeclaration =
+        transformInit(init)
+
     open fun transformFunction(function: SirFunction): SirDeclaration =
         transformCallable(function)
 
