@@ -5,5 +5,5 @@
 data class Data private constructor(val x: Int)
 
 fun local(data: Data) {
-    data.copy()
+    data.<!DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE_ERROR!>copy<!>()
 }

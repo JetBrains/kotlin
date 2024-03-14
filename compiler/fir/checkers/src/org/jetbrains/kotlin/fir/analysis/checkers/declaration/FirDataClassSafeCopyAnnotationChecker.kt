@@ -22,20 +22,23 @@ object FirDataClassSafeCopyAnnotationChecker : FirClassChecker(MppCheckerKind.Co
         val safeCopy = declaration.annotations.firstOrNull { it.fqName(context.session) == StandardNames.SAFE_COPY_ANNOTATION }
         val unsafeCopy = declaration.annotations.firstOrNull { it.fqName(context.session) == StandardNames.UNSAFE_COPY_ANNOTATION }
 
-        if (safeCopy != null && unsafeCopy != null) {
-            reporter.reportOn(unsafeCopy.source, FirErrors.DATA_CLASS_SAFE_COPY_AND_UNSAFE_COPY_ARE_INCOMPATIBLE_ANNOTATIONS, context)
-        }
+        when {
+            safeCopy != null && (declaration !is FirRegularClass || !declaration.isData) -> {
+                reporter.reportOn(safeCopy.source, FirErrors.DATA_CLASS_SAFE_COPY_WRONG_ANNOTATION_TARGET, context)
+            }
+            unsafeCopy != null && (declaration !is FirRegularClass || !declaration.isData) -> {
+                reporter.reportOn(unsafeCopy.source, FirErrors.DATA_CLASS_SAFE_COPY_WRONG_ANNOTATION_TARGET, context)
+            }
+            else -> {
+                if (safeCopy != null && unsafeCopy != null) {
+                    reporter.reportOn(unsafeCopy.source, FirErrors.DATA_CLASS_SAFE_COPY_AND_UNSAFE_COPY_ARE_INCOMPATIBLE_ANNOTATIONS, context)
+                    reporter.reportOn(safeCopy.source, FirErrors.DATA_CLASS_SAFE_COPY_AND_UNSAFE_COPY_ARE_INCOMPATIBLE_ANNOTATIONS, context)
+                }
 
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility) && safeCopy != null) {
-            reporter.reportOn(safeCopy.source, FirErrors.DATA_CLASS_SAFE_COPY_REDUNDANT_ANNOTATION, context)
-        }
-
-        if (safeCopy != null && (declaration !is FirRegularClass || !declaration.isData)) {
-            reporter.reportOn(safeCopy.source, FirErrors.DATA_CLASS_SAFE_COPY_WRONG_ANNOTATION_TARGET, context)
-        }
-
-        if (unsafeCopy != null && (declaration !is FirRegularClass || !declaration.isData)) {
-            reporter.reportOn(unsafeCopy.source, FirErrors.DATA_CLASS_SAFE_COPY_WRONG_ANNOTATION_TARGET, context)
+                if (context.languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility) && safeCopy != null) {
+                    reporter.reportOn(safeCopy.source, FirErrors.DATA_CLASS_SAFE_COPY_REDUNDANT_ANNOTATION, context)
+                }
+            }
         }
     }
 }

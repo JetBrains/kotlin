@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// WITH_STDLIB
 // LANGUAGE: +DataClassCopyRespectsConstructorVisibility
 @file:OptIn(ExperimentalStdlibApi::class)
 

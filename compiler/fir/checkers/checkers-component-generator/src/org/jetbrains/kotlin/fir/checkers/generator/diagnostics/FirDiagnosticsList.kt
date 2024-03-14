@@ -321,8 +321,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING by warning<KtPrimaryConstructor>(PositioningStrategy.VISIBILITY_MODIFIER)
         val DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_ERROR by error<KtPrimaryConstructor>(PositioningStrategy.VISIBILITY_MODIFIER)
 
-        val DATA_CLASS_COPY_WILL_BECOME_INACCESSIBLE_WARNING by warning<KtPrimaryConstructor>(PositioningStrategy.VISIBILITY_MODIFIER)
-        val DATA_CLASS_COPY_WILL_BECOME_INACCESSIBLE_ERROR by error<KtPrimaryConstructor>(PositioningStrategy.VISIBILITY_MODIFIER)
+        val DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE_WARNING by warning<KtNameReferenceExpression>()
+        val DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE_ERROR by error<KtNameReferenceExpression>()
 
         // TODO: Consider creating a parameter list position strategy and report on the parameter list instead
         val DATA_CLASS_WITHOUT_PARAMETERS by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)

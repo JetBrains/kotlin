@@ -1,6 +1,5 @@
-// FIR_IDENTICAL
 // LANGUAGE: +WarnAboutDataClassCopyVisibilityChange, -ErrorAboutDataClassCopyVisibilityChange, -DataClassCopyRespectsConstructorVisibility
-data class Data <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!> constructor(val x: Int) {
+data class Data private constructor(val x: Int) {
     fun member() {
         copy()
         this.copy()
@@ -14,17 +13,17 @@ data class Data <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!>
 }
 
 fun topLevel(data: Data) {
-    data.<!DATA_CLASS_COPY_WILL_BECOME_INACCESSIBLE_WARNING!>copy<!>()
+    data.copy()
 }
 
 fun Data.topLevelExtension() {
-    <!DATA_CLASS_COPY_WILL_BECOME_INACCESSIBLE_WARNING!>copy<!>()
+    copy()
 }
 
 fun local() {
-    data class Local <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!> constructor(val x: Int)
+    data class Local private constructor(val x: Int)
 
     fun Local.foo() {
-        <!DATA_CLASS_COPY_WILL_BECOME_INACCESSIBLE_WARNING!>copy<!>()
+        copy()
     }
 }

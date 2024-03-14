@@ -1209,7 +1209,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
         resolvePhase = this@createDataClassCopyFunction.resolvePhase
         val primaryConstructor = this@createDataClassCopyFunction.declarations.firstIsInstanceOrNull<FirPrimaryConstructor>()
             ?: error("Can't find primary constructor")
-//        this@createDataClassCopyFunction.annotations.any { it.annotationTypeRef }
+        val foo = this@createDataClassCopyFunction.annotations
         val visibility =
             when (moduleData.session.languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)) {
                 true -> primaryConstructor.visibility

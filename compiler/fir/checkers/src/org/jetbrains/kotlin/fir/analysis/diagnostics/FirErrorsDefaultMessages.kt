@@ -170,6 +170,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_CONSTRUCTO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_GENERIC_UPPER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_INHERITANCE_HIERARCHY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DANGEROUS_CHARACTERS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_NOT_PROPERTY_PARAMETER
@@ -1010,6 +1012,14 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
                 - Add '-Xsafe-data-class-copy-visibility' compiler option
                 - Annotate the data class with '@UnsafeCopy' annotation (Discouraged, but useful if you want to keep binary compatibility)
             """.trimIndent()
+        )
+        map.put(
+            DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE_WARNING,
+            "This 'copy()' exposes 'data class' private primary constructor. Please migrate the usage. This warning will become an error in future versions of Kotlin"
+        )
+        map.put(
+            DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE_ERROR,
+            "This 'copy()' exposes 'data class' private primary constructor. Please migrate the usage."
         )
         map.put(DATA_CLASS_WITHOUT_PARAMETERS, "Data class must have at least one primary constructor parameter.")
         map.put(DATA_CLASS_VARARG_PARAMETER, "Primary constructor vararg parameters are prohibited for data classes.")

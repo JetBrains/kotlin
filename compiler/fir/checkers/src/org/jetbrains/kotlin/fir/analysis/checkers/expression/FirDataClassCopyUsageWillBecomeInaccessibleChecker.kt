@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.resolve.DataClassResolver
 
-object FirDataClassCopyWillBecomeInaccessibleChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
+object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.WarnAboutDataClassCopyVisibilityChange) &&
             !context.languageVersionSettings.supportsFeature(LanguageFeature.ErrorAboutDataClassCopyVisibilityChange)
@@ -46,8 +46,8 @@ object FirDataClassCopyWillBecomeInaccessibleChecker : FirFunctionCallChecker(Mp
             if (!isConstructorVisible) {
                 val factory =
                     when (context.languageVersionSettings.supportsFeature(LanguageFeature.ErrorAboutDataClassCopyVisibilityChange)) {
-                        true -> FirErrors.DATA_CLASS_COPY_WILL_BECOME_INACCESSIBLE_ERROR
-                        false -> FirErrors.DATA_CLASS_COPY_WILL_BECOME_INACCESSIBLE_WARNING
+                        true -> FirErrors.DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE_ERROR
+                        false -> FirErrors.DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE_WARNING
                     }
                 reporter.reportOn(expression.calleeReference.source, factory, context)
             }
