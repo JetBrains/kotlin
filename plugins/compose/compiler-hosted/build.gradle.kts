@@ -25,6 +25,8 @@ dependencies {
     testImplementation("org.junit.vintage:junit-vintage-engine:$platformVersion")
 }
 
+optInToIrSymbolInternals()
+
 kotlin.jvmToolchain(11)
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
