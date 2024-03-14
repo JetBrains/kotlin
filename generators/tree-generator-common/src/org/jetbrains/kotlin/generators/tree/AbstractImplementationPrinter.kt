@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators.tree
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.printer.braces
 import org.jetbrains.kotlin.generators.tree.printer.printBlock
+import org.jetbrains.kotlin.generators.tree.printer.printKDoc
 import org.jetbrains.kotlin.generators.tree.printer.typeParameters
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -37,6 +38,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
     fun printImplementation(implementation: Implementation) {
         addAllImports(implementation.additionalImports)
         printer.run {
+            printKDoc(implementation.kDoc)
             buildSet {
                 if (implementation.requiresOptIn) {
                     add(implementationOptInAnnotation)

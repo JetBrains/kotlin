@@ -142,6 +142,10 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
             implementation.isPublic = true
         }
 
+        fun kDoc(kDoc: String) {
+            implementation.kDoc = kDoc
+        }
+
         private fun getField(name: String): ImplementationField {
             return implementation.getField(name)
         }

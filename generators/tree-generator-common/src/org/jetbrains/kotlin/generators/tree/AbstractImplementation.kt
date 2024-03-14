@@ -48,6 +48,8 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
      */
     val additionalImports = mutableListOf<Importable>()
 
+    var kDoc: String? = null
+
     init {
         @Suppress("UNCHECKED_CAST")
         element.implementations += this as Implementation
