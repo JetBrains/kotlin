@@ -35,8 +35,13 @@ abstract class CompilerPluginRegistrar {
         }
 
         /**
-         * Passed [disposable] will be called at the end of compilation
+         * Passed [disposable] will be called when the plugin is no longer needed:
+         *
+         * - In the CLI mode: At the end of the compilation process.
+         * - In the IDE mode: When the whole project is closed, or when the module
+         * with the corresponding compiler plugin enabled is removed from the project.
          */
+        @Suppress("unused")
         fun registerDisposable(disposable: PluginDisposable) {
             _disposables += disposable
         }
