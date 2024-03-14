@@ -11651,6 +11651,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("hiddenComponentInDestructuringDeclaration.kt")
+      public void testHiddenComponentInDestructuringDeclaration() {
+        runTest("compiler/testData/diagnostics/tests/deprecated/hiddenComponentInDestructuringDeclaration.kt");
+      }
+
+      @Test
       @TestMetadata("hiddenPropertyAccessors.kt")
       public void testHiddenPropertyAccessors() {
         runTest("compiler/testData/diagnostics/tests/deprecated/hiddenPropertyAccessors.kt");
