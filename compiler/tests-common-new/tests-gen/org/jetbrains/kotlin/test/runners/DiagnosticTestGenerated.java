@@ -14200,6 +14200,30 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("kt66277.kt")
+        public void testKt66277() {
+          runTest("compiler/testData/diagnostics/tests/functionLiterals/return/kt66277.kt");
+        }
+
+        @Test
+        @TestMetadata("kt66279.kt")
+        public void testKt66279() {
+          runTest("compiler/testData/diagnostics/tests/functionLiterals/return/kt66279.kt");
+        }
+
+        @Test
+        @TestMetadata("kt66512.kt")
+        public void testKt66512() {
+          runTest("compiler/testData/diagnostics/tests/functionLiterals/return/kt66512.kt");
+        }
+
+        @Test
+        @TestMetadata("kt66534.kt")
+        public void testKt66534() {
+          runTest("compiler/testData/diagnostics/tests/functionLiterals/return/kt66534.kt");
+        }
+
+        @Test
         @TestMetadata("LambdaReturnTypeIsUnitIfImplicitReturnExists.kt")
         public void testLambdaReturnTypeIsUnitIfImplicitReturnExists() {
           runTest("compiler/testData/diagnostics/tests/functionLiterals/return/LambdaReturnTypeIsUnitIfImplicitReturnExists.kt");
