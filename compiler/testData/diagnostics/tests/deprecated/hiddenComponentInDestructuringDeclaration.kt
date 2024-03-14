@@ -1,5 +1,4 @@
-// TARGET_FRONTEND: ClassicFrontend
-// ^ reason for a FIR mute: KT-66595
+// FIR_IDENTICAL
 
 class SimpleKlass {
     @Deprecated("deprecated and hidden", level = DeprecationLevel.HIDDEN)
