@@ -26874,6 +26874,90 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         public void testJvmInlineExpectValueClass() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/jvmInlineExpectValueClass.kt");
         }
+
+        @Test
+        @TestMetadata("valueClassExtendsClass.kt")
+        public void testValueClassExtendsClass() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassExtendsClass.kt");
+        }
+
+        @Test
+        @TestMetadata("valueClassNotFinal.kt")
+        public void testValueClassNotFinal() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassNotFinal.kt");
+        }
+
+        @Test
+        @TestMetadata("valueClassNotTopLevel.kt")
+        public void testValueClassNotTopLevel() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassNotTopLevel.kt");
+        }
+
+        @Test
+        @TestMetadata("valueClassWithContextReceiver.kt")
+        public void testValueClassWithContextReceiver() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithContextReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("valueClassWithDelegatedPropertyCustom.kt")
+        public void testValueClassWithDelegatedPropertyCustom() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithDelegatedPropertyCustom.kt");
+        }
+
+        @Test
+        @TestMetadata("valueClassWithDelegatedPropertyStandard.kt")
+        public void testValueClassWithDelegatedPropertyStandard() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithDelegatedPropertyStandard.kt");
+        }
+
+        @Test
+        @TestMetadata("valueClassWithInapplicableParameterType.kt")
+        public void testValueClassWithInapplicableParameterType() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithInapplicableParameterType.kt");
+        }
+
+        @Test
+        @TestMetadata("valueClassWithInefficientEquals.kt")
+        public void testValueClassWithInefficientEquals() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithInefficientEquals.kt");
+        }
+
+        @Test
+        @TestMetadata("valueClassWithInnerClass.kt")
+        public void testValueClassWithInnerClass() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithInnerClass.kt");
+        }
+
+        @Test
+        @TestMetadata("valueClassWithNonFinalParameter.kt")
+        public void testValueClassWithNonFinalParameter() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithNonFinalParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("valueClassWithPropertyWithBackingField.kt")
+        public void testValueClassWithPropertyWithBackingField() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithPropertyWithBackingField.kt");
+        }
+
+        @Test
+        @TestMetadata("valueClassWithRecursiveProperty.kt")
+        public void testValueClassWithRecursiveProperty() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithRecursiveProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("valueClassWithReservedMember.kt")
+        public void testValueClassWithReservedMember() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithReservedMember.kt");
+        }
+
+        @Test
+        @TestMetadata("valueClassWithTypedEquals.kt")
+        public void testValueClassWithTypedEquals() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithTypedEquals.kt");
+        }
       }
 
       @Nested
