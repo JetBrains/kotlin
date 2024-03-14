@@ -4668,6 +4668,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
 
     @Test
+    @TestMetadata("interfaceMethodReference.kt")
+    public void testInterfaceMethodReference() {
+      runTest("compiler/testData/codegen/box/callableReference/interfaceMethodReference.kt");
+    }
+
+    @Test
     @TestMetadata("javaField.kt")
     public void testJavaField() {
       runTest("compiler/testData/codegen/box/callableReference/javaField.kt");

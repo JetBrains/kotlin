@@ -87,7 +87,7 @@ class PurifyObjectInstanceGettersLowering(val context: JsCommonBackendContext) :
 
     private fun IrStatement.isPureStatementForObjectInitialization(owner: IrClass): Boolean {
         return (
-                this is IrReturn ||
+                (this is IrReturn && value.isPureStatementForObjectInitialization(owner)) ||
                         // Only objects which don't have a class parent
                         (this is IrDelegatingConstructorCall && symbol.owner.parent == context.irBuiltIns.anyClass.owner) ||
                         (this is IrExpression && isPure(anyVariable = true, checkFields = false, context = context)) ||

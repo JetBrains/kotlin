@@ -4255,6 +4255,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/callableReference/inlineArrayConstructors.kt");
     }
 
+    @TestMetadata("interfaceMethodReference.kt")
+    public void testInterfaceMethodReference() {
+      runTest("compiler/testData/codegen/box/callableReference/interfaceMethodReference.kt");
+    }
+
     @TestMetadata("javaField.kt")
     public void testJavaField() {
       runTest("compiler/testData/codegen/box/callableReference/javaField.kt");

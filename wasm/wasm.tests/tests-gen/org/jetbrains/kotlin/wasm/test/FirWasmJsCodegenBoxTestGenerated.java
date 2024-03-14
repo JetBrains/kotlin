@@ -3600,6 +3600,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
+    @TestMetadata("interfaceMethodReference.kt")
+    public void testInterfaceMethodReference() {
+      runTest("compiler/testData/codegen/box/callableReference/interfaceMethodReference.kt");
+    }
+
+    @Test
     @TestMetadata("kt21014.kt")
     public void testKt21014() {
       runTest("compiler/testData/codegen/box/callableReference/kt21014.kt");
