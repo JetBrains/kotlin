@@ -138,7 +138,7 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, String> MISSING_IMPORTED_SCRIPT_FILE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, String> MISSING_IMPORTED_SCRIPT_PSI = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, String> MISSING_SCRIPT_PROVIDED_PROPERTY_CLASS = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<PsiElement, String> PRE_RELEASE_CLASS = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<PsiElement, String> PRE_RELEASE_CLASS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, String> IR_WITH_UNSTABLE_ABI_COMPILED_CLASS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, String> FIR_COMPILED_CLASS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<PsiElement, String, IncompatibleVersionErrorData<?>> INCOMPATIBLE_CLASS = DiagnosticFactory2.create(ERROR);

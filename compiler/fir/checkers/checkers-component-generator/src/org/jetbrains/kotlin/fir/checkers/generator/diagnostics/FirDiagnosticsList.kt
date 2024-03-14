@@ -1805,7 +1805,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("presentableString")
             parameter<IncompatibleVersionErrorData<*>>("incompatibility")
         }
-        val PRE_RELEASE_CLASS by warning<PsiElement> {
+        val PRE_RELEASE_CLASS by error<PsiElement> {
             parameter<String>("presentableString")
         }
         val IR_WITH_UNSTABLE_ABI_COMPILED_CLASS by error<PsiElement> {
