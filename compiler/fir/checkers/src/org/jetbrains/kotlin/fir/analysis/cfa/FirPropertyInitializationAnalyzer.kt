@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
+import org.jetbrains.kotlin.fir.analysis.cfa.util.previousCfgNodes
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.hasDiagnosticKind
@@ -99,17 +100,47 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
     doNotReportConstantUninitialized: Boolean,
     scopes: MutableMap<FirPropertySymbol, FirDeclaration?>,
 ) {
+    val capturedInitializationError = if (receiver != null)
+        FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION
+    else
+        FirErrors.CAPTURED_VAL_INITIALIZATION
+
+    // TODO: move this to PropertyInitializationInfoData (the collector also does this check when visiting assignments)
     fun FirQualifiedAccessExpression.hasMatchingReceiver(): Boolean {
         val expression = dispatchReceiver?.unwrapSmartcastExpression()
         return (expression as? FirThisReceiverExpression)?.calleeReference?.boundSymbol == receiver ||
                 (expression as? FirResolvedQualifier)?.symbol == receiver
     }
 
-    for (node in graph.nodes) {
-        when {
-            // TODO, KT-59669: `node.isUnion` - f({ x = 1 }, { x = 2 }) - which to report?
-            //  Also this is currently indistinguishable from x = 1; f({}, {}).
+    fun CFGNode<*>.reportErrorsOnInitializationsInInputs(symbol: FirPropertySymbol, path: EdgeLabel) {
+        for (previousNode in previousCfgNodes) {
+            if (edgeFrom(previousNode).kind.isBack) continue
+            when (val assignmentNode = getValue(previousNode)[path]?.get(symbol)?.location) {
+                is VariableDeclarationNode -> {} // unreachable - `val`s with initializers do not require hindsight
+                is VariableAssignmentNode ->
+                    reporter.reportOn(assignmentNode.fir.lValue.source, capturedInitializationError, symbol, context)
+                else -> // merge node for a branching construct, e.g. `if (p) { x = 1 } else { x = 2 }` - report on all branches
+                    assignmentNode?.reportErrorsOnInitializationsInInputs(symbol, path)
+            }
+        }
+    }
 
+    for (node in graph.nodes) {
+        if (node.isUnion) {
+            for ((path, data) in getValue(node)) {
+                for ((symbol, range) in data) {
+                    if (!symbol.isVal || !range.canBeRevisited() || symbol !in properties) continue
+                    // This can be something like `f({ x = 1 }, { x = 2 })` where `f` calls both lambdas in-place.
+                    // At each assignment it was only considered in isolation, but now that we're merging their control flows,
+                    // we can see that the assignments clash, so we need to go back and emit errors on these nodes.
+                    if (node.previousCfgNodes.all { getValue(it)[path]?.get(symbol)?.canBeRevisited() != true }) {
+                        node.reportErrorsOnInitializationsInInputs(symbol, path)
+                    }
+                }
+            }
+        }
+
+        when {
             node is VariableDeclarationNode -> {
                 val symbol = node.fir.symbol
                 if (scope != null && receiver == null && node.fir.isVal && symbol in properties) {
@@ -126,11 +157,7 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
                 if (getValue(node).values.any { it[symbol]?.canBeRevisited() == true }) {
                     reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
                 } else if (scope != scopes[symbol]) {
-                    val error = if (receiver != null)
-                        FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION
-                    else
-                        FirErrors.CAPTURED_VAL_INITIALIZATION
-                    reporter.reportOn(node.fir.lValue.source, error, symbol, context)
+                    reporter.reportOn(node.fir.lValue.source, capturedInitializationError, symbol, context)
                 }
             }
 

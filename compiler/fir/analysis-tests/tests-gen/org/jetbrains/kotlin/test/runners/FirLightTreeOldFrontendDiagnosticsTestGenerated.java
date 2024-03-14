@@ -8141,6 +8141,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("reassignmentInConcurrentLambdas.kt")
+      public void testReassignmentInConcurrentLambdas() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/reassignmentInConcurrentLambdas.kt");
+      }
+
+      @Test
       @TestMetadata("reassignmentInLambda.kt")
       public void testReassignmentInLambda() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/reassignmentInLambda.kt");
