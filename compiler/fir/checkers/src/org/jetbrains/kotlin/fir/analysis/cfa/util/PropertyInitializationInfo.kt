@@ -43,11 +43,13 @@ abstract class EventOccurrencesRangeInfo<E : EventOccurrencesRangeInfo<E, K>, K 
                 when {
                     kind1 == MarkedEventOccurrencesRange.Zero -> kind2
                     kind2 == MarkedEventOccurrencesRange.Zero -> kind1
-                    // Otherwise for a union node it happened at two different locations:
+                    // Otherwise the event happens more than once (in different locations):
                     //   callBothFunctions({ <x> }, { <y> })
                     //   Zero ---> ExactlyOnce(x) ---> MoreThanOnce
                     //         \-> ExactlyOnce(y) -/
-                    // (Sum of two non-zero ranges cannot be `ExactlyOnce` or `AtMostOnce`.)
+                    // Sum of two non-zero ranges cannot be `ExactlyOnce` or `AtMostOnce`. It should also not be possible
+                    // to get a union of `ExactlyOnce` and `AtMostOnce` for the same location (in which case the correct
+                    // result would be `ExactlyOnce`...probably...if it made any sense in the first place).
                     else -> (kind1.withoutMarker + kind2.withoutMarker).at(null)
                 }
             } else {
