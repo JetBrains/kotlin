@@ -2518,6 +2518,12 @@ public class FirLightTreeJsBoxTestGenerated extends AbstractFirLightTreeJsBoxTes
       }
 
       @Test
+      @TestMetadata("privateInnerClass.kt")
+      public void testPrivateInnerClass() {
+        runTest("js/js.translator/testData/box/esModules/jsExport/privateInnerClass.kt");
+      }
+
+      @Test
       @TestMetadata("recursiveExport.kt")
       public void testRecursiveExport() {
         runTest("js/js.translator/testData/box/esModules/jsExport/recursiveExport.kt");
