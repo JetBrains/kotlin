@@ -1,6 +1,4 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K2: JVM_IR
-// Reason: java.lang.VerifyError: class B overrides final method charAt.(I)C
 // ISSUE: KT-66463
 // JVM_TARGET: 1.8
 
