@@ -21,7 +21,6 @@ public abstract class A implements CharSequence {
 
 // FILE: B.kt
 class B : A() {
-    @Suppress("ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE")
     override fun get(index: Int) = 'A'
 }
 

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.isHiddenToOvercomeSignatureClash
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.initialSignatureAttr
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
@@ -39,7 +40,7 @@ object FirAccidentalOverrideClashChecker : FirSimpleFunctionChecker(MppCheckerKi
         containingClass.unsubstitutedScope(context).processFunctionsByName(name) {
             @OptIn(SymbolInternals::class)
             val hiddenFir = it.fir
-            if (!reported && hiddenFir.isHiddenToOvercomeSignatureClash == true) {
+            if (!reported && hiddenFir.isHiddenToOvercomeSignatureClash == true && !hiddenFir.isFinal) {
                 if (declaration.computeJvmDescriptor() == hiddenFir.computeJvmDescriptor()) {
                     val regularBase = hiddenFir.initialSignatureAttr as? FirSimpleFunction ?: return@processFunctionsByName
                     val description = when {

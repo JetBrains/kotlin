@@ -21292,6 +21292,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
     }
 
     @Test
+    @TestMetadata("charAtAndOverloadWithAbstractGetAndProxy.kt")
+    public void testCharAtAndOverloadWithAbstractGetAndProxy() {
+      runTest("compiler/testData/codegen/box/fir/charAtAndOverloadWithAbstractGetAndProxy.kt");
+    }
+
+    @Test
     @TestMetadata("ClassBuilder.kt")
     public void testClassBuilder() {
       runTest("compiler/testData/codegen/box/fir/ClassBuilder.kt");

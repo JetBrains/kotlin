@@ -557,6 +557,12 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
       }
 
       @Test
+      @TestMetadata("charAtAndOverloadWithAbstractGetAndProxy.kt")
+      public void testCharAtAndOverloadWithAbstractGetAndProxy() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/charAtAndOverloadWithAbstractGetAndProxy.kt");
+      }
+
+      @Test
       @TestMetadata("inheritFromJavaCollectionSubclassWithContainsOverload.kt")
       public void testInheritFromJavaCollectionSubclassWithContainsOverload() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/inheritFromJavaCollectionSubclassWithContainsOverload.kt");

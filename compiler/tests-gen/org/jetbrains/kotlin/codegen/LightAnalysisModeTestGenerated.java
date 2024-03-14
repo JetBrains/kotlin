@@ -17806,6 +17806,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/fir/charAtAndOverloadWithAbstractGet.kt");
     }
 
+    @TestMetadata("charAtAndOverloadWithAbstractGetAndProxy.kt")
+    public void testCharAtAndOverloadWithAbstractGetAndProxy() {
+      runTest("compiler/testData/codegen/box/fir/charAtAndOverloadWithAbstractGetAndProxy.kt");
+    }
+
     @TestMetadata("ClassBuilder.kt")
     public void testClassBuilder() {
       runTest("compiler/testData/codegen/box/fir/ClassBuilder.kt");

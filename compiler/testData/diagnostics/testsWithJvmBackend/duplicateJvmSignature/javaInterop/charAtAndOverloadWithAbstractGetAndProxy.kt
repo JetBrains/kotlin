@@ -1,4 +1,6 @@
+// FIR_IDENTICAL
 // ISSUE: KT-66463
+// JVM_TARGET: 1.8
 // SCOPE_DUMP: B:get
 
 // FILE: A.java
@@ -17,7 +19,15 @@ public abstract class A implements CharSequence {
     public abstract char get(int index);
 }
 
+// FILE: Proxy.java
+
+public interface Proxy {
+    default char get(int index) {
+        return ' ';
+    }
+}
+
 // FILE: B.kt
-class B : A() {
-    override fun <!ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE!>get<!>(index: Int) = 'A'
+class B : A(), Proxy {
+    override fun get(index: Int) = 'A'
 }

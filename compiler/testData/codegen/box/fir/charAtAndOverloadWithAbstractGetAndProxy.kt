@@ -1,6 +1,8 @@
-// FIR_IDENTICAL
+// TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR
+// Reason: java.lang.VerifyError: class B overrides final method charAt.(I)C
 // ISSUE: KT-66463
-// SCOPE_DUMP: B:get
+// JVM_TARGET: 1.8
 
 // FILE: A.java
 public abstract class A implements CharSequence {
@@ -18,7 +20,21 @@ public abstract class A implements CharSequence {
     public abstract char get(int index);
 }
 
+// FILE: Proxy.java
+
+public interface Proxy {
+    default char get(int index) {
+        return 'X';
+    }
+}
+
 // FILE: B.kt
-class B : A() {
+class B : A(), Proxy {
     override fun get(index: Int) = 'A'
+}
+
+fun box(): String {
+    val b = B()
+    if (b.get(0) != 'A') return "FAIL"
+    return "OK"
 }
