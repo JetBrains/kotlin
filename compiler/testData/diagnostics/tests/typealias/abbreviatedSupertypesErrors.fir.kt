@@ -12,13 +12,13 @@ typealias BothList<T, K> = List<TK<T, K>>
 object O1 : One<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>() // compiler error expected
 object O2 : Both<<!UPPER_BOUND_VIOLATED!>Any<!>, <!UPPER_BOUND_VIOLATED!>Any<!>>()
 
-class A1<T : <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>One<<!UPPER_BOUND_VIOLATED!>Any<!>><!>>
+class A1<T : One<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>>
 class A2<T : One<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Any, Any><!>>
 
 interface IO1 : OneList<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>> {}
 interface IO2 : BothList<<!UPPER_BOUND_VIOLATED!>Any<!>, <!UPPER_BOUND_VIOLATED!>Any<!>> {}
 
-fun foo1(x: <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>One<<!UPPER_BOUND_VIOLATED!>Any<!>><!>) {}
+fun foo1(x: One<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>) {}
 fun foo2(x: Both<<!UPPER_BOUND_VIOLATED!>Any<!>, <!UPPER_BOUND_VIOLATED!>Any<!>>) {}
 
 fun main() {

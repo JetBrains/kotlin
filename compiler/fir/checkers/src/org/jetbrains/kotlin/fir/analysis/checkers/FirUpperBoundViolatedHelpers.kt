@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.reflect.KClass
 
 /**
@@ -52,7 +51,8 @@ private fun checkUpperBoundViolated(
 
     // If we have FirTypeRef information, add KtSourceElement information to each argument of the type and fully expand.
     val type = if (typeRef != null) {
-        notExpandedType.fullyExpandedTypeWithSource(typeRef, context.session)
+        (notExpandedType.abbreviatedTypeOrSelf as? ConeClassLikeType)
+            ?.fullyExpandedTypeWithSource(typeRef, context.session)
             // Add fallback source information to arguments of the expanded type.
             ?.withArguments { it.withSource(FirTypeRefSource(null, typeRef.source)) }
             ?: return
