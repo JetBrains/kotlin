@@ -35,6 +35,9 @@ Diagnostics from elements:
   for PSI element of type KtTypeReference at (67,22-39)
     DEPRECATION      text ranges: [(145,162)]
       PSI: KtTypeReference at (67,22-39)
+  for PSI element of type KtTypeReference at (68,26-47)
+    DEPRECATION      text ranges: [(189,210)]
+      PSI: KtTypeReference at (68,26-47)
   for PSI element of type KtTypeReference at (69,35-65)
-    DEPRECATION      text ranges: [(246,276)]
+    TYPEALIAS_EXPANSION_DEPRECATION      text ranges: [(246,276)]
       PSI: KtTypeReference at (69,35-65)

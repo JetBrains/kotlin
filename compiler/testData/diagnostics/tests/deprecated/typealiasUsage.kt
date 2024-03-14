@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class Base {
     companion object
 }
