@@ -371,8 +371,14 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(expression, "FirUnitExpression") {
+            kDoc(
+                """
+                A special kind of expression that can only appear inside [${returnExpression.typeName}].
+                It denotes an empty `return` expression, which is different from explicit `return Unit`.
+                """.trimIndent()
+            )
             defaultBuiltInType("Unit")
-            additionalImports(implicitUnitTypeRefType)
+            additionalImports(returnExpression)
             publicImplementation()
         }
 
