@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.parcelize.test.runners
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirIdenticalChecker
@@ -25,7 +24,6 @@ abstract class AbstractFirParcelizeDiagnosticTestBase(val parser: FirParser) : A
         defaultDirectives {
             +FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
             FirDiagnosticsDirectives.FIR_PARSER with parser
-            DIAGNOSTICS with "-PRE_RELEASE_CLASS"
         }
 
         useConfigurators(::ParcelizeEnvironmentConfigurator)

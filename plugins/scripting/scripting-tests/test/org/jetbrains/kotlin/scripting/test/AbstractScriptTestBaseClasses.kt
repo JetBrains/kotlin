@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.scripting.test
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTestBase
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirScriptCodegenTest
 
@@ -37,6 +36,5 @@ fun TestConfigurationBuilder.configureWithCustomScriptDef() {
     )
     defaultDirectives {
         +WITH_STDLIB
-        DIAGNOSTICS with "-PRE_RELEASE_CLASS"
     }
 }

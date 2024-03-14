@@ -59,7 +59,6 @@ internal object CompilerExecutor {
                 val extraOptions = buildList {
                     addAll(options)
                     add("-XXLanguage:-${LanguageFeature.SkipStandaloneScriptsInSourceRoots.name}")
-                    add("-Xskip-prerelease-check")
                 }
 
                 MockLibraryUtil.compileLibraryToJar(

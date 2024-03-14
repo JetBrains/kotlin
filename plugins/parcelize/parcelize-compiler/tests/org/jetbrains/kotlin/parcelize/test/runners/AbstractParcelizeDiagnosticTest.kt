@@ -31,7 +31,7 @@ abstract class AbstractParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
 
         defaultDirectives {
             +USE_PSI_CLASS_FILES_READING
-            DIAGNOSTICS with listOf("-UNUSED_PARAMETER", "-PRE_RELEASE_CLASS")
+            DIAGNOSTICS with "-UNUSED_PARAMETER"
         }
 
         enableMetaInfoHandler()

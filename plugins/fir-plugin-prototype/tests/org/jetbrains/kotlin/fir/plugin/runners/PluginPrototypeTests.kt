@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.js.test.fir.AbstractFirLoadK2CompiledJsKotlinTest
 import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.runners.AbstractFirLoadK2CompiledJvmKotlinTest
@@ -59,7 +58,6 @@ fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration() {
     defaultDirectives {
         +ENABLE_PLUGIN_PHASES
         +FIR_DUMP
-        DIAGNOSTICS with "-PRE_RELEASE_CLASS"
     }
 
     useConfigurators(
