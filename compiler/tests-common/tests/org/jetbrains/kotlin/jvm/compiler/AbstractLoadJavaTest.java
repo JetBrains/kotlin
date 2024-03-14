@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.test.util.DescriptorValidator;
 import org.jetbrains.kotlin.test.util.JUnit4Assertions;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.Configuration;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.junit.Assert;
 
 import java.io.File;
@@ -66,7 +67,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         try {
             doTestCompiledJava(javaFileName, COMPARATOR_CONFIGURATION);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
@@ -130,7 +131,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         try {
             doTestCompiledKotlin(ktFileName, ConfigurationKind.ALL, false);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
@@ -140,7 +141,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         try {
             doTestCompiledKotlinImpl(ktFileName, configurationKind, useTypeTableInSerializer);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
@@ -223,7 +224,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
             doTestJavaAgainstKotlinImpl(expectedFileName);
         }
         catch (Exception e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
@@ -256,7 +257,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         try {
             doTestKotlinAgainstCompiledJavaWithKotlinImpl(expectedFileName);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
@@ -320,7 +321,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
             );
         }
         catch (IOException e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
@@ -333,7 +334,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         try {
             fileContent = FileUtil.loadFile(new File(javaFileName));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
 
         List<File> srcFiles = TestFiles.createTestFiles(
@@ -387,7 +388,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                                                                 usePsiClassFilesReading(), useJavacWrapper(), withForeignAnnotations(), explicitLanguageVersionSettings,
                                                                 getExtraClasspath(), this::configureEnvironment);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 

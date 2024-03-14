@@ -526,7 +526,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         try {
             doMultiFileTest(file, testFiles);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 

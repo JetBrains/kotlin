@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.TestsCompilerError;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -98,7 +99,7 @@ public abstract class AbstractParsingTest extends KtParsingTestCase {
         try {
             doBaseTestImpl(filePath, fileType, contentFilter);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 

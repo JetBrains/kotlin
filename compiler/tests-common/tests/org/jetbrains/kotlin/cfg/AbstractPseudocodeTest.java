@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironmentManagement;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,7 +54,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironmentMa
         try {
             doTestWithEnvironment(fileName, createEnvironmentWithMockJdk(ConfigurationKind.NO_KOTLIN_REFLECT));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
@@ -61,7 +62,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironmentMa
         try {
             doTestWithEnvironment(fileName, createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
