@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.sir.impl.SirClassImpl
 
 @SirBuilderDsl
 class SirClassBuilder {
-    var origin: SirOrigin = SirOrigin.Unknown
-    var visibility: SirVisibility = SirVisibility.PUBLIC
-    lateinit var name: String
-    val declarations: MutableList<SirDeclaration> = mutableListOf()
+    var origin: () -> SirOrigin = { SirOrigin.Unknown }
+    var visibility: () -> SirVisibility = { SirVisibility.PUBLIC }
+    lateinit var name: () -> String
+    var declarations: () -> MutableList<SirDeclaration> = { mutableListOf() }
 
     fun build(): SirClass {
         return SirClassImpl(
@@ -37,17 +37,4 @@ inline fun buildClass(init: SirClassBuilder.() -> Unit): SirClass {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return SirClassBuilder().apply(init).build()
-}
-
-@OptIn(ExperimentalContracts::class)
-inline fun buildClassCopy(original: SirClass, init: SirClassBuilder.() -> Unit): SirClass {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = SirClassBuilder()
-    copyBuilder.origin = original.origin
-    copyBuilder.visibility = original.visibility
-    copyBuilder.name = original.name
-    copyBuilder.declarations.addAll(original.declarations)
-    return copyBuilder.apply(init).build()
 }

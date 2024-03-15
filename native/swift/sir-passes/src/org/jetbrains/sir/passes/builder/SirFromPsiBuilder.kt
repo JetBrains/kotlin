@@ -138,41 +138,53 @@ context(KtAnalysisSession)
 internal fun buildSirClassFromPsi(classOrObject: KtClassOrObject): SirNamedDeclaration {
     val symbol = classOrObject.getNamedClassOrObjectSymbol()!!
     return buildClass {
-        name = classOrObject.name ?: "UNKNOWN_CLASS" // todo: error handling strategy: KT-65980
-        origin = KotlinSource(symbol)
+        name = {
+            // todo: error handling strategy: KT-65980
+            classOrObject.name ?: "UNKNOWN_CLASS"
+        }
 
-        classOrObject.acceptChildren(
-            PsiToSirTranslationCollector(
-                declarations,
-                PsiToSirTranslatableChecker(analysisSession),
-                PsiToSirElementTranslation(analysisSession),
+        origin = {
+            KotlinSource(symbol)
+        }
+
+        declarations = {
+            val res = mutableListOf<SirDeclaration>()
+
+            classOrObject.acceptChildren(
+                PsiToSirTranslationCollector(
+                    res,
+                    PsiToSirTranslatableChecker(analysisSession),
+                    PsiToSirElementTranslation(analysisSession),
+                )
             )
-        )
 
-        // HACK to support default constructors.
-        // todo: We should rework builder from PSI to AnalysisApi during KT-66310
-        val constructors = symbol.getMemberScope().getConstructors()
-        if (constructors.count() == 1 && constructors.first().psi == classOrObject) {
-            declarations.add(
-                0,
-                buildInit {
-                    val constructorSymbol = constructors.first()
-                    origin = KotlinSource(constructorSymbol)
+            // HACK to support default constructors.
+            // todo: We should rework builder from PSI to AnalysisApi during KT-66310
+            val constructors = symbol.getMemberScope().getConstructors()
+            if (constructors.count() == 1 && constructors.first().psi == classOrObject) {
+                res.add(
+                    0,
+                    buildInit {
+                        val constructorSymbol = constructors.first()
+                        origin = KotlinSource(constructorSymbol)
 
-                    kind = constructorSymbol.sirCallableKind
-                    isFailable = false
-                    initKind = SirInitializerKind.ORDINARY
+                        kind = constructorSymbol.sirCallableKind
+                        isFailable = false
+                        initKind = SirInitializerKind.ORDINARY
 
-                    constructorSymbol.valueParameters.mapTo(parameters) {
-                        SirParameter(
-                            argumentName = it.name.asString(),
-                            type = buildSirNominalType(it.returnType)
-                        )
+                        constructorSymbol.valueParameters.mapTo(parameters) {
+                            SirParameter(
+                                argumentName = it.name.asString(),
+                                type = buildSirNominalType(it.returnType)
+                            )
+                        }
+
+                        documentation = null
                     }
+                )
+            }
 
-                    documentation = null
-                }
-            )
+            res
         }
     }.also { resultedClass ->
         resultedClass.declarations.forEach { decl -> decl.parent = resultedClass }

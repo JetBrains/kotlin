@@ -16,12 +16,17 @@ import org.jetbrains.kotlin.sir.visitors.SirTransformer
 import org.jetbrains.kotlin.sir.visitors.SirVisitor
 
 internal class SirClassImpl(
-    override val origin: SirOrigin,
-    override val visibility: SirVisibility,
-    override val name: String,
-    override val declarations: MutableList<SirDeclaration>,
+    private val originProvider: () -> SirOrigin,
+    private val visibilityProvider: () -> SirVisibility,
+    private val nameProvider: () -> String,
+    private val declarationsProvider: () -> MutableList<SirDeclaration>,
 ) : SirClass() {
     override lateinit var parent: SirDeclarationParent
+
+    override val origin: SirOrigin by lazy { originProvider() }
+    override val visibility: SirVisibility by lazy { visibilityProvider() }
+    override val name: String by lazy { nameProvider() }
+    override val declarations: MutableList<SirDeclaration> by lazy { declarationsProvider() }
 
     override fun <R, D> acceptChildren(visitor: SirVisitor<R, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }

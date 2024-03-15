@@ -19,22 +19,22 @@ fun main(args: Array<String>) {
     val generationPath = args.firstOrNull()?.let { File(it) }
         ?: File("./native/swift/sir/gen/").canonicalFile
     val model = SwiftIrTree.build()
-    generateTree(
-        generationPath,
-        "native/swift/sir/tree-generator/Readme.md",
-        model,
-        pureAbstractElementType,
-        ::ElementPrinter,
-        listOf(
-            elementVisitorType to ::VisitorPrinter,
-            elementVisitorVoidType to ::VisitorVoidPrinter,
-            elementTransformerType to ::TransformerPrinter.bind(model.rootElement),
-            elementTransformerVoidType to ::TransformerVoidPrinter,
-        ),
-        ImplementationConfigurator,
-        BuilderConfigurator(model.elements),
-        ::ImplementationPrinter,
-        ::BuilderPrinter,
-    )
+//    generateTree(
+//        generationPath,
+//        "native/swift/sir/tree-generator/Readme.md",
+//        model,
+//        pureAbstractElementType,
+//        ::ElementPrinter,
+//        listOf(
+//            elementVisitorType to ::VisitorPrinter,
+//            elementVisitorVoidType to ::VisitorVoidPrinter,
+//            elementTransformerType to ::TransformerPrinter.bind(model.rootElement),
+//            elementTransformerVoidType to ::TransformerVoidPrinter,
+//        ),
+//        ImplementationConfigurator,
+//        BuilderConfigurator(model.elements),
+//        ::ImplementationPrinter,
+//        ::BuilderPrinter,
+//    )
 }
 
