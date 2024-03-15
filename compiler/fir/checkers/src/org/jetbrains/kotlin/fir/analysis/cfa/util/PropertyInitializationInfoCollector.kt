@@ -32,10 +32,7 @@ class PropertyInitializationInfoData(
         val declaredVariablesInLoop = setMultimapOf<FirStatement, FirPropertySymbol>().apply {
             graph.declaration?.accept(PropertyDeclarationCollector(this), null)
         }
-        graph.collectDataForNode(
-            TraverseDirection.Forward,
-            PropertyInitializationInfoCollector(properties, receiver, declaredVariablesInLoop)
-        )
+        graph.traverseToFixedPoint(PropertyInitializationInfoCollector(properties, receiver, declaredVariablesInLoop))
     }
 
     fun getValue(node: CFGNode<*>): PathAwarePropertyInitializationInfo {

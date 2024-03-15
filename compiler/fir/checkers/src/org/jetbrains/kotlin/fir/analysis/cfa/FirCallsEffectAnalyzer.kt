@@ -80,8 +80,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
             }
         }
 
-        val invocationData = graph.collectDataForNode(
-            TraverseDirection.Forward,
+        val invocationData = graph.traverseToFixedPoint(
             InvocationDataCollector(functionalTypeEffects.keys.filterTo(mutableSetOf()) { it !in leakedSymbols })
         )
 

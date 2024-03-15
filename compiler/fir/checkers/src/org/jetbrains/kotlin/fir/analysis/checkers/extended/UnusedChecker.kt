@@ -33,7 +33,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
         val ownData = Data(data.properties)
         data.graph.traverse(AddAllWrites(), ownData)
         if (ownData.unreadWrites.isNotEmpty()) {
-            ownData.writesByNode = data.graph.collectDataForNode(TraverseDirection.Forward, FindVisibleWrites(data.properties))
+            ownData.writesByNode = data.graph.traverseToFixedPoint(FindVisibleWrites(data.properties))
         }
         data.graph.traverse(RemoveVisibleWrites(), ownData)
 
