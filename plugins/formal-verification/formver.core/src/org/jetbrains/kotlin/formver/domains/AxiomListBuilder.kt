@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.formver.viper.ast.Exp
  * Doing the same thing for domains as a whole is tempting but impractical: domain functions
  * should be members of their respective domains, which makes creating them from a DSL unwieldy.
  */
-internal class AxiomListBuilder(private val domain: Domain) {
+internal class AxiomListBuilder private constructor(private val domain: Domain) {
     val axioms = mutableListOf<DomainAxiom>()
 
     companion object {

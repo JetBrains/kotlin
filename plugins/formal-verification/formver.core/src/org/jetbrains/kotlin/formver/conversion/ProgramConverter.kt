@@ -60,7 +60,15 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
 
     val program: Program
         get() = Program(
-            domains = listOf(UnitDomain, NullableDomain, CastingDomain, TypeOfDomain, TypeDomain(classes.values.toList()), AnyDomain),
+            domains = listOf(
+                UnitDomain,
+                NullableDomain,
+                CastingDomain,
+                TypeOfDomain,
+                TypeDomain(classes.values.toList()),
+                AnyDomain,
+//                RuntimeTypeDomain(classes.values.toList())
+            ),
             fields = SpecialFields.all.map { it.toViper() } +
                     classes.values.flatMap { it.flatMapUniqueFields { _, field -> listOf(field.toViper()) } }.distinctBy { it.name },
             functions = SpecialFunctions.all + classes.values.flatMap { it.getterFunctions() }.distinctBy { it.name },

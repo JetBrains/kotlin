@@ -536,3 +536,22 @@ sealed interface Exp : IntoSilver<viper.silver.ast.Exp> {
         }
     }
 }
+
+operator fun Exp.not() = Exp.Not(this)
+infix fun Exp.or(other: Exp) = Exp.Or(this, other)
+infix fun Exp.and(other: Exp) = Exp.And(this, other)
+infix fun Exp.eq(other: Exp) = Exp.EqCmp(this, other)
+infix fun Exp.ne(other: Exp) = Exp.NeCmp(this, other)
+infix fun Exp.ge(other: Exp) = Exp.GeCmp(this, other)
+infix fun Exp.le(other: Exp) = Exp.LeCmp(this, other)
+infix fun Exp.gt(other: Exp) = Exp.GtCmp(this, other)
+infix fun Exp.lt(other: Exp) = Exp.LtCmp(this, other)
+infix operator fun Exp.plus(other: Exp) = Exp.Add(this, other)
+infix operator fun Exp.minus(other: Exp) = Exp.Sub(this, other)
+infix operator fun Exp.times(other: Exp) = Exp.Mul(this, other)
+infix operator fun Exp.div(other: Exp) = Exp.Div(this, other)
+infix operator fun Exp.rem(other: Exp) = Exp.Mod(this, other)
+infix fun Exp.implies(other: Exp) = Exp.Implies(this, other)
+fun Int.toExp() = Exp.IntLit(this)
+fun Boolean.toExp() = Exp.BoolLit(this)
+
