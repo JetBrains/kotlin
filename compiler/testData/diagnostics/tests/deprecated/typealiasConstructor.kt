@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @Deprecated("Deprecated class")
 open class DeprecatedClass
 
