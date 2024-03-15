@@ -63,7 +63,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
                 constructorOnlyDeprecation, reporter, context
             )
         } else {
-            reportApiStatusIfNeeded(source, referencedSymbol, context, reporter, callSite = expression)
+            reportApiStatusIfNeeded(source, referencedSymbol, context, reporter, callSite = expression as FirElement)
         }
 
         reportCallToDeprecatedOverrideOfHidden(expression, source, referencedSymbol, reporter, context)

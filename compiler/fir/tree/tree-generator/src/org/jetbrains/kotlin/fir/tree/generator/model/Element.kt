@@ -83,6 +83,7 @@ class Element(name: String, override val propertyName: String, kind: Kind) : Abs
     enum class Kind(val packageName: String) {
         Expression("expressions"),
         Declaration("declarations"),
+        DeclarationImpl("declarations.impl"),
         Reference("references"),
         TypeRef("types"),
         Contracts("contracts"),

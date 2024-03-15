@@ -22,15 +22,17 @@ internal class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<El
         val kind = element.kind ?: error("Expected non-null element kind")
         with(element) {
             val treeName = "FIR"
-            printAcceptMethod(element, firVisitorType, hasImplementation = true, treeName = treeName)
+            if (!kind.isInterface) {
+                printAcceptMethod(element, firVisitorType, hasImplementation = true, treeName = treeName)
 
-            printTransformMethod(
-                element = element,
-                transformerClass = firTransformerType,
-                implementation = "transformer.transform${element.name}(this, data)",
-                returnType = TypeVariable("E", listOf(AbstractFirTreeBuilder.baseFirElement)),
-                treeName = treeName,
-            )
+                printTransformMethod(
+                    element = element,
+                    transformerClass = firTransformerType,
+                    implementation = "transformer.transform${element.name}(this, data)",
+                    returnType = TypeVariable("E", listOf(AbstractFirTreeBuilder.baseFirAbstractElement)),
+                    treeName = treeName,
+                )
+            }
 
             fun Field.replaceDeclaration(override: Boolean, overridenType: TypeRefWithNullability? = null, forceNullable: Boolean = false) {
                 println()
@@ -61,25 +63,6 @@ internal class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<El
                     element,
                     override = element.elementParents.any { it.element.needTransformOtherChildren },
                     kind,
-                )
-                println()
-            }
-
-            if (element.isRootElement) {
-                println()
-                printAcceptVoidMethod(firVisitorVoidType, treeName)
-                printAcceptChildrenMethod(
-                    element = element,
-                    visitorClass = firVisitorType,
-                    visitorResultType = TypeVariable("R"),
-                )
-                println()
-                println()
-                printAcceptChildrenVoidMethod(firVisitorVoidType)
-                printTransformChildrenMethod(
-                    element = element,
-                    transformerClass = firTransformerType,
-                    returnType = AbstractFirTreeBuilder.baseFirElement,
                 )
                 println()
             }

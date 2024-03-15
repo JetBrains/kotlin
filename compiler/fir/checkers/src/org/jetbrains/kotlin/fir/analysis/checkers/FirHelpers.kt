@@ -803,6 +803,10 @@ fun FirBasedSymbol<*>.getAnnotationStringParameter(classId: ClassId, session: Fi
     return expression?.value as? String
 }
 
+fun FirElementInterface.isLhsOfAssignment(context: CheckerContext): Boolean {
+    return (this as FirElement).isLhsOfAssignment(context)
+}
+
 fun FirElement.isLhsOfAssignment(context: CheckerContext): Boolean {
     if (this !is FirQualifiedAccessExpression) return false
     val lastQualified = context.callsOrAssignments.lastOrNull { it != this } ?: return false

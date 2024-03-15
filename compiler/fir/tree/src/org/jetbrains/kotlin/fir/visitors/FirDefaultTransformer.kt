@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.fir.visitors
 
-import org.jetbrains.kotlin.fir.declarations.FirConstructedClassTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
-import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -105,12 +104,28 @@ abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
         return transformFunctionCall(implicitInvokeCall, data)
     }
 
+    open fun transformTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: D): FirTypeParameterRef {
+        return transformElement(typeParameterRef as FirElement, data) as FirTypeParameterRef
+    }
+
+    open fun transformDeclarationStatus(declarationStatus: FirDeclarationStatus, data: D): FirDeclarationStatus {
+        return transformElement(declarationStatus as FirElement, data) as FirDeclarationStatus
+    }
+
+    open fun transformAnnotationContainer(annotationContainer: FirAnnotationContainer, data: D): FirAnnotationContainer {
+        return transformElement(annotationContainer as FirElement, data) as FirAnnotationContainer
+    }
+
     override fun transformConstructedClassTypeParameterRef(constructedClassTypeParameterRef: FirConstructedClassTypeParameterRef, data: D): FirTypeParameterRef {
         return transformTypeParameterRef(constructedClassTypeParameterRef, data)
     }
 
     override fun transformOuterClassTypeParameterRef(outerClassTypeParameterRef: FirOuterClassTypeParameterRef, data: D): FirTypeParameterRef {
         return transformTypeParameterRef(outerClassTypeParameterRef, data)
+    }
+
+    override fun transformDeclarationStatusBase(declarationStatusBase: FirDeclarationStatusBase, data: D): FirDeclarationStatus {
+        return transformDeclarationStatus(declarationStatusBase, data)
     }
 }
 

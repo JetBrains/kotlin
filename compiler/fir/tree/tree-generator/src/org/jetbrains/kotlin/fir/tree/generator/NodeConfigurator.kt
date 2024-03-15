@@ -44,6 +44,13 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
     fun configureFields() = configure {
         baseFirElement.configure {
             +field("source", sourceElementType, nullable = true)
+            element.kDoc = """
+                 |Base interface for all fir elements. This interface is needed in order to add off-tree element types to the fir hierarchy.
+                 |The off-tree element type is a fir interface that is inherited from [FirElementInterface] like [org.jetbrains.kotlin.fir.expressions.FirStatement].
+                 |We should get rid of such interfaces and inherit all fir elements from [FirElement] in the future.
+                 |
+                 |**Notice:** every class implementing [FirElementInterface] must inherit [FirElement].
+            """.trimMargin()
         }
 
         annotationContainer.configure {
@@ -410,6 +417,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         implicitInvokeCall.configure {
             +booleanField("isCallWithExplicitReceiver")
+        }
+
+        declarationStatusBase.configure {
+            shouldBeAbstractClass()
         }
 
         constructor.configure {

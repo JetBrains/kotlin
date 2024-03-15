@@ -86,6 +86,7 @@ val typeParameterSymbolType = type("fir.symbols.impl", "FirTypeParameterSymbol")
 val emptyArgumentListType = type("fir.expressions", "FirEmptyArgumentList")
 val firScopeProviderType = type("fir.scopes", "FirScopeProvider")
 
+val baseAbstractElementType = generatedType("FirElement")
 val pureAbstractElementType = generatedType("FirPureAbstractElement")
 val coneContractElementType = type("fir.contracts.description", "ConeContractDescriptionElement")
 val coneEffectDeclarationType = type("fir.contracts.description", "ConeEffectDeclaration")

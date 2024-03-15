@@ -20,9 +20,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.fir.visitors.transformInplace
+import org.jetbrains.kotlin.fir.visitors.*
 
 @OptIn(UnresolvedExpressionTypeAccess::class)
 internal class FirIntegerLiteralOperatorCallImpl(

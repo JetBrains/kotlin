@@ -443,7 +443,8 @@ private class ContextCollectorVisitor(
     private fun Processor.processClassHeader(regularClass: FirRegularClass) {
         context.withTypeParametersOf(regularClass) {
             processList(regularClass.contextReceivers)
-            processList(regularClass.typeParameters)
+            @Suppress("UNCHECKED_CAST")
+            processList(regularClass.typeParameters as List<FirElement>)
             processList(regularClass.superTypeRefs)
         }
     }

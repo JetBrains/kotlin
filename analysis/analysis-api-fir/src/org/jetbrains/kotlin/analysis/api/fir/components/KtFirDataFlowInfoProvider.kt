@@ -222,7 +222,7 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
             if (fir in firTargets) {
                 // This intentionally replaces existing values, in case if there are multiple nodes with the same FirElement.
                 // Here we look for exits, so we are interested in the last matching node.
-                exitNodes[fir] = node.followingNodes
+                exitNodes[fir as FirElement] = node.followingNodes
                     .filter { it !is StubNode }
                     .map { it.unwrap() }
                     .distinct()

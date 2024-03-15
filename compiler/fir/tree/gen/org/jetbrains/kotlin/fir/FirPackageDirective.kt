@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.FqName
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.packageDirective]
  */
-abstract class FirPackageDirective : FirPureAbstractElement(), FirElement {
+abstract class FirPackageDirective : FirPureAbstractElement(), FirElementInterface {
     abstract override val source: KtSourceElement?
     abstract val packageFqName: FqName
 

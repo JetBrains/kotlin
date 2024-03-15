@@ -257,7 +257,7 @@ internal class KtFirCallResolver(
             )
             // FIR does not resolve to a symbol for equality calls.
             is FirEqualityOperatorCall -> toKtCallInfo(psi)
-            is FirSafeCallExpression -> selector.toKtCallInfo(
+            is FirSafeCallExpression -> (selector as FirElement).toKtCallInfo(
                 psi,
                 resolveCalleeExpressionOfFunctionCall,
                 resolveFragmentOfCall
@@ -363,7 +363,7 @@ internal class KtFirCallResolver(
         candidate: AbstractCandidate?,
         resolveFragmentOfCall: Boolean
     ): KtCall? {
-        return createKtCall(psi, fir, fir.calleeReference, candidate, resolveFragmentOfCall)
+        return createKtCall(psi, fir as FirElement, fir.calleeReference, candidate, resolveFragmentOfCall)
     }
 
     private fun createKtCall(
@@ -993,7 +993,7 @@ internal class KtFirCallResolver(
         }
         return when (this) {
             is FirFunctionCall -> collectCallCandidates(psi, resolveFragmentOfCall)
-            is FirSafeCallExpression -> selector.collectCallCandidates(
+            is FirSafeCallExpression -> (selector as FirElement).collectCallCandidates(
                 psi,
                 resolveCalleeExpressionOfFunctionCall,
                 resolveFragmentOfCall

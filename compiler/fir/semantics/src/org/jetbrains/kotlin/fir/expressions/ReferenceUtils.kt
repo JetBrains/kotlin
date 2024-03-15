@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -36,6 +37,11 @@ fun FirElement.toReference(session: FirSession): FirReference? {
         is FirResolvable -> calleeReference
         else -> null
     }
+}
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun FirElementInterface.toReference(session: FirSession): FirReference? {
+    return (this as FirElement).toReference(session)
 }
 
 /**

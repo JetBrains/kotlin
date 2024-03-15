@@ -61,6 +61,9 @@ internal class ImplementationPrinter(
             }
         }
         with(implementation) {
+            addImport(acceptOnInterfaceImport)
+            addImport(transformOnInterfaceImport)
+
             val isInterface = kind == ImplementationKind.Interface || kind == ImplementationKind.SealedInterface
             val isAbstract = kind == ImplementationKind.AbstractClass || kind == ImplementationKind.SealedClass
             val bindingCalls = element.allFields.filter {

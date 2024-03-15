@@ -3,22 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/fir/tree/tree-generator/Readme.md.
-// DO NOT MODIFY IT MANUALLY.
-
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder.Companion.baseFirElement]
+ * Base class for all fir elements. Every fir element must inherit [FirElement]. About how interfaces are included in the fir hierarchy
+ * see [FirElementInterface].
  */
-interface FirElement {
-    val source: KtSourceElement?
-
+abstract class FirElement: FirElementInterface {
     /**
      * Runs the provided [visitor] on the FIR subtree with the root at this node.
      *
@@ -26,7 +21,7 @@ interface FirElement {
      * @param data An arbitrary context to pass to each invocation of [visitor]'s methods.
      * @return The value returned by the topmost `visit*` invocation.
      */
-    fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+    open fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitElement(this, data)
 
     /**
@@ -37,7 +32,7 @@ interface FirElement {
      * @return The transformed node.
      */
     @Suppress("UNCHECKED_CAST")
-    fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
+    open fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformElement(this, data) as E
 
     /**
@@ -57,7 +52,7 @@ interface FirElement {
      * @param visitor The visitor for children to accept.
      * @param data An arbitrary context to pass to each invocation of [visitor]'s methods.
      */
-    fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D)
+    abstract fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D)
 
     /**
      * Runs the provided [visitor] on subtrees with roots in this node's children.
@@ -81,5 +76,5 @@ interface FirElement {
      * @param data An arbitrary context to pass to each invocation of [transformer]'s methods.
      * @return `this`
      */
-    fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement
+    abstract fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement
 }

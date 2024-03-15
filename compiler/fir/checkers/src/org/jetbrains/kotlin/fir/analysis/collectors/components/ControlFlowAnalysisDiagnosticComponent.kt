@@ -45,7 +45,7 @@ class ControlFlowAnalysisDiagnosticComponent(
         if (graph.isSubGraph) return
         cfaCheckers.forEach { it.analyze(graph, reporter, context) }
 
-        val collector = LocalPropertyCollector().apply { declaration.acceptChildren(this, graph.subGraphs.toSet()) }
+        val collector = LocalPropertyCollector().apply { (declaration as FirElement).acceptChildren(this, graph.subGraphs.toSet()) }
         val properties = collector.properties
         if (properties.isNotEmpty()) {
             val data = PropertyInitializationInfoData(properties, collector.conditionallyInitializedProperties, receiver = null, graph)

@@ -10,9 +10,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.statement]
@@ -20,13 +18,6 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 interface FirStatement : FirAnnotationContainer {
     override val source: KtSourceElement?
     override val annotations: List<FirAnnotation>
-
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitStatement(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformStatement(this, data) as E
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 

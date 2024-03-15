@@ -56,7 +56,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitAnnotationContainer(annotationContainer: FirAnnotationContainer, data: Nothing?) {
         withAnnotationContainer(annotationContainer) {
-            checkElement(annotationContainer)
+            checkElement(annotationContainer as FirElement)
             visitNestedElements(annotationContainer)
         }
     }
@@ -325,7 +325,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     private fun visitWithCallOrAssignment(callOrAssignment: FirStatement) {
         return withCallOrAssignment(callOrAssignment) {
-            visitElement(callOrAssignment, null)
+            visitElement(callOrAssignment as FirElement, null)
         }
     }
 
@@ -429,7 +429,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     @OptIn(PrivateForInline::class)
     inline fun <R> withAnnotationContainer(annotationContainer: FirAnnotationContainer, block: () -> R): R {
-        return withElement(annotationContainer) {
+        return withElement(annotationContainer as FirElement) {
             val existingContext = context
             addSuppressedDiagnosticsToContext(annotationContainer)
             val notEmptyAnnotations = annotationContainer.annotations.isNotEmpty()

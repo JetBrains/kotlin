@@ -415,6 +415,14 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         return declarationsTransformer?.transformation(declaration, data) ?: declaration
     }
 
+    private inline fun <T : R, R : FirElementInterface> declarationTransformation(
+        declaration: T,
+        data: ResolutionMode,
+        transformation: FirDeclarationsResolveTransformer.(T, ResolutionMode) -> R,
+    ): R {
+        return declarationsTransformer?.transformation(declaration, data) ?: declaration
+    }
+
     override fun transformDeclaration(
         declaration: FirDeclaration,
         data: ResolutionMode,

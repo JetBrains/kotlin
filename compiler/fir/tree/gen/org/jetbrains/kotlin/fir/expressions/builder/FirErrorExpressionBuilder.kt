@@ -12,7 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -29,7 +29,7 @@ class FirErrorExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBu
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var diagnostic: ConeDiagnostic
     var expression: FirExpression? = null
-    var nonExpressionElement: FirElement? = null
+    var nonExpressionElement: FirElementInterface? = null
 
     override fun build(): FirErrorExpression {
         return FirErrorExpressionImpl(

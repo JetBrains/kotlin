@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.customAnnotations
 import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.accept
 
 /**
  * Visitor for annotations outside bodies.
@@ -145,11 +146,11 @@ internal abstract class NonLocalAnnotationVisitor<T> : FirVisitor<Unit, T>() {
         contextReceivers.forEach { it.accept(this, data) }
     }
 
-    override fun visitAnnotationContainer(annotationContainer: FirAnnotationContainer, data: T) {
+    fun visitAnnotationContainer(annotationContainer: FirAnnotationContainer, data: T) {
         annotationContainer.annotations.forEach { it.accept(this, data) }
     }
 
-    override fun visitTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner, data: T) {
+    fun visitTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner, data: T) {
         typeParameterRefsOwner.typeParameters.forEach { it.accept(this, data) }
     }
 

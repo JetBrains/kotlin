@@ -9,21 +9,12 @@
 package org.jetbrains.kotlin.fir.diagnostics
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.FirElementInterface
 
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.diagnosticHolder]
  */
-interface FirDiagnosticHolder : FirElement {
+interface FirDiagnosticHolder : FirElementInterface {
     override val source: KtSourceElement?
     val diagnostic: ConeDiagnostic
-
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitDiagnosticHolder(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformDiagnosticHolder(this, data) as E
 }

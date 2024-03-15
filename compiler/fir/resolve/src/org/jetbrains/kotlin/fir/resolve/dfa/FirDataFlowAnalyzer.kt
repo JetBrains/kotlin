@@ -1047,7 +1047,7 @@ abstract class FirDataFlowAnalyzer(
             if (operation == null) {
                 flow.addAllStatements(statements)
             } else {
-                val functionCallVariable = variableStorage.getOrCreate(flow, qualifiedAccess)
+                val functionCallVariable = variableStorage.getOrCreate(flow, qualifiedAccess as FirElement)
                 flow.addAllConditionally(OperationStatement(functionCallVariable, operation), statements)
             }
         }
@@ -1349,7 +1349,7 @@ abstract class FirDataFlowAnalyzer(
 
             // For CFGNodes that are the end of alternate flows, use the alternate flow associated with the edge label.
             val flow = if (node is FinallyBlockExitNode) {
-                val alternatePath = FlowPath.CfgEdge(edge.label, node.fir)
+                val alternatePath = FlowPath.CfgEdge(edge.label, node.fir as FirElement)
                 node.getAlternateFlow(alternatePath) ?: node.flow
             } else {
                 node.flow
@@ -1461,7 +1461,7 @@ abstract class FirDataFlowAnalyzer(
             if (edge.label == UncaughtExceptionPath || !usedInDfa(edge)) continue
 
             if (createdLabels.add(edge.label)) {
-                val path = FlowPath.CfgEdge(edge.label, this.fir)
+                val path = FlowPath.CfgEdge(edge.label, this.fir as FirElement)
                 addAlternateFlow(path, buildAlternateFlow(path, builder).freeze())
             }
         }

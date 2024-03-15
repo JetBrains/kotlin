@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.generators.tree.AbstractVisitorVoidPrinter
 import org.jetbrains.kotlin.generators.tree.ClassRef
+import org.jetbrains.kotlin.generators.tree.ImportCollector
 import org.jetbrains.kotlin.generators.tree.PositionTypeParameterRef
 import org.jetbrains.kotlin.utils.SmartPrinter
 
@@ -31,5 +32,18 @@ internal class VisitorVoidPrinter(
     override val overriddenVisitMethodsAreFinal: Boolean
         get() = true
 
-    override fun parentInVisitor(element: Element): Element = AbstractFirTreeBuilder.baseFirElement
+    override fun skipElement(element: Element): Boolean {
+        return !element.isRootElement && element.kind?.isInterface == true
+    }
+
+    override fun parentInVisitor(element: Element): Element = AbstractFirTreeBuilder.baseFirAbstractElement
+
+    context(ImportCollector)
+    override fun printMethodsForElement(element: Element) {
+        if (element == AbstractFirTreeBuilder.baseFirElement) {
+            super.printMethodsForElement(AbstractFirTreeBuilder.baseFirAbstractElement)
+        } else {
+            super.printMethodsForElement(element)
+        }
+    }
 }

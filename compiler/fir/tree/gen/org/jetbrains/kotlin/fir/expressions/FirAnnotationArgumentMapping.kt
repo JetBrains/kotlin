@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.name.Name
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.annotationArgumentMapping]
  */
-abstract class FirAnnotationArgumentMapping : FirPureAbstractElement(), FirElement {
+abstract class FirAnnotationArgumentMapping : FirPureAbstractElement(), FirElementInterface {
     abstract override val source: KtSourceElement?
     abstract val mapping: Map<Name, FirExpression>
 

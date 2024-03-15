@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.dfa.FlowPath
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.utils.SmartList
 @RequiresOptIn
 annotation class CfgInternals
 
-sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level: Int) {
+sealed class CFGNode<out E : FirElementInterface>(val owner: ControlFlowGraph, val level: Int) {
     @OptIn(CfgInternals::class)
     val id = owner.nodeCount++
 
@@ -181,7 +182,7 @@ interface GraphExitNodeMarker : ExitNodeMarker
 
 // ----------------------------------- EnterNode for declaration with CFG -----------------------------------
 
-sealed class CFGNodeWithSubgraphs<out E : FirElement>(owner: ControlFlowGraph, level: Int) : CFGNode<E>(owner, level) {
+sealed class CFGNodeWithSubgraphs<out E : FirElementInterface>(owner: ControlFlowGraph, level: Int) : CFGNode<E>(owner, level) {
     abstract val subGraphs: List<ControlFlowGraph>
 }
 

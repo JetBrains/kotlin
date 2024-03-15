@@ -52,21 +52,26 @@ abstract class AbstractTransformerPrinter<Element : AbstractElement<Element, Fie
                 }
             }
             println()
-            printVisitMethodDeclaration(
-                element = element,
-                modality = Modality.FINAL,
-                override = true,
+            printOverriddenVisitMethod(element)
+        }
+    }
+
+    context(ImportCollector)
+    protected open fun SmartPrinter.printOverriddenVisitMethod(element: Element) {
+        printVisitMethodDeclaration(
+            element = element,
+            modality = Modality.FINAL,
+            override = true,
+        )
+        printBlock {
+            println(
+                "return transform",
+                element.name,
+                "(",
+                element.visitorParameterName,
+                ", ",
+                "data)"
             )
-            printBlock {
-                println(
-                    "return transform",
-                    element.name,
-                    "(",
-                    element.visitorParameterName,
-                    ", ",
-                    "data)"
-                )
-            }
         }
     }
 }

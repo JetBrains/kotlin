@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
+import org.jetbrains.kotlin.fir.visitors.accept
 
 abstract class FirErrorExpressionRenderer {
     internal lateinit var components: FirRendererComponents

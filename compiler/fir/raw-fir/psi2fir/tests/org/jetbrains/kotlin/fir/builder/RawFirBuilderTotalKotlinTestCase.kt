@@ -87,7 +87,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                         } else {
                             normalReferences++
                         }
-                        visitStatement(qualifiedAccessExpression, data)
+                        visitStatement(qualifiedAccessExpression)
                     }
 
                     override fun visitExpression(expression: FirExpression, data: FirElement) {
@@ -103,9 +103,9 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                         expression.acceptChildren(this, expression)
                     }
 
-                    override fun visitStatement(statement: FirStatement, data: FirElement) {
+                    private fun visitStatement(statement: FirStatement) {
                         normalStatements++
-                        statement.acceptChildren(this, statement)
+                        (statement as FirElement).acceptChildren(this, statement)
                     }
 
 //                    override fun visitErrorDeclaration(errorDeclaration: FirErrorDeclaration) {

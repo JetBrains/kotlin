@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -386,7 +387,7 @@ class ControlFlowGraphBuilder {
         val nextLevelExits = postponedLambdaExits.topOrNull()?.exits.takeIf { !callCompleted }
         if (nextLevelExits != null) {
             node.updateDeadStatus()
-            nextLevelExits += createMergePostponedLambdaExitsNode(node.fir).also {
+            nextLevelExits += createMergePostponedLambdaExitsNode(node.fir as FirElement).also {
                 addEdge(node, it) // copy liveness (deadness?) from `node`
                 for ((exit, kind) in currentLevelExits) {
                     if (kind.usedInCfa) {
@@ -610,7 +611,7 @@ class ControlFlowGraphBuilder {
                 ?.takeIf { parent -> this !in generateSequence(parent) { it.parentConstructor() } }
         }
 
-        fun getDelegateNodes(ctor: FirConstructor): Pair<CFGNode<FirElement>?, CFGNode<FirElement>?> {
+        fun getDelegateNodes(ctor: FirConstructor): Pair<CFGNode<FirElementInterface>?, CFGNode<FirElementInterface>?> {
             val parentConstructor = ctor.parentConstructor()
             val secondaryGraph = secondaryConstructors[parentConstructor]
             return when {

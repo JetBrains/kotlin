@@ -33,7 +33,7 @@ abstract class AbstractVisitorVoidPrinter<Element, Field>(
     abstract val overriddenVisitMethodsAreFinal: Boolean
 
     context(ImportCollector)
-    final override fun printMethodsForElement(element: Element) {
+    override fun printMethodsForElement(element: Element) {
         val parentInVisitor = parentInVisitor(element)
         if (!element.isRootElement && parentInVisitor == null) return
 

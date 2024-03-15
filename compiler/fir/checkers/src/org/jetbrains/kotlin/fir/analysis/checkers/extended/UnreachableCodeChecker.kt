@@ -26,7 +26,7 @@ object UnreachableCodeChecker : FirControlFlowChecker(MppCheckerKind.Common) {
         val reachableSources = reachableNodes.mapNotNull { it.fir.source }.toSet()
         val unreachableElements = unreachableNodes.map { it.fir }
         val innerNodes = mutableSetOf<FirElement>()
-        unreachableElements.forEach { it.collectInnerNodes(innerNodes) }
+        unreachableElements.forEach { (it as FirElement).collectInnerNodes(innerNodes) }
         unreachableElements.distinctBy { it.source }.forEach { element ->
             if (element !in innerNodes) {
                 reporter.reportOn(element.source, FirErrors.UNREACHABLE_CODE, reachableSources, unreachableSources, context)

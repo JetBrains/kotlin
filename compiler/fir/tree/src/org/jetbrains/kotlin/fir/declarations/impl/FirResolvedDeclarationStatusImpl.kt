@@ -9,7 +9,10 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 class FirResolvedDeclarationStatusImpl(
     visibility: Visibility,
@@ -49,4 +52,12 @@ class FirResolvedDeclarationStatusImpl(
 
     override val modality: Modality
         get() = super.modality!!
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R {
+        return super<FirDeclarationStatusImpl>.accept(visitor, data)
+    }
+
+    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E {
+        return super<FirDeclarationStatusImpl>.transform(transformer, data)
+    }
 }

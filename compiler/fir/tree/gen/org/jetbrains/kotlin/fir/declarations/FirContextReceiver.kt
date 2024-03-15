@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.name.Name
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.contextReceiver]
  */
-abstract class FirContextReceiver : FirPureAbstractElement(), FirElement {
+abstract class FirContextReceiver : FirPureAbstractElement(), FirElementInterface {
     abstract override val source: KtSourceElement?
     abstract val typeRef: FirTypeRef
     abstract val customLabelName: Name?

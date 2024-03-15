@@ -20,6 +20,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val targetElement by element(Other)
 
     val declarationStatus by element(Declaration)
+    val declarationStatusBase by element(Declaration, declarationStatus)
     val resolvedDeclarationStatus by element(Declaration, declarationStatus)
 
     val controlFlowGraphOwner by element(Declaration)

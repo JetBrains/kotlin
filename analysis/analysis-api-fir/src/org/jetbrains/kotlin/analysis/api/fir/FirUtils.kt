@@ -142,4 +142,4 @@ fun FirAnnotationContainer.getJvmNameFromAnnotation(session: FirSession, target:
 }
 
 internal fun FirElement.unwrapSafeCall(): FirElement =
-    (this as? FirSafeCallExpression)?.selector ?: this
+    ((this as? FirSafeCallExpression)?.selector ?: this) as FirElement

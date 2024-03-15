@@ -9,24 +9,16 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.contractDescriptionOwner]
  */
-sealed interface FirContractDescriptionOwner : FirElement {
+sealed interface FirContractDescriptionOwner : FirElementInterface {
     override val source: KtSourceElement?
     val contractDescription: FirContractDescription
-
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitContractDescriptionOwner(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformContractDescriptionOwner(this, data) as E
 
     fun replaceContractDescription(newContractDescription: FirContractDescription)
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator
 
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import java.io.File
 import kotlin.reflect.KClass
 
@@ -13,11 +13,11 @@ class CheckersConfigurator {
     private val registeredAliases: MutableMap<KClass<*>, String> = LinkedHashMap()
     private val additionalCheckers: MutableMap<String, String> = LinkedHashMap()
 
-    inline fun <reified T : FirElement> alias(name: String) {
+    inline fun <reified T : FirElementInterface> alias(name: String) {
         alias(T::class, name)
     }
 
-    fun alias(kClass: KClass<out FirElement>, name: String) {
+    fun alias(kClass: KClass<out FirElementInterface>, name: String) {
         val realName = name.takeIf { it.startsWith("Fir") } ?: "Fir$name"
         registeredAliases[kClass] = realName
     }

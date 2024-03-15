@@ -11,14 +11,12 @@ package org.jetbrains.kotlin.fir.declarations
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.FirElementInterface
 
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.declarationStatus]
  */
-interface FirDeclarationStatus : FirElement {
+interface FirDeclarationStatus : FirElementInterface {
     override val source: KtSourceElement?
     val visibility: Visibility
     val modality: Modality?
@@ -41,11 +39,4 @@ interface FirDeclarationStatus : FirElement {
     val isFromEnumClass: Boolean
     val isFun: Boolean
     val hasStableParameterNames: Boolean
-
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitDeclarationStatus(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformDeclarationStatus(this, data) as E
 }

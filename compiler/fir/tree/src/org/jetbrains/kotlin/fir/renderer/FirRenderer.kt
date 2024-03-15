@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.fir.visitors.accept
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -160,7 +161,8 @@ class FirRenderer(
     private fun List<FirTypeParameterRef>.renderTypeParameters() {
         if (isNotEmpty()) {
             print("<")
-            renderSeparated(this, visitor)
+            @Suppress("UNCHECKED_CAST")
+            renderSeparated(this as List<FirElement>, visitor)
             print(">")
         }
     }
@@ -291,7 +293,7 @@ class FirRenderer(
             contextReceiver.typeRef.accept(this)
         }
 
-        override fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef) {
+        private fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef) {
             typeParameterRef.symbol.fir.accept(this)
         }
 
@@ -542,14 +544,6 @@ class FirRenderer(
             valueParameterRenderer?.renderParameter(valueParameter)
         }
 
-        override fun visitImport(import: FirImport) {
-            visitElement(import)
-        }
-
-        override fun visitStatement(statement: FirStatement) {
-            visitElement(statement)
-        }
-
         override fun visitReturnExpression(returnExpression: FirReturnExpression) {
             annotationRenderer?.render(returnExpression)
             print("^")
@@ -754,7 +748,7 @@ class FirRenderer(
             print(")")
         }
 
-        override fun visitCall(call: FirCall) {
+        fun visitCall(call: FirCall) {
             callArgumentsRenderer?.renderArguments(call.arguments)
         }
 

@@ -297,7 +297,7 @@ private fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.getNarrowe
 
 fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirResolvedTypeRef {
     val calleeReference = access.calleeReference
-    return typeFromCallee(access, calleeReference)
+    return typeFromCallee(access as FirElement, calleeReference)
 }
 
 fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: FirReference): FirResolvedTypeRef {

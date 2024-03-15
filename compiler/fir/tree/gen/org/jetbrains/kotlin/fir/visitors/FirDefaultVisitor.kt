@@ -8,6 +8,8 @@
 
 package org.jetbrains.kotlin.fir.visitors
 
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
@@ -23,13 +25,19 @@ import org.jetbrains.kotlin.fir.types.*
  */
 abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
+    open fun visitAnnotationContainer(annotationContainer: FirAnnotationContainer, data: D): R =
+        visitElement(annotationContainer as FirElement, data)
+
     override fun visitTypeRef(typeRef: FirTypeRef, data: D): R =
         visitAnnotationContainer(typeRef, data)
 
-    override fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: D): R =
-        visitDeclarationStatus(resolvedDeclarationStatus, data)
+    open fun visitDeclarationStatus(declarationStatus: FirDeclarationStatus, data: D): R =
+        visitElement(declarationStatus as FirElement, data)
 
-    override fun visitStatement(statement: FirStatement, data: D): R =
+    override fun visitDeclarationStatusBase(declarationStatusBase: FirDeclarationStatusBase, data: D): R =
+        visitDeclarationStatus(declarationStatusBase, data)
+
+    open fun visitStatement(statement: FirStatement, data: D): R =
         visitAnnotationContainer(statement, data)
 
     override fun visitExpression(expression: FirExpression, data: D): R =
@@ -38,11 +46,11 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitLazyExpression(lazyExpression: FirLazyExpression, data: D): R =
         visitExpression(lazyExpression, data)
 
-    override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: D): R =
-        visitTypeParameterRefsOwner(typeParametersOwner, data)
-
     override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): R =
         visitMemberDeclaration(callableDeclaration, data)
+
+    open fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: D): R =
+        visitElement(typeParameterRef as FirElement, data)
 
     override fun visitConstructedClassTypeParameterRef(constructedClassTypeParameterRef: FirConstructedClassTypeParameterRef, data: D): R =
         visitTypeParameterRef(constructedClassTypeParameterRef, data)
@@ -112,9 +120,6 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
     override fun visitTypeProjectionWithVariance(typeProjectionWithVariance: FirTypeProjectionWithVariance, data: D): R =
         visitTypeProjection(typeProjectionWithVariance, data)
-
-    override fun visitCall(call: FirCall, data: D): R =
-        visitStatement(call, data)
 
     override fun visitAnnotation(annotation: FirAnnotation, data: D): R =
         visitExpression(annotation, data)

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.utils.exceptions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.renderer.*
@@ -17,6 +18,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
+
+fun ExceptionAttachmentBuilder.withFirEntry(name: String, fir: FirElementInterface) {
+    withFirEntry(name, fir as FirElement)
+}
 
 fun ExceptionAttachmentBuilder.withFirEntry(name: String, fir: FirElement) {
     withEntry(name, fir) {

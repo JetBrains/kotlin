@@ -275,7 +275,7 @@ internal fun checkAnnotationIsResolved(annotation: FirAnnotation, annotationCont
     }
 
     for (argument in annotation.argumentMapping.mapping.values) {
-        checkExpressionTypeIsResolved(argument.coneTypeOrNull, "annotation argument", annotationContainer) {
+        checkExpressionTypeIsResolved(argument.coneTypeOrNull, "annotation argument", (annotationContainer as FirElement)) {
             withFirEntry("firAnnotation", annotation)
             withFirEntry("firArgument", argument)
         }

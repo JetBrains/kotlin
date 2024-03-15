@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.cfa.util
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.visitors.accept
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirLoop
@@ -73,7 +74,7 @@ class DeclaredVariableCollector {
         }
 
         private fun visitCapturingStatement(statement: FirStatement, parent: FirStatement?) {
-            visitElement(statement, statement)
+            visitElement(statement as FirElement, statement)
             if (parent != null) {
                 declaredVariablesPerElement.putAll(parent, declaredVariablesPerElement[statement])
             }

@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.name.Name
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.import]
  */
-abstract class FirImport : FirPureAbstractElement(), FirElement {
+abstract class FirImport : FirPureAbstractElement(), FirElementInterface {
     abstract override val source: KtSourceElement?
     abstract val importedFqName: FqName?
     abstract val isAllUnder: Boolean

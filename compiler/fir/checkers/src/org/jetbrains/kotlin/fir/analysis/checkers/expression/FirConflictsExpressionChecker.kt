@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkForLocalRedeclarations
 import org.jetbrains.kotlin.fir.analysis.checkers.collectConflictingLocalFunctionsFrom
@@ -24,7 +25,8 @@ object FirConflictsExpressionChecker : FirBlockChecker(MppCheckerKind.Common) {
         val elements =
             if (expression.statements.none { it.isDestructuredParameter() }) expression.statements // optimization
             else expression.statements.filterNot { it.isDestructuredParameter() }
-        checkForLocalRedeclarations(elements, context, reporter)
+        @Suppress("UNCHECKED_CAST")
+        checkForLocalRedeclarations(elements as List<FirElement>, context, reporter)
         checkForLocalConflictingFunctions(expression, context, reporter)
     }
 

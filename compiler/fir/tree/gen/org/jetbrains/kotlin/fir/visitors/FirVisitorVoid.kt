@@ -11,7 +11,6 @@ package org.jetbrains.kotlin.fir.visitors
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.types.*
@@ -26,14 +25,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
     }
 
     abstract fun visitElement(element: FirElement)
-
-    final override fun visitAnnotationContainer(annotationContainer: FirAnnotationContainer, data: Nothing?) {
-        visitAnnotationContainer(annotationContainer)
-    }
-
-    open fun visitAnnotationContainer(annotationContainer: FirAnnotationContainer) {
-        visitElement(annotationContainer)
-    }
 
     final override fun visitTypeRef(typeRef: FirTypeRef, data: Nothing?) {
         visitTypeRef(typeRef)
@@ -59,52 +50,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(label)
     }
 
-    final override fun visitResolvable(resolvable: FirResolvable, data: Nothing?) {
-        visitResolvable(resolvable)
+    final override fun visitDeclarationStatusBase(declarationStatusBase: FirDeclarationStatusBase, data: Nothing?) {
+        visitDeclarationStatusBase(declarationStatusBase)
     }
 
-    open fun visitResolvable(resolvable: FirResolvable) {
-        visitElement(resolvable)
-    }
-
-    final override fun visitTargetElement(targetElement: FirTargetElement, data: Nothing?) {
-        visitTargetElement(targetElement)
-    }
-
-    open fun visitTargetElement(targetElement: FirTargetElement) {
-        visitElement(targetElement)
-    }
-
-    final override fun visitDeclarationStatus(declarationStatus: FirDeclarationStatus, data: Nothing?) {
-        visitDeclarationStatus(declarationStatus)
-    }
-
-    open fun visitDeclarationStatus(declarationStatus: FirDeclarationStatus) {
-        visitElement(declarationStatus)
-    }
-
-    final override fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: Nothing?) {
-        visitResolvedDeclarationStatus(resolvedDeclarationStatus)
-    }
-
-    open fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus) {
-        visitElement(resolvedDeclarationStatus)
-    }
-
-    final override fun visitControlFlowGraphOwner(controlFlowGraphOwner: FirControlFlowGraphOwner, data: Nothing?) {
-        visitControlFlowGraphOwner(controlFlowGraphOwner)
-    }
-
-    open fun visitControlFlowGraphOwner(controlFlowGraphOwner: FirControlFlowGraphOwner) {
-        visitElement(controlFlowGraphOwner)
-    }
-
-    final override fun visitStatement(statement: FirStatement, data: Nothing?) {
-        visitStatement(statement)
-    }
-
-    open fun visitStatement(statement: FirStatement) {
-        visitElement(statement)
+    open fun visitDeclarationStatusBase(declarationStatusBase: FirDeclarationStatusBase) {
+        visitElement(declarationStatusBase)
     }
 
     final override fun visitExpression(expression: FirExpression, data: Nothing?) {
@@ -147,22 +98,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(declaration)
     }
 
-    final override fun visitTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner, data: Nothing?) {
-        visitTypeParameterRefsOwner(typeParameterRefsOwner)
-    }
-
-    open fun visitTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner) {
-        visitElement(typeParameterRefsOwner)
-    }
-
-    final override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: Nothing?) {
-        visitTypeParametersOwner(typeParametersOwner)
-    }
-
-    open fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner) {
-        visitElement(typeParametersOwner)
-    }
-
     final override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration, data: Nothing?) {
         visitMemberDeclaration(memberDeclaration)
     }
@@ -185,14 +120,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration) {
         visitElement(callableDeclaration)
-    }
-
-    final override fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: Nothing?) {
-        visitTypeParameterRef(typeParameterRef)
-    }
-
-    open fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef) {
-        visitElement(typeParameterRef)
     }
 
     final override fun visitTypeParameter(typeParameter: FirTypeParameter, data: Nothing?) {
@@ -315,14 +242,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(function)
     }
 
-    final override fun visitContractDescriptionOwner(contractDescriptionOwner: FirContractDescriptionOwner, data: Nothing?) {
-        visitContractDescriptionOwner(contractDescriptionOwner)
-    }
-
-    open fun visitContractDescriptionOwner(contractDescriptionOwner: FirContractDescriptionOwner) {
-        visitElement(contractDescriptionOwner)
-    }
-
     final override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?) {
         visitSimpleFunction(simpleFunction)
     }
@@ -417,14 +336,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression) {
         visitElement(anonymousObjectExpression)
-    }
-
-    final override fun visitDiagnosticHolder(diagnosticHolder: FirDiagnosticHolder, data: Nothing?) {
-        visitDiagnosticHolder(diagnosticHolder)
-    }
-
-    open fun visitDiagnosticHolder(diagnosticHolder: FirDiagnosticHolder) {
-        visitElement(diagnosticHolder)
     }
 
     final override fun visitImport(import: FirImport, data: Nothing?) {
@@ -595,14 +506,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(argumentList)
     }
 
-    final override fun visitCall(call: FirCall, data: Nothing?) {
-        visitCall(call)
-    }
-
-    open fun visitCall(call: FirCall) {
-        visitElement(call)
-    }
-
     final override fun visitAnnotation(annotation: FirAnnotation, data: Nothing?) {
         visitAnnotation(annotation)
     }
@@ -689,14 +592,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitWhenBranch(whenBranch: FirWhenBranch) {
         visitElement(whenBranch)
-    }
-
-    final override fun visitContextReceiverArgumentListOwner(contextReceiverArgumentListOwner: FirContextReceiverArgumentListOwner, data: Nothing?) {
-        visitContextReceiverArgumentListOwner(contextReceiverArgumentListOwner)
-    }
-
-    open fun visitContextReceiverArgumentListOwner(contextReceiverArgumentListOwner: FirContextReceiverArgumentListOwner) {
-        visitElement(contextReceiverArgumentListOwner)
     }
 
     final override fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: Nothing?) {

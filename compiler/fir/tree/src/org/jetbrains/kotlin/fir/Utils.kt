@@ -84,13 +84,18 @@ fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement?): R {
 val FirFile.packageFqName: FqName
     get() = packageDirective.packageFqName
 
+val FirElementInterface.psi: PsiElement? get() = (this as FirElement).psi
 val FirElement.psi: PsiElement? get() = (source as? KtPsiSourceElement)?.psi
+val FirElementInterface.realPsi: PsiElement? get() = (this as FirElement).realPsi
 val FirElement.realPsi: PsiElement? get() = (source as? KtRealPsiSourceElement)?.psi
 
 val FirContextReceiver.labelName: Name? get() = customLabelName ?: labelNameFromTypeRef
 
 fun FirElement.renderWithType(): String =
     FirRenderer().renderElementWithTypeAsString(this)
+
+fun FirElementInterface.render(): String =
+    FirRenderer().renderElementAsString(this as FirElement)
 
 fun FirElement.render(): String =
     FirRenderer().renderElementAsString(this)
@@ -146,6 +151,10 @@ fun FirDeclarationStatus.copy(
         this.isFun = isFun
         this.hasStableParameterNames = hasStableParameterNames
     }
+}
+
+inline fun <R> whileAnalysing(session: FirSession, element: FirElementInterface, block: () -> R): R {
+    return whileAnalysing(session, element as FirElement, block)
 }
 
 inline fun <R> whileAnalysing(session: FirSession, element: FirElement, block: () -> R): R {
