@@ -1,3 +1,7 @@
+// IGNORE_REVERSED_RESOLVE
+// IGNORE_CONTRACT_VIOLATIONS
+// Issue appears bacause of `FirCompileTimeConstantEvaluator` from Analysis API.
+// Problem should be resolved when we will switch to compiler's FIR evaluator.
 // FIR_IDENTICAL
 // FILE: Bar.java
 

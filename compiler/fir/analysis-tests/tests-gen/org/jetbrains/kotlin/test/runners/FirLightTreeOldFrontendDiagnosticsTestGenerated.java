@@ -24376,6 +24376,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("typeOperator.kt")
+        public void testTypeOperator() {
+          runTest("compiler/testData/diagnostics/tests/modifiers/const/typeOperator.kt");
+        }
+
+        @Test
         @TestMetadata("types.kt")
         public void testTypes() {
           runTest("compiler/testData/diagnostics/tests/modifiers/const/types.kt");
