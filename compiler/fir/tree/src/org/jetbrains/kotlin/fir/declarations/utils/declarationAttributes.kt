@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.declarations.utils
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SourceFile
+import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -27,6 +28,7 @@ private object SourceElementKey : FirDeclarationDataKey()
 private object ModuleNameKey : FirDeclarationDataKey()
 private object DanglingTypeConstraintsKey : FirDeclarationDataKey()
 private object KlibSourceFile : FirDeclarationDataKey()
+private object EvaluatedValue : FirDeclarationDataKey()
 
 var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
 var FirProperty.isReferredViaField: Boolean? by FirDeclarationDataRegistry.data(IsReferredViaField)
@@ -55,6 +57,8 @@ val FirPropertySymbol.fromPrimaryConstructor: Boolean
  */
 val FirBasedSymbol<out FirDeclaration>.klibSourceFile: SourceFile?
     get() = fir.klibSourceFile
+
+var FirProperty.evaluatedInitializer: FirEvaluatorResult? by FirDeclarationDataRegistry.data(EvaluatedValue)
 
 /**
  * Constraint without corresponding type argument

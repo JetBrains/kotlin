@@ -20,8 +20,8 @@ fun <T> buildLiteralExpression(
     source: KtSourceElement?,
     kind: ConstantValueKind<T>,
     value: T,
-    annotations: MutableList<FirAnnotation> = mutableListOf(),
-    setType: Boolean
+    annotations: MutableList<FirAnnotation>? = null,
+    setType: Boolean,
 ): FirLiteralExpression<T> {
     return FirLiteralExpressionImpl(source, null, annotations.toMutableOrEmpty(), kind, value).also {
         if (setType) {
