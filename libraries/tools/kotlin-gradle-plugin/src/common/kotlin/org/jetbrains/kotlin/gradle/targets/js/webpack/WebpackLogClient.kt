@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.gradle.internal.TeamCityMessageCommonClient
 
 class WebpackLogClient(
     clientType: LogType,
-    log: Logger
+    log: Logger,
+    private val infrastructureLogged: InfrastructureLogged,
 ) : TeamCityMessageCommonClient(clientType, log) {
     override fun regularText(text: String) {
-        if (WEBPACK_INITIAL_REGEX.matches(text)) {
+        if (WEBPACK_INFRASTRUCTURE_REGEX.matches(text)) {
+            infrastructureLogged.value = true
             printMessage(text, LogType.LIFECYCLE)
         } else {
             super.regularText(text)
@@ -22,7 +24,7 @@ class WebpackLogClient(
     }
 
     override fun printMessage(text: String, type: LogType?) {
-        if (WEBPACK_COMPILED_REGEX.matches(text)) {
+        if (infrastructureLogged.value && WEBPACK_COMPILED_REGEX.matches(text)) {
             super.printMessage(text, LogType.LIFECYCLE)
         } else {
             super.printMessage(text, type)
@@ -31,6 +33,6 @@ class WebpackLogClient(
 
     companion object {
         internal val WEBPACK_COMPILED_REGEX = "webpack (.+) compiled (.+) in .+\\s".toRegex()
-        internal val WEBPACK_INITIAL_REGEX = "<i> \\[.+] .+\\s".toRegex()
+        internal val WEBPACK_INFRASTRUCTURE_REGEX = "<i> \\[.+] .+\\s".toRegex()
     }
 }
