@@ -84,9 +84,7 @@ internal object FirCompileTimeConstantEvaluator {
         return when {
             mode == KtConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION && !isConst -> null
             isVal && hasInitializer -> {
-                // NB: the initializer could be [FirLazyExpression] in [BodyBuildingMode.LAZY_BODIES].
-                this.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE) // to unwrap lazy body
-                evaluate(fir.initializer, mode)
+                evaluate(resolvedInitializer, mode)
             }
             else -> null
         }
@@ -151,7 +149,7 @@ internal object FirCompileTimeConstantEvaluator {
     private fun FirLiteralExpression<*>.adaptToConstKind(): FirLiteralExpression<*> {
         return kind.toLiteralExpression(
             source,
-            kind.convertToNumber(value as? Number) ?: value
+            kind.convertToNumber(value) ?: value
         )
     }
 
@@ -238,7 +236,7 @@ internal object FirCompileTimeConstantEvaluator {
                 return it.toConstantValueKind().toLiteralExpression(source, it)
             }
         }
-        return kind.convertToNumber(value as? Number)?.let { opr ->
+        return kind.convertToNumber(value)?.let { opr ->
             evalUnaryOp(
                 function.name.asString(),
                 kind.toCompileTimeType(),
@@ -280,8 +278,8 @@ internal object FirCompileTimeConstantEvaluator {
                 }
             }
         }
-        return kind.convertToNumber(value as? Number)?.let { opr1 ->
-            other.kind.convertToNumber(other.value as? Number)?.let { opr2 ->
+        return kind.convertToNumber(value)?.let { opr1 ->
+            other.kind.convertToNumber(other.value)?.let { opr2 ->
                 evalBinaryOp(
                     function.name.asString(),
                     kind.toCompileTimeType(),
@@ -347,22 +345,25 @@ internal object FirCompileTimeConstantEvaluator {
             else -> error("Unknown constant value")
         }
 
-    private fun ConstantValueKind<*>.convertToNumber(value: Number?): Any? {
+    private fun ConstantValueKind<*>.convertToNumber(value: Any?): Any? {
         if (value == null) {
             return null
         }
         return when (this) {
-            ConstantValueKind.Byte -> value.toByte()
-            ConstantValueKind.Double -> value.toDouble()
-            ConstantValueKind.Float -> value.toFloat()
-            ConstantValueKind.Int -> value.toInt()
-            ConstantValueKind.Long -> value.toLong()
-            ConstantValueKind.Short -> value.toShort()
-            ConstantValueKind.UnsignedByte -> value.toLong().toUByte()
-            ConstantValueKind.UnsignedShort -> value.toLong().toUShort()
-            ConstantValueKind.UnsignedInt -> value.toLong().toUInt()
-            ConstantValueKind.UnsignedLong -> value.toLong().toULong()
-            ConstantValueKind.UnsignedIntegerLiteral -> value.toLong().toULong()
+            ConstantValueKind.Boolean -> value as Boolean
+            ConstantValueKind.Char -> value as Char
+            ConstantValueKind.String -> value as String
+            ConstantValueKind.Byte -> (value as Number).toByte()
+            ConstantValueKind.Double -> (value as Number).toDouble()
+            ConstantValueKind.Float -> (value as Number).toFloat()
+            ConstantValueKind.Int -> (value as Number).toInt()
+            ConstantValueKind.Long -> (value as Number).toLong()
+            ConstantValueKind.Short -> (value as Number).toShort()
+            ConstantValueKind.UnsignedByte -> (value as Number).toLong().toUByte()
+            ConstantValueKind.UnsignedShort -> (value as Number).toLong().toUShort()
+            ConstantValueKind.UnsignedInt -> (value as Number).toLong().toUInt()
+            ConstantValueKind.UnsignedLong -> (value as Number).toLong().toULong()
+            ConstantValueKind.UnsignedIntegerLiteral -> (value as Number).toLong().toULong()
             else -> null
         }
     }

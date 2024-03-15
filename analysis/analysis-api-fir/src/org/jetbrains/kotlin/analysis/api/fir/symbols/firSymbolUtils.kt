@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -109,15 +110,13 @@ internal fun FirVariableSymbol<*>.getKtConstantInitializer(builder: KtSymbolByFi
     // to avoid lazy resolve
     if (fir.initializer == null) return null
 
-    lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-    var firInitializer = fir.initializer ?: return null
+    var firInitializer = resolvedInitializer ?: return null
     if (firInitializer is FirPropertyAccessExpression) {
         val calleeReference = firInitializer.calleeReference
         if (calleeReference is FirPropertyFromParameterResolvedNamedReference) {
             val valueParameterSymbol = calleeReference.resolvedSymbol as? FirValueParameterSymbol
             if (valueParameterSymbol != null) {
-                valueParameterSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-                firInitializer = valueParameterSymbol.fir.defaultValue ?: firInitializer
+                firInitializer = valueParameterSymbol.resolvedDefaultValue ?: firInitializer
             }
         }
     }

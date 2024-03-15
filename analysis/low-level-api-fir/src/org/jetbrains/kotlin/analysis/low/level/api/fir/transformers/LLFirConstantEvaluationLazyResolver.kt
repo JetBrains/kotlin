@@ -7,7 +7,11 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
+import org.jetbrains.kotlin.fir.declarations.utils.isConst
+import org.jetbrains.kotlin.fir.resolve.transformers.FirExpressionEvaluator
 
 internal object LLFirConstantEvaluationLazyResolver : LLFirLazyResolver(FirResolvePhase.CONSTANT_EVALUATION) {
     override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirConstantEvaluationTargetResolver(target)
@@ -18,8 +22,6 @@ internal object LLFirConstantEvaluationLazyResolver : LLFirLazyResolver(FirResol
 /**
  * This resolver is responsible for [CONSTANT_EVALUATION][FirResolvePhase.CONSTANT_EVALUATION] phase.
  *
- * This resolver doesn't do anything yet (see KT-64151).
- *
  * @see FirResolvePhase.CONSTANT_EVALUATION
  */
 private class LLFirConstantEvaluationTargetResolver(resolveTarget: LLFirResolveTarget) : LLFirTargetResolver(
@@ -27,6 +29,8 @@ private class LLFirConstantEvaluationTargetResolver(resolveTarget: LLFirResolveT
     FirResolvePhase.CONSTANT_EVALUATION,
 ) {
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        // Will be finished later on
+        if (target is FirProperty && target.isConst) {
+            target.evaluatedInitializer = FirExpressionEvaluator.evaluatePropertyInitializer(target, target.moduleData.session)
+        }
     }
 }
