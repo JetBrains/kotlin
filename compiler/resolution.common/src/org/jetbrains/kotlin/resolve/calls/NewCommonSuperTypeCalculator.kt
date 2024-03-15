@@ -400,8 +400,8 @@ object NewCommonSuperTypeCalculator {
         if (parameter.getVariance() == TypeVariance.IN)
             return false // arguments for contravariant parameters are intersected, recursion should not be possible
 
-        val originalTypesSet = originalTypesForCst.toSet()
-        val typeArgumentsTypeSet = typeArgumentsForSuperConstructorParameter.map { it.getType().lowerBoundIfFlexible().originalIfDefinitelyNotNullable() }.toSet()
+        val originalTypesSet = originalTypesForCst.mapTo(mutableSetOf()) { it.lowerBoundIfFlexible().originalIfDefinitelyNotNullable() }
+        val typeArgumentsTypeSet = typeArgumentsForSuperConstructorParameter.mapTo(mutableSetOf()) { it.getType().lowerBoundIfFlexible().originalIfDefinitelyNotNullable() }
 
         if (originalTypesSet.size != typeArgumentsTypeSet.size)
             return false
