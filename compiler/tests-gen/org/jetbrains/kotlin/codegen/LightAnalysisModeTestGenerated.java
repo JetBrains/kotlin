@@ -20369,6 +20369,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
   public static class Initializers extends AbstractLightAnalysisModeTest {
+    @TestMetadata("initializers9.kt")
+    public void ignoreInitializers9() {
+      runTest("compiler/testData/codegen/box/initializers/initializers9.kt");
+    }
+
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }

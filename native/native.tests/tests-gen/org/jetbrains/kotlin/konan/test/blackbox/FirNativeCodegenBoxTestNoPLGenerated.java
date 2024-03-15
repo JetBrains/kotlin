@@ -20225,6 +20225,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
+      @TestMetadata("initializers9.kt")
+      public void testInitializers9() {
+        runTest("compiler/testData/codegen/box/initializers/initializers9.kt");
+      }
+
+      @Test
       @TestMetadata("multipleModules1.kt")
       public void testMultipleModules1() {
         runTest("compiler/testData/codegen/box/initializers/multipleModules1.kt");

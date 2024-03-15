@@ -7236,6 +7236,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("nonConstAnnotationConstructorParam.kt")
+        public void testNonConstAnnotationConstructorParam() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/nonConstAnnotationConstructorParam.kt");
+        }
+
+        @Test
+        @TestMetadata("nonConstValuesInConstContext.kt")
+        public void testNonConstValuesInConstContext() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/nonConstValuesInConstContext.kt");
+        }
+
+        @Test
         @TestMetadata("nonFinalProperty.kt")
         public void testNonFinalProperty() {
           runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/nonFinalProperty.kt");
