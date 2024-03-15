@@ -37,7 +37,7 @@ struct g1_ {};
 
 typedef void* voidptr;
 _Pragma("clang assume_nonnull begin")
-const voidptr g8 = 0x1, g9 = 0x2;
+const voidptr g8 = (voidptr)0x1, g9 = (voidptr)0x2;
 _Pragma("clang assume_nonnull end")
 
 // MODULE: main(cinterop)
