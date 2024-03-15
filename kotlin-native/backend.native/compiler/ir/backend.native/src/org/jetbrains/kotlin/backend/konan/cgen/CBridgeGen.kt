@@ -382,10 +382,7 @@ internal fun KotlinStubs.generateObjCCall(
             receiverOrSuper, symbols.nativePtrType, CTypes.voidPtr).name
     callBuilder.cFunctionBuilder.addParameter(CTypes.voidPtr)
 
-    if (isDirect) {
-        callBuilder.cCallBuilder.arguments += "0"
-        callBuilder.cFunctionBuilder.addParameter(CTypes.voidPtr)
-    } else {
+    if (!isDirect) {
         callBuilder.cCallBuilder.arguments += "@selector($selector)"
         callBuilder.cFunctionBuilder.addParameter(CTypes.voidPtr)
     }
