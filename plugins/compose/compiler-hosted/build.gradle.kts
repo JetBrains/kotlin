@@ -44,15 +44,12 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-val enableComposePublish = findProperty("kotlin.build.compose.publish.enabled") as String? == "true"
-if (enableComposePublish) {
-    publish {
-        pom {
-            name.set("AndroidX Compose Hosted Compiler Plugin")
-            developers {
-                developer {
-                    name.set("The Android Open Source Project")
-                }
+publish {
+    pom {
+        name.set("AndroidX Compose Hosted Compiler Plugin")
+        developers {
+            developer {
+                name.set("The Android Open Source Project")
             }
         }
     }
