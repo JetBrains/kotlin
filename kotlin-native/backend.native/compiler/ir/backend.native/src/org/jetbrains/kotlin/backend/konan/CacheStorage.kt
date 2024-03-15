@@ -32,11 +32,9 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
 
     fun saveAdditionalCacheInfo() {
         outputFiles.prepareTempDirectories()
-        if (!generationState.config.produce.isHeaderCache) {
-            saveKlibContentsHash()
-        }
-        saveInlineFunctionBodies()
+        saveKlibContentsHash()
         saveCacheBitcodeDependencies()
+        saveInlineFunctionBodies()
         saveClassFields()
         saveEagerInitializedProperties()
     }
