@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.builder
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
@@ -29,7 +30,7 @@ abstract class FirScriptConfiguratorExtension(
     fun interface Factory : FirExtension.Factory<FirScriptConfiguratorExtension>
 
     abstract fun FirScriptBuilder.configureContainingFile(fileBuilder: FirFileBuilder)
-    abstract fun FirScriptBuilder.configure(sourceFile: KtSourceFile)
+    abstract fun FirScriptBuilder.configure(sourceFile: KtSourceFile, context: Context<PsiElement>)
 }
 
 val FirExtensionService.scriptConfigurators: List<FirScriptConfiguratorExtension> by FirExtensionService.registeredExtensions()

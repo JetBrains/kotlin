@@ -1,10 +1,10 @@
 @R|foo/Anno|(position = <strcat>(String(local type ), R|foo/constant|))  kotlin/Int
   context -> FirPropertySymbol <local>/i
-  anchor -> [FirPropertySymbol <local>/$$result]
+  anchor -> [FirPropertySymbol foo/$$result]
 
 @R|foo/Anno|(position = <strcat>(String(local type ), R|foo/constant|))  kotlin/Int
   context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/i
-  anchor -> [FirPropertySymbol <local>/$$result]
+  anchor -> [FirPropertySymbol foo/$$result]
 
 FILE: [ResolvedTo(IMPORTS)] resultBodyAnnotation.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)

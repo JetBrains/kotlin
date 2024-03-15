@@ -1331,7 +1331,7 @@ open class PsiRawFirBuilder(
                     setup()
                     if (sourceFile != null) {
                         for (configurator in baseSession.extensionService.scriptConfigurators) {
-                            with(configurator) { configure(sourceFile) }
+                            with(configurator) { configure(sourceFile, context) }
                         }
                     }
                 }

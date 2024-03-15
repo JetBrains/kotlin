@@ -1,2 +1,2 @@
 Resolved to:
-0: (in <local>: <script-ScriptResult.kts>) val `$$result`: kotlin.Int
+0: (in ROOT) val `$$result`: kotlin.Int
