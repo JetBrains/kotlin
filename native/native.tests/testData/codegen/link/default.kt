@@ -6,8 +6,11 @@
 import kotlinx.cinterop.convert
 import platform.posix.*
 
-fun main(args: Array<String>) {
+@OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+fun box(): String {
     // Just check the typealias is in scope.
     val sizet: size_t = 0.convert<size_t>()
-    println("sizet = $sizet")
+    if (sizet.toString() == "0")
+        return "OK"
+    return "FAIL: $sizet"
 }

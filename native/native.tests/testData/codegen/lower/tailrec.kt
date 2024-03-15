@@ -1,23 +1,26 @@
-/*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
- */
+// FREE_COMPILER_ARGS: -XXLanguage:-ProhibitTailrecOnVirtualMember
 
-package lower.tailrec
+import kotlin.test.*
 
+fun box(): String {
+    assertEquals(12, add(5, 7))
+    assertEquals(100000000, add(100000000, 0))
 
-fun main() {
-    println(add(5, 7))
-    println(add(100000000, 0))
+    assertEquals(8, fib(6))
 
-    println(fib(6))
-
-    println(one(5))
+    assertEquals(1, one(5))
 
     countdown(3)
+    assertEquals("""
+        3 ...
+        2 ...
+        1 ...
+        ready!
+    """.trimIndent(), sb.toString())
 
-    println(listOf(1, 2, 3).indexOf(3))
-    println(listOf(1, 2, 3).indexOf(4))
+    assertEquals(2, listOf(1, 2, 3).indexOf(3))
+    assertEquals(-1, listOf(1, 2, 3).indexOf(4))
+    return "OK"
 }
 
 tailrec fun add(x: Int, y: Int): Int = if (x > 0) add(x - 1, y + 1) else y
@@ -34,12 +37,13 @@ fun fib(n: Int): Int {
 
 tailrec fun one(delay: Int, result: Int = delay + 1): Int = if (delay > 0) one(delay - 1) else result
 
+val sb = StringBuilder()
 tailrec fun countdown(iterations: Int): Unit {
     if (iterations > 0) {
-        println("$iterations ...")
+        sb.appendLine("$iterations ...")
         countdown(iterations - 1)
     } else {
-        println("ready!")
+        sb.append("ready!")
     }
 }
 

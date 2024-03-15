@@ -1,8 +1,8 @@
-/*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-
+// Test depends on macOS-specific AppKit
+// DISABLE_NATIVE: isAppleTarget=false
+// DISABLE_NATIVE: targetFamily=IOS
+// DISABLE_NATIVE: targetFamily=TVOS
+// DISABLE_NATIVE: targetFamily=WATCHOS
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.readValue
@@ -11,6 +11,9 @@ import platform.AppKit.NSOpenGLPixelFormat
 import platform.AppKit.NSOpenGLView
 import platform.Foundation.NSRect
 
+val sb = StringBuilder()
+
+@OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 class MyNSOpenGLView(
         frame: kotlinx.cinterop.CValue<NSRect>,
         pixelFormat: platform.AppKit.NSOpenGLPixelFormat?
@@ -24,7 +27,7 @@ class MyNSOpenGLView(
     override fun becomeFirstResponder(): Boolean = true
 
     override fun resetCursorRects() {
-        println("MyNSOpenGLView::resetCursorRects")
+       sb.append("OK")
     }
 
 
@@ -76,10 +79,12 @@ class MyNSOpenGLView(
     }
 }
 
-fun main() {
+@OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+fun box(): String {
     memScoped {
         val frame = alloc<NSRect>()
         val pixelFormat = NSOpenGLPixelFormat()
         val x = MyNSOpenGLView(frame.readValue(), pixelFormat)
     }
+    return sb.toString()
 }

@@ -3,11 +3,13 @@
  * that can be found in the LICENSE file.
  */
 
+import kotlin.test.*
 import kotlinx.cinterop.*
 import platform.iconv.*
 import platform.posix.size_tVar
 
-fun main(args: Array<String>) {
+@OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+fun box(): String {
 
     val sourceByteArray = "Hello!".encodeToByteArray()
 
@@ -35,10 +37,10 @@ fun main(args: Array<String>) {
         iconv(conversion, sourcePtr.ptr, sourceLength.ptr, destPtr.ptr, destLength.ptr)
 
         golden.forEachIndexed { index, it ->
-            println("$it ${destBytes[index]}")
-            it == destBytes[index].toInt()
+            assertEquals(it, destBytes[index].toInt())
         }
 
         iconv_close(conversion)
     }
+    return "OK"
 }

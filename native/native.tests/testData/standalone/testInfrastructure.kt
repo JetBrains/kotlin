@@ -1,8 +1,3 @@
-/*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-
 // FILE: lib.kt
 var z1 = false
 var z2 = false
@@ -41,4 +36,16 @@ fun test2() {
     t2 = true
     assertTrue(z2)
     assertTrue(t1 || !z1)
+}
+
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+fun main() {
+    val exitCode = kotlin.native.internal.test.testLauncherEntryPoint(emptyArray())
+    if (exitCode != 0) {
+        kotlin.system.exitProcess(exitCode)
+    }
+    assertTrue(t1)
+    assertTrue(t2)
+    assertTrue(z1)
+    assertTrue(z2)
 }

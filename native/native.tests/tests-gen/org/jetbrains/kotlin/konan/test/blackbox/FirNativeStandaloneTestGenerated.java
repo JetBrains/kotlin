@@ -53,6 +53,12 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
   }
 
   @Test
+  @TestMetadata("testInfrastructure.kt")
+  public void testTestInfrastructure() {
+    runTest("native/native.tests/testData/standalone/testInfrastructure.kt");
+  }
+
+  @Test
   @TestMetadata("workerSignals.kt")
   public void testWorkerSignals() {
     runTest("native/native.tests/testData/standalone/workerSignals.kt");

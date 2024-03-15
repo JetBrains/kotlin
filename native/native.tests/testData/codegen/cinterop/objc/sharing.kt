@@ -1,4 +1,4 @@
-@file:OptIn(FreezingIsDeprecated::class, ObsoleteWorkersApi::class)
+// DISABLE_NATIVE: isAppleTarget=false
 
 import kotlin.native.concurrent.*
 import kotlin.test.*
@@ -6,7 +6,7 @@ import platform.Foundation.*
 import platform.darwin.NSObject
 
 fun Worker.runInWorker(block: () -> Unit) {
-    this.execute(TransferMode.SAFE, { block.freeze() }) {
+    this.execute(TransferMode.SAFE, { block }) {
         it()
     }.result
 }
@@ -15,18 +15,14 @@ private class NSObjectImpl : NSObject() {
     var x = 111
 }
 
-// Also see counterpart in interop/objc/tests/sharing.kt
-fun main() = withWorker {
+fun box(): String = withWorker {
     val obj = NSObjectImpl()
     val array: NSArray = NSMutableArray().apply {
         addObject(obj)
     }
 
-    assertFalse(obj.isFrozen)
-
-    println("Before")
     runInWorker {
-        array.objectAtIndex(0)
+        array.objectAtIndex(0U)
     }
-    println("After")
+    return "OK"
 }
