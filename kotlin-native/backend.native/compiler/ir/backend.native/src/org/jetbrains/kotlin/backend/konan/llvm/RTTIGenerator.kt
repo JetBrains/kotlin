@@ -283,9 +283,7 @@ internal class RTTIGenerator(
     }
 
     private fun getIndicesOfObjectFields(classDecl: ClassLlvmDeclarations) : List<Int> =
-            classDecl.fieldIndices
-                    .filter { (symbol, index) -> symbol.isBound && symbol.owner.type.binaryTypeIsReference() }
-                    .map { (_,index) -> index }
+            classDecl.objectFieldIndices
                     .sorted()
 
     private fun getObjOffsets(classDecl: ClassLlvmDeclarations): List<ConstInt32> =
