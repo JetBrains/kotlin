@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
+import org.jetbrains.kotlin.builtins.functions.isBuiltin
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPo
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessCallableReference
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessLambdaArgument
+import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -470,7 +472,7 @@ private fun Candidate.prepareExpectedType(
     context: ResolutionContext
 ): ConeKotlinType? {
     if (parameter == null) return null
-    val basicExpectedType = argument.getExpectedType(parameter/*, LanguageVersionSettings*/)
+    val basicExpectedType = argument.getExpectedType(session, parameter/*, LanguageVersionSettings*/)
 
     val expectedType =
         getExpectedTypeWithSAMConversion(session, scopeSession, argument, basicExpectedType, context)?.also {
@@ -656,6 +658,7 @@ private fun FirExpression.namedReferenceWithCandidate(): FirNamedReferenceWithCa
     }
 
 fun FirExpression.getExpectedType(
+    session: FirSession,
     parameter: FirValueParameter/*, languageVersionSettings: LanguageVersionSettings*/
 ): ConeKotlinType {
     val shouldUnwrapVarargType = when (this) {
@@ -663,10 +666,36 @@ fun FirExpression.getExpectedType(
         else -> parameter.isVararg
     }
 
-    return if (shouldUnwrapVarargType) {
+    val expectedType = if (shouldUnwrapVarargType) {
         parameter.returnTypeRef.coneType.varargElementType()
     } else {
         parameter.returnTypeRef.coneType
+    }
+    if (!session.functionTypeService.hasExtensionKinds()) return expectedType
+    return FunctionTypeKindSubstitutor(session).substituteOrSelf(expectedType)
+}
+
+/**
+ * This class creates a type by recursively substituting function types of a given type if the function types have special function
+ * type kinds.
+ */
+private class FunctionTypeKindSubstitutor(private val session: FirSession) : AbstractConeSubstitutor(session.typeContext) {
+    /**
+     * Returns a new type that applies the special function type kind to [type] if [type] has a special function type kind.
+     */
+    override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+        if (type !is ConeClassLikeType) return null
+        val classId = type.classId ?: return null
+        return session.functionTypeService.extractSingleExtensionKindForDeserializedConeType(classId, type.customAnnotations)
+            ?.let { functionTypeKind ->
+                type.createFunctionTypeWithNewKind(session, functionTypeKind) {
+                    // When `substituteType()` returns a non-null value, it does not recursively substitute type arguments,
+                    // which is problematic for a nested function type kind like `@Composable () -> (@Composable -> Unit)`.
+                    // To fix this issue, we manually substitute type arguments here.
+                    this.mapIndexed { index, coneTypeProjection -> substituteArgument(coneTypeProjection, index) ?: coneTypeProjection }
+                        .toTypedArray()
+                }
+            }
     }
 }
 

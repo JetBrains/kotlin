@@ -62,4 +62,22 @@ public class FirIdeNormalAnalysisSourceModuleFirPluginPrototypeMultiModuleCompil
   public void testComposableInlineFunctionExpressionParameter() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/composableInlineFunctionExpressionParameter.kt");
   }
+
+  @Test
+  @TestMetadata("functionParamInBinaryModule.kt")
+  public void testFunctionParamInBinaryModule() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/functionParamInBinaryModule.kt");
+  }
+
+  @Test
+  @TestMetadata("functionParamInBinaryModule2.kt")
+  public void testFunctionParamInBinaryModule2() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/functionParamInBinaryModule2.kt");
+  }
+
+  @Test
+  @TestMetadata("functionParamInBinaryModule3.kt")
+  public void testFunctionParamInBinaryModule3() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/functionParamInBinaryModule3.kt");
+  }
 }

@@ -113,11 +113,16 @@ fun ConeKotlinType.customFunctionTypeToSimpleFunctionType(session: FirSession): 
     return createFunctionTypeWithNewKind(session, newKind)
 }
 
-private fun ConeKotlinType.createFunctionTypeWithNewKind(session: FirSession, kind: FunctionTypeKind): ConeClassLikeType {
+fun ConeKotlinType.createFunctionTypeWithNewKind(
+    session: FirSession,
+    kind: FunctionTypeKind,
+    updateTypeArguments: (Array<out ConeTypeProjection>.() -> Array<out ConeTypeProjection>)? = null,
+): ConeClassLikeType {
     val expandedType = fullyExpandedType(session)
     val functionTypeId = ClassId(kind.packageFqName, kind.numberedClassName(expandedType.typeArguments.size - 1))
+    val typeArguments = expandedType.typeArguments
     return functionTypeId.toLookupTag().constructClassType(
-        expandedType.typeArguments,
+        updateTypeArguments?.let { typeArguments.updateTypeArguments() } ?: typeArguments,
         isNullable = expandedType.isNullable,
         attributes = expandedType.attributes
     )
