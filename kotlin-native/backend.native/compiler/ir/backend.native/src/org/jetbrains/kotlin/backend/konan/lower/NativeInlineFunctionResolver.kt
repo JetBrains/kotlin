@@ -38,8 +38,7 @@ internal class NativeInlineFunctionResolver(override val context: Context, val g
         val packageFragment = function.getPackageFragment()
         val moduleDeserializer = context.irLinker.getCachedDeclarationModuleDeserializer(function)
         val irFile: IrFile
-        val functionIsCached = moduleDeserializer != null && function.body == null
-        val (possiblyLoweredFunction, shouldLower) = if (functionIsCached) {
+        val (possiblyLoweredFunction, shouldLower) = if (moduleDeserializer != null) {
             // The function is cached, get its body from the IR linker.
             val (firstAccess, deserializedInlineFunction) = moduleDeserializer.deserializeInlineFunction(function)
             generationState.inlineFunctionOrigins[function] = deserializedInlineFunction
@@ -58,6 +57,7 @@ internal class NativeInlineFunctionResolver(override val context: Context, val g
         }
 
         if (shouldLower) {
+            val functionIsCached = moduleDeserializer != null
             lower(possiblyLoweredFunction, irFile, functionIsCached)
             if (!functionIsCached) {
                 generationState.inlineFunctionOrigins[function] =
