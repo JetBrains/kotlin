@@ -26,6 +26,7 @@ dependencies {
 }
 
 optInToUnsafeDuringIrConstructionAPI()
+optInToObsoleteDescriptorBasedAPI()
 
 kotlin.jvmToolchain(11)
 
