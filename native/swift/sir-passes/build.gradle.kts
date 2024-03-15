@@ -27,3 +27,11 @@ sourceSets {
 tasks.withType<KotlinJvmCompile> {
     compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
 }
+
+if (kotlinBuildProperties.isSwiftExportPluginPublishingEnabled) {
+    publish()
+}
+
+runtimeJar()
+sourcesJar()
+javadocJar()
