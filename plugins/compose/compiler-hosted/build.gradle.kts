@@ -37,6 +37,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
             "-Xskip-metadata-version-check",
             "-Xjvm-default=all"
         )
+        allWarningsAsErrors = false
     }
 }
 
