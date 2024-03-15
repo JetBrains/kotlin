@@ -44,7 +44,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
                         CompilerOutputKind.BITCODE -> error("Bitcode output kind is obsolete.")
                         CompilerOutputKind.DYNAMIC_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.STATIC_CACHE -> produceBinary(engine, config, environment)
-                        CompilerOutputKind.HEADER_CACHE -> produceBinary(engine, config, environment)
+                        CompilerOutputKind.PRELIMINARY_CACHE -> TODO()
                         CompilerOutputKind.TEST_BUNDLE -> produceBundle(engine, config, environment)
                     }
                 }
