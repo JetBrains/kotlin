@@ -216,6 +216,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
+    @TestMetadata("libiconv.kt")
+    public void testLibiconv() {
+      runTest("native/native.tests/testData/codegen/cinterop/libiconv.kt");
+    }
+
+    @Test
     @TestMetadata("toKString.kt")
     public void testToKString() {
       runTest("native/native.tests/testData/codegen/cinterop/toKString.kt");
@@ -446,9 +452,21 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
       }
 
       @Test
+      @TestMetadata("kt55653.kt")
+      public void testKt55653() {
+        runTest("native/native.tests/testData/codegen/cinterop/objc/kt55653.kt");
+      }
+
+      @Test
       @TestMetadata("overridabilityCondition.kt")
       public void testOverridabilityCondition() {
         runTest("native/native.tests/testData/codegen/cinterop/objc/overridabilityCondition.kt");
+      }
+
+      @Test
+      @TestMetadata("sharing.kt")
+      public void testSharing() {
+        runTest("native/native.tests/testData/codegen/cinterop/objc/sharing.kt");
       }
 
       @Test
@@ -574,6 +592,35 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
       public void testNestedCalls() {
         runTest("native/native.tests/testData/codegen/cinterop/threadStates/nestedCalls.kt");
       }
+    }
+  }
+
+  @Nested
+  @TestMetadata("native/native.tests/testData/codegen/classes")
+  @TestDataPath("$PROJECT_ROOT")
+  @UseExtTestCaseGroupProvider()
+  public class Classes {
+    @Test
+    @TestMetadata("abstract_super.kt")
+    public void testAbstract_super() {
+      runTest("native/native.tests/testData/codegen/classes/abstract_super.kt");
+    }
+
+    @Test
+    public void testAllFilesPresentInClasses() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/classes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+    }
+
+    @Test
+    @TestMetadata("vtable1.kt")
+    public void testVtable1() {
+      runTest("native/native.tests/testData/codegen/classes/vtable1.kt");
+    }
+
+    @Test
+    @TestMetadata("vtable_any.kt")
+    public void testVtable_any() {
+      runTest("native/native.tests/testData/codegen/classes/vtable_any.kt");
     }
   }
 
@@ -1407,6 +1454,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
+    @TestMetadata("default.kt")
+    public void testDefault() {
+      runTest("native/native.tests/testData/codegen/link/default.kt");
+    }
+
+    @Test
     @TestMetadata("klibName.kt")
     public void testKlibName() {
       runTest("native/native.tests/testData/codegen/link/klibName.kt");
@@ -1454,9 +1507,50 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
+    @TestMetadata("empty_string.kt")
+    public void testEmpty_string() {
+      runTest("native/native.tests/testData/codegen/literals/empty_string.kt");
+    }
+
+    @Test
     @TestMetadata("strdedup2.kt")
     public void testStrdedup2() {
       runTest("native/native.tests/testData/codegen/literals/strdedup2.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("native/native.tests/testData/codegen/lower")
+  @TestDataPath("$PROJECT_ROOT")
+  @UseExtTestCaseGroupProvider()
+  public class Lower {
+    @Test
+    public void testAllFilesPresentInLower() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/lower"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+    }
+
+    @Test
+    @TestMetadata("immutable_blob_in_lambda.kt")
+    public void testImmutable_blob_in_lambda() {
+      runTest("native/native.tests/testData/codegen/lower/immutable_blob_in_lambda.kt");
+    }
+
+    @Test
+    @TestMetadata("tailrec.kt")
+    public void testTailrec() {
+      runTest("native/native.tests/testData/codegen/lower/tailrec.kt");
+    }
+
+    @Test
+    @TestMetadata("vararg.kt")
+    public void testVararg() {
+      runTest("native/native.tests/testData/codegen/lower/vararg.kt");
+    }
+
+    @Test
+    @TestMetadata("vararg_of_literals.kt")
+    public void testVararg_of_literals() {
+      runTest("native/native.tests/testData/codegen/lower/vararg_of_literals.kt");
     }
   }
 
@@ -1614,6 +1708,41 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
       public void testCallOnValueOverPrimitiveClass() {
         runTest("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues/callOnValueOverPrimitiveClass.kt");
       }
+    }
+  }
+
+  @Nested
+  @TestMetadata("native/native.tests/testData/codegen/serialization")
+  @TestDataPath("$PROJECT_ROOT")
+  @UseExtTestCaseGroupProvider()
+  public class Serialization {
+    @Test
+    public void testAllFilesPresentInSerialization() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/serialization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+    }
+
+    @Test
+    @TestMetadata("deserialized_fields.kt")
+    public void testDeserialized_fields() {
+      runTest("native/native.tests/testData/codegen/serialization/deserialized_fields.kt");
+    }
+
+    @Test
+    @TestMetadata("deserialized_inline0.kt")
+    public void testDeserialized_inline0() {
+      runTest("native/native.tests/testData/codegen/serialization/deserialized_inline0.kt");
+    }
+
+    @Test
+    @TestMetadata("deserialized_listof0.kt")
+    public void testDeserialized_listof0() {
+      runTest("native/native.tests/testData/codegen/serialization/deserialized_listof0.kt");
+    }
+
+    @Test
+    @TestMetadata("no_type_map.kt")
+    public void testNo_type_map() {
+      runTest("native/native.tests/testData/codegen/serialization/no_type_map.kt");
     }
   }
 

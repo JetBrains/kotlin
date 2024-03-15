@@ -277,50 +277,6 @@ Task dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
     }
 }
 
-// This test checks object layout can't be done in
-// KonanLocalTest paradigm
-//tasks.register("constructor", UnitKonanTest) {
-//    source = "codegen/object/constructor.kt"
-//}
-
-standaloneTest("initializers_testInfrastructure") {
-    source = "codegen/initializers/testInfrastructure.kt"
-    flags = ["-tr"]
-}
-
-tasks.register("sanity_assertions_enabled_for_local_tests", KonanLocalTest) {
-    source = "sanity/assertions_enabled_for_local_tests.kt"
-}
-
-tasks.register("immutable_binary_blob_in_lambda", KonanLocalTest) {
-    source = "lower/immutable_blob_in_lambda.kt"
-    useGoldenData = true
-}
-
-tasks.register("abstract_super", KonanLocalTest) {
-    source = "datagen/rtti/abstract_super.kt"
-}
-
-tasks.register("vtable1", KonanLocalTest) {
-    source = "datagen/rtti/vtable1.kt"
-}
-
-tasks.register("vtable_any", KonanLocalTest) {
-    source = "datagen/rtti/vtable_any.kt"
-    useGoldenData = true
-}
-
-tasks.register("empty_string", KonanLocalTest) {
-    useGoldenData = true
-    source = "datagen/literals/empty_string.kt"
-}
-
-standaloneTest("link_default_libs") {
-    useGoldenData = true
-    source = "link/default/default.kt"
-    UtilsKt.dependsOnPlatformLibs(it)
-}
-
 standaloneTest("check_stacktrace_format_coresymbolication") {
     disabled = !PlatformInfo.supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=coresymbolication']
@@ -380,35 +336,6 @@ standaloneTest("throw_from_except_constr") {
     source = "runtime/exceptions/throw_from_except_constr.kt"
 }
 
-tasks.register("vararg0", KonanLocalTest) {
-    source = "lower/vararg.kt"
-}
-
-tasks.register("vararg_of_literals", KonanLocalTest) {
-    enabled = false
-    useGoldenData = true
-    source = "lower/vararg_of_literals.kt"
-}
-
-standaloneTest('tailrec') {
-    disabled = isAggressiveGC // TODO: Investigate why too slow
-    useGoldenData = true
-    source = "lower/tailrec.kt"
-    flags = ['-XXLanguage:-ProhibitTailrecOnVirtualMember', '-e', 'lower.tailrec.main']
-}
-
-tasks.register("deserialized_inline0", KonanLocalTest) {
-    source = "serialization/deserialized_inline0.kt"
-}
-
-tasks.register("deserialized_listof0", KonanLocalTest) {
-    source = "serialization/deserialized_listof0.kt"
-}
-
-tasks.register("deserialized_fields", KonanLocalTest) {
-    source = "serialization/deserialized_fields.kt"
-}
-
 KotlinNativeTestKt.createTest(project, "kt39548", KonanStandaloneTest) { task ->
     // Test infrastructure doesn't support generated source;
     // workaround by specifying dummy source:
@@ -429,11 +356,6 @@ KotlinNativeTestKt.createTest(project, "kt39548", KonanStandaloneTest) { task ->
             GenTestKT39548Kt.genTestKT39548(ktFile)
         }
     }
-}
-
-standaloneTest("serialized_no_typemap") {
-    source = "serialization/regression/no_type_map.kt"
-    useGoldenData = true
 }
 
 standaloneTest("testing_annotations") {
@@ -698,14 +620,6 @@ if (PlatformInfo.isAppleTarget(project)) {
         useGoldenData = true
         flags = ["-native-library", bcFile.toString()]
     }
-
-    standaloneTest("interop_kt55653") {
-        // Test depends on macOS-specific AppKit
-        enabled = (project.testTarget == 'macos_x64' || project.testTarget == 'macos_arm64' || project.testTarget == null)
-        source = "interop/objc/kt55653/main.kt"
-        useGoldenData = true
-        UtilsKt.dependsOnPlatformLibs(it)
-    }
 }
 
 tasks.register("KT-50983", KonanDriverTest) {
@@ -722,22 +636,6 @@ tasks.register("KT-50983", KonanDriverTest) {
     }
     source = "windows/KT-50983/main.kt"
     flags = ['-linker-option', resFile.toString()]
-}
-
-standaloneTest("interop_libiconv") {
-    enabled = (project.testTarget == null)
-    source = "interop/libiconv.kt"
-    useGoldenData = true
-    UtilsKt.dependsOnPlatformLibs(it)
-}
-
-standaloneTest("interop_objc_illegal_sharing") {
-    disabled = !PlatformInfo.isAppleTarget(project)
-    source = "interop/objc/illegal_sharing.kt"
-    UtilsKt.dependsOnPlatformLibs(it)
-    outputChecker = {
-        it.startsWith("Before") && it.contains("After")
-    }
 }
 
 dynamicTest("produce_dynamic") {
@@ -899,48 +797,6 @@ standaloneTest("split_compilation_pipeline") {
     flags = ["-Xread-dependencies-from=${dir}/split_compilation_pipeline.deps", "-Xcompile-from-bitcode=${dir}/tmp/split/out.bc"]
     useGoldenData = true
 }
-
-/**
- * Builds tests into a single binary with TestRunner
- */
-task buildKonanTests { t ->
-    def compileList = [ "codegen", "datagen", "lower", "runtime", "serialization", "sanity" ]
-
-    // These tests should not be built into the TestRunner's test executable
-    def excludeList = [ "codegen/inline/returnLocalClassFromBlock.kt" ]
-    project.tasks
-            .withType(KonanStandaloneTest.class)
-            .each {
-                // add library and source files
-                if (it.source != null) {
-                    excludeList += it.source
-                }
-            }
-    def sources = UtilsKt.getFilesToCompile(project, compileList, excludeList)
-
-    konanArtifacts {
-        program('localTest', targets: [target.name]) {
-            srcFiles sources
-            baseDir testOutputLocal
-            extraOpts '-ea' // Without this option assertions would remain inactive.
-            extraOpts '-tr'
-            extraOpts '-Xverify-ir=error'
-            extraOpts project.globalTestArgs
-        }
-    }
-
-    // Set build dependencies.
-    dependsOn compileKonanLocalTest
-    def buildTask = UtilsKt.findKonanBuildTask(project, "localTest", target)
-    UtilsKt.dependsOnDist(buildTask)
-
-    // Local tests build into a single binary should depend on this task
-    project.tasks
-            .withType(KonanLocalTest.class)
-            .matching { !(it instanceof KonanStandaloneTest) }
-            .configureEach { it.dependsOn(t) }
-}
-
 
 sourceSets {
     nopPlugin {
