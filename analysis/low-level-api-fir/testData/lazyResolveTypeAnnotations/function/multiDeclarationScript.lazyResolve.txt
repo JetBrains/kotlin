@@ -779,7 +779,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] multiDeclarationScript.kts
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val constant: R|kotlin/String| = String(s)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(s)] val constant: R|kotlin/String| = String(s)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
         public final data [ResolvedTo(BODY_RESOLVE)] class Pair : R|kotlin/Any| {
@@ -851,3 +851,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] multiDeclarationScript.kts
             }
             )
         }
+

@@ -272,7 +272,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeFromIncorrectSetterPropagation.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
     public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: <ERROR TYPE REF: Unresolved name: field> = R|low/incorrectProperty|
         public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: field>

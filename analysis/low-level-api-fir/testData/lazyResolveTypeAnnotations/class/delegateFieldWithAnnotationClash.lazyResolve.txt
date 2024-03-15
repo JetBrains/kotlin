@@ -469,7 +469,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateFieldWithAnnotationClash.kt
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun bar(): R|second/Base| {
     }
-    public final const [ResolvedTo(BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val constant: R|kotlin/Int| = Int(0)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(int = R|second/constant|)  second/Base| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {

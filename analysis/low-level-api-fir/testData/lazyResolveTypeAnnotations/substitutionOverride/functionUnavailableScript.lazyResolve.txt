@@ -348,9 +348,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] functionUnavailableScript.kts
                     super<R|kotlin/Any|>()
                 }
 
-                private final const [ResolvedTo(BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
+                private final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val constant: R|kotlin/String| = String(str)
                     private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/String|
 
             }
 
         }
+

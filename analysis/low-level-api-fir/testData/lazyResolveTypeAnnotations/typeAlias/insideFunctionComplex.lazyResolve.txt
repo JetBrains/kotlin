@@ -222,7 +222,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] insideFunctionComplex.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeAnnWithArg] get(): R|kotlin/String|
 
     }
-    public final const [ResolvedTo(BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val constant: R|kotlin/Int| = Int(0)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public final [ResolvedTo(BODY_RESOLVE)] typealias MyTypeAlias = R|@R|pack/TypeAnnWithArg|(arg = <strcat>(String(type: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested type: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|pack/constant|))  kotlin/Int>>|
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe([ResolvedTo(BODY_RESOLVE)] param: R|@R|pack/TypeAnnWithArg|(arg = <strcat>(String(parameter: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested parameter: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested parameter: ), R|pack/constant|))  pack/MyTypeAlias>>|): R|kotlin/Unit| {

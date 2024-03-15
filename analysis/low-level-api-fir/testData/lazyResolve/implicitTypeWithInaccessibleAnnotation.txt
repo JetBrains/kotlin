@@ -388,7 +388,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeWithInaccessibleAnnotation.kt
             ^expectedType2 Int(4)
         }
 
-        private final const [ResolvedTo(BODY_RESOLVE)] val privateConstVal: R|kotlin/String| = String(privateConstVal)
+        private final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(privateConstVal)] val privateConstVal: R|kotlin/String| = String(privateConstVal)
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelObject] get(): R|kotlin/String|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun expectedType(): R|@R|usage/Anno|(s = this@R|usage/TopLevelObject|.R|usage/TopLevelObject.privateConstVal|)  kotlin/Int| {

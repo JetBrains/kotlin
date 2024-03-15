@@ -497,7 +497,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithExplicitTypeScript.kts
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val prop: R|kotlin/Int| = Int(0)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
         public final [ResolvedTo(BODY_RESOLVE)] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, @R|Anno|(position = <strcat>(String(super type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested super type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|/prop|))  kotlin/Int>>>| {
@@ -521,3 +521,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithExplicitTypeScript.kts
             @PROPERTY_SETTER:R|Anno|[Types](position = <strcat>(String(set ), R|/prop|)) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](position = <strcat>(String(setparam ), R|/prop|)) <set-?>: R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|))  kotlin/Int>>|): R|kotlin/Unit| {
                 ^ D|/propertyToResolve|.R|/Delegate.setValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
             }
+

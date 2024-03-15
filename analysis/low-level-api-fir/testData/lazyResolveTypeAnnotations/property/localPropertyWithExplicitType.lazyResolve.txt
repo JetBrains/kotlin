@@ -224,7 +224,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localPropertyWithExplicitType.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
     public final [ResolvedTo(BODY_RESOLVE)] fun ttt(): R|kotlin/Unit| {
         @R|myPack/Anno|[Types](position = <strcat>(String(property ), R|myPack/prop|)) [ResolvedTo(BODY_RESOLVE)] lvar <@R|myPack/Anno|[Types](position = <strcat>(String(type parameter ), R|myPack/prop|)) [ResolvedTo(BODY_RESOLVE)] T : R|@R|myPack/Anno|(position = <strcat>(String(bound ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested bound ), R|myPack/prop|))  kotlin/String>|> @RECEIVER:R|myPack/Anno|[Types](position = <strcat>(String(receiver ), R|myPack/prop|)) R|@R|myPack/Anno|(position = <strcat>(String(receiver type ), R|myPack/prop|))  kotlin/collections/List<ERROR CLASS: Incomplete code>|.variableToResolve: R|@R|myPack/Anno|(position = <strcat>(String(return type ), R|myPack/prop|))  kotlin/collections/Collection<@R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>>|

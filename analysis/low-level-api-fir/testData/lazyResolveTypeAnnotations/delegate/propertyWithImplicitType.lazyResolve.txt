@@ -422,7 +422,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithImplicitType.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val prop: R|kotlin/Int| = Int(0)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public final [ResolvedTo(BODY_RESOLVE)] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, @R|Anno|(position = <strcat>(String(super type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested super type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|/prop|))  kotlin/Int>>>| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {

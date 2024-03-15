@@ -354,15 +354,15 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithImplicitTypeAndFieldAnnotations.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    @R|myPack/Anno|[Types](number = R|myPack/propertyProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val propertyProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](number = R|myPack/propertyProperty|) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val propertyProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](number = R|myPack/getterProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val getterProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](number = R|myPack/getterProperty|) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val getterProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](number = R|myPack/setterProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val setterProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](number = R|myPack/setterProperty|) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val setterProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](number = R|myPack/setterParameterProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val setterParameterProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](number = R|myPack/setterParameterProperty|) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val setterParameterProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](number = R|myPack/fieldProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val fieldProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](number = R|myPack/fieldProperty|) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val fieldProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     @R|myPack/Anno|[Types](number = R|myPack/propertyProperty|) field:@FIELD:R|myPack/Anno|[Types](number = R|myPack/fieldProperty|) public final [ResolvedTo(BODY_RESOLVE)] [IsReferredViaField=true] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
         @R|myPack/Anno|[Types](number = R|myPack/getterProperty|) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {

@@ -456,6 +456,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] topLevel.kt
         public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int| = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
 
     }
-    public final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
     <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>

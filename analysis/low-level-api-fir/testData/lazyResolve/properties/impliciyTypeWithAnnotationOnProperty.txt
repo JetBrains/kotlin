@@ -266,7 +266,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] impliciyTypeWithAnnotationOnProperty.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    public final const [ResolvedTo(BODY_RESOLVE)] val value: R|kotlin/Int| = Int(0)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val value: R|kotlin/Int| = Int(0)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public final [ResolvedTo(BODY_RESOLVE)] fun typeWithAnnotation(): R|@R|Anno|(number = R|/value|)  kotlin/String| {
         ^typeWithAnnotation String()

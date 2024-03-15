@@ -724,7 +724,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] copyTypeCollisionAndAnnotations.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    public final const [ResolvedTo(BODY_RESOLVE)] val constant: R|kotlin/String| = String()
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String()] val constant: R|kotlin/String| = String()
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
     public final [ResolvedTo(BODY_RESOLVE)] class MyClass<[ResolvedTo(BODY_RESOLVE)] A> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(BODY_RESOLVE)] A>(): R|one/two/MyClass<A>| {
@@ -755,7 +755,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] copyTypeCollisionAndAnnotations.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final const [ResolvedTo(BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val constant: R|kotlin/Int| = Int(0)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
         }

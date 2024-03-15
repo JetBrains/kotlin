@@ -456,7 +456,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] generatedComponentNScript.kts
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val constant: R|kotlin/Int| = Int(0)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
         public final data [ResolvedTo(BODY_RESOLVE)] class MyClass : R|kotlin/Any| {
@@ -472,3 +472,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] generatedComponentNScript.kts
             public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] property: R|@R|properties/Anno|(position = <strcat>(String(parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int>>| = this@R|properties/MyClass|.R|properties/MyClass.property|): R|properties/MyClass|
 
         }
+

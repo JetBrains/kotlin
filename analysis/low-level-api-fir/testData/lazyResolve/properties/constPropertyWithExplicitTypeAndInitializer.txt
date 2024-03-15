@@ -83,7 +83,7 @@ FILE: [ResolvedTo(IMPORTS)] constPropertyWithExplicitTypeAndInitializer.kt
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var simple: R|kotlin/Int| = Int(24)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
-    public final const [ResolvedTo(CONSTANT_EVALUATION)] val withConstInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/simple|)
+    public final const [ResolvedTo(CONSTANT_EVALUATION)] [EvaluatedValue=Int(30)] val withConstInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/simple|)
         public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int|
 
 ANNOTATION_ARGUMENTS:
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] constPropertyWithExplicitTypeAndInitializer.kt
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var simple: R|kotlin/Int| = Int(24)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
-    public final const [ResolvedTo(ANNOTATION_ARGUMENTS)] val withConstInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/simple|)
+    public final const [ResolvedTo(ANNOTATION_ARGUMENTS)] [EvaluatedValue=Int(30)] val withConstInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/simple|)
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
 
 BODY_RESOLVE:
@@ -99,13 +99,13 @@ FILE: [ResolvedTo(IMPORTS)] constPropertyWithExplicitTypeAndInitializer.kt
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var simple: R|kotlin/Int| = Int(24)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
-    public final const [ResolvedTo(BODY_RESOLVE)] val withConstInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/simple|)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(30)] val withConstInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/simple|)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] constPropertyWithExplicitTypeAndInitializer.kt
-    public final const [ResolvedTo(BODY_RESOLVE)] var simple: R|kotlin/Int| = Int(24)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(24)] var simple: R|kotlin/Int| = Int(24)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
         public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
-    public final const [ResolvedTo(BODY_RESOLVE)] val withConstInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/simple|)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(30)] val withConstInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/simple|)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

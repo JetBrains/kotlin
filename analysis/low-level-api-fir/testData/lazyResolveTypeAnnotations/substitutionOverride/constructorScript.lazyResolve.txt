@@ -456,7 +456,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] constructorScript.kts
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val constant: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type param: ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|))  kotlin/String>>>| {
@@ -472,3 +472,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] constructorScript.kts
             }
 
         }
+

@@ -651,7 +651,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructEntry.kts
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val constant: R|kotlin/Int| = Int(0)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
         public final data [ResolvedTo(BODY_RESOLVE)] class MyPair : R|kotlin/Any| {
@@ -681,3 +681,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructEntry.kts
 
 
         public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val right: R|kotlin/Int| = R|<local>/<destruct>|.R|util/MyPair.component2|()
+
+

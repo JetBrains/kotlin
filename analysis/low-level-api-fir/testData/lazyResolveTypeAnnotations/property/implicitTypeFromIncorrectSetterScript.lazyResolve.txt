@@ -346,7 +346,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeFromIncorrectSetterScript.kts
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
         public final [ResolvedTo(BODY_RESOLVE)] var resolveMe: <ERROR TYPE REF: Unresolved name: field>
@@ -356,3 +356,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeFromIncorrectSetterScript.kts
             public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|low/Anno|(position = <strcat>(String(setter parameter type ), R|low/prop|))  kotlin/collections/List<@R|low/Anno|(position = <strcat>(String(setter nested parameter type ), R|low/prop|))  kotlin/collections/Collection<@R|low/Anno|(position = <strcat>(String(setter nested nested parameter type ), R|low/prop|))  kotlin/String>>|): R|kotlin/Unit| {
                 ^ R|<local>/value|
             }
+

@@ -483,7 +483,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] generatedPropertyFromParameter.kt
             @PROPERTY_SETTER:R|Anno|[Types](s = <strcat>(String(set), R|/stringConstant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](s = <strcat>(String(setparam), R|/stringConstant|)) value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
-    public final const [ResolvedTo(BODY_RESOLVE)] val konstant: R|kotlin/Int| = Int(0)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val konstant: R|kotlin/Int| = Int(0)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final const [ResolvedTo(BODY_RESOLVE)] val stringConstant: R|kotlin/String| = <strcat>(String(str ), Int(1))
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str 1)] val stringConstant: R|kotlin/String| = <strcat>(String(str ), Int(1))
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|

@@ -474,7 +474,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithConstantFromNestedClass.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final const [ResolvedTo(BODY_RESOLVE)] val CONSTANT_FROM_COMPANION: R|kotlin/Int| = Int(42)
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val CONSTANT_FROM_COMPANION: R|kotlin/Int| = Int(42)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
             @R|Anno|[Types](number = this@R|/Outer.Companion|.R|/Outer.Companion.CONSTANT_FROM_COMPANION|) public final [ResolvedTo(BODY_RESOLVE)] class Nested : R|kotlin/Any| {

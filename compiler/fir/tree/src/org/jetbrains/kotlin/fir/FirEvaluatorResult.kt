@@ -7,9 +7,13 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.FirEvaluatorResult.CompileTimeException
 import org.jetbrains.kotlin.fir.FirEvaluatorResult.Evaluated
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 
 sealed class FirEvaluatorResult {
-    class Evaluated(val result: FirElement) : FirEvaluatorResult()
+    class Evaluated(val result: FirElement) : FirEvaluatorResult() {
+        override fun toString(): String = result.render()
+    }
+
     data object NotEvaluated : FirEvaluatorResult()
     data object DuringEvaluation : FirEvaluatorResult()
 

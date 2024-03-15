@@ -329,7 +329,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitFunctionUnavailable.kt
                 ^explicitType Null(null)
             }
 
-            public final const [ResolvedTo(BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val constant: R|kotlin/String| = String(str)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/String|
 
         }

@@ -331,5 +331,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] constructorParameterWithImplicitParameterAnnota
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
-    public final const [ResolvedTo(BODY_RESOLVE)] val konstant: R|kotlin/Int| = Int(0)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val konstant: R|kotlin/Int| = Int(0)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

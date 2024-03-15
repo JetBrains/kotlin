@@ -651,7 +651,7 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
             internal final const [ResolvedTo(STATUS)] val IS_MUTABLE_COLLECTION_TYPE: <implicit> = LAZY_EXPRESSION
                 internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
 
-            internal final const [ResolvedTo(CONSTANT_EVALUATION)] val IS_NOTHING_TYPE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(2))
+            internal final const [ResolvedTo(CONSTANT_EVALUATION)] [EvaluatedValue=Int(4)] val IS_NOTHING_TYPE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(2))
                 internal [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
         }
@@ -711,7 +711,7 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
             internal final const [ResolvedTo(STATUS)] val IS_MUTABLE_COLLECTION_TYPE: <implicit> = LAZY_EXPRESSION
                 internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
 
-            internal final const [ResolvedTo(ANNOTATION_ARGUMENTS)] val IS_NOTHING_TYPE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(2))
+            internal final const [ResolvedTo(ANNOTATION_ARGUMENTS)] [EvaluatedValue=Int(4)] val IS_NOTHING_TYPE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(2))
                 internal [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
         }
@@ -771,7 +771,7 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
             internal final const [ResolvedTo(STATUS)] val IS_MUTABLE_COLLECTION_TYPE: <implicit> = LAZY_EXPRESSION
                 internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
 
-            internal final const [ResolvedTo(BODY_RESOLVE)] val IS_NOTHING_TYPE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(2))
+            internal final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(4)] val IS_NOTHING_TYPE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(2))
                 internal [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
         }
@@ -956,13 +956,13 @@ FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
                 super<R|kotlin/Any|>()
             }
 
-            internal final const [ResolvedTo(BODY_RESOLVE)] val IS_MARKED_NULLABLE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(0))
+            internal final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(1)] val IS_MARKED_NULLABLE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(0))
                 internal [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-            internal final const [ResolvedTo(BODY_RESOLVE)] val IS_MUTABLE_COLLECTION_TYPE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(1))
+            internal final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(2)] val IS_MUTABLE_COLLECTION_TYPE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(1))
                 internal [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-            internal final const [ResolvedTo(BODY_RESOLVE)] val IS_NOTHING_TYPE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(2))
+            internal final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(4)] val IS_NOTHING_TYPE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(2))
                 internal [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
         }

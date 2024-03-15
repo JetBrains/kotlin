@@ -443,7 +443,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] resultWithPropagatedTypeUnavailable.kts
                 super<R|kotlin/Any|>()
             }
 
-            private final const [ResolvedTo(BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
+            private final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val constant: R|kotlin/Int| = Int(0)
                 private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Obj] get(): R|kotlin/Int|
 
             public final [ResolvedTo(BODY_RESOLVE)] fun explicitType(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/String>>| {
@@ -454,3 +454,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] resultWithPropagatedTypeUnavailable.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|@R|foo/Anno|(position = <strcat>(String(return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/String>>| = Q|foo/Obj|.R|foo/Obj.explicitType|()
             public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/String>>|
+

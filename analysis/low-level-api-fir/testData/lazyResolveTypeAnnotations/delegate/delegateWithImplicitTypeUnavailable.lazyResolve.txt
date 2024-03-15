@@ -313,7 +313,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithImplicitTypeUnavailable.kt
                 ^explicitType Int(1)
             }
 
-            private final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
+            private final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val prop: R|kotlin/Int| = Int(0)
                 private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
         }

@@ -440,7 +440,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] secondaryConstructorScript.kts
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] class AbstractClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
@@ -456,3 +456,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] secondaryConstructorScript.kts
             }
 
         }
+

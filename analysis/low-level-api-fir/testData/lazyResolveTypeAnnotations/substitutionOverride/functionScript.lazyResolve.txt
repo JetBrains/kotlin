@@ -280,7 +280,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] functionScript.kts
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val constant: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>| {
@@ -298,3 +298,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] functionScript.kts
             @R|second/Anno|[Types](position = <strcat>(String(function ), R|second/constant|)) public abstract [ResolvedTo(BODY_RESOLVE)] fun <@R|second/Anno|[Types](position = <strcat>(String(type param ), R|second/constant|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|second/Anno|(position = <strcat>(String(bound type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested bound type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested bound type ), R|second/constant|))  kotlin/String>>|> @RECEIVER:R|second/Anno|[Types](position = <strcat>(String(receiver ), R|second/constant|)) R|@R|second/Anno|(position = <strcat>(String(receiver type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested receiver type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested receiver type ), R|second/constant|))  T>>|.resolveMe([ResolvedTo(BODY_RESOLVE)] @R|second/Anno|[Types](position = <strcat>(String(param ), R|second/constant|)) param: R|@R|second/Anno|(position = <strcat>(String(param type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested param type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested param type ), R|second/constant|))  T>>|): R|@R|second/Anno|(position = <strcat>(String(return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested return type ), R|second/constant|))  T>>|
 
         }
+

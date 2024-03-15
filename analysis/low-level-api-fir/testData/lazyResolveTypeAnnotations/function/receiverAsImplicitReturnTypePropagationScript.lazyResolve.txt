@@ -342,7 +342,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] receiverAsImplicitReturnTypePropagationScript.k
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun R|kotlin/collections/List<kotlin/collections/Collection<kotlin/String>>|.bar(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
@@ -352,3 +352,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] receiverAsImplicitReturnTypePropagationScript.k
         public final [ResolvedTo(BODY_RESOLVE)] fun R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.foo(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>| {
             ^foo this@R|/foo|
         }
+

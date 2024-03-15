@@ -316,7 +316,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] parameterAsImplicitReturnTypeScript.kts
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] param: R|@R|Anno|(position = <strcat>(String(parameter type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested parameter type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String>>| = @R|Anno|[Types](position = <strcat>(String(defaultValue ), R|/prop|)) [ResolvedTo(RAW_FIR)] fun <anonymous>([ResolvedTo(RAW_FIR)] i: R|@R|Anno|(position = <strcat>(String(anonymousFunction parameter type ), R|/prop|))  kotlin/Int|): R|@R|Anno|(position = <strcat>(String(anonymousFunction return type ), R|/prop|))  kotlin/Int| <inline=Unknown>  {
@@ -324,3 +324,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] parameterAsImplicitReturnTypeScript.kts
         ): R|@R|Anno|(position = <strcat>(String(parameter type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested parameter type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String>>| {
             ^foo R|<local>/param|
         }
+

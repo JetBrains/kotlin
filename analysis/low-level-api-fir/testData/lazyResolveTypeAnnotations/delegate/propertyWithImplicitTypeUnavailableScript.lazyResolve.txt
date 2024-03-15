@@ -636,7 +636,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithImplicitTypeUnavailableScript.kts
                     ^explicitType Int(1)
                 }
 
-                public final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
+                public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val prop: R|kotlin/Int| = Int(0)
                     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
             }
@@ -657,3 +657,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithImplicitTypeUnavailableScript.kts
             public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|@R|Anno|(position = <strcat>(String(explicitType return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>|): R|kotlin/Unit| {
                 ^ D|/propertyToResolve|.R|/Delegate.setValue|(Null(null), ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
             }
+

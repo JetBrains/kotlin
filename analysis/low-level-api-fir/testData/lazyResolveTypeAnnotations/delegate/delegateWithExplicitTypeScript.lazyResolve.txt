@@ -276,7 +276,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithExplicitTypeScript.kts
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val prop: R|kotlin/Int| = Int(0)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
         public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
@@ -294,3 +294,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithExplicitTypeScript.kts
             }
 
         }
+

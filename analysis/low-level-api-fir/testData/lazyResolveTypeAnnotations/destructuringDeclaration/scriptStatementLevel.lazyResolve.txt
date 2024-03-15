@@ -566,7 +566,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevel.kts
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val constant: R|kotlin/String| = String(s)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(s)] val constant: R|kotlin/String| = String(s)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
         public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class Pair : R|kotlin/Any| {
@@ -588,7 +588,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevel.kts
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
         [ResolvedTo(BODY_RESOLVE)] init {
@@ -624,7 +624,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] scriptStatementLevel.kts
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val constant: R|kotlin/String| = String(s)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(s)] val constant: R|kotlin/String| = String(s)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
         public final data [ResolvedTo(BODY_RESOLVE)] class Pair : R|kotlin/Any| {
@@ -646,7 +646,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] scriptStatementLevel.kts
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
         [ResolvedTo(BODY_RESOLVE)] init {
@@ -665,3 +665,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] scriptStatementLevel.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
         }
+

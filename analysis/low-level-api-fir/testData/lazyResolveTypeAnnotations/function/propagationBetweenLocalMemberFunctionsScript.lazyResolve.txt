@@ -400,7 +400,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propagationBetweenLocalMemberFunctionsScript.kt
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
@@ -424,3 +424,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propagationBetweenLocalMemberFunctionsScript.kt
             }
 
         }
+

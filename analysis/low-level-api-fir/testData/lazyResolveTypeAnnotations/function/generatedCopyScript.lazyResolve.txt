@@ -521,7 +521,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] generatedCopyScript.kts
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val constant: R|kotlin/Int| = Int(0)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
         public final data [ResolvedTo(BODY_RESOLVE)] class MyClass : R|kotlin/Any| {
@@ -542,3 +542,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] generatedCopyScript.kts
             public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] property1: R|@R|properties/Anno|(position = <strcat>(String(parameter1 type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested parameter1 type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter1 type: ), R|properties/constant|))  kotlin/Int>>| = this@R|properties/MyClass|.R|properties/MyClass.property1|, [ResolvedTo(BODY_RESOLVE)] property2: R|@R|properties/Anno|(position = <strcat>(String(parameter2 type: ), R|properties/constant|))  kotlin/collections/Collection<@R|properties/Anno|(position = <strcat>(String(nested parameter2 type: ), R|properties/constant|))  kotlin/collections/Collection<@R|properties/Anno|(position = <strcat>(String(nested nested parameter2 type: ), R|properties/constant|))  kotlin/String>>| = this@R|properties/MyClass|.R|properties/MyClass.property2|): R|properties/MyClass|
 
         }
+

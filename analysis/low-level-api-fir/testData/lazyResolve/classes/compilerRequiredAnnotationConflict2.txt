@@ -271,7 +271,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationConflict2.kt
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val FIELD: R|kotlin/String| = String()
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String()] val FIELD: R|kotlin/String| = String()
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Some] get(): R|kotlin/String|
 
     }

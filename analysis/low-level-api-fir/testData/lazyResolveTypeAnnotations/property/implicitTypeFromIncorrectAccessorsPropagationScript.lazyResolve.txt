@@ -456,7 +456,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeFromIncorrectAccessorsPropagationSc
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
         public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate> = R|low/incorrectProperty|
@@ -476,3 +476,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeFromIncorrectAccessorsPropagationSc
 
         public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: value> = <Unresolved name: value>#
             public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: value>
+

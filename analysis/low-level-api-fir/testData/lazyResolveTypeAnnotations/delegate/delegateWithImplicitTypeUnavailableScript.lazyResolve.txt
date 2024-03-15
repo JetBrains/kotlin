@@ -364,7 +364,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithImplicitTypeUnavailableScript.kts
                     super<R|kotlin/Any|>()
                 }
 
-                private final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
+                private final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val prop: R|kotlin/Int| = Int(0)
                     private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
                 private final [ResolvedTo(BODY_RESOLVE)] fun explicitType(): R|@R|Anno|(position = <strcat>(String(explicitType return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int>>| {
@@ -374,3 +374,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithImplicitTypeUnavailableScript.kts
             }
 
         }
+

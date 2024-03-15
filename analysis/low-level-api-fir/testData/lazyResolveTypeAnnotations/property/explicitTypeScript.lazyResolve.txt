@@ -346,7 +346,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] explicitTypeScript.kts
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
         @R|myPack/Anno|[Types](position = <strcat>(String(property ), R|myPack/prop|)) public final [ResolvedTo(BODY_RESOLVE)] var <@R|myPack/Anno|[Types](position = <strcat>(String(type parameter ), R|myPack/prop|)) [ResolvedTo(BODY_RESOLVE)] T : R|@R|myPack/Anno|(position = <strcat>(String(bound ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested bound ), R|myPack/prop|))  kotlin/String>|> @RECEIVER:R|myPack/Anno|[Types](position = <strcat>(String(receiver ), R|myPack/prop|)) R|@R|myPack/Anno|(position = <strcat>(String(receiver type ), R|myPack/prop|))  kotlin/collections/List<ERROR CLASS: Incomplete code>|.variableToResolve: R|@R|myPack/Anno|(position = <strcat>(String(return type ), R|myPack/prop|))  kotlin/collections/Collection<@R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>>|
@@ -356,3 +356,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] explicitTypeScript.kts
             @R|myPack/Anno|[Types](position = <strcat>(String(setter ), R|myPack/prop|)) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](position = <strcat>(String(setter parameter ), R|myPack/prop|)) value: R|@R|myPack/Anno|(position = <strcat>(String(return type ), R|myPack/prop|))  kotlin/collections/Collection<@R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>>|): R|kotlin/Unit| {
                 ^ Q|kotlin/Unit|
             }
+
