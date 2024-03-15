@@ -38749,6 +38749,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("notConsideredGetter.kt")
+      public void testNotConsideredGetter() {
+        runTest("compiler/testData/diagnostics/tests/testWithModifiedMockJdk/notConsideredGetter.kt");
+      }
+
+      @Test
       @TestMetadata("notConsideredMethod.kt")
       public void testNotConsideredMethod() {
         runTest("compiler/testData/diagnostics/tests/testWithModifiedMockJdk/notConsideredMethod.kt");

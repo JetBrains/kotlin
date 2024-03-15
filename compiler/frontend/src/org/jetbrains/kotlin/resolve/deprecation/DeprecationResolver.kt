@@ -46,6 +46,10 @@ class DeprecationResolver(
         return when {
             deprecations.isNotEmpty() -> DeprecationInfo(deprecations, hasInheritedDeprecations = false)
             descriptor is PropertyAccessorDescriptor && descriptor.correspondingProperty is SyntheticPropertyDescriptor -> {
+                // This branch is necessary only for Java getters with JDKMemberStatus.NOT_CONSIDERED status
+                // Currently (Mar 2024, JDK 21) we don't know such methods, but they may appear in future
+                // See jawl.somethingNonExisting line (must have deprecation)
+                // in the test compiler/testData/diagnostics/tests/testWithModifiedMockJdk/notConsideredGetter.kt
                 val syntheticProperty = descriptor.correspondingProperty as SyntheticPropertyDescriptor
                 val originalMethod =
                     if (descriptor is PropertyGetterDescriptor) syntheticProperty.getMethod else syntheticProperty.setMethod
