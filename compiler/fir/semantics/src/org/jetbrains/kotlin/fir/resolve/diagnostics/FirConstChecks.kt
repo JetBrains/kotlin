@@ -100,7 +100,15 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
     }
 
     override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?): ConstantArgumentKind {
-        return if (typeOperatorCall.operation == FirOperation.AS) ConstantArgumentKind.NOT_CONST else ConstantArgumentKind.VALID_CONST
+        if (typeOperatorCall.operation != FirOperation.AS) {
+            return ConstantArgumentKind.NOT_CONST
+        }
+
+        if (!typeOperatorCall.argument.resolvedType.isSubtypeOf(typeOperatorCall.resolvedType, session)) {
+            return ConstantArgumentKind.NOT_CONST
+        }
+
+        return ConstantArgumentKind.VALID_CONST
     }
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Nothing?): ConstantArgumentKind {
@@ -136,7 +144,12 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
 
     override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: Nothing?): ConstantArgumentKind {
         for (exp in stringConcatenationCall.arguments) {
-            if (exp is FirResolvedQualifier || exp is FirGetClassCall) {
+            if (exp is FirLiteralExpression<*> && exp.value == null) {
+                // `null` is allowed
+                continue
+            }
+
+            if (!exp.hasAllowedCompileTimeType()) {
                 return ConstantArgumentKind.NOT_CONST
             }
             exp.accept(this, data).ifNotValidConst { return it }
@@ -154,7 +167,7 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
                 return ConstantArgumentKind.NOT_CONST
             }
 
-            if (exp is FirResolvedQualifier || exp is FirGetClassCall || exp.getExpandedType().isUnsignedType) {
+            if (!exp.hasAllowedCompileTimeType() || exp.getExpandedType().isUnsignedType) {
                 return ConstantArgumentKind.NOT_CONST
             }
 
@@ -165,6 +178,10 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
     }
 
     override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: Nothing?): ConstantArgumentKind {
+        if (!binaryLogicExpression.leftOperand.resolvedType.isBoolean || !binaryLogicExpression.rightOperand.resolvedType.isBoolean) {
+            return ConstantArgumentKind.NOT_CONST
+        }
+
         binaryLogicExpression.leftOperand.accept(this, data).ifNotValidConst { return it }
         binaryLogicExpression.rightOperand.accept(this, data).ifNotValidConst { return it }
         return ConstantArgumentKind.VALID_CONST
@@ -184,6 +201,15 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
             getClassCall.argument !is FirResolvedQualifier -> ConstantArgumentKind.NOT_KCLASS_LITERAL
             else -> ConstantArgumentKind.VALID_CONST
         }
+    }
+
+    override fun visitVarargArgumentsExpression(
+        varargArgumentsExpression: FirVarargArgumentsExpression, data: Nothing?
+    ): ConstantArgumentKind {
+        for (exp in varargArgumentsExpression.arguments) {
+            exp.accept(this, data).ifNotValidConst { return it }
+        }
+        return ConstantArgumentKind.VALID_CONST
     }
 
     override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: Nothing?): ConstantArgumentKind {
@@ -275,11 +301,7 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
 
         for (exp in functionCall.arguments.plus(functionCall.dispatchReceiver).plus(functionCall.extensionReceiver)) {
             if (exp == null) continue
-            val expClassId = exp.getExpandedType().lowerBoundIfFlexible().fullyExpandedType(session).classId
-            // TODO, KT-59823: add annotation for allowed constant types
-            if (expClassId !in StandardClassIds.constantAllowedTypes) {
-                return ConstantArgumentKind.NOT_CONST
-            }
+            if (!exp.hasAllowedCompileTimeType()) return ConstantArgumentKind.NOT_CONST
 
             exp.accept(this, null).ifNotValidConst { return it }
         }
@@ -323,6 +345,12 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
     // --- Utils ---
     private fun FirBasedSymbol<*>.canBeEvaluated(): Boolean {
         return intrinsicConstEvaluation && this.hasAnnotation(StandardClassIds.Annotations.IntrinsicConstEvaluation, session)
+    }
+
+    private fun FirExpression.hasAllowedCompileTimeType(): Boolean {
+        val expClassId = getExpandedType().lowerBoundIfFlexible().fullyExpandedType(session).classId
+        // TODO, KT-59823: add annotation for allowed constant types
+        return expClassId in StandardClassIds.constantAllowedTypes
     }
 
     private fun FirExpression.getExpandedType() = resolvedType.fullyExpandedType(session)

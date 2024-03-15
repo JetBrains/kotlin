@@ -24214,6 +24214,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("compareArrayLiteralInAnnotation.kt")
+        public void testCompareArrayLiteralInAnnotation() {
+          runTest("compiler/testData/diagnostics/tests/modifiers/const/compareArrayLiteralInAnnotation.kt");
+        }
+
+        @Test
+        @TestMetadata("compareEnums.kt")
+        public void testCompareEnums() {
+          runTest("compiler/testData/diagnostics/tests/modifiers/const/compareEnums.kt");
+        }
+
+        @Test
         @TestMetadata("complexBooleanInStringConcat_after.kt")
         public void testComplexBooleanInStringConcat_after() {
           runTest("compiler/testData/diagnostics/tests/modifiers/const/complexBooleanInStringConcat_after.kt");
@@ -24373,6 +24385,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         @TestMetadata("unsigned.kt")
         public void testUnsigned() {
           runTest("compiler/testData/diagnostics/tests/modifiers/const/unsigned.kt");
+        }
+
+        @Test
+        @TestMetadata("wrongTypeInStringConcatenation.kt")
+        public void testWrongTypeInStringConcatenation() {
+          runTest("compiler/testData/diagnostics/tests/modifiers/const/wrongTypeInStringConcatenation.kt");
         }
       }
 
