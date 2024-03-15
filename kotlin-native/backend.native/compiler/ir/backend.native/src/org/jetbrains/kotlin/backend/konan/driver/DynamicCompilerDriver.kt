@@ -118,7 +118,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             val headerKlibPath = config.headerKlibPath
             if (!headerKlibPath.isNullOrEmpty()) {
                 val headerKlib = engine.runFir2IrSerializer(FirSerializerInput(fir2IrOutput, produceHeaderKlib = true))
-                engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
+                engine.writeKlib(headerKlib, headerKlibPath)
                 // Don't overwrite the header klib with the full klib and stop compilation here.
                 // By providing the same path for both regular output and header klib we can skip emitting the full klib.
                 if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null
@@ -144,7 +144,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         val headerKlibPath = config.headerKlibPath
         if (!headerKlibPath.isNullOrEmpty()) {
             val headerKlib = engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput, produceHeaderKlib = true)
-            engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
+            engine.writeKlib(headerKlib, headerKlibPath)
             // Don't overwrite the header klib with the full klib and stop compilation here.
             // By providing the same path for both regular output and header klib we can skip emitting the full klib.
             if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null

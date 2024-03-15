@@ -12,17 +12,14 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_HEADER
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
-import java.util.*
 
 internal data class KlibWriterInput(
         val serializerOutput: SerializerOutput,
-        val customOutputPath: String?,
-        val produceHeaderKlib: Boolean
+        val customOutputPath: String?
 )
 internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibWriterInput>(
         "WriteKlib", "Write klib output",
@@ -46,11 +43,7 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
             metadataVersion = metadataVersion,
     )
     val target = config.target
-    val manifestProperties = config.manifestProperties ?: Properties()
-
-    if (input.produceHeaderKlib) {
-        manifestProperties.setProperty(KLIB_PROPERTY_HEADER, "true")
-    }
+    val manifestProperties = config.manifestProperties
 
     if (!nopack) {
         val suffix = outputFiles.produce.suffix(target)
@@ -87,7 +80,6 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
 internal fun <T : PhaseContext> PhaseEngine<T>.writeKlib(
         serializationOutput: SerializerOutput,
         customOutputPath: String? = null,
-        produceHeaderKlib: Boolean = false,
 ) {
-    this.runPhase(WriteKlibPhase, KlibWriterInput(serializationOutput, customOutputPath, produceHeaderKlib))
+    this.runPhase(WriteKlibPhase, KlibWriterInput(serializationOutput, customOutputPath))
 }
