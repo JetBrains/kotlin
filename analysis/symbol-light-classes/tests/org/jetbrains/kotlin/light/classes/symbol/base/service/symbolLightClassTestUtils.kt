@@ -7,22 +7,10 @@ package org.jetbrains.kotlin.light.classes.symbol.base.service
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.SyntaxTraverser
-import org.jetbrains.kotlin.asJava.PsiClassRenderer
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
-import java.nio.file.Path
-
-internal inline fun <R> withExtendedTypeRenderer(testDataFile: Path, action: () -> R): R {
-    val extendedTypeRendererOld = PsiClassRenderer.extendedTypeRenderer.get()
-    return try {
-        PsiClassRenderer.extendedTypeRenderer.set(testDataFile.toString().endsWith("typeAnnotations.kt"))
-        action()
-    } finally {
-        PsiClassRenderer.extendedTypeRenderer.set(extendedTypeRendererOld)
-    }
-}
 
 internal fun getLightClassesFromFile(ktFile: KtFile): List<PsiClass> {
     val ktClasses = SyntaxTraverser.psiTraverser(ktFile).filter(KtClassOrObject::class.java).toList()

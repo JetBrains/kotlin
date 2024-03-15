@@ -24,7 +24,7 @@ public final class JvmWildcardAnnotationsKt /* JvmWildcardAnnotationsKt*/ {
 
   @kotlin.jvm.JvmSuppressWildcards(suppress = true)
   @org.jetbrains.annotations.NotNull()
-  public static final Out<T> foo2();//  foo2()
+  public static final Out<error.NonExistentClass> foo2();//  foo2()
 
   @kotlin.jvm.JvmSuppressWildcards(suppress = true)
   public static final int bar(boolean, @org.jetbrains.annotations.NotNull() In<java.lang.Long>, long);//  bar(boolean, In<java.lang.Long>, long)

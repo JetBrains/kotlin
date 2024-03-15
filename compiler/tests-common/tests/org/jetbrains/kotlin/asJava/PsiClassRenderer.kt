@@ -38,8 +38,6 @@ class PsiClassRenderer private constructor(
     }
 
     companion object {
-        var extendedTypeRenderer: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
-
         fun renderClass(
             psiClass: PsiClass,
             renderInner: Boolean = false,
@@ -84,8 +82,9 @@ class PsiClassRenderer private constructor(
     }
 
     private fun PsiType.renderType() = StringBuffer().also { renderType(it) }.toString()
+
     private fun PsiType.renderType(sb: StringBuffer) {
-        if (extendedTypeRenderer.get() && annotations.isNotEmpty()) {
+        if (annotations.isNotEmpty()) {
             sb.append(annotations.joinToString(" ", postfix = " ") { it.renderAnnotation() })
         }
         when (this) {
@@ -108,8 +107,24 @@ class PsiClassRenderer private constructor(
                 componentType.renderType(sb)
                 sb.append("[]")
             }
+            is PsiWildcardType -> {
+                if (!isBounded) {
+                    sb.append("?")
+                } else {
+                    if (isSuper) {
+                        sb.append(PsiWildcardType.SUPER_PREFIX)
+                    } else {
+                        sb.append(PsiWildcardType.EXTENDS_PREFIX)
+                    }
+
+                    bound?.renderType(sb)
+                }
+            }
+            is PsiPrimitiveType -> {
+                sb.append(name)
+            }
             else -> {
-                sb.append(canonicalText)
+                sb.append(getCanonicalText(/* annotated = */ true))
             }
         }
     }
