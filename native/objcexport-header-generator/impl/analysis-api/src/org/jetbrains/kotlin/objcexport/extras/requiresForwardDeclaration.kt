@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.objcexport.extras
 
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCNonNullReferenceType
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCNullableReferenceType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCReferenceType
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
@@ -16,7 +18,12 @@ private val requiresForwardDeclarationKey = extrasKeyOf<Boolean>("isForwardDecla
  * - Default value: `false`.
  * - Example: All types used in function and method signature are expected to render forward declarations
  */
-internal val ObjCReferenceType.requiresForwardDeclaration: Boolean get() = extras[requiresForwardDeclarationKey] ?: false
+internal val ObjCReferenceType.requiresForwardDeclaration: Boolean
+    get() =
+        when (this) {
+            is ObjCNonNullReferenceType -> extras[requiresForwardDeclarationKey] ?: false
+            is ObjCNullableReferenceType -> extras[requiresForwardDeclarationKey] ?: nonNullType.requiresForwardDeclaration
+        }
 
 /**
  * ⚠️ Marks [this] [ObjCReferenceType] as 'requires forward declaration' and returns the same instance.

@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.backend.konan.cgen
 
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -19,7 +24,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
@@ -123,7 +127,7 @@ private fun createKotlinBridge(
             DescriptorVisibilities.PRIVATE,
             isInline = false,
             isExpect = false,
-            IrUninitializedType,
+            null,
             Modality.FINAL,
             IrSimpleFunctionSymbolImpl(),
             isTailrec = false,

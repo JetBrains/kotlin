@@ -13,11 +13,11 @@ import java.nio.file.Path
 class CompiledLibraryProvider(private val testServices: TestServices) : TestService {
     private val libraries = mutableMapOf<String, CompiledLibrary>()
 
-    fun compileToLibrary(module: TestModule): CompiledLibrary {
+    fun compileToLibrary(module: TestModule, dependencyBinaryRoots: Collection<Path>): CompiledLibrary {
         if (module.name in libraries) {
             error("Library for module ${module.name} is already compiled")
         }
-        val libraryJar = testServices.testModuleCompiler.compileTestModuleToLibrary(module, testServices)
+        val libraryJar = testServices.testModuleCompiler.compileTestModuleToLibrary(module, dependencyBinaryRoots, testServices)
         val librarySourcesJar = testServices.testModuleCompiler.compileTestModuleToLibrarySources(module, testServices)
 
         return CompiledLibrary(libraryJar, librarySourcesJar).also { libraries[module.name] = it }

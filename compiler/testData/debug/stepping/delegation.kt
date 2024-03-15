@@ -42,6 +42,5 @@ fun box() {
 // test.kt:17 $box (12, 12)
 // test.kt:14 $C.<init> (15, 16)
 // test.kt:18 $box (4, 6)
-// test.kt:1 $C.f
 // test.kt:11 $O.f
 // test.kt:19 $box

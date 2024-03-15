@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarg
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
@@ -67,7 +66,6 @@ internal object LLFirResolveDesignationCollector {
      */
     private fun FirElementWithResolveState.shouldBeResolved() = when (this) {
         is FirDeclaration -> shouldBeResolved()
-        is FirFileAnnotationsContainer -> annotations.isNotEmpty()
         else -> throwUnexpectedFirElementError(this)
     }
 

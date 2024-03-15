@@ -3,12 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// a package is omitted to get declarations directly under the module
 package kotlin.wasm.internal
 
 import kotlin.reflect.*
-import kotlin.reflect.wasm.internal.*
 
+internal expect fun <T : Any> getKClassForObject(obj: Any): KClass<T>
+
+//TODO(Replace getKClass to intrinsic argument-less implementation after bootstrap KT-65322")
+//@ExcludedFromCodegen
+//internal fun <T : Any> getKClass(): KClass<T> =
+//    implementedAsIntrinsic
 internal fun <T : Any> getKClass(typeInfoData: TypeInfoData): KClass<T> =
     KClassImpl(typeInfoData)
 
@@ -34,12 +38,12 @@ internal fun <T : Any> getKClassFromExpression(e: T): KClass<T> =
         is DoubleArray -> PrimitiveClasses.doubleArrayClass
         is KClass<*> -> KClass::class
         is Array<*> -> PrimitiveClasses.arrayClass
-        else -> getKClass(getTypeInfoTypeDataByPtr(e.typeInfo))
+        else -> getKClassForObject(e)
     } as KClass<T>
 
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
 internal inline fun <reified T : Any> wasmGetKClass(): KClass<T> =
-    KClassImpl(wasmGetTypeInfoData<T>())
+    KClassImpl(getTypeInfoTypeDataByPtr(wasmTypeId<T>()))
 
 internal fun createKType(classifier: KClassifier, arguments: Array<KTypeProjection>, isMarkedNullable: Boolean): KType =
     KTypeImpl(classifier, arguments.asList(), isMarkedNullable)

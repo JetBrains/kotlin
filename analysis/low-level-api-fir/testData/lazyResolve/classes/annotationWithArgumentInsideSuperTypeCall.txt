@@ -168,6 +168,23 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClass : R|@R|Anno|(LAZY_EXPRESSION)  Foo| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
     public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

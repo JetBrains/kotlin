@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.calls.FirFakeArgumentForCallableReference
 import org.jetbrains.kotlin.fir.resolve.calls.ResolvedCallArgument
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -548,7 +549,7 @@ internal class AdapterGenerator(
     }
 
     internal fun getFunctionTypeForPossibleSamType(parameterType: ConeKotlinType): ConeKotlinType? {
-        return samResolver.getFunctionTypeForPossibleSamType(parameterType)
+        return samResolver.getSamInfoForPossibleSamType(parameterType)?.functionalType
     }
 
     /**
@@ -603,7 +604,7 @@ internal class AdapterGenerator(
         expectedFunctionalType: ConeClassLikeType,
         argument: FirExpression
     ): IrSimpleFunctionSymbol? {
-        val argumentType = ((argument as? FirSamConversionExpression)?.expression ?: argument).resolvedType
+        val argumentType = ((argument as? FirSamConversionExpression)?.expression ?: argument).resolvedType.fullyExpandedType(session)
         val argumentTypeWithInvoke = argumentType.findSubtypeOfBasicFunctionType(session, expectedFunctionalType) ?: return null
 
         return if (argumentTypeWithInvoke.isSomeFunctionType(session)) {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import java.io.File
 
 abstract class AbstractIncrementalK1JvmCompilerRunnerTest : AbstractIncrementalJvmCompilerRunnerTest() {
@@ -17,4 +18,6 @@ abstract class AbstractIncrementalK1JvmCompilerRunnerTest : AbstractIncrementalJ
             }
         }
 
+    override val buildLogFinder: BuildLogFinder
+        get() = super.buildLogFinder.copy(isFirEnabled = false)
 }

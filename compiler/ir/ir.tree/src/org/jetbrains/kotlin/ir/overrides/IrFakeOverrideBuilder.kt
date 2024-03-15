@@ -67,7 +67,7 @@ class IrFakeOverrideBuilder(
             val (staticMembers, instanceMembers) =
                 clazz.declarations.filterIsInstance<IrOverridableMember>().partition { it.isStaticMember }
 
-            buildFakeOverridesForClassImpl(clazz, instanceMembers, oldSignatures, clazz.superTypes) { !it.isStaticMember }
+            buildFakeOverridesForClassImpl(clazz, instanceMembers, oldSignatures, clazz.superTypes, isStaticMembers = false)
 
             // Static Java members from the superclass need fake overrides in the subclass, to support the case when the static member is
             // declared in an inaccessible grandparent class but is exposed as public in the parent. For example:
@@ -80,7 +80,7 @@ class IrFakeOverrideBuilder(
             // we need to generate a fake override in class B. This is only possible in case of superclasses, as static _interface_ members
             // are not inherited (see JLS 8.4.8 and 9.4.1).
             val superClass = clazz.superTypes.filter { it.classOrFail.owner.isClass }
-            buildFakeOverridesForClassImpl(clazz, staticMembers, oldSignatures, superClass) { it.isStaticMember }
+            buildFakeOverridesForClassImpl(clazz, staticMembers, oldSignatures, superClass, isStaticMembers = true)
         }
     }
 
@@ -89,11 +89,11 @@ class IrFakeOverrideBuilder(
         allFromCurrent: List<IrOverridableMember>,
         oldSignatures: Boolean,
         supertypes: List<IrType>,
-        declarationFilter: (IrOverridableMember) -> Boolean,
+        isStaticMembers: Boolean,
     ) {
         val allFromSuper = supertypes.flatMap { superType ->
             superType.classOrFail.owner.declarations
-                .filterIsInstanceAnd<IrOverridableMember>(declarationFilter)
+                .filterIsInstanceAnd<IrOverridableMember> { it.isStaticMember == isStaticMembers }
                 .mapNotNull {
                     val fakeOverride = strategy.fakeOverrideMember(superType, it, clazz) ?: return@mapNotNull null
                     FakeOverride(fakeOverride, it)
@@ -105,10 +105,7 @@ class IrFakeOverrideBuilder(
 
         allFromSuperByName.forEach { (name, superMembers) ->
             generateOverridesInFunctionGroup(
-                superMembers,
-                allFromCurrentByName[name] ?: emptyList(),
-                clazz,
-                oldSignatures
+                superMembers, allFromCurrentByName[name] ?: emptyList(), clazz, oldSignatures, isStaticMembers
             )
         }
 
@@ -164,7 +161,8 @@ class IrFakeOverrideBuilder(
         membersFromSupertypes: List<FakeOverride>,
         membersFromCurrent: List<IrOverridableMember>,
         current: IrClass,
-        compatibilityMode: Boolean
+        compatibilityMode: Boolean,
+        isStaticMembers: Boolean,
     ) {
         val notOverridden = membersFromSupertypes.toMutableSet()
 
@@ -174,7 +172,13 @@ class IrFakeOverrideBuilder(
         }
 
         val addedFakeOverrides = mutableListOf<IrOverridableMember>()
-        createAndBindFakeOverrides(current, notOverridden, addedFakeOverrides, compatibilityMode)
+        if (isStaticMembers) {
+            for (member in notOverridden) {
+                createAndBindFakeOverride(listOf(member), current, addedFakeOverrides, compatibilityMode)
+            }
+        } else {
+            createAndBindFakeOverrides(current, notOverridden, addedFakeOverrides, compatibilityMode)
+        }
         current.declarations.addAll(addedFakeOverrides)
     }
 
@@ -370,64 +374,25 @@ class IrFakeOverrideBuilder(
         return AbstractTypeChecker.isSubtypeOf(typeCheckerState, a.returnType, b.returnType)
     }
 
-    private fun isMoreSpecific(
-        a: IrOverridableMember,
-        b: IrOverridableMember
-    ): Boolean {
-        return a > b
+    private fun isMoreSpecific(a: IrOverridableMember, b: IrOverridableMember): Boolean {
+        if (!isVisibilityMoreSpecific(a, b)) return false
+
+        if (a is IrProperty) {
+            check(b is IrProperty) { "b is not a property: $b" }
+            if (!isAccessorMoreSpecific(a.setter, b.setter)) return false
+            if (!a.isVar && b.isVar) return false
+        }
+
+        return isReturnTypeIsSubtypeOfOtherReturnType(a, b)
     }
 
-    // Based on compareTo from FirOverrideService.kt
-    private operator fun IrOverridableMember.compareTo(other: IrOverridableMember): Int {
-        fun merge(preferA: Boolean, preferB: Boolean, previous: Int): Int = when {
-            preferA == preferB -> previous
-            preferA && previous >= 0 -> 1
-            preferB && previous <= 0 -> -1
-            else -> 0
-        }
-
-        val aIr = this@compareTo
-        val bIr = other
-        val byVisibility = DescriptorVisibilities.compare(aIr.visibility, bIr.visibility) ?: 0
-        val aReturnType = aIr.returnType
-        val bReturnType = bIr.returnType
-
-        val aSubtypesB = isReturnTypeIsSubtypeOfOtherReturnType(aIr, bIr)
-        val bSubtypesA = isReturnTypeIsSubtypeOfOtherReturnType(bIr, aIr)
-
-        val byVisibilityAndType = when {
-            // Could be that one of them is flexible, in which case the types are not equal but still subtypes of one another;
-            // make the inflexible one more specific.
-            aSubtypesB && bSubtypesA -> merge(!aReturnType.isFlexible(), !bReturnType.isFlexible(), byVisibility)
-            aSubtypesB && byVisibility >= 0 -> 1
-            bSubtypesA && byVisibility <= 0 -> -1
-            else -> 0
-        }
-
-        return when (aIr) {
-            is IrSimpleFunction -> byVisibilityAndType
-            is IrProperty -> {
-                require(bIr is IrProperty)
-                val settersComparison = if (aIr.isVar && bIr.isVar) {
-                    val aSetter = aIr.setter
-                    val bSetter = bIr.setter
-                    when {
-                        aSetter != null && bSetter != null -> aSetter.compareTo(bSetter)
-                        else -> 0
-                    }
-                } else {
-                    0
-                }
-                val bySetters = merge(
-                    preferA = settersComparison >= 0,
-                    preferB = settersComparison <= 0,
-                    byVisibilityAndType
-                )
-                merge(aIr.isVar, bIr.isVar, bySetters)
-            }
-            else -> error("Unexpected type: $aIr")
-        }
+    private fun isVisibilityMoreSpecific(a: IrOverridableMember, b: IrOverridableMember): Boolean {
+        val result = DescriptorVisibilities.compare(a.visibility, b.visibility)
+        return result == null || result >= 0
     }
+
+    private fun isAccessorMoreSpecific(a: IrSimpleFunction?, b: IrSimpleFunction?): Boolean =
+        a == null || b == null || isVisibilityMoreSpecific(a, b)
 
     private fun IrType.isFlexible(): Boolean {
         return with(typeSystem) { isFlexible() }
@@ -454,20 +419,12 @@ class IrFakeOverrideBuilder(
         }
         val candidates = mutableListOf<FakeOverride>()
         var transitivelyMostSpecific = overridables.first()
-        val transitivelyMostSpecificMember = transitivelyMostSpecific
         for (overridable in overridables) {
-            if (isMoreSpecificThenAllOf(overridable, overridables)
-            ) {
+            if (isMoreSpecificThenAllOf(overridable, overridables)) {
                 candidates.add(overridable)
             }
-            if (isMoreSpecific(
-                    overridable.override,
-                    transitivelyMostSpecificMember.override
-                )
-                && !isMoreSpecific(
-                    transitivelyMostSpecificMember.override,
-                    overridable.override
-                )
+            if (isMoreSpecific(overridable.override, transitivelyMostSpecific.override)
+                && !isMoreSpecific(transitivelyMostSpecific.override, overridable.override)
             ) {
                 transitivelyMostSpecific = overridable
             }
@@ -479,7 +436,7 @@ class IrFakeOverrideBuilder(
         }
         var firstNonFlexible: FakeOverride? = null
         for (candidate in candidates) {
-            if (candidate.override.returnType !is IrDynamicType) {
+            if (!candidate.override.returnType.isFlexible()) {
                 firstNonFlexible = candidate
                 break
             }

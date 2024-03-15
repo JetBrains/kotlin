@@ -1,5 +1,5 @@
 FILE: arrayOfImports.kt
-    @R|kotlin/Deprecated|(message = String(Use ...), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(String(bar), vararg(imports = <implicitArrayOf>(String(my.package.bar))))) @R|Third|(first = R|/First.First|(<implicitArrayOf>(<getClass>(Q|kotlin/String|))), second = R|/Second.Second|(<implicitArrayOf>(R|/First.First|(<implicitArrayOf>(<getClass>(Q|kotlin/Int|))), R|/First.First|(<implicitArrayOf>(<getClass>(Q|kotlin/Double|)))))) @R|Second|(value = <implicitArrayOf>(<implicitArrayOf>(String()), <implicitArrayOf>(R|/First.First|(<implicitArrayOf>())))) public final fun foo(): R|kotlin/Unit| {
+    @R|kotlin/Deprecated|(message = String(Use ...), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(String(bar), vararg(*<implicitArrayOf>(String(my.package.bar))))) @R|Third|(first = R|/First.First|(<implicitArrayOf>(<getClass>(Q|kotlin/String|))), second = R|/Second.Second|(<implicitArrayOf>(R|/First.First|(<implicitArrayOf>(<getClass>(Q|kotlin/Int|))), R|/First.First|(<implicitArrayOf>(<getClass>(Q|kotlin/Double|)))))) @R|Second|(value = <implicitArrayOf>(<implicitArrayOf>(String()), <implicitArrayOf>(R|/First.First|(<implicitArrayOf>())))) public final fun foo(): R|kotlin/Unit| {
     }
     public final annotation class First : R|kotlin/Annotation| {
         public constructor(value: R|kotlin/Array<kotlin/reflect/KClass<*>>|): R|First| {

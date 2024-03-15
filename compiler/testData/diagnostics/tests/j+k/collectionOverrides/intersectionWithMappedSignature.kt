@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FULL_JDK
 // SCOPE_DUMP: B1:remove, B2:remove
 // FILE: Java1.java
@@ -8,14 +9,12 @@ public interface Java1 {
 // FILE: testRemove.kt
 import java.util.*
 
-// CONFLICTING_JVM_DECLARATIONS in K1 is only reported with old backend, not with K1.
-class <!CONFLICTING_JVM_DECLARATIONS!>B1<!> : ArrayList<Int>(), Java1 {
-    <!CONFLICTING_JVM_DECLARATIONS!>override fun remove(element: Int?): Boolean<!> {
+class B1 : ArrayList<Int>(), Java1 {
+    override fun remove(element: Int?): Boolean {
         return false
     }
 }
 
-// CONFLICTING_JVM_DECLARATIONS in K1 is only reported with old backend, not with K1.
 class B2 : ArrayList<Int>(), Java1 {
 }
 

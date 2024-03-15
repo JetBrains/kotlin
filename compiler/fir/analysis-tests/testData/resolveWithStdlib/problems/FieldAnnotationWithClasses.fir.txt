@@ -14,7 +14,7 @@ FILE: FieldAnnotationWithClasses.kt
                 super<R|kotlin/Any|>()
             }
 
-            field:@FIELD:R|Ann|(allowedTypes = vararg(allowedTypes = <implicitArrayOf>(<getClass>(Q|Some|), <getClass>(Q|Other|)))) public final val x: R|kotlin/Int| = Int(42)
+            field:@FIELD:R|Ann|(allowedTypes = vararg(*<implicitArrayOf>(<getClass>(Q|Some|), <getClass>(Q|Other|)))) public final val x: R|kotlin/Int| = Int(42)
                 public get(): R|kotlin/Int|
 
         }

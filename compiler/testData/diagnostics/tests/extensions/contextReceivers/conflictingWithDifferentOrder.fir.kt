@@ -10,8 +10,8 @@ context(B, A)
 fun f(): Unit = TODO()
 
 fun test(a: A, b: B) {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>(a) {
-        with(b) {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>(a) {
+        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>(b) {
             <!OVERLOAD_RESOLUTION_AMBIGUITY!>f<!>()
         }
     }

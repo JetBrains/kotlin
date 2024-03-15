@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFieldConfigurator
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder.Companion.baseFirElement
 import org.jetbrains.kotlin.fir.tree.generator.context.type
 import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.generators.tree.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.StandardTypes
 import org.jetbrains.kotlin.generators.tree.TypeRef
 import org.jetbrains.kotlin.generators.tree.withArgs
@@ -90,10 +91,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
             +field("moduleData", firModuleDataType)
             shouldBeAbstractClass()
-        }
-
-        fileAnnotationsContainer.configure {
-            +field("containingFileSymbol", type("fir.symbols.impl", "FirFileSymbol"))
         }
 
         declaration.configure {
@@ -335,6 +332,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         anonymousFunctionExpression.configure {
             +field(anonymousFunction).withTransform()
+            +booleanField("isTrailingLambda", withReplace = true).apply {
+                replaceOptInAnnotation = rawFirApi
+            }
         }
 
         typeParameter.configure {
@@ -491,7 +491,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         file.configure {
-            +field("annotationsContainer", fileAnnotationsContainer, nullable = true).withTransform()
             +field("packageDirective", packageDirective)
             +fieldList(import).withTransform()
             +declarations.withTransform()
@@ -528,7 +527,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         resolvedImport.configure {
-            +field("delegate", import)
+            +field("delegate", import, isChild = false)
             +field("packageFqName", fqNameType)
             +field("relativeParentClassName", fqNameType, nullable = true)
             +field("resolvedParentClassId", classIdType, nullable = true)
@@ -547,7 +546,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         annotationCall.configure {
-            +field("argumentMapping", annotationArgumentMapping, withReplace = true)
+            +field("argumentMapping", annotationArgumentMapping, withReplace = true, isChild = false)
             +field("annotationResolvePhase", annotationResolvePhaseType, withReplace = true)
             +field("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)).apply {
                 withBindThis = false
@@ -555,7 +554,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         errorAnnotationCall.configure {
-            +field("argumentMapping", annotationArgumentMapping, withReplace = true)
+            +field("argumentMapping", annotationArgumentMapping, withReplace = true, isChild = false)
         }
 
         annotationArgumentMapping.configure {
@@ -614,13 +613,71 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +booleanField("isSpread")
         }
 
+        spreadArgumentExpression.configure {
+            +booleanField("isNamed")
+            +booleanField("isFakeSpread")
+
+            element.kDoc = """
+                |### Up to and including body resolution phase
+                |
+                |Represents a spread expression `*foo`. If a spread expression is passed as named argument `foo = *bar`, it will be
+                |represented as an [FirNamedArgumentExpression] with [FirNamedArgumentExpression.isSpread] set to `true`.
+                |  
+                |### After body resolution phase
+                |
+                |Represents spread expressions `*foo` and named argument expressions for vararg parameters `foo = bar` and `foo = *bar`.
+                |
+                |If [isNamed] is `true`, it means the argument was passed in named form. The name is not saved since it's not required.
+                |To retrieve the argument mapping of a call, [FirResolvedArgumentList.mapping] must be used.
+                |
+                |If [isFakeSpread] is `true`, it means this expression is the argument to a `vararg` parameter that was passed in named form
+                |without a spread operator `*`.
+                |
+                |The information carried by [isNamed] and [isFakeSpread] is only relevant for some checkers. Otherwise,
+                |[FirSpreadArgumentExpression]s should be treated uniformly since they always represent an array that was passed to a
+                |`vararg` parameter and don't influence the resulting platform code.
+            """.trimMargin()
+            element.additionalImports.add(ArbitraryImportable("org.jetbrains.kotlin.fir.expressions.impl", "FirResolvedArgumentList"))
+        }
+
         namedArgumentExpression.configure {
             +name
+
+            element.kDoc = """
+                |Represents a named argument `foo = bar` before and during body resolution phase.
+                |
+                |After body resolution, all [FirNamedArgumentExpression]s are removed from the FIR tree and the argument mapping must be
+                |retrieved from [FirResolvedArgumentList.mapping].
+                |
+                |For a named argument with spread operator `foo = *bar`, [isSpread] will be set to `true` but no additional
+                |[FirSpreadArgumentExpression] will be created as the [expression].
+                |
+                |**Special case vor varargs**: named arguments for `vararg` parameters are replaced with [FirSpreadArgumentExpression] with
+                |[FirSpreadArgumentExpression.isNamed] set to `true`.
+                |
+                |See [FirVarargArgumentsExpression] for the general structure of arguments of `vararg` parameters after resolution.
+            """.trimMargin()
+            element.additionalImports.add(ArbitraryImportable("org.jetbrains.kotlin.fir.expressions.impl", "FirResolvedArgumentList"))
         }
 
         varargArgumentsExpression.configure {
             +fieldList("arguments", expression)
             +field("coneElementTypeOrNull", coneKotlinTypeType, nullable = true)
+
+            element.kDoc = """
+                |[FirVarargArgumentsExpression]s are created during body resolution phase for arguments of `vararg` parameters.
+                |
+                |If one or multiple elements are passed to a `vararg` parameter, the will be wrapped with a [FirVarargArgumentsExpression]
+                |and [arguments] will contain the individual elements.
+                |
+                |If a named argument is passed to a `vararg` parameter, [arguments] will contain a single [FirSpreadArgumentExpression]
+                |with [FirSpreadArgumentExpression.isNamed] set to `true`.
+                |
+                |[FirSpreadArgumentExpression]s are kept as is in [arguments]. 
+                |
+                |If no element is passed to a `vararg` parameter, no [FirVarargArgumentsExpression] is created regardless of whether the
+                |parameter has a default value.
+            """.trimMargin()
         }
 
         samConversionExpression.configure {
@@ -721,7 +778,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         resolvedTypeRef.configure {
             +field("type", coneKotlinTypeType)
-            +field("delegatedTypeRef", typeRef, nullable = true)
+            +field("delegatedTypeRef", typeRef, nullable = true, isChild = false)
             element.otherParents.add(typeRefMarkerType)
         }
 

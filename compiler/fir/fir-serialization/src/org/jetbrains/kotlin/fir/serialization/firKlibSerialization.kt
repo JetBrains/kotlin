@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.SerializableStringTable
 
+// TODO: handle incremental/monolothic (see klib serializer) - maybe externally
 fun serializeSingleFirFile(
     file: FirFile, session: FirSession, scopeSession: ScopeSession,
     actualizedExpectDeclarations: Set<FirDeclaration>?,
@@ -25,56 +26,55 @@ fun serializeSingleFirFile(
     produceHeaderKlib: Boolean = false,
 ): ProtoBuf.PackageFragment {
     val approximator = TypeApproximatorForMetadataSerializer(session)
+
     val packageSerializer = FirElementSerializer.createTopLevel(
         session, scopeSession, serializerExtension,
         approximator,
         languageVersionSettings,
         produceHeaderKlib
     )
-
-    // TODO: typealiases (see klib serializer)
-    // TODO: split package fragment (see klib serializer)
-    // TODO: handle incremental/monolothic (see klib serializer) - maybe externally
-
-    val packageProto = packageSerializer.packagePartProto(file.packageFqName, listOf(file), actualizedExpectDeclarations).build()
+    val packageProto = packageSerializer.packagePartProto(
+        file.packageFqName,
+        listOf(file),
+        actualizedExpectDeclarations
+    ).build()
 
     val classesProto = mutableListOf<Pair<ProtoBuf.Class, Int>>()
 
-    fun List<FirClassSymbol<*>>.makeClassesProtoWithNested() {
-        val classSymbols = this
-            .filter {
-                it.fir.isNotExpectOrShouldBeSerialized(actualizedExpectDeclarations) &&
-                        it.fir.isNotPrivateOrShouldBeSerialized(produceHeaderKlib)
-            }
-            .sortedBy { it.classId.asFqNameString() }
-        for (symbol in classSymbols) {
-            val klass = symbol.fir
-            val classSerializer = FirElementSerializer.create(
-                session, scopeSession, klass, serializerExtension, null,
-                approximator, languageVersionSettings, produceHeaderKlib
-            )
-            val index = classSerializer.stringTable.getFqNameIndex(klass)
+    fun FirClass.makeClassProtoWithNested() {
+        if (!isNotExpectOrShouldBeSerialized(actualizedExpectDeclarations) ||
+            !isNotPrivateOrShouldBeSerialized(produceHeaderKlib)
+        ) {
+            return
+        }
 
-            classesProto += classSerializer.classProto(klass).build() to index
-            classSerializer.computeNestedClassifiersForClass(symbol).filterIsInstance<FirClassSymbol<*>>().makeClassesProtoWithNested()
+        val classSerializer = FirElementSerializer.create(
+            session, scopeSession, klass = this, serializerExtension, parentSerializer = null,
+            approximator, languageVersionSettings, produceHeaderKlib
+        )
+        val index = classSerializer.stringTable.getFqNameIndex(this)
+
+        classesProto += classSerializer.classProto(this).build() to index
+
+        for (nestedClassifierSymbol in classSerializer.computeNestedClassifiersForClass(symbol)) {
+            (nestedClassifierSymbol as? FirClassSymbol<*>)?.fir?.makeClassProtoWithNested()
         }
     }
 
     serializerExtension.processFile(file) {
-        file.declarations.mapNotNull { it.symbol as? FirClassSymbol<*> }.makeClassesProtoWithNested()
-    }
-
-    val hasTopLevelDeclarations = file.declarations.any {
-        it is FirMemberDeclaration && it.isNotExpectOrShouldBeSerialized(actualizedExpectDeclarations) &&
-                it.isNotPrivateOrShouldBeSerialized(produceHeaderKlib) &&
-                (it is FirProperty || it is FirSimpleFunction || it is FirTypeAlias)
+        for (declaration in file.declarations) {
+            (declaration as? FirClass)?.makeClassProtoWithNested()
+        }
     }
 
     return buildKlibPackageFragment(
         packageProto,
         classesProto,
         file.packageFqName,
-        hasTopLevelDeclarations && classesProto.isEmpty(),
+        isEmpty = packageProto.functionList.isEmpty() &&
+                packageProto.propertyList.isEmpty() &&
+                packageProto.typeAliasList.isEmpty() &&
+                classesProto.isEmpty(),
         serializerExtension.stringTable as SerializableStringTable
     )
 }

@@ -25,6 +25,10 @@ internal fun PrototypeAndroidTarget.createAndroidCompilation(name: String): Prot
         compilationFactory = CompilationFactory(::PrototypeAndroidCompilation)
         compileTaskName = camelCase("prototype", "compile", targetName, name)
 
+        friendArtifactResolver = ExternalKotlinCompilationDescriptor.FriendArtifactResolver { compilation ->
+            compilation.extraFriendPaths
+        }
+
         /*
         Replace Kotlin's compilation association (main <-> test) with noop,
         since Android goes through adding a dependency on the project itself

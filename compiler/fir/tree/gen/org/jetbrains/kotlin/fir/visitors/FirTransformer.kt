@@ -139,14 +139,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElementWithResolveState(elementWithResolveState, data)
     }
 
-    open fun transformFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer, data: D): FirFileAnnotationsContainer {
-        return transformElement(fileAnnotationsContainer, data)
-    }
-
-    final override fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer, data: D): FirFileAnnotationsContainer {
-        return transformFileAnnotationsContainer(fileAnnotationsContainer, data)
-    }
-
     open fun transformDeclaration(declaration: FirDeclaration, data: D): FirDeclaration {
         return transformElement(declaration, data)
     }
@@ -929,14 +921,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: D): FirStatement {
         return transformWrappedArgumentExpression(wrappedArgumentExpression, data)
-    }
-
-    open fun transformLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: D): FirStatement {
-        return transformElement(lambdaArgumentExpression, data)
-    }
-
-    final override fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: D): FirStatement {
-        return transformLambdaArgumentExpression(lambdaArgumentExpression, data)
     }
 
     open fun transformSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: D): FirStatement {

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConversionScope
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.InjectedValue
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -103,6 +104,5 @@ class JvmFir2IrExtensions(
         )
 
     override fun hasBackingField(property: FirProperty, session: FirSession): Boolean =
-        // NOTE maybe there might be platform-specific logic, similar to JvmGeneratorExtensionsImpl.isPropertyWithPlatformField()
-        Fir2IrExtensions.Default.hasBackingField(property, session)
+        property.origin is FirDeclarationOrigin.Java || Fir2IrExtensions.Default.hasBackingField(property, session)
 }

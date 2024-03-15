@@ -64,9 +64,9 @@ val <T> T.genericLambda: T.((T) -> Unit) -> Unit get() = {}
 
 fun test6() {
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>b<!> <!CANNOT_INFER_PARAMETER_TYPE!>{
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>extension<!>()
+        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>extension<!>()
         <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>genericLambda<!> { }
-        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>genericLambda<!> { it.extension() }
+        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>genericLambda<!> { it.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>extension<!>() }
         use(::extension)
     }<!>
 }

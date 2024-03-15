@@ -1,6 +1,7 @@
 
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
 }
 
 val scriptingTestDefinition by configurations.creating

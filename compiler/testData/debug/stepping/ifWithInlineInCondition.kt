@@ -72,7 +72,6 @@ fun nop() {}
 // test.kt:22 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:4 $box
 // test.kt:25 $box (11, 4, 11, 4, 11, 4, 11, 4)
 // test.kt:5 $box

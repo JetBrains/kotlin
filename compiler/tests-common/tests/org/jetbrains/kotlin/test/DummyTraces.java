@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test;
 
 import com.google.common.collect.ImmutableMap;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -67,7 +68,19 @@ public class DummyTraces {
                 public void addOwnDataTo(@NotNull BindingTrace trace, boolean commitDiagnostics) {
                     // do nothing
                 }
+
+                @Nullable
+                @Override
+                public Project getProject() {
+                    return null;
+                }
             };
+        }
+
+        @Nullable
+        @Override
+        public Project getProject() {
+            return null;
         }
 
         @Override
@@ -121,6 +134,12 @@ public class DummyTraces {
         @Override
         public BindingContext getBindingContext() {
             return new BindingContext() {
+                @Nullable
+                @Override
+                public Project getProject() {
+                    return null;
+                }
+
                 @NotNull
                 @Override
                 public Diagnostics getDiagnostics() {
@@ -156,6 +175,12 @@ public class DummyTraces {
                     // do nothing
                 }
             };
+        }
+
+        @Nullable
+        @Override
+        public Project getProject() {
+            return null;
         }
 
         @Override

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.sir.visitors.SirVisitor
 sealed interface SirNamedDeclaration : SirDeclaration, SirNamed {
     override val origin: SirOrigin
     override val visibility: SirVisibility
+    override var documentation: String?
     override var parent: SirDeclarationParent
     override val name: String
 

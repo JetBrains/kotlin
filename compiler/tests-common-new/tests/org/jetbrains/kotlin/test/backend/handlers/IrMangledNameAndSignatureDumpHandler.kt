@@ -186,7 +186,10 @@ class IrMangledNameAndSignatureDumpHandler(
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        if (dumper.isEmpty()) return
+        if (dumper.isEmpty()) {
+            assertions.assertFileDoesntExist(expectedFile, DUMP_SIGNATURES)
+            return
+        }
         val frontendKind = testServices.defaultsProvider.defaultFrontend
         val muteDirectives = listOfNotNull(
             MUTE_SIGNATURE_COMPARISON_K2.takeIf { frontendKind == FrontendKinds.FIR },

@@ -124,7 +124,6 @@ kotlin {
                                 "-Xexpect-actual-classes",
                                 "-Xmultifile-parts-inherit",
                                 "-Xuse-14-inline-classes-mangling-scheme",
-                                "-Xbuiltins-from-sources",
                                 "-Xno-new-java-annotation-targets",
                                 "-Xlink-via-signatures",
                                 diagnosticNamesArg,
@@ -150,6 +149,7 @@ kotlin {
                         freeCompilerArgs.set(
                             listOfNotNull(
                                 "-Xallow-kotlin-package",
+                                "-Xexpect-actual-classes",
                                 "-Xmultifile-parts-inherit",
                                 "-Xno-new-java-annotation-targets",
                                 "-Xexplicit-api=strict",

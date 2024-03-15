@@ -122,6 +122,10 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
 
     @DisplayName("for project with included build")
     @GradleTest
+    @OsCondition(
+        supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
+        enabledOnCI = [OS.LINUX, OS.MAC], //Fails on windows KT-65227
+    )
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.G_7_6,
         maxVersion = TestVersions.Gradle.G_8_0

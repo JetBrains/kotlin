@@ -24,6 +24,7 @@ abstract class FirAnonymousFunctionExpression : FirExpression() {
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
     abstract val anonymousFunction: FirAnonymousFunction
+    abstract val isTrailingLambda: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitAnonymousFunctionExpression(this, data)
@@ -35,6 +36,9 @@ abstract class FirAnonymousFunctionExpression : FirExpression() {
     abstract override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    @RawFirApi
+    abstract fun replaceIsTrailingLambda(newIsTrailingLambda: Boolean)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionExpression
 

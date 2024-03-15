@@ -38,6 +38,12 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:JavaChild modality:OPEN visib
       overridden:
         public final fun <get-c> (): kotlin.Int declared in <root>.KotlinBase
       $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.JavaChild
+    FUN FAKE_OVERRIDE name:<set-c> visibility:private modality:FINAL <> ($this:<root>.JavaChild, value:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      correspondingProperty: PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        private final fun <set-c> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.KotlinBase
+      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.JavaChild
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int
   PROPERTY FAKE_OVERRIDE name:d visibility:public modality:FINAL [fake_override,var]
     overridden:
       public final d: kotlin.Int [var]

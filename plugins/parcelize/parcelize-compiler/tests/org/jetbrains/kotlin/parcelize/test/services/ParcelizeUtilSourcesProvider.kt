@@ -17,6 +17,8 @@ class ParcelizeUtilSourcesProvider(testServices: TestServices, baseDir: String =
 
     @OptIn(ExperimentalStdlibApi::class)
     override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
-        return listOf(File(libraryPath).toTestFile())
+        // Only provide the additional files for a JVM only module. In multiplatform tests, this ensures that the
+        // additional files are only provided once and in the right module.
+        return if (module.targetPlatform.all { it.platformName == "JVM" }) listOf(File(libraryPath).toTestFile()) else listOf()
     }
 }

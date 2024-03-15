@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode;
 
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cfg.ControlFlowProcessor;
@@ -94,6 +95,12 @@ public class PseudocodeUtil {
             @Override
             public boolean wantsDiagnostics() {
                 return false;
+            }
+
+            @Nullable
+            @Override
+            public Project getProject() {
+                return bindingContext.getProject();
             }
         };
         return new ControlFlowProcessor(mockTrace, languageVersionSettings).generatePseudocode(declaration);

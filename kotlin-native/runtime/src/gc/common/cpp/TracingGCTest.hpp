@@ -1174,7 +1174,7 @@ TYPED_TEST_P(TracingGCTest, MutateBetweenSafePoints) {
     }
 }
 
-TYPED_TEST_P(TracingGCTest, WeakResuractionInMark) {
+TYPED_TEST_P(TracingGCTest, WeakResurrectionInMark) {
     constexpr auto kObjectsPerThread = 100;
     std::vector<Mutator> mutators(kDefaultThreadCount);
     std::vector<test_support::RegularWeakReferenceImpl*> weaks(kDefaultThreadCount);
@@ -1215,12 +1215,13 @@ TYPED_TEST_P(TracingGCTest, WeakResuractionInMark) {
 
             auto weakReferee = weaks[i]->get();
             (*roots[i])->field2 = weakReferee;
-            bool resurected = weakReferee != nullptr;
+            bool resurrected = weakReferee != nullptr;
 
             while (!gcDone.load(std::memory_order_relaxed)) {
                 safePoint(threadData);
             }
-            if (resurected) {
+
+            if (resurrected) {
                 EXPECT_NE(weaks[i]->get(), nullptr);
             } else {
                 EXPECT_EQ(weaks[i]->get(), nullptr);
@@ -1257,7 +1258,7 @@ TYPED_TEST_P(TracingGCTest, WeakResuractionInMark) {
     NewThreadsWhileRequestingCollection, \
     FreeObjectWithFreeWeakReversedOrder, \
     MutateBetweenSafePoints, \
-    WeakResuractionInMark
+    WeakResurrectionInMark
 
 template <typename FixtureImpl>
 class STWMarkGCTest : public TracingGCTest<FixtureImpl> {};

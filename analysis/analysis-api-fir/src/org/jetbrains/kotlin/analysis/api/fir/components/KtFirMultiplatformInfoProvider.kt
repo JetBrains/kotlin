@@ -23,13 +23,9 @@ internal class KtFirMultiplatformInfoProvider(
     override fun getExpectForActual(actual: KtDeclarationSymbol): List<KtDeclarationSymbol> {
         require(actual is KtFirSymbol<*>)
         val firSymbol = actual.firSymbol
-        val status = when (firSymbol) {
-            is FirCallableSymbol -> firSymbol.rawStatus
-            is FirClassSymbol -> firSymbol.rawStatus
-            is FirTypeAliasSymbol -> firSymbol.rawStatus
-            else -> null
+        if (firSymbol !is FirCallableSymbol && firSymbol !is FirClassSymbol && firSymbol !is FirTypeAliasSymbol) {
+            return emptyList()
         }
-        if (status?.isActual != true) return emptyList()
 
         return firSymbol.expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully)
             ?.map { analysisSession.firSymbolBuilder.buildSymbol(it) as KtDeclarationSymbol }.orEmpty()

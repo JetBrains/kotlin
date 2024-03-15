@@ -554,7 +554,7 @@ public class KotlinTestUtils {
                         try {
                             FileUtil.writeToFile(testDataFile, newText);
                         } catch (IOException ioException) {
-                            throw new RuntimeException(ioException);
+                            throw ExceptionUtilsKt.rethrow(e);
                         }
                     }
                 }
@@ -585,7 +585,7 @@ public class KotlinTestUtils {
                             try {
                                 FileUtil.writeToFile(testDataFile, newText);
                             } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                throw ExceptionUtilsKt.rethrow(e);
                             }
                         }
                     }

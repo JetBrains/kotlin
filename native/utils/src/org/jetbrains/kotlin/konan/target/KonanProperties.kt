@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.konan.properties
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.Configurables
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.util.ArchiveType
-import org.jetbrains.kotlin.konan.util.DependencyProcessor
-import org.jetbrains.kotlin.konan.util.ProgressCallback
+import org.jetbrains.kotlin.konan.util.*
 import java.io.File
 
 interface TargetableExternalStorage {
@@ -74,6 +72,10 @@ abstract class KonanPropertiesLoader(
 
     override fun downloadDependencies() {
         dependencyProcessor!!.run()
+    }
+
+    fun downloadDependencies(archiveExtractor: ArchiveExtractor) {
+        dependencyProcessor!!.run(archiveExtractor)
     }
 
     // TODO: We may want to add caching to avoid repeated resolve.

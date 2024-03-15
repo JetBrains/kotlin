@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 private val executorCache: ConcurrentHashMap<KonanTarget, Executor> = ConcurrentHashMap()
 
-internal val Settings.executor: Executor
+val Settings.executor: Executor
     get() = with(get<KotlinNativeTargets>()) {
         executorCache.computeIfAbsent(testTarget) {
             val configurables = configurables

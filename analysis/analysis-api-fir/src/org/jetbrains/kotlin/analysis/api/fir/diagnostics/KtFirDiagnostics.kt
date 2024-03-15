@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtLabelReferenceExpression
+import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -394,6 +395,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
     interface InnerClassConstructorNoReceiver : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InnerClassConstructorNoReceiver::class
         val classSymbol: KtClassLikeSymbol
+    }
+
+    interface PluginAmbiguousInterceptedSymbol : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = PluginAmbiguousInterceptedSymbol::class
+        val names: List<String>
     }
 
     interface ResolutionToClassifier : KtFirDiagnostic<PsiElement> {
@@ -1412,7 +1418,7 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val actualType: KtType
     }
 
-    interface ManyLambdaExpressionArguments : KtFirDiagnostic<KtValueArgument> {
+    interface ManyLambdaExpressionArguments : KtFirDiagnostic<KtLambdaExpression> {
         override val diagnosticClass get() = ManyLambdaExpressionArguments::class
     }
 
@@ -1920,6 +1926,13 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val containingClassName: Name
     }
 
+    interface CannotWeakenAccessPrivilegeWarning : KtFirDiagnostic<KtModifierListOwner> {
+        override val diagnosticClass get() = CannotWeakenAccessPrivilegeWarning::class
+        val overridingVisibility: Visibility
+        val overridden: KtCallableSymbol
+        val containingClassName: Name
+    }
+
     interface CannotChangeAccessPrivilege : KtFirDiagnostic<KtModifierListOwner> {
         override val diagnosticClass get() = CannotChangeAccessPrivilege::class
         val overridingVisibility: Visibility
@@ -1927,8 +1940,20 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val containingClassName: Name
     }
 
+    interface CannotChangeAccessPrivilegeWarning : KtFirDiagnostic<KtModifierListOwner> {
+        override val diagnosticClass get() = CannotChangeAccessPrivilegeWarning::class
+        val overridingVisibility: Visibility
+        val overridden: KtCallableSymbol
+        val containingClassName: Name
+    }
+
     interface CannotInferVisibility : KtFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = CannotInferVisibility::class
+        val callable: KtCallableSymbol
+    }
+
+    interface CannotInferVisibilityWarning : KtFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = CannotInferVisibilityWarning::class
         val callable: KtCallableSymbol
     }
 
@@ -3151,9 +3176,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val operator: String
     }
 
-    interface PropertyAsOperator : KtFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = PropertyAsOperator::class
-        val property: KtVariableSymbol
+    interface NotFunctionAsOperator : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = NotFunctionAsOperator::class
+        val elementName: String
+        val elementSymbol: KtSymbol
     }
 
     interface DslScopeViolation : KtFirDiagnostic<PsiElement> {
@@ -3396,6 +3422,12 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val type: KtType
     }
 
+    interface InlineFromHigherPlatform : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InlineFromHigherPlatform::class
+        val inlinedBytecodeVersion: String
+        val currentModuleBytecodeVersion: String
+    }
+
     interface CannotAllUnderImportFromSingleton : KtFirDiagnostic<KtImportDirective> {
         override val diagnosticClass get() = CannotAllUnderImportFromSingleton::class
         val objectName: Name
@@ -3494,8 +3526,16 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DeprecatedAccessToEntryPropertyFromEnum::class
     }
 
+    interface DeprecatedAccessToEntriesProperty : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = DeprecatedAccessToEntriesProperty::class
+    }
+
     interface DeprecatedAccessToEnumEntryPropertyAsReference : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = DeprecatedAccessToEnumEntryPropertyAsReference::class
+    }
+
+    interface DeprecatedAccessToEntriesAsQualifier : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = DeprecatedAccessToEntriesAsQualifier::class
     }
 
     interface DeprecatedDeclarationOfEnumEntry : KtFirDiagnostic<KtEnumEntry> {
@@ -3991,6 +4031,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val name: String
     }
 
+    interface NamedCompanionInExportedInterface : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NamedCompanionInExportedInterface::class
+    }
+
     interface NestedJsExport : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = NestedJsExport::class
     }
@@ -4084,6 +4128,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
     interface ExternalInterfaceAsReifiedTypeArgument : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ExternalInterfaceAsReifiedTypeArgument::class
         val typeArgument: KtType
+    }
+
+    interface NamedCompanionInExternalInterface : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NamedCompanionInExternalInterface::class
     }
 
     interface JscodeArgumentNonConstExpression : KtFirDiagnostic<KtElement> {

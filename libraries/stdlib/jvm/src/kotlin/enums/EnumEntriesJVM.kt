@@ -6,7 +6,6 @@
 package kotlin.enums
 
 @SinceKotlin("1.9")
-@ExperimentalStdlibApi
 @PublishedApi
 @kotlin.internal.InlineOnly
 internal actual inline fun <T : Enum<T>> enumEntriesIntrinsic(): EnumEntries<T> {

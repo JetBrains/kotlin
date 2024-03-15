@@ -382,7 +382,6 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             }
             return staticGnuArCommands(ar, executable, objectFiles, libraries)
         }
-        val isMips = target == KonanTarget.LINUX_MIPS32 || target == KonanTarget.LINUX_MIPSEL32
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
         val crtPrefix = "$absoluteTargetSysRoot/$crtFilesLocation"
         // TODO: Can we extract more to the konan.configurables?
@@ -402,7 +401,7 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             +"$crtPrefix/crti.o"
             +if (dynamic) "$libGcc/crtbeginS.o" else "$libGcc/crtbegin.o"
             +"-L$libGcc"
-            if (!isMips) +"--hash-style=gnu" // MIPS doesn't support hash-style=gnu
+            +"--hash-style=gnu"
             +specificLibs
             if (optimize) +linkerOptimizationFlags
             if (!debug) +linkerNoDebugFlags
@@ -599,4 +598,3 @@ fun linker(configurables: Configurables): LinkerFlags =
             is ZephyrConfigurables -> ZephyrLinker(configurables)
             else -> error("Unexpected target: ${configurables.target}")
         }
-

@@ -1,4 +1,5 @@
 import KotlinBridges
+import KotlinRuntime
 
 public enum namespace1 {
     public enum local_functions {

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
@@ -461,7 +460,7 @@ open class SerializerIrGenerator(
         val decodeSequentiallyCall = irInvoke(localInput.get(), inputClass.functionByName(CallingConventions.decodeSequentially))
 
         val sequentialPart = irBlock {
-            decoderCalls.forEach { (_, expr) -> +expr.deepCopyWithVariables() }
+            decoderCalls.forEach { (_, expr) -> +expr.deepCopyWithoutPatchingParents() }
         }
 
         val byIndexPart: IrExpression = irWhile().also { loop ->

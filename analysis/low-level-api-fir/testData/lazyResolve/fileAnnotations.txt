@@ -2,7 +2,6 @@ RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] fileAnnotations.kt
     @FILE:Deprecated[Unresolved](LAZY_EXPRESSION)
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
-    [ResolvedTo(RAW_FIR)] annotations container
     @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -17,7 +16,6 @@ IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
     @FILE:Deprecated[Unresolved](LAZY_EXPRESSION)
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
-    [ResolvedTo(RAW_FIR)] annotations container
     @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -29,10 +27,9 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
     }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
+FILE: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String())
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
-    [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotations container
     @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -44,10 +41,9 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
     }
 
 COMPANION_GENERATION:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
+FILE: [ResolvedTo(COMPANION_GENERATION)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String())
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
-    [ResolvedTo(COMPANION_GENERATION)] annotations container
     @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -59,10 +55,9 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
     }
 
 SUPER_TYPES:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
+FILE: [ResolvedTo(SUPER_TYPES)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String())
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
-    [ResolvedTo(SUPER_TYPES)] annotations container
     @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -74,10 +69,9 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
     }
 
 TYPES:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
+FILE: [ResolvedTo(TYPES)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](String())
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
-    [ResolvedTo(TYPES)] annotations container
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -89,10 +83,9 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
     }
 
 STATUS:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
+FILE: [ResolvedTo(STATUS)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](String())
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
-    [ResolvedTo(STATUS)] annotations container
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -104,10 +97,9 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
     }
 
 EXPECT_ACTUAL_MATCHING:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
+FILE: [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](String())
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
-    [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotations container
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -119,10 +111,9 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
     }
 
 CONTRACTS:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
+FILE: [ResolvedTo(CONTRACTS)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](String())
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
-    [ResolvedTo(CONTRACTS)] annotations container
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -134,10 +125,23 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
+FILE: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](String())
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
-    [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotations container
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(CONSTANT_EVALUATION)] fileAnnotations.kt
+    @FILE:R|kotlin/Deprecated|[Types](String())
+    @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -149,10 +153,9 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
     }
 
 ANNOTATION_ARGUMENTS:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](message = String())
     @FILE:R|one/Anno|[Types](s = String(anno))
-    [ResolvedTo(ANNOTATION_ARGUMENTS)] annotations container
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -164,10 +167,9 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
     }
 
 BODY_RESOLVE:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](message = String())
     @FILE:R|one/Anno|[Types](s = String(anno))
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -182,7 +184,6 @@ FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](message = String())
     @FILE:R|one/Anno|[Types](s = String(anno))
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
             super<R|kotlin/Any|>()

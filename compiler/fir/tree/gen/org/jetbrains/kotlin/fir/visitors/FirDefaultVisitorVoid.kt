@@ -120,8 +120,6 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression) = visitWrappedExpression(wrappedArgumentExpression)
 
-    override fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression) = visitWrappedArgumentExpression(lambdaArgumentExpression)
-
     override fun visitSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression) = visitWrappedArgumentExpression(spreadArgumentExpression)
 
     override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression) = visitWrappedArgumentExpression(namedArgumentExpression)

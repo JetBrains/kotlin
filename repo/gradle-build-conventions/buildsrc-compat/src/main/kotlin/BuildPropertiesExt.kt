@@ -62,3 +62,9 @@ val KotlinBuildProperties.useFirTightIC: Boolean
 
 val KotlinBuildProperties.isSwiftExportPluginPublishingEnabled: Boolean
     get() = getBoolean("kotlin.native.swift-export.enabled", false)
+
+val KotlinBuildProperties.limitTestTasksConcurrency: Boolean
+    get() = getBoolean("kotlin.build.limitTestTasksConcurrency", true)
+
+val KotlinBuildProperties.konanDataDir: String?
+    get() = getOrNull("konan.data.dir") as String?

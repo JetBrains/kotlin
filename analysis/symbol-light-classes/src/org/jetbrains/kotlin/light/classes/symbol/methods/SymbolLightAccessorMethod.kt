@@ -269,11 +269,19 @@ internal class SymbolLightAccessorMethod private constructor(
                 allowErrorTypes = true,
                 typeMappingMode,
                 containingClass.isAnnotationType,
+                suppressWildcards(),
             )
         } ?: nonExistentType()
     }
 
     override fun getReturnType(): PsiType = _returnedType
+
+    override fun suppressWildcards(): Boolean? =
+        withAccessorSymbol { accessorSymbol ->
+            accessorSymbol.suppressWildcardMode { parent ->
+                parent !is KtPropertySymbol
+            }
+        }
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
         return super.isEquivalentTo(another) || basicIsEquivalentTo(this, another as? PsiField)

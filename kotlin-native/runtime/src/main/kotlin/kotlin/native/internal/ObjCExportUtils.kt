@@ -281,6 +281,7 @@ public class ObjCErrorException(
 @PublishedApi
 @GCUnsafeCall("Kotlin_ObjCExport_trapOnUndeclaredException")
 @ExportForCppRuntime
+// No need to mark throwable as @Escapes because this function actually never returns.
 internal external fun trapOnUndeclaredException(exception: Throwable)
 
 @ExportForCppRuntime

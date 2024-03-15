@@ -448,6 +448,9 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun KotlinTypeMarker.lowerBoundIfFlexible(): SimpleTypeMarker = this.asFlexibleType()?.lowerBound() ?: this.asSimpleType()!!
     fun KotlinTypeMarker.upperBoundIfFlexible(): SimpleTypeMarker = this.asFlexibleType()?.upperBound() ?: this.asSimpleType()!!
 
+    fun KotlinTypeMarker.isFlexibleWithDifferentTypeConstructors(): Boolean =
+        lowerBoundIfFlexible().typeConstructor() != upperBoundIfFlexible().typeConstructor()
+
     fun TypeConstructorMarker.isDefinitelyClassTypeConstructor(): Boolean = isClassTypeConstructor() && !isInterface()
 
     fun KotlinTypeMarker.isFlexible(): Boolean = asFlexibleType() != null

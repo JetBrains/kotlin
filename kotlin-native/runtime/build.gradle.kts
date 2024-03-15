@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.konan.file.File as KFile
 import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
 
 // These properties are used by the 'konan' plugin, thus we set them before applying it.
-val distDir: File by project
-val konanHome: String by extra(distDir.absolutePath)
+val konanHome: String by extra(kotlinNativeDist.absolutePath)
 extra["org.jetbrains.kotlin.native.home"] = konanHome
 
 val kotlinVersion: String by rootProject.extra
@@ -36,13 +35,12 @@ googletest {
     refresh = project.hasProperty("refresh-gtest")
 }
 
-val hostName: String by project
-val targetList: List<String> by project
+val targetList = enabledTargets(extensions.getByType<PlatformManager>())
 
 bitcode {
     allTargets {
         module("main") {
-            headersDirs.from("src/externalCallsChecker/common/cpp")
+            headersDirs.from("src/externalCallsChecker/common/cpp", "src/objcExport/cpp")
             sourceSets {
                 main {
                     // TODO: Split out out `base` module and merge it together with `main` into `runtime.bc`
@@ -59,6 +57,12 @@ bitcode {
             testedModules.addAll("main")
             // TODO(KT-53776): Some tests depend on allocator being legacy.
             testSupportModules.addAll("mm", "noop_externalCallsChecker", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+        }
+
+        // Headers from here get reused by Swift Export, so this module should not depend on anything in the runtime
+        module("objcExport") {
+            // There must not be any implementation files, only headers.
+            sourceSets {}
         }
 
         module("mimalloc") {
@@ -84,15 +88,14 @@ bitcode {
                     "-DMI_TSAN=1".takeIf { sanitizer == SanitizerKind.THREAD },
             ))
 
-            onlyIf { target.supportsMimallocAllocator() }
+            onlyIf { it.supportsMimallocAllocator() }
         }
 
         module("libbacktrace") {
             val elfSize = when (target.architecture) {
                 TargetArchitecture.X64, TargetArchitecture.ARM64 -> 64
-                TargetArchitecture.X86, TargetArchitecture.ARM32,
-                TargetArchitecture.MIPS32, TargetArchitecture.MIPSEL32,
-                TargetArchitecture.WASM32 -> 32
+                TargetArchitecture.X86, TargetArchitecture.ARM32 -> 32
+                else -> 32 // TODO(KT-66500): remove after the bootstrap
             }
             val useMachO = target.family.isAppleFamily
             val useElf = target.family in listOf(Family.LINUX, Family.ANDROID)
@@ -136,25 +139,25 @@ bitcode {
                     "-Wno-atomic-alignment"
             ))
 
-            onlyIf { target.supportsLibBacktrace() }
+            onlyIf { it.supportsLibBacktrace() }
         }
 
         module("compiler_interface") {
-            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
             }
         }
 
         module("launcher") {
-            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
             }
         }
 
         module("debug") {
-            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
             }
@@ -162,7 +165,7 @@ bitcode {
 
         module("common_alloc") {
             srcRoot.set(layout.projectDirectory.dir("src/alloc/common"))
-            headersDirs.from(files("src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
                 test {}
@@ -176,7 +179,7 @@ bitcode {
 
         module("std_alloc") {
             srcRoot.set(layout.projectDirectory.dir("src/alloc/std"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/alloc/legacy/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/alloc/legacy/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
             }
@@ -184,7 +187,7 @@ bitcode {
 
         module("custom_alloc") {
             srcRoot.set(layout.projectDirectory.dir("src/alloc/custom"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
                 test {}
@@ -202,7 +205,7 @@ bitcode {
 
         module("mimalloc_alloc") {
             srcRoot.set(layout.projectDirectory.dir("src/alloc/mimalloc"))
-            headersDirs.from(files("src/mimalloc/c/include", "src/alloc/common/cpp", "src/alloc/legacy/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/mimalloc/c/include", "src/alloc/common/cpp", "src/alloc/legacy/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
             }
@@ -212,7 +215,7 @@ bitcode {
 
         module("legacy_alloc") {
             srcRoot.set(layout.projectDirectory.dir("src/alloc/legacy"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
                 test {}
@@ -232,7 +235,7 @@ bitcode {
 
         module("exceptionsSupport") {
             srcRoot.set(layout.projectDirectory.dir("src/exceptions_support"))
-            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
             }
@@ -240,33 +243,33 @@ bitcode {
 
         module("source_info_core_symbolication") {
             srcRoot.set(layout.projectDirectory.dir("src/source_info/core_symbolication"))
-            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
             }
 
-            onlyIf { target.supportsCoreSymbolication() }
+            onlyIf { it.supportsCoreSymbolication() }
         }
 
         module("source_info_libbacktrace") {
             srcRoot.set(layout.projectDirectory.dir("src/source_info/libbacktrace"))
-            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/main/cpp", "src/libbacktrace/c/include"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/libbacktrace/c/include"))
             sourceSets {
                 main {}
             }
 
-            onlyIf { target.supportsLibBacktrace() }
+            onlyIf { it.supportsLibBacktrace() }
         }
 
         module("objc") {
-            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
             }
         }
 
         module("test_support") {
-            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 testFixtures {
                     inputFiles.include("**/*.cpp", "**/*.mm")
@@ -275,7 +278,7 @@ bitcode {
         }
 
         module("mm") {
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
                 testFixtures {}
@@ -290,7 +293,7 @@ bitcode {
 
         module("common_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/common"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
                 test {}
@@ -304,7 +307,7 @@ bitcode {
 
         module("noop_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/noop"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp", "src/alloc/legacy/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/alloc/legacy/cpp"))
             sourceSets {
                 main {}
             }
@@ -312,7 +315,7 @@ bitcode {
 
         module("noop_gc_custom") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/noop"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp", "src/alloc/custom/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/alloc/custom/cpp"))
             sourceSets {
                 main {}
             }
@@ -322,7 +325,7 @@ bitcode {
 
         module("same_thread_ms_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/stms"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp", "src/alloc/legacy/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/alloc/legacy/cpp"))
             sourceSets {
                 main {}
                 test {}
@@ -336,7 +339,7 @@ bitcode {
 
         module("same_thread_ms_gc_custom") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/stms"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp", "src/alloc/custom/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/alloc/custom/cpp"))
             sourceSets {
                 main {}
                 test {}
@@ -352,7 +355,7 @@ bitcode {
 
         module("pmcs_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/pmcs"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp", "src/alloc/legacy/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/alloc/legacy/cpp"))
             sourceSets {
                 main {}
                 test {}
@@ -366,7 +369,7 @@ bitcode {
 
         module("pmcs_gc_custom") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/pmcs"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp", "src/alloc/custom/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/alloc/custom/cpp"))
             sourceSets {
                 main {}
                 test {}
@@ -382,7 +385,7 @@ bitcode {
 
         module("concurrent_ms_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/cms"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp", "src/alloc/legacy/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/alloc/legacy/cpp"))
             sourceSets {
                 main {}
                 test {}
@@ -396,7 +399,7 @@ bitcode {
 
         module("concurrent_ms_gc_custom") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/cms"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp", "src/alloc/custom/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/alloc/custom/cpp"))
             sourceSets {
                 main {}
                 test {}
@@ -412,7 +415,7 @@ bitcode {
 
         module("common_gcScheduler") {
             srcRoot.set(layout.projectDirectory.dir("src/gcScheduler/common"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
                 test {}
@@ -426,7 +429,7 @@ bitcode {
 
         module("manual_gcScheduler") {
             srcRoot.set(layout.projectDirectory.dir("src/gcScheduler/manual"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
             }
@@ -434,7 +437,7 @@ bitcode {
 
         module("adaptive_gcScheduler") {
             srcRoot.set(layout.projectDirectory.dir("src/gcScheduler/adaptive"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
                 test {}
@@ -448,7 +451,7 @@ bitcode {
 
         module("aggressive_gcScheduler") {
             srcRoot.set(layout.projectDirectory.dir("src/gcScheduler/aggressive"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
                 test {}
@@ -462,7 +465,7 @@ bitcode {
 
         module("impl_externalCallsChecker") {
             srcRoot.set(layout.projectDirectory.dir("src/externalCallsChecker/impl"))
-            headersDirs.from("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp")
+            headersDirs.from("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp")
             sourceSets {
                 main {}
             }
@@ -470,21 +473,36 @@ bitcode {
 
         module("noop_externalCallsChecker") {
             srcRoot.set(layout.projectDirectory.dir("src/externalCallsChecker/noop"))
-            headersDirs.from("src/externalCallsChecker/common/cpp", "src/main/cpp")
+            headersDirs.from("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp")
             sourceSets {
                 main {}
             }
         }
 
         module("xctest_launcher") {
-            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
 
             sourceSets {
                 main {}
             }
-            onlyIf { target.family.isAppleFamily }
+            onlyIf { it.family.isAppleFamily }
         }
     }
+}
+
+val objcExportApi by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.API))
+        attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+    }
+}
+
+artifacts {
+    // This should be a "public headers" directory and this configuration with artifacts should be defined by
+    // CompileToBitcodePlugin itself.
+    add(objcExportApi.name, layout.projectDirectory.dir("src/objcExport/cpp"))
 }
 
 val runtimeBitcode by configurations.creating {
@@ -499,15 +517,15 @@ dependencies {
     runtimeBitcode(project(":kotlin-native:runtime"))
 }
 
-targetList.forEach { targetName ->
+targetList.forEach { target ->
     // TODO: replace with a more convenient user-facing task that can build for a specific target.
     //       like compileToBitcode with optional argument --target.
-    tasks.register("${targetName}Runtime") {
-        description = "Build all main runtime modules for $targetName"
+    tasks.register("${target}Runtime") {
+        description = "Build all main runtime modules for $target"
         group = CompileToBitcodeExtension.BUILD_TASK_GROUP
         val dependencies = runtimeBitcode.incoming.artifactView {
             attributes {
-                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, project.platformManager.targetByName(targetName).withSanitizer())
+                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, target.withSanitizer())
             }
         }.files
         dependsOn(dependencies)
@@ -517,13 +535,13 @@ targetList.forEach { targetName ->
 val hostRuntime by tasks.registering {
     description = "Build all main runtime modules for host"
     group = CompileToBitcodeExtension.BUILD_TASK_GROUP
-    dependsOn("${hostName}Runtime")
+    dependsOn("${PlatformInfo.hostName}Runtime")
 }
 
 val hostRuntimeTests by tasks.registering {
     description = "Runs all runtime tests for host"
     group = CompileToBitcodeExtension.VERIFICATION_TASK_GROUP
-    dependsOn("${hostName}RuntimeTests")
+    dependsOn("${PlatformInfo.hostName}RuntimeTests")
 }
 
 tasks.named("assemble") {
@@ -531,7 +549,7 @@ tasks.named("assemble") {
 }
 
 val hostAssemble by tasks.registering {
-    dependsOn("${hostName}Runtime")
+    dependsOn("${PlatformInfo.hostName}Runtime")
 }
 
 tasks.named("clean") {
@@ -576,7 +594,6 @@ konanArtifacts {
         noDefaultLibs(true)
         noEndorsedLibs(true)
 
-        extraOpts(project.globalBuildArgs)
         extraOpts(
                 "-Werror",
                 "-Xexplicit-api=strict",
@@ -614,6 +631,8 @@ val stdlibTask = tasks.register<Copy>("nativeStdlib") {
     from(stdlibBuildTask.map { it.outputs.files })
     into(project.layout.buildDirectory.dir("nativeStdlib"))
 
+    val targetList = targetList
+    val kotlinVersion = kotlinVersion
     eachFile {
         if (name == "manifest") {
             // Stdlib is a common library that doesn't depend on anything target-specific.
@@ -635,10 +654,11 @@ val stdlibTask = tasks.register<Copy>("nativeStdlib") {
     }
 }
 
-val cacheableTargetNames: List<String> by project
+val cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
 
 cacheableTargetNames.forEach { targetName ->
     tasks.register("${targetName}StdlibCache", KonanCacheTask::class.java) {
+        notCompatibleWithConfigurationCache("project used in execution time")
         target = targetName
         originalKlib.fileProvider(stdlibTask.map { it.destinationDir })
         klibUniqName = "stdlib"
@@ -646,7 +666,7 @@ cacheableTargetNames.forEach { targetName ->
 
         dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
         // stdlib cache links in runtime modules from the K/N distribution.
-        inputs.dir("$distDir/konan/targets/$targetName/native")
+        inputs.dir("$kotlinNativeDist/konan/targets/$targetName/native")
     }
 }
 

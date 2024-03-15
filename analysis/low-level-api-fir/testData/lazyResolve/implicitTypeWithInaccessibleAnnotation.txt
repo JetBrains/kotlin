@@ -272,6 +272,37 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
     }
     public? final? [ResolvedTo(RAW_FIR)] fun implicitType2(): <implicit> { LAZY_BLOCK }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=usage/Anno.s] s: String): R|usage/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol usage/TopLevelObject.expectedType]] fun implicitType1(): R|@R|usage/Anno|(privateConstVal#)  kotlin/Int| {
+        ^implicitType1 Q|usage/TopLevelObject|.R|usage/TopLevelObject.expectedType|()
+    }
+    public final [ResolvedTo(STATUS)] object TopLevelObject : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelObject] constructor(): R|usage/TopLevelObject| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] fun expectedType2(): R|@R|usage/Anno|(privateConstVal#)  kotlin/Int| { LAZY_BLOCK }
+
+        private final const [ResolvedTo(STATUS)] val privateConstVal: <implicit> = LAZY_EXPRESSION
+            private [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelObject] get(): <implicit>
+
+        public final [ResolvedTo(CONTRACTS)] fun expectedType(): R|@R|usage/Anno|(privateConstVal#)  kotlin/Int| {
+            ^expectedType IntegerLiteral(4)
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType2(): <implicit> { LAZY_BLOCK }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

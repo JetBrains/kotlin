@@ -26,6 +26,8 @@ public interface K2JsArgumentConstants {
     String MODULE_UMD = "umd";
     String MODULE_ES = "es";
 
+    String ES_2015 = "es2015";
+
     String GRANULARITY_WHOLE_PROGRAM = "whole-program";
     String GRANULARITY_PER_MODULE = "per-module";
     String GRANULARITY_PER_FILE = "per-file";

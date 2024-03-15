@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
 import org.jetbrains.kotlin.konan.test.diagnostics.AbstractDiagnosticsNativeTest
 import org.jetbrains.kotlin.konan.test.diagnostics.AbstractFirLightTreeNativeDiagnosticsTest
 import org.jetbrains.kotlin.konan.test.diagnostics.AbstractFirPsiNativeDiagnosticsTest
+import org.jetbrains.kotlin.konan.test.diagnostics.AbstractFirPsiNativeDiagnosticsWithBackendTestBase
 import org.jetbrains.kotlin.konan.test.irtext.AbstractClassicNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.irtext.AbstractFirLightTreeNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.irtext.AbstractFirPsiNativeIrTextTest
@@ -357,13 +358,20 @@ fun main() {
             ) {
                 model("diagnostics/nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
+
+            testClass<AbstractFirPsiNativeDiagnosticsWithBackendTestBase>(
+                suiteTestClassName = "FirPsiNativeKlibDiagnosticsTestGenerated",
+                annotations = listOf(*frontendFir(), klib())
+            ) {
+                model("diagnostics/klibSerializationTests")
+            }
         }
 
         // Atomicfu compiler plugin native tests.
         testGroup("plugins/atomicfu/atomicfu-compiler/test", "plugins/atomicfu/atomicfu-compiler/testData") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "AtomicfuNativeTestGenerated",
-                annotations = listOf(atomicfuNative(), provider<UseStandardTestCaseGroupProvider>())
+                annotations = listOf(*atomicfuNative(), provider<UseStandardTestCaseGroupProvider>())
             ) {
                 model("nativeBox")
             }
@@ -518,6 +526,50 @@ fun main() {
                 model("SwiftExport", pattern = "^([^_](.+))$", recursive = false)
             }
         }
+        // Stress tests
+        testGroup("native/native.tests/stress/tests-gen", "native/native.tests/stress/testData") {
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "NativeStressTestGenerated",
+                annotations = listOf(
+                    *stress(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                )
+            ) {
+                model("")
+            }
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "FirNativeStressTestGenerated",
+                annotations = listOf(
+                    *stress(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                    *frontendFir(),
+                )
+            ) {
+                model("")
+            }
+        }
+        // GC tests
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "NativeGCTestGenerated",
+                annotations = listOf(
+                    *gc(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                )
+            ) {
+                model("gc")
+            }
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "FirNativeGCTestGenerated",
+                annotations = listOf(
+                    *gc(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                    *frontendFir(),
+                )
+            ) {
+                model("gc")
+            }
+        }
     }
 }
 
@@ -555,11 +607,13 @@ private fun frontendFir() = arrayOf(
     annotation(FirPipeline::class.java)
 )
 
+private fun klib() = annotation(Tag::class.java, "klib")
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
-private fun k1libContents() = annotation(Tag::class.java, "k1libContents")
-private fun k2libContents() = annotation(Tag::class.java, "k2libContents")
-private fun atomicfuNative() = annotation(Tag::class.java, "atomicfu-native")
+private fun atomicfuNative() = arrayOf(
+    annotation(Tag::class.java, "atomicfu-native"),
+    annotation(EnforcedHostTarget::class.java), // TODO(KT-65977): Make atomicfu tests run on all targets.
+)
 private fun standalone() = arrayOf(
     annotation(Tag::class.java, "standalone"),
     annotation(
@@ -577,4 +631,15 @@ private fun cinterfaceMode(mode: String = "V1") = annotation(
     EnforcedProperty::class.java,
     "property" to ClassLevelProperty.C_INTERFACE_MODE,
     "propertyValue" to mode
+)
+private fun gc() = arrayOf(
+    annotation(Tag::class.java, "gc"),
+)
+private fun stress() = arrayOf(
+    annotation(Tag::class.java, "stress"),
+    annotation(
+        EnforcedProperty::class.java,
+        "property" to ClassLevelProperty.EXECUTION_TIMEOUT,
+        "propertyValue" to "5m"
+    )
 )

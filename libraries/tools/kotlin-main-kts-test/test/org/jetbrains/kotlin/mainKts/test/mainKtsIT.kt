@@ -138,8 +138,9 @@ class MainKtsIT {
         }
     }
 
+    @Ignore // see #KT-66395
     @Test
-    fun testHelloSerialization() {
+    fun ignore_testHelloSerialization() {
         val paths = PathUtil.kotlinPathsForDistDirectory
         val serializationPlugin = paths.jar(KotlinPaths.Jar.SerializationPlugin)
         runWithKotlinc(

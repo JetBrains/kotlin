@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirAnalysisHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
+import org.jetbrains.kotlin.test.frontend.fir.handlers.KmpCompilationMode
 import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorService
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
@@ -36,7 +37,8 @@ class NoFirCompilationErrorsHandler(testServices: TestServices) : FirAnalysisHan
 
             val diagnosticsPerFile = testServices.firDiagnosticCollectorService.getFrontendDiagnosticsForModule(info)
             for ((firFile, diagnostics) in diagnosticsPerFile) {
-                for (diagnostic in diagnostics) {
+                for ((diagnostic, mode) in diagnostics) {
+                    if (mode == KmpCompilationMode.METADATA) continue
                     if (diagnostic.severity == Severity.ERROR) {
                         hasError = true
                         if (!ignoreErrors) {

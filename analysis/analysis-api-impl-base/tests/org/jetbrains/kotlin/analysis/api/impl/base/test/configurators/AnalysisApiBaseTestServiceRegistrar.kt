@@ -23,11 +23,16 @@ import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.providers.*
 import org.jetbrains.kotlin.analysis.providers.impl.*
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
+import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
+import org.jetbrains.kotlin.analysis.test.framework.services.configuration.libraryIndexingConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFileClassProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.NO_RUNTIME
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -48,6 +53,7 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             //but getClasses is used during java resolve, thus it's required to return some PsiClass for such cases
             registerService(KtFileClassProvider::class.java, KtClsFileClassProvider(project))
             registerService(ClsJavaStubByVirtualFileCache::class.java, ClsJavaStubByVirtualFileCache())
+            registerService(ScriptDefinitionProvider::class.java, CliScriptDefinitionProvider())
         }
     }
 
@@ -66,32 +72,51 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
 
     override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
         val moduleStructure = testServices.ktModuleProvider.getModuleStructure()
-        val allSourceKtFiles = moduleStructure.mainModules.flatMap { it.files.filterIsInstance<KtFile>() }
-        val binaryDependencies = moduleStructure.binaryModules.toMutableSet()
+        val testKtFiles = moduleStructure.mainModules.flatMap { it.files.filterIsInstance<KtFile>() }
+
+        // We explicitly exclude decompiled libraries. Their decompiled PSI files are indexed by the declaration provider, so it shouldn't
+        // additionally build and index stubs for the library.
+        val mainBinaryModules = moduleStructure.mainModules
+            .filter { it.moduleKind == TestModuleKind.LibraryBinary }
+            .map { it.ktModule as KtBinaryModule }
+
+        val sharedBinaryDependencies = moduleStructure.binaryModules.toMutableSet()
         for (mainModule in moduleStructure.mainModules) {
             val ktModule = mainModule.ktModule
             if (ktModule !is KtBinaryModule) continue
-            binaryDependencies -= ktModule
+            sharedBinaryDependencies -= ktModule
         }
 
-        val roots = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(
-            binaryDependencies.flatMap { binary -> binary.getBinaryRoots() },
+        val mainBinaryRoots = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(
+            mainBinaryModules.flatMap { it.getBinaryRoots() },
+            testServices.environmentManager.getProjectEnvironment(),
+        ).distinct()
+
+        val sharedBinaryRoots = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(
+            sharedBinaryDependencies.flatMap { binary -> binary.getBinaryRoots() },
             testServices.environmentManager.getProjectEnvironment()
         ).distinct()
 
         project.apply {
-            registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(project, allSourceKtFiles))
+            registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(project, testKtFiles))
 
             val filter = BuiltInDefinitionFile.FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES
             val ktFilesForBinaries: List<KtFile>
             try {
                 BuiltInDefinitionFile.FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES = false
+
+                val shouldBuildStubsForBinaryLibraries =
+                    testServices.libraryIndexingConfiguration.binaryLibraryIndexingMode == AnalysisApiBinaryLibraryIndexingMode.INDEX_STUBS
+
                 val declarationProviderFactory = KotlinStaticDeclarationProviderFactory(
                     project,
-                    allSourceKtFiles,
-                    additionalRoots = roots,
+                    testKtFiles,
+                    binaryRoots = mainBinaryRoots,
+                    sharedBinaryRoots = sharedBinaryRoots,
                     skipBuiltins = testServices.moduleStructure.allDirectives.contains(NO_RUNTIME),
+                    shouldBuildStubsForBinaryLibraries = shouldBuildStubsForBinaryLibraries,
                 )
+
                 ktFilesForBinaries = declarationProviderFactory.getAdditionalCreatedKtFiles()
                 registerService(
                     KotlinDeclarationProviderFactory::class.java, declarationProviderFactory
@@ -102,7 +127,7 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             registerService(KotlinDeclarationProviderMerger::class.java, KotlinStaticDeclarationProviderMerger(project))
             registerService(
                 KotlinPackageProviderFactory::class.java,
-                KotlinStaticPackageProviderFactory(project, allSourceKtFiles + ktFilesForBinaries)
+                KotlinStaticPackageProviderFactory(project, testKtFiles + ktFilesForBinaries)
             )
             registerService(KotlinPackageProviderMerger::class.java, KotlinStaticPackageProviderMerger(project))
             registerService(KotlinResolutionScopeProvider::class.java, KotlinByModulesResolutionScopeProvider::class.java)

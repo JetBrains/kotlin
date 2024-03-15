@@ -27,9 +27,7 @@ internal interface UsesClassLoadersCachingBuildService : Task {
 /**
  * A [BuildService] for caching [ClassLoader] instances
  */
-internal abstract class ClassLoadersCachingBuildService : BuildService<BuildServiceParameters.None>, AutoCloseable {
-    // The service could be used by multiple tasks in parallel, so the map have to be synchronized
-    private val classLoaders = ConcurrentHashMap<ClassLoaderCacheKey, ClassLoader>()
+internal abstract class ClassLoadersCachingBuildService : BuildService<BuildServiceParameters.None> {
     private val logger = Logging.getLogger(javaClass)
 
     fun getClassLoader(
@@ -42,12 +40,10 @@ internal abstract class ClassLoadersCachingBuildService : BuildService<BuildServ
         }
     }
 
-    override fun close() {
-        logger.debug("Clearing ${classLoaders.size} cached classloaders")
-        classLoaders.clear()
-    }
-
     companion object {
+        // The service could be used by multiple tasks in parallel, so the map have to be synchronized
+        private val classLoaders = ConcurrentHashMap<ClassLoaderCacheKey, ClassLoader>()
+
         fun registerIfAbsent(project: Project) =
             project.gradle.registerClassLoaderScopedBuildService(ClassLoadersCachingBuildService::class).also { serviceProvider ->
                 SingleActionPerProject.run(project, UsesClassLoadersCachingBuildService::class.java.name) {

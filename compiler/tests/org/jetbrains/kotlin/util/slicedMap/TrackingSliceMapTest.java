@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext;
 public class TrackingSliceMapTest extends TestCase {
     public void testSimpleSlice() {
         WritableSlice<String, Integer> SUPER_COMPUTER = Slices.<String, Integer>sliceBuilder().setDebugName("SUPER_COMPUTER").build();
-        BindingTraceContext traceContext = BindingTraceContext.createTraceableBindingTrace();
+        BindingTraceContext traceContext = BindingTraceContext.createTraceableBindingTrace(null);
 
         traceContext.record(SUPER_COMPUTER, "Answer", 42);
         Integer answer = traceContext.get(SUPER_COMPUTER, "Answer");
@@ -39,7 +39,7 @@ public class TrackingSliceMapTest extends TestCase {
                 .setFurtherLookupSlices(new ReadOnlySlice[] {NAME_COLOR})
                 .setDebugName("NAME_OBJECT").build();
 
-        BindingTraceContext traceContext = BindingTraceContext.createTraceableBindingTrace();
+        BindingTraceContext traceContext = BindingTraceContext.createTraceableBindingTrace(null);
 
         traceContext.record(NAME_COLOR, "RED", 0xff0000);
         Object object = traceContext.get(NAME_OBJECT, "RED");

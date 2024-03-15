@@ -160,6 +160,7 @@ class LauncherReplTest : TestCaseWithTmpdir() {
 
     val replOutHeader = arrayOf(
         null to "Welcome to Kotlin version .*",
+        null to "Warning: REPL is not yet compatible with the Kotlin version .*, using '-language-version 1.9'.",
         null to "Type :help for help, :quit for quit"
     )
 

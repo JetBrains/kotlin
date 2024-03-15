@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
@@ -136,7 +135,7 @@ class OperatorCallOfConstructor(val constructor: FirConstructorSymbol) : Resolut
 class InferenceError(val constraintError: ConstraintSystemError) : ResolutionDiagnostic(constraintError.applicability)
 class Unsupported(val message: String, val source: KtSourceElement?) : ResolutionDiagnostic(K2_UNSUPPORTED)
 
-class PropertyAsOperator(val propertySymbol: FirPropertySymbol) : ResolutionDiagnostic(K2_PROPERTY_AS_OPERATOR)
+class NotFunctionAsOperator(val symbol: FirBasedSymbol<*>) : ResolutionDiagnostic(K2_NOT_FUNCTION_AS_OPERATOR)
 
 class DslScopeViolation(val calleeSymbol: FirBasedSymbol<*>) : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
 
@@ -166,3 +165,5 @@ class TypeVariableAsExplicitReceiver(
 ) : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
 
 object CallToDeprecatedOverrideOfHidden : ResolutionDiagnostic(RESOLVED)
+
+class AmbiguousInterceptedSymbol(val pluginNames: List<String>) : ResolutionDiagnostic(RESOLVED_WITH_ERROR)

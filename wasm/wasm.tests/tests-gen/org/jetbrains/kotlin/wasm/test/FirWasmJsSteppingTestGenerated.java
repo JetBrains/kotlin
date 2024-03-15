@@ -9,7 +9,6 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -83,6 +82,24 @@ public class FirWasmJsSteppingTestGenerated extends AbstractFirWasmJsSteppingTes
   @TestMetadata("classObject.kt")
   public void testClassObject() {
     runTest("compiler/testData/debug/stepping/classObject.kt");
+  }
+
+  @Test
+  @TestMetadata("closingBracketOfCrossinlineInsideCrossinline.kt")
+  public void testClosingBracketOfCrossinlineInsideCrossinline() {
+    runTest("compiler/testData/debug/stepping/closingBracketOfCrossinlineInsideCrossinline.kt");
+  }
+
+  @Test
+  @TestMetadata("closingBracketOfLambdaOfInlineOnlyFunction.kt")
+  public void testClosingBracketOfLambdaOfInlineOnlyFunction() {
+    runTest("compiler/testData/debug/stepping/closingBracketOfLambdaOfInlineOnlyFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("closingBracketOfObjectInsideCrossinline.kt")
+  public void testClosingBracketOfObjectInsideCrossinline() {
+    runTest("compiler/testData/debug/stepping/closingBracketOfObjectInsideCrossinline.kt");
   }
 
   @Test

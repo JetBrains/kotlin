@@ -1,18 +1,18 @@
 val topLevelPropA = 0
 val topLevelPropB = 1
 
-val Foo.extensionValA
+val Clazz.extensionValA
     get() = 0
-val Foo.extensionValB
+val Clazz.extensionValB
     get() = 1
 
-var Foo.extensionVarA
+var Clazz.extensionVarA
     get() = 0
     set(value) {}
-var Foo.extensionVarB
+var Clazz.extensionVarB
     get() = 1
     set(value) {}
 
-class Foo {
+class Clazz {
     fun memberFun() {}
 }

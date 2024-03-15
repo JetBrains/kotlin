@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,7 +18,8 @@ public abstract class KtPsiTypeProvider : KtAnalysisSessionComponent() {
         useSitePosition: PsiElement,
         mode: KtTypeMappingMode,
         isAnnotationMethod: Boolean,
-        allowErrorTypes: Boolean
+        suppressWildcards: Boolean?,
+        allowErrorTypes: Boolean,
     ): PsiTypeElement?
 
     public abstract fun asKtType(
@@ -46,15 +47,29 @@ public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
      *
      * If [allowErrorTypes] set to true then erroneous types will be replaced with `error.NonExistentClass` type.
      *
+     * [suppressWildcards] indicates whether wild cards in type arguments need to be suppressed or not,
+     * e.g., according to the annotation on the containing declarations.
+     *   `true` means they should be suppressed;
+     *   `false` means they should appear;
+     *   `null` is no-op by default, i.e., their suppression/appearance is determined by type annotations.
+     *
      * Note: [PsiTypeElement] is JVM conception, so this method will return `null` for non-JVM platforms.
      */
     public fun KtType.asPsiTypeElement(
         useSitePosition: PsiElement,
         allowErrorTypes: Boolean,
         mode: KtTypeMappingMode = KtTypeMappingMode.DEFAULT,
-        isAnnotationMethod: Boolean = false
+        isAnnotationMethod: Boolean = false,
+        suppressWildcards: Boolean? = null,
     ): PsiTypeElement? = withValidityAssertion {
-        analysisSession.psiTypeProvider.asPsiTypeElement(this, useSitePosition, mode, isAnnotationMethod, allowErrorTypes)
+        analysisSession.psiTypeProvider.asPsiTypeElement(
+            this,
+            useSitePosition,
+            mode,
+            isAnnotationMethod,
+            suppressWildcards,
+            allowErrorTypes,
+        )
     }
 
     /**
@@ -70,15 +85,25 @@ public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
         useSitePosition: PsiElement,
         allowErrorTypes: Boolean,
         mode: KtTypeMappingMode = KtTypeMappingMode.DEFAULT,
-        isAnnotationMethod: Boolean = false
+        isAnnotationMethod: Boolean = false,
+        suppressWildcards: Boolean? = null,
     ): PsiType? =
-        asPsiTypeElement(useSitePosition, allowErrorTypes, mode, isAnnotationMethod)?.type
+        asPsiTypeElement(
+            useSitePosition,
+            allowErrorTypes,
+            mode,
+            isAnnotationMethod,
+            suppressWildcards,
+        )?.type
 
     /**
      * Converts given [PsiType] to [KtType].
      *
-     * @receiver PsiType to be converted.
-     * @return The converted KtType, or null if conversion is not possible e.g., [PsiType] is not resolved
+     * [useSitePosition] may be used to clarify how to resolve some parts of [PsiType].
+     * For instance, it can be used to collect type parameters and use them during the conversion.
+     *
+     * @receiver [PsiType] to be converted.
+     * @return The converted [KtType], or null if conversion is not possible e.g., [PsiType] is not resolved
      */
     public fun PsiType.asKtType(useSitePosition: PsiElement): KtType? = withValidityAssertion {
         analysisSession.psiTypeProvider.asKtType(this, useSitePosition)

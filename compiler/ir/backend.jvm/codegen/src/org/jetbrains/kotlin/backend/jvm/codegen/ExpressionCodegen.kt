@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.BackendErrors
@@ -50,6 +51,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
@@ -155,6 +157,13 @@ class ExpressionCodegen(
 
     val state: GenerationState = context.state
     val config: JvmBackendConfig = context.config
+
+    override val inlineScopesGenerator =
+        if (state.configuration.getBoolean(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS)) {
+            InlineScopesGenerator()
+        } else {
+            null
+        }
 
     override val visitor: InstructionAdapter
         get() = mv
@@ -755,6 +764,15 @@ class ExpressionCodegen(
     override fun visitVariable(declaration: IrVariable, data: BlockInfo): PromisedValue {
         val varType = typeMapper.mapType(declaration)
         val index = frameMap.enter(declaration.symbol, varType)
+        val name = declaration.name.asString()
+
+        if (state.configuration.getBoolean(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS) &&
+            state.configuration.getBoolean(JVMConfigurationKeys.ENABLE_IR_INLINER) &&
+            isFakeLocalVariableForInline(name) &&
+            name.contains(INLINE_SCOPE_NUMBER_SEPARATOR)
+        ) {
+            declaration.name = Name.identifier(updateCallSiteLineNumber(name, lineNumberMapper.getLineNumber()))
+        }
 
         val initializer = declaration.initializer
         if (initializer != null) {

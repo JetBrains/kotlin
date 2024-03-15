@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,6 +27,7 @@ abstract class AbstractField<Field : AbstractField<Field>> {
     open val arbitraryImportables: MutableList<Importable> = mutableListOf()
 
     open var optInAnnotation: ClassRef<*>? = null
+    open var replaceOptInAnnotation: ClassRef<*>? = null
 
     abstract var isMutable: Boolean
     open val withGetter: Boolean get() = false
@@ -64,7 +65,7 @@ abstract class AbstractField<Field : AbstractField<Field>> {
      *
      * Only has effect if [containsElement] is `true`.
      */
-    var isChild: Boolean = true
+    abstract val isChild: Boolean
 
     open val overriddenTypes: MutableSet<TypeRefWithNullability> = mutableSetOf()
 
@@ -101,12 +102,12 @@ abstract class AbstractField<Field : AbstractField<Field>> {
         copy.isLateinit = isLateinit
         copy.arbitraryImportables += arbitraryImportables
         copy.optInAnnotation = optInAnnotation
+        copy.replaceOptInAnnotation = replaceOptInAnnotation
         copy.isMutable = isMutable
         copy.deprecation = deprecation
         copy.visibility = visibility
         copy.fromParent = fromParent
         copy.useInBaseTransformerDetection = useInBaseTransformerDetection
-        copy.isChild = isChild
         copy.overriddenTypes += overriddenTypes
     }
 }

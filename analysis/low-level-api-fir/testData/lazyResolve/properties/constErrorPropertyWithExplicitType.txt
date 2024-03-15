@@ -1,0 +1,93 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] constErrorPropertyWithExplicitType.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): Int { LAZY_BLOCK }
+    public? final? const [ResolvedTo(RAW_FIR)] val nonConstantInitializer: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] constErrorPropertyWithExplicitType.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): Int { LAZY_BLOCK }
+    public? final? const [ResolvedTo(RAW_FIR)] val nonConstantInitializer: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] constErrorPropertyWithExplicitType.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): Int { LAZY_BLOCK }
+    public? final? const [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val nonConstantInitializer: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): Int
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] constErrorPropertyWithExplicitType.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): Int { LAZY_BLOCK }
+    public? final? const [ResolvedTo(COMPANION_GENERATION)] val nonConstantInitializer: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(COMPANION_GENERATION)] get(): Int
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] constErrorPropertyWithExplicitType.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): Int { LAZY_BLOCK }
+    public? final? const [ResolvedTo(SUPER_TYPES)] val nonConstantInitializer: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(SUPER_TYPES)] get(): Int
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] constErrorPropertyWithExplicitType.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): Int { LAZY_BLOCK }
+    public? final? const [ResolvedTo(TYPES)] val nonConstantInitializer: R|kotlin/Int| = LAZY_EXPRESSION
+        public? [ResolvedTo(TYPES)] get(): R|kotlin/Int|
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] constErrorPropertyWithExplicitType.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): Int { LAZY_BLOCK }
+    public final const [ResolvedTo(STATUS)] val nonConstantInitializer: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] constErrorPropertyWithExplicitType.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): Int { LAZY_BLOCK }
+    public final const [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val nonConstantInitializer: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/Int|
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] constErrorPropertyWithExplicitType.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): Int { LAZY_BLOCK }
+    public final const [ResolvedTo(CONTRACTS)] val nonConstantInitializer: R|kotlin/Int| = IntegerLiteral(1).plus#(IntegerLiteral(5)).plus#(foo#())
+        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] constErrorPropertyWithExplicitType.kt
+    public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Int| {
+        ^foo IntegerLiteral(0)
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val nonConstantInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/foo|())
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] constErrorPropertyWithExplicitType.kt
+    public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Int| {
+        ^foo IntegerLiteral(0)
+    }
+    public final const [ResolvedTo(CONSTANT_EVALUATION)] val nonConstantInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/foo|())
+        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int|
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] constErrorPropertyWithExplicitType.kt
+    public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Int| {
+        ^foo IntegerLiteral(0)
+    }
+    public final const [ResolvedTo(ANNOTATION_ARGUMENTS)] val nonConstantInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/foo|())
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] constErrorPropertyWithExplicitType.kt
+    public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Int| {
+        ^foo IntegerLiteral(0)
+    }
+    public final const [ResolvedTo(BODY_RESOLVE)] val nonConstantInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/foo|())
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] constErrorPropertyWithExplicitType.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
+        ^foo Int(0)
+    }
+    public final const [ResolvedTo(BODY_RESOLVE)] val nonConstantInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/foo|())
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

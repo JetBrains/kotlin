@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleProjectStructure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -18,6 +18,9 @@ object StandaloneModeConfigurator : StandaloneModeConfiguratorBase() {
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         sourceConfigurator.configureTest(builder, disposable)
+
+        // `StandaloneModeConfiguratorBase` is ordered last so that it overrules the source test configuration.
+        super.configureTest(builder, disposable)
     }
 
     private val sourceConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
@@ -29,7 +32,7 @@ object StandaloneModeConfigurator : StandaloneModeConfiguratorBase() {
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project
-    ): KtModuleProjectStructure {
+    ): KtTestModuleProjectStructure {
         return sourceConfigurator.createModules(moduleStructure, testServices, project)
     }
 }

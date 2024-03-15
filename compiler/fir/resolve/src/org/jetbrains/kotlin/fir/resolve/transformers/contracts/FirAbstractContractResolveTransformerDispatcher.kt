@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
@@ -171,10 +170,10 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
                 owner.body.replaceFirstStatement<FirContractCallBlock> { FirContractCallBlock(resolvedContractCall) }
             }
 
-            val argument = resolvedContractCall.arguments.singleOrNull() as? FirLambdaArgumentExpression
+            val argument = resolvedContractCall.arguments.singleOrNull() as? FirAnonymousFunctionExpression
                 ?: return transformOwnerOfErrorContract(owner)
 
-            val lambdaBody = (argument.expression as FirAnonymousFunctionExpression).anonymousFunction.body
+            val lambdaBody = argument.anonymousFunction.body
                 ?: return transformOwnerOfErrorContract(owner)
 
             val resolvedContractDescription = buildResolvedContractDescription {
@@ -228,10 +227,9 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
                 }
             }
 
-            val lambdaArgument = buildLambdaArgumentExpression {
-                expression = buildAnonymousFunctionExpression {
-                    anonymousFunction = effectsBlock
-                }
+            val lambdaArgument = buildAnonymousFunctionExpression {
+                anonymousFunction = effectsBlock
+                isTrailingLambda = true
             }
 
             val contractCall = buildFunctionCall {
@@ -325,13 +323,6 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             data: ResolutionMode
         ): FirDanglingModifierList {
             return danglingModifierList
-        }
-
-        override fun transformFileAnnotationsContainer(
-            fileAnnotationsContainer: FirFileAnnotationsContainer,
-            data: ResolutionMode
-        ): FirFileAnnotationsContainer {
-            return fileAnnotationsContainer
         }
 
         override fun transformErrorPrimaryConstructor(

@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.incremental.createDirectory
 import org.jetbrains.kotlin.incremental.deleteRecursivelyOrThrow
 
 @DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
-abstract class GenerateSPMPackageFromSwiftExport : DefaultTask() {
+internal abstract class GenerateSPMPackageFromSwiftExport : DefaultTask() {
+    companion object {
+        private const val KOTLIN_RUNTIME = "KotlinRuntime"
+    }
 
     @get:Input
     abstract val swiftApiModuleName: Property<String>
@@ -30,6 +33,10 @@ abstract class GenerateSPMPackageFromSwiftExport : DefaultTask() {
 
     @get:Input
     abstract val kotlinLibraryName: Property<String>
+
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val kotlinRuntime: DirectoryProperty
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -49,6 +56,9 @@ abstract class GenerateSPMPackageFromSwiftExport : DefaultTask() {
     @get:Internal
     val headerBridgeIncludePath get() = headerBridgeModulePath.resolve("include")
 
+    @get:Internal
+    val kotlinRuntimeIncludePath get() = kotlinRuntimeModulePath.resolve("include")
+
     private val swiftApiModule get() = swiftApiModuleName.get()
     private val headerBridgeModule get() = headerBridgeModuleName.get()
     private val spmPackageRootPath get() = packagePath.getFile()
@@ -56,6 +66,7 @@ abstract class GenerateSPMPackageFromSwiftExport : DefaultTask() {
     private val sourcesPath get() = spmPackageRootPath.resolve("Sources")
     private val swiftApiModulePath get() = sourcesPath.resolve(swiftApiModule)
     private val headerBridgeModulePath get() = sourcesPath.resolve(headerBridgeModule)
+    private val kotlinRuntimeModulePath get() = sourcesPath.resolve(KOTLIN_RUNTIME)
 
     @TaskAction
     fun generate() {
@@ -63,6 +74,7 @@ abstract class GenerateSPMPackageFromSwiftExport : DefaultTask() {
         createHeaderTarget()
         createSwiftTarget()
         createPackageManifest()
+        createKotlinRuntimeTarget()
     }
 
     private fun preparePackageDirectory() {
@@ -71,10 +83,11 @@ abstract class GenerateSPMPackageFromSwiftExport : DefaultTask() {
         }
         swiftApiModulePath.createDirectory()
         headerBridgeIncludePath.createDirectory()
+        kotlinRuntimeIncludePath.createDirectory()
     }
 
     private fun createHeaderTarget() {
-        headerBridgePath.get().asFile.copyTo(
+        headerBridgePath.getFile().copyTo(
             headerBridgeIncludePath.resolve("Kotlin.h")
         )
         headerBridgeIncludePath.resolve("module.modulemap").writeText(
@@ -89,6 +102,15 @@ abstract class GenerateSPMPackageFromSwiftExport : DefaultTask() {
             """.trimIndent()
         )
         headerBridgeModulePath.resolve("linkingStub.c").writeText("\n")
+    }
+
+    private fun createKotlinRuntimeTarget() {
+        kotlinRuntime.asFileTree.forEach {
+            it.copyTo(
+                kotlinRuntimeIncludePath.resolve(it.name)
+            )
+        }
+        kotlinRuntimeModulePath.resolve("linkingStub.c").writeText("\n")
     }
 
     private fun createSwiftTarget() {
@@ -117,10 +139,13 @@ abstract class GenerateSPMPackageFromSwiftExport : DefaultTask() {
                 targets: [
                     .target(
                         name: "$swiftApiModule",
-                        dependencies: ["$headerBridgeModule"]
+                        dependencies: ["$headerBridgeModule", "$KOTLIN_RUNTIME"]
                     ),
                     .target(
                         name: "$headerBridgeModule"
+                    ),
+                    .target(
+                        name: "$KOTLIN_RUNTIME"
                     )
                 ]
             )

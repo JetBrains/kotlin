@@ -11,6 +11,9 @@ annotation class AllOpen
 annotation class AllOpen2
 
 annotation class DummyFunction
+
+@Target(AnnotationTarget.FUNCTION)
+annotation class TestTopLevelPrivateSuspendFun
 annotation class ExternalClassWithNested
 annotation class NestedClassAndMaterializeMember
 annotation class MyInterfaceSupertype

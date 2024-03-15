@@ -154,6 +154,7 @@ internal class KtFe10CallResolver(
         val parentBinaryExpression = psi.parentOfType<KtBinaryExpression>()
         val lhs = KtPsiUtil.deparenthesize(parentBinaryExpression?.left)
         val unwrappedPsi = KtPsiUtil.deparenthesize(psi as? KtExpression) ?: psi
+
         if (parentBinaryExpression != null &&
             parentBinaryExpression.operationToken == KtTokens.EQ &&
             (lhs == unwrappedPsi || (lhs as? KtQualifiedExpression)?.selectorExpression == unwrappedPsi) &&
@@ -163,6 +164,11 @@ internal class KtFe10CallResolver(
             // treated as a property read.
             return resolveCall(parentBinaryExpression)
         }
+
+        if (psi is KtCallableReferenceExpression) {
+            return resolveCall(psi.callableReference)
+        }
+
         when (unwrappedPsi) {
             is KtBinaryExpression -> {
                 handleAsCompoundAssignment(this, unwrappedPsi)?.let { return@with it }

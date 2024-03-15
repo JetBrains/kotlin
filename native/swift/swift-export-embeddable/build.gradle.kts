@@ -4,6 +4,10 @@ plugins {
     java
 }
 
+if (kotlinBuildProperties.isSwiftExportPluginPublishingEnabled) {
+    publish()
+}
+
 dependencies {
     embedded(project(":native:swift:sir")) { isTransitive = false }
     embedded(project(":native:swift:sir-compiler-bridge")) { isTransitive = false }

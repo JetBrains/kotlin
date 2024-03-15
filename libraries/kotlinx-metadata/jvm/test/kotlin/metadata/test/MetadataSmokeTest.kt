@@ -12,6 +12,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.Test
 import java.net.URLClassLoader
 import kotlin.coroutines.CoroutineContext
+import kotlin.metadata.internal._flagAccess
 import kotlin.reflect.full.primaryConstructor
 import kotlin.test.*
 
@@ -146,7 +147,6 @@ class MetadataSmokeTest {
     }
 
     @Test
-    @Suppress("DEPRECATION_ERROR") // flags will become internal eventually
     fun unstableParameterNames() {
         @Suppress("unused", "UNUSED_PARAMETER")
         class Test(a: String, b: Int, c: Boolean) {
@@ -155,8 +155,8 @@ class MetadataSmokeTest {
 
         val classWithStableParameterNames = Test::class.java.readMetadataAsClass()
 
-        classWithStableParameterNames.kmClass.constructors.forEach { assertFalse(Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
-        classWithStableParameterNames.kmClass.functions.forEach { assertFalse(Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
+        classWithStableParameterNames.kmClass.constructors.forEach { assertFalse(Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES(_flagAccess(it))) }
+        classWithStableParameterNames.kmClass.functions.forEach { assertFalse(Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES(_flagAccess(it))) }
 
         classWithStableParameterNames.kmClass.constructors.forEach { assertFalse(it.hasNonStableParameterNames) }
         classWithStableParameterNames.kmClass.functions.forEach { assertFalse(it.hasNonStableParameterNames) }
@@ -168,8 +168,8 @@ class MetadataSmokeTest {
 
         val classWithUnstableParameterNames = newMetadata.readAsKmClass()
 
-        classWithUnstableParameterNames.constructors.forEach { assertTrue(Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
-        classWithUnstableParameterNames.functions.forEach { assertTrue(Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
+        classWithUnstableParameterNames.constructors.forEach { assertTrue(Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES(_flagAccess(it))) }
+        classWithUnstableParameterNames.functions.forEach { assertTrue(Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES(_flagAccess(it))) }
 
         classWithUnstableParameterNames.constructors.forEach { assertTrue(it.hasNonStableParameterNames) }
         classWithUnstableParameterNames.functions.forEach { assertTrue(it.hasNonStableParameterNames) }

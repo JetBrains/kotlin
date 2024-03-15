@@ -14,7 +14,6 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
-import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
@@ -35,7 +34,6 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClas
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterface
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
 import org.jetbrains.kotlin.light.classes.symbol.classes.modificationTrackerForClassInnerStuff
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -43,6 +41,10 @@ import java.util.*
 
 internal fun <L : Any> L.invalidAccess(): Nothing =
     error("Cls delegate shouldn't be accessed for symbol light classes! Qualified name: ${javaClass.name}")
+
+context(KtAnalysisSession)
+internal fun KtDeclarationSymbol.getContainingSymbolsWithSelf(): Sequence<KtDeclarationSymbol> =
+    generateSequence(this) { it.getContainingSymbol() }
 
 internal fun KtAnalysisSession.mapType(
     type: KtType,
@@ -58,7 +60,6 @@ internal fun KtAnalysisSession.mapType(
         annotateByKtType(it, type, psiTypeElement, modifierListAsParent = null) as? PsiClassType
     }
 }
-
 
 internal enum class NullabilityType {
     Nullable,
@@ -167,13 +168,6 @@ internal fun KtAnalysisSession.getTypeNullability(type: KtType): NullabilityType
     if (ktType.classId.shortClassName.asString() == SpecialNames.ANONYMOUS_STRING) return NullabilityType.NotNull
 
     return ktType.nullabilityType
-}
-
-internal val KtType.isUnit get() = isClassTypeWithClassId(DefaultTypeClassIds.UNIT)
-
-internal fun KtType.isClassTypeWithClassId(classId: ClassId): Boolean {
-    if (this !is KtNonErrorClassType) return false
-    return this.classId == classId
 }
 
 private fun escapeString(s: String): String = buildString {

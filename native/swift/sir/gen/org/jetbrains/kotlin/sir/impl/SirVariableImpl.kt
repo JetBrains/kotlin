@@ -6,7 +6,7 @@
 // This file was generated automatically. See native/swift/sir/tree-generator/Readme.md.
 // DO NOT MODIFY IT MANUALLY.
 
-@file:Suppress("DuplicatedCode", "unused")
+@file:Suppress("DuplicatedCode")
 
 package org.jetbrains.kotlin.sir.impl
 
@@ -21,7 +21,7 @@ internal class SirVariableImpl(
     override val type: SirType,
     override val getter: SirGetter,
     override val setter: SirSetter?,
-    override val isStatic: Boolean,
+    override var documentation: String?,
 ) : SirVariable() {
     override lateinit var parent: SirDeclarationParent
 

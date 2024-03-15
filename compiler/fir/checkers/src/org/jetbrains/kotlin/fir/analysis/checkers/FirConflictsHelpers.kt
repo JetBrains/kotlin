@@ -92,10 +92,19 @@ private val FirBasedSymbol<*>.resolvedStatus
         else -> null
     }
 
-internal fun isExpectAndActual(declaration1: FirBasedSymbol<*>, declaration2: FirBasedSymbol<*>): Boolean {
-    val status1 = declaration1.resolvedStatus ?: return false
-    val status2 = declaration2.resolvedStatus ?: return false
-    return (status1.isExpect && status2.isActual) || (status1.isActual && status2.isExpect)
+internal fun isExpectAndNonExpect(first: FirBasedSymbol<*>, second: FirBasedSymbol<*>): Boolean {
+    val firstIsExpect = first.resolvedStatus?.isExpect == true
+    val secondIsExpect = second.resolvedStatus?.isExpect == true
+    /*
+     * this `xor` is equivalent to the following check:
+     * when {
+     *    !firstIsExpect && secondIsExpect -> true
+     *    firstIsExpect && !secondIsExpect -> true
+     *    else -> false
+     * }
+     */
+
+    return firstIsExpect xor secondIsExpect
 }
 
 private class DeclarationBuckets {
@@ -344,7 +353,7 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(file: FirFile, pa
                     conflictingFile
                 )
 
-                session.lookupTracker?.recordLookup(declarationName, file.packageFqName.asString(), declaration.source, file.source)
+                session.lookupTracker?.recordNameLookup(declarationName, file.packageFqName.asString(), declaration.source, file.source)
             }
         }
 
@@ -438,9 +447,15 @@ private fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(context: Ch
     }
 }
 
-private fun shouldCheckForMultiplatformRedeclaration(dependency: FirBasedSymbol<*>, dependent: FirBasedSymbol<*>): Boolean =
-    dependent.moduleData.allDependsOnDependencies.contains(dependency.moduleData) &&
-            dependency.resolvedStatus?.isExpect != true // ACTUAL_MISSING takes care of this case
+private fun shouldCheckForMultiplatformRedeclaration(dependency: FirBasedSymbol<*>, dependent: FirBasedSymbol<*>): Boolean {
+    if (dependency.moduleData !in dependent.moduleData.allDependsOnDependencies) return false
+
+    /*
+     * If one of declarations is expect and the other is not expect, ExpectActualChecker will handle this case
+     * All other cases (both are expect or both are not expect) should be reported as declarations conflict
+     */
+    return !isExpectAndNonExpect(dependency, dependent)
+}
 
 private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
     declaration: FirBasedSymbol<*>,
@@ -503,7 +518,7 @@ private fun FirDeclarationCollector<*>.areNonConflictingCallables(
     declaration: FirBasedSymbol<*>,
     conflicting: FirBasedSymbol<*>,
 ): Boolean {
-    if (isExpectAndActual(declaration, conflicting) && declaration.moduleData != conflicting.moduleData) return true
+    if (isExpectAndNonExpect(declaration, conflicting) && declaration.moduleData != conflicting.moduleData) return true
 
     val declarationIsLowPriority = hasLowPriorityAnnotation(declaration.annotations)
     val conflictingIsLowPriority = hasLowPriorityAnnotation(conflicting.annotations)

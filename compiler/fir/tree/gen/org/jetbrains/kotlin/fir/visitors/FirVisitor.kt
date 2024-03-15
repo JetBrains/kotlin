@@ -65,9 +65,6 @@ abstract class FirVisitor<out R, in D> {
     open fun visitElementWithResolveState(elementWithResolveState: FirElementWithResolveState, data: D): R =
         visitElement(elementWithResolveState, data)
 
-    open fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer, data: D): R =
-        visitElement(fileAnnotationsContainer, data)
-
     open fun visitDeclaration(declaration: FirDeclaration, data: D): R =
         visitElement(declaration, data)
 
@@ -361,9 +358,6 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: D): R =
         visitElement(wrappedArgumentExpression, data)
-
-    open fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: D): R =
-        visitElement(lambdaArgumentExpression, data)
 
     open fun visitSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: D): R =
         visitElement(spreadArgumentExpression, data)

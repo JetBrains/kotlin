@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeprecationProv
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
@@ -97,8 +96,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
 
     override fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean {
         when (target) {
-            is FirFile -> return false
-            is FirRegularClass, is FirScript, is FirCodeFragment -> {}
+            is FirFile, is FirScript, is FirRegularClass, is FirCodeFragment -> {}
             else -> {
                 if (!target.isRegularDeclarationWithAnnotation) {
                     throwUnexpectedFirElementError(target)
@@ -107,13 +105,18 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
         }
 
         requireIsInstance<FirAnnotationContainer>(target)
-        resolveTargetDeclaration(target)
+        if (target is FirFile) {
+            transformer.annotationTransformer.withFileAndFileScopes(target) {
+                resolveTargetDeclaration(target)
+            }
+        } else {
+            resolveTargetDeclaration(target)
+        }
 
         return true
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        if (target is FirFile) return
         throwUnexpectedFirElementError(target)
     }
 
@@ -211,7 +214,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
             }
 
             for ((declaration, annotations) in annotationMap) {
-                if (declaration is FirProperty || declaration is FirFileAnnotationsContainer) continue
+                if (declaration is FirProperty || declaration is FirFile) continue
 
                 requireIsInstance<FirAnnotationContainer>(declaration)
                 deprecations[declaration] = declaration.extractDeprecationInfoPerUseSite(

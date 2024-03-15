@@ -46,7 +46,24 @@ import java.util.zip.GZIPInputStream
 // Set this to true if you want to dump all bytecode (test will fail in this case)
 private val DUMP_ALL = System.getProperty("comparison.dump.all") == "true"
 
-fun assertEqualDirectories(expected: File, actual: File, forgiveExtraFiles: Boolean) {
+fun assertEqualDirectoriesIgnoringDotFiles(
+    expected: File,
+    actual: File,
+    forgiveOtherExtraFiles: Boolean,
+) = assertEqualDirectories(
+    expected,
+    actual,
+    forgiveExtraFiles = forgiveOtherExtraFiles,
+    // e.g. ignore .DS_Store on macOS
+    filter = { !it.name.startsWith(".") },
+)
+
+fun assertEqualDirectories(
+    expected: File,
+    actual: File,
+    forgiveExtraFiles: Boolean,
+    filter: (File) -> (Boolean) = { true },
+) {
     val pathsInExpected = getAllRelativePaths(expected)
     val pathsInActual = getAllRelativePaths(actual)
 
@@ -55,8 +72,8 @@ fun assertEqualDirectories(expected: File, actual: File, forgiveExtraFiles: Bool
             .filter { DUMP_ALL || !Arrays.equals(File(expected, it).readBytes(), File(actual, it).readBytes()) }
             .sorted()
 
-    val expectedString = getDirectoryString(expected, changedPaths)
-    val actualString = getDirectoryString(actual, changedPaths)
+    val expectedString = getDirectoryString(expected, changedPaths, filter)
+    val actualString = getDirectoryString(actual, changedPaths, filter)
 
     if (DUMP_ALL) {
         Assert.assertEquals(expectedString, actualString + " ")
@@ -92,7 +109,11 @@ private fun File.checksumString(): String {
 
 private const val DIR_ROOT_PLACEHOLDER = "<DIR_ROOT_PLACEHOLDER>"
 
-private fun getDirectoryString(dir: File, interestingPaths: List<String>): String {
+private fun getDirectoryString(
+    dir: File,
+    interestingPaths: List<String>,
+    predicate: (File) -> (Boolean),
+): String {
     val buf = StringBuilder()
     val p = Printer(buf)
 
@@ -100,7 +121,7 @@ private fun getDirectoryString(dir: File, interestingPaths: List<String>): Strin
     fun addDirContent(dir: File) {
         p.pushIndent()
 
-        val listFiles = dir.listFiles()
+        val listFiles = dir.listFiles()?.filter(predicate)
         assertNotNull("$dir does not exist", listFiles)
 
         val children = listFiles!!.sortedWith(compareBy({ it.isDirectory }, { it.name }))

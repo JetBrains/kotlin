@@ -33,11 +33,11 @@ private fun AssertionsMode.assertionsEnabledWith(optimizationMode: OptimizationM
     else -> optimizationMode != OptimizationMode.OPT
 }
 
-internal abstract class TestCompilation<A : TestCompilationArtifact> {
+abstract class TestCompilation<A : TestCompilationArtifact> {
     abstract val result: TestCompilationResult<out A>
 }
 
-internal abstract class BasicCompilation<A : TestCompilationArtifact>(
+abstract class BasicCompilation<A : TestCompilationArtifact>(
     protected val targets: KotlinNativeTargets,
     protected val home: KotlinNativeHome,
     private val classLoader: KotlinNativeClassLoader,
@@ -125,14 +125,7 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
     protected open fun postCompileCheck() = Unit
 
     private fun doCompile(): TestCompilationResult.ImmediateResult<out A> {
-        val compilerArgs = buildArgs {
-            applyCommonArgs()
-            applySpecificArgs(this)
-            applyDependencies(this)
-            applyFreeArgs()
-            applyCompilerPlugins()
-            applySources()
-        }
+        val compilerArgs = getCompilerArgs()
 
         val loggedCompilerInput = LoggedData.CompilerInput(sourceModules)
         val loggedCompilerParameters = LoggedData.CompilerParameters(home, compilerArgs)
@@ -180,9 +173,18 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
 
         return result
     }
+
+    fun getCompilerArgs() = buildArgs {
+        applyCommonArgs()
+        applySpecificArgs(this)
+        applyDependencies(this)
+        applyFreeArgs()
+        applyCompilerPlugins()
+        applySources()
+    }
 }
 
-internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
+abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     targets: KotlinNativeTargets,
     home: KotlinNativeHome,
     classLoader: KotlinNativeClassLoader,
@@ -222,7 +224,6 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     }
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
-        addFlattened(dependencies.libraries) { library -> listOf("-l", library.path) }
         dependencies.friends.takeIf(Collection<*>::isNotEmpty)?.let { friends ->
             add("-friend-modules", friends.joinToString(File.pathSeparator) { friend -> friend.path })
         }
@@ -267,14 +268,28 @@ internal class LibraryCompilation(
     dependencies = CategorizedDependencies(dependencies),
     expectedArtifact = expectedArtifact
 ) {
+    private val useHeaders: Boolean = settings.get<CacheMode>().useHeaders
     override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.defaultForTesting(optimizationMode, freeCompilerArgs.assertionsMode)
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
         add(
             "-produce", "library",
-            "-output", expectedArtifact.path
+            "-output", expectedArtifact.path,
         )
+        if (useHeaders) {
+            add("-Xheader-klib-path=${expectedArtifact.headerKlib.path}")
+        }
         super.applySpecificArgs(argsBuilder)
+    }
+
+    override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
+        super.applyDependencies(argsBuilder)
+        addFlattened(dependencies.libraries) { library ->
+            listOf(
+                "-l",
+                library.headerKlib.takeIf { useHeaders && it.exists() }?.path ?: library.path
+            )
+        }
     }
 }
 
@@ -489,7 +504,7 @@ internal class SwiftCompilation<T: TestCompilationArtifact>(
     }
 }
 
-internal class ExecutableCompilation(
+class ExecutableCompilation(
     settings: Settings,
     freeCompilerArgs: TestCompilerArgs,
     sourceModules: Collection<TestModule>,
@@ -551,6 +566,7 @@ internal class ExecutableCompilation(
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         super.applyDependencies(argsBuilder)
+        addFlattened(dependencies.libraries) { library -> listOf("-l", library.path) }
     }
 
     override fun postCompileCheck() {
@@ -598,8 +614,9 @@ internal class StaticCacheCompilation(
     private val options: Options,
     private val pipelineType: PipelineType,
     dependencies: Iterable<TestCompilationDependency<*>>,
-    expectedArtifact: KLIBStaticCache,
     makePerFileCacheOverride: Boolean? = null,
+    private val createHeaderCache: Boolean = false,
+    expectedArtifact: KLIBStaticCache
 ) : BasicCompilation<KLIBStaticCache>(
     targets = settings.get(),
     home = settings.get(),
@@ -624,8 +641,10 @@ internal class StaticCacheCompilation(
 
     private val partialLinkageConfig: UsedPartialLinkageConfig = settings.get()
 
+    private val useHeaders: Boolean = settings.get<CacheMode>().useHeaders
+
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
-        add("-produce", "static_cache")
+        add("-produce", if (createHeaderCache) "header_cache" else "static_cache")
         pipelineType.compilerFlags.forEach { compilerFlag -> add(compilerFlag) }
 
         when (options) {
@@ -651,9 +670,18 @@ internal class StaticCacheCompilation(
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         dependencies.friends.takeIf(Collection<*>::isNotEmpty)?.let { friends ->
-            add("-friend-modules", friends.joinToString(File.pathSeparator) { friend -> friend.path })
+            add(
+                "-friend-modules",
+                friends.joinToString(File.pathSeparator) { friend ->
+                    friend.headerKlib.takeIf { useHeaders && it.exists() }?.path ?: friend.path
+                })
         }
-        addFlattened(dependencies.cachedLibraries) { (_, library) -> listOf("-l", library.path) }
+        addFlattened(dependencies.cachedLibraries) { lib ->
+            listOf(
+                "-l",
+                lib.klib.headerKlib.takeIf { useHeaders && it.exists() }?.path ?: lib.klib.path
+            )
+        }
         super.applyDependencies(argsBuilder)
     }
 
@@ -662,7 +690,7 @@ internal class StaticCacheCompilation(
     }
 }
 
-internal class CategorizedDependencies(uncategorizedDependencies: Iterable<TestCompilationDependency<*>>) {
+class CategorizedDependencies(uncategorizedDependencies: Iterable<TestCompilationDependency<*>>) {
     val failures: Set<TestCompilationResult.Failure> by lazy {
         uncategorizedDependencies.flatMapToSet { dependency ->
             when (val result = (dependency as? TestCompilation<*>)?.result) {
@@ -691,7 +719,7 @@ internal class CategorizedDependencies(uncategorizedDependencies: Iterable<TestC
     }
 
     val uniqueCacheDirs: Set<File> by lazy {
-        cachedLibraries.mapToSet { (libraryCacheDir, _) -> libraryCacheDir } // Avoid repeating the same directory more than once.
+        cachedLibraries.mapToSet { it.cacheDir } // Avoid repeating the same directory more than once.
     }
 
     private inline fun <reified A : TestCompilationArtifact, reified T : TestCompilationDependencyType<A>> Iterable<TestCompilationDependency<*>>.collectArtifacts(): List<A> {

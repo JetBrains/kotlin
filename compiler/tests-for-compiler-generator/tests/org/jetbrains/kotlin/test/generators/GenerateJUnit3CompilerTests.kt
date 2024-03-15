@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
-import org.jetbrains.kotlin.ir.AbstractIrCfgTestCase
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.compiler.ir.*
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
@@ -108,10 +107,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
 
             testClass<AbstractIrCustomScriptCodegenTest> {
                 model("codegen/customScript", pattern = "^(.*)$", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractIrCfgTestCase> {
-                model("ir/irCfg")
             }
 
             testClass<AbstractTopLevelMembersInvocationTest> {

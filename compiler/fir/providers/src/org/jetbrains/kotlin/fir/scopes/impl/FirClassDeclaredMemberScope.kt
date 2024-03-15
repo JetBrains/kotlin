@@ -17,8 +17,12 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.utils.SmartList
 
-abstract class FirClassDeclaredMemberScope(val classId: ClassId) : FirContainingNamesAwareScope()
+abstract class FirClassDeclaredMemberScope(val classId: ClassId) : FirContainingNamesAwareScope() {
+
+    override val scopeOwnerLookupNames: List<String> = SmartList(classId.asFqNameString())
+}
 
 class FirClassDeclaredMemberScopeImpl(
     val useSiteSession: FirSession,

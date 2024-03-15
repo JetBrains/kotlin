@@ -26,18 +26,6 @@ public sealed class JvmMemberSignature {
      * In case of a field [name] and [descriptor] are concatenated with `:` separator, e.g. `value:Ljava/lang/String;`
      */
     abstract override fun toString(): String
-
-    // Two following declarations are deprecated since 0.6.1, should be error in 0.7.0+
-
-    @Deprecated("Deprecated for removal. Use descriptor instead", ReplaceWith("descriptor"), level = DeprecationLevel.ERROR)
-    public val desc: String get() = descriptor
-
-    @Deprecated(
-        "asString() is deprecated as redundant. Use toString() instead",
-        ReplaceWith("toString()"),
-        level = DeprecationLevel.ERROR
-    )
-    public fun asString(): String = toString()
 }
 
 /**

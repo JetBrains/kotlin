@@ -11,7 +11,6 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.ProjectLayout
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.UsesXcodeVersion
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.tasks.buildKotlinNativeBinaryLinkerArgs
@@ -56,8 +56,9 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     private val projectLayout: ProjectLayout,
 ) : DefaultTask(),
     UsesBuildMetricsService,
-    KotlinToolTask<KotlinCommonCompilerToolOptions>,
-    UsesKotlinNativeBundleBuildService {
+    UsesKotlinNativeBundleBuildService,
+    UsesXcodeVersion,
+    KotlinToolTask<KotlinCommonCompilerToolOptions> {
 
     @get:Input
     abstract val baseName: Property<String>
@@ -100,11 +101,6 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Input
     abstract val binaryOptions: MapProperty<String, String>
 
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    @get:Optional
-    @get:InputFile
-    abstract val xcodeVersion: RegularFileProperty
-
     private val nativeBinaryOptions = PropertiesProvider(project).nativeBinaryOptions
 
     @get:Input
@@ -116,16 +112,22 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
             freeCompilerArgs.addAll(PropertiesProvider(project).nativeLinkArgs)
         }
 
+    @Suppress("DEPRECATION")
+    @Deprecated(KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE)
     @get:Internal
     val kotlinOptions = object : KotlinCommonToolOptions {
         override val options: KotlinCommonCompilerToolOptions
             get() = toolOptions
     }
 
+    @Suppress("DEPRECATION")
+    @Deprecated(KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE)
     fun kotlinOptions(fn: KotlinCommonToolOptions.() -> Unit) {
         kotlinOptions.fn()
     }
 
+    @Suppress("DEPRECATION")
+    @Deprecated(KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE)
     fun kotlinOptions(fn: Action<KotlinCommonToolOptions>) {
         fn.execute(kotlinOptions)
     }

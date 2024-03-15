@@ -15,15 +15,9 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 /**
- * A non-leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.expression]
  */
 abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement, IrAttributeContainer {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
-
     abstract var type: IrType
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrExpression =

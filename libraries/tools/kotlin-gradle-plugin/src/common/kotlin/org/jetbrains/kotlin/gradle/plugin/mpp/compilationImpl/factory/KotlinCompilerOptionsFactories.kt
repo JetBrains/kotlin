@@ -22,6 +22,7 @@ internal object KotlinMultiplatformCommonCompilerOptionsFactory : KotlinCompilat
                 .configureExperimentalTryNext(target.project)
         }
 
+        @Suppress("DEPRECATION")
         val kotlinOptions = object : KotlinCommonOptions {
             override val options: KotlinCommonCompilerOptions
                 get() = compilerOptions.options
@@ -44,6 +45,7 @@ internal object KotlinNativeCompilerOptionsFactory : KotlinCompilationImplFactor
             )
         )
 
+        @Suppress("DEPRECATION")
         val kotlinOptions = object : KotlinCommonOptions {
             override val options get() = compilerOptions.options
         }
@@ -62,6 +64,7 @@ internal object KotlinJsCompilerOptionsFactory : KotlinCompilationImplFactory.Ko
                 .configureExperimentalTryNext(target.project)
         }
 
+        @Suppress("DEPRECATION")
         val kotlinOptions = object : KotlinJsOptions {
             override val options: KotlinJsCompilerOptions
                 get() = compilerOptions.options
@@ -80,6 +83,7 @@ internal object KotlinJvmCompilerOptionsFactory : KotlinCompilationImplFactory.K
                 .configureExperimentalTryNext(target.project)
         }
 
+        @Suppress("DEPRECATION")
         val kotlinOptions = object : KotlinJvmOptions {
             override val options: KotlinJvmCompilerOptions
                 get() = compilerOptions.options

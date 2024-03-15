@@ -26,6 +26,8 @@ public interface ErrorsWasm {
     DiagnosticFactory0<PsiElement> WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> ASSOCIATED_OBJECT_INVALID_BINDING = DiagnosticFactory0.create(ERROR);
+
     DiagnosticFactory0<PsiElement> NESTED_WASM_IMPORT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR);

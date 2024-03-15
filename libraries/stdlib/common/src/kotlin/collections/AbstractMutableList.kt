@@ -21,8 +21,7 @@ public expect abstract class AbstractMutableList<E> : MutableList<E> {
      * to provide fail-fast behavior when a concurrent modification is detected during iteration.
      * [ConcurrentModificationException] will be thrown in this case.
      */
-    // TODO: Should be @SinceKotlin("2.0"), see KT-64904
-    @SinceKotlin("1.9")
+    @SinceKotlin("2.0")
     protected var modCount: Int
 
     protected constructor()
@@ -30,8 +29,7 @@ public expect abstract class AbstractMutableList<E> : MutableList<E> {
     /**
      * Removes the range of elements from this list starting from [fromIndex] and ending with but not including [toIndex].
      */
-    // TODO: Should be @SinceKotlin("2.0"), see KT-64904
-    @SinceKotlin("1.9")
+    @SinceKotlin("2.0")
     protected open fun removeRange(fromIndex: Int, toIndex: Int): Unit
 
     // From List

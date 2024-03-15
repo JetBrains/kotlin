@@ -106,9 +106,13 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    @TodoAnalysisApi
     fun `test - interfaceImplementingInterface`() {
         doTest(headersTestDataDir.resolve("interfaceImplementingInterface"))
+    }
+
+    @Test
+    fun `test - multipleInterfacesImplementationChain`() {
+        doTest(headersTestDataDir.resolve("multipleInterfacesImplementationChain"))
     }
 
     @Test
@@ -137,7 +141,6 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    @TodoAnalysisApi
     fun `test - functionWithThrowsAnnotation`() {
         doTest(headersTestDataDir.resolve("functionWithThrowsAnnotation"))
     }
@@ -148,13 +151,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    @TodoAnalysisApi
     fun `test - functionWithErrorTypeAndFrameworkName`() {
         doTest(headersTestDataDir.resolve("functionWithErrorTypeAndFrameworkName"), Configuration(frameworkName = "shared"))
     }
 
     @Test
-    @TodoAnalysisApi
     fun `test - kdocWithBlockTags`() {
         doTest(headersTestDataDir.resolve("kdocWithBlockTags"))
     }
@@ -175,7 +176,6 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    @TodoAnalysisApi
     fun `test - parameterWithMustBeDocumentedAnnotation`() {
         doTest(headersTestDataDir.resolve("parameterWithMustBeDocumentedAnnotation"))
     }
@@ -222,12 +222,7 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("classReferencingOtherClassAsReturnType"))
     }
 
-    /**
-     * - IntIterator has unwanted 'hasNext' exposed
-     * - IntIterator's next method returns int32_t instead of expected Int *
-     */
     @Test
-    @TodoAnalysisApi
     fun `test - classReferencingDependencyClassAsReturnType`() {
         doTest(headersTestDataDir.resolve("classReferencingDependencyClassAsReturnType"))
     }
@@ -297,11 +292,7 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("samInterface"))
     }
 
-    /**
-     * Requires some fixes: KT-65800
-     */
     @Test
-    @TodoAnalysisApi
     fun `test - simple data class`() {
         doTest(headersTestDataDir.resolve("simpleDataClass"))
     }
@@ -309,6 +300,75 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     @Test
     fun `test - special function names`() {
         doTest(headersTestDataDir.resolve("specialFunctionNames"))
+    }
+
+    @Test
+    fun `test - vararg`() {
+        doTest(headersTestDataDir.resolve("vararg"))
+    }
+
+    /**
+     * KT-66066
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - member function signature order`() {
+        doTest(headersTestDataDir.resolve("memberFunctionSignatureOrder"))
+    }
+
+    @Test
+    fun `test - multiple inheritance`() {
+        doTest(headersTestDataDir.resolve("multipleInheritance"))
+    }
+
+    @Test
+    fun `test - private super interface`() {
+        doTest(headersTestDataDir.resolve("privateSuperInterface"))
+    }
+
+    @Test
+    fun `test- privateSuperInterfaceWithCovariantOverride`() {
+        doTest(headersTestDataDir.resolve("privateSuperInterfaceWithCovariantOverride"))
+    }
+
+    @Test
+    fun `test - superClassWithCovariantOverride`() {
+        doTest(headersTestDataDir.resolve("superClassWithCovariantOverride"))
+    }
+
+    @Test
+    fun `test - privateGenericSuperInterface`() {
+        doTest(headersTestDataDir.resolve("privateGenericSuperInterface"))
+    }
+
+    @Test
+    fun `test - throwable`() {
+        doTest(headersTestDataDir.resolve("throwable"))
+    }
+
+    @Test
+    fun `test - illegalStateException`() {
+        doTest(headersTestDataDir.resolve("illegalStateException"))
+    }
+
+    @Test
+    fun `test - suspend function`() {
+        doTest(headersTestDataDir.resolve("suspendFunction"))
+    }
+
+    @Test
+    fun `test - innerClass`() {
+        doTest(headersTestDataDir.resolve("innerClass"))
+    }
+
+    /**
+     * Works except properties sorting with special name [org.jetbrains.kotlin.name.Name.special]
+     * See KT-66510
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - innerClassWithExtensionFunction`() {
+        doTest(headersTestDataDir.resolve("innerClassWithExtensionFunction"))
     }
 
     private fun doTest(root: File, configuration: Configuration = Configuration()) {

@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.js.test.ir
 
-import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
 import org.jetbrains.kotlin.js.test.converters.JsKlibBackendFacade
-import org.jetbrains.kotlin.js.test.handlers.JsBackendDiagnosticsHandler
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
+import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -85,7 +84,7 @@ abstract class AbstractDiagnosticsTestWithJsStdLibWithBackend : AbstractDiagnost
         // facadeStep { JsIrBackendFacade(it, firstTimeCompilation = true) }
 
         klibArtifactsHandlersStep {
-            useHandlers(::JsBackendDiagnosticsHandler)
+            useHandlers(::KlibBackendDiagnosticsHandler)
         }
     }
 }

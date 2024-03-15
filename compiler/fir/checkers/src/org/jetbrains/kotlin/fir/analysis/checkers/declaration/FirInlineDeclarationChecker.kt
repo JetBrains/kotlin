@@ -457,7 +457,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             function.valueParameters.any { param ->
                 val type = param.returnTypeRef.coneType
                 !param.isNoinline && !type.isNullable
-                        && (type.isBasicFunctionType(session) || type.isSuspendOrKSuspendFunctionType(session))
+                        && type.isNonKFunctionType(session)
             }
         if (hasInlinableParameters) return
         if (function.isInlineOnly(session)) return
@@ -488,7 +488,6 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
     private fun isInlinableDefaultValue(expression: FirExpression): Boolean =
         expression is FirCallableReferenceAccess ||
                 expression is FirFunctionCall ||
-                expression is FirLambdaArgumentExpression ||
                 expression is FirAnonymousFunctionExpression ||
                 (expression is FirLiteralExpression<*> && expression.value == null) //this will be reported separately
 

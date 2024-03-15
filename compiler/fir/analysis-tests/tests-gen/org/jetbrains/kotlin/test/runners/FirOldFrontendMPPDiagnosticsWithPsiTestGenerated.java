@@ -33,6 +33,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("actualTypealiasCycle.kt")
+  public void testActualTypealiasCycle() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/actualTypealiasCycle.kt");
+  }
+
+  @Test
   @TestMetadata("actualTypealiasForNotExpectClass.kt")
   public void testActualTypealiasForNotExpectClass() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/actualTypealiasForNotExpectClass.kt");
@@ -260,6 +266,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("JsExternalTypeExtendsActualExternalType.kt")
+  public void testJsExternalTypeExtendsActualExternalType() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/JsExternalTypeExtendsActualExternalType.kt");
+  }
+
+  @Test
   @TestMetadata("kt54827.kt")
   public void testKt54827() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/kt54827.kt");
@@ -347,6 +359,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   @TestMetadata("optionalExpectationDiagnostics.kt")
   public void testOptionalExpectationDiagnostics() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/optionalExpectationDiagnostics.kt");
+  }
+
+  @Test
+  @TestMetadata("platformRedeclarationOfExpect.kt")
+  public void testPlatformRedeclarationOfExpect() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/platformRedeclarationOfExpect.kt");
   }
 
   @Test
@@ -1730,6 +1748,18 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   @TestDataPath("$PROJECT_ROOT")
   public class Hmpp {
     @Test
+    @TestMetadata("actualizeSubtypeBeforeSupertype.kt")
+    public void testActualizeSubtypeBeforeSupertype() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/actualizeSubtypeBeforeSupertype.kt");
+    }
+
+    @Test
+    @TestMetadata("actualizedInPlatformSession.kt")
+    public void testActualizedInPlatformSession() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/actualizedInPlatformSession.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInHmpp() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/hmpp"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
@@ -1738,6 +1768,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     @TestMetadata("ambiguousActuals.kt")
     public void testAmbiguousActuals() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/ambiguousActuals.kt");
+    }
+
+    @Test
+    @TestMetadata("hmppModalityClash.kt")
+    public void testHmppModalityClash() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/hmppModalityClash.kt");
     }
 
     @Test
@@ -1750,6 +1786,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     @TestMetadata("hmppRedeclarationWithExpectActualPair.kt")
     public void testHmppRedeclarationWithExpectActualPair() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/hmppRedeclarationWithExpectActualPair.kt");
+    }
+
+    @Test
+    @TestMetadata("hmppSignatureClash.kt")
+    public void testHmppSignatureClash() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/hmppSignatureClash.kt");
     }
 
     @Test

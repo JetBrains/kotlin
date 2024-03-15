@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.buil
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.annotations.annotations
 import org.jetbrains.kotlin.analysis.api.calls.KtSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.calls.successfulFunctionCallOrNull
 import org.jetbrains.kotlin.analysis.api.calls.symbol
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
@@ -25,12 +27,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
-import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
-import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.nio.file.Paths
@@ -75,7 +74,73 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
     }
 
     @Test
+    fun testJvmInlineOnCommon() {
+        // Example from https://youtrack.jetbrains.com/issue/KT-55085
+        val root = "jvmInlineOnCommon"
+        lateinit var sourceModule: KtSourceModule
+        val session = buildStandaloneAnalysisAPISession(disposable) {
+            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
+
+            buildKtModuleProvider {
+                platform = CommonPlatforms.defaultCommonPlatform
+                val stdlib = addModule(
+                    buildKtLibraryModule {
+                        addBinaryRoot(Paths.get("dist/common/kotlin-stdlib-common.jar"))
+                        platform = CommonPlatforms.defaultCommonPlatform
+                        libraryName = "stdlib"
+                    }
+                )
+                val commonModule = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath(root).resolve("commonMain"))
+                        addRegularDependency(stdlib)
+                        platform = CommonPlatforms.defaultCommonPlatform
+                        moduleName = "common"
+                    }
+                )
+                sourceModule = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath(root).resolve("androidMain"))
+                        addDependsOnDependency(commonModule)
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "android"
+                    }
+                )
+            }
+        }
+        val ktFile = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
+
+        // Test dependsOn dependency: expect in the common module, actual "typealias" in the platform-specific module
+        val testFunction = ktFile.findDescendantOfType<KtFunction>()!!
+        val localVariable = testFunction.findDescendantOfType<KtProperty>()!!
+        analyze(localVariable) {
+            val localVariableSymbol = localVariable.getVariableSymbol()
+            val type = localVariableSymbol.returnType as KtNonErrorClassType
+            Assertions.assertEquals(
+                ClassId(FqName("test.pkg"), FqName("NativePointerKeyboardModifiers"), isLocal = false),
+                type.classId
+            )
+            // expanded to `actual` `typealias`
+            val expandedType = type.fullyExpandedType
+            Assertions.assertTrue(expandedType.isInt)
+        }
+
+        // Test stdlib-common: @JvmInline in the common module
+        val actualClass = ktFile.findDescendantOfType<KtClassOrObject>()!!
+        val actualProperty = actualClass.findDescendantOfType<KtProperty>()!!
+        analyze(actualProperty) {
+            val symbol = actualProperty.getVariableSymbol()
+            val type = symbol.returnType as KtNonErrorClassType
+            Assertions.assertEquals(
+                ClassId.fromString("kotlin/jvm/JvmInline"),
+                type.classSymbol.annotations.single().classId
+            )
+        }
+    }
+
+    @Test
     fun testResolveAgainstCommonKlib() {
+        val root = "resolveAgainstCommonKLib"
         lateinit var sourceModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
             registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
@@ -84,7 +149,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
                 platform = CommonPlatforms.defaultCommonPlatform
                 val kLib = addModule(
                     buildKtLibraryModule {
-                        val compiledKLibRoot = compileCommonKlib(testDataPath("resolveAgainstCommonKLib/klibSrc"))
+                        val compiledKLibRoot = compileCommonKlib(testDataPath(root).resolve("klibSrc"))
                         addBinaryRoot(compiledKLibRoot)
                         platform = CommonPlatforms.defaultCommonPlatform
                         libraryName = "klib"
@@ -92,7 +157,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
                 )
                 sourceModule = addModule(
                     buildKtSourceModule {
-                        addSourceRoot(testDataPath("resolveAgainstCommonKLib/src"))
+                        addSourceRoot(testDataPath(root).resolve("src"))
                         addRegularDependency(kLib)
                         platform = CommonPlatforms.defaultCommonPlatform
                         moduleName = "source"
@@ -107,7 +172,55 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
     }
 
     @Test
+    fun testResolveAgainstCommonKlibFromOtherModule() {
+        val root = "resolveAgainstCommonKLibFromOtherModule"
+        lateinit var commonModule: KtSourceModule
+        lateinit var sourceModule: KtSourceModule
+        val session = buildStandaloneAnalysisAPISession(disposable) {
+            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
+
+            buildKtModuleProvider {
+                platform = CommonPlatforms.defaultCommonPlatform
+                val kLib = addModule(
+                    buildKtLibraryModule {
+                        val compiledKLibRoot = compileCommonKlib(testDataPath(root).resolve("klibSrc"))
+                        addBinaryRoot(compiledKLibRoot)
+                        platform = CommonPlatforms.defaultCommonPlatform
+                        libraryName = "klib"
+                    }
+                )
+                commonModule = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath(root).resolve("commonMain"))
+                        addRegularDependency(kLib)
+                        platform = CommonPlatforms.defaultCommonPlatform
+                        moduleName = "common"
+                    }
+                )
+                sourceModule = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath(root).resolve("jvmMain"))
+                        addRegularDependency(kLib)
+                        addRegularDependency(commonModule)
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "app"
+                    }
+                )
+            }
+        }
+
+        val ktFileInCommon = session.modulesWithFiles.getValue(commonModule).single() as KtFile
+        val callInCommon = ktFileInCommon.findDescendantOfType<KtCallExpression>()!!
+        callInCommon.assertIsCallOf(CallableId(FqName("some.example"), FqName("Person"), Name.identifier("greet")))
+
+        val ktFileInJvm = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
+        val callInJvm = ktFileInJvm.findDescendantOfType<KtCallExpression>()!!
+        callInJvm.assertIsCallOf(CallableId(FqName("common"), Name.identifier("greetEachOther")))
+    }
+
+    @Test
     fun testKotlinSourceModuleSessionBuilder() {
+        val root = "otherModuleUsage"
         lateinit var sourceModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
             registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
@@ -116,15 +229,57 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
                 platform = JvmPlatforms.defaultJvmPlatform
                 val main = addModule(
                     buildKtSourceModule {
-                        addSourceRoot(testDataPath("otherModuleUsage").resolve("dependent"))
+                        addSourceRoot(testDataPath(root).resolve("dependent"))
                         platform = JvmPlatforms.defaultJvmPlatform
                         moduleName = "dependent"
                     }
                 )
                 sourceModule = addModule(
                     buildKtSourceModule {
-                        addSourceRoot(testDataPath("otherModuleUsage").resolve("main"))
+                        addSourceRoot(testDataPath(root).resolve("main"))
                         addRegularDependency(main)
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "main"
+                    }
+                )
+            }
+        }
+        val ktFile = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
+        val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
+        ktCallExpression.assertIsCallOf(CallableId(FqName.ROOT, Name.identifier("foo")))
+    }
+
+    @Test
+    fun testKotlinSourceModuleSessionWithVirtualFile() {
+        val root = "otherModuleUsage"
+        lateinit var sourceModule: KtSourceModule
+        val session = buildStandaloneAnalysisAPISession(disposable) {
+            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
+
+            buildKtModuleProvider {
+                platform = JvmPlatforms.defaultJvmPlatform
+                val dep = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath(root).resolve("dependent"))
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "dependent"
+                    }
+                )
+                sourceModule = addModule(
+                    buildKtSourceModule {
+                        // addSourceRoot(testDataPath(root).resolve("main"))
+                        // Instead, add [VirtualFile] on-the-fly
+                        val virtualFile = createDumbVirtualFile(
+                            project,
+                            "test.kt",
+                            """
+                                fun main() {
+                                    foo()
+                                }
+                            """.trimIndent()
+                        )
+                        addSourceVirtualFile(virtualFile)
+                        addRegularDependency(dep)
                         platform = JvmPlatforms.defaultJvmPlatform
                         moduleName = "main"
                     }

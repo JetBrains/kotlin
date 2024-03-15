@@ -27,6 +27,7 @@ private typealias Block<T> = () -> T
 data class TestMode(
     val isJs: Boolean = false,
     val isNative: Boolean = false,
+    val isWasm: Boolean = false,
     val staticCache: Scope = Scope.NOWHERE,
     val lazyIr: Scope = Scope.NOWHERE
 ) {
@@ -39,7 +40,7 @@ data class TestMode(
     }
 
     init {
-        check(isJs xor isNative)
+        check(isJs xor isNative xor isWasm)
         check(isNative || staticCache.notUsed)
         check(isNative || lazyIr.notUsed)
     }

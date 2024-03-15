@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliRunnerIsolatedClassLoadersService
 import org.jetbrains.kotlin.util.Logger
 import java.io.File
 import java.util.*
@@ -77,12 +78,12 @@ abstract class KonanCacheTask : DefaultTask() {
 
     @get:Input
     /** Path to a compiler distribution that is used to build this cache. */
-    val compilerDistributionPath: Property<File> = project.objects.property(File::class.java).apply {
-        set(project.provider { project.kotlinNativeDist })
-    }
+    val compilerDistributionPath: Property<File> = project.objects.property(File::class.java).convention(project.kotlinNativeDist)
 
     @get:Input
     var cachedLibraries: Map<File, File> = emptyMap()
+
+    private val isolatedClassLoadersService = KonanCliRunnerIsolatedClassLoadersService.attachingToTask(this)
 
     @TaskAction
     fun compile() {
@@ -114,6 +115,6 @@ abstract class KonanCacheTask : DefaultTask() {
             args += "-Xmake-per-file-cache"
         args += additionalCacheFlags
         args += cachedLibraries.map { "-Xcached-library=${it.key},${it.value}" }
-        KonanCliCompilerRunner(project, konanHome = konanHome).run(args)
+        KonanCliCompilerRunner(project, isolatedClassLoadersService, konanHome = konanHome).run(args)
     }
 }

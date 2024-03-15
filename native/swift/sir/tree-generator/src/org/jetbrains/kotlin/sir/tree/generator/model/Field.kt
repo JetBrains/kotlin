@@ -49,17 +49,19 @@ class SimpleField(
     name: String,
     override val typeRef: TypeRefWithNullability,
     isMutable: Boolean,
+    override val isChild: Boolean,
 ) : Field(name, isMutable) {
 
-    override fun internalCopy() = SimpleField(name, typeRef, isMutable)
+    override fun internalCopy() = SimpleField(name, typeRef, isMutable, isChild)
 
-    override fun replaceType(newType: TypeRefWithNullability) = SimpleField(name, newType, isMutable).also(::updateFieldsInCopy)
+    override fun replaceType(newType: TypeRefWithNullability) = SimpleField(name, newType, isMutable, isChild).also(::updateFieldsInCopy)
 }
 
 class ListField(
     name: String,
     override val baseType: TypeRef,
     isMutable: Boolean,
+    override val isChild: Boolean,
 ) : Field(name, isMutable), ListField {
 
     override val typeRef: ClassRef<PositionTypeParameterRef>
@@ -68,7 +70,7 @@ class ListField(
     override val listType: ClassRef<PositionTypeParameterRef>
         get() = StandardTypes.list
 
-    override fun internalCopy() = ListField(name, baseType, isMutable)
+    override fun internalCopy() = ListField(name, baseType, isMutable, isChild)
 
     override fun replaceType(newType: TypeRefWithNullability) = internalCopy().also(::updateFieldsInCopy)
 }

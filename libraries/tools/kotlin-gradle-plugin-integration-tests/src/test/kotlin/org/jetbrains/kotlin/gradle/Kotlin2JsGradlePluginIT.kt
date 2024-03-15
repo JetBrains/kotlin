@@ -612,7 +612,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testPackageJsonWithEsModules(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
             subProject("app").buildGradleKts.modify {
                 it + """
                     |
@@ -629,7 +628,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                         Gson().fromJson(it.readText(), PackageJson::class.java)
                     }
 
-                assertEquals(packageJson.main, "kotlin/kotlin-js-browser-app.mjs")
+                assertEquals("kotlin/kotlin-js-browser-app.mjs", packageJson.main)
 
             }
         }

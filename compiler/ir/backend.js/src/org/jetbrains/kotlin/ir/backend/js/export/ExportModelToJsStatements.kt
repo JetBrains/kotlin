@@ -33,7 +33,7 @@ class ExportModelToJsStatements(
     fun generateModuleExport(
         module: ExportedModule,
         internalModuleName: JsName?,
-        esModules: Boolean
+        esModules: Boolean,
     ): List<JsStatement> {
         return module.declarations.flatMap {
             generateDeclarationExport(it, internalModuleName?.makeRef(), esModules)
@@ -44,7 +44,7 @@ class ExportModelToJsStatements(
         declaration: ExportedDeclaration,
         namespace: JsExpression?,
         esModules: Boolean,
-        parentClass: IrClass? = null
+        parentClass: IrClass? = null,
     ): List<JsStatement> {
         return when (declaration) {
             is ExportedNamespace -> {
@@ -155,7 +155,9 @@ class ExportModelToJsStatements(
             }
 
             is ExportedRegularClass -> {
-                if (declaration.isInterface) return emptyList()
+                if (declaration.isInterface) {
+                    return declaration.nestedClasses.flatMap { generateDeclarationExport(it, namespace, esModules, parentClass) }
+                }
                 val (name, classInitialization) = declaration.getNameAndInitialization()
                 val newNameSpace = when {
                     namespace != null -> jsElementAccess(declaration.name, namespace)

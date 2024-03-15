@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.asJava.classes.KtUltraLightSupport
 import org.jetbrains.kotlin.asJava.classes.cleanFromAnonymousTypes
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.classes.tryGetPredefinedName
-import org.jetbrains.kotlin.cli.jvm.compiler.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -88,14 +87,6 @@ class CliLightClassGenerationSupport(
         require(element.project == project) { "ULC support created from another project from requested" }
         return ultraLightSupport
     }
-
-    val context: LightClassConstructionContext
-        get() = LightClassConstructionContext(
-            traceHolder.bindingContext,
-            traceHolder.module,
-            traceHolder.languageVersionSettings,
-            traceHolder.jvmTarget,
-        )
 
     override fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor? {
         return traceHolder.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)

@@ -213,22 +213,22 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         this.annotations.addAll(annotations)
     }.build().apply {
         if (classId.isLocal) {
-            resultType = typeForQualifierByDeclaration(regularClass.fir, session)
+            resultType = typeForQualifierByDeclaration(regularClass.fir, session, element = this@apply, file)
                 ?.also { replaceCanBeValue(true) }
                 ?: session.builtinTypes.unitType.type
         } else {
-            setTypeOfQualifier(session)
+            setTypeOfQualifier(this@buildResolvedQualifierForClass)
         }
     }
 }
 
-fun FirResolvedQualifier.setTypeOfQualifier(session: FirSession) {
+fun FirResolvedQualifier.setTypeOfQualifier(components: BodyResolveComponents) {
     val classSymbol = symbol
     if (classSymbol != null) {
         classSymbol.lazyResolveToPhase(FirResolvePhase.TYPES)
         val declaration = classSymbol.fir
         if (declaration !is FirTypeAlias || typeArguments.isEmpty()) {
-            val typeByDeclaration = typeForQualifierByDeclaration(declaration, session)
+            val typeByDeclaration = typeForQualifierByDeclaration(declaration, components.session, element = this, components.file)
             if (typeByDeclaration != null) {
                 this.resultType = typeByDeclaration
                 replaceCanBeValue(true)
@@ -236,7 +236,7 @@ fun FirResolvedQualifier.setTypeOfQualifier(session: FirSession) {
             }
         }
     }
-    this.resultType = session.builtinTypes.unitType.type
+    this.resultType = components.session.builtinTypes.unitType.type
 }
 
 internal fun typeForReifiedParameterReference(parameterReferenceBuilder: FirResolvedReifiedParameterReferenceBuilder): ConeLookupTagBasedType {
@@ -244,10 +244,12 @@ internal fun typeForReifiedParameterReference(parameterReferenceBuilder: FirReso
     return typeParameterSymbol.constructType(emptyArray(), false)
 }
 
-internal fun typeForQualifierByDeclaration(declaration: FirDeclaration, session: FirSession): ConeKotlinType? {
+internal fun typeForQualifierByDeclaration(
+    declaration: FirDeclaration, session: FirSession, element: FirElement, file: FirFile
+): ConeKotlinType? {
     if (declaration is FirTypeAlias) {
         val expandedDeclaration = declaration.expandedConeType?.lookupTag?.toSymbol(session)?.fir ?: return null
-        return typeForQualifierByDeclaration(expandedDeclaration, session)
+        return typeForQualifierByDeclaration(expandedDeclaration, session, element, file)
     }
     if (declaration is FirRegularClass) {
         if (declaration.classKind == ClassKind.OBJECT) {
@@ -255,6 +257,7 @@ internal fun typeForQualifierByDeclaration(declaration: FirDeclaration, session:
         } else {
             val companionObjectSymbol = declaration.companionObjectSymbol
             if (companionObjectSymbol != null) {
+                session.lookupTracker?.recordCompanionLookup(companionObjectSymbol.classId, element.source, file.source)
                 return companionObjectSymbol.constructType(emptyArray(), false)
             }
         }
@@ -348,6 +351,7 @@ fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: Fi
 
 private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>): FirResolvedTypeRef {
     return when (symbol) {
+        is FirSyntheticPropertySymbol -> typeFromSymbol(symbol.getterSymbol!!.delegateFunctionSymbol)
         is FirCallableSymbol<*> -> {
             val returnTypeRef = returnTypeCalculator.tryCalculateReturnType(symbol.fir)
             returnTypeRef.copyWithNewSource(null)
@@ -366,9 +370,8 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>): Fir
 
 fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
     qualifiedAccessExpression: FirQualifiedAccessExpression,
-    ignoreCallArguments: Boolean,
 ): FirExpression {
-    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(qualifiedAccessExpression, ignoreCallArguments)
+    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(qualifiedAccessExpression)
         ?: return qualifiedAccessExpression
 
     return transformExpressionUsingSmartcastInfo(qualifiedAccessExpression, stability, typesFromSmartCast) ?: qualifiedAccessExpression
@@ -377,7 +380,7 @@ fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
 fun BodyResolveComponents.transformWhenSubjectExpressionUsingSmartcastInfo(
     whenSubjectExpression: FirWhenSubjectExpression,
 ): FirExpression {
-    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(whenSubjectExpression, ignoreCallArguments = false)
+    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(whenSubjectExpression)
         ?: return whenSubjectExpression
 
     return transformExpressionUsingSmartcastInfo(whenSubjectExpression, stability, typesFromSmartCast) ?: whenSubjectExpression
@@ -387,7 +390,7 @@ fun BodyResolveComponents.transformDesugaredAssignmentValueUsingSmartcastInfo(
     expression: FirDesugaredAssignmentValueReferenceExpression,
 ): FirExpression {
     val (stability, typesFromSmartCast) =
-        dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression.expressionRef.value, ignoreCallArguments = false)
+        dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression.expressionRef.value)
             ?: return expression
 
     return transformExpressionUsingSmartcastInfo(expression, stability, typesFromSmartCast) ?: expression

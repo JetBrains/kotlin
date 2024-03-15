@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.kapt4;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -388,6 +387,12 @@ public class KotlinKapt4ContextTestGenerated extends AbstractKotlinKapt4ContextT
   @TestMetadata("jvmOverloads.kt")
   public void testJvmOverloads() {
     runTest("plugins/kapt4/../kapt3/kapt3-compiler/testData/converter/jvmOverloads.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmRecord.kt")
+  public void testJvmRecord() {
+    runTest("plugins/kapt4/../kapt3/kapt3-compiler/testData/converter/jvmRecord.kt");
   }
 
   @Test

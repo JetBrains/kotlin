@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.isResolved
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
@@ -139,8 +138,6 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             is FirFile -> {
                 if (target.resolvePhase >= resolverPhase) return true
 
-                target.annotationsContainer?.lazyResolveToPhase(resolverPhase)
-
                 // resolve file CFG graph here, to do this we need to have property blocks resoled
                 resolveMembersForControlFlowGraph(target)
                 performCustomResolveUnderLock(target) {
@@ -156,7 +153,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
                 // resolve properties so they are available for CFG building in resolveScript
                 resolveMembersForControlFlowGraph(target)
                 performCustomResolveUnderLock(target) {
-                    resolve(target, BodyStateKeepers.SCRIPT)
+                    calculateControlFlowGraph(target)
                 }
 
                 return true
@@ -311,7 +308,6 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             is FirVariable -> resolve(target, BodyStateKeepers.VARIABLE)
             is FirAnonymousInitializer -> resolve(target, BodyStateKeepers.ANONYMOUS_INITIALIZER)
             is FirDanglingModifierList,
-            is FirFileAnnotationsContainer,
             is FirTypeAlias,
             -> {
                 // No bodies here
@@ -321,31 +317,13 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
     }
 
     override fun rawResolve(target: FirElementWithResolveState) {
-        when (target) {
-            is FirScript -> {
-                resolveScript(target)
-                calculateControlFlowGraph(target)
-            }
-
-            else -> super.rawResolve(target)
-        }
+        super.rawResolve(target)
 
         LLFirDeclarationModificationService.bodyResolved(target, resolverPhase)
-    }
-
-    private fun resolveScript(script: FirScript) {
-        transformer.declarationsTransformer.withScript(script) {
-            script.parameters.forEach { it.transformSingle(transformer, ResolutionMode.ContextIndependent) }
-            script
-        }
     }
 }
 
 internal object BodyStateKeepers {
-    val SCRIPT: StateKeeper<FirScript, FirDesignation> = stateKeeper { _, _ ->
-        add(FirScript::controlFlowGraphReference, FirScript::replaceControlFlowGraphReference)
-    }
-
     val CODE_FRAGMENT: StateKeeper<FirCodeFragment, FirDesignation> = stateKeeper { _, _ ->
         add(FirCodeFragment::block, FirCodeFragment::replaceBlock, ::blockGuard)
     }

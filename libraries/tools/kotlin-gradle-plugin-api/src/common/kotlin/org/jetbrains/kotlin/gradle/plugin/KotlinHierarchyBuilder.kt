@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
+import org.jetbrains.kotlin.konan.target.REMOVED_TARGET_MESSAGE
 
 @KotlinTargetsDsl
 @ExperimentalKotlinGradlePluginApi
@@ -150,7 +150,7 @@ interface KotlinHierarchyBuilder {
     fun withAndroidNativeX86()
     fun withAndroidNativeArm32()
     fun withAndroidNativeArm64()
-    fun withIosArm32()
+
     fun withIosArm64()
     fun withIosX64()
     fun withIosSimulatorArm64()
@@ -168,21 +168,24 @@ interface KotlinHierarchyBuilder {
     fun withMacosArm64()
     fun withLinuxArm64()
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    fun withIosArm32()
+
+    @Deprecated(REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
     fun withWatchosX86()
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Deprecated(REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
     fun withMingwX86()
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Deprecated(REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
     fun withLinuxArm32Hfp()
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Deprecated(REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
     fun withLinuxMips32()
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Deprecated(REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
     fun withLinuxMipsel32()
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    @Deprecated(REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
     fun withWasm32()
 }

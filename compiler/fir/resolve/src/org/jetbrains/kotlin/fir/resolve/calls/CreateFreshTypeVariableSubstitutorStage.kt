@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
@@ -15,6 +17,8 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParamete
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -52,20 +56,14 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
             val typeParameter = typeParameters[index]
             val freshVariable = freshVariables[index]
 
-//            val knownTypeArgument = knownTypeParametersResultingSubstitutor?.substitute(typeParameter.defaultType)
-//            if (knownTypeArgument != null) {
-//                csBuilder.addEqualityConstraint(
-//                    freshVariable.defaultType,
-//                    knownTypeArgument.unwrap(),
-//                    KnownTypeParameterConstraintPosition(knownTypeArgument)
-//                )
-//                continue
-//            }
-
             when (val typeArgument = candidate.typeArgumentMapping[index]) {
                 is FirTypeProjectionWithVariance -> csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
-                    typeArgument.typeRef.coneType.fullyExpandedType(context.session),
+                    getTypePreservingFlexibilityWrtTypeVariable(
+                        typeArgument.typeRef.coneType,
+                        typeParameter,
+                        context.session
+                    ).fullyExpandedType(context.session),
                     ConeExplicitTypeParameterConstraintPosition(typeArgument)
                 )
                 is FirStarProjection -> csBuilder.addEqualityConstraint(
@@ -84,6 +82,100 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                 sink.reportDiagnostic(InferenceError(error))
             }
             sink.yieldIfNeed()
+        }
+    }
+
+    /**
+     * This function provides a type for a newly created EQUALS constraint on a fresh type variable,
+     * for a situation when we have an explicit type argument and type parameter is a Java type parameter without known nullability.
+     *
+     * For a normal function call, like foo<T = SomeType>, we create a constraint T = SomeType!.
+     * This is an unsafe solution, however yet we have to keep it, otherwise a lot of code becomes red.
+     * Typical "strange" example:
+     *
+     * ```
+     * // Java
+     * public class Foo {
+     *     static <T> T id(T foo) {
+     *         return null;
+     *     }
+     * }
+     *
+     * // Kotlin
+     * fun test(): String {
+     *     return Foo.id<String?>(null) // OK...
+     * }
+     * ```
+     *
+     * We keep more sound constraint T = SomeType for regular and SAM constructor calls. Typical examples are:
+     *
+     * ```
+     * fun test1() = J1<Int>() // type should be J1<Int>, not J1<Int!>
+     * // J1.java
+     * public class J1<T1> {}
+     * ```
+     *
+     * or
+     *
+     * ```
+     * // Again, type should be J<String> and not J<String!>
+     * fun test1() = J<String> { x -> x }
+     *
+     *
+     * // FILE: J.java
+     * public interface J<T> {
+     *     T foo(T x);
+     * }
+     * ```
+     *
+     * @return type which is chosen for EQUALS constraint
+     */
+    private fun getTypePreservingFlexibilityWrtTypeVariable(
+        type: ConeKotlinType,
+        typeParameter: FirTypeParameterRef,
+        session: FirSession,
+    ): ConeKotlinType {
+        val containingDeclarationSymbol = typeParameter.symbol.containingDeclarationSymbol
+        // To remove constructors (they use class type parameters)
+        return if (
+            containingDeclarationSymbol is FirCallableSymbol &&
+            // To remove SAMs
+            containingDeclarationSymbol !is FirSyntheticFunctionSymbol &&
+            typeParameter.shouldBeFlexible(session.typeContext)
+        ) {
+            when (type) {
+                is ConeSimpleKotlinType -> ConeFlexibleType(
+                    type.withNullability(ConeNullability.NOT_NULL, session.typeContext),
+                    type.withNullability(ConeNullability.NULLABLE, session.typeContext)
+                )
+                /*
+                 * ConeFlexibleTypes have to be handled here
+                 * at least because MapTypeArguments special-cases ConeRawTypes without explicit arguments (KT-54666)
+                 * which allows them to get past the NoExplicitArguments optimization
+                 * in CreateFreshTypeVariableSubstitutorStage.check
+                 *
+                 * (it might be safe to just return the same flexible type without explicitly enforcing flexibility,
+                 * but better safe than sorry when dealing with raw types)
+                 */
+                is ConeFlexibleType -> ConeFlexibleType(
+                    type.lowerBound.withNullability(ConeNullability.NOT_NULL, session.typeContext),
+                    type.upperBound.withNullability(ConeNullability.NULLABLE, session.typeContext)
+                )
+            }
+        } else {
+            type
+        }
+    }
+
+    private fun FirTypeParameterRef.shouldBeFlexible(context: ConeTypeContext): Boolean {
+        if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN)) {
+            return false
+        }
+        return symbol.resolvedBounds.any {
+            val type = it.coneType
+            type is ConeFlexibleType || with(context) {
+                (type.typeConstructor() as? ConeTypeParameterLookupTag)?.symbol?.fir?.shouldBeFlexible(context) ?: false
+            }
         }
     }
 }

@@ -25,6 +25,42 @@ public class TypeCheckSwiftExportGoldenData extends SwiftTypeCheckBaseTest {
   }
 
   @Nested
+  @TestMetadata("native/swift/swift-export-standalone/testData/classes")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Classes {
+    @Test
+    public void testAllFilesPresentInClasses() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/classes"), Pattern.compile("^(.+)\\.swift$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("native/swift/swift-export-standalone/testData/classes/golden_result")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Golden_result {
+      @Test
+      public void testAllFilesPresentInGolden_result() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/classes/golden_result"), Pattern.compile("^(.+)\\.swift$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("result.swift")
+      public void testResult() {
+        runTest("native/swift/swift-export-standalone/testData/classes/golden_result/result.swift");
+      }
+    }
+
+    @Nested
+    @TestMetadata("native/swift/swift-export-standalone/testData/classes/input_root")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Input_root {
+      @Test
+      public void testAllFilesPresentInInput_root() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData/classes/input_root"), Pattern.compile("^(.+)\\.swift$"), null, true);
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("native/swift/swift-export-standalone/testData/documentation")
   @TestDataPath("$PROJECT_ROOT")
   public class Documentation {

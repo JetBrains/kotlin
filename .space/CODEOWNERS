@@ -22,6 +22,7 @@
 # OWNER_LIST: Ilya.Goncharov
 # OWNER_LIST: Simon.Ogorodnik
 # OWNER_LIST: Alexander.Shabalin Aleksei.Glushko Sergey.Bogolepov Svyatoslav.Scherbina
+# OWNER_LIST: Brian.Norman
 # Kotlin Libraries
 # OWNER_LIST: A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Sergey.Shanshin Leonid.Startsev Filipp.Zhinkin
 
@@ -79,7 +80,6 @@
 /compiler/ir/backend.wasm/ "Kotlin Wasm"
 /compiler/ir/ir.actualization/ "Kotlin Compiler Core" "Kotlin Common Backend" Simon.Ogorodnik
 /compiler/ir/ir.interpreter/ "Kotlin Common Backend"
-/compiler/ir/ir.ir2cfg/ Mikhail.Glukhikh
 /compiler/ir/ir.psi2ir/ "Kotlin JVM"
 /compiler/ir/ir.tree/ "Kotlin Common Backend"
 /compiler/ir/ir.objcinterop/ "Kotlin Native"
@@ -153,7 +153,6 @@
 # UNKNOWN: /compiler/testData/integration/
 /compiler/testData/ir/closureAnnotator/ "Kotlin JVM"
 /compiler/testData/ir/interpreter/ "Kotlin Common Backend"
-/compiler/testData/ir/irCfg/ "Kotlin JVM"
 /compiler/testData/ir/irText/ "Kotlin Compiler Core"
 /compiler/testData/ir/klibLayout/ "Kotlin Common Backend"
 /compiler/testData/ir/sourceRanges/ "Kotlin Compiler Core"
@@ -184,7 +183,6 @@
 /compiler/testData/resolveConstructorDelegationCalls/ "Kotlin Compiler Core"
 /compiler/testData/resolvedCalls/ "Kotlin Compiler Core"
 /compiler/testData/serialization/builtinsSerializer/ "Kotlin Compiler Core"
-/compiler/testData/serialization/js/ "Kotlin JS"
 /compiler/testData/serialization/nonStableParameterNames/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/testData/serialization/klib/ "Kotlin Common Backend"
 /compiler/testData/type/ "Kotlin Compiler Core"
@@ -361,6 +359,7 @@
 /license/ "Kotlin Build Infrastructure"
 
 /native/ "Kotlin Native"
+/native/analysis-api-klib-reader/ "Kotlin Native" "Kotlin in Fleet"
 /native/commonizer/ "Kotlin Apple Ecosystem"
 /native/commonizer-api/ "Kotlin Apple Ecosystem"
 /native/commonizer-embeddable/ "Kotlin Apple Ecosystem"
@@ -386,7 +385,7 @@
 /plugins/noarg/ "Kotlin Compiler Core"
 /plugins/parcelize/ "Kotlin Compiler Core"
 /plugins/pill/ Yan.Zhulanow "Kotlin Build Infrastructure"
-/plugins/power-assert/ "Kotlin Compiler Core"
+/plugins/power-assert/ Brian.Norman "Kotlin Common Backend"
 /plugins/sam-with-receiver/ "Kotlin Compiler Core"
 /plugins/scripting/ "Kotlin Compiler Core"
 

@@ -268,6 +268,65 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunction.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunction.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] class A : R|kotlin/Any| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=A] constructor(): R|util/A| {
+            super<R|kotlin/Any|>()
+            local final? [ResolvedTo(RAW_FIR)] class OuterIntoLocal : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterIntoLocal] constructor(): R|<local>/OuterIntoLocal| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun doo(): <implicit> {
+                    ^doo foo#()
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
+                    ^foo bar#()
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun baz(): <implicit> {
+                    ^baz foo#()
+                }
+
+            }
+
+            local final? [ResolvedTo(RAW_FIR)] class LocalIntoLocal : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalIntoLocal] constructor(): R|<local>/LocalIntoLocal| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
+                    ^foo bar#()
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](<strcat>(String(bar ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bar ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested nested bar ), prop#)) Int>>? {
+                    ^bar Null(null)
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun foo2(): <implicit> {
+                    ^foo2 bar#()
+                }
+
+            }
+
+        }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunction.kt
     @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {

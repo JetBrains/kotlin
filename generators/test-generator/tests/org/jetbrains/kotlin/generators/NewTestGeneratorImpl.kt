@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.generators.impl.SingleClassTestModelAllFilesPresente
 import org.jetbrains.kotlin.generators.impl.TransformingTestMethodGenerator
 import org.jetbrains.kotlin.generators.model.*
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
-import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.getMainClassName
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.Printer
@@ -113,10 +112,10 @@ class NewTestGeneratorImpl(
             val generatedCode = generate()
 
             val testSourceFile = File(testSourceFilePath)
-            val changed =
-                GeneratorsFileUtil.isFileContentChangedIgnoringLineSeparators(testSourceFile, generatedCode)
-            if (!dryRun) {
+            val changed = if (!dryRun) {
                 GeneratorsFileUtil.writeFileIfContentChanged(testSourceFile, generatedCode, false)
+            } else {
+                GeneratorsFileUtil.isFileContentChangedIgnoringLineSeparators(testSourceFile, generatedCode)
             }
             return GenerationResult(changed, testSourceFilePath)
         }
@@ -147,7 +146,12 @@ class NewTestGeneratorImpl(
             }
 
             p.println("import ${TestMetadata::class.java.canonicalName};")
-            p.println("import ${Nested::class.java.canonicalName};")
+
+            // Don't import an unneeded `@Nested` annotation to avoid unused import warnings in the IDE.
+            if (testClassModels.requiresNestedAnnotation()) {
+                p.println("import ${Nested::class.java.canonicalName};")
+            }
+
             p.println("import ${Test::class.java.canonicalName};")
             if (testClassModels.any { it.containsTags() }) {
                 p.println("import ${Tag::class.java.canonicalName};")
@@ -288,6 +292,14 @@ class NewTestGeneratorImpl(
             generateSignature(method as T, p)
         }
     }
+
+    private fun Collection<TestClassModel>.requiresNestedAnnotation(): Boolean {
+        // Multiple test class models are generated as inner (nested) test class models of a fake root test class model, see
+        // `TestGeneratorInstance.generate`.
+        return size > 1 || singleOrNull()?.requiresNestedAnnotation() == true
+    }
+
+    private fun TestClassModel.requiresNestedAnnotation(): Boolean = innerTestClasses.isNotEmpty()
 
     private fun TestEntityModel.containsTags(): Boolean {
         if (this.tags.isNotEmpty()) return true

@@ -13,6 +13,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.PlatformManagerPlugin
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.target.TargetDomainObjectContainer
@@ -103,11 +104,8 @@ abstract class NativeDependenciesDownloaderExtension @Inject constructor(private
                     owner.dependenciesDirectory.apply { finalizeValue() }.asFile.get(),
                     loader,
                     owner.repositoryURL.apply { finalizeValue() }.get(),
-                    keepUnstable = false) { url, currentBytes, totalBytes ->
-                // TODO: Consider using logger.
-                print("\nDownloading dependency for $_target: $url (${currentBytes}/${totalBytes}). ")
-            }.apply {
-                showInfo = project.logger.isEnabled(LogLevel.INFO)
+                    keepUnstable = false) { _, _, _ ->
+                error("This is used as dependency resolver only, downloading cannot be performed")
             }
         }
 
@@ -116,7 +114,9 @@ abstract class NativeDependenciesDownloaderExtension @Inject constructor(private
         val task = project.tasks.register<NativeDependenciesDownloader>("nativeDependencies${_target.name.capitalized}") {
             description = "Download dependencies for $_target"
             group = "native dependencies"
-            dependencyProcessor.set(this@Target.dependencyProcessor)
+            target.set(this@Target.target)
+            dependenciesDirectory.set(owner.dependenciesDirectory)
+            repositoryURL.set(owner.repositoryURL)
         }
 
         init {
@@ -167,6 +167,7 @@ abstract class NativeDependenciesDownloaderExtension @Inject constructor(private
  */
 open class NativeDependenciesDownloaderPlugin : Plugin<Project> {
     override fun apply(project: Project) {
+        project.apply<PlatformManagerPlugin>()
         project.apply<NativeDependenciesBasePlugin>()
         project.extensions.create<NativeDependenciesDownloaderExtension>("nativeDependenciesDownloader", project)
     }

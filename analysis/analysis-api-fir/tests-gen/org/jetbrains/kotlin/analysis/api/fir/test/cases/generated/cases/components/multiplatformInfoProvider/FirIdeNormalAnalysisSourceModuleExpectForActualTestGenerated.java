@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.multiplatformInfoProvider.AbstractExpectForActualTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -45,6 +44,12 @@ public class FirIdeNormalAnalysisSourceModuleExpectForActualTestGenerated extend
   @TestMetadata("actual_object.kt")
   public void testActual_object() {
     runTest("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual/actual_object.kt");
+  }
+
+  @Test
+  @TestMetadata("actual_primaryConstructor.kt")
+  public void testActual_primaryConstructor() {
+    runTest("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual/actual_primaryConstructor.kt");
   }
 
   @Test

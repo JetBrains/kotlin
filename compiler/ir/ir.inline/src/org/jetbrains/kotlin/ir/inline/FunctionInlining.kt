@@ -80,11 +80,10 @@ class FunctionInlining(
     private val inlineFunctionResolver: InlineFunctionResolver = InlineFunctionResolver.TRIVIAL,
     private val innerClassesSupport: InnerClassesSupport? = null,
     private val insertAdditionalImplicitCasts: Boolean = false,
-    private val alwaysCreateTemporaryVariablesForArguments: Boolean = false,
     private val regenerateInlinedAnonymousObjects: Boolean = false,
-    private val inlineArgumentsWithOriginalOffset: Boolean = false,
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
     private var containerScope: ScopeWithIr? = null
+    private val elementsWithLocationToPatch = hashSetOf<IrGetValue>()
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         // TODO container: IrSymbolDeclaration
@@ -162,7 +161,7 @@ class FunctionInlining(
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
 
-        fun inline() = inlineFunction(callSite, callee, callee, true)
+        fun inline() = inlineFunction(callSite, callee, callee.originalFunction, true)
 
         private fun <E : IrElement> E.copy(): E {
             @Suppress("UNCHECKED_CAST")
@@ -247,8 +246,8 @@ class FunctionInlining(
                 argument.transformChildrenVoid(this) // Default argument can contain subjects for substitution.
 
                 val ret =
-                    if (argument is IrGetValueWithoutLocation)
-                        argument.withLocation(newExpression.startOffset, newExpression.endOffset)
+                    if (argument is IrGetValue && argument in elementsWithLocationToPatch)
+                        argument.copyWithOffsets(newExpression.startOffset, newExpression.endOffset)
                     else
                         argument.copy()
 
@@ -412,8 +411,8 @@ class FunctionInlining(
                     is IrConstructor -> {
                         val classTypeParametersCount = inlinedFunction.parentAsClass.typeParameters.size
                         IrConstructorCallImpl.fromSymbolOwner(
-                            if (inlineArgumentsWithOriginalOffset) irFunctionReference.startOffset else irCall.startOffset,
-                            if (inlineArgumentsWithOriginalOffset) irFunctionReference.endOffset else irCall.endOffset,
+                            irFunctionReference.startOffset,
+                            irFunctionReference.endOffset,
                             functionReferenceReturnType,
                             inlinedFunction.symbol,
                             classTypeParametersCount,
@@ -422,8 +421,8 @@ class FunctionInlining(
                     }
                     is IrSimpleFunction ->
                         IrCallImpl(
-                            if (inlineArgumentsWithOriginalOffset) irFunctionReference.startOffset else irCall.startOffset,
-                            if (inlineArgumentsWithOriginalOffset) irFunctionReference.endOffset else irCall.endOffset,
+                            irFunctionReference.startOffset,
+                            irFunctionReference.endOffset,
                             functionReferenceReturnType,
                             inlinedFunction.symbol,
                             inlinedFunction.typeParameters.size,
@@ -436,8 +435,8 @@ class FunctionInlining(
                         val argument =
                             if (parameter !in unboundArgsSet) {
                                 val arg = boundFunctionParametersMap[parameter]!!
-                                if (arg is IrGetValueWithoutLocation)
-                                    arg.withLocation(irCall.startOffset, irCall.endOffset)
+                                if (arg is IrGetValue && arg in elementsWithLocationToPatch)
+                                    arg.copyWithOffsets(irCall.startOffset, irCall.endOffset)
                                 else arg.copy()
                             } else {
                                 if (unboundIndex == valueParameters.size && parameter.defaultValue != null)
@@ -667,7 +666,7 @@ class FunctionInlining(
                 // Arguments may reference the previous ones - substitute them.
                 val irExpression = it.argumentExpression.transform(substitutor, data = null)
                 val newArgument = if (it.isImmutableVariableLoad) {
-                    IrGetValueWithoutLocation((irExpression as IrGetValue).symbol)
+                    irGetValueWithoutLocation((irExpression as IrGetValue).symbol)
                 } else {
                     val newVariable =
                         currentScope.scope.createTemporaryVariable(
@@ -683,7 +682,7 @@ class FunctionInlining(
 
                     evaluationStatements.add(newVariable)
 
-                    IrGetValueWithoutLocation(newVariable.symbol)
+                    irGetValueWithoutLocation(newVariable.symbol)
                 }
                 when (it.parameter) {
                     referenced.dispatchReceiverParameter -> reference.dispatchReceiver = newArgument
@@ -707,7 +706,7 @@ class FunctionInlining(
                 isMutable = false
             )
 
-            val newArgument = IrGetValueWithoutLocation(newVariable.symbol)
+            val newArgument = irGetValueWithoutLocation(newVariable.symbol)
             when {
                 reference.dispatchReceiver != null -> reference.dispatchReceiver = newArgument
                 reference.extensionReceiver != null -> reference.extensionReceiver = newArgument
@@ -768,19 +767,17 @@ class FunctionInlining(
 
                 // Arguments may reference the previous ones - substitute them.
                 val variableInitializer = argument.argumentExpression.transform(substitutor, data = null)
-                val shouldCreateTemporaryVariable =
-                    (alwaysCreateTemporaryVariablesForArguments && !parameter.isInlineParameter()) ||
-                            argument.shouldBeSubstitutedViaTemporaryVariable()
+                val shouldCreateTemporaryVariable = !parameter.isInlineParameter() || argument.shouldBeSubstitutedViaTemporaryVariable()
 
                 if (shouldCreateTemporaryVariable) {
                     val newVariable = createTemporaryVariable(parameter, variableInitializer, argument.isDefaultArg, callee)
                     if (argument.isDefaultArg) evaluationStatementsFromDefault.add(newVariable) else evaluationStatements.add(newVariable)
-                    substituteMap[parameter] = IrGetValueWithoutLocation(newVariable.symbol)
+                    substituteMap[parameter] = irGetValueWithoutLocation(newVariable.symbol)
                     return@forEach
                 }
 
                 substituteMap[parameter] = if (variableInitializer is IrGetValue) {
-                    IrGetValueWithoutLocation(variableInitializer.symbol)
+                    irGetValueWithoutLocation(variableInitializer.symbol)
                 } else {
                     variableInitializer
                 }
@@ -834,32 +831,19 @@ class FunctionInlining(
                 }
             )
 
-            if (alwaysCreateTemporaryVariablesForArguments) {
-                variable.name = Name.identifier(parameter.name.asStringStripSpecialMarkers())
-            }
+            variable.name = Name.identifier(parameter.name.asStringStripSpecialMarkers())
 
             return variable
         }
     }
 
-    private class IrGetValueWithoutLocation(
-        override var symbol: IrValueSymbol,
-        override var origin: IrStatementOrigin? = null
-    ) : IrGetValue() {
-        override val startOffset: Int get() = UNDEFINED_OFFSET
-        override val endOffset: Int get() = UNDEFINED_OFFSET
-
-        override var type: IrType
-            get() = symbol.owner.type
-            set(value) {
-                symbol.owner.type = value
-            }
-
-        override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D) =
-            visitor.visitGetValue(this, data)
-
-        fun withLocation(startOffset: Int, endOffset: Int) =
-            IrGetValueImpl(startOffset, endOffset, type, symbol, origin)
+    private fun irGetValueWithoutLocation(
+        symbol: IrValueSymbol,
+        origin: IrStatementOrigin? = null,
+    ): IrGetValue {
+        return IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol, origin).also {
+            elementsWithLocationToPatch += it
+        }
     }
 }
 

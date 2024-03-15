@@ -35,8 +35,14 @@ abstract class SirVisitor<out R, in D> {
     open fun visitStruct(struct: SirStruct, data: D): R =
         visitNamedDeclaration(struct, data)
 
+    open fun visitClass(klass: SirClass, data: D): R =
+        visitNamedDeclaration(klass, data)
+
     open fun visitCallable(callable: SirCallable, data: D): R =
         visitDeclaration(callable, data)
+
+    open fun visitInit(init: SirInit, data: D): R =
+        visitCallable(init, data)
 
     open fun visitFunction(function: SirFunction, data: D): R =
         visitCallable(function, data)

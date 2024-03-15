@@ -39,9 +39,9 @@ private class SealedClassInheritorsProviderForTests(
             else -> ktModule
         }
 
-        // the module might be absent in the map if it doesn't have any .kt-files whatsoever, in which case
-        // there's definitely no sealed inheritors
-        val inheritorsForModuleMap = inheritorsByModule[relevantModule] ?: return emptyList()
-        return inheritorsForModuleMap[firClass.classId] ?: firClass.sealedInheritorsAttr?.value ?: emptyList()
+        // If the module is absent in the map, it's either a binary library that wasn't stub-indexed (e.g. in Standalone mode) or the module
+        // doesn't have any `.kt` files, in which case there cannot be sealed inheritors. `sealedInheritorsAttr` covers the binary library
+        // case, as class-based deserialization sets this attribute.
+        return inheritorsByModule[relevantModule]?.get(firClass.classId) ?: firClass.sealedInheritorsAttr?.value ?: emptyList()
     }
 }

@@ -491,8 +491,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         compileKotlin("source.kt", tmpdir, listOf(library1))
     }
 
-    // KT-60777 K2: missing INLINE_FROM_HIGHER_PLATFORM
-    fun testWrongInlineTarget() = muteForK2 {
+    fun testWrongInlineTarget() {
         val library = compileLibrary("library", additionalOptions = listOf("-jvm-target", "11"))
 
         compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-jvm-target", "1.8"))

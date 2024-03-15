@@ -11,8 +11,6 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 /**
- * A non-leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.memberWithContainerSource]
  */
 interface IrMemberWithContainerSource : IrDeclarationWithName {

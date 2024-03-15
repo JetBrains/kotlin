@@ -85,17 +85,17 @@ fun BaseIrGenerator?.findTypeSerializerOrContext(
 }
 
 fun BaseIrGenerator?.findTypeSerializerOrContextUnchecked(
-    context: SerializationBaseContext, kType: IrType
+    context: SerializationBaseContext, kType: IrType, useTypeAnnotations: Boolean = true
 ): IrClassSymbol? {
-    val annotations = kType.annotations
     if (kType.isTypeParameter()) return null
+    val annotations = if (useTypeAnnotations) kType.annotations else emptyList()
     annotations.serializableWith()?.let { return it }
     this?.additionalSerializersInScopeOfCurrentFile?.get(kType.classOrNull!! to kType.isNullable())?.let {
         return it
     }
     if (kType.isMarkedNullable()) return findTypeSerializerOrContextUnchecked(context, kType.makeNotNull())
     if (this?.contextualKClassListInCurrentFile?.contains(kType.classOrNull) == true) return context.referenceClassId(contextSerializerId)
-    return analyzeSpecialSerializers(context, annotations) ?: findTypeSerializer(context, kType)
+    return analyzeSpecialSerializers(context, annotations) ?: findTypeSerializer(context, kType, useTypeAnnotations)
 }
 
 fun analyzeSpecialSerializers(
@@ -111,8 +111,8 @@ fun analyzeSpecialSerializers(
 }
 
 
-fun findTypeSerializer(context: SerializationBaseContext, type: IrType): IrClassSymbol? {
-    type.overriddenSerializer?.let { return it }
+fun findTypeSerializer(context: SerializationBaseContext, type: IrType, useTypeAnnotations: Boolean = true): IrClassSymbol? {
+    if (useTypeAnnotations) type.overriddenSerializer?.let { return it }
     if (type.isTypeParameter()) return null
     if (type.isArray()) return context.referenceClassId(referenceArraySerializerId)
     if (type.isGeneratedSerializableObject()) return context.referenceClassId(objectSerializerId)

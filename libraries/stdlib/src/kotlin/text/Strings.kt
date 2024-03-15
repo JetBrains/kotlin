@@ -8,6 +8,7 @@
 
 package kotlin.text
 
+import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.jvm.JvmName
 
@@ -355,8 +356,12 @@ public inline fun String?.orEmpty(): String = this ?: ""
  */
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
-public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : CharSequence, C : R =
-    if (isEmpty()) defaultValue() else this
+public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : CharSequence, C : R {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (isEmpty()) defaultValue() else this
+}
 
 /**
  * Returns this char sequence if it is not empty and doesn't consist solely of whitespace characters,
@@ -366,8 +371,12 @@ public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : CharSeque
  */
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
-public inline fun <C, R> C.ifBlank(defaultValue: () -> R): R where C : CharSequence, C : R =
-    if (isBlank()) defaultValue() else this
+public inline fun <C, R> C.ifBlank(defaultValue: () -> R): R where C : CharSequence, C : R {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (isBlank()) defaultValue() else this
+}
 
 /**
  * Returns the range of valid character indices for this char sequence.

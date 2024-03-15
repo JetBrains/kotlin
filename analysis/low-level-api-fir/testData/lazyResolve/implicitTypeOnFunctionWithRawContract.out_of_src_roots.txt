@@ -78,6 +78,16 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithRawContract.kt
         ^foo R|<local>/bool|
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithRawContract.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo([ResolvedTo(CONSTANT_EVALUATION)] bool: R|kotlin/Boolean|): R|kotlin/Boolean|
+        [Contract description] <
+            returns#().implies#(bool#)
+        >
+     {
+        ^foo R|<local>/bool|
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithRawContract.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] bool: R|kotlin/Boolean|): R|kotlin/Boolean|

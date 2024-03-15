@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
-internal class ArgsBuilder {
+class ArgsBuilder {
     private val args = mutableListOf<String>()
 
     fun add(vararg args: String) {
@@ -16,15 +16,15 @@ internal class ArgsBuilder {
         this.args += args
     }
 
-    inline fun <T> add(rawArgs: Iterable<T>, transform: (T) -> String) {
+    fun <T> add(rawArgs: Iterable<T>, transform: (T) -> String) {
         rawArgs.mapTo(args) { transform(it) }
     }
 
-    inline fun <T> addFlattened(rawArgs: Iterable<T>, transform: (T) -> Iterable<String>) {
+    fun <T> addFlattened(rawArgs: Iterable<T>, transform: (T) -> Iterable<String>) {
         rawArgs.flatMapTo(args) { transform(it) }
     }
 
-    inline fun <T, R> addFlattenedTwice(rawArgs: Iterable<T>, transform1: (T) -> Iterable<R>, transform2: (R) -> String) {
+    fun <T, R> addFlattenedTwice(rawArgs: Iterable<T>, transform1: (T) -> Iterable<R>, transform2: (R) -> String) {
         rawArgs.forEach { add(transform1(it), transform2) }
     }
 

@@ -56,4 +56,7 @@ class JsMapping : DefaultMapping() {
 
     val wasmExternalClassToInstanceCheck =
         DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
+
+    val wasmGetJsClass =
+        DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
 }

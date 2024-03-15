@@ -3,7 +3,31 @@
 Starting with 0.6.0 release, Kotlin team is focused on revisiting and improving kotlinx-metadata-jvm API, with an aim to provide a stable release
 in the near future. As a result, the API was reshaped, with cuts here and there, so we've provided a migration guide to help you with updates.
 
-## Migrating from 0.7.0 to 0.8.0 and above
+Starting with the 2.0 release, the library is considered stable and will be evolving in a backwards compatible way.
+
+## Migrating from 0.9.0 to stable (2.x.x)
+
+Starting with Kotlin 2.0, kotlin-metadata-jvm library is promoted to stable, and is a part of Kotlin distribution now.
+Therefore, library coordinates and package were changed.
+
+To migrate, one needs to perform three simple steps:
+
+1. Make sure that you do not use any deprecated APIs, as they were removed completely in the stable version. 
+To migrate from deprecated APIs, study the migration guide for previous versions.
+If you used version lower than 0.9.0 before, we advise you to perform two step migration: first, upgrade to 0.9.0, and after
+resolving all deprecation errors, upgrade to stable 2.x.
+2. Change coordinates of the library in your dependency declarations. The new coordinates are `org.jetbrains.kotlin:kotlin-metadata-jvm`.
+For example: `implementation("org.jetbrains.kotlin:kotlin-metadata-jvm:2.0.0-RC")`
+3. Update imports in your code so they are pointing to correct package. 
+Change `import kotlinx.metadata` to `import kotlin.metadata`, `import kotlinx.metadata.jvm` to `import kotlin.metadata.jvm`, and so on.
+As declarations themselves were not changed, this should be straightforward.
+
+## Migrating from 0.8.0 to 0.9.0
+
+There are no new deprecated or removed APIs in 0.9.0. The main difference with 0.8.0 is that deprecations that were warnings
+report errors in 0.9.0. Study the migration guide for previous versions to learn how to get rid of usages of deprecated APIs.
+
+## Migrating from 0.7.0 to 0.8.0
 
 ### Choosing between read methods
 

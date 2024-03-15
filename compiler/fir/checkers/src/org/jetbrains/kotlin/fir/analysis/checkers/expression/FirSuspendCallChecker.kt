@@ -116,7 +116,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
         val reference = this.calleeReference
         if (reference is FirResolvedCallableReference) return null
         if (typeArguments.any { it.source != null }) return null
-        if (arguments.singleOrNull() is FirLambdaArgumentExpression) {
+        if (arguments.singleOrNull().let { it is FirAnonymousFunctionExpression && it.isTrailingLambda }) {
             // No brackets should be in a selector call
             val callExpressionSource =
                 if (explicitReceiver == null) source

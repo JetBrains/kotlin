@@ -148,6 +148,21 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
     public final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
+    public abstract [ResolvedTo(CONSTANT_EVALUATION)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /ResolveMe> {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface E : <ERROR TYPE REF: Loop in supertype: /E -> /F> {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
     public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {

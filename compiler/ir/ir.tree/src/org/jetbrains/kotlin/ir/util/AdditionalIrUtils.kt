@@ -140,7 +140,7 @@ val IrClass.packageFqName: FqName?
     get() = symbol.signature?.packageFqName() ?: parent.getPackageFragment()?.packageFqName
 
 fun IrDeclarationWithName.hasEqualFqName(fqName: FqName): Boolean =
-    symbol.hasEqualFqName(fqName) || name == fqName.shortName() && when (val parent = parent) {
+    name == fqName.shortName() && when (val parent = parent) {
         is IrPackageFragment -> parent.packageFqName == fqName.parent()
         is IrDeclarationWithName -> parent.hasEqualFqName(fqName.parent())
         else -> false

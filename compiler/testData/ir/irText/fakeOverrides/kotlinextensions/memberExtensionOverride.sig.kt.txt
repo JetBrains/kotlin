@@ -1,0 +1,179 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+open class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#bar@Java2(kotlin.Int){}
+  //   Public signature: /A.bar|-4052098631143945129[0]
+  //   Public signature debug description: bar@Java2(kotlin.Int){}
+  open fun Java2.bar(a: Int): Unit
+
+  // CHECK:
+  //   Mangled name: A#foo@A(kotlin.Int){}
+  //   Public signature: /A.foo|-6186268904683510789[0]
+  //   Public signature debug description: foo@A(kotlin.Int){}
+  open fun A.foo(a: Int): Unit
+
+  // CHECK:
+  //   Mangled name: A@A{}a
+  //   Public signature: /A.a|-112912227296012367[0]
+  //   Public signature debug description: @A{}a
+  open var A.a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-a>@A(){}kotlin.Int
+    //   Public signature: /A.a.<get-a>|-5182152274603237009[0]
+    //   Public signature debug description: <get-a>@A(){}kotlin.Int
+    open get(): Int
+    // CHECK:
+    //   Mangled name: A#<set-a>@A(kotlin.Int){}
+    //   Public signature: /A.a.<set-a>|6195122733392538441[0]
+    //   Public signature debug description: <set-a>@A(kotlin.Int){}
+    open set(value: Int): Unit
+
+  // CHECK:
+  //   Mangled name: A@Java2{}b
+  //   Public signature: /A.b|2371064665038281993[0]
+  //   Public signature debug description: @Java2{}b
+  open var Java2.b: String
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-b>@Java2(){}kotlin.String
+    //   Public signature: /A.b.<get-b>|4816858536020199467[0]
+    //   Public signature debug description: <get-b>@Java2(){}kotlin.String
+    open get(): String
+    // CHECK:
+    //   Mangled name: A#<set-b>@Java2(kotlin.String){}
+    //   Public signature: /A.b.<set-b>|7587520575456570009[0]
+    //   Public signature debug description: <set-b>@Java2(kotlin.String){}
+    open set(value: String): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java1 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B#bar@Java2(kotlin.Int){}
+  //   Public signature: /B.bar|-4052098631143945129[0]
+  //   Public signature debug description: bar@Java2(kotlin.Int){}
+  /* fake */ override fun Java2.bar(a: Int): Unit
+
+  // CHECK:
+  //   Mangled name: B#foo@A(kotlin.Int){}
+  //   Public signature: /B.foo|-6186268904683510789[0]
+  //   Public signature debug description: foo@A(kotlin.Int){}
+  /* fake */ override fun A.foo(a: Int): Unit
+
+  // CHECK:
+  //   Mangled name: B#test(){}
+  //   Public signature: /B.test|6620506149988718649[0]
+  //   Public signature debug description: test(){}
+  fun test(): Unit
+
+  // CHECK:
+  //   Mangled name: B@A{}a
+  //   Public signature: /B.a|-112912227296012367[0]
+  //   Public signature debug description: @A{}a
+  /* fake */ override var A.a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-a>@A(){}kotlin.Int
+    //   Public signature: /B.a.<get-a>|-5182152274603237009[0]
+    //   Public signature debug description: <get-a>@A(){}kotlin.Int
+    /* fake */ override get(): Int
+    // CHECK:
+    //   Mangled name: B#<set-a>@A(kotlin.Int){}
+    //   Public signature: /B.a.<set-a>|6195122733392538441[0]
+    //   Public signature debug description: <set-a>@A(kotlin.Int){}
+    /* fake */ override set(value: Int): Unit
+
+  // CHECK:
+  //   Mangled name: B@Java2{}b
+  //   Public signature: /B.b|2371064665038281993[0]
+  //   Public signature debug description: @Java2{}b
+  /* fake */ override var Java2.b: String
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-b>@Java2(){}kotlin.String
+    //   Public signature: /B.b.<get-b>|4816858536020199467[0]
+    //   Public signature debug description: <get-b>@Java2(){}kotlin.String
+    /* fake */ override get(): String
+    // CHECK:
+    //   Mangled name: B#<set-b>@Java2(kotlin.String){}
+    //   Public signature: /B.b.<set-b>|7587520575456570009[0]
+    //   Public signature debug description: <set-b>@Java2(kotlin.String){}
+    /* fake */ override set(value: String): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java1 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: C#bar@Java2(kotlin.Int){}
+  //   Public signature: /C.bar|-4052098631143945129[0]
+  //   Public signature debug description: bar@Java2(kotlin.Int){}
+  override fun Java2.bar(a: Int): Unit
+
+  // CHECK:
+  //   Mangled name: C#foo@A(kotlin.Int){}
+  //   Public signature: /C.foo|-6186268904683510789[0]
+  //   Public signature debug description: foo@A(kotlin.Int){}
+  override fun A.foo(a: Int): Unit
+
+  // CHECK:
+  //   Mangled name: C#test(){}
+  //   Public signature: /C.test|6620506149988718649[0]
+  //   Public signature debug description: test(){}
+  fun test(): Unit
+
+  // CHECK:
+  //   Mangled name: C@A{}a
+  //   Public signature: /C.a|-112912227296012367[0]
+  //   Public signature debug description: @A{}a
+  override var A.a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-a>@A(){}kotlin.Int
+    //   Public signature: /C.a.<get-a>|-5182152274603237009[0]
+    //   Public signature debug description: <get-a>@A(){}kotlin.Int
+    override get(): Int
+    // CHECK:
+    //   Mangled name: C#<set-a>@A(kotlin.Int){}
+    //   Public signature: /C.a.<set-a>|6195122733392538441[0]
+    //   Public signature debug description: <set-a>@A(kotlin.Int){}
+    override set(value: Int): Unit
+
+  // CHECK:
+  //   Mangled name: C@Java2{}b
+  //   Public signature: /C.b|2371064665038281993[0]
+  //   Public signature debug description: @Java2{}b
+  override var Java2.b: String
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-b>@Java2(){}kotlin.String
+    //   Public signature: /C.b.<get-b>|4816858536020199467[0]
+    //   Public signature debug description: <get-b>@Java2(){}kotlin.String
+    override get(): String
+    // CHECK:
+    //   Mangled name: C#<set-b>@Java2(kotlin.String){}
+    //   Public signature: /C.b.<set-b>|7587520575456570009[0]
+    //   Public signature debug description: <set-b>@Java2(kotlin.String){}
+    override set(value: String): Unit
+
+}

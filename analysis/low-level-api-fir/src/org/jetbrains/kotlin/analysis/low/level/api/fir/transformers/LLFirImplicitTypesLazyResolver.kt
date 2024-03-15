@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkInitializerIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwareBodyResolveTransformer
@@ -31,6 +32,10 @@ internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePha
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target !is FirCallableDeclaration) return
         checkReturnTypeRefIsResolved(target)
+
+        if (target is FirProperty && target.isConst) {
+            checkInitializerIsResolved(target)
+        }
     }
 }
 
@@ -181,7 +186,7 @@ internal class LLFirImplicitBodyTargetResolver(
             }
 
             target is FirProperty -> {
-                if (target.returnTypeRef is FirImplicitTypeRef || target.backingField?.returnTypeRef is FirImplicitTypeRef) {
+                if (target.isConst || target.returnTypeRef is FirImplicitTypeRef || target.backingField?.returnTypeRef is FirImplicitTypeRef) {
                     resolve(target, BodyStateKeepers.PROPERTY)
                 }
             }
@@ -198,7 +203,6 @@ internal class LLFirImplicitBodyTargetResolver(
                     target is FirCodeFragment ||
                     target is FirAnonymousInitializer ||
                     target is FirDanglingModifierList ||
-                    target is FirFileAnnotationsContainer ||
                     target is FirEnumEntry ||
                     target is FirErrorProperty ||
                     target is FirScript
@@ -208,9 +212,8 @@ internal class LLFirImplicitBodyTargetResolver(
             else -> throwUnexpectedFirElementError(target)
         }
 
-        if (target is FirDeclaration) {
-            target.forEachDeclarationWhichCanHavePostponedSymbols(::publishPostponedSymbols)
-        }
+        @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
+        (target as FirDeclaration).forEachDeclarationWhichCanHavePostponedSymbols(::publishPostponedSymbols)
     }
 
     private fun publishPostponedSymbols(target: FirCallableDeclaration) {

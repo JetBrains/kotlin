@@ -22,7 +22,7 @@ fun KtClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
     val name = getObjCClassOrProtocolName()
     val attributes = (if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()) + name.toNameAttributes()
     val comment: ObjCComment? = annotationsList.translateToObjCComment()
-    val origin: ObjCExportStubOrigin = getObjCExportStubOrigin()
+    val origin = getObjCExportStubOrigin()
     val superProtocols: List<String> = superProtocols()
     val categoryName: String? = null
     val generics: List<ObjCGenericTypeDeclaration> = emptyList()
@@ -33,7 +33,7 @@ fun KtClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
     objectMembers += getDefaultMembers()
     objectMembers += getDeclaredMemberScope().getCallableSymbols()
         .sortedWith(StableCallableOrder)
-        .mapNotNull { it.translateToObjCExportStub() }
+        .flatMap { it.translateToObjCExportStub() }
 
     return ObjCInterfaceImpl(
         name = name.objCName,

@@ -21,8 +21,9 @@ class WasmDtsHandler(testServices: TestServices) : WasmBinaryArtifactHandler(tes
         val globalDirectives = testServices.moduleStructure.allDirectives
         if (WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS !in globalDirectives) return
 
-        val referenceDtsFile = module.files.first().originalFile.withReplacedExtensionOrNull(".kt", ".d.ts")
-            ?: error("Can't find reference .d.ts file")
+        val referenceDtsFile = module.files.first().originalFile.parentFile
+            .resolve("index.d.mts")
+            .run { takeIf { it.exists() } ?: error("'${path}' doesn't exist") }
 
         val generatedDts = info.compilerResult.dts
             ?: error("Can't find generated .d.ts file")

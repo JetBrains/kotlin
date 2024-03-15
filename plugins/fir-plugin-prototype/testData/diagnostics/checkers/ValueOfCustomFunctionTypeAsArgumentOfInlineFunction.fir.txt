@@ -1,0 +1,4 @@
+FILE: ValueOfCustomFunctionTypeAsArgumentOfInlineFunction.kt
+    @R|org/jetbrains/kotlin/fir/plugin/MyComposable|() public final inline fun <T> inlineFunction(block: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<T>|): R|T| {
+        ^inlineFunction R|<local>/block|.R|SubstitutionOverride<some/MyComposableFunction0.invoke: R|T|>|()
+    }

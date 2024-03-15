@@ -213,6 +213,7 @@ internal class StubBasedFirMemberDeserializer(
                 }
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
+            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
         }.apply {
             sourceElement = c.containerSource
         }
@@ -245,6 +246,8 @@ internal class StubBasedFirMemberDeserializer(
             replaceAnnotations(
                 c.annotationDeserializer.loadAnnotations(getter)
             )
+
+            replaceDeprecationsProvider(getDeprecationsProvider(c.session))
             containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
         }
     }
@@ -280,6 +283,8 @@ internal class StubBasedFirMemberDeserializer(
             replaceAnnotations(
                 c.annotationDeserializer.loadAnnotations(setter)
             )
+
+            replaceDeprecationsProvider(getDeprecationsProvider(c.session))
             containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
         }
     }
@@ -398,13 +403,14 @@ internal class StubBasedFirMemberDeserializer(
 
             this.containerSource = c.containerSource
             this.initializer = c.annotationDeserializer.loadConstant(property, symbol.callableId)
-            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
 
             property.contextReceivers.mapNotNull { it.typeReference() }.mapTo(contextReceivers, ::loadContextReceiver)
         }.apply {
             setLazyPublishedVisibility(c.session)
             this.getter?.setLazyPublishedVisibility(annotations, this, c.session)
             this.setter?.setLazyPublishedVisibility(annotations, this, c.session)
+
+            replaceDeprecationsProvider(getDeprecationsProvider(c.session))
         }
     }
 

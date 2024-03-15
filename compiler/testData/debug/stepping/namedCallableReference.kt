@@ -33,7 +33,6 @@ fun g() {}
 // test.kt:6 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:4 $box (12, 4)
 // test.kt:5 $box
 // test.kt:9 $f

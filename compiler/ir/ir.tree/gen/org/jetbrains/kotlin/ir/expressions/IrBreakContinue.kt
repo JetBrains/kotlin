@@ -9,12 +9,10 @@
 package org.jetbrains.kotlin.ir.expressions
 
 /**
- * A non-leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.breakContinue]
  */
 abstract class IrBreakContinue : IrExpression() {
     abstract var loop: IrLoop
 
-    var label: String? = null
+    abstract var label: String?
 }

@@ -37,6 +37,8 @@ import java.util.concurrent.ConcurrentHashMap
  * for the [org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider].
  */
 abstract class LLFirResolveExtensionTool : FirSessionComponent {
+    internal abstract val extensions: List<KtResolveExtension>
+
     abstract val declarationProvider: LLFirResolveExtensionToolDeclarationProvider
     abstract val packageProvider: KotlinPackageProvider
     abstract val packageFilter: LLFirResolveExtensionToolPackageFilter
@@ -48,7 +50,7 @@ val FirSession.llResolveExtensionTool: LLFirResolveExtensionTool? by FirSession.
 
 internal class LLFirNonEmptyResolveExtensionTool(
     session: LLFirSession,
-    extensions: List<KtResolveExtension>,
+    override val extensions: List<KtResolveExtension>,
 ) : LLFirResolveExtensionTool() {
     init {
         require(extensions.isNotEmpty())

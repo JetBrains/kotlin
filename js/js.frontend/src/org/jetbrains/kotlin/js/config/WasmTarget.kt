@@ -7,16 +7,12 @@ package org.jetbrains.kotlin.js.config
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
 
-enum class WasmTarget {
-    JS,
-    WASI;
+enum class WasmTarget(val alias: String) {
+    JS("wasm-js"),
+    WASI("wasm-wasi");
 
     companion object {
-        fun fromName(name: String): WasmTarget? = when (name) {
-            "wasm-js" -> JS
-            "wasm-wasi" -> WASI
-            else -> null
-        }
+        fun fromName(name: String): WasmTarget? = WasmTarget.entries.firstOrNull { it.alias == name }
     }
 }
 

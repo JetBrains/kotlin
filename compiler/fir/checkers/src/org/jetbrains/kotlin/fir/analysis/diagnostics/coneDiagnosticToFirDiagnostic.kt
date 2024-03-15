@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
@@ -397,6 +398,8 @@ private fun mapInapplicableCandidateError(
             // Reported later
             is TypeParameterAsExpression -> null
 
+            is AmbiguousInterceptedSymbol -> FirErrors.PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL.createOn(source, rootCause.pluginNames)
+
             else -> genericDiagnostic
         }
     }.distinct()
@@ -511,7 +514,9 @@ private fun ConstraintSystemError.toDiagnostic(
             }
 
             FirErrors.NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.createOn(
-                candidate.sourceOfCallToSymbolWith(this.typeVariable as ConeTypeVariable) ?: source,
+                (resolvedAtom as? FirResolvable)?.calleeReference?.source
+                    ?: candidate.sourceOfCallToSymbolWith(this.typeVariable as ConeTypeVariable)
+                    ?: source,
                 typeVariableName,
             )
         }

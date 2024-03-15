@@ -59,6 +59,7 @@ object FirSessionFactoryHelper {
             librariesScope,
             packagePartProvider,
             languageVersionSettings,
+            predefinedJavaComponents = null,
             registerExtraComponents = {},
         )
 
@@ -78,10 +79,12 @@ object FirSessionFactoryHelper {
             { incrementalCompilationContext?.createSymbolProviders(it, mainModuleData, projectEnvironment) },
             extensionRegistrars,
             languageVersionSettings,
+            JvmTarget.DEFAULT,
             lookupTracker,
             enumWhenTracker,
             importTracker,
-            needRegisterJavaElementFinder = needRegisterJavaElementFinder,
+            predefinedJavaComponents = null,
+            needRegisterJavaElementFinder,
             registerExtraComponents = {},
             init = sessionConfigurator,
         )

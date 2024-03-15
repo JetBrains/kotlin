@@ -83,6 +83,10 @@ fun ObjCExportClassOrProtocolName.toNameAttributes(): List<String> = listOfNotNu
     swiftName.takeIf { it != objCName }?.let { swiftNameAttribute(it) }
 )
 
+fun ObjCExportFileName.toNameAttributes(): List<String> = listOfNotNull(
+    swiftName.takeIf { it != objCName }?.let { swiftNameAttribute(it) }
+)
+
 @InternalKotlinNativeApi
 fun swiftNameAttribute(swiftName: String) = "swift_name(\"$swiftName\")"
 

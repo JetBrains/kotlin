@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtLabelReferenceExpression
+import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -458,6 +459,12 @@ internal class InnerClassConstructorNoReceiverImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.InnerClassConstructorNoReceiver
+
+internal class PluginAmbiguousInterceptedSymbolImpl(
+    override val names: List<String>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.PluginAmbiguousInterceptedSymbol
 
 internal class ResolutionToClassifierImpl(
     override val classSymbol: KtClassLikeSymbol,
@@ -1696,7 +1703,7 @@ internal class ResultTypeMismatchImpl(
 internal class ManyLambdaExpressionArgumentsImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtValueArgument>(firDiagnostic, token), KtFirDiagnostic.ManyLambdaExpressionArguments
+) : KtAbstractFirDiagnostic<KtLambdaExpression>(firDiagnostic, token), KtFirDiagnostic.ManyLambdaExpressionArguments
 
 internal class NewInferenceNoInformationForParameterImpl(
     override val name: String,
@@ -2307,6 +2314,14 @@ internal class CannotWeakenAccessPrivilegeImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtModifierListOwner>(firDiagnostic, token), KtFirDiagnostic.CannotWeakenAccessPrivilege
 
+internal class CannotWeakenAccessPrivilegeWarningImpl(
+    override val overridingVisibility: Visibility,
+    override val overridden: KtCallableSymbol,
+    override val containingClassName: Name,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtModifierListOwner>(firDiagnostic, token), KtFirDiagnostic.CannotWeakenAccessPrivilegeWarning
+
 internal class CannotChangeAccessPrivilegeImpl(
     override val overridingVisibility: Visibility,
     override val overridden: KtCallableSymbol,
@@ -2315,11 +2330,25 @@ internal class CannotChangeAccessPrivilegeImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtModifierListOwner>(firDiagnostic, token), KtFirDiagnostic.CannotChangeAccessPrivilege
 
+internal class CannotChangeAccessPrivilegeWarningImpl(
+    override val overridingVisibility: Visibility,
+    override val overridden: KtCallableSymbol,
+    override val containingClassName: Name,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtModifierListOwner>(firDiagnostic, token), KtFirDiagnostic.CannotChangeAccessPrivilegeWarning
+
 internal class CannotInferVisibilityImpl(
     override val callable: KtCallableSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KtFirDiagnostic.CannotInferVisibility
+
+internal class CannotInferVisibilityWarningImpl(
+    override val callable: KtCallableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KtFirDiagnostic.CannotInferVisibilityWarning
 
 internal class MultipleDefaultsInheritedFromSupertypesImpl(
     override val name: Name,
@@ -3794,11 +3823,12 @@ internal class AssignmentOperatorShouldReturnUnitImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.AssignmentOperatorShouldReturnUnit
 
-internal class PropertyAsOperatorImpl(
-    override val property: KtVariableSymbol,
+internal class NotFunctionAsOperatorImpl(
+    override val elementName: String,
+    override val elementSymbol: KtSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.PropertyAsOperator
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.NotFunctionAsOperator
 
 internal class DslScopeViolationImpl(
     override val calleeSymbol: KtSymbol,
@@ -4094,6 +4124,13 @@ internal class InefficientEqualsOverridingInValueClassImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KtFirDiagnostic.InefficientEqualsOverridingInValueClass
 
+internal class InlineFromHigherPlatformImpl(
+    override val inlinedBytecodeVersion: String,
+    override val currentModuleBytecodeVersion: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.InlineFromHigherPlatform
+
 internal class CannotAllUnderImportFromSingletonImpl(
     override val objectName: Name,
     firDiagnostic: KtPsiDiagnostic,
@@ -4214,10 +4251,20 @@ internal class DeprecatedAccessToEntryPropertyFromEnumImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.DeprecatedAccessToEntryPropertyFromEnum
 
+internal class DeprecatedAccessToEntriesPropertyImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.DeprecatedAccessToEntriesProperty
+
 internal class DeprecatedAccessToEnumEntryPropertyAsReferenceImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.DeprecatedAccessToEnumEntryPropertyAsReference
+
+internal class DeprecatedAccessToEntriesAsQualifierImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.DeprecatedAccessToEntriesAsQualifier
 
 internal class DeprecatedDeclarationOfEnumEntryImpl(
     firDiagnostic: KtPsiDiagnostic,
@@ -4818,6 +4865,11 @@ internal class NonConsumableExportedIdentifierImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.NonConsumableExportedIdentifier
 
+internal class NamedCompanionInExportedInterfaceImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.NamedCompanionInExportedInterface
+
 internal class NestedJsExportImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
@@ -4934,6 +4986,11 @@ internal class ExternalInterfaceAsReifiedTypeArgumentImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.ExternalInterfaceAsReifiedTypeArgument
+
+internal class NamedCompanionInExternalInterfaceImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.NamedCompanionInExternalInterface
 
 internal class JscodeArgumentNonConstExpressionImpl(
     firDiagnostic: KtPsiDiagnostic,

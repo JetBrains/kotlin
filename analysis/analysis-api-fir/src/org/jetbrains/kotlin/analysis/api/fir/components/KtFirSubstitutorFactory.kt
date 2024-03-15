@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtSubstitutorBuilder
 import org.jetbrains.kotlin.analysis.api.components.KtSubstitutorFactory
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.fir.types.KtFirGenericSubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirMapBackedSubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
@@ -29,7 +30,9 @@ internal class KtFirSubstitutorFactory(
             }
         }
 
-        val coneSubstitutor = ConeSubstitutorByMap(firSubstitution, analysisSession.useSiteSession)
-        return KtFirMapBackedSubstitutor(coneSubstitutor, analysisSession.firSymbolBuilder)
+        return when (val coneSubstitutor = ConeSubstitutorByMap.create(firSubstitution, analysisSession.useSiteSession)) {
+            is ConeSubstitutorByMap -> KtFirMapBackedSubstitutor(coneSubstitutor, analysisSession.firSymbolBuilder)
+            else -> KtFirGenericSubstitutor(coneSubstitutor, analysisSession.firSymbolBuilder)
+        }
     }
 }

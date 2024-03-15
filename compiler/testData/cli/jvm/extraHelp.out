@@ -142,6 +142,7 @@ where advanced options include:
                              including the ability to read type-use annotations from class files.
                              See KT-45671 for more details.
   -Xuse-fast-jar-file-system Use the fast implementation of Jar FS. This may speed up compilation time, but it is experimental.
+  -Xuse-inline-scopes-numbers Use inline scopes numbers for inline marker variables.
   -Xuse-javac                Use javac for Java source and class file analysis.
   -Xuse-kapt4                Enable the experimental KAPT 4.
   -Xuse-old-backend          Use the old JVM backend.
@@ -228,10 +229,11 @@ where advanced options include:
                              Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
   -Xuse-fir-extended-checkers Use extended analysis mode based on the frontend IR.
                              Warning: This feature is not yet production-ready.
+  -Xuse-fir-fake-override-builder
+                             Generate all fake overrides via FIR2IR instead of IR, i.e. revert to behavior before KT-61514 was resolved.
   -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
                              Warning: This feature is not yet production-ready.
   -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
-  -Xuse-ir-fake-override-builder Generate fake overrides via IR. See KT-61514
   -Xuse-k2                   Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.
   -Xverbose-phases           Be verbose while performing the given backend phases.
 

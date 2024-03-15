@@ -77,6 +77,12 @@ public class Fe10IdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ex
   }
 
   @Test
+  @TestMetadata("deprecationFromLibrary.kt")
+  public void testDeprecationFromLibrary() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/deprecationFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("duplicatedCallableWithImplicitType.kt")
   public void testDuplicatedCallableWithImplicitType() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/duplicatedCallableWithImplicitType.kt");

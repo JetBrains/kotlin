@@ -41,10 +41,25 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
         println("import ${import.moduleName}")
     }
 
+    override fun visitClass(klass: SirClass): Unit = with(printer) {
+        printDocumentation(klass)
+        printVisibility(klass)
+        println(
+            "class ",
+            klass.name.swiftIdentifier,
+            " {"
+        )
+        withIndent {
+            klass.acceptChildren(this@SirAsSwiftSourcesPrinter)
+        }
+        println("}")
+    }
+
     override fun visitVariable(variable: SirVariable): Unit = with(printer) {
+        printDocumentation(variable)
+        printVisibility(variable)
+        printCallableKind(variable.kind)
         print(
-            variable.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " } ?: "",
-            if (variable.isStatic) "static " else "",
             "var ",
             variable.name.swiftIdentifier,
             ": ",
@@ -81,31 +96,15 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
     }
 
     override fun visitFunction(function: SirFunction): Unit = with(printer) {
-        function.documentation?.let { println(it) }
+        printDocumentation(function)
+        printVisibility(function)
+        printCallableKind(function.kind)
         print(
-            function.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " } ?: "",
-            if (function.isStatic) {
-                "static "
-            } else {
-                ""
-            },
             "func ",
             function.name.swiftIdentifier,
             "("
         )
-        if (function.parameters.isNotEmpty()) {
-            println()
-            withIndent {
-                function.parameters.forEachIndexed { index, sirParameter ->
-                    print(sirParameter.swift)
-                    if (index != function.parameters.lastIndex) {
-                        println(",")
-                    } else {
-                        println()
-                    }
-                }
-            }
-        }
+        printParameters(function.parameters)
         print(
             ")",
             " -> ",
@@ -120,9 +119,29 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
         println("}")
     }
 
+    override fun visitInit(init: SirInit): Unit = with(printer) {
+        printDocumentation(init)
+        printVisibility(init)
+        printInitKind(init.initKind)
+        print("init")
+        "?".takeIf { init.isFailable }?.let { print(it) }
+        print("(")
+        printParameters(init.parameters)
+        print(
+            ")"
+        )
+        println(" {")
+        withIndent {
+            printFunctionBody(init.body).forEach {
+                println(it)
+            }
+        }
+        println("}")
+    }
+
     override fun visitEnum(enum: SirEnum): Unit = with(printer) {
+        printVisibility(enum)
         println(
-            enum.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " } ?: "",
             "enum ",
             enum.name.swiftIdentifier,
             " {"
@@ -168,3 +187,51 @@ private val SirNamedDeclaration.swiftFqName: String
 private val simpleIdentifierRegex = Regex("[_a-zA-Z][_a-zA-Z0-9]*")
 
 private val String.swiftIdentifier get() = if (simpleIdentifierRegex.matches(this)) this else "`$this`"
+
+internal fun SmartPrinter.printVisibility(decl: SirDeclaration) {
+    print(
+        decl.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " } ?: ""
+    )
+}
+
+internal fun SmartPrinter.printDocumentation(decl: SirDeclaration) {
+    decl.documentation?.lines()?.forEach { println(it.trimIndent()) }
+}
+
+internal fun SmartPrinter.printInitKind(decl: SirInitializerKind) {
+    print(
+        when (decl) {
+            SirInitializerKind.ORDINARY -> ""
+            SirInitializerKind.REQUIRED -> "required "
+            SirInitializerKind.CONVENIENCE -> "convenience "
+        }
+    )
+}
+
+internal fun SmartPrinter.printCallableKind(callableKind: SirCallableKind) {
+    print(
+        when (callableKind) {
+            SirCallableKind.FUNCTION -> ""
+            SirCallableKind.INSTANCE_METHOD -> ""
+            SirCallableKind.CLASS_METHOD -> "class "
+            SirCallableKind.STATIC_METHOD -> "static "
+        }
+    )
+}
+
+internal fun SmartPrinter.printParameters(params: List<SirParameter>): Unit = params
+    .takeIf { it.isNotEmpty() }
+    ?.let {
+        println()
+        withIndent {
+            params.forEachIndexed { index, sirParameter ->
+                print(sirParameter.swift)
+                if (index != params.lastIndex) {
+                    println(",")
+                } else {
+                    println()
+                }
+            }
+        }
+    }
+    ?: Unit

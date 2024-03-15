@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -322,6 +323,25 @@ abstract class AbstractFirDeserializedSymbolProvider(
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-        return getClass(classId) ?: getTypeAlias(classId)
+        /**
+         * FIR has a contract that providers should return the first classifier with required classId they found.
+         *
+         * But on the other hand, there is a contract (from pre 1.0 times), that classes have more priority than typealiases,
+         *   when search is performed in binary dependencies.
+         *
+         * And the second contract breaks the first in case, when there are two parts of a MPP library:
+         * - one is platform one and contains `actual typealias`
+         * - second is common one and contains `expect class`
+         *
+         * In this case, by the first contract, provider will return `expect class`, but FIR expects that `actual typealias` will be found
+         * So, to avoid this problem, we need to search for typealias in case, when `expect class` was found
+         *
+         * For details see KT-65840
+         */
+        val clazz = getClass(classId)
+        if (clazz != null && !clazz.isExpect) {
+            return clazz
+        }
+        return getTypeAlias(classId) ?: clazz
     }
 }

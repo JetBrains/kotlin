@@ -175,7 +175,7 @@ private fun <D : FunctionDescriptor> ResolvedCall<D>.replaceAssertWithAssertInne
         call,
         newCandidateDescriptor,
         dispatchReceiver, extensionReceiver, explicitReceiverKind,
-        null, DelegatingBindingTrace(BindingTraceContext().bindingContext, "Temporary trace for assertInner"),
+        null, DelegatingBindingTrace(BindingTraceContext(null).bindingContext, "Temporary trace for assertInner"),
         TracingStrategy.EMPTY, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY)
     )
     valueArguments.forEach {

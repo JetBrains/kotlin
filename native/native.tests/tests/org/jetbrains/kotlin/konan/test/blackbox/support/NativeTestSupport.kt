@@ -105,7 +105,7 @@ internal object NativeTestSupport {
     fun computeNativeClassLoader(parent: ClassLoader? = null): KotlinNativeClassLoader = KotlinNativeClassLoader(
         lazy {
             val nativeClassPath = ProcessLevelProperty.COMPILER_CLASSPATH.readValue()
-                .split(':', ';')
+                .split(File.pathSeparatorChar)
                 .map { File(it).toURI().toURL() }
                 .toTypedArray()
 
@@ -177,7 +177,7 @@ internal object NativeTestSupport {
         val nativeHome = getOrCreateTestProcessSettings().get<KotlinNativeHome>()
 
         val distribution = Distribution(nativeHome.dir.path)
-        val hostManager = HostManager(distribution, experimental = false)
+        val hostManager = HostManager()
         val nativeTargets = computeNativeTargets(enforcedProperties, hostManager)
 
         val cacheMode = computeCacheMode(enforcedProperties, distribution, nativeTargets, optimizationMode)
@@ -277,8 +277,10 @@ internal object NativeTestSupport {
             CacheMode.Alias.STATIC_ONLY_DIST -> false
             CacheMode.Alias.STATIC_EVERYWHERE -> true
             CacheMode.Alias.STATIC_PER_FILE_EVERYWHERE -> true
+            CacheMode.Alias.STATIC_USE_HEADERS_EVERYWHERE -> true
         }
         val makePerFileCaches = cacheMode == CacheMode.Alias.STATIC_PER_FILE_EVERYWHERE
+        val useHeaders = cacheMode == CacheMode.Alias.STATIC_USE_HEADERS_EVERYWHERE
 
         return if (defaultCache == CacheMode.Alias.NO)
             CacheMode.WithoutCache
@@ -288,6 +290,7 @@ internal object NativeTestSupport {
             optimizationMode,
             useStaticCacheForUserLibraries,
             makePerFileCaches,
+            useHeaders,
             cacheMode
         )
     }
@@ -299,7 +302,7 @@ internal object NativeTestSupport {
         CompilerPlugins(
             ClassLevelProperty.COMPILER_PLUGINS.readValue(
                 enforcedProperties,
-                { it.split(':', ';').mapToSet(::File) },
+                { it.split(File.pathSeparatorChar).mapToSet(::File) },
                 default = emptySet()
             )
         )
@@ -308,7 +311,7 @@ internal object NativeTestSupport {
         CustomKlibs(
             ClassLevelProperty.CUSTOM_KLIBS.readValue(
                 enforcedProperties,
-                { it.split(':', ';').mapToSet(::File) },
+                { it.split(File.pathSeparatorChar).mapToSet(::File) },
                 default = emptySet()
             )
         )
@@ -354,7 +357,18 @@ internal object NativeTestSupport {
             val enclosingTestClass = enclosingTestClass
 
             val testProcessSettings = getOrCreateTestProcessSettings()
-            val computedTestConfiguration = computeTestConfiguration(enclosingTestClass)
+            val computedTestConfiguration = computeTestConfiguration(enclosingTestClass).run {
+                if (TestGroupCreation.getFromProperty() == TestGroupCreation.EAGER &&
+                    configuration.providerClass == ExtTestCaseGroupProvider::class
+                ) {
+                    val annotation = UseEagerExtTestCaseGroupProvider()
+                    val testConfiguration = annotation.annotationClass.findAnnotation<TestConfiguration>()
+                        ?: error("Unable to find annotation for Eager test group creation")
+                    ComputedTestConfiguration(testConfiguration, annotation)
+                } else {
+                    this
+                }
+            }
 
             val settings = buildList {
                 // Put common settings:

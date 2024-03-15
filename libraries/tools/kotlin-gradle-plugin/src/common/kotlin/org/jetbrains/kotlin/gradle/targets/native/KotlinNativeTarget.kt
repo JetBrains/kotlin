@@ -12,6 +12,8 @@ import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.*
@@ -34,7 +36,7 @@ import javax.inject.Inject
 abstract class KotlinNativeTarget @Inject constructor(
     project: Project,
     val konanTarget: KonanTarget,
-) : HasConfigurableCompilerOptions<KotlinNativeCompilerOptions>,
+) : HasConfigurableKotlinCompilerOptions<KotlinNativeCompilerOptions>,
     KotlinTargetWithBinaries<KotlinNativeCompilation, KotlinNativeBinaryContainer>(
     project,
     KotlinPlatformType.native
@@ -78,6 +80,12 @@ abstract class KotlinNativeTarget @Inject constructor(
                 mainCompilation,
                 targetName,
                 dashSeparatedName(targetName.toLowerCaseAsciiOnly())
+            )
+        )
+
+        mutableUsageContexts.addIfNotNull(
+            setUpResourcesVariant(
+                mainCompilation
             )
         )
 

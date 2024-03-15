@@ -146,6 +146,9 @@ abstract class RunGTest : DefaultTask() {
     @get:Input
     abstract val executionTimeout: Property<Duration>
 
+    @get:Input
+    val platformManagerExtension: PlatformManager = project.extensions.getByType<PlatformManager>()
+
     @TaskAction
     fun run() {
         val workQueue = workerExecutor.noIsolation()
@@ -157,7 +160,7 @@ abstract class RunGTest : DefaultTask() {
             reportFileUnprocessed.set(this@RunGTest.reportFileUnprocessed)
             filter.set(this@RunGTest.filter)
             tsanSuppressionsFile.set(this@RunGTest.tsanSuppressionsFile)
-            platformManager.set(project.extensions.getByType<PlatformManager>())
+            platformManager.set(platformManagerExtension)
             targetName.set(this@RunGTest.target.get().name)
             executionTimeout.set(this@RunGTest.executionTimeout)
         }

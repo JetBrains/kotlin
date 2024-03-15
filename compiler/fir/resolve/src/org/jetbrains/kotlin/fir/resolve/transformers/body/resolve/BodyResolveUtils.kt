@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
+import org.jetbrains.kotlin.fir.expressions.builder.buildSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.types.*
@@ -57,7 +58,16 @@ internal fun remapArgumentsWithVararg(
                 // NB: don't pull out of named arguments.
                 (valueParameter.isVararg && arg !is FirNamedArgumentExpression)
             ) {
-                arguments += arg
+                arguments += if (arg is FirNamedArgumentExpression) {
+                    buildSpreadArgumentExpression {
+                        this.source = arg.source
+                        this.expression = arg.expression
+                        this.isNamed = true
+                        this.isFakeSpread = !arg.isSpread
+                    }
+                } else {
+                    arg
+                }
                 startOffset = minOf(startOffset, arg.source?.startOffset ?: Int.MAX_VALUE)
                 endOffset = maxOf(endOffset, arg.source?.endOffset ?: 0)
                 if (firstVarargElementSource == null) firstVarargElementSource = arg.source

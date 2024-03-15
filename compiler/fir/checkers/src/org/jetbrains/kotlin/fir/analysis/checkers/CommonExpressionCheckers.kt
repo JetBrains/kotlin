@@ -154,7 +154,6 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val typeOperatorCallCheckers: Set<FirTypeOperatorCallChecker>
         get() = setOf(
-            FirUselessTypeOperationCallChecker,
             FirCastOperatorsChecker
         )
 

@@ -1,0 +1,20 @@
+[KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy Template was not applied to 'root project 'customCompilations'':
+Explicit .dependsOn() edges were configured for the following source sets:
+[jvmIntegrationTest, linuxX64IntegrationTest]
+
+Consider removing dependsOn-calls or disabling the default template by adding
+    'kotlin.mpp.applyDefaultHierarchyTemplate=false'
+to your gradle.properties
+
+Learn more about hierarchy templates: https://kotl.in/hierarchy-template
+----
+[MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Sets: 'commonIntegrationTest', 'jvmIntegrationTest2'
+are included to 'integrationTest' compilation of 'jvm' target.
+However, they have no common source set root between them.
+
+Please remove these kotlin source sets and include their source directories to the compilation's default source set.
+
+    kotlin.sourceSets["jvmIntegrationTest"].kotlin.srcDir() // <-- pass sources directories here
+
+Or, if the solution above is not applicable, specify `dependsOn` edges between these source sets so that there are no multiple roots.
+See https://kotl.in/connecting-source-sets for more details.

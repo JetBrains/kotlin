@@ -304,7 +304,6 @@ internal class KtSymbolByFirBuilder(
         fun buildPropertySymbol(firSymbol: FirPropertySymbol): KtVariableSymbol {
             checkRequirementForBuildingSymbol<KtKotlinPropertySymbol>(firSymbol, !firSymbol.isLocal)
             checkRequirementForBuildingSymbol<KtKotlinPropertySymbol>(firSymbol, firSymbol !is FirSyntheticPropertySymbol)
-            checkRequirementForBuildingSymbol<KtKotlinPropertySymbol>(firSymbol, firSymbol !is FirSyntheticPropertySymbol)
 
             firSymbol.fir.unwrapSubstitutionOverrideIfNeeded()?.let {
                 return buildVariableSymbol(it.symbol)

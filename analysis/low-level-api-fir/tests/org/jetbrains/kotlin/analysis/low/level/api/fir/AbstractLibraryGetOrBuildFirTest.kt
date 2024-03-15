@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryDecompiledTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.service
 
 abstract class AbstractLibraryGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
-    override val configurator = AnalysisApiFirLibraryBinaryTestConfigurator
+    override val configurator get() = AnalysisApiFirLibraryBinaryDecompiledTestConfigurator
+
     override fun configureTest(builder: TestConfigurationBuilder) {
         builder.forTestsMatching("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/*") {
             this.defaultsProviderBuilder.targetPlatform = JsPlatforms.defaultJsPlatform

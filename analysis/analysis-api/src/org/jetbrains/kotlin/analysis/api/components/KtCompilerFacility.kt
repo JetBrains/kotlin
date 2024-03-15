@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -124,6 +125,8 @@ public interface KtCompilerFacilityMixIn : KtAnalysisSessionMixIn {
         return withValidityAssertion {
             try {
                 analysisSession.compilerFacility.compile(file, configuration, target, allowedErrorFilter)
+            } catch (e: ProcessCanceledException) {
+                throw e
             } catch (e: Throwable) {
                 throw KtCodeCompilationException(e)
             }

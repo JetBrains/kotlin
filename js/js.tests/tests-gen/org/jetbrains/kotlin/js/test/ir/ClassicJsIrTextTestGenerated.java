@@ -2361,6 +2361,236 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public void testSetterVisibliity() {
       runTest("compiler/testData/ir/irText/fakeOverrides/setterVisibliity.kt");
     }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/annotations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Annotations {
+      @Test
+      public void testAllFilesPresentInAnnotations() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/charsequence")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Charsequence {
+      @Test
+      public void testAllFilesPresentInCharsequence() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/charsequence"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Collections {
+      @Test
+      public void testAllFilesPresentInCollections() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections/list")
+      @TestDataPath("$PROJECT_ROOT")
+      public class List {
+        @Test
+        public void testAllFilesPresentInList() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections/list"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections/map")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Map {
+        @Test
+        public void testAllFilesPresentInMap() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections/map"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections/set")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Set {
+        @Test
+        public void testAllFilesPresentInSet() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections/set"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/dataclass")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Dataclass {
+      @Test
+      public void testAllFilesPresentInDataclass() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/dataclass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/enum")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Enum {
+      @Test
+      public void testAllFilesPresentInEnum() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/fieldmodifiers")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Fieldmodifiers {
+      @Test
+      public void testAllFilesPresentInFieldmodifiers() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/fieldmodifiers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/generics")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Generics {
+      @Test
+      public void testAllFilesPresentInGenerics() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/generics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/gettersetter")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Gettersetter {
+      @Test
+      public void testAllFilesPresentInGettersetter() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/gettersetter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/java21")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Java21 {
+      @Test
+      public void testAllFilesPresentInJava21() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/java21"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/javastatic")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Javastatic {
+      @Test
+      public void testAllFilesPresentInJavastatic() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/javastatic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/kotlinextensions")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Kotlinextensions {
+      @Test
+      public void testAllFilesPresentInKotlinextensions() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/kotlinextensions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/methodmodifiers")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Methodmodifiers {
+      @Test
+      public void testAllFilesPresentInMethodmodifiers() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/methodmodifiers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/methodparameters")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Methodparameters {
+      @Test
+      public void testAllFilesPresentInMethodparameters() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/methodparameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/number")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Number {
+      @Test
+      public void testAllFilesPresentInNumber() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/number"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/operators")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Operators {
+      @Test
+      public void testAllFilesPresentInOperators() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/operators"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/platformtypes")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Platformtypes {
+      @Test
+      public void testAllFilesPresentInPlatformtypes() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/platformtypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/typenothing")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Typenothing {
+      @Test
+      public void testAllFilesPresentInTypenothing() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/typenothing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/vararg")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Vararg {
+      @Test
+      public void testAllFilesPresentInVararg() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/vararg"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/visibility")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Visibility {
+      @Test
+      public void testAllFilesPresentInVisibility() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/visibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/void")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Void {
+      @Test
+      public void testAllFilesPresentInVoid() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/void"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
   }
 
   @Nested

@@ -1,3 +1,7 @@
+/* K2 is skipped because of the test data: multiple KNM parts are produced */
+// KNM_K2_IGNORE
+
+
 package test
 
 import test.E.E1

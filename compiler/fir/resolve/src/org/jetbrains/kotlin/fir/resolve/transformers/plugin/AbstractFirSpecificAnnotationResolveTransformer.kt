@@ -191,7 +191,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             isUsedAsGetClassReceiver: Boolean,
             callSite: FirElement,
             data: ResolutionMode,
-        ): FirStatement {
+        ): FirQualifiedAccessExpression {
             qualifiedAccessExpression.resolveFromImportScope()
             return qualifiedAccessExpression
         }
@@ -255,7 +255,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             calleeReference: FirSimpleNamedReference,
             calleeSymbol: FirEnumEntrySymbol
         ) {
-            session.lookupTracker?.recordLookup(
+            session.lookupTracker?.recordNameLookup(
                 calleeReference.name,
                 calleeSymbol.dispatchReceiverType?.classId?.asFqNameString() ?: calleeSymbol.callableId.packageName.asString(),
                 this.source,

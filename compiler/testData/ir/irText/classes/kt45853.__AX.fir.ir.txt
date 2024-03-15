@@ -8,7 +8,7 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:AX modality:ABSTRACT visibili
   PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:a visibility:public modality:OPEN [val]
     overridden:
       public abstract a: <root>.A? [val]
-    FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:<get-a> visibility:public modality:OPEN <> ($this:<root>.AX) returnType:@[FlexibleNullability] <root>.AX?
+    FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:<get-a> visibility:public modality:OPEN <> ($this:<root>.AX) returnType:@[EnhancedNullability] <root>.AX?
       annotations:
         Override
       correspondingProperty: PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:a visibility:public modality:OPEN [val]

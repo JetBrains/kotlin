@@ -66,7 +66,7 @@ abstract class AbstractStandaloneSessionBuilderAgainstStdlibTest : TestWithDispo
 
         // builtin type
         val typeReference = ktFile.findDescendantOfType<KtNamedFunction>()!!.typeReference!!
-        typeReference.assertIsReferenceTo(StandardClassIds.Unit)
+        typeReference.assertIsReferenceTo(StandardClassIds.Float)
     }
 
     private fun KtTypeReference.assertIsReferenceTo(classId: ClassId) {

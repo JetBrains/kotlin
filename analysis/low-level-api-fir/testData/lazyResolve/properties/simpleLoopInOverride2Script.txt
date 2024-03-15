@@ -250,7 +250,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-simpleLoopInOverride2Script.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
@@ -281,7 +281,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-simpleLoopInOverride2Script.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
@@ -308,11 +308,42 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2Script.kts
         }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2Script.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-simpleLoopInOverride2Script.kts>
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(CONSTANT_EVALUATION)] val str: R|kotlin/String|
+                public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+
+        }
+
+        public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+            public? open? override [ResolvedTo(RAW_FIR)] val str: String
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
+
+        }
+
+        public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+            public? open? override [ResolvedTo(RAW_FIR)] val str: String
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo3] get(): String
+
+        }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-simpleLoopInOverride2Script.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
@@ -343,7 +374,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-simpleLoopInOverride2Script.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
@@ -399,4 +430,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] simpleLoopInOverride2Script.kts
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo3] get(): R|kotlin/String|
 
         }
-

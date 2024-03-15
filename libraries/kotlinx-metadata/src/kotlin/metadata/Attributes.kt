@@ -3,7 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION_ERROR") // flags will become internal eventually
 @file:JvmName("Attributes")
 
 package kotlin.metadata
@@ -294,18 +293,6 @@ public var KmProperty.kind: MemberKind by memberKindDelegate(KmProperty::flags)
  * Note that setting [KmProperty.isVar] to true does not automatically create [KmProperty.setter] and vice versa. This has to be done explicitly.
  */
 public var KmProperty.isVar: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.IS_VAR))
-
-/**
- * Indicates that the corresponding property has a getter.
- */
-@Deprecated("Kotlin properties always have getters", ReplaceWith("true"), DeprecationLevel.ERROR)
-public var KmProperty.hasGetter: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.HAS_GETTER))
-
-/**
- * Indicates that the corresponding property has a setter.
- */
-@Deprecated("Check .setter for nullability instead", ReplaceWith("this.setter != null"), DeprecationLevel.ERROR)
-public var KmProperty.hasSetter: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.HAS_SETTER))
 
 /**
  * Indicates that the corresponding property is `const`.

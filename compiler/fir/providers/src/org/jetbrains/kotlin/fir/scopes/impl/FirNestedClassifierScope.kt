@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 abstract class FirNestedClassifierScope(val klass: FirClass, val useSiteSession: FirSession) : FirContainingNamesAwareScope() {
@@ -37,7 +40,7 @@ abstract class FirNestedClassifierScope(val klass: FirClass, val useSiteSession:
             val substitution = klass.typeParameters.associate {
                 it.symbol to it.toConeType()
             }
-            ConeSubstitutorByMap(substitution, useSiteSession)
+            ConeSubstitutorByMap.create(substitution, useSiteSession)
         }
         processor(matchedClass, substitutor)
     }
@@ -45,6 +48,10 @@ abstract class FirNestedClassifierScope(val klass: FirClass, val useSiteSession:
     abstract fun isEmpty(): Boolean
 
     override fun getCallableNames(): Set<Name> = emptySet()
+
+    override val scopeOwnerLookupNames: List<String> =
+        if (klass.isLocal) emptyList()
+        else SmartList(klass.classId.asFqNameString())
 }
 
 class FirNestedClassifierScopeImpl(klass: FirClass, useSiteSession: FirSession) : FirNestedClassifierScope(klass, useSiteSession) {

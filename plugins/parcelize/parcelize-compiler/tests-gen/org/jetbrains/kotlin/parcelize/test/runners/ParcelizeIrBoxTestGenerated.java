@@ -9,7 +9,6 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -20,6 +19,12 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/parcelize/parcelize-compiler/testData/box")
 @TestDataPath("$PROJECT_ROOT")
 public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
+  @Test
+  @TestMetadata("additionalAnnotationTrigger.kt")
+  public void testAdditionalAnnotationTrigger() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/additionalAnnotationTrigger.kt");
+  }
+
   @Test
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-compiler/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -323,6 +328,12 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
   @TestMetadata("maps.kt")
   public void testMaps() {
     runTest("plugins/parcelize/parcelize-compiler/testData/box/maps.kt");
+  }
+
+  @Test
+  @TestMetadata("mppWithExpectParcelable.kt")
+  public void testMppWithExpectParcelable() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/mppWithExpectParcelable.kt");
   }
 
   @Test

@@ -77,14 +77,14 @@ class InlineSourceCodeAnalysisExtension : ParameterResolver, AfterEachCallback {
  */
 private class InlineSourceCodeAnalysisImpl(private val tempDir: File) : InlineSourceCodeAnalysis {
     override fun createKtFile(@Language("kotlin") sourceCode: String): KtFile {
-        return createStandaloneAnalysisApiSession(tempDir, mapOf("TestSources.kt" to sourceCode))
+        return createStandaloneAnalysisApiSession(tempDir = tempDir, kotlinSources = mapOf("TestSources.kt" to sourceCode))
             .modulesWithFiles.entries.single()
             .value.single() as KtFile
     }
 
     override fun createKtFiles(builder: InlineSourceCodeAnalysis.KtModuleBuilder.() -> Unit): Map<String, KtFile> {
         val sources = KtModuleBuilderImpl().also(builder).sources.toMap()
-        return createStandaloneAnalysisApiSession(tempDir, sources)
+        return createStandaloneAnalysisApiSession(tempDir = tempDir, kotlinSources = sources)
             .modulesWithFiles.entries.single()
             .value.map { it as KtFile }
             .associateBy { it.name }

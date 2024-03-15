@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -282,7 +281,7 @@ class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, 
                             fallbackPrimaryCtorParamsMap[propName]?.defaultValue?.takeIf { it.expression !is IrErrorExpression }
                         else -> null
                     }
-                parameter.defaultValue = newDefaultValue?.deepCopyWithVariables()
+                parameter.defaultValue = newDefaultValue?.deepCopyWithoutPatchingParents()
                     ?.also { if (defaultValueTransformer != null) it.transformChildrenVoid(defaultValueTransformer) }
 
                 ctorBody.statements += with(ctorBodyBuilder) {

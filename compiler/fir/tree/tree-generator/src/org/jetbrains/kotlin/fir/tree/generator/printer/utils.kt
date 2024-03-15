@@ -78,6 +78,7 @@ fun SmartPrinter.replaceFunctionDeclaration(
             implementationKind == ImplementationKind.AbstractClass || implementationKind == ImplementationKind.SealedClass
         },
         override = override,
+        optInAnnotation = field.replaceOptInAnnotation,
     )
 }
 

@@ -102,7 +102,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
         vararg dependencies: KLIB
     ): File {
         autoCacheDir.mkdirs()
-        return compileToExecutable(
+        return compileToExecutableInOneStage(
             sourcesDir,
             tryPassSystemCacheDirectory = false, // With auto-cache mode, the compiler chooses the system cache directory itself.
             freeCompilerArgs = TestCompilerArgs(

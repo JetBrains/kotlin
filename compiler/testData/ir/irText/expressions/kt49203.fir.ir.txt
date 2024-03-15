@@ -133,7 +133,7 @@ FILE fqName:<root> fileName:/kt49203.kt
       BLOCK_BODY
         CALL 'public final fun <set-value> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.X' type=kotlin.Unit origin=EQ
           $this: GET_VAR '<this>: <root>.X declared in <root>.X.plusAssign' type=<root>.X origin=null
-          <set-?>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
+          <set-?>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
             $this: CALL 'public final fun <get-value> (): kotlin.String declared in <root>.X' type=kotlin.String origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.X declared in <root>.X.plusAssign' type=<root>.X origin=null
             other: GET_VAR 'data: kotlin.String declared in <root>.X.plusAssign' type=kotlin.String origin=null

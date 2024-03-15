@@ -27,7 +27,7 @@ internal open class KotlinCommonPlugin(
         KotlinCommonSourceSetProcessor(KotlinCompilationInfo(compilation), tasksProvider)
 
     override fun apply(project: Project) {
-        @Suppress("UNCHECKED_CAST", "TYPEALIAS_EXPANSION_DEPRECATION")
+        @Suppress("UNCHECKED_CAST", "TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
         val target = project.objects.newInstance(
             KotlinWithJavaTarget::class.java,
             project,

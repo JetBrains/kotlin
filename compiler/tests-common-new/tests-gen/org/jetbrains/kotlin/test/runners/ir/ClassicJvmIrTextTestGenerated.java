@@ -2729,6 +2729,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
     }
 
     @Test
+    @TestMetadata("kjkWithRawTypes.kt")
+    public void testKjkWithRawTypes() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/kjkWithRawTypes.kt");
+    }
+
+    @Test
     @TestMetadata("setterVisibliity.kt")
     public void testSetterVisibliity() {
       runTest("compiler/testData/ir/irText/fakeOverrides/setterVisibliity.kt");
@@ -2738,6 +2744,1106 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
     @TestMetadata("setterVisibliityWithJava.kt")
     public void testSetterVisibliityWithJava() {
       runTest("compiler/testData/ir/irText/fakeOverrides/setterVisibliityWithJava.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/annotations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Annotations {
+      @Test
+      public void testAllFilesPresentInAnnotations() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("basicNullabilityAnnotationOverride.kt")
+      public void testBasicNullabilityAnnotationOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/annotations/basicNullabilityAnnotationOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionNullabilityAnnotation.kt")
+      public void testIntersectionNullabilityAnnotation() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/annotations/intersectionNullabilityAnnotation.kt");
+      }
+
+      @Test
+      @TestMetadata("kotlinCustomAnnotationOverride.kt")
+      public void testKotlinCustomAnnotationOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/annotations/kotlinCustomAnnotationOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("nullabilityAnnotationOverrideOnComplexHierarchy.kt")
+      public void testNullabilityAnnotationOverrideOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/annotations/nullabilityAnnotationOverrideOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("platformAnnotationOverride.kt")
+      public void testPlatformAnnotationOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/annotations/platformAnnotationOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("typeArgumentAnnotationOverride.kt")
+      public void testTypeArgumentAnnotationOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/annotations/typeArgumentAnnotationOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("typeParameterAnnotationOverride.kt")
+      public void testTypeParameterAnnotationOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/annotations/typeParameterAnnotationOverride.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/charsequence")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Charsequence {
+      @Test
+      public void testAllFilesPresentInCharsequence() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/charsequence"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("javaCharSequenceOverride.kt")
+      public void testJavaCharSequenceOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/charsequence/javaCharSequenceOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("kotlinCharSequenceOverride.kt")
+      public void testKotlinCharSequenceOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/charsequence/kotlinCharSequenceOverride.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Collections {
+      @Test
+      public void testAllFilesPresentInCollections() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections/list")
+      @TestDataPath("$PROJECT_ROOT")
+      public class List {
+        @Test
+        public void testAllFilesPresentInList() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections/list"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("intersectionListOverrideKJJ.kt")
+        public void testIntersectionListOverrideKJJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/intersectionListOverrideKJJ.kt");
+        }
+
+        @Test
+        @TestMetadata("intersectionListOverrideKJK.kt")
+        public void testIntersectionListOverrideKJK() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/intersectionListOverrideKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("listOverrideKJ.kt")
+        public void testListOverrideKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/listOverrideKJ.kt");
+        }
+
+        @Test
+        @TestMetadata("listOverrideKJJ.kt")
+        public void testListOverrideKJJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/listOverrideKJJ.kt");
+        }
+
+        @Test
+        @TestMetadata("listOverrideKJK.kt")
+        public void testListOverrideKJK() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/listOverrideKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("listOverrideOnComplexHierarchy.kt")
+        public void testListOverrideOnComplexHierarchy() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/listOverrideOnComplexHierarchy.kt");
+        }
+
+        @Test
+        @TestMetadata("listOverrideOnKJKJ.kt")
+        public void testListOverrideOnKJKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/listOverrideOnKJKJ.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutionListOverrideKJ.kt")
+        public void testSubstitutionListOverrideKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/substitutionListOverrideKJ.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutionListOverrideKJJ.kt")
+        public void testSubstitutionListOverrideKJJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/substitutionListOverrideKJJ.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutionListOverrideKJK.kt")
+        public void testSubstitutionListOverrideKJK() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/substitutionListOverrideKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutionListOverrideKJKJ.kt")
+        public void testSubstitutionListOverrideKJKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/list/substitutionListOverrideKJKJ.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections/map")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Map {
+        @Test
+        public void testAllFilesPresentInMap() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections/map"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("intersectionMapOverrideKJJ.kt")
+        public void testIntersectionMapOverrideKJJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/intersectionMapOverrideKJJ.kt");
+        }
+
+        @Test
+        @TestMetadata("intersectionMapOverrideKJK.kt")
+        public void testIntersectionMapOverrideKJK() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/intersectionMapOverrideKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("intersectionWithGenericMapOverrideKJJ.kt")
+        public void testIntersectionWithGenericMapOverrideKJJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/intersectionWithGenericMapOverrideKJJ.kt");
+        }
+
+        @Test
+        @TestMetadata("intersectionWithGenericMapOverrideKJK.kt")
+        public void testIntersectionWithGenericMapOverrideKJK() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/intersectionWithGenericMapOverrideKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("mapOverrideKJKJ.kt")
+        public void testMapOverrideKJKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/mapOverrideKJKJ.kt");
+        }
+
+        @Test
+        @TestMetadata("mapOverrideOnComplexHierarchy.kt")
+        public void testMapOverrideOnComplexHierarchy() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/mapOverrideOnComplexHierarchy.kt");
+        }
+
+        @Test
+        @TestMetadata("mapOverrideOnKJ.kt")
+        public void testMapOverrideOnKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/mapOverrideOnKJ.kt");
+        }
+
+        @Test
+        @TestMetadata("mapOverrideOnKJJ.kt")
+        public void testMapOverrideOnKJJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/mapOverrideOnKJJ.kt");
+        }
+
+        @Test
+        @TestMetadata("mapOverrrideOnKJK.kt")
+        public void testMapOverrrideOnKJK() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/mapOverrrideOnKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutionMapOverrideKJJ.kt")
+        public void testSubstitutionMapOverrideKJJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/substitutionMapOverrideKJJ.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutionMapOverrideKJK.kt")
+        public void testSubstitutionMapOverrideKJK() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/substitutionMapOverrideKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutionMapOverrideOnKJKJ.kt")
+        public void testSubstitutionMapOverrideOnKJKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/substitutionMapOverrideOnKJKJ.kt");
+        }
+
+        @Test
+        @TestMetadata("sunstitutionMapOverrideKJ.kt")
+        public void testSunstitutionMapOverrideKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/map/sunstitutionMapOverrideKJ.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections/set")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Set {
+        @Test
+        public void testAllFilesPresentInSet() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections/set"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("intersectionSetOverrideKJJ.kt")
+        public void testIntersectionSetOverrideKJJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/set/intersectionSetOverrideKJJ.kt");
+        }
+
+        @Test
+        @TestMetadata("intersectionSetOverrideKJK.kt")
+        public void testIntersectionSetOverrideKJK() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/set/intersectionSetOverrideKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("setOverrideKJ.kt")
+        public void testSetOverrideKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/set/setOverrideKJ.kt");
+        }
+
+        @Test
+        @TestMetadata("setOverrideKJJ.kt")
+        public void testSetOverrideKJJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/set/setOverrideKJJ.kt");
+        }
+
+        @Test
+        @TestMetadata("setOverrideKJK.kt")
+        public void testSetOverrideKJK() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/set/setOverrideKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("setOverrideKJKJ.kt")
+        public void testSetOverrideKJKJ() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/set/setOverrideKJKJ.kt");
+        }
+
+        @Test
+        @TestMetadata("setOverrideOnComplexHierarchy.kt")
+        public void testSetOverrideOnComplexHierarchy() {
+          runTest("compiler/testData/ir/irText/fakeOverrides/collections/set/setOverrideOnComplexHierarchy.kt");
+        }
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/dataclass")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Dataclass {
+      @Test
+      public void testAllFilesPresentInDataclass() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/dataclass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("dataClassMethodOverride.kt")
+      public void testDataClassMethodOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/dataclass/dataClassMethodOverride.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/enum")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Enum {
+      @Test
+      public void testAllFilesPresentInEnum() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("enumMethodOverride.kt")
+      public void testEnumMethodOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/enum/enumMethodOverride.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/fieldmodifiers")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Fieldmodifiers {
+      @Test
+      public void testAllFilesPresentInFieldmodifiers() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/fieldmodifiers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("javaModifiersOverride.kt")
+      public void testJavaModifiersOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/fieldmodifiers/javaModifiersOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("kotlinModifiersOverride.kt")
+      public void testKotlinModifiersOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/fieldmodifiers/kotlinModifiersOverride.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/generics")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Generics {
+      @Test
+      public void testAllFilesPresentInGenerics() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/generics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("basicGenericMethodsOverride.kt")
+      public void testBasicGenericMethodsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/basicGenericMethodsOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("basicGenericWithBoundsOverride.kt")
+      public void testBasicGenericWithBoundsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/basicGenericWithBoundsOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("basicRawTypeOverride.kt")
+      public void testBasicRawTypeOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/basicRawTypeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("basicWilcardsOverride.kt")
+      public void testBasicWilcardsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/basicWilcardsOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("genericMethodOverrideOnComplexHierarchy.kt")
+      public void testGenericMethodOverrideOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/genericMethodOverrideOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("genericMethodOverrideOnKJJ.kt")
+      public void testGenericMethodOverrideOnKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/genericMethodOverrideOnKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("genericMethodOverrideOnKJK.kt")
+      public void testGenericMethodOverrideOnKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/genericMethodOverrideOnKJK.kt");
+      }
+
+      @Test
+      @TestMetadata("genericWithBoundsOnComplexHierarchy.kt")
+      public void testGenericWithBoundsOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/genericWithBoundsOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("genericWithBoundsOnKJJ.kt")
+      public void testGenericWithBoundsOnKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/genericWithBoundsOnKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("genericWithBoundsOnKJK.kt")
+      public void testGenericWithBoundsOnKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/genericWithBoundsOnKJK.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionGenericMethodOverride.kt")
+      public void testIntersectionGenericMethodOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/intersectionGenericMethodOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionGenericWithBoundsOverride.kt")
+      public void testIntersectionGenericWithBoundsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/intersectionGenericWithBoundsOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionRawTypeOverride.kt")
+      public void testIntersectionRawTypeOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/intersectionRawTypeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWildcardsOverride.kt")
+      public void testIntersectionWildcardsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/intersectionWildcardsOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("rawTypeOverrideOnComplexHierarchy.kt")
+      public void testRawTypeOverrideOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/rawTypeOverrideOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("rawTypeOverrideOnKJJ.kt")
+      public void testRawTypeOverrideOnKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/rawTypeOverrideOnKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("wildcardsOverrideOnComplexHierarchy.kt")
+      public void testWildcardsOverrideOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/wildcardsOverrideOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("wildcardsOverrideOnKJJ.kt")
+      public void testWildcardsOverrideOnKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/wildcardsOverrideOnKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("wildcardsOverrideOnKJK.kt")
+      public void testWildcardsOverrideOnKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/wildcardsOverrideOnKJK.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/gettersetter")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Gettersetter {
+      @Test
+      public void testAllFilesPresentInGettersetter() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/gettersetter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("getterSetterOverrideOnKJ.kt")
+      public void testGetterSetterOverrideOnKJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/gettersetter/getterSetterOverrideOnKJ.kt");
+      }
+
+      @Test
+      @TestMetadata("getterSetterOverrideOnKJK.kt")
+      public void testGetterSetterOverrideOnKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/gettersetter/getterSetterOverrideOnKJK.kt");
+      }
+
+      @Test
+      @TestMetadata("getterSetterOverrideonComplexHierarchy.kt")
+      public void testGetterSetterOverrideonComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/gettersetter/getterSetterOverrideonComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("getterSetterOvverideOnKJJ.kt")
+      public void testGetterSetterOvverideOnKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/gettersetter/getterSetterOvverideOnKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("getterSetterOvverrideOnKJKJ.kt")
+      public void testGetterSetterOvverrideOnKJKJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/gettersetter/getterSetterOvverrideOnKJKJ.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionOverrideForGetterSetter.kt")
+      public void testIntersectionOverrideForGetterSetter() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/gettersetter/intersectionOverrideForGetterSetter.kt");
+      }
+
+      @Test
+      @TestMetadata("substitutionOverrideForGetterSetter.kt")
+      public void testSubstitutionOverrideForGetterSetter() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/gettersetter/substitutionOverrideForGetterSetter.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/java21")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Java21 {
+      @Test
+      public void testAllFilesPresentInJava21() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/java21"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("sequenceCollectionIntersectionOverrideKJJ.kt")
+      public void testSequenceCollectionIntersectionOverrideKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceCollectionIntersectionOverrideKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("sequenceCollectionIntersectionOverrideKJK.kt")
+      public void testSequenceCollectionIntersectionOverrideKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceCollectionIntersectionOverrideKJK.kt");
+      }
+
+      @Test
+      @TestMetadata("sequenceCollectionOverride.kt")
+      public void testSequenceCollectionOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceCollectionOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("sequenceMapIntersectionOverrideKJJ.kt")
+      public void testSequenceMapIntersectionOverrideKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceMapIntersectionOverrideKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("sequenceMapOverride.kt")
+      public void testSequenceMapOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceMapOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("sequenceMapOverrideKJ.kt")
+      public void testSequenceMapOverrideKJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceMapOverrideKJ.kt");
+      }
+
+      @Test
+      @TestMetadata("sequenceSetIntersectionOverrideKJJ.kt")
+      public void testSequenceSetIntersectionOverrideKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceSetIntersectionOverrideKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("sequenceSetIntersectionOverrideKJK.kt")
+      public void testSequenceSetIntersectionOverrideKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceSetIntersectionOverrideKJK.kt");
+      }
+
+      @Test
+      @TestMetadata("sequenceSetOverride.kt")
+      public void testSequenceSetOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/java21/sequenceSetOverride.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/javastatic")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Javastatic {
+      @Test
+      public void testAllFilesPresentInJavastatic() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/javastatic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("intersectionOverrideOnStaticKJJ.kt")
+      public void testIntersectionOverrideOnStaticKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/intersectionOverrideOnStaticKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionOverrideOnStaticKJK.kt")
+      public void testIntersectionOverrideOnStaticKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/intersectionOverrideOnStaticKJK.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithGenericOnComplexHierarchy.kt")
+      public void testIntersectionWithGenericOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/intersectionWithGenericOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithGenericOverride.kt")
+      public void testIntersectionWithGenericOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/intersectionWithGenericOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("staticOverrideOnComplexHierarchy.kt")
+      public void testStaticOverrideOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/staticOverrideOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("staticOverrideOnKJ.kt")
+      public void testStaticOverrideOnKJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/staticOverrideOnKJ.kt");
+      }
+
+      @Test
+      @TestMetadata("staticOverrideOnKJJ.kt")
+      public void testStaticOverrideOnKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/staticOverrideOnKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("staticOverrideOnKJK.kt")
+      public void testStaticOverrideOnKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/staticOverrideOnKJK.kt");
+      }
+
+      @Test
+      @TestMetadata("staticOverrideOnKJKJ.kt")
+      public void testStaticOverrideOnKJKJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/staticOverrideOnKJKJ.kt");
+      }
+
+      @Test
+      @TestMetadata("substitutionStaticOverride.kt")
+      public void testSubstitutionStaticOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/javastatic/substitutionStaticOverride.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/kotlinextensions")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Kotlinextensions {
+      @Test
+      public void testAllFilesPresentInKotlinextensions() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/kotlinextensions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("kotlinExtensionsOverride.kt")
+      public void testKotlinExtensionsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/kotlinextensions/kotlinExtensionsOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("memberExtensionOverride.kt")
+      public void testMemberExtensionOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/kotlinextensions/memberExtensionOverride.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/methodmodifiers")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Methodmodifiers {
+      @Test
+      public void testAllFilesPresentInMethodmodifiers() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/methodmodifiers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("basicJavaModifiersOverride.kt")
+      public void testBasicJavaModifiersOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/methodmodifiers/basicJavaModifiersOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("basicKotlinModifiersOverride.kt")
+      public void testBasicKotlinModifiersOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/methodmodifiers/basicKotlinModifiersOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionJavaModifiersOverride.kt")
+      public void testIntersectionJavaModifiersOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/methodmodifiers/intersectionJavaModifiersOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionKotlinModifiersOverride.kt")
+      public void testIntersectionKotlinModifiersOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/methodmodifiers/intersectionKotlinModifiersOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("kotlinFunParamModifiersOverride.kt")
+      public void testKotlinFunParamModifiersOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/methodmodifiers/kotlinFunParamModifiersOverride.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/methodparameters")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Methodparameters {
+      @Test
+      public void testAllFilesPresentInMethodparameters() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/methodparameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("basicJavaThisOverride.kt")
+      public void testBasicJavaThisOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/methodparameters/basicJavaThisOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("basicKotlinDefaultParametersOverride.kt")
+      public void testBasicKotlinDefaultParametersOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/methodparameters/basicKotlinDefaultParametersOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionJavaThisOverride.kt")
+      public void testIntersectionJavaThisOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/methodparameters/intersectionJavaThisOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionKotlinDefaultParametersOverride.kt")
+      public void testIntersectionKotlinDefaultParametersOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/methodparameters/intersectionKotlinDefaultParametersOverride.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/number")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Number {
+      @Test
+      public void testAllFilesPresentInNumber() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/number"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("javaNumberOverride.kt")
+      public void testJavaNumberOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/number/javaNumberOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("kotlinNumberOverride.kt")
+      public void testKotlinNumberOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/number/kotlinNumberOverride.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/operators")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Operators {
+      @Test
+      public void testAllFilesPresentInOperators() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/operators"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("basicOperatorsOverride.kt")
+      public void testBasicOperatorsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/operators/basicOperatorsOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("basicOverrideOnComplexHierarchy.kt")
+      public void testBasicOverrideOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/operators/basicOverrideOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionOperatorsOverride.kt")
+      public void testIntersectionOperatorsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/operators/intersectionOperatorsOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("substitutionOperatorsOverride.kt")
+      public void testSubstitutionOperatorsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/operators/substitutionOperatorsOverride.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/platformtypes")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Platformtypes {
+      @Test
+      public void testAllFilesPresentInPlatformtypes() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/platformtypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("basicCollectionOverrideOnComplexHierarchy.kt")
+      public void testBasicCollectionOverrideOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/basicCollectionOverrideOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("basicCollectionsOverride.kt")
+      public void testBasicCollectionsOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/basicCollectionsOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("basicOverride.kt")
+      public void testBasicOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/basicOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("basicOverrideOnComplexHierarchy.kt")
+      public void testBasicOverrideOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/basicOverrideOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("combinationExplicitImlicitOverride.kt")
+      public void testCombinationExplicitImlicitOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/combinationExplicitImlicitOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionOnComplexHierarchy.kt")
+      public void testIntersectionOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/intersectionOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionOverride.kt")
+      public void testIntersectionOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/intersectionOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionOverrideOnCollections.kt")
+      public void testIntersectionOverrideOnCollections() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/intersectionOverrideOnCollections.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithExplicitOverride.kt")
+      public void testIntersectionWithExplicitOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/intersectionWithExplicitOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithGenericExplicitOverride.kt")
+      public void testIntersectionWithGenericExplicitOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/intersectionWithGenericExplicitOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithGenericOnComplexHierarchy.kt")
+      public void testIntersectionWithGenericOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/intersectionWithGenericOnComplexHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithGenericOverride.kt")
+      public void testIntersectionWithGenericOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/intersectionWithGenericOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("substitutionOverride.kt")
+      public void testSubstitutionOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/substitutionOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("substitutionOverrideOnCollections.kt")
+      public void testSubstitutionOverrideOnCollections() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/substitutionOverrideOnCollections.kt");
+      }
+
+      @Test
+      @TestMetadata("substitutionOverrideOnComplexHierarchy.kt")
+      public void testSubstitutionOverrideOnComplexHierarchy() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/platformtypes/substitutionOverrideOnComplexHierarchy.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/typenothing")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Typenothing {
+      @Test
+      public void testAllFilesPresentInTypenothing() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/typenothing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("baseOverrideOnNothing.kt")
+      public void testBaseOverrideOnNothing() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/typenothing/baseOverrideOnNothing.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionOverrrideOnNothing.kt")
+      public void testIntersectionOverrrideOnNothing() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/typenothing/intersectionOverrrideOnNothing.kt");
+      }
+
+      @Test
+      @TestMetadata("substitutionOverrideOnNothing.kt")
+      public void testSubstitutionOverrideOnNothing() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/typenothing/substitutionOverrideOnNothing.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/vararg")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Vararg {
+      @Test
+      public void testAllFilesPresentInVararg() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/vararg"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("basicVarargOverride.kt")
+      public void testBasicVarargOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/vararg/basicVarargOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionOnVarargOverride.kt")
+      public void testIntersectionOnVarargOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/vararg/intersectionOnVarargOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithGenericOnVarargOverride.kt")
+      public void testIntersectionWithGenericOnVarargOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/vararg/intersectionWithGenericOnVarargOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("substitutionOnVarargOverride.kt")
+      public void testSubstitutionOnVarargOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/vararg/substitutionOnVarargOverride.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/visibility")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Visibility {
+      @Test
+      public void testAllFilesPresentInVisibility() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/visibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("allPropertiesAndMethodsKJ.kt")
+      public void testAllPropertiesAndMethodsKJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/allPropertiesAndMethodsKJ.kt");
+      }
+
+      @Test
+      @TestMetadata("allPropertiesAndMethodsKJJ.kt")
+      public void testAllPropertiesAndMethodsKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/allPropertiesAndMethodsKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("allPropertiesAndMethodsKJK.kt")
+      public void testAllPropertiesAndMethodsKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/allPropertiesAndMethodsKJK.kt");
+      }
+
+      @Test
+      @TestMetadata("allPropertiesAndMethodsKJKJ.kt")
+      public void testAllPropertiesAndMethodsKJKJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/allPropertiesAndMethodsKJKJ.kt");
+      }
+
+      @Test
+      @TestMetadata("allPropertiesAndMethodsWithSeparateModuleKJJ.kt")
+      public void testAllPropertiesAndMethodsWithSeparateModuleKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/allPropertiesAndMethodsWithSeparateModuleKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("internalOverrideCrossModule.kt")
+      public void testInternalOverrideCrossModule() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/internalOverrideCrossModule.kt");
+      }
+
+      @Test
+      @TestMetadata("internalOverrideWithFriendModule.kt")
+      public void testInternalOverrideWithFriendModule() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/internalOverrideWithFriendModule.kt");
+      }
+
+      @Test
+      @TestMetadata("internalWithPublishedApiOverride.kt")
+      public void testInternalWithPublishedApiOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/internalWithPublishedApiOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionVisibilityOverrideKJJ.kt")
+      public void testIntersectionVisibilityOverrideKJJ() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/intersectionVisibilityOverrideKJJ.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionVisibilityOverrideKJK.kt")
+      public void testIntersectionVisibilityOverrideKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/intersectionVisibilityOverrideKJK.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithPublishedApiOverride.kt")
+      public void testIntersectionWithPublishedApiOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/intersectionWithPublishedApiOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionWithSeparateModule.kt")
+      public void testIntersectionWithSeparateModule() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/intersectionWithSeparateModule.kt");
+      }
+
+      @Test
+      @TestMetadata("overrideKotlinMethodsKJKK.kt")
+      public void testOverrideKotlinMethodsKJKK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/overrideKotlinMethodsKJKK.kt");
+      }
+
+      @Test
+      @TestMetadata("overridePropertiesKJKK.kt")
+      public void testOverridePropertiesKJKK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/overridePropertiesKJKK.kt");
+      }
+
+      @Test
+      @TestMetadata("overrideSetAndGetKJK.kt")
+      public void testOverrideSetAndGetKJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/overrideSetAndGetKJK.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/void")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Void {
+      @Test
+      public void testAllFilesPresentInVoid() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/void"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("basicVoidOverride.kt")
+      public void testBasicVoidOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/void/basicVoidOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("intersectionVoidOverride.kt")
+      public void testIntersectionVoidOverride() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/void/intersectionVoidOverride.kt");
+      }
     }
   }
 
@@ -3614,6 +4720,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
     @TestMetadata("inStarProjectionInReceiverType.kt")
     public void testInStarProjectionInReceiverType() {
       runTest("compiler/testData/ir/irText/types/inStarProjectionInReceiverType.kt");
+    }
+
+    @Test
+    @TestMetadata("inferenceOfDefinitelyNotNullableBoolean.kt")
+    public void testInferenceOfDefinitelyNotNullableBoolean() {
+      runTest("compiler/testData/ir/irText/types/inferenceOfDefinitelyNotNullableBoolean.kt");
     }
 
     @Test

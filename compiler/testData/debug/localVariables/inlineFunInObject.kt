@@ -37,6 +37,41 @@ fun box() {
     }
 }
 
+// EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// test.kt:31 box:
+// test.kt:3 box: $i$f$foo\1\31:int=0:int
+// test.kt:3 <init>:
+// test.kt:10 box: $i$f$foo\1\31:int=0:int
+// test.kt:5 baz: param:int=5:int
+// test.kt:6 baz: param:int=5:int, a:int=1:int
+// test.kt:26 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall\1\6:int=0:int
+// test.kt:27 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall\1\6:int=0:int, e\1:int=5:int
+// test.kt:7 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall\1\6:int=0:int, e\1:int=5:int, $i$a$-inlineCall-TestKt$foo$1$baz$1\2\129\0:int=0:int
+// test.kt:8 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall\1\6:int=0:int, e\1:int=5:int, $i$a$-inlineCall-TestKt$foo$1$baz$1\2\129\0:int=0:int, f\2:int=6:int
+// test.kt:27 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall\1\6:int=0:int, e\1:int=5:int
+// test.kt:28 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall\1\6:int=0:int, e\1:int=5:int
+// test.kt:9 baz: param:int=5:int, a:int=1:int
+// test.kt:11 box: $i$f$foo\1\31:int=0:int
+// test.kt:35 box:
+// test.kt:14 box: $i$f$bar\2\35:int=0:int
+// test.kt:14 <init>:
+// test.kt:22 box: $i$f$bar\2\35:int=0:int
+// test.kt:16 baz: param:int=6:int
+// test.kt:17 baz: param:int=6:int, b:int=2:int
+// test.kt:36 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$2\1\17\0:int=0:int
+// test.kt:37 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$2\1\17\0:int=0:int, d\1:int=4:int
+// test.kt:17 baz: param:int=6:int, b:int=2:int
+// test.kt:18 baz: param:int=6:int, b:int=2:int
+// test.kt:26 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\18:int=0:int
+// test.kt:27 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\18:int=0:int, e\2:int=5:int
+// test.kt:19 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\18:int=0:int, e\2:int=5:int, $i$a$-inlineCall-TestKt$bar$1$baz$1\3\131\0:int=0:int
+// test.kt:20 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\18:int=0:int, e\2:int=5:int, $i$a$-inlineCall-TestKt$bar$1$baz$1\3\131\0:int=0:int, g\3:int=7:int
+// test.kt:27 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\18:int=0:int, e\2:int=5:int
+// test.kt:28 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\18:int=0:int, e\2:int=5:int
+// test.kt:21 baz: param:int=6:int, b:int=2:int
+// test.kt:23 box: $i$f$bar\2\35:int=0:int
+// test.kt:38 box:
+
 // EXPECTATIONS JVM_IR
 // test.kt:31 box:
 // test.kt:3 box: $i$f$foo:int=0:int

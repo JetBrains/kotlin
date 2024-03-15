@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorJs
 import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibBackendFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
@@ -69,7 +70,7 @@ open class AbstractK1WasmJsTranslatorTest : AbstractK1WasmTest(
 
 open class AbstractK1WasmSteppingTest : AbstractK1WasmTest(
     "compiler/testData/debug/stepping/",
-    "debug/stepping/"
+    "debug/stepping/k1Box"
 ) {
 
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
@@ -79,6 +80,30 @@ open class AbstractK1WasmSteppingTest : AbstractK1WasmTest(
         commonConfigurationForWasmBlackBoxCodegenTest()
         defaultDirectives {
             +WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
+        }
+    }
+}
+
+open class AbstractK1WasmTypeScriptExportTest : AbstractK1WasmTest(
+    "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/wasm/",
+    "typescript-export/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS
+        }
+    }
+}
+
+open class AbstractFirWasmTypeScriptExportTest : AbstractK1WasmTest(
+    "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/wasm/",
+    "typescript-export/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS
         }
     }
 }

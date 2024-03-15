@@ -6,3 +6,11 @@ fun foo(arg: Boolean) = buildList {
         add(<!ARGUMENT_TYPE_MISMATCH!>42<!>)
     }
 }
+
+fun bar(arg: Boolean) = buildList {
+    if (!arg) {
+        add(42)
+    } else {
+        removeLast()
+    }
+}

@@ -19,8 +19,12 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_INTRANSITIVE_METADATA_CONFIGURATION
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.getExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionImpl
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.kotlinArtifactsExtension
+import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.konan.target.Xcode
+import org.jetbrains.kotlin.konan.target.XcodeVersion
 
 fun buildProject(
     projectBuilder: ProjectBuilder.() -> Unit = { },
@@ -113,6 +117,14 @@ fun Project.enableCInteropCommonization(enabled: Boolean = true) {
     propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION, enabled.toString())
 }
 
+fun Project.enableMppResourcesPublication(enabled: Boolean = true) {
+    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_RESOURCES_PUBLICATION, enabled.toString())
+}
+
+fun Project.setMppResourcesResolutionStrategy(strategy: KotlinTargetResourcesResolutionStrategy) {
+    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_RESOURCES_RESOLUTION_STRATEGY, strategy.propertyName)
+}
+
 fun Project.enableIntransitiveMetadataConfiguration(enabled: Boolean = true) {
     propertiesExtension.set(KOTLIN_MPP_ENABLE_INTRANSITIVE_METADATA_CONFIGURATION, enabled.toString())
 }
@@ -130,3 +142,13 @@ fun Project.enableDependencyVerification(enabled: Boolean = true) {
     else DependencyVerificationMode.OFF
 }
 
+fun Project.enableWasmStabilityNoWarn(enabled: Boolean = true) {
+    propertiesExtension.set("kotlin.wasm.stability.nowarn", enabled.toString())
+}
+
+fun Project.mockXcodeVersion(version: XcodeVersion = XcodeVersion.maxTested) {
+    project.layout.buildDirectory.getFile().apply {
+        mkdirs()
+        resolve("xcode-version.txt").writeText(version.toString())
+    }
+}

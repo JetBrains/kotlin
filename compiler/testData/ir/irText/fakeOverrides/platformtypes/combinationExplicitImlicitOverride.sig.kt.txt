@@ -1,0 +1,125 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+open class A : Java1 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#foo(kotlin.String?){}
+  //   Public signature: /A.foo|-7402282804178432687[0]
+  //   Public signature debug description: foo(kotlin.String?){}
+  /* fake */ override fun foo(s: String?): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#getNullableString(){}kotlin.String?
+  //   Public signature: /A.getNullableString|6881651708779767674[0]
+  //   Public signature debug description: getNullableString(){}kotlin.String?
+  /* fake */ override fun getNullableString(): String?
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : A {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B#foo(kotlin.String?){}
+  //   Public signature: /B.foo|-7402282804178432687[0]
+  //   Public signature debug description: foo(kotlin.String?){}
+  /* fake */ override fun foo(s: String?): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#getNullableString(){}kotlin.String?
+  //   Public signature: /B.getNullableString|6881651708779767674[0]
+  //   Public signature debug description: getNullableString(){}kotlin.String?
+  /* fake */ override fun getNullableString(): String?
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+open class C : Java1 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: C#foo(kotlin.String?){}
+  //   Public signature: /C.foo|-7402282804178432687[0]
+  //   Public signature debug description: foo(kotlin.String?){}
+  override fun foo(s: String?): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#getNullableString(){}kotlin.String
+  //   Public signature: /C.getNullableString|-1945283449268521403[0]
+  //   Public signature debug description: getNullableString(){}kotlin.String
+  override fun getNullableString(): String
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : C {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: D#foo(kotlin.String?){}
+  //   Public signature: /D.foo|-7402282804178432687[0]
+  //   Public signature debug description: foo(kotlin.String?){}
+  /* fake */ override fun foo(s: String?): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#getNullableString(){}kotlin.String
+  //   Public signature: /D.getNullableString|-1945283449268521403[0]
+  //   Public signature debug description: getNullableString(){}kotlin.String
+  /* fake */ override fun getNullableString(): String
+
+}
+
+// CHECK:
+//   Mangled name: E
+//   Public signature: /E|null[0]
+class E : C {
+  // CHECK:
+  //   Mangled name: E#<init>(){}
+  //   Public signature: /E.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: E#foo(kotlin.String?){}
+  //   Public signature: /E.foo|-7402282804178432687[0]
+  //   Public signature debug description: foo(kotlin.String?){}
+  override fun foo(s: String?): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#getNullableString(){}kotlin.String
+  //   Public signature: /E.getNullableString|-1945283449268521403[0]
+  //   Public signature debug description: getNullableString(){}kotlin.String
+  override fun getNullableString(): String
+
+}
+
+// CHECK:
+//   Mangled name: #test(B;D;E){}
+//   Public signature: /test|-6778578765888432501[0]
+//   Public signature debug description: test(B;D;E){}
+fun test(b: B, d: D, e: E): Unit

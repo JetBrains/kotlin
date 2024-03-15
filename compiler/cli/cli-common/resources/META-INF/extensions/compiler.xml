@@ -16,7 +16,7 @@
                         area="IDEA_PROJECT"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.diagnosticSuppressor"
                         interface="org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor"
-                        dynamic="true"/>
+                        area="IDEA_PROJECT" dynamic="true"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.expressionCodegenExtension"
                         interface="org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension"
                         area="IDEA_PROJECT" dynamic="true"/>

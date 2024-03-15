@@ -76,6 +76,8 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
 
         private fun doKtElementHasCorrespondingFirElement(ktElement: KtElement): Boolean = when (ktElement) {
             is KtImportList -> false
+            is KtFileAnnotationList -> false
+            is KtAnnotation -> false
             else -> true
         }
     }
@@ -158,10 +160,10 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         return findElementInside(firElement = anchorFir, element = element, stopAt = anchorElement)
     }
 
-    private fun KtAnnotationEntry.owner(): KtAnnotated? {
+    private fun PsiElement.annotationOwner(): KtAnnotated? {
         val modifierList = when (val parent = parent) {
             is KtModifierList -> parent
-            is KtAnnotation -> parent.parent as? KtModifierList
+            is KtAnnotation -> return parent.annotationOwner()
             is KtFileAnnotationList -> return parent.parent as? KtFile
             else -> null
         }
@@ -174,7 +176,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
     ): FirElement? = getFirForNonBodyElement<KtAnnotationEntry, KtAnnotated>(
         element = element,
         anchorElementProvider = { it.parentOfType<KtAnnotationEntry>(withSelf = true) },
-        elementOwnerProvider = { it.owner() },
+        elementOwnerProvider = { it.annotationOwner() },
         resolveAndFindFirForAnchor = { declaration, anchor -> declaration.resolveAndFindAnnotation(anchor, goDeep = true) },
     )
 
@@ -208,7 +210,6 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
 
             when (anchor) {
                 is KtPackageDirective -> declaration.packageDirective
-                is KtFileAnnotationList -> declaration.annotationsContainer?.also { it.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS) }
                 is KtImportDirective -> {
                     declaration.lazyResolveToPhase(FirResolvePhase.IMPORTS)
                     declaration.imports.find { it.psi == anchor }
@@ -221,11 +222,6 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
     )
 
     private fun KtElement.fileHeaderAnchorElement(): KtElement? {
-        /**
-         * File annotations already covered by [getFirForElementInsideAnnotations], but we have to cover the list itself
-         */
-        if (this is KtFileAnnotationList) return this
-
         return parentsWithSelf.find { it is KtPackageDirective || it is KtImportDirective } as? KtElement
     }
 

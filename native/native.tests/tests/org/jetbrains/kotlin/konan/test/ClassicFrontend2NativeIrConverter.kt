@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.reflect.KClass
-
 
 class ClassicFrontend2NativeIrConverter(
     testServices: TestServices,
@@ -103,9 +103,7 @@ class ClassicFrontend2NativeIrConverter(
                 signature: IdSignature,
                 kind: IrDeserializer.TopLevelSymbolKind,
                 moduleName: Name
-            ): IrSymbol {
-                error("Should not be called")
-            }
+            ): Nothing = shouldNotBeCalled()
 
             override fun postProcess(inOrAfterLinkageStep: Boolean) = Unit
         }
@@ -136,6 +134,7 @@ class ClassicFrontend2NativeIrConverter(
             descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer!!.mangler,
             irMangler = KonanManglerIr,
             firMangler = null,
+            metadataSerializer = null
         )
     }
 

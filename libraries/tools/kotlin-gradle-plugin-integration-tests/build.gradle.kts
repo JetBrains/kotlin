@@ -13,6 +13,7 @@ testsJar()
 
 kotlin.sourceSets.all {
     languageSettings.optIn("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
+    languageSettings.optIn("org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi")
 }
 
 val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
@@ -144,42 +145,13 @@ tasks.register<Delete>("cleanUserHomeKonanDir") {
         logger.info("Default .konan directory user's home has been deleted: $userHomeKonanDir")
     }
 }
+tasks.register<Task>("prepareNativeBundleForGradleIT") {
 
-tasks.register<Copy>("prepareNativeBundleForGradleIT") {
-
-    description = "This task adds dependency on :kotlin-native:bundle and then copying built bundle into the tests' konan dir"
+    description = "This task adds dependency on :kotlin-native:bundle"
 
     if (project.kotlinBuildProperties.isKotlinNativeEnabled) {
         // 1. Build full Kotlin Native bundle
         dependsOn(":kotlin-native:bundle")
-
-        // 2. Coping and extracting k/n artifacts from the 1st step to tests' konan data directory
-        val (extension, unzipFunction) = when (HostManager.host) {
-            KonanTarget.MINGW_X64 -> Pair("zip", ::zipTree)
-            else -> Pair("tar.gz", ::tarTree)
-        }
-
-        val kotlinNativeRootDir = rootProject.findProject(":kotlin-native")?.projectDir
-            ?: throw IllegalStateException("The path to kotlin-native module is undefined.")
-
-        from(
-            unzipFunction(
-                kotlinNativeRootDir.resolve("kotlin-native-${HostManager.platformName()}-${project.kotlinBuildProperties.defaultSnapshotVersion}.$extension")
-            )
-        )
-        from(
-            unzipFunction(
-                kotlinNativeRootDir.resolve("kotlin-native-prebuilt-${HostManager.platformName()}-${project.kotlinBuildProperties.defaultSnapshotVersion}.$extension")
-            )
-        )
-
-        into(
-            konanDataDir
-        )
-
-        doFirst {
-            delete(konanDataDir)
-        }
     }
 }
 
@@ -193,6 +165,8 @@ fun Test.includeNative(include: Boolean) = includeTestsWithPattern(include) {
 
 fun Test.applyKotlinNativeFromCurrentBranchIfNeeded() {
     val kotlinNativeFromMasterEnabled = project.kotlinBuildProperties.isKotlinNativeEnabled && project.kotlinBuildProperties.useKotlinNativeLocalDistributionForTests
+
+    //add native bundle dependencies for local test run
     if (kotlinNativeFromMasterEnabled && !project.kotlinBuildProperties.isTeamcityBuild) {
         dependsOn(":kotlin-gradle-plugin-integration-tests:prepareNativeBundleForGradleIT")
     }
@@ -273,6 +247,60 @@ val memoryPerGradleTestWorkerMb = 6000
 val maxParallelTestForks =
     (totalMaxMemoryForTestsMb / memoryPerGradleTestWorkerMb).coerceIn(1, Runtime.getRuntime().availableProcessors())
 
+// Must be in sync with TestVersions.kt KTI-1612
+val gradleVersions = listOf(
+    "6.8.3",
+    "6.9.4",
+    "7.0.2",
+    "7.1.1",
+    "7.2",
+    "7.3.3",
+    "7.4.2",
+    "7.5.1",
+    "7.6.3",
+    "8.0.2",
+    "8.1.1",
+    "8.2.1",
+    "8.3",
+    "8.4",
+    "8.5",
+    "8.6"
+)
+
+if (project.kotlinBuildProperties.isTeamcityBuild) {
+    val junitTags = listOf("JvmKGP", "DaemonsKGP", "JsKGP", "NativeKGP", "MppKGP", "AndroidKGP", "OtherKGP")
+    val requiresKotlinNative = listOf("NativeKGP", "MppKGP", "OtherKGP")
+    val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
+
+    junitTags.forEach { junitTag ->
+        val taskPrefix = "kgp${junitTag.substringBefore("KGP")}"
+        val tasksByGradleVersion = gradleVersions.map { gradleVersion ->
+            tasks.register<Test>("${taskPrefix}TestsForGradle_${gradleVersion.replace(".", "_")}") {
+                group = gradleVersionTaskGroup
+                description = "Runs all tests for Kotlin Gradle plugins against Gradle $gradleVersion"
+                maxParallelForks = maxParallelTestForks
+
+                systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
+                systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
+                if (junitTag in requiresKotlinNative) {
+                    applyKotlinNativeFromCurrentBranchIfNeeded()
+                }
+
+                useJUnitPlatform {
+                    includeTags(junitTag)
+                    excludeTags(*(junitTags - junitTag).toTypedArray())
+                    includeEngines("junit-jupiter")
+                }
+            }
+        }
+
+        tasks.register("${taskPrefix}TestsGroupedByGradleVersion") {
+            group = gradleVersionTaskGroup
+            dependsOn(tasksByGradleVersion)
+        }
+    }
+}
+
 val allParallelTestsTask = tasks.register<Test>("kgpAllParallelTests") {
     group = KGP_TEST_TASKS_GROUP
     description = "Runs all tests for Kotlin Gradle plugins except daemon ones"
@@ -291,7 +319,18 @@ val jvmTestsTask = tasks.register<Test>("kgpJvmTests") {
     maxParallelForks = maxParallelTestForks
     useJUnitPlatform {
         includeTags("JvmKGP")
-        excludeTags("JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP")
+        excludeTags("JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
+        includeEngines("junit-jupiter")
+    }
+}
+
+val swiftExportTestsTask = tasks.register<Test>("kgpSwiftExportTests") {
+    group = KGP_TEST_TASKS_GROUP
+    description = "Run Swift Export Kotlin Gradle plugin tests"
+    maxParallelForks = maxParallelTestForks
+    useJUnitPlatform {
+        includeTags("SwiftExportKGP")
+        excludeTags("JvmKGP", "JsKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "NativeKGP")
         includeEngines("junit-jupiter")
     }
 }
@@ -302,7 +341,7 @@ val jsTestsTask = tasks.register<Test>("kgpJsTests") {
     maxParallelForks = maxParallelTestForks
     useJUnitPlatform {
         includeTags("JsKGP")
-        excludeTags("JvmKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP")
+        excludeTags("JvmKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
         includeEngines("junit-jupiter")
     }
 }
@@ -313,7 +352,7 @@ val nativeTestsTask = tasks.register<Test>("kgpNativeTests") {
     maxParallelForks = maxParallelTestForks
     useJUnitPlatform {
         includeTags("NativeKGP")
-        excludeTags("JvmKGP", "JsKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP")
+        excludeTags("JvmKGP", "JsKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
         includeEngines("junit-jupiter")
     }
     applyKotlinNativeFromCurrentBranchIfNeeded()
@@ -327,7 +366,7 @@ val daemonsTestsTask = tasks.register<Test>("kgpDaemonTests") {
 
     useJUnitPlatform {
         includeTags("DaemonsKGP")
-        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "OtherKGP", "MppKGP", "AndroidKGP")
+        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "OtherKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
         includeEngines("junit-jupiter")
     }
 }
@@ -338,7 +377,7 @@ val otherPluginsTestTask = tasks.register<Test>("kgpOtherTests") {
     maxParallelForks = maxParallelTestForks
     useJUnitPlatform {
         includeTags("OtherKGP")
-        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "MppKGP", "AndroidKGP")
+        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
         includeEngines("junit-jupiter")
     }
     applyKotlinNativeFromCurrentBranchIfNeeded()
@@ -350,7 +389,7 @@ val mppTestsTask = tasks.register<Test>("kgpMppTests") {
     maxParallelForks = maxParallelTestForks
     useJUnitPlatform {
         includeTags("MppKGP")
-        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "AndroidKGP")
+        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "AndroidKGP", "SwiftExportKGP")
         includeEngines("junit-jupiter")
     }
     applyKotlinNativeFromCurrentBranchIfNeeded()
@@ -362,7 +401,7 @@ val androidTestsTask = tasks.register<Test>("kgpAndroidTests") {
     maxParallelForks = maxParallelTestForks
     useJUnitPlatform {
         includeTags("AndroidKGP")
-        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP")
+        excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "SwiftExportKGP")
         includeEngines("junit-jupiter")
     }
 }
@@ -428,6 +467,7 @@ tasks.withType<Test> {
         allParallelTestsTask.name,
         jvmTestsTask.name,
         jsTestsTask.name,
+        swiftExportTestsTask.name,
         nativeTestsTask.name,
         daemonsTestsTask.name,
         otherPluginsTestTask.name,

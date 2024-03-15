@@ -36,6 +36,11 @@ class ObjCExportForwardDeclarationsTest(
         doTest(forwardDeclarationsDir.resolve("propertyReturningClass"))
     }
 
+    @Test
+    fun `test - nullable type`() {
+        doTest(forwardDeclarationsDir.resolve("nullableType"))
+    }
+
     private fun doTest(root: File) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root)

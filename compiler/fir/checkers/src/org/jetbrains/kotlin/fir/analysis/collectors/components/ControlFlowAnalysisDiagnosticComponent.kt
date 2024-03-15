@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -15,10 +16,12 @@ import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirLoop
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 
 class ControlFlowAnalysisDiagnosticComponent(
     session: FirSession,
@@ -42,7 +45,7 @@ class ControlFlowAnalysisDiagnosticComponent(
         if (graph.isSubGraph) return
         cfaCheckers.forEach { it.analyze(graph, reporter, context) }
 
-        val collector = LocalPropertyCollector().apply { graph.traverse(this) }
+        val collector = LocalPropertyCollector().apply { declaration.acceptChildren(this, graph.subGraphs.toSet()) }
         val properties = collector.properties
         if (properties.isNotEmpty()) {
             val data = PropertyInitializationInfoData(properties, collector.conditionallyInitializedProperties, receiver = null, graph)
@@ -96,7 +99,18 @@ class ControlFlowAnalysisDiagnosticComponent(
         analyze(constructor, data)
     }
 
-    private class LocalPropertyCollector : ControlFlowGraphVisitorVoid() {
+    /**
+     * Attempts to traverse an [FirElement] like a [ControlFlowGraph]. The data of this visitor represents the allowed
+     * [ControlFlowGraph.subGraphs] which can be entered. This allows limiting the visited elements to those which are part of the original
+     * [ControlFlowGraph].
+     *
+     * ```kotlin
+     * val element: FirControlFlowGraphOwner = ...
+     * val graph = element.controlFlowGraphReference?.controlFlowGraph ?: ...
+     * LocalPropertyCollector().apply { element.acceptChildren(this, graph.subGraphs.toSet()) }
+     * ```
+     */
+    private class LocalPropertyCollector : FirDefaultVisitor<Unit, Set<ControlFlowGraph>>() {
         val properties = mutableSetOf<FirPropertySymbol>()
 
         // Properties which may not be initialized when accessed, even if they have an initializer.
@@ -108,17 +122,40 @@ class ControlFlowAnalysisDiagnosticComponent(
         private val doWhileLoopProperties = ArrayDeque<Pair<FirLoop, MutableSet<FirPropertySymbol>>>()
         private val insideDoWhileConditions = mutableSetOf<FirLoop>()
 
-        override fun visitNode(node: CFGNode<*>) {}
-
-        override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
-            val symbol = node.fir.symbol
-            properties.add(symbol)
-            doWhileLoopProperties.lastOrNull()?.second?.add(symbol)
+        override fun visitElement(element: FirElement, data: Set<ControlFlowGraph>) {
+            when (element) {
+                is FirControlFlowGraphOwner -> {
+                    // Only traverse elements that can have a graph when...
+                    // 1. They do not have a graph,
+                    // 2. Or their graph is in the allowed set of sub-graphs.
+                    val elementGraph = element.controlFlowGraphReference?.controlFlowGraph
+                    if (elementGraph == null) {
+                        element.acceptChildren(this, data)
+                    } else if (elementGraph in data) {
+                        element.acceptChildren(this, elementGraph.subGraphs.toSet())
+                    }
+                }
+                else -> element.acceptChildren(this, data)
+            }
         }
 
-        override fun visitQualifiedAccessNode(node: QualifiedAccessNode) {
+        override fun visitProperty(property: FirProperty, data: Set<ControlFlowGraph>) {
+            if (
+                !property.isLocal ||
+                property.origin == FirDeclarationOrigin.ScriptCustomization.Parameter ||
+                property.origin == FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass
+            ) return visitElement(property, data)
+
+            val symbol = property.symbol
+            properties.add(symbol)
+            doWhileLoopProperties.lastOrNull()?.second?.add(symbol)
+
+            visitElement(property, data)
+        }
+
+        override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Set<ControlFlowGraph>) {
             if (insideDoWhileConditions.isNotEmpty()) {
-                val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: return
+                val symbol = qualifiedAccessExpression.calleeReference.toResolvedPropertySymbol() ?: return
 
                 // It is possible to nest do-while loops within do-while loop conditions via in-place lambda functions. Make sure to check
                 // all properties for all loop conditions.
@@ -126,30 +163,22 @@ class ControlFlowAnalysisDiagnosticComponent(
                     conditionallyInitializedProperties.add(symbol)
                 }
             }
+
+            visitElement(qualifiedAccessExpression, data)
         }
 
-        override fun visitLoopEnterNode(node: LoopEnterNode) {
-            if (node.fir is FirDoWhileLoop) {
-                doWhileLoopProperties.addLast(node.fir to mutableSetOf())
-            }
-        }
+        override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: Set<ControlFlowGraph>) {
+            doWhileLoopProperties.addLast(doWhileLoop to mutableSetOf())
 
-        override fun visitLoopExitNode(node: LoopExitNode) {
-            if (node.fir is FirDoWhileLoop) {
-                doWhileLoopProperties.removeLast()
-            }
-        }
+            // Manually navigate children of do-while loop, so it is known when the loop condition is being navigated.
+            // Navigation of the annotations and label is not needed.
+            doWhileLoop.block.accept(this, data)
 
-        override fun visitLoopConditionEnterNode(node: LoopConditionEnterNode) {
-            if (node.loop is FirDoWhileLoop) {
-                insideDoWhileConditions.add(node.loop)
-            }
-        }
+            insideDoWhileConditions.add(doWhileLoop)
+            doWhileLoop.condition.accept(this, data)
+            insideDoWhileConditions.remove(doWhileLoop)
 
-        override fun visitLoopConditionExitNode(node: LoopConditionExitNode) {
-            if (node.loop is FirDoWhileLoop) {
-                insideDoWhileConditions.remove(node.loop)
-            }
+            doWhileLoopProperties.removeLast()
         }
     }
 }

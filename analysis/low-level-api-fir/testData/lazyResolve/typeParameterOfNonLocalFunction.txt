@@ -110,6 +110,18 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
+    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] resolveMe> ddd(): R|kotlin/Unit| {
+        }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
     public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {

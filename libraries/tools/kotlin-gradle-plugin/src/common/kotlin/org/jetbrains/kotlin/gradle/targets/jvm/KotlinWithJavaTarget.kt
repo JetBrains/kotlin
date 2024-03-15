@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.File
 import javax.inject.Inject
 
+@Suppress("DEPRECATION")
 abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> @Inject constructor(
     project: Project,
     override val platformType: KotlinPlatformType,
@@ -29,7 +30,7 @@ abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions, CO 
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") compilerOptionsFactory: () -> DeprecatedHasCompilerOptions<CO>,
     kotlinOptionsFactory: (CO) -> KotlinOptionsType
 ) : AbstractKotlinTarget(project),
-    HasConfigurableCompilerOptions<KotlinJvmCompilerOptions> {
+    HasConfigurableKotlinCompilerOptions<KotlinJvmCompilerOptions> {
     override var disambiguationClassifier: String? = null
         internal set
 

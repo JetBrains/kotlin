@@ -13,7 +13,7 @@
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-insideFunctionComplexScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/TypeAnnWithArg.arg] arg: R|kotlin/String|): R|pack/TypeAnnWithArg| {
@@ -32,4 +32,3 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|@R|pack/TypeAnnWithArg|(arg = <strcat>(String(parameter: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested parameter: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested parameter: ), R|pack/constant|))  pack/MyTypeAlias>>|): R|kotlin/Unit| {
         }
-

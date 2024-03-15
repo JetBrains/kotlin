@@ -73,5 +73,5 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int, [ResolvedTo(RAW_FIR)] action: ( (Int) -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(LAZY_EXPRESSION, <L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(LAZY_EXPRESSION, LAZY_EXPRESSION)
             public [ResolvedTo(RAW_FIR)] get(): <implicit>

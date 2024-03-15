@@ -41,7 +41,7 @@ sourcesJar()
 javadocJar()
 testsJar()
 
-projectTest(parallel = true) {
+projectTest(jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
@@ -49,6 +49,6 @@ projectTest(parallel = true) {
     val localJunit5Classpath: FileCollection = junit5Classpath
 
     doFirst {
-        systemProperty("junit5.classpath", localJunit5Classpath.files.joinToString(",") { it.absolutePath })
+        systemProperty("junit5.classpath", localJunit5Classpath.asPath)
     }
 }

@@ -69,7 +69,7 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
         override fun onNonEmptyBuildDirectory(directory: File) = backupDirectoryContents(directory)
 
         override fun isIgnoredTest(projectInfo: ProjectInfo) =
-            super.isIgnoredTest(projectInfo) || projectInfo.name == "externalDeclarations"
+            super.isIgnoredTest(projectInfo) || projectInfo.name == "externalDeclarations" || projectInfo.name == "externalDeclarationsKJS"
 
         override fun onIgnoredTest() = throw TestAbortedException()
     }
@@ -209,7 +209,7 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
     private fun KLIB.toFriendDependency() = ExistingDependency(this, FriendLibrary)
     private fun KLIBStaticCache.toDependency() = ExistingDependency(this, LibraryStaticCache)
 
-    private fun KLIB.toStaticCacheArtifact() = KLIBStaticCache(
+    private fun KLIB.toStaticCacheArtifact() = KLIBStaticCacheImpl(
         cacheDir = klibFile.parentFile.resolve(STATIC_CACHE_DIR_NAME).apply { mkdirs() },
         klib = this
     )

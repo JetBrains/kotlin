@@ -75,7 +75,7 @@ fun BodyResolveComponents.mapArguments(
     val excessLambdaArguments: MutableList<FirExpression> = mutableListOf()
     var externalArgument: FirExpression? = null
     for (argument in arguments) {
-        if (argument is FirLambdaArgumentExpression) {
+        if (argument is FirAnonymousFunctionExpression && argument.isTrailingLambda) {
             if (externalArgument == null) {
                 externalArgument = argument
             } else {
@@ -135,19 +135,7 @@ private class FirCallArgumentsProcessor(
 
     fun processNonLambdaArguments(arguments: List<FirExpression>) {
         for ((argumentIndex, argument) in arguments.withIndex()) {
-            if (argument is FirVarargArgumentsExpression) {
-                // If the argument list was already resolved, any arguments for a vararg parameter will be in a FirVarargArgumentsExpression.
-                // This can happen when getting all the candidates for an already resolved function call.
-                val varargArguments = argument.arguments
-                for ((varargArgumentIndex, varargArgument) in varargArguments.withIndex()) {
-                    processNonLambdaArgument(
-                        varargArgument,
-                        isLastArgument = argumentIndex == arguments.lastIndex && varargArgumentIndex == varargArguments.lastIndex
-                    )
-                }
-            } else {
-                processNonLambdaArgument(argument, isLastArgument = argumentIndex == arguments.lastIndex)
-            }
+            processNonLambdaArgument(argument, isLastArgument = argumentIndex == arguments.lastIndex)
         }
         if (state == State.VARARG_POSITION) {
             completeVarargPositionArguments()

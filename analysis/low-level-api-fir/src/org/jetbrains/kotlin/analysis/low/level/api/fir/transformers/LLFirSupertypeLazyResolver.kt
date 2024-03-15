@@ -197,7 +197,7 @@ private class LLFirSuperTypeTargetResolver(
             visitedElements = visitedElements,
         ).resolveDesignation()
 
-        LLFirLazyPhaseResolverByPhase.getByPhase(resolverPhase).checkIsResolved(target)
+        LLFirSupertypeLazyResolver.checkIsResolved(target.target)
     }
 
     /**

@@ -6,24 +6,28 @@
 package org.jetbrains.kotlin.ir.overrides
 
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.util.TypeRemapper
+import org.jetbrains.kotlin.ir.util.copyAnnotations
 
-class FakeOverrideCopier(
-    private val symbolRemapper: SymbolRemapper,
+internal class FakeOverrideCopier(
+    private val valueParameters: MutableMap<IrValueParameterSymbol, IrValueParameterSymbol>,
+    private val typeParameters: MutableMap<IrTypeParameterSymbol, IrTypeParameterSymbol>,
     private val typeRemapper: TypeRemapper,
-    private val symbolRenamer: SymbolRenamer,
-    private val parent: IrClass,
+    private val parentClass: IrClass,
     private val unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
-) : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper, symbolRenamer) {
-
-    override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction {
-        val customization = unimplementedOverridesStrategy.computeCustomization(declaration, parent)
+) {
+    fun copySimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction {
+        val customization = unimplementedOverridesStrategy.computeCustomization(declaration, parentClass)
 
         return declaration.factory.createFunctionWithLateBinding(
-            startOffset = parent.startOffset,
-            endOffset = parent.endOffset,
+            startOffset = parentClass.startOffset,
+            endOffset = parentClass.endOffset,
             origin = customization.origin ?: IrDeclarationOrigin.FAKE_OVERRIDE,
-            name = symbolRenamer.getFunctionName(declaration.symbol),
+            name = declaration.name,
             visibility = declaration.visibility,
             isInline = declaration.isInline,
             isExpect = declaration.isExpect,
@@ -35,43 +39,26 @@ class FakeOverrideCopier(
             isInfix = declaration.isInfix,
             isExternal = declaration.isExternal,
         ).apply {
+            parent = parentClass
             contextReceiverParametersCount = declaration.contextReceiverParametersCount
-            transformAnnotations(declaration)
-            copyTypeParametersFrom(declaration)
-            typeRemapper.withinScope(this) {
-                // This is the more correct way to produce dispatch receiver for a fake override,
-                // but some lowerings still expect the below behavior as produced by the current psi2ir.
-                /*
-                    val superDispatchReceiver = declaration.dispatchReceiverParameter!!
-                    val dispatchReceiverSymbol = IrValueParameterSymbolImpl(WrappedReceiverParameterDescriptor())
-                    val dispatchReceiverType = destinationClass.defaultType
-                    dispatchReceiverParameter = IrValueParameterImpl(
-                        superDispatchReceiver.startOffset,
-                        superDispatchReceiver.endOffset,
-                        superDispatchReceiver.origin,
-                        dispatchReceiverSymbol,
-                        superDispatchReceiver.name,
-                        superDispatchReceiver.index,
-                        dispatchReceiverType,
-                        null,
-                        superDispatchReceiver.isCrossinline,
-                        superDispatchReceiver.isNoinline
-                    )
-                    */
-                // Should fake override's receiver be the current class is an open question.
-                dispatchReceiverParameter = declaration.dispatchReceiverParameter?.transform()
-                extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
-                returnType = typeRemapper.remapType(declaration.returnType)
-                valueParameters = declaration.valueParameters.transform()
+            annotations = declaration.copyAnnotations()
+            typeParameters = declaration.typeParameters.map { copyTypeParameter(it, this) }
+            for ((i, thisTypeParameter) in typeParameters.withIndex()) {
+                val otherTypeParameter = declaration.typeParameters[i]
+                thisTypeParameter.superTypes = otherTypeParameter.superTypes.map(typeRemapper::remapType)
             }
+            dispatchReceiverParameter = declaration.dispatchReceiverParameter?.let { copyValueParameter(it, this) }
+            extensionReceiverParameter = declaration.extensionReceiverParameter?.let { copyValueParameter(it, this) }
+            returnType = typeRemapper.remapType(declaration.returnType)
+            valueParameters = declaration.valueParameters.map { copyValueParameter(it, this) }
         }
     }
 
-    override fun visitProperty(declaration: IrProperty): IrProperty {
-        val customization = unimplementedOverridesStrategy.computeCustomization(declaration, parent)
+    fun copyProperty(declaration: IrProperty): IrProperty {
+        val customization = unimplementedOverridesStrategy.computeCustomization(declaration, parentClass)
 
         return declaration.factory.createPropertyWithLateBinding(
-            parent.startOffset, parent.endOffset,
+            parentClass.startOffset, parentClass.endOffset,
             customization.origin ?: IrDeclarationOrigin.FAKE_OVERRIDE,
             declaration.name,
             declaration.visibility,
@@ -83,28 +70,47 @@ class FakeOverrideCopier(
             isExpect = declaration.isExpect,
             isExternal = declaration.isExternal,
         ).apply {
-            transformAnnotations(declaration)
-            this.getter = declaration.getter?.transform()
-            this.setter = declaration.setter?.transform()
+            parent = parentClass
+            annotations = declaration.copyAnnotations()
+            this.getter = declaration.getter?.let(::copySimpleFunction)
+            this.setter = declaration.setter?.let(::copySimpleFunction)
         }
     }
 
-    override fun visitValueParameter(declaration: IrValueParameter): IrValueParameter =
+    private fun copyValueParameter(declaration: IrValueParameter, newParent: IrDeclarationParent): IrValueParameter =
         declaration.factory.createValueParameter(
-            startOffset = parent.startOffset,
-            endOffset = parent.endOffset,
+            startOffset = parentClass.startOffset,
+            endOffset = parentClass.endOffset,
             origin = IrDeclarationOrigin.DEFINED,
-            name = symbolRenamer.getValueParameterName(declaration.symbol),
-            type = declaration.type.remapType(),
+            name = declaration.name,
+            type = typeRemapper.remapType(declaration.type),
             isAssignable = declaration.isAssignable,
-            symbol = symbolRemapper.getDeclaredValueParameter(declaration.symbol),
+            symbol = IrValueParameterSymbolImpl(null),
             index = declaration.index,
-            varargElementType = declaration.varargElementType?.remapType(),
+            varargElementType = declaration.varargElementType?.let(typeRemapper::remapType),
             isCrossinline = declaration.isCrossinline,
             isNoinline = declaration.isNoinline,
             isHidden = declaration.isHidden,
         ).apply {
-            transformAnnotations(declaration)
+            valueParameters[declaration.symbol] = symbol
+            parent = newParent
+            annotations = declaration.copyAnnotations()
             // Don't set the default value for fake overrides.
+        }
+
+    private fun copyTypeParameter(declaration: IrTypeParameter, newParent: IrDeclarationParent): IrTypeParameter =
+        declaration.factory.createTypeParameter(
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = declaration.origin,
+            name = declaration.name,
+            symbol = IrTypeParameterSymbolImpl(null),
+            variance = declaration.variance,
+            index = declaration.index,
+            isReified = declaration.isReified,
+        ).apply {
+            typeParameters[declaration.symbol] = symbol
+            parent = newParent
+            annotations = declaration.copyAnnotations()
         }
 }

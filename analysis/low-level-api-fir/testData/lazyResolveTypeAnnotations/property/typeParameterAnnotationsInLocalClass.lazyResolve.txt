@@ -160,6 +160,35 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| {
+        local final? [ResolvedTo(RAW_FIR)] class OriginalClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] constructor(): R|<local>/OriginalClass| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
+
+            @Anno[Unresolved](<strcat>(String(property ), prop#)) public? final? [ResolvedTo(RAW_FIR)] val <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) Number> @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) F.explicitType: @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): @Anno[Unresolved](<strcat>(String(bound ), prop#)) Int {
+                    ^ IntegerLiteral(1)
+                }
+
+        }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {

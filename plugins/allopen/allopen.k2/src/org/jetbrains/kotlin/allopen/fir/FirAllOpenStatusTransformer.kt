@@ -30,7 +30,7 @@ class FirAllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExt
                 if (parentClassId.isLocal) return false
                 val parentClassSymbol = session.symbolProvider.getClassLikeSymbolByClassId(parentClassId) as? FirRegularClassSymbol
                     ?: return false
-                session.allOpenPredicateMatcher.isAnnotated(parentClassSymbol)
+                parentClassSymbol.classKind == ClassKind.CLASS && session.allOpenPredicateMatcher.isAnnotated(parentClassSymbol)
             }
             else -> false
         }

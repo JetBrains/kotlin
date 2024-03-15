@@ -85,10 +85,10 @@ abstract class AbstractBuilderConfigurator<Element, Implementation, BuilderField
 
     private fun Element.extractImplementation(type: String?): Implementation {
         return if (type == null) {
-            allImplementations.singleOrNull { it.kind?.hasLeafBuilder == true } ?: this@AbstractBuilderConfigurator.run {
+            implementations.singleOrNull { it.kind?.hasLeafBuilder == true } ?: this@AbstractBuilderConfigurator.run {
                 val message = buildString {
                     appendLine("${this@extractImplementation} has multiple implementations:")
-                    for (implementation in allImplementations) {
+                    for (implementation in implementations) {
                         appendLine("  - ${implementation.typeName}")
                     }
                     appendLine("Please specify implementation is needed")
@@ -96,10 +96,10 @@ abstract class AbstractBuilderConfigurator<Element, Implementation, BuilderField
                 throw IllegalArgumentException(message)
             }
         } else {
-            allImplementations.firstOrNull { it.typeName == type } ?: this@AbstractBuilderConfigurator.run {
+            implementations.firstOrNull { it.typeName == type } ?: this@AbstractBuilderConfigurator.run {
                 val message = buildString {
                     appendLine("${this@extractImplementation} has not implementation $type. Existing implementations:")
-                    for (implementation in allImplementations) {
+                    for (implementation in implementations) {
                         appendLine("  - ${implementation.typeName}")
                     }
                     appendLine("Please specify implementation is needed")
@@ -118,7 +118,7 @@ abstract class AbstractBuilderConfigurator<Element, Implementation, BuilderField
         implementationPredicate: (Implementation) -> Boolean = { true }
     ): Collection<Implementation> {
         return elements
-            .flatMap { it.allImplementations }
+            .flatMap { it.implementations }
             .mapNotNullTo(mutableSetOf()) { implementation ->
                 if (!implementationPredicate(implementation)) return@mapNotNullTo null
                 if (implementation.element == element) return@mapNotNullTo null
@@ -128,7 +128,7 @@ abstract class AbstractBuilderConfigurator<Element, Implementation, BuilderField
     }
 
     private val allLeafBuilders: List<LeafBuilder<BuilderField, Element, Implementation>>
-        get() = elements.flatMap { it.allImplementations }.mapNotNull { it.builder }
+        get() = elements.flatMap { it.implementations }.mapNotNull { it.builder }
 
     /**
      * Allows to batch-apply [config] to certain fields in _all_ the builders that satisfy the given

@@ -30,8 +30,8 @@ object WASM_DIAGNOSTICS_LIST : DiagnosticList("FirWasmErrors") {
         }
         val CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION by error<PsiElement>()
         val WRONG_JS_INTEROP_TYPE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
-            parameter<String>("place")
             parameter<ConeKotlinType>("type")
+            parameter<String>("place")
         }
         val NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<ConeKotlinType>("type")
@@ -69,5 +69,9 @@ object WASM_DIAGNOSTICS_LIST : DiagnosticList("FirWasmErrors") {
     val WASI by object : DiagnosticGroup("WASI") {
         val WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION by error<KtElement>()
         val WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT by error<KtElement>()
+    }
+
+    val ASSOCIATED_OBJECTS by object : DiagnosticGroup("Associated object") {
+        val ASSOCIATED_OBJECT_INVALID_BINDING by error<KtElement>()
     }
 }

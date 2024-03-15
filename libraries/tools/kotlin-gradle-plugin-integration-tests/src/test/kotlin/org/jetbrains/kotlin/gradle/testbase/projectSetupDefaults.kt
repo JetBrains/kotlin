@@ -33,6 +33,7 @@ internal val DEFAULT_GROOVY_SETTINGS_FILE =
             id "org.jetbrains.kotlin.plugin.jpa" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.plugin.noarg" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.plugin.lombok" version "${'$'}kotlin_version"
+            id "org.jetbrains.kotlin.plugin.power-assert" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.plugin.sam.with.receiver" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.plugin.serialization" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.plugin.assignment" version "${'$'}kotlin_version"
@@ -92,6 +93,15 @@ internal fun getGroovyRepositoryBlock(
     |        mavenLocal()
     |        mavenCentral()
     |        google()
+    |        ivy {
+    |            url = "https://download.jetbrains.com/kotlin/native/builds/releases"
+    |            patternLayout {
+    |                artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
+    |            }
+    |            metadataSources {
+    |                artifact()
+    |            }
+    |        }
     |        ivy {
     |            url = "https://download.jetbrains.com/kotlin/native/builds/dev"
     |            patternLayout {
@@ -164,6 +174,9 @@ internal fun getGroovyRepositoryBlock(
     |                includeModule("google.d8", "v8") 
     |            }
     |        }
+    |        maven {
+    |            url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/"
+    |        }
     |        ${additionalDependencyRepositories.map { repo -> "maven{ url = \"$repo\" }" }.joinToString("\n")}
     |        ${localRepo?.absolutePathString()?.let { repo -> "maven{ url = \"${repo.replace("\\", "\\\\")}\" }" } ?: ""}
     |    }
@@ -195,6 +208,7 @@ internal val DEFAULT_KOTLIN_SETTINGS_FILE =
             id("org.jetbrains.kotlin.plugin.jpa") version kotlin_version
             id("org.jetbrains.kotlin.plugin.noarg") version kotlin_version
             id("org.jetbrains.kotlin.plugin.lombok") version kotlin_version
+            id("org.jetbrains.kotlin.plugin.power-assert") version kotlin_version
             id("org.jetbrains.kotlin.plugin.sam.with.receiver") version kotlin_version
             id("org.jetbrains.kotlin.plugin.serialization") version kotlin_version
             id("org.jetbrains.kotlin.plugin.assignment") version kotlin_version
@@ -253,6 +267,15 @@ internal fun getKotlinRepositoryBlock(
     |        mavenLocal()
     |        mavenCentral()
     |        google()
+    |        ivy {
+    |            url = uri("https://download.jetbrains.com/kotlin/native/builds/releases")
+    |            patternLayout {
+    |                artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
+    |            }
+    |            metadataSources {
+    |                artifact()
+    |            }
+    |        }
     |        ivy {
     |            url = uri("https://download.jetbrains.com/kotlin/native/builds/dev")
     |            patternLayout {

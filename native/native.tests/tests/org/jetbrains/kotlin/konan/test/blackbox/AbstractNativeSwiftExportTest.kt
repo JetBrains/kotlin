@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.PackageName
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.createTestProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import java.io.File
@@ -99,6 +101,7 @@ abstract class AbstractNativeSwiftExportTest() : AbstractNativeSimpleTest() {
             ),
             swiftExtraOpts = listOf(
                 "-Xcc", "-fmodule-map-file=${moduleMap.absolutePath}",
+                "-Xcc", "-fmodule-map-file=${Distribution(KotlinNativePaths.homePath.absolutePath).kotlinRuntimeForSwiftModuleMap}",
                 "-L", binaryLibrary.libraryFile.parentFile.absolutePath,
                 "-l$binaryLibraryName",
                 "-emit-module", "-parse-as-library", "-emit-library", "-enable-library-evolution",
@@ -120,6 +123,7 @@ abstract class AbstractNativeSwiftExportTest() : AbstractNativeSimpleTest() {
             "-L", swiftModuleDir.absolutePath,
             "-l$binaryLibraryName",
             "-Xcc", "-fmodule-map-file=${moduleMap.absolutePath}",
+            "-Xcc", "-fmodule-map-file=${Distribution(KotlinNativePaths.homePath.absolutePath).kotlinRuntimeForSwiftModuleMap}",
         )
         val provider = createTestProvider(buildDir, testSources)
         val success = SwiftCompilation(
@@ -154,13 +158,7 @@ abstract class AbstractNativeSwiftExportTest() : AbstractNativeSimpleTest() {
                 )
             ),
             nominalPackageName = PackageName(testName),
-            checks = TestRunChecks(
-                executionTimeoutCheck = TestRunCheck.ExecutionTimeout.ShouldNotExceed(testRunSettings.get<Timeouts>().executionTimeout),
-                exitCodeCheck = TestRunCheck.ExitCode.Expected(0),
-                outputDataFile = null,
-                outputMatcher = null,
-                fileCheckMatcher = null,
-            ),
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
             extras = TestCase.NoTestRunnerExtras(entryPoint = "main")
         ).apply {
             initialize(null, null)

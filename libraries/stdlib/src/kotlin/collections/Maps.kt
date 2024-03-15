@@ -235,8 +235,12 @@ public inline fun <K, V> Map<K, V>?.orEmpty(): Map<K, V> = this ?: emptyMap()
  */
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
-public inline fun <M, R> M.ifEmpty(defaultValue: () -> R): R where M : Map<*, *>, M : R =
-    if (isEmpty()) defaultValue() else this
+public inline fun <M, R> M.ifEmpty(defaultValue: () -> R): R where M : Map<*, *>, M : R {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (isEmpty()) defaultValue() else this
+}
 
 /**
  * Checks if the map contains the given key.
@@ -334,7 +338,12 @@ public inline fun <K, V> Map.Entry<K, V>.toPair(): Pair<K, V> = Pair(key, value)
  * @sample samples.collections.Maps.Usage.getOrElse
  */
 @kotlin.internal.InlineOnly
-public inline fun <K, V> Map<K, V>.getOrElse(key: K, defaultValue: () -> V): V = get(key) ?: defaultValue()
+public inline fun <K, V> Map<K, V>.getOrElse(key: K, defaultValue: () -> V): V {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return get(key) ?: defaultValue()
+}
 
 
 internal inline fun <K, V> Map<K, V>.getOrElseNullable(key: K, defaultValue: () -> V): V {

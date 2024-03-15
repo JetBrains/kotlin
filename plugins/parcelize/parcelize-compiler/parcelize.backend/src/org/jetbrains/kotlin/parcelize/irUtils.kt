@@ -27,17 +27,16 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.NEW_ARRAY_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELABLE_FQN
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_FQN
-import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELIZE_CLASS_FQ_NAMES
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_TO_PARCEL_NAME
 import org.jetbrains.kotlin.parcelize.serializers.ParcelizeExtensionBase
 import org.jetbrains.kotlin.types.Variance
 
 // true if the class should be processed by the parcelize plugin
-val IrClass.isParcelize: Boolean
-    get() = kind in ParcelizeExtensionBase.ALLOWED_CLASS_KINDS &&
-            (hasAnyAnnotation(PARCELIZE_CLASS_FQ_NAMES) || superTypes.any { superType ->
+fun IrClass.isParcelize(parcelizeAnnotations: List<FqName>): Boolean =
+    kind in ParcelizeExtensionBase.ALLOWED_CLASS_KINDS &&
+            (hasAnyAnnotation(parcelizeAnnotations) || superTypes.any { superType ->
                 superType.classOrNull?.owner?.let {
-                    it.modality == Modality.SEALED && it.hasAnyAnnotation(PARCELIZE_CLASS_FQ_NAMES)
+                    it.modality == Modality.SEALED && it.hasAnyAnnotation(parcelizeAnnotations)
                 } == true
             })
 

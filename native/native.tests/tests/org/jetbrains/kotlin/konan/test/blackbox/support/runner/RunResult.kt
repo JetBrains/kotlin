@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import kotlin.time.Duration
 
-internal data class RunResult(
+data class RunResult(
     val testExecutable: TestExecutable, // KT-62157: TODO extract out of RunResult and pass Pair(TestExecutable, RunResult)
     val exitCode: Int?,
     val timeout: Duration,
@@ -22,4 +22,4 @@ internal data class RunResult(
     }
 }
 
-internal class ProcessOutput(val stdOut: TestOutputFilter.FilteredOutput, val stdErr: String)
+class ProcessOutput(val stdOut: TestOutputFilter.FilteredOutput, val stdErr: String)

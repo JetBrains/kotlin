@@ -21,7 +21,7 @@ open class C : A<Int>()
 
 interface D : B<Int>
 
-class <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>E<!> : C(), D
+class E : C(), D
 
 fun main() {
     E().foo(42)

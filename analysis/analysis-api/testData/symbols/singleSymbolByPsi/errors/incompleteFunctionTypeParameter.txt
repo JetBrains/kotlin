@@ -1,0 +1,11 @@
+KtTypeParameterSymbol:
+  annotationsList: []
+  isReified: false
+  name: TYPE
+  origin: SOURCE
+  typeParameters: []
+  upperBounds: []
+  variance: INVARIANT
+  getContainingFileSymbol: KtFileSymbol(incompleteFunctionTypeParameter.kt)
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

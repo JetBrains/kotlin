@@ -40,15 +40,18 @@ public class CKN extends C<@Nullable CK> {}
 // FILE: main.kt
 fun main(ak: AK, akn: AKN, bk: BK, ck: CK, ckn: CKN): Unit {
     ak.foo(ak)
-    ak.foo(null)
+    // jspecify_nullness_mismatch
+    ak.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 
     akn.foo(null) // the corresponding warning/error is present on the Java side
 
     bk.foo(bk)
-    bk.foo(null)
+    // jspecify_nullness_mismatch
+    bk.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 
     ck.foo(ck)
-    ck.foo(null)
+    // jspecify_nullness_mismatch
+    ck.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 
     ckn.foo(null) // the corresponding warning/error is present on the Java side
 }

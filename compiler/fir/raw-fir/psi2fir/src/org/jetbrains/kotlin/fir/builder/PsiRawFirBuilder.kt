@@ -904,9 +904,10 @@ open class PsiRawFirBuilder(
                     val argumentExpression =
                         buildOrLazyExpression((argument as? PsiElement)?.toFirSourceElement()) { argument.toFirExpression() }
                     arguments += when (argument) {
-                        is KtLambdaArgument -> buildLambdaArgumentExpression {
-                            source = argument.toFirSourceElement()
-                            expression = argumentExpression
+                        is KtLambdaArgument -> argumentExpression.apply {
+                            // TODO(KT-66553) remove and set in builder
+                            @OptIn(RawFirApi::class)
+                            (this as? FirAnonymousFunctionExpression)?.replaceIsTrailingLambda(true)
                         }
                         else -> argumentExpression
                     }
@@ -1183,7 +1184,6 @@ open class PsiRawFirBuilder(
                 BodyBuildingMode.LAZY_BODIES -> file.packageFqName
             }
             return buildFile {
-                symbol = FirFileSymbol()
                 source = file.toFirSourceElement()
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
@@ -1194,19 +1194,11 @@ open class PsiRawFirBuilder(
                     packageFqName = context.packageFqName
                     source = file.packageDirective?.toKtPsiSourceElement()
                 }
-                annotationsContainer = file.fileAnnotationList?.let {
-                    buildFileAnnotationsContainer {
-                        moduleData = baseModuleData
-                        containingFileSymbol = this@buildFile.symbol
-                        source = it.toKtPsiSourceElement()
-                        withContainerSymbol(containingFileSymbol) {
-                            for (annotationEntry in it.annotationEntries) {
-                                annotations += annotationEntry.convert<FirAnnotation>()
-                            }
-                        }
 
-                        annotations.ifEmpty {
-                            resolvePhase = FirResolvePhase.BODY_RESOLVE
+                file.fileAnnotationList?.let {
+                    withContainerSymbol(symbol) {
+                        for (annotationEntry in it.annotationEntries) {
+                            annotations += annotationEntry.convert<FirAnnotation>()
                         }
                     }
                 }
@@ -2564,26 +2556,18 @@ open class PsiRawFirBuilder(
             return buildWhenExpression {
                 source = expression.toFirSourceElement()
 
-                var ktLastIf: KtIfExpression = expression
-                whenBranches@ while (true) {
-                    val ktCondition = ktLastIf.condition
-                    branches += buildWhenBranch {
-                        source = ktCondition?.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
-                        condition = ktCondition.toFirExpression("If statement should have condition")
-                        result = ktLastIf.then.toFirBlock()
-                    }
+                val ktCondition = expression.condition
+                branches += buildWhenBranch {
+                    source = ktCondition?.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
+                    condition = ktCondition.toFirExpression("If statement should have condition")
+                    result = expression.then.toFirBlock()
+                }
 
-                    when (val ktElse = ktLastIf.`else`) {
-                        null -> break@whenBranches
-                        is KtIfExpression -> ktLastIf = ktElse
-                        else -> {
-                            branches += buildWhenBranch {
-                                source = ktLastIf.elseKeyword?.toKtPsiSourceElement()
-                                condition = buildElseIfTrueCondition()
-                                result = ktLastIf.`else`.toFirBlock()
-                            }
-                            break@whenBranches
-                        }
+                if (expression.`else` != null) {
+                    branches += buildWhenBranch {
+                        source = expression.elseKeyword?.toKtPsiSourceElement()
+                        condition = buildElseIfTrueCondition()
+                        result = expression.`else`.toFirBlock()
                     }
                 }
 

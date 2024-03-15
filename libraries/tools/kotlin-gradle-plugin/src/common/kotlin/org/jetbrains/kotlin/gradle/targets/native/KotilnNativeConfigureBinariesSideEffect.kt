@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.version
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
@@ -77,7 +75,7 @@ private fun Project.createLinkTask(binary: NativeBinary) {
     // this afterEvaluate comes from NativeCompilerOptions
     @Suppress("DEPRECATION") val compilationCompilerOptions = binary.compilation.compilerOptions
     val konanPropertiesBuildService = KonanPropertiesBuildService.registerIfAbsent(project)
-    val xcodeVersionTask = XcodeVersionTask.locateOrRegister(project)
+
     val linkTask = registerTask<KotlinNativeLink>(
         binary.linkTaskName, listOf(binary)
     ) { task ->
@@ -93,7 +91,6 @@ private fun Project.createLinkTask(binary: NativeBinary) {
         task.toolOptions.freeCompilerArgs.value(compilationCompilerOptions.options.freeCompilerArgs)
         task.toolOptions.freeCompilerArgs.addAll(providers.provider { PropertiesProvider(project).nativeLinkArgs })
         task.runViaBuildToolsApi.value(false).disallowChanges() // K/N is not yet supported
-        task.xcodeVersion.set(xcodeVersionTask.version)
 
         // Frameworks actively uses symlinks.
         // Gradle build cache transforms symlinks into regular files https://guides.gradle.org/using-build-cache/#symbolic_links

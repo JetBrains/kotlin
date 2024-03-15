@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.io.IOException
 
-internal class TestExecutable(
+class TestExecutable(
     val executable: Executable,
     val loggedCompilationToolCall: LoggedData.CompilerCall,
     val testNames: Collection<TestName>
@@ -50,7 +50,7 @@ internal class TestExecutable(
     }
 }
 
-internal data class TestRun(
+data class TestRun(
     val displayName: String,
     val executable: TestExecutable,
     val runParameters: List<TestRunParameter>,
@@ -59,7 +59,7 @@ internal data class TestRun(
     val expectedFailure: Boolean,
 )
 
-internal sealed interface TestRunParameter {
+sealed interface TestRunParameter {
     fun applyTo(programArgs: MutableList<String>)
 
     sealed class WithFilter : TestRunParameter {
@@ -146,6 +146,9 @@ internal inline fun <reified T : TestRunParameter> List<TestRunParameter>.get(on
     firstIsInstanceOrNull<T>()?.let(onFound)
 }
 
+internal inline fun <reified T : TestRunParameter> List<TestRunParameter>.getAll(onFound: T.() -> Unit) {
+    filterIsInstance<T>().forEach(onFound)
+}
 
 // must be in sync with `fromGTestPattern(String)` in kotlin-native/runtime/src/main/kotlin/kotlin/native/internal/test/TestRunner.kt
 internal fun fromGTestPattern(pattern: String): Regex {

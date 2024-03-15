@@ -12,6 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.*
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Usage
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.internal.component.DefaultSoftwareComponentVariant
 import org.gradle.api.internal.tasks.DefaultTaskDependency
 import org.gradle.api.tasks.*
@@ -60,8 +61,10 @@ abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
 
     @Internal lateinit var destinationDir: File
     @Internal lateinit var artifactName: String
-    @Internal lateinit var platformConfiguration: Configuration
-    @Internal lateinit var configuration: Configuration
+
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val platformConfigurationFiles: ConfigurableFileCollection
 
     protected val artifactFullName: String
         @Internal get() = "$artifactPrefix$artifactName$artifactSuffix"
@@ -79,7 +82,9 @@ abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
         super.init(target)
         this.destinationDir = destinationDir
         this.artifactName = artifactName
+        val configuration: Configuration
         configuration = project.configurations.maybeCreate("artifact$artifactName")
+        val platformConfiguration: Configuration
         platformConfiguration = project.configurations.create("artifact${artifactName}_${target.name}")
         platformConfiguration.extendsFrom(configuration)
         platformConfiguration.attributes{
@@ -89,6 +94,7 @@ abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
             attribute(CppBinary.DEBUGGABLE_ATTRIBUTE, false)
             attribute(Attribute.of("org.gradle.native.kotlin.platform", String::class.java), target.name)
         }
+        platformConfigurationFiles.setFrom(platformConfiguration)
 
         val artifactNameWithoutSuffix = artifact.name.removeSuffix(artifactSuffix)
         project.pluginManager.withPlugin("maven-publish") {

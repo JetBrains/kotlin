@@ -5,12 +5,13 @@
 
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanInteropTask
+import org.jetbrains.kotlin.PlatformInfo
+import org.jetbrains.kotlin.kotlinNativeDist
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
 
 // These properties are used by the 'konan' plugin, thus we set them before applying it.
-val distDir: File by project
-val konanHome: String by extra(distDir.absolutePath)
+val konanHome: String by extra(kotlinNativeDist.absolutePath)
 val jvmArgs: String by extra(
         mutableListOf<String>().apply {
             addAll(HostManager.defaultJvmArgs)
@@ -22,18 +23,14 @@ extra["org.jetbrains.kotlin.native.home"] = konanHome
 extra["konan.jvmArgs"] = jvmArgs
 
 plugins {
+    id("platform-manager")
     id("konan")
 }
-
-val targetsWithoutZlib: List<KonanTarget> by project
 
 // region: Util functions.
 fun KonanTarget.defFiles() =
     project.fileTree("src/platform/${family.visibleName}")
             .filter { it.name.endsWith(".def") }
-            // The libz.a/libz.so and zlib.h are missing in MIPS sysroots.
-            // Just workaround it until we have sysroots corrected.
-            .filterNot { (this in targetsWithoutZlib) && it.name == "zlib.def" }
             .map { DefFile(it, this) }
 
 
@@ -45,11 +42,9 @@ if (HostManager.host == KonanTarget.MACOS_ARM64) {
     project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
 }
 
-val konanTargetList: List<KonanTarget> by project
-val targetList: List<String> by project
-val cacheableTargets: List<KonanTarget> by project
+val cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
 
-konanTargetList.forEach { target ->
+enabledTargets(platformManager).forEach { target ->
     val targetName = target.visibleName
     val installTasks = mutableListOf<TaskProvider<out Task>>()
     val cacheTasks = mutableListOf<TaskProvider<out Task>>()
@@ -89,8 +84,9 @@ konanTargetList.forEach { target ->
         }
         installTasks.add(klibInstallTask)
 
-        if (target in cacheableTargets) {
+        if (target.name in cacheableTargetNames) {
             val cacheTask = tasks.register("${libName}Cache", KonanCacheTask::class.java) {
+                notCompatibleWithConfigurationCache("project used in execution time")
                 this.target = targetName
                 originalKlib.fileProvider(libTask.map {
                     it.artifactDirectory ?: error("Artifact wasn't set for ${it.name}")
@@ -116,7 +112,7 @@ konanTargetList.forEach { target ->
         dependsOn(installTasks)
     }
 
-    if (target in cacheableTargets) {
+    if (target.name in cacheableTargetNames) {
         tasks.register("${targetName}Cache") {
             dependsOn(cacheTasks)
 
@@ -126,14 +122,12 @@ konanTargetList.forEach { target ->
     }
 }
 
-val hostName: String by project
-
 val hostInstall by tasks.registering {
-    dependsOn("${hostName}Install")
+    dependsOn("${PlatformInfo.hostName}Install")
 }
 
 val hostCache by tasks.registering {
-    dependsOn("${hostName}Cache")
+    dependsOn("${PlatformInfo.hostName}Cache")
 }
 
 val cache by tasks.registering {

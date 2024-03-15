@@ -55,7 +55,6 @@ private fun render(firElement: FirElement?): String = when (firElement) {
     null -> "null"
     is FirImport -> "import ${firElement.importedFqName}"
     else -> FirRenderer(
-        fileAnnotationsContainerRenderer = FirFileAnnotationsContainerRenderer(),
         packageDirectiveRenderer = FirPackageDirectiveRenderer(),
         resolvePhaseRenderer = FirResolvePhaseRenderer(),
         declarationRenderer = FirDeclarationRendererWithFilteredAttributes(),

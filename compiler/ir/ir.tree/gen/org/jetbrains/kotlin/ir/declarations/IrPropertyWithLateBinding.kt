@@ -11,8 +11,6 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 
 /**
- * A leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.propertyWithLateBinding]
  */
 abstract class IrPropertyWithLateBinding : IrProperty() {

@@ -223,13 +223,9 @@ internal class JvmMetadataExtensions : MetadataExtensions {
 
     override fun createPackageExtension(): KmPackageExtension = JvmPackageExtension()
 
-    @Suppress("DEPRECATION_ERROR")
     override fun createModuleFragmentExtensions(): KmModuleFragmentExtension =
         object : KmModuleFragmentExtension {
             override val type: KmExtensionType = KmExtensionType(KmModuleFragmentExtension::class)
-
-            override fun accept(visitor: KmModuleFragmentExtensionVisitor) {
-            }
         }
 
     override fun createFunctionExtension(): KmFunctionExtension = JvmFunctionExtension()

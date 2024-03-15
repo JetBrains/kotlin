@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractIsSubclassOfTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -47,8 +46,38 @@ public class FirStandaloneNormalAnalysisSourceModuleIsSubclassOfTestGenerated ex
   }
 
   @Test
+  @TestMetadata("childClass.kt")
+  public void testChildClass() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf/childClass.kt");
+  }
+
+  @Test
+  @TestMetadata("grandParentClass.kt")
+  public void testGrandParentClass() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf/grandParentClass.kt");
+  }
+
+  @Test
   @TestMetadata("localClasses.kt")
   public void testLocalClasses() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf/localClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("parentClass.kt")
+  public void testParentClass() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf/parentClass.kt");
+  }
+
+  @Test
+  @TestMetadata("sameClass.kt")
+  public void testSameClass() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf/sameClass.kt");
+  }
+
+  @Test
+  @TestMetadata("unrelatedClass.kt")
+  public void testUnrelatedClass() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf/unrelatedClass.kt");
   }
 }

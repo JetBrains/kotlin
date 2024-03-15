@@ -243,6 +243,8 @@ object StandardClassIds {
         val mutableCollectionToBaseCollection: Map<ClassId, ClassId> =
             baseCollectionToMutableEquivalent.entries.associateBy({ it.value }) { it.key }
     }
+
+    val allBuiltinTypes = primitiveTypes + unsignedTypes + this.String + this.Unit + this.Any + this.Enum
 }
 
 private fun String.baseId() = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier(this))

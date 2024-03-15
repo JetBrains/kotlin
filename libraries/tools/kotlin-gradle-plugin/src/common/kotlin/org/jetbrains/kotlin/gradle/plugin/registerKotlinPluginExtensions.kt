@@ -17,8 +17,12 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportSetupAction
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeResolveDependenciesTaskSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AddBuildListenerForXCodeSetupAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.DeprecatedMppGradlePropertiesMigrationSetupAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultiplatformAndroidAssetsAndResourcesPublicationAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultiplatformJvmResourcesPublicationAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.RegisterMultiplatformResourcesPublicationExtensionAction
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinMultiplatformSourceSetSetupAction
 import org.jetbrains.kotlin.gradle.plugin.sources.LanguageSettingsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.statistics.MultiplatformBuildStatsReportSetupAction
@@ -71,12 +75,17 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, IdeMultiplatformImportSetupAction)
             register(project, IdeResolveDependenciesTaskSetupAction)
             register(project, CInteropCommonizedCInteropApiElementsConfigurationsSetupAction)
+            register(project, XcodeVersionSetupAction)
             register(project, AddBuildListenerForXCodeSetupAction)
             register(project, CreateFatFrameworksSetupAction)
             register(project, KotlinRegisterCompilationArchiveTasksExtension)
             register(project, IdeMultiplatformImportActionSetupAction)
             register(project, KotlinLLDBScriptSetupAction)
             register(project, ExcludeDefaultPlatformDependenciesFromKotlinNativeCompileTasks)
+            register(project, SetupConsistentMetadataDependenciesResolution)
+            register(project, RegisterMultiplatformResourcesPublicationExtensionAction)
+            register(project, SetUpMultiplatformJvmResourcesPublicationAction)
+            register(project, SetUpMultiplatformAndroidAssetsAndResourcesPublicationAction)
         }
     }
 
@@ -137,9 +146,11 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, DuplicateSourceSetChecker)
         register(project, CInteropInputChecker)
         register(project, IncorrectNativeDependenciesChecker)
+        register(project, GradleDeprecatedPropertyChecker)
 
         if (isMultiplatform) {
             register(project, KotlinMultiplatformAndroidGradlePluginCompatibilityChecker)
+            register(project, MultipleSourceSetRootsInCompilationChecker)
         }
     }
 }

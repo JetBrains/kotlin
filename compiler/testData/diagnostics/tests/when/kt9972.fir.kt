@@ -10,7 +10,7 @@
  */
 
 fun test1(): Int {
-    val x: String = <!TYPE_MISMATCH!>if (true) {
+    val x: String = <!INITIALIZER_TYPE_MISMATCH!>if (true) {
         <!TYPE_MISMATCH, TYPE_MISMATCH!>when {
             true -> <!TYPE_MISMATCH!>Any()<!>
             else -> null
@@ -20,9 +20,9 @@ fun test1(): Int {
 }
 
 fun test2(): Int {
-    val x: String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!><!TYPE_MISMATCH!>when {
+    val x: String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>when {
                         true -> <!TYPE_MISMATCH!>Any()<!>
                         else -> null
-                    }<!> ?: return 0<!>
+                    } ?: return 0<!>
     return x.hashCode()
 }

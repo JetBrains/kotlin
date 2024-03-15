@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2024 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -13,8 +13,11 @@
 #include "ObjectData.hpp"
 #include "ParallelProcessor.hpp"
 #include "SafePoint.hpp"
+#include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
 #include "Utils.hpp"
+#include "concurrent/Once.hpp"
+
 
 namespace kotlin::gc::mark {
 
@@ -29,12 +32,14 @@ namespace kotlin::gc::mark {
  *      as only references from mark phase beginning matter for the SatB approach.
  *    - Read barrier for weak refs:
  *      Remembers each object read via a weak reference in a thread-local mark queue.
- *      Prevents the possibility of inserting a strong reference to a ewakly-reachable object behind the mark front.
- * 3. Concurrently, the marker thread builds a mark closure. Unmarked objects hidden in a mutator mark queues may still exist.
- * 4. Pause mutators once more, drain local mark queues, and complete the mark closure, this time non-concurrently.
- *    // TODO build closure fully concurrent
- * 5. Process and clean weak references. // TODO process weak refs concurrently
- * 6. Prepare mared heap for sweeping and resume mutation. // TODO prepare heap without a pause
+ *      Prevents the possibility of inserting a strong reference to a weakly-reachable object behind the mark front.
+ * 3. Concurrently, the marker thread builds a mark closure.
+ *    From time to time the mutator threads flush their mark queues into the global one.
+ * 4. In case the mark closure is complete, replace the remembering weak read barrier with
+ *    the barrier that hides unmarked (dead) referents.
+ * 5. Process and clean weak references.
+ * 6. Pause mutators once again and disable all the barreirs.
+ * 7. Prepare marked heap for sweeping and resume mutation. // TODO prepare heap without a pause
  */
 class ConcurrentMark : private Pinned {
     using MarkStackImpl = intrusive_forward_list<GC::ObjectData>;
@@ -51,9 +56,7 @@ public:
 
         static constexpr auto kAllowHeapToStackRefs = false;
 
-        static void clear(AnyQueue& queue) noexcept {
-            RuntimeAssert(queue.localEmpty(), "Mark queue must be empty");
-        }
+        static void clear(AnyQueue& queue) noexcept { RuntimeAssert(queue.localEmpty(), "Mark queue must be empty"); }
 
         static ALWAYS_INLINE ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
             auto* obj = queue.tryPop();
@@ -91,10 +94,17 @@ public:
     };
 
     class ThreadData : private Pinned {
+        friend ConcurrentMark;
+
     public:
         auto& markQueue() noexcept { return markQueue_; }
+        void onSafePoint() noexcept;
+
     private:
-        ManuallyScoped<MutatorQueue> markQueue_{};
+        void ensureFlushActionExecuted() noexcept;
+
+        ManuallyScoped<MutatorQueue, true> markQueue_{};
+        ManuallyScoped<OnceExecutable, true> flushAction_{};
     };
 
     void beginMarkingEpoch(GCHandle gcHandle);
@@ -109,17 +119,33 @@ public:
      */
     void runOnMutator(mm::ThreadData& mutatorThread);
 
+    /**
+     * Weak reference reads may be mutually exclusive with certain parts of mark oprocess.
+     * Every read must be guarded by the object returned by this method.
+     */
+    auto weakReadProtector() noexcept {
+        return std::pair{ThreadStateGuard{ThreadState::kNative}, std::shared_lock{markTerminationMutex_}};
+    }
+
 private:
     GCHandle& gcHandle();
 
     void completeMutatorsRootSet(MarkTraits::MarkQueue& markQueue);
     void tryCollectRootSet(mm::ThreadData& thread, ParallelProcessor::Worker& markQueue);
-    void parallelMark(ParallelProcessor::Worker& worker);
+    bool tryTerminateMark(std::size_t& everSharedBatches) noexcept;
+    void flushMutatorQueues() noexcept;
 
     void resetMutatorFlags();
 
     GCHandle gcHandle_ = GCHandle::invalid();
     std::optional<mm::ThreadRegistry::Iterable> lockedMutatorsList_;
-    ManuallyScoped<ParallelProcessor> parallelProcessor_{};
+    ManuallyScoped<ParallelProcessor, true> parallelProcessor_{};
+
+    RWSpinLock<MutexThreadStateHandling::kIgnore> markTerminationMutex_;
 };
+
+namespace test_support {
+bool flushActionRequested();
+}
+
 } // namespace kotlin::gc::mark

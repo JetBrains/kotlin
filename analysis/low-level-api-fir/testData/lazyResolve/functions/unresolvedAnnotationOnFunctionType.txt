@@ -40,6 +40,11 @@ FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnFunctionType.kt
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] a: @<ERROR TYPE REF: Symbol not found for Anno>[Unresolved](Foo#) <ERROR TYPE REF: Symbol not found for Foo>): @<ERROR TYPE REF: Symbol not found for Anno>[Unresolved](Foo#) <ERROR TYPE REF: Symbol not found for Foo> {
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnFunctionType.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo([ResolvedTo(CONSTANT_EVALUATION)] a: @<ERROR TYPE REF: Symbol not found for Anno>[Unresolved](Foo#) <ERROR TYPE REF: Symbol not found for Foo>): @<ERROR TYPE REF: Symbol not found for Anno>[Unresolved](Foo#) <ERROR TYPE REF: Symbol not found for Foo> {
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnFunctionType.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] a: @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo>): @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo> {

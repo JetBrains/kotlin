@@ -25,14 +25,14 @@ import kotlin.time.Duration.Companion.seconds
 /**
  * The tested and the host Kotlin/Native targets.
  */
-internal class KotlinNativeTargets(val testTarget: KonanTarget, val hostTarget: KonanTarget) {
+class KotlinNativeTargets(val testTarget: KonanTarget, val hostTarget: KonanTarget) {
     fun areDifferentTargets() = testTarget != hostTarget
 }
 
 /**
  * The Kotlin/Native home.
  */
-internal class KotlinNativeHome(val dir: File) {
+class KotlinNativeHome(val dir: File) {
     val librariesDir: File = dir.resolve("klib")
     val stdlibFile: File = librariesDir.resolve("common/stdlib")
     val properties: Properties by lazy {
@@ -56,7 +56,7 @@ internal class LLDB(nativeHome: KotlinNativeHome) {
 /**
  * Lazy-initialized class loader with the Kotlin/Native embedded compiler.
  */
-internal class KotlinNativeClassLoader(private val lazyClassLoader: Lazy<ClassLoader>) {
+class KotlinNativeClassLoader(private val lazyClassLoader: Lazy<ClassLoader>) {
     val classLoader: ClassLoader get() = lazyClassLoader.value
 }
 
@@ -82,7 +82,7 @@ internal enum class TestMode(private val description: String) {
  * Kotlin compiler plugins to be used together with the the Kotlin/Native compiler.
  */
 @JvmInline
-internal value class CompilerPlugins(val compilerPluginJars: Set<File>) {
+value class CompilerPlugins(val compilerPluginJars: Set<File>) {
     init {
         val invalidJars = compilerPluginJars.filterNot { it.isDirectory || (it.isFile && it.extension == "jar") }
         assertTrue(invalidJars.isEmpty()) {
@@ -122,7 +122,7 @@ internal value class SharedExecutionTestRunner(val value: Boolean)
 /**
  * Optimization mode to be applied.
  */
-internal enum class OptimizationMode(private val description: String, val compilerFlag: String?) {
+enum class OptimizationMode(private val description: String, val compilerFlag: String?) {
     DEBUG("Build with debug information", "-g"),
     OPT("Build with optimizations applied", "-opt"),
     NO("Don't use any specific optimizations", null);
@@ -133,7 +133,7 @@ internal enum class OptimizationMode(private val description: String, val compil
 /**
  * Thread state checked. Can be applied only with [OptimizationMode.DEBUG], [CacheMode.WithoutCache].
  */
-internal enum class ThreadStateChecker(val compilerFlag: String?) {
+enum class ThreadStateChecker(val compilerFlag: String?) {
     DISABLED(null),
     ENABLED("-Xbinary=checkStateAtExternalCalls=true");
 
@@ -143,7 +143,7 @@ internal enum class ThreadStateChecker(val compilerFlag: String?) {
 /**
  * Type of sanitizer. Can be applied only with [CacheMode.WithoutCache]
  */
-internal enum class Sanitizer(val compilerFlag: String?) {
+enum class Sanitizer(val compilerFlag: String?) {
     NONE(null),
     THREAD("-Xbinary=sanitizer=thread");
 
@@ -153,7 +153,7 @@ internal enum class Sanitizer(val compilerFlag: String?) {
 /**
  * Garbage collector type.
  */
-internal enum class GCType(val compilerFlag: String?) {
+enum class GCType(val compilerFlag: String?) {
     UNSPECIFIED(null),
     NOOP("-Xbinary=gc=noop"),
     STWMS("-Xbinary=gc=stwms"),
@@ -166,7 +166,7 @@ internal enum class GCType(val compilerFlag: String?) {
     override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
 }
 
-internal enum class GCScheduler(val compilerFlag: String?) {
+enum class GCScheduler(val compilerFlag: String?) {
     UNSPECIFIED(null),
     MANUAL("-Xbinary=gcSchedulerType=manual"),
     ADAPTIVE("-Xbinary=gcSchedulerType=adaptive"),
@@ -180,7 +180,7 @@ internal enum class GCScheduler(val compilerFlag: String?) {
     override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
 }
 
-internal enum class Allocator(val compilerFlag: String?) {
+enum class Allocator(val compilerFlag: String?) {
     UNSPECIFIED(null),
     STD("-Xallocator=std"),
     MIMALLOC("-Xallocator=mimalloc"),
@@ -206,10 +206,11 @@ internal class Timeouts(val executionTimeout: Duration) {
 /**
  * Used cache mode.
  */
-internal sealed class CacheMode {
+sealed class CacheMode {
     abstract val staticCacheForDistributionLibrariesRootDir: File?
     abstract val useStaticCacheForUserLibraries: Boolean
     abstract val makePerFileCaches: Boolean
+    abstract val useHeaders: Boolean
     abstract val alias: Alias
 
     val useStaticCacheForDistributionLibraries: Boolean get() = staticCacheForDistributionLibrariesRootDir != null
@@ -218,6 +219,7 @@ internal sealed class CacheMode {
         override val staticCacheForDistributionLibrariesRootDir: File? get() = null
         override val useStaticCacheForUserLibraries: Boolean get() = false
         override val makePerFileCaches: Boolean = false
+        override val useHeaders = false
         override val alias = Alias.NO
     }
 
@@ -227,6 +229,7 @@ internal sealed class CacheMode {
         optimizationMode: OptimizationMode,
         override val useStaticCacheForUserLibraries: Boolean,
         override val makePerFileCaches: Boolean,
+        override val useHeaders: Boolean,
         override val alias: Alias,
     ) : CacheMode() {
         init {
@@ -255,7 +258,7 @@ internal sealed class CacheMode {
         }
     }
 
-    enum class Alias { NO, STATIC_ONLY_DIST, STATIC_EVERYWHERE, STATIC_PER_FILE_EVERYWHERE }
+    enum class Alias { NO, STATIC_ONLY_DIST, STATIC_EVERYWHERE, STATIC_PER_FILE_EVERYWHERE, STATIC_USE_HEADERS_EVERYWHERE }
 
     companion object {
         fun defaultForTestTarget(distribution: Distribution, kotlinNativeTargets: KotlinNativeTargets): Alias {
@@ -283,7 +286,7 @@ internal sealed class CacheMode {
     }
 }
 
-internal enum class PipelineType(val mutedOption: MutedOption, val compilerFlags: List<String>) {
+enum class PipelineType(val mutedOption: MutedOption, val compilerFlags: List<String>) {
     DEFAULT(
         MutedOption.DEFAULT,
         emptyList()
@@ -300,9 +303,24 @@ internal enum class PipelineType(val mutedOption: MutedOption, val compilerFlags
     override fun toString() = if (compilerFlags.isEmpty()) "" else compilerFlags.joinToString(prefix = "(", postfix = ")", separator = " ")
 }
 
-internal enum class CompilerOutputInterceptor {
+enum class CompilerOutputInterceptor {
     DEFAULT,
     NONE
+}
+
+internal enum class TestGroupCreation {
+    DEFAULT,
+    EAGER;
+
+    companion object {
+        private const val PROPERTY = "kotlin.internal.native.test.eagerGroupCreation"
+
+        fun getFromProperty(): TestGroupCreation = System.getProperty(PROPERTY)
+            ?.let {
+                if (it.toBoolean()) EAGER
+                else DEFAULT
+            } ?: DEFAULT
+    }
 }
 
 internal enum class BinaryLibraryKind {

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.allopen;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -22,6 +21,12 @@ public class DiagnosticTestForAllOpenBaseGenerated extends AbstractDiagnosticTes
   @Test
   public void testAllFilesPresentInDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/allopen/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+  }
+
+  @Test
+  @TestMetadata("allOpenOnAnnotation.kt")
+  public void testAllOpenOnAnnotation() {
+    runTest("plugins/allopen/testData/diagnostics/allOpenOnAnnotation.kt");
   }
 
   @Test

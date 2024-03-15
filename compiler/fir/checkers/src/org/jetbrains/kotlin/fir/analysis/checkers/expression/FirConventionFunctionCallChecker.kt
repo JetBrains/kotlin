@@ -11,23 +11,21 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePropertyAsOperator
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeNotFunctionAsOperator
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 object FirConventionFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        // PROPERTY_AS_OPERATOR can only happen for function calls and it's reported on the receiver expression.
-        checkPropertyAsOperator(expression, expression.dispatchReceiver, context, reporter)
-        checkPropertyAsOperator(expression, expression.extensionReceiver, context, reporter)
+        checkNotFunctionAsOperator(expression, expression.dispatchReceiver, context, reporter)
+        checkNotFunctionAsOperator(expression, expression.extensionReceiver, context, reporter)
         val calleeReference = expression.calleeReference as? FirErrorNamedReference ?: return
         val diagnostic = calleeReference.diagnostic as? ConeUnresolvedNameError ?: return
 
@@ -39,7 +37,7 @@ object FirConventionFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.
         }
     }
 
-    private fun checkPropertyAsOperator(
+    private fun checkNotFunctionAsOperator(
         callExpression: FirFunctionCall,
         receiver: FirExpression?,
         context: CheckerContext,
@@ -47,9 +45,27 @@ object FirConventionFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.
     ) {
         if (callExpression.dispatchReceiver?.resolvedType is ConeDynamicType) return
         // KT-61905: TODO: Return also in case of error type.
-        val unwrapped = receiver?.unwrapSmartcastExpression()
-        if (unwrapped !is FirPropertyAccessExpression) return
-        val diagnostic = unwrapped.nonFatalDiagnostics.firstIsInstanceOrNull<ConePropertyAsOperator>() ?: return
-        reporter.reportOn(callExpression.calleeReference.source, FirErrors.PROPERTY_AS_OPERATOR, diagnostic.symbol, context)
+        val unwrapped = receiver?.unwrapSmartcastExpression() ?: return
+        val nonFatalDiagnostics = when (unwrapped) {
+            is FirQualifiedAccessExpression -> unwrapped.nonFatalDiagnostics
+            is FirResolvedQualifier -> unwrapped.nonFatalDiagnostics
+            else -> return
+        }
+        val diagnosticSymbol = nonFatalDiagnostics.firstIsInstanceOrNull<ConeNotFunctionAsOperator>()?.symbol ?: return
+        when {
+            unwrapped.resolvedType.classId!!.shortClassName == OperatorNameConventions.ITERATOR -> {
+                reporter.reportOn(unwrapped.source, FirErrors.ITERATOR_MISSING, context)
+            }
+            else -> {
+                // NOT_FUNCTION_AS_OPERATOR can only happen for function calls and it's reported on the receiver expression.
+                reporter.reportOn(
+                    callExpression.calleeReference.source,
+                    FirErrors.NOT_FUNCTION_AS_OPERATOR,
+                    if (diagnosticSymbol is FirPropertySymbol) "Property" else "Object",
+                    diagnosticSymbol,
+                    context
+                )
+            }
+        }
     }
 }

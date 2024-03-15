@@ -27,7 +27,7 @@ FILE: namedArgument.kt
             )
         }
 
-        R|/myRun|(f = R|<local>/g|)
+        R|/myRun|(R|<local>/g|)
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun test_2(g: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]

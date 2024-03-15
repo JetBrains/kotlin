@@ -22,6 +22,7 @@ internal object LLFirLazyPhaseResolverByPhase {
         this[FirResolvePhase.EXPECT_ACTUAL_MATCHING] = LLFirExpectActualMatcherLazyResolver
         this[FirResolvePhase.CONTRACTS] = LLFirContractsLazyResolver
         this[FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE] = LLFirImplicitTypesLazyResolver
+        this[FirResolvePhase.CONSTANT_EVALUATION] = LLFirConstantEvaluationLazyResolver
         this[FirResolvePhase.ANNOTATION_ARGUMENTS] = LLFirAnnotationArgumentsLazyResolver
         this[FirResolvePhase.BODY_RESOLVE] = LLFirBodyLazyResolver
     }

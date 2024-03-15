@@ -57,6 +57,6 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
               $this: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null
           GET_VAR 'val tmp_0: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null
       CALL 'local final fun <set-x> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.Unit origin=PLUSEQ
-        <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+        <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
           $this: CALL 'local final fun <get-x> (): kotlin.Int declared in <root>.test2' type=kotlin.Int origin=GET_LOCAL_PROPERTY
           other: CONST Int type=kotlin.Int value=1

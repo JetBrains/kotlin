@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.collectTailRecursionCalls
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * This pass lowers tail recursion calls in `tailrec` functions.
  *
  * Note: it currently can't handle local functions and classes declared in default arguments.
- * See [deepCopyWithVariables].
  */
 open class TailrecLowering(val context: BackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
@@ -174,7 +173,7 @@ private class BodyTransformer(
         defaultValuedParameters.let { if (lowering.useProperComputationOrderOfTailrecDefaultParameters) it else it.asReversed() }
             .associateWithTo(parameterToArgument) { parameter ->
                 val originalDefaultValue = parameter.defaultValue?.expression ?: throw Error("no argument specified for $parameter")
-                irTemporary(originalDefaultValue.deepCopyWithVariables().patchDeclarationParents(parent).transform(remapper, null))
+                irTemporary(originalDefaultValue.deepCopyWithSymbols(parent).transform(remapper, null))
             }
 
         // Copy the new `val`s into the `var`s declared outside the loop:

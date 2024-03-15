@@ -2,7 +2,6 @@ RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] fileAnnotationsScript.kts
     @FILE:Deprecated[Unresolved](LAZY_EXPRESSION)
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
-    [ResolvedTo(RAW_FIR)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -22,7 +21,6 @@ IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
     @FILE:Deprecated[Unresolved](LAZY_EXPRESSION)
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
-    [ResolvedTo(RAW_FIR)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -39,10 +37,9 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
+FILE: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fileAnnotationsScript.kts
     @FILE:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String())
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
-    [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -59,10 +56,9 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
 
 
 COMPANION_GENERATION:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
+FILE: [ResolvedTo(COMPANION_GENERATION)] fileAnnotationsScript.kts
     @FILE:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String())
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
-    [ResolvedTo(COMPANION_GENERATION)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -79,10 +75,9 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
 
 
 SUPER_TYPES:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
+FILE: [ResolvedTo(SUPER_TYPES)] fileAnnotationsScript.kts
     @FILE:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String())
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
-    [ResolvedTo(SUPER_TYPES)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -99,10 +94,9 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
 
 
 TYPES:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
+FILE: [ResolvedTo(TYPES)] fileAnnotationsScript.kts
     @FILE:R|kotlin/Deprecated|[Types](String())
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
-    [ResolvedTo(TYPES)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -119,10 +113,9 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
 
 
 STATUS:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
+FILE: [ResolvedTo(STATUS)] fileAnnotationsScript.kts
     @FILE:R|kotlin/Deprecated|[Types](String())
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
-    [ResolvedTo(STATUS)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -139,10 +132,9 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
 
 
 EXPECT_ACTUAL_MATCHING:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
+FILE: [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fileAnnotationsScript.kts
     @FILE:R|kotlin/Deprecated|[Types](String())
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
-    [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -159,10 +151,9 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
 
 
 CONTRACTS:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
+FILE: [ResolvedTo(CONTRACTS)] fileAnnotationsScript.kts
     @FILE:R|kotlin/Deprecated|[Types](String())
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
-    [ResolvedTo(CONTRACTS)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -179,10 +170,28 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
+FILE: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fileAnnotationsScript.kts
     @FILE:R|kotlin/Deprecated|[Types](String())
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
-    [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotations container
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(CONSTANT_EVALUATION)] fileAnnotationsScript.kts
+    @FILE:R|kotlin/Deprecated|[Types](String())
+    @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -199,10 +208,9 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
 
 
 ANNOTATION_ARGUMENTS:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] fileAnnotationsScript.kts
     @FILE:R|kotlin/Deprecated|[Types](message = String())
     @FILE:R|one/Anno|[Types](s = String(anno))
-    [ResolvedTo(ANNOTATION_ARGUMENTS)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -219,10 +227,9 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
 
 
 BODY_RESOLVE:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
+FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotationsScript.kts
     @FILE:R|kotlin/Deprecated|[Types](message = String())
     @FILE:R|one/Anno|[Types](s = String(anno))
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -242,7 +249,6 @@ FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotationsScript.kts
     @FILE:R|kotlin/Deprecated|[Types](message = String())
     @FILE:R|one/Anno|[Types](s = String(anno))
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|

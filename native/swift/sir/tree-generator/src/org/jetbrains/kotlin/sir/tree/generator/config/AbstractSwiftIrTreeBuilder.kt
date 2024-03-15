@@ -61,8 +61,7 @@ abstract class AbstractSwiftIrTreeBuilder {
         isChild: Boolean = true,
         initializer: SimpleField.() -> Unit = {}
     ): SimpleField {
-        return SimpleField(name, type.copy(nullable), mutable).apply {
-            this.isChild = isChild
+        return SimpleField(name, type.copy(nullable), mutable, isChild).apply {
             initializer()
         }
     }
@@ -77,8 +76,8 @@ abstract class AbstractSwiftIrTreeBuilder {
             name = name,
             baseType = baseType,
             isMutable = false,
+            isChild = isChild,
         ).apply {
-            this.isChild = isChild
             initializer()
         }
     }

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.DecoratedKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.*
@@ -19,7 +19,7 @@ internal class KotlinCompilationImplFactory(
         DefaultKotlinCompilationSourceSetsContainerFactory(),
 
     private val compilationDependencyConfigurationsFactory: KotlinCompilationDependencyConfigurationsFactory =
-        DefaultKotlinCompilationDependencyConfigurationsFactory.WithRuntime,
+        DefaultKotlinCompilationDependencyConfigurationsFactory.WithRuntime(),
 
     private val compilationAssociator: KotlinCompilationAssociator =
         DefaultKotlinCompilationAssociator,
@@ -69,7 +69,7 @@ internal class KotlinCompilationImplFactory(
     fun interface KotlinCompilerOptionsFactory {
         data class Options(
             @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") val compilerOptions: DeprecatedHasCompilerOptions<*>,
-            val kotlinOptions: KotlinCommonOptions
+            @Suppress("DEPRECATION") val kotlinOptions: KotlinCommonOptions
         )
 
         fun create(target: KotlinTarget, compilationName: String): Options

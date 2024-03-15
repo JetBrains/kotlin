@@ -18,16 +18,24 @@ import java.io.File
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "This task only copies files")
-abstract class CopySwiftExportIntermediatesForConsumer @Inject constructor(
+internal abstract class CopySwiftExportIntermediatesForConsumer @Inject constructor(
     objectFactory: ObjectFactory,
     projectLayout: ProjectLayout,
     providerFactory: ProviderFactory,
     private val fileSystem: FileSystemOperations
 ) : DefaultTask() {
+    companion object {
+        private const val KOTLIN_RUNTIME = "KotlinRuntime"
+        private const val KOTLIN_BRIDGE = "KotlinBridge"
+    }
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val includeBridgeDirectory: RegularFileProperty
+
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val includeKotlinRuntimeDirectory: RegularFileProperty
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -53,7 +61,16 @@ abstract class CopySwiftExportIntermediatesForConsumer @Inject constructor(
     val syntheticInterfacesDestinationPath: DirectoryProperty = objectFactory.directoryProperty().convention(
         builtProductsDirectory.flatMap {
             projectLayout.dir(providerFactory.provider {
-                it.asFile.resolve("KotlinBridge")
+                it.asFile.resolve(KOTLIN_BRIDGE)
+            })
+        }
+    )
+
+    @get:OutputDirectory
+    val kotlinRuntimeDestinationPath: DirectoryProperty = objectFactory.directoryProperty().convention(
+        builtProductsDirectory.flatMap {
+            projectLayout.dir(providerFactory.provider {
+                it.asFile.resolve(KOTLIN_RUNTIME)
             })
         }
     )
@@ -69,6 +86,10 @@ abstract class CopySwiftExportIntermediatesForConsumer @Inject constructor(
         fileSystem.copy {
             it.from(includeBridgeDirectory)
             it.into(syntheticInterfacesDestinationPath)
+        }
+        fileSystem.copy {
+            it.from(includeKotlinRuntimeDirectory)
+            it.into(kotlinRuntimeDestinationPath)
         }
     }
 }

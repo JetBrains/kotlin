@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,9 +16,6 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
         where Implementation : AbstractImplementation<Implementation, Element, Field>,
               Element : AbstractElement<Element, *, Implementation>,
               Field : AbstractField<*> {
-
-    private val isDefault: Boolean
-        get() = name == null
 
     override val allParents: List<ImplementationKindOwner>
         get() = listOf(element)
@@ -51,13 +48,11 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
      */
     val additionalImports = mutableListOf<Importable>()
 
+    var kDoc: String? = null
+
     init {
         @Suppress("UNCHECKED_CAST")
-        if (isDefault) {
-            element.defaultImplementation = this as Implementation
-        } else {
-            element.customImplementations += this as Implementation
-        }
+        element.implementations += this as Implementation
     }
 
     override val hasAcceptChildrenMethod: Boolean
@@ -71,15 +66,20 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
         get() = true
     var isPublic = false
 
+    var putImplementationOptInInConstructor = true
+
+    var constructorParameterOrderOverride: List<String>? = null
+
     override fun get(fieldName: String): Field? {
         return allFields.firstOrNull { it.name == fieldName }
     }
 
-    private fun withDefault(field: Field) = !field.isFinal && (field.defaultValueInImplementation != null || field.isLateinit)
+    private fun withDefault(field: Field) =
+        !field.isFinal && (field.defaultValueInImplementation != null || field.isLateinit)
 
-    val fieldsWithoutDefault by lazy { allFields.filterNot(::withDefault) }
+    val fieldsInConstructor by lazy { allFields.filterNot(::withDefault) }
 
-    val fieldsWithDefault by lazy { allFields.filter(::withDefault) }
+    val fieldsInBody by lazy { allFields.filter(::withDefault) }
 
     var requiresOptIn = false
 
@@ -98,4 +98,7 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
         }
 
     var builder: LeafBuilder<Field, Element, Implementation>? = null
+
+    open val doPrint: Boolean
+        get() = true
 }

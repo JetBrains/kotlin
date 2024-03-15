@@ -144,5 +144,5 @@ public annotation class ExperimentalJsReflectionCreateInstance
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @MustBeDocumented
-@SinceKotlin("1.9")
+@SinceKotlin("2.0")
 public annotation class ExperimentalJsCollectionsApi

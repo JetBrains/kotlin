@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.lookupTracker
-import org.jetbrains.kotlin.fir.recordTypeLookup
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolutionResult
 import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
@@ -87,12 +85,11 @@ class FirSpecificTypeResolverTransformer(
 
     @OptIn(PrivateForInline::class)
     override fun transformTypeRef(typeRef: FirTypeRef, data: ScopeClassDeclaration): FirResolvedTypeRef {
-        val scopeOwnerLookupNames = data.scopes.flatMap { it.scopeOwnerLookupNames }
-        session.lookupTracker?.recordTypeLookup(typeRef, scopeOwnerLookupNames, currentFile?.source)
         withBareTypes(allowed = false) {
             typeRef.transformChildren(this, data)
         }
         val (resolvedType, diagnostic) = resolveType(typeRef, data)
+
         return transformType(typeRef, resolvedType, diagnostic, data)
     }
 
@@ -102,8 +99,6 @@ class FirSpecificTypeResolverTransformer(
         data: ScopeClassDeclaration
     ): FirResolvedTypeRef {
         functionTypeRef.transformChildren(this, data)
-        val scopeOwnerLookupNames = data.scopes.flatMap { it.scopeOwnerLookupNames }
-        session.lookupTracker?.recordTypeLookup(functionTypeRef, scopeOwnerLookupNames, currentFile?.source)
         val resolvedTypeWithDiagnostic = resolveType(functionTypeRef, data)
         val resolvedType = resolvedTypeWithDiagnostic.type.takeIfAcceptable()
         val diagnostic = resolvedTypeWithDiagnostic.diagnostic
@@ -256,6 +251,7 @@ class FirSpecificTypeResolverTransformer(
             val typeRefToTry = buildUserTypeRef {
                 qualifier += qualifiersToTry
                 isMarkedNullable = false
+                source = typeRef.source
             }
             val (resolvedType, diagnostic) = resolveType(typeRefToTry, data)
             if (resolvedType is ConeErrorType || diagnostic != null) continue

@@ -130,5 +130,9 @@ gradlePlugin {
             id = "native-dependencies"
             implementationClass = "org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin"
         }
+        create("platformManager") {
+            id = "platform-manager"
+            implementationClass = "org.jetbrains.kotlin.PlatformManagerPlugin"
+        }
     }
 }

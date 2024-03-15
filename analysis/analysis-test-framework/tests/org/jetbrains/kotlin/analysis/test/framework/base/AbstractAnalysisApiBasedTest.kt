@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.getKtFiles
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.mainModules
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSourceFilePreprocessor
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -350,9 +351,8 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         testConfiguration.preAnalysisHandlers.forEach { preprocessor -> preprocessor.preprocessModuleStructure(moduleStructure) }
         testConfiguration.preAnalysisHandlers.forEach { preprocessor -> preprocessor.prepareSealedClassInheritors(moduleStructure) }
 
-        moduleStructure.modules.forEach { module ->
-            val files = testServices.ktModuleProvider.getModuleFiles(module)
-            configurator.prepareFilesInModule(files, module, testServices)
+        testServices.ktModuleProvider.mainModules.forEach { ktTestModule ->
+            configurator.prepareFilesInModule(ktTestModule, testServices)
         }
     }
 

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.hasDiagnosticKind
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirLambdaArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -32,7 +31,7 @@ object FirRecursiveProblemChecker : FirBasicExpressionChecker(MppCheckerKind.Com
 
         fun checkConeType(coneType: ConeKotlinType?) {
             if (coneType?.hasDiagnosticKind(DiagnosticKind.RecursionInImplicitTypes) == true) {
-                val source = ((expression as? FirLambdaArgumentExpression)?.expression ?: expression).source
+                val source = expression.source
                 reporter.reportOn(source, FirErrors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, context)
             } else if (coneType is ConeClassLikeType) {
                 for (typeArgument in coneType.typeArguments) {

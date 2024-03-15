@@ -51,7 +51,7 @@ class Fir2IrTypeConverter(
             StandardClassIds.Double to irBuiltIns.doubleClass,
             StandardClassIds.Char to irBuiltIns.charClass,
             StandardClassIds.Array to irBuiltIns.arrayClass,
-            StandardClassIds.Annotations.IntrinsicConstEvaluation to irBuiltIns.intrinsicConst
+            StandardClassIds.Annotations.IntrinsicConstEvaluation to irBuiltIns.intrinsicConstSymbol
         )
     }
 

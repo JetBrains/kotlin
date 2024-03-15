@@ -113,9 +113,10 @@ class WasmModuleCodegenContext(
             val superClass = irClass.owner.getSuperClass(backendContext.irBuiltIns)
             val superClassMetadata = superClass?.let { getClassMetadata(it.symbol) }
             ClassMetadata(
-                irClass.owner,
-                superClassMetadata,
-                backendContext.irBuiltIns
+                klass = irClass.owner,
+                superClass = superClassMetadata,
+                irBuiltIns = backendContext.irBuiltIns,
+                allowAccidentalOverride = backendContext.partialLinkageSupport.isEnabled
             )
         }
 

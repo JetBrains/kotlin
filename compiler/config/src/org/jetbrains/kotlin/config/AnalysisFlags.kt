@@ -9,6 +9,22 @@ object AnalysisFlags {
     @JvmStatic
     val skipMetadataVersionCheck by AnalysisFlag.Delegates.Boolean
 
+    /**
+     * Metadata compilation is run for every non-platform fragment (for common and intermediate fragments).
+     *
+     * The initial purpose of the metadata compilation is to produce metadata artifacts for non-platform source sets.
+     * These metadata artifacts are needed only for IDE.
+     *
+     * But metadata compilation is also used to report diagnostics when regular compilation can't do that for whatever reason (My opinion,
+     * that the reason is broken design of `expect`/`actual` KT-64130).
+     * E.g. `ABSTRACT_NOT_IMPLEMENTED` (KT-66205)
+     *
+     * This flag is true in two case:
+     * 1. Metadata compilation (`:compile*KotlinMetadata` Gradle task)
+     * 2. IDE analysis
+     *
+     * Known metadata compilation problems: KT-66382
+     */
     @JvmStatic
     val metadataCompilation by AnalysisFlag.Delegates.Boolean
 

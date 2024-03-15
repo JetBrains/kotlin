@@ -236,7 +236,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         require(newType is ConeKotlinType)
         return when (this) {
             is ConeKotlinType -> newType
-            is ConeStarProjection -> ConeStarProjection
             is ConeKotlinTypeProjectionOut -> ConeKotlinTypeProjectionOut(newType)
             is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(newType)
             is ConeKotlinTypeConflictingProjection -> ConeKotlinTypeConflictingProjection(newType)
@@ -563,6 +562,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         val annotationCall = customAnnotations.firstOrNull {
             it.resolvedType.fullyExpandedType(session).classId?.asSingleFqName() == fqName
         } ?: return null
+
+        if (annotationCall is FirAnnotationCall) {
+            annotationCall.containingDeclarationSymbol.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
+        }
+
         val argument = when (val argument = annotationCall.argumentMapping.mapping.values.firstOrNull() ?: return null) {
             is FirVarargArgumentsExpression -> argument.arguments.firstOrNull()
             is FirArrayLiteral -> argument.arguments.firstOrNull()

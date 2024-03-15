@@ -161,17 +161,9 @@ abstract class FirDataFlowAnalyzer(
      * is **stateful** and changes as the FIR tree is navigated by [FirDataFlowAnalyzer].
      *
      * @param expression The variable access expression.
-     * @param ignoreCallArguments Should be set to `true` when call argument flow should not be used for smart-casting. This is important
-     * because the receiver of implicit `invoke` calls is visited *after* the call arguments due to tower resolution.
      */
-    open fun getTypeUsingSmartcastInfo(
-        expression: FirExpression,
-        ignoreCallArguments: Boolean,
-    ): Pair<PropertyStability, MutableList<ConeKotlinType>>? {
-        // TODO(KT-64094): Consider moving logic to tower resolution instead.
-        val node = graphBuilder.lastNode
-            .let { if (ignoreCallArguments && it is FunctionCallArgumentsExitNode) it.enterNode else it }
-        val flow = node.flow
+    open fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<PropertyStability, MutableList<ConeKotlinType>>? {
+        val flow = currentSmartCastPosition ?: return null
         val variable = variableStorage.getRealVariableWithoutUnwrappingAlias(flow, expression) ?: return null
         val types = flow.getTypeStatement(variable)?.exactType?.ifEmpty { null } ?: return null
         return variable.stability to types.toMutableList()
@@ -221,7 +213,7 @@ abstract class FirDataFlowAnalyzer(
             val (functionExitNode, postponedLambdaExitNode, graph) = graphBuilder.exitAnonymousFunction(function)
             functionExitNode.mergeIncomingFlow()
             postponedLambdaExitNode?.mergeIncomingFlow()
-            resetReceivers() // roll back to state before function
+            resetSmartCastPosition() // roll back to state before function
             return FirControlFlowGraphReferenceImpl(graph)
         }
 
@@ -234,7 +226,7 @@ abstract class FirDataFlowAnalyzer(
             }
         }
         val info = DataFlowInfo(variableStorage)
-        resetReceivers()
+        resetSmartCastPosition()
         return FirControlFlowGraphReferenceImpl(graph, info)
     }
 
@@ -255,7 +247,7 @@ abstract class FirDataFlowAnalyzer(
         if (node != null) {
             node.mergeIncomingFlow()
         } else {
-            resetReceivers()
+            resetSmartCastPosition()
         }
         graph?.completePostponedNodes()
         return graph
@@ -276,7 +268,7 @@ abstract class FirDataFlowAnalyzer(
         if (node != null) {
             node.mergeIncomingFlow()
         } else {
-            resetReceivers() // to state before class initialization
+            resetSmartCastPosition() // to state before class initialization
         }
         graph?.completePostponedNodes()
         return graph
@@ -932,9 +924,7 @@ abstract class FirDataFlowAnalyzer(
             // Reset implicit receivers back to their state *before* call arguments as tower resolve will use receiver types to lookup
             // functions after call arguments have been processed.
             // TODO(KT-64094): Consider moving logic to tower resolution instead.
-            val flow = exitNode.enterNode.flow
-            updateAllReceivers(currentReceiverState, flow)
-            currentReceiverState = flow
+            resetSmartCastPositionTo(exitNode.enterNode.flow)
         }
     }
 
@@ -1034,7 +1024,7 @@ abstract class FirDataFlowAnalyzer(
             val substitutionFromArguments = typeParameters.zip(qualifiedAccess.typeArguments).map { (typeParameterRef, typeArgument) ->
                 typeParameterRef.symbol to typeArgument.toConeTypeProjection().type
             }.filter { it.second != null }.toMap() as Map<FirTypeParameterSymbol, ConeKotlinType>
-            ConeSubstitutorByMap(substitutionFromArguments, components.session)
+            ConeSubstitutorByMap.create(substitutionFromArguments, components.session)
         } else {
             ConeSubstitutor.Empty
         }
@@ -1044,7 +1034,7 @@ abstract class FirDataFlowAnalyzer(
             typeArgumentsSubstitutor
         } else {
             val map = originalFunction.symbol.typeParameterSymbols.zip(typeParameters.map { it.symbol.toConeType() }).toMap()
-            ConeSubstitutorByMap(map, components.session).chain(typeArgumentsSubstitutor)
+            ConeSubstitutorByMap.create(map, components.session).chain(typeArgumentsSubstitutor)
         }
 
         for (conditionalEffect in conditionalEffects) {
@@ -1338,12 +1328,10 @@ abstract class FirDataFlowAnalyzer(
 
     // ------------------------------------------------------ Utils ------------------------------------------------------
 
-    // Smart cast information is taken from `graphBuilder.lastNode`, but the problem with receivers specifically
-    // is that they also affect tower resolver's scope stack. To allow accessing members on smart casted receivers,
-    // we explicitly patch up the stack by calling `receiverUpdated` in a way that maintains consistency with
-    // `getTypeUsingSmartcastInfo`; i.e. at any point between calls to this class' methods the types in the implicit
-    // receiver stack also correspond to the data flow information attached to `graphBuilder.lastNode`.
-    private var currentReceiverState: Flow? = null
+    // The data flow state from which type statements are taken during expression resolution.
+    // Should normally be equal to `graphBuilder.lastNode`, but one exception is between exiting call
+    // arguments and exiting the call itself, where smart casting does not use information from the arguments.
+    private var currentSmartCastPosition: Flow? = null
 
     private fun CFGNode<*>.buildDefaultFlow(
         builder: (FlowPath, MutableFlow) -> Unit,
@@ -1375,12 +1363,13 @@ abstract class FirDataFlowAnalyzer(
         val result = logicSystem.joinFlow(previousFlows, statementFlows, isUnion)
 
         if (graphBuilder.lastNodeOrNull == this) {
-            // Here it is, the new `lastNode`. If the previous state is the only predecessor, then there is actually
-            // nothing to update; `addTypeStatement` has already ensured we have the correct information.
-            if (currentReceiverState == null || previousFlows.singleOrNull() != currentReceiverState) {
-                updateAllReceivers(currentReceiverState, result)
+            if (currentSmartCastPosition == null || currentSmartCastPosition != previousFlows.singleOrNull()) {
+                // Force-update the receiver stack as merging multiple flows might have changed receivers' type statements.
+                resetSmartCastPositionTo(result)
+            } else {
+                // Receiver stack should already be up-to-date, only need to swap the flow for explicit lookups.
+                currentSmartCastPosition = result
             }
-            currentReceiverState = result
         }
 
         builder(FlowPath.Default, result)
@@ -1431,8 +1420,8 @@ abstract class FirDataFlowAnalyzer(
         // Always build the default flow path for all nodes.
         val mutableDefaultFlow = buildDefaultFlow(builder)
         val defaultFlow = mutableDefaultFlow.freeze().also { this.flow = it }
-        if (currentReceiverState === mutableDefaultFlow) {
-            currentReceiverState = defaultFlow
+        if (currentSmartCastPosition === mutableDefaultFlow) {
+            currentSmartCastPosition = defaultFlow
         }
 
         // Propagate alternate flows from previous nodes.
@@ -1498,23 +1487,27 @@ abstract class FirDataFlowAnalyzer(
 
     // In rare cases (like after exiting functions) after adding more nodes `graphBuilder` will revert the current
     // state to a previously created node, so none of the nodes it returned are `lastNode` and `mergeIncomingFlow`
-    // will not ensure consistency. In that case an explicit call to `resetReceivers` is needed to roll back the stack
-    // to that previously created node's state.
-    private fun resetReceivers() {
-        val currentFlow = graphBuilder.lastNodeOrNull?.flow
-        updateAllReceivers(currentReceiverState, currentFlow)
-        currentReceiverState = currentFlow
+    // will not ensure the smart cast position is auto-advanced. In that case an explicit call to `resetSmartCastPosition`
+    // is needed to roll back to that previously created node's state.
+    private fun resetSmartCastPosition() {
+        resetSmartCastPositionTo(graphBuilder.lastNodeOrNull?.flow)
     }
 
-    private fun updateAllReceivers(from: Flow?, to: Flow?) {
+    // This method can be used to change the smart cast state to some node that is not the one at which the graph
+    // builder is currently stopped. This is temporary: adding any more nodes to the graph will restart tracking
+    // of the current position in the graph.
+    private fun resetSmartCastPositionTo(flow: Flow?) {
+        val previous = currentSmartCastPosition
+        if (previous == flow) return
         receiverStack.forEach {
             variableStorage.getLocalVariable(it.boundSymbol)?.let { variable ->
-                val newStatement = to?.getTypeStatement(variable)
-                if (newStatement != from?.getTypeStatement(variable)) {
+                val newStatement = flow?.getTypeStatement(variable)
+                if (newStatement != previous?.getTypeStatement(variable)) {
                     receiverUpdated(it.boundSymbol, newStatement)
                 }
             }
         }
+        currentSmartCastPosition = flow
     }
 
     private fun isSameValueIn(other: PersistentFlow, fir: FirElement, original: MutableFlow): Boolean {
@@ -1528,7 +1521,7 @@ abstract class FirDataFlowAnalyzer(
 
     private fun MutableFlow.addTypeStatement(info: TypeStatement) {
         val newStatement = logicSystem.addTypeStatement(this, info) ?: return
-        if (newStatement.variable.isThisReference && this === currentReceiverState) {
+        if (newStatement.variable.isThisReference && this === currentSmartCastPosition) {
             receiverUpdated(newStatement.variable.identifier.symbol, newStatement)
         }
     }

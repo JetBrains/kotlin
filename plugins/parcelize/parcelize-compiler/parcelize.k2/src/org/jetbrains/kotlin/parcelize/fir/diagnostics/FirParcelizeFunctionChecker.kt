@@ -17,11 +17,12 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isInt
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.name.ClassId
 
-object FirParcelizeFunctionChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
+class FirParcelizeFunctionChecker(private val parcelizeAnnotations: List<ClassId>) : FirSimpleFunctionChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         val containingClassSymbol = declaration.dispatchReceiverType?.toRegularClassSymbol(context.session)
-        if (!containingClassSymbol.isParcelize(context.session)) return
+        if (!containingClassSymbol.isParcelize(context.session, parcelizeAnnotations)) return
         if (declaration.origin != FirDeclarationOrigin.Source) return
         if (declaration.isWriteToParcel() && declaration.isOverride) {
             reporter.reportOn(declaration.source, KtErrorsParcelize.OVERRIDING_WRITE_TO_PARCEL_IS_NOT_ALLOWED, context)

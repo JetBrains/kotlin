@@ -158,9 +158,13 @@ class PathReadWriteTest : AbstractPathTest() {
 
         assertEquals(listOf("Hello", "World"), file.readLines())
 
-        file.useLines {
-            assertEquals(listOf("Hello", "World"), it.toList())
+        val lines: List<String>
+        val linesResult = file.useLines {
+            lines = it.toList()
+            lines
         }
+        assertEquals(listOf("Hello", "World"), lines)
+        assertEquals(lines, linesResult)
 
         val text = file.inputStream().reader().readText()
         assertTrue("Hello" in text)

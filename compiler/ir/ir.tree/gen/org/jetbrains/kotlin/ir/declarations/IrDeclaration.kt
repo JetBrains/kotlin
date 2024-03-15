@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 
 /**
- * A non-leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.declaration]
  */
 interface IrDeclaration : IrStatement, IrSymbolOwner, IrMutableAnnotationContainer {

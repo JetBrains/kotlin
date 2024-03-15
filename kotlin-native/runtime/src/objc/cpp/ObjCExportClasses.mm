@@ -9,11 +9,7 @@
 
 #if KONAN_OBJC_INTEROP
 
-#import <Foundation/NSObject.h>
-#import <Foundation/NSValue.h>
-#import <Foundation/NSString.h>
-#import <Foundation/NSException.h>
-#import <Foundation/NSDecimalNumber.h>
+#import <Foundation/Foundation.h>
 #import <objc/runtime.h>
 #import <objc/objc-exception.h>
 #import <dispatch/dispatch.h>

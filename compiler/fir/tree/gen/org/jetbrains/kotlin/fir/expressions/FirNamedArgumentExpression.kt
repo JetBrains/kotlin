@@ -10,12 +10,26 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 
 /**
+ * Represents a named argument `foo = bar` before and during body resolution phase.
+ *
+ * After body resolution, all [FirNamedArgumentExpression]s are removed from the FIR tree and the argument mapping must be
+ * retrieved from [FirResolvedArgumentList.mapping].
+ *
+ * For a named argument with spread operator `foo = *bar`, [isSpread] will be set to `true` but no additional
+ * [FirSpreadArgumentExpression] will be created as the [expression].
+ *
+ * **Special case vor varargs**: named arguments for `vararg` parameters are replaced with [FirSpreadArgumentExpression] with
+ * [FirSpreadArgumentExpression.isNamed] set to `true`.
+ *
+ * See [FirVarargArgumentsExpression] for the general structure of arguments of `vararg` parameters after resolution.
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.namedArgumentExpression]
  */
 abstract class FirNamedArgumentExpression : FirWrappedArgumentExpression() {

@@ -7,19 +7,12 @@ package org.jetbrains.kotlin.swiftexport.standalone.builders
 
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.sir.SirElement
-import org.jetbrains.kotlin.sir.SirFunction
-import org.jetbrains.kotlin.sir.SirVariable
-import org.jetbrains.kotlin.sir.SirAccessor
-import org.jetbrains.kotlin.sir.SirSetter
-import org.jetbrains.kotlin.sir.SirGetter
+import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.util.*
-import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.bridge.BridgeRequest
 import org.jetbrains.kotlin.sir.bridge.createFunctionBodyFromRequest
 import org.jetbrains.kotlin.sir.visitors.SirVisitorVoid
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.sir.passes.SirPass
 import org.jetbrains.sir.passes.builder.KotlinSource
 import org.jetbrains.sir.passes.run
@@ -46,15 +39,10 @@ private object BridgeGenerationPass : SirPass<SirElement, Nothing?, List<BridgeR
                 ?.callableIdIfNonLocal?.asSingleFqName()
                 ?.pathSegments()?.map { it.toString() }
                 ?: return
-            val fqNameForBridge = fqName.forBridge
 
-            val bridgeRequest = BridgeRequest(
-                function,
-                fqNameForBridge.joinToString("_"),
-                fqName
+            requests.addIfNotNull(
+                function.patchCallableBodyAndGenerateRequest(fqName)
             )
-            requests += bridgeRequest
-            function.body = createFunctionBodyFromRequest(bridgeRequest)
         }
 
         override fun visitVariable(variable: SirVariable) {
@@ -62,21 +50,44 @@ private object BridgeGenerationPass : SirPass<SirElement, Nothing?, List<BridgeR
                 ?.callableIdIfNonLocal?.asSingleFqName()
                 ?.pathSegments()?.map { it.toString() }
                 ?: return
-            val fqNameForBridge = fqName.forBridge
 
             variable.accessors.forEach {
-                val suffix = it.bridgeSuffix
-                val request = BridgeRequest(
-                    it,
-                    fqNameForBridge.joinToString("_") + "_$suffix",
-                    fqName
+                requests.addIfNotNull(
+                    it.patchCallableBodyAndGenerateRequest(fqName)
                 )
-                requests += request
-                it.body = createFunctionBodyFromRequest(request)
             }
         }
     }
 }
+
+private fun SirCallable.patchCallableBodyAndGenerateRequest(
+    fqName: List<String>,
+): BridgeRequest? = when (kind) {
+    SirCallableKind.FUNCTION,
+    SirCallableKind.STATIC_METHOD,
+    -> {
+        val suffix = bridgeSuffix
+        val request = BridgeRequest(
+            this,
+            fqName.forBridge.joinToString("_") + suffix,
+            fqName
+        )
+        body = createFunctionBodyFromRequest(request)
+        request
+    }
+    SirCallableKind.INSTANCE_METHOD,
+    SirCallableKind.CLASS_METHOD,
+    -> {
+        body = SirFunctionBody(listOf("fatalError()"))
+        null
+    }
+}
+
+private val SirCallable.bridgeSuffix: String
+    get() = when (this) {
+        is SirAccessor -> "_$bridgeSuffix"
+        else -> ""
+    }
 
 private val SirAccessor.bridgeSuffix: String
     get() = when (this) {

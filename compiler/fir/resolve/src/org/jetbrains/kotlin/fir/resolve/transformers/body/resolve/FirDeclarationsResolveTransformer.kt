@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -125,16 +126,6 @@ open class FirDeclarationsResolveTransformer(
         return danglingModifierList
     }
 
-    override fun transformFileAnnotationsContainer(
-        fileAnnotationsContainer: FirFileAnnotationsContainer,
-        data: ResolutionMode
-    ): FirFileAnnotationsContainer {
-        if (implicitTypeOnly) return fileAnnotationsContainer
-
-        fileAnnotationsContainer.transformAnnotations(transformer, data)
-        return fileAnnotationsContainer
-    }
-
     override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty = whileAnalysing(session, property) {
         require(property !is FirSyntheticProperty) { "Synthetic properties should not be processed by body transformers" }
 
@@ -154,7 +145,7 @@ open class FirDeclarationsResolveTransformer(
 
         val returnTypeRefBeforeResolve = property.returnTypeRef
         val cannotHaveDeepImplicitTypeRefs = property.backingField?.returnTypeRef !is FirImplicitTypeRef
-        if (implicitTypeOnly && returnTypeRefBeforeResolve !is FirImplicitTypeRef && cannotHaveDeepImplicitTypeRefs) {
+        if (!property.isConst && implicitTypeOnly && returnTypeRefBeforeResolve !is FirImplicitTypeRef && cannotHaveDeepImplicitTypeRefs) {
             return property
         }
 

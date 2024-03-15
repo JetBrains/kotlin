@@ -159,23 +159,7 @@ public sealed class KmAnnotationArgument {
      *
      * @property className FQ name of the referenced class.
      */
-    @Suppress("DEPRECATION_ERROR")
-    public data class KClassValue @Deprecated(
-        "Use single-argument constructor instead or ArrayKClassValue",
-        level = DeprecationLevel.ERROR
-    ) constructor(
-        val className: ClassName,
-        @Deprecated(
-            "Use ArrayKClassValue instead",
-            level = DeprecationLevel.ERROR
-        ) val arrayDimensionCount: Int
-    ) : KmAnnotationArgument() {
-        public constructor(className: ClassName) : this(className, 0)
-
-        init {
-            require(arrayDimensionCount == 0) { "KClassValue must not have array dimensions. For Array<X>::class, use ArrayKClassValue." }
-        }
-
+    public data class KClassValue(val className: ClassName) : KmAnnotationArgument() {
         override fun toString(): String = "KClassValue($className)"
     }
 

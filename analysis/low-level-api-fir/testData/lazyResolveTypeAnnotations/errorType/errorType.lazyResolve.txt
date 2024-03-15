@@ -150,6 +150,22 @@ FILE: [ResolvedTo(IMPORTS)] errorType.kt
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] F : @R|lowlevel/Anno|[Unresolved](<strcat>(String(bound ), prop#)) <ERROR TYPE REF: Symbol not found for ASF>> @R|lowlevel/Anno|[Unresolved](<strcat>(String(receiver ), prop#)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] param: @R|lowlevel/Anno|[Unresolved](<strcat>(String(param ), prop#)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Unresolved](<strcat>(String(return ), prop#)) <ERROR TYPE REF: Symbol not found for Type3> {
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] errorType.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=lowlevel/Anno.position] position: String): R|lowlevel/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] F : @R|lowlevel/Anno|[Unresolved](<strcat>(String(bound ), prop#)) <ERROR TYPE REF: Symbol not found for ASF>> @R|lowlevel/Anno|[Unresolved](<strcat>(String(receiver ), prop#)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(CONSTANT_EVALUATION)] param: @R|lowlevel/Anno|[Unresolved](<strcat>(String(param ), prop#)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Unresolved](<strcat>(String(return ), prop#)) <ERROR TYPE REF: Symbol not found for Type3> {
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] errorType.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

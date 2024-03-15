@@ -22,7 +22,7 @@ class SirVariableBuilder {
     lateinit var type: SirType
     lateinit var getter: SirGetter
     var setter: SirSetter? = null
-    var isStatic: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    var documentation: String? = null
 
     fun build(): SirVariable {
         return SirVariableImpl(
@@ -32,7 +32,7 @@ class SirVariableBuilder {
             type,
             getter,
             setter,
-            isStatic,
+            documentation,
         )
     }
 
@@ -58,6 +58,6 @@ inline fun buildVariableCopy(original: SirVariable, init: SirVariableBuilder.() 
     copyBuilder.type = original.type
     copyBuilder.getter = original.getter
     copyBuilder.setter = original.setter
-    copyBuilder.isStatic = original.isStatic
+    copyBuilder.documentation = original.documentation
     return copyBuilder.apply(init).build()
 }

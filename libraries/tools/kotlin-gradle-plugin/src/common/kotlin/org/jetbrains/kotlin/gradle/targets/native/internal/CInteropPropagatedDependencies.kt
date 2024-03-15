@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
@@ -75,6 +76,9 @@ internal fun Project.getPlatformCinteropDependenciesOrEmpty(
 
         /* Participating in multiple compilations? -> can't propagate -> should be commonized */
         val compilation = compilations.singleOrNull() as? KotlinNativeCompilation ?: return@files emptySet<File>()
+
+        /* Apple-specific cinterops can't be produced on non-MacOs machines, so just return an empty dependencies collection */
+        if (!compilation.target.konanTarget.enabledOnCurrentHost) return@files emptySet<File>()
 
         (compilation.associatedCompilations + compilation)
             .filterIsInstance<KotlinNativeCompilation>()

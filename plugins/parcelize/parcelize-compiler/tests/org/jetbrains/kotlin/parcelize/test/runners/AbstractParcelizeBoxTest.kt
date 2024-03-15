@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrJvmResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
+import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
@@ -120,6 +121,7 @@ abstract class AbstractParcelizeFirBoxTestBase(val parser: FirParser) : Abstract
                 +ENABLE_PLUGIN_PHASES
                 FirDiagnosticsDirectives.FIR_PARSER with parser
             }
+            useAfterAnalysisCheckers(::FirMetaInfoDiffSuppressor)
         }
     }
 }

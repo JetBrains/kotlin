@@ -380,6 +380,45 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
+    public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
+            LAZY_super<R|kotlin/Enum<X>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] enum entry A: R|X|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] fun values(): R|kotlin/Array<X>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|X| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): A.X
+
+    }
+    public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe(): R|kotlin/Unit| {
+        }
+
+        @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
     public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {

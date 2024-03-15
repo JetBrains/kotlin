@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocolImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.toNameAttributes
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDeclaredSuperInterfaceSymbols
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.isObjCBaseCallable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 context(KtAnalysisSession, KtObjCExportSession)
@@ -24,10 +25,10 @@ fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
     // TODO: Check error type!
     val name = getObjCClassOrProtocolName()
 
-    val members = getDeclaredMemberScope().getCallableSymbols()
+    val members = getCallableSymbolsForObjCMemberTranslation()
+        .filter { it.isObjCBaseCallable() }
         .sortedWith(StableCallableOrder)
-        .mapNotNull { it.translateToObjCExportStub() }
-        .toList()
+        .flatMap { it.translateToObjCExportStub() }
 
     val comment: ObjCComment? = annotationsList.translateToObjCComment()
 
@@ -44,6 +45,7 @@ fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
 context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtClassOrObjectSymbol.superProtocols(): List<String> {
     return getDeclaredSuperInterfaceSymbols()
+        .filter { it.isVisibleInObjC() }
         .map { superInterface -> superInterface.getObjCClassOrProtocolName().objCName }
         .toList()
 }

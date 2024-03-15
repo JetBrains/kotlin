@@ -9,8 +9,6 @@
 package org.jetbrains.kotlin.ir.declarations
 
 /**
- * A non-leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.possiblyExternalDeclaration]
  */
 interface IrPossiblyExternalDeclaration : IrDeclarationWithName {

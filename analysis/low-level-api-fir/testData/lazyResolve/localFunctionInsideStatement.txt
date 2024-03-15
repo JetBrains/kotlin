@@ -2,7 +2,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideStatement.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class Builder : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Builder] constructor(): R|Builder| {
@@ -82,4 +82,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideStatement.kts
         }
         )
             public [ResolvedTo(BODY_RESOLVE)] get(): R|Builder|
-

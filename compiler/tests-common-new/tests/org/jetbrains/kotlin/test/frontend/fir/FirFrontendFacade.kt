@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.container.topologicalSort
 import org.jetbrains.kotlin.fir.*
@@ -85,7 +86,7 @@ open class FirFrontendFacade(
         }
     }
 
-    fun registerExtraComponents(session: FirSession) {
+    private fun registerExtraComponents(session: FirSession) {
         testServices.firSessionComponentRegistrar?.registerAdditionalComponent(session)
     }
 
@@ -214,7 +215,7 @@ open class FirFrontendFacade(
                         projectFileSearchScope,
                         packagePartProvider,
                         languageVersionSettings,
-                        predefinedJavaComponents = predefinedJavaComponents,
+                        predefinedJavaComponents,
                         registerExtraComponents = ::registerExtraComponents,
                     )
                 }
@@ -367,7 +368,12 @@ open class FirFrontendFacade(
                     createIncrementalCompilationSymbolProviders = { null },
                     extensionRegistrars,
                     languageVersionSettings,
-                    predefinedJavaComponents = predefinedJavaComponents,
+                    jvmTarget = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+                        .get(JVMConfigurationKeys.JVM_TARGET, JvmTarget.DEFAULT),
+                    lookupTracker = null,
+                    enumWhenTracker = null,
+                    importTracker = null,
+                    predefinedJavaComponents,
                     needRegisterJavaElementFinder = true,
                     registerExtraComponents = ::registerExtraComponents,
                     init = sessionConfigurator,

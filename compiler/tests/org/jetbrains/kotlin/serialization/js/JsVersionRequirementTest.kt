@@ -73,7 +73,7 @@ class JsVersionRequirementTest : AbstractVersionRequirementTest() {
     override fun loadModule(directory: File): ModuleDescriptor {
         val environment = createEnvironment(extraDependencies = listOf(File(directory, "lib.meta.js")))
         return TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(
-            emptyList(), BindingTraceContext(), createModule(environment), environment.configuration, CompilerEnvironment, environment.project
+            emptyList(), BindingTraceContext(environment.project), createModule(environment), environment.configuration, CompilerEnvironment, environment.project
         ).moduleDescriptor
     }
 

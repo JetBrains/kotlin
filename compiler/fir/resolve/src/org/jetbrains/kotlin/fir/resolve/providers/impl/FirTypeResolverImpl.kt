@@ -118,6 +118,10 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
         }
 
+        session.lookupTracker?.recordUserTypeRefLookup(
+            typeRef, scopes.asSequence().flatMap { it.scopeOwnerLookupNames }.asIterable(), useSiteFile?.source
+        )
+
         for (scope in scopes) {
             if (applicability == CandidateApplicability.RESOLVED) break
             scope.processClassifiersByNameWithSubstitution(qualifier.first().name) { symbol, substitutorFromScope ->
@@ -205,7 +209,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
     @OptIn(SymbolInternals::class)
     private fun FirQualifierResolver.resolveEnumEntrySymbol(
         qualifier: List<FirQualifierPart>,
-        classId: ClassId
+        classId: ClassId,
     ): FirVariableSymbol<FirEnumEntry>? {
         // Assuming the current qualifier refers to an enum entry, we drop the last part so we get a reference to the enum class.
         val enumClassSymbol = resolveSymbolWithPrefix(qualifier.dropLast(1), classId) ?: return null
@@ -453,6 +457,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 }
             }
             else -> error(typeRef.render())
+        }.also {
+            session.lookupTracker?.recordTypeResolveAsLookup(it.type, typeRef.source, useSiteFile?.source)
         }
     }
 

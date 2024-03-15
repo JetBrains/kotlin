@@ -20,30 +20,47 @@ import org.jetbrains.kotlin.test.model.TestModule
  */
 enum class TestModuleKind(val suffix: String) {
     /**
-     * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleFactory
+     * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceTestModuleFactory
      */
     Source("Source"),
 
     /**
-     * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryModuleFactory
+     * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryTestModuleFactory
      */
     LibraryBinary("LibraryBinary"),
 
     /**
-     * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibrarySourceModuleFactory
+     * A binary library with PSI files decompiled from the library's class files. Instead of building and indexing stubs (if applicable),
+     * the test's declaration provider will instead index the decompiled PSI files directly.
+     *
+     * [LibraryBinaryDecompiled] should be specified when tests access the library's files as test files, usually as a main file in a main
+     * module. See [AbstractAnalysisApiBasedTest][org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest] for an
+     * overview of "main module" and "main file".
+     *
+     * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryDecompiledTestModuleFactory
+     */
+    LibraryBinaryDecompiled("LibraryBinaryDecompiled"),
+
+    /**
+     * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibrarySourceTestModuleFactory
      */
     LibrarySource("LibrarySource"),
 
     /**
-     * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtScriptModuleFactory
+     * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtScriptTestModuleFactory
      */
     ScriptSource("ScriptSource"),
 
     /**
-     * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtCodeFragmentModuleFactory
+     * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtCodeFragmentTestModuleFactory
      */
-    CodeFragment("CodeFragment")
+    CodeFragment("CodeFragment"),
+
+    /**
+     * This is currently only used in LL FIR tests and not supported by a test framework module factory.
+     */
+    NotUnderContentRoot("NotUnderContentRoot"),
 }
 
-val TestModule.moduleKind: TestModuleKind?
+val TestModule.explicitTestModuleKind: TestModuleKind?
     get() = directives.singleOrZeroValue(AnalysisApiTestDirectives.MODULE_KIND)

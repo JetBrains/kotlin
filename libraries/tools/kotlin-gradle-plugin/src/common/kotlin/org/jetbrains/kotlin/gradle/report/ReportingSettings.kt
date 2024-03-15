@@ -18,6 +18,7 @@ data class ReportingSettings(
     val httpReportSettings: HttpReportSettings? = null,
     val buildScanReportSettings: BuildScanSettings? = null,
     val singleOutputFile: File? = null,
+    val jsonOutputDir: File? = null,
     val experimentalTryNextConsoleOutput: Boolean = false,
     val includeCompilerArguments: Boolean = false,
 ) : Serializable {

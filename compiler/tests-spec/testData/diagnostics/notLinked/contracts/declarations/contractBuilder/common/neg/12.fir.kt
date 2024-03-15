@@ -29,7 +29,7 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1
 inline fun case_1(block: () -> Unit) {
-    contract(builder = { callsInPlaceEffectBuilder(block) })
+    contract(builder = { <!ERROR_IN_CONTRACT_DESCRIPTION!>callsInPlaceEffectBuilder(block)<!> })
     return block()
 }
 
@@ -41,6 +41,6 @@ inline fun case_2(block: () -> Unit) {
 
 // TESTCASE NUMBER: 3
 inline fun case_3(value_1: Int?, block: () -> Unit) {
-    contract({ returnsEffectBuilder(value_1); callsInPlaceEffectBuilder(block) })
+    contract({ <!ERROR_IN_CONTRACT_DESCRIPTION!>returnsEffectBuilder(value_1)<!>; <!ERROR_IN_CONTRACT_DESCRIPTION!>callsInPlaceEffectBuilder(block)<!> })
     return block()
 }

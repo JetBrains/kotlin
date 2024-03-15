@@ -19,6 +19,12 @@ object CppUsage {
     @JvmField
     val COMPILATION_DATABASE = "llvm-compilation-database"
 
+    /**
+     * Directory with public headers of a component.
+     */
+    @JvmField
+    val API = Usage.C_PLUS_PLUS_API
+
     @JvmField
     val USAGE_ATTRIBUTE: Attribute<Usage> = Usage.USAGE_ATTRIBUTE
 }

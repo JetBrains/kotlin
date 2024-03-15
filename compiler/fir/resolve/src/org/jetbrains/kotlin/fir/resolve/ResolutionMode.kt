@@ -53,7 +53,8 @@ sealed class ResolutionMode(
                     "mayBeCoercionToUnitApplied=${mayBeCoercionToUnitApplied}, " +
                     "expectedTypeMismatchIsReportedInChecker=${expectedTypeMismatchIsReportedInChecker}, " +
                     "fromCast=${fromCast}, " +
-                    "shouldBeStrictlyEnforced=${shouldBeStrictlyEnforced}, "
+                    "shouldBeStrictlyEnforced=${shouldBeStrictlyEnforced}, " +
+                    "forceFullCompletion=${forceFullCompletion}, "
         }
     }
 

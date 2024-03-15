@@ -146,7 +146,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localConstructorScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
 
@@ -164,7 +164,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localConstructorScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| {
             ^magic Null(null)!!
@@ -201,11 +201,52 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
         }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-localConstructorScript.kts>
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| {
+            ^magic Null(null)!!
+        }
+
+        public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] E, [ResolvedTo(CONSTANT_EVALUATION)] F> foo(): R|() -> <local>/C<F, E, F>| {
+                ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|<local>/C<F, E, F>| <inline=Unknown>  {
+                    local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(CONSTANT_EVALUATION)] Outer(E), [ResolvedTo(CONSTANT_EVALUATION)] Outer(F)> : R|kotlin/Any| {
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|<local>/C<G, E, F>| {
+                            super<R|kotlin/Any|>()
+                        }
+
+                        public final [ResolvedTo(RAW_FIR)] val e: R|E| = R|/magic|<R|E|>()
+                            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|E|
+
+                        public final [ResolvedTo(RAW_FIR)] val f: R|F| = R|/magic|<R|F|>()
+                            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|F|
+
+                        public final [ResolvedTo(RAW_FIR)] val g: R|G| = R|/magic|<R|G|>()
+                            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|G|
+
+                    }
+
+                    ^ R|SubstitutionOverride<<local>/C.C>|<R|F|>()
+                }
+
+            }
+
+        }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localConstructorScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| {
             ^magic Null(null)!!
@@ -246,7 +287,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localConstructorScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| {
             ^magic Null(null)!!
@@ -322,4 +363,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localConstructorScript.kts
             }
 
         }
-

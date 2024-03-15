@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
+import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -43,7 +44,7 @@ object FirGeneratedElementsValidator : FirDefaultVisitor<Unit, Any?>() {
     }
 
     override fun visitArgumentList(argumentList: FirArgumentList, data: Any?) {
-        require(argumentList is FirResolvedArgumentList)
+        require(argumentList is FirResolvedArgumentList || argumentList is FirEmptyArgumentList)
         argumentList.acceptChildren(this, null)
     }
 

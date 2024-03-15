@@ -96,12 +96,11 @@ class Fir2IrLazySimpleFunction(
     }
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by symbolsMappingForLazyClasses.lazyMappedFunctionListVar(lock) {
-        when (configuration.useIrFakeOverrideBuilder) {
-            true -> computeOverriddenSymbolsForIrFakeOverrideGenerator()
-            false -> computeOverriddenUsingFir2IrFakeOverrideGenerator()
+        when (configuration.useFirBasedFakeOverrideGenerator) {
+            true -> computeOverriddenUsingFir2IrFakeOverrideGenerator()
+            false -> computeOverriddenSymbolsForIrFakeOverrideGenerator()
         }
     }
-
 
     // TODO: drop this function after migration to IR f/o generator will be complete (KT-64202)
     private fun computeOverriddenUsingFir2IrFakeOverrideGenerator(): List<IrSimpleFunctionSymbol> {

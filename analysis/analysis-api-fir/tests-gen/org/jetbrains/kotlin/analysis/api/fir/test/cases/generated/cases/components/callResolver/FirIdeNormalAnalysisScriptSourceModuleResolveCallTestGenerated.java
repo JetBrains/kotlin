@@ -57,6 +57,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCallTestGenerated exte
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CallableReferences {
+    @Test
+    public void testAllFilesPresentInCallableReferences() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode")
   @TestDataPath("$PROJECT_ROOT")
   public class InvalidCode {

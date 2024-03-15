@@ -3,7 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION_ERROR") // flags will become internal eventually
 @file:JvmName("JvmAttributes")
 
 package kotlin.metadata.jvm
@@ -11,6 +10,7 @@ package kotlin.metadata.jvm
 import kotlin.metadata.*
 import kotlin.metadata.internal.*
 import org.jetbrains.kotlin.metadata.deserialization.Flags
+import kotlin.metadata.jvm.internal.jvm
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags as JF
 
 /**
@@ -55,3 +55,16 @@ public var KmClass.isCompiledInCompatibilityMode: Boolean by BooleanFlagDelegate
 
 private fun booleanFlag(f: Flags.BooleanFlagField): FlagImpl =
     FlagImpl(f.offset, f.bitWidth, 1)
+
+private var KmProperty.jvmFlags: Int
+    get() = jvm.jvmFlags
+    set(value) {
+        jvm.jvmFlags = value
+    }
+
+
+private var KmClass.jvmFlags: Int
+    get() = jvm.jvmFlags
+    set(value) {
+        jvm.jvmFlags = value
+    }

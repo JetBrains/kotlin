@@ -21,13 +21,11 @@ import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProv
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
@@ -38,6 +36,7 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 data class FirResult(val outputs: List<ModuleCompilerAnalyzedOutput>)
 
@@ -74,7 +73,7 @@ fun FirResult.convertToIrAndActualize(
     actualizerTypeContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
     fir2IrResultPostCompute: (ModuleCompilerAnalyzedOutput, Fir2IrResult) -> Unit = { _, _ -> },
 ): Fir2IrActualizedResult {
-    val commonMemberStorage = Fir2IrCommonMemberStorage(firMangler)
+    val commonMemberStorage = Fir2IrCommonMemberStorage(FirBasedSignatureComposer.create(firMangler, fir2IrConfiguration))
 
     require(outputs.isNotEmpty()) { "No modules found" }
 
@@ -110,12 +109,12 @@ fun FirResult.convertToIrAndActualize(
         ),
         actualizerTypeContextProvider(irModuleFragment.irBuiltins),
         fir2IrConfiguration.expectActualTracker,
-        fir2IrConfiguration.useIrFakeOverrideBuilder,
+        fir2IrConfiguration.useFirBasedFakeOverrideGenerator,
         irModuleFragment,
         allIrModules.dropLast(1),
     )
 
-    if (fir2IrConfiguration.useIrFakeOverrideBuilder) {
+    if (!fir2IrConfiguration.useFirBasedFakeOverrideGenerator) {
         // actualizeCallablesAndMergeModules call below in fact can also actualize classifiers.
         // So to avoid even more changes, when this mode is disabled, we don't run classifiers
         // actualization separately. This should go away, after useIrFakeOverrideBuilder becomes
@@ -125,14 +124,18 @@ fun FirResult.convertToIrAndActualize(
         components.fakeOverrideBuilder.buildForAll(allIrModules, temporaryResolver)
     }
     val expectActualMap = irActualizer?.actualizeCallablesAndMergeModules() ?: emptyMap()
-    if (components.configuration.useIrFakeOverrideBuilder) {
+    val fakeOverrideResolver = runIf(!components.configuration.useFirBasedFakeOverrideGenerator) {
         val fakeOverrideResolver = SpecialFakeOverrideSymbolsResolver(expectActualMap)
         irModuleFragment.acceptVoid(SpecialFakeOverrideSymbolsResolverVisitor(fakeOverrideResolver))
         @OptIn(Fir2IrSymbolsMappingForLazyClasses.SymbolRemapperInternals::class)
         components.symbolsMappingForLazyClasses.initializeSymbolMap(fakeOverrideResolver)
+        fakeOverrideResolver
     }
     Fir2IrConverter.evaluateConstants(irModuleFragment, components)
     val actualizationResult = irActualizer?.runChecksAndFinalize(expectActualMap)
+
+    fakeOverrideResolver?.cacheFakeOverridesOfAllClasses(irModuleFragment)
+
     pluginContext.applyIrGenerationExtensions(irModuleFragment, irGeneratorExtensions)
     return Fir2IrActualizedResult(irModuleFragment, components, pluginContext, actualizationResult)
 }
@@ -196,8 +199,18 @@ private fun IrFakeOverrideBuilder.buildForAll(
             element.acceptChildrenVoid(this)
         }
 
+        private fun isIgnoredClass(declaration: IrClass) : Boolean {
+            return when {
+                declaration.isExpect -> true
+                declaration.metadata is MetadataSource.CodeFragment -> true
+                else -> false
+            }
+        }
+
         override fun visitClass(declaration: IrClass) {
-            buildFakeOverrides(declaration)
+            if (!isIgnoredClass(declaration)) {
+                buildFakeOverrides(declaration)
+            }
             declaration.acceptChildrenVoid(this)
         }
     }

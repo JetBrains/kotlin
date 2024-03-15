@@ -27,6 +27,7 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     ENABLED_COMPILER_PLUGIN_LOMBOK(OR, SAFE),
     ENABLED_COMPILER_PLUGIN_PARSELIZE(OR, SAFE),
     ENABLED_COMPILER_PLUGIN_ATOMICFU(OR, SAFE),
+    ENABLED_COMPILER_PLUGIN_POWER_ASSERT(OR, SAFE),
 
     ENABLED_HMPP(OR, SAFE),
 
@@ -52,6 +53,7 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     BUILD_SCAN_BUILD_REPORT(OR, SAFE),
     HTTP_BUILD_REPORT(OR, SAFE),
     SINGLE_FILE_BUILD_REPORT(OR, SAFE),
+    JSON_BUILD_REPORT(OR, SAFE),
 
     //Dokka features
     ENABLED_DOKKA(OR, SAFE),
@@ -80,6 +82,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     COCOAPODS_PLUGIN_ENABLED(OR, SAFE);
 
     companion object {
-        const val VERSION = 3
+        const val VERSION = 5
     }
 }

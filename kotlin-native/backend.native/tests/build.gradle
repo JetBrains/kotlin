@@ -9,10 +9,6 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileNativeBinary
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
-
-import java.util.regex.Pattern
 
 buildscript {
     repositories {
@@ -24,26 +20,59 @@ buildscript {
     }
 }
 
+void loadLocalProperties() {
+    if (new File("$project.rootDir/local.properties").exists()) {
+        Properties props = new Properties()
+        props.load(new FileInputStream("$project.rootDir/local.properties"))
+        props.each { prop -> project.ext.set(prop.key, prop.value) }
+    }
+}
+
+void loadCommandLineProperties() {
+    if (project.hasProperty("konanc_flags")) {
+        throw new Error("Specify either -Ptest_flags or -Pbuild_flags.")
+    }
+
+    ext.globalBuildArgs = new ArrayList<String>()
+    if (project.hasProperty("build_flags")) {
+        for (String flag : ext.build_flags.toString().split("\\s")) {
+            flag = flag.trim()
+            if (!flag.isEmpty()) ext.globalBuildArgs.add(flag)
+        }
+    }
+
+    ext.globalTestArgs = new ArrayList<String>()
+    ext.globalTestArgs.add("-Xpartial-linkage=enable")
+    ext.globalTestArgs.add("-Xpartial-linkage-loglevel=error")
+    if (project.hasProperty("test_flags")) {
+        for (String flag : ext.test_flags.toString().split("\\s")) {
+            flag = flag.trim()
+            if (!flag.isEmpty()) ext.globalTestArgs.add(flag)
+        }
+    }
+
+    ext.testTarget = project.hasProperty("test_target") ? ext.test_target : PlatformInfo.hostName
+}
+
+loadCommandLineProperties()
+loadLocalProperties()
+
+apply plugin: 'platform-manager'
 apply plugin: 'konan'
 apply plugin: 'kotlin'
 apply plugin: 'kotlin.native.build-tools-conventions'
 apply plugin: 'native-dependencies'
 
 configurations {
-    cli_bc
     update_tests
 
     nopPluginApi
     api.extendsFrom nopPluginApi
 }
 
-dependencies {
-    // TODO: upgrade coroutines to common version
-    api RepoDependencies.commonDependency(project, "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
-}
 ext.testOutputRoot = rootProject.file("test.output").absolutePath
 
-ext.platformManager = project.project(":kotlin-native").platformManager
+ext.platformManager = project.extensions.platformManager
 ext.target = platformManager.targetManager(project.testTarget).target
 
 ext.buildNumber = rootProject.property("kotlinVersion")
@@ -175,10 +204,6 @@ tasks.named("run") {
     dependsOn(tasks.withType(KonanTest).matching { it.enabled })
     // Add regular gradle test tasks
     dependsOn(tasks.withType(Test).matching { it.enabled })
-    // TODO(KTI-1571): This task should be run by Compiler Unit Tests (Native) configuration
-    dependsOn(":nativeCompilerUnitTest")
-    // TODO(KTI-1571): This should be run by Compiler Tests (Native) configuration
-    dependsOn(":native:objcexport-header-generator:check")
 }
 
 // Was a subset of tests.
@@ -260,195 +285,6 @@ Task dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
 //    source = "codegen/object/constructor.kt"
 //}
 
-standaloneTest("runtime_basic_init") {
-    source = "runtime/basic/init.kt"
-    expectedExitStatus = 0
-}
-
-standaloneTest("cleaner_basic") {
-    enabled = !isNoopGC
-    source = "runtime/basic/cleaner_basic.kt"
-    flags = ['-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
-}
-
-standaloneTest("cleaner_workers") {
-    enabled = !isNoopGC
-    source = "runtime/basic/cleaner_workers.kt"
-    flags = ['-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
-}
-
-standaloneTest("cleaner_in_main_with_checker") {
-    enabled = !isNoopGC
-    source = "runtime/basic/cleaner_in_main_with_checker.kt"
-    useGoldenData = true
-}
-
-standaloneTest("cleaner_in_main_without_checker") {
-    source = "runtime/basic/cleaner_in_main_without_checker.kt"
-    useGoldenData = true
-}
-
-standaloneTest("cleaner_leak_without_checker") {
-    source = "runtime/basic/cleaner_leak_without_checker.kt"
-    useGoldenData = true
-}
-
-standaloneTest("cleaner_leak_with_checker") {
-    enabled = !isNoopGC
-    source = "runtime/basic/cleaner_leak_with_checker.kt"
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = { s -> (s =~ /Cleaner (0x)?[0-9a-fA-F]+ was disposed during program exit/).find() }
-}
-
-standaloneTest("cleaner_in_tls_main_without_checker") {
-    source = "runtime/basic/cleaner_in_tls_main_without_checker.kt"
-}
-
-standaloneTest("cleaner_in_tls_main_with_checker") {
-    enabled = !isNoopGC
-    source = "runtime/basic/cleaner_in_tls_main_with_checker.kt"
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = { s -> (s =~ /Cleaner (0x)?[0-9a-fA-F]+ was disposed during program exit/).find() }
-}
-
-standaloneTest("cleaner_in_tls_worker") {
-    enabled = !isNoopGC
-    source = "runtime/basic/cleaner_in_tls_worker.kt"
-    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
-}
-
-standaloneTest('logging') {
-    outputChecker = { out ->
-        out.toLowerCase().contains("[logging]") && // loging reports configured log levels on info level
-        out.toLowerCase().contains("logging = debug") &&
-        out.toLowerCase().contains("gc = info") &&
-        out.toLowerCase().contains("mm = warning") &&
-        out.toLowerCase().contains("tls = error") &&
-        out.toLowerCase().contains("[gc]") // gc reports initialization on info level
-    }
-    source = "runtime/basic/logging.kt"
-    flags = ['-Xruntime-logs=gc=info,mm=warning,tls=error,logging=debug']
-}
-
-standaloneTest('logging_invalid') {
-    outputChecker = { it.isEmpty() }
-    source = "runtime/basic/logging.kt"
-    flags = ['-Xruntime-logs=invalid=unknown,logging=debug']
-}
-
-standaloneTest('logging_override') {
-    outputChecker = { it.isEmpty() }
-    source = "runtime/basic/logging.kt"
-    flags = ['-Xruntime-logs=logging=info,logging=debug,logging=none']
-}
-
-standaloneTest("worker_bound_reference0") {
-    source = "runtime/concurrent/worker_bound_reference0.kt"
-    flags = ['-tr']
-
-    if (isNoopGC) {
-        def exclude = [
-                "*.testCollect",
-                "*.testCollectFrozen",
-                "*.testCollectInWorkerFrozen",
-                "*.collectCyclicGarbage",
-                "*.collectCyclicGarbageWithAtomicsFrozen",
-                "*.collectCrossThreadCyclicGarbageWithAtomicsFrozen"
-        ]
-        arguments += ["--ktest_filter=*-${exclude.join(":")}"]
-    }
-}
-
-// This tests changes main thread worker queue state, so better be executed alone.
-standaloneTest("worker5") {
-    useGoldenData = true
-    source = "runtime/workers/worker5.kt"
-}
-
-tasks.register("worker10", KonanLocalTest) {
-    enabled = !isNoopGC
-    useGoldenData = true
-    source = "runtime/workers/worker10.kt"
-}
-
-standaloneTest("worker_exceptions") {
-    flags = ["-tr"]
-    outputChecker = {
-        !it.contains("testExecuteAfterStartQuiet error") && it.contains("testExecuteStart error") && !it.contains("testExecuteStartQuiet error")
-    }
-    source = "runtime/workers/worker_exceptions.kt"
-}
-
-standaloneTest("worker_exceptions_terminate") {
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = {
-        it.contains("some error") && !it.contains("Will not happen")
-    }
-    source = "runtime/workers/worker_exceptions_terminate.kt"
-}
-
-standaloneTest("worker_exceptions_terminate_hook") {
-    outputChecker = {
-        it.contains("hook called") && !it.contains("some error") && it.contains("Will happen")
-    }
-    source = "runtime/workers/worker_exceptions_terminate_hook.kt"
-}
-
-standaloneTest("worker_exceptions_terminate_current") {
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = {
-        it.contains("some error") && !it.contains("Will not happen")
-    }
-    source = "runtime/workers/worker_exceptions_terminate_current.kt"
-}
-
-standaloneTest("worker_exceptions_terminate_hook_current") {
-    outputChecker = {
-        it.contains("hook called") && !it.contains("some error") && it.contains("Will happen")
-    }
-    source = "runtime/workers/worker_exceptions_terminate_hook_current.kt"
-}
-
-standaloneTest("worker_threadlocal_no_leak") {
-    source = "runtime/workers/worker_threadlocal_no_leak.kt"
-}
-
-standaloneTest("freeze_disabled") {
-    enabled = !isNoopGC
-    flags = ["-tr"]
-    source = "runtime/workers/freeze_disabled.kt"
-    testLogger = KonanTest.Logger.SILENT
-}
-
-standaloneTest("lazy2") {
-    useGoldenData = true
-    source = "runtime/workers/lazy2.kt"
-}
-
-standaloneTest("lazy3") {
-    enabled = !isNoopGC
-    source = "runtime/workers/lazy3.kt"
-}
-
-tasks.register("mutableData1", KonanLocalTest) {
-    source = "runtime/workers/mutableData1.kt"
-}
-
-tasks.register("enumIdentity", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/workers/enum_identity.kt"
-}
-
-standaloneTest("leakWorker") {
-    source = "runtime/workers/leak_worker.kt"
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = { s -> s.contains("Unfinished workers detected, 1 workers leaked!") }
-}
-
-standaloneTest("leakMemoryWithWorkerTermination") {
-    source = "runtime/workers/leak_memory_with_worker_termination.kt"
-}
-
 standaloneTest("initializers_testInfrastructure") {
     source = "codegen/initializers/testInfrastructure.kt"
     flags = ["-tr"]
@@ -502,7 +338,7 @@ standaloneTest("stack_trace_inline") {
 }
 
 standaloneTest("kt-49240-stack-trace-completeness") {
-    disabled = !PlatformInfo.supportsExceptions(project) || project.globalTestArgs.contains('-opt')
+    disabled = project.globalTestArgs.contains('-opt')
     source = "runtime/exceptions/kt-49240-stack-trace-completeness.kt"
 }
 
@@ -544,128 +380,6 @@ standaloneTest("throw_from_except_constr") {
     disabled = !PlatformInfo.supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
     source = "runtime/exceptions/throw_from_except_constr.kt"
-}
-
-tasks.register("initializers6", KonanLocalTest) {
-    source = "runtime/basic/initializers6.kt"
-}
-
-tasks.register("memory_var1", KonanLocalTest) {
-    source = "runtime/memory/var1.kt"
-}
-
-tasks.register("memory_var2", KonanLocalTest) {
-    source = "runtime/memory/var2.kt"
-}
-
-tasks.register("memory_var3", KonanLocalTest) {
-    source = "runtime/memory/var3.kt"
-}
-
-tasks.register("memory_var4", KonanLocalTest) {
-    source = "runtime/memory/var4.kt"
-}
-
-tasks.register("memory_throw_cleanup", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/memory/throw_cleanup.kt"
-}
-
-tasks.register("memory_escape0", KonanLocalTest) {
-    source = "runtime/memory/escape0.kt"
-}
-
-tasks.register("memory_escape1", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/memory/escape1.kt"
-}
-
-tasks.register("memory_cycles0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/memory/cycles0.kt"
-}
-
-tasks.register("memory_cycles1", KonanLocalTest) {
-    enabled = !isNoopGC
-    source = "runtime/memory/cycles1.kt"
-}
-
-tasks.register("memory_basic0", KonanLocalTest) {
-    source = "runtime/memory/basic0.kt"
-}
-
-tasks.register("memory_escape2", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/memory/escape2.kt"
-}
-
-tasks.register("memory_weak0", KonanLocalTest) {
-    enabled = !isNoopGC
-    useGoldenData = true
-    source = "runtime/memory/weak0.kt"
-}
-
-tasks.register("memory_weak1", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/memory/weak1.kt"
-}
-
-standaloneTest("memory_only_gc") {
-    source = "runtime/memory/only_gc.kt"
-}
-
-standaloneTest("leakMemory") {
-    source = "runtime/memory/leak_memory.kt"
-}
-
-standaloneTest("leakMemoryWithTestRunner") {
-    source = "runtime/memory/leak_memory_test_runner.kt"
-    flags = ['-tr']
-}
-
-standaloneTest("gcStats") {
-    source = "runtime/memory/gcStats.kt"
-    flags = ['-tr', "-Xbinary=gcSchedulerType=disabled"]
-    enabled = !isNoopGC && !isAggressiveGC
-}
-
-standaloneTest("stress_gc_allocations") {
-    // TODO: Support obtaining peak RSS on more platforms.
-    enabled =
-        (project.testTarget != "watchos_arm32") &&
-        (project.testTarget != "watchos_arm64") &&
-        (project.testTarget != "watchos_x86") &&
-        (project.testTarget != "watchos_x64") &&
-        (project.testTarget != "watchos_simulator_arm64") &&
-        !isNoopGC && // Requires some GC.
-        !isAggressiveGC && // No need to check with aggressive GC at all
-        !runtimeAssertionsPanic // New allocator with assertions makes this test very slow.
-    source = "runtime/memory/stress_gc_allocations.kt"
-    flags = [
-        '-opt-in=kotlin.native.internal.InternalForKotlinNative', // MemoryUsageInfo is internal
-        '-Xdisable-phases=EscapeAnalysis', // The test checks GC, we need to allocate everything on the heap.
-    ]
-}
-
-standaloneTest("array_out_of_memory") {
-    // This test allocs a large array that may make Linux
-    // kill any process inlcuding Gradle with OOM-killer
-    enabled = project.target.family != Family.LINUX
-    source = "runtime/memory/array_out_of_memory.kt"
-    flags = ['-tr']
-    switch(project.target.architecture) {
-        case Architecture.X64:
-        case Architecture.ARM64:
-            break;
-        case Architecture.X86:
-        case Architecture.ARM32:
-        case Architecture.MIPS32:
-        case Architecture.MIPSEL32:
-        case Architecture.WASM32:
-            expectedExitStatusChecker = { it != 0 }
-            outputChecker = { s -> s.contains("Out of memory trying to allocate") }
-            break;
-    }
 }
 
 tasks.register("vararg0", KonanLocalTest) {
@@ -912,21 +626,6 @@ standaloneTest("testing_stacktrace") {
     }
 }
 
-// Just check that the driver is able to produce runnable binaries.
-tasks.register("driver0", KonanDriverTest) {
-    disabled = isAggressiveGC // No need to test with different GC schedulers
-    useGoldenData = true
-    source = "runtime/basic/driver0.kt"
-}
-
-tasks.register("driver_opt", KonanDriverTest) {
-    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
-        || isAggressiveGC // No need to test with different GC schedulers
-    useGoldenData = true
-    source = "runtime/basic/driver_opt.kt"
-    flags = ["-opt"]
-}
-
 // A helper method to create interop artifacts
 void createInterop(String name, Closure conf) {
     konanArtifacts {
@@ -963,91 +662,9 @@ createInterop("kt43502") {
     }
 }
 
-createInterop("leakMemoryWithRunningThread") {
-    it.defFile 'interop/leakMemoryWithRunningThread/leakMemory.def'
-    it.headers "$projectDir/interop/leakMemoryWithRunningThread/leakMemory.h"
-    it.extraOpts "-Xcompile-source", "$projectDir/interop/leakMemoryWithRunningThread/leakMemory.cpp"
-}
-
-createInterop("workerSignals") {
-    it.defFile "interop/workerSignals/workerSignals.def"
-    it.headers "$projectDir/interop/workerSignals/workerSignals.h"
-    it.extraOpts "-Xcompile-source", "$projectDir/interop/workerSignals/workerSignals.cpp"
-}
-
-if (PlatformInfo.isAppleTarget(project)) {
-    createInterop("kt63423_dispose_on_main_stress") {
-        it.defFile 'interop/objc/kt63423_dispose_on_main_stress/objclib.def'
-        it.headers "$projectDir/interop/objc/kt63423_dispose_on_main_stress/objclib.h"
-        it.extraOpts "-Xcompile-source", "$projectDir/interop/objc/kt63423_dispose_on_main_stress/objclib.m"
-        it.extraOpts "-Xsource-compiler-option", "-DNS_FORMAT_ARGUMENT(A)="
-        it.extraOpts "-Xsource-compiler-option", "-fobjc-arc"
-        it.extraOpts "-Xsource-compiler-option", "-ObjC++"
-    }
-}
-
 createInterop("exceptions_throwThroughBridge") {
     it.defFile "interop/exceptions/throwThroughBridge.def"
     it.extraOpts "-Xcompile-source", "$projectDir/interop/exceptions/throwThroughBridgeInterop.cpp"
-}
-
-/**
- * Creates a task for the interop test. Configures runner and adds library and test build tasks.
- */
-Task interopTestBase(String name, boolean multiFile, boolean interop2ForMainOnly, Closure<KonanInteropTest> configureClosure) {
-    return KotlinNativeTestKt.createTest(project, name, KonanInteropTest) { KonanInteropTest task ->
-        task.configure(configureClosure)
-        if (task.enabled) {
-            konanArtifacts {
-                def targetName = target.name
-                def interopLib = task.interop
-                def interopLib2 = task.interop2
-                UtilsKt.dependsOnKonanBuildingTask(task, interopLib, target)
-                if (interopLib2 != null) UtilsKt.dependsOnKonanBuildingTask(task, interopLib2, target)
-
-                def lib = "lib$name"
-                def hasIntermediateLib = task.lib != null
-                if (hasIntermediateLib) {
-                    // build a library from KonanInteropTest::lib property
-                    library(lib, targets: [targetName]) {
-                        libraries {
-                            artifact interopLib
-                            if (interopLib2 != null && !interop2ForMainOnly) artifact interopLib2
-                        }
-                        srcFiles task.lib
-                        baseDir  "$testOutputLocal/$name"
-                        extraOpts task.flags
-                        extraOpts project.globalTestArgs.findAll { !it.contains("-Xpartial-linkage") }
-                    }
-                    UtilsKt.dependsOnKonanBuildingTask(task, lib, target)
-                }
-
-                program(name, targets: [targetName]) {
-                    libraries {
-                        artifact interopLib
-                        if (interopLib2 != null) artifact interopLib2
-                        if (hasIntermediateLib)
-                            klibFile file("$testOutputLocal/$name/$targetName/${lib}.klib")
-                    }
-                    srcFiles multiFile ? fileTree(task.source) { include '**/*.kt' } : task.getSources()
-                    baseDir "$testOutputLocal/$name"
-                    linkerOpts "-L${project.layout.buildDirectory.get().asFile}"
-                    extraOpts task.flags
-                    extraOpts project.globalTestArgs
-                }
-            }
-            task.dependsOn(nativeDependencies.llvmDependency)
-            task.dependsOn(nativeDependencies.targetDependency(target))
-        }
-    }
-}
-
-Task interopTest(String name, Closure<KonanInteropTest> configureClosure) {
-    return interopTestBase(name, false, false, configureClosure)
-}
-
-Task interopTestMultifile(String name, Closure<KonanInteropTest> configureClosure) {
-    return interopTestBase(name, true, false, configureClosure)
 }
 
 standaloneTest("interop_objc_allocException") {
@@ -1063,39 +680,6 @@ dynamicTest("interop_kt43502") {
     cSource = "$projectDir/interop/kt43502/main.c"
     useGoldenData = true
 }
-
-interopTest("interop_leakMemoryWithRunningThreadChecked") {
-    interop = 'leakMemoryWithRunningThread'
-    source = "interop/leakMemoryWithRunningThread/checked.kt"
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = { s -> s.contains("Cannot run checkers when there are 1 alive runtimes at the shutdown") }
-}
-
-interopTest("interop_workerSignals") {
-    disabled = project.testTarget == 'mingw_x64' // cross-thread signalling does not work on Windows
-    source = "interop/workerSignals/workerSignals.kt"
-    interop = "workerSignals"
-}
-
-/*
-TODO: This test isn't run automatically
-tasks.register("interop_echo_server", RunInteropKonanTest) {
-    disabled = PlatformInfo.isWasmTarget(project) || PlatformInfo.isWindowsTarget(project)
-    run = false
-    source = "interop/basics/echo_server.kt"
-    interop = 'sockets'
-}
-*/
-
-/*
-TODO: This test isn't run automatically
-standaloneTest("interop_opengl_teapot") {
-    enabled = PlatformInfo.isAppleTarget(project) && project.testTarget != 'ios_x64'  // No GLUT in iOS
-    dependsOnPlatformLibs(it as Task)
-    run = false
-    source = "interop/basics/opengl_teapot.kt"
-}
-*/
 
 if (PlatformInfo.isAppleTarget(project)) {
     standaloneTest("interop_objc_kt61441") {
@@ -1123,21 +707,6 @@ if (PlatformInfo.isAppleTarget(project)) {
         source = "interop/objc/kt55653/main.kt"
         useGoldenData = true
         UtilsKt.dependsOnPlatformLibs(it)
-    }
-
-
-    interopTest("interop_objc_kt63423_dispose_on_main_stress") {
-        // Test depends on macOS-specific AppKit
-        enabled = (project.testTarget == 'macos_x64' || project.testTarget == 'macos_arm64' || project.testTarget == null)
-            && !isNoopGC // requires some GC
-            && !isAggressiveGC // requires careful timing of GC
-            && !isWithStateChecker // TODO(KT-65261)
-        source = 'interop/objc/kt63423_dispose_on_main_stress/main.kt'
-        interop = "kt63423_dispose_on_main_stress"
-        flags = [
-            '-opt-in=kotlin.native.internal.InternalForKotlinNative', // MemoryUsageInfo is internal
-            '-Xbinary=gcSchedulerType=manual', // This test requires very careful timing when GC can happen
-        ]
     }
 }
 
@@ -1309,7 +878,7 @@ dynamicTest("interop_kotlin_exception_hook") {
 }
 
 standaloneTest("kt51302") {
-    enabled = project.target.name == project.hostName
+    enabled = project.target.name == PlatformInfo.hostName
     source = "serialization/KT-51302/main.kt"
     flags = ["-l", "$projectDir/serialization/KT-51302/kt51302_dependency"]
 }
@@ -1344,42 +913,6 @@ standaloneTest("split_compilation_pipeline") {
     }
     flags = ["-Xread-dependencies-from=${dir}/split_compilation_pipeline.deps", "-Xcompile-from-bitcode=${dir}/tmp/split/out.bc"]
     useGoldenData = true
-}
-
-tasks.register("override_konan_properties0", KonanDriverTest) {
-    disabled = isAggressiveGC // No need to test with different GC schedulers
-    def overrides = PlatformInfo.isWindows()
-            ? '-Xoverride-konan-properties="llvmInlineThreshold=76"'
-            : '-Xoverride-konan-properties=llvmInlineThreshold=76'
-    flags = [
-            "-opt",
-            "-Xverbose-phases=MandatoryBitcodeLLVMPostprocessingPhase",
-            overrides
-    ]
-    compilerMessages = true
-    source = "link/ir_providers/hello.kt"
-    def messages = "inline_threshold: 76\nhello\n"
-    outputChecker = { out ->
-        messages.split("\n")
-                .collect { line -> out.contains(line) }
-                .every { it == true }
-    }
-}
-
-tasks.register("llvm_variant_dev", KonanDriverTest) {
-    // We use clang from Xcode on macOS for apple targets,
-    // so it is hard to reliably detect LLVM variant for these targets.
-    disabled = PlatformInfo.isAppleTarget(project)
-        || isAggressiveGC // No need to test with different GC schedulers
-    flags = [
-            "-Xllvm-variant=dev",
-            "-Xverbose-phases=ObjectFiles"
-    ]
-    compilerMessages = true
-    source = "link/ir_providers/hello.kt"
-    // User LLVM variant has "essentials" suffix.
-    def message = "-essentials"
-    outputChecker = { out -> !out.contains(message) }
 }
 
 /**
@@ -1468,7 +1001,6 @@ pluginTest("runtime_basic_init", "nopPlugin") {
 }
 
 dependencies {
-    nopPluginApi kotlinCompilerModule
     nopPluginApi project(":native:kotlin-native-utils")
     nopPluginApi project(":core:descriptors")
     nopPluginApi project(":compiler:ir.tree")
@@ -1482,8 +1014,7 @@ dependencies {
     nopPluginApi project(":kotlin-util-klib-metadata")
     nopPluginApi project(":compiler:ir.serialization.common")
 
-    implementation kotlinCompilerModule
-    api project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
+    api project(':native:cli-native')
     api libs.junit4
 }
 

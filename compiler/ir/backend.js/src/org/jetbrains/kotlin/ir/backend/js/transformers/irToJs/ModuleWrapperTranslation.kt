@@ -96,7 +96,7 @@ object ModuleWrapperTranslation {
         val selector = JsAstUtils.newJsIf(amdTest, amdBody, JsAstUtils.newJsIf(commonJsTest, commonJsBody, plainBlock))
         adapterBody.statements += selector
 
-        return listOf(JsInvocation(adapter, JsThisRef(), function).makeStmt())
+        return listOf(JsInvocation(adapter, JsName("globalThis", false).makeRef(), function).makeStmt())
     }
 
     private fun wrapAmd(

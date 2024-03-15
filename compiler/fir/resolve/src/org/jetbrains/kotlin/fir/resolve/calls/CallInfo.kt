@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.expressions.FirArgumentList
-import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -47,8 +46,18 @@ data class CallInfo(
     val hasSyntheticOuterCall: Boolean = false,
     val origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
 ) : AbstractCallInfo() {
-    val arguments: List<FirExpression> get() = argumentList.arguments
-
+    /**
+     * If [argumentList] is a [FirResolvedArgumentList],
+     * returns the [FirArgumentList.arguments] of the [FirResolvedArgumentList.originalArgumentList].
+     * This means the result still contains [FirNamedArgumentExpression]s that are removed from the
+     * [FirResolvedArgumentList] during completion.
+     *
+     * This is important for Analysis API because it will trigger resolution on already resolved expressions,
+     * and we wouldn't otherwise have access to named arguments.
+     *
+     * @see FirCallResolver.collectAllCandidates
+     */
+    val arguments: List<FirExpression> get() = (argumentList as? FirResolvedArgumentList)?.originalArgumentList?.arguments ?: argumentList.arguments
     val argumentCount get() = arguments.size
 
     fun replaceWithVariableAccess(): CallInfo =

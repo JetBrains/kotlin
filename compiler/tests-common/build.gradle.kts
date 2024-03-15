@@ -32,7 +32,6 @@ dependencies {
     testApi(project(":compiler:fir:checkers:checkers.wasm"))
     testApi(project(":compiler:fir:java"))
     testApi(project(":compiler:fir:entrypoint"))
-    testApi(project(":compiler:ir.ir2cfg"))
     testApi(project(":compiler:frontend"))
     testApi(project(":compiler:frontend.java"))
     testApi(project(":compiler:util"))

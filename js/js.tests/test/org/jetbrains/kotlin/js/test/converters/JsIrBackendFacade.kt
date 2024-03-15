@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.DebugMode
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_ERRORS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
@@ -42,7 +43,7 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator.Companion.getJsArtifactSimpleName
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator.Companion.getJsModuleArtifactName
 import org.jetbrains.kotlin.test.services.configuration.getDependencies
 import org.jetbrains.kotlin.test.services.libraryProvider
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -65,7 +66,13 @@ class JsIrBackendFacade(
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
-        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR))
+        // Unless this is a test with the IGNORE_ERRORS directive.
+        configuration.setupPartialLinkageConfig(
+            PartialLinkageConfig(
+                if (IGNORE_ERRORS in module.directives) PartialLinkageMode.DISABLE else PartialLinkageMode.ENABLE,
+                PartialLinkageLogLevel.ERROR
+            )
+        )
 
         val isMainModule = JsEnvironmentConfigurator.isMainModule(module, testServices)
         if (!isMainModule) return null
@@ -127,7 +134,7 @@ class JsIrBackendFacade(
         val phaseConfig = if (debugMode >= DebugMode.SUPER_DEBUG) {
             val dumpOutputDir = File(
                 JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices),
-                JsEnvironmentConfigurator.getJsArtifactSimpleName(testServices, module.name) + "-irdump"
+                JsEnvironmentConfigurator.getKlibArtifactSimpleName(testServices, module.name) + "-irdump"
             )
             PhaseConfig(
                 jsPhases,
@@ -181,7 +188,7 @@ class JsIrBackendFacade(
             loweredIr.context,
             moduleToName = runIf(isEsModules) {
                 loweredIr.allModules.associateWith {
-                    "./${getJsArtifactSimpleName(testServices, it.safeName)}_v5".minifyIfNeed()
+                    "./${getJsModuleArtifactName(testServices, it.safeName)}".minifyIfNeed()
                 }
             } ?: emptyMap(),
             shouldReferMainFunction,

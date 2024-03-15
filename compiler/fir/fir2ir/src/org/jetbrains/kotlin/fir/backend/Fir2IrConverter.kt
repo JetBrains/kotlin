@@ -93,8 +93,8 @@ class Fir2IrConverter(
             processFileAndClassMembers(firFile)
         }
         //   4. Override processing which sets overridden symbols for everything inside non-local regular classes
-        @OptIn(FirBasedFakeOverrideGenerator::class) // checked for useIrFakeOverrideBuilder
-        if (!configuration.useIrFakeOverrideBuilder) {
+        @OptIn(FirBasedFakeOverrideGenerator::class)
+        if (configuration.useFirBasedFakeOverrideGenerator) {
             for (firFile in allFirFiles) {
                 bindFakeOverridesInFile(firFile)
             }
@@ -119,7 +119,7 @@ class Fir2IrConverter(
         }
 
         if (
-            !configuration.useIrFakeOverrideBuilder &&
+            configuration.useFirBasedFakeOverrideGenerator &&
             components.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
         ) {
             // See the comment to generateUnboundFakeOverrides function itself
@@ -287,8 +287,8 @@ class Fir2IrConverter(
             declarationStorage.leaveScope(irConstructor.symbol)
         }
 
-        if (!configuration.useIrFakeOverrideBuilder) {
-            @OptIn(FirBasedFakeOverrideGenerator::class) // checked for useIrFakeOverrideBuilder
+        if (configuration.useFirBasedFakeOverrideGenerator) {
+            @OptIn(FirBasedFakeOverrideGenerator::class)
             fakeOverrideGenerator.computeFakeOverrides(klass, irClass, allDeclarations)
         }
 
@@ -392,10 +392,9 @@ class Fir2IrConverter(
     }
 
     // `irClass` is a source class and definitely is not a lazy class
-    // checked for useIrFakeOverrideBuilder
     @OptIn(UnsafeDuringIrConstructionAPI::class, FirBasedFakeOverrideGenerator::class)
     fun bindFakeOverridesInClass(klass: IrClass) {
-        if (configuration.useIrFakeOverrideBuilder) return
+        if (!configuration.useFirBasedFakeOverrideGenerator) return
         require(klass !is Fir2IrLazyClass)
         fakeOverrideGenerator.bindOverriddenSymbols(klass.declarations)
         delegatedMemberGenerator.bindDelegatedMembersOverriddenSymbols(klass)
@@ -729,7 +728,7 @@ class Fir2IrConverter(
                 { irBuiltins ->
                     IrFakeOverrideBuilder(
                         typeContextProvider(irBuiltins),
-                        Fir2IrFakeOverrideStrategy(friendModulesMap(session), commonMemberStorage.symbolTable, irMangler),
+                        Fir2IrFakeOverrideStrategy(friendModulesMap(session)),
                         fir2IrExtensions.externalOverridabilityConditions
                     )
                 },

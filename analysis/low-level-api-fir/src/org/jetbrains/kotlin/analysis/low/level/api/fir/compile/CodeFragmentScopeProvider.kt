@@ -37,7 +37,10 @@ val FirSession.codeFragmentScopeProvider: CodeFragmentScopeProvider by FirSessio
 
 private object ForeignValueMarkerDataKey : FirDeclarationDataKey()
 
-var FirProperty.foreignValueMarker: Boolean? by FirDeclarationDataRegistry.data(ForeignValueMarkerDataKey)
+private var FirProperty.foreignValueMarker: Boolean? by FirDeclarationDataRegistry.data(ForeignValueMarkerDataKey)
+
+val FirPropertySymbol.isForeignValue: Boolean
+    get() = fir.foreignValueMarker == true
 
 class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionComponent {
     private val foreignValueProvider = ForeignValueProviderService.getInstance()

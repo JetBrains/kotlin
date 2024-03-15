@@ -9,8 +9,6 @@
 package org.jetbrains.kotlin.ir
 
 /**
- * A non-leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.statement]
  */
 interface IrStatement : IrElement

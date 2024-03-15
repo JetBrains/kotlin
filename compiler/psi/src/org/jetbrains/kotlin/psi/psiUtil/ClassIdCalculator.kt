@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi.psiUtil
 
+import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
@@ -17,7 +18,12 @@ internal object ClassIdCalculator {
 
         for (element in declaration.parentsWithSelf) {
             when (element) {
-                is KtEnumEntry -> {
+                is KtEnumEntry,
+                is KtCallElement,
+                is KtObjectLiteralExpression,
+                is KtCodeFragment,
+                is PsiErrorElement,
+                -> {
                     return null
                 }
                 is KtClassLikeDeclaration -> {
@@ -30,7 +36,7 @@ internal object ClassIdCalculator {
                 is KtScript -> {
                     // Skip script parent
                 }
-                is KtDeclaration, is KtObjectLiteralExpression -> {
+                is KtDeclaration -> {
                     // Local declarations don't have a 'ClassId'
                     return null
                 }

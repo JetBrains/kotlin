@@ -242,8 +242,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         v.visitSource(myClass.getContainingKtFile().getName(), null);
 
-        initDefaultSourceMappingIfNeeded();
-
         writeEnclosingMethod();
 
         AnnotationCodegen.forClass(v.getVisitor(), this, state).genAnnotations(descriptor, null, null);

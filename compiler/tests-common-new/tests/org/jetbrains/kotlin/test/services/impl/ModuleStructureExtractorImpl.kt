@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
@@ -355,18 +356,13 @@ class ModuleStructureExtractorImpl(
                 directives = moduleDirectives,
                 languageVersionSettings = currentModuleLanguageVersionSettingsBuilder.build()
             )
-            if (testModule.frontendKind != FrontendKinds.FIR ||
-                !testModule.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) ||
-                modules.isEmpty()
-            ) {
-                additionalSourceProviders.flatMapTo(filesOfCurrentModule) { additionalSourceProvider ->
-                    additionalSourceProvider.produceAdditionalFiles(
-                        globalDirectives ?: RegisteredDirectives.Empty,
-                        testModule
-                    ).also { additionalFiles ->
-                        require(additionalFiles.all { it.isAdditional }) {
-                            "Files produced by ${additionalSourceProvider::class.qualifiedName} should have flag `isAdditional = true`"
-                        }
+            additionalSourceProviders.flatMapTo(filesOfCurrentModule) { additionalSourceProvider ->
+                additionalSourceProvider.produceAdditionalFiles(
+                    globalDirectives ?: RegisteredDirectives.Empty,
+                    testModule
+                ).also { additionalFiles ->
+                    require(additionalFiles.all { it.isAdditional }) {
+                        "Files produced by ${additionalSourceProvider::class.qualifiedName} should have flag `isAdditional = true`"
                     }
                 }
             }
@@ -381,6 +377,7 @@ class ModuleStructureExtractorImpl(
                 nameSuffix == "COMMON" -> CommonPlatforms.defaultCommonPlatform
                 nameSuffix == "JVM" -> JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): determine JvmTarget precisely
                 nameSuffix == "JS" -> JsPlatforms.defaultJsPlatform
+                nameSuffix == "WASM" -> WasmPlatforms.Default
                 nameSuffix == "NATIVE" -> NativePlatforms.unspecifiedNativePlatform
                 nameSuffix.isEmpty() -> null // TODO(dsavvinov): this leads to 'null'-platform in ModuleDescriptor
                 else -> throw IllegalStateException("Can't determine platform by name $nameSuffix")

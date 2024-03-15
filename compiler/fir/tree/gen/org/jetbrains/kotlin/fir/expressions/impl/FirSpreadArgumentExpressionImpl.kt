@@ -6,7 +6,7 @@
 // This file was generated automatically. See compiler/fir/tree/tree-generator/Readme.md.
 // DO NOT MODIFY IT MANUALLY.
 
-@file:Suppress("DuplicatedCode", "unused")
+@file:Suppress("DuplicatedCode")
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
@@ -26,6 +26,8 @@ internal class FirSpreadArgumentExpressionImpl(
     override val source: KtSourceElement?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var expression: FirExpression,
+    override val isNamed: Boolean,
+    override val isFakeSpread: Boolean,
 ) : FirSpreadArgumentExpression() {
     @OptIn(UnresolvedExpressionTypeAccess::class)
     override val coneTypeOrNull: ConeKotlinType?

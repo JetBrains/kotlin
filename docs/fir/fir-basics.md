@@ -23,7 +23,9 @@ List of all FIR phases that exist in the compiler right now with a short descrip
 - **STATUS**: The compiler resolves modality, visibility, and modifiers for member declarations.
 - **EXPECT_ACTUAL_MATCHING**: The compiler matches and records an `expect` member declaration for `actual` member declarations.
 - **CONTRACTS**: The compiler resolves a contract definition in property accessors, functions, and constructors.
-- **IMPLICIT_TYPES_BODY_RESOLVE**: The compiler resolves types for callable declarations without an explicit return type.
+- **IMPLICIT_TYPES_BODY_RESOLVE**: The compiler resolves types for callable declarations without an explicit return type. 
+Also resolves initializers of const properties. 
+- **CONSTANT_EVALUATION**: The compiler evaluates values of const properties and defaults of annotations' constructors.
 - **ANNOTATION_ARGUMENTS**: The compiler resolves arguments of annotations in declaration headers.
 - **BODY_RESOLVE**: The compiler resolves bodies for declarations.
 - **CHECKERS**: At this point, all FIR tree is already resolved, and it's time to check it and report diagnostics for the user.

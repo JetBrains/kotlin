@@ -9,7 +9,6 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -167,6 +166,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
   @TestMetadata("intrinsicsBox.kt")
   public void testIntrinsicsBox() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsBox.kt");
+  }
+
+  @Test
+  @TestMetadata("intrinsicsConsistency.kt")
+  public void testIntrinsicsConsistency() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsConsistency.kt");
   }
 
   @Test

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
+import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.isForeignValue
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLe
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.platform.has
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.psi
@@ -135,22 +137,23 @@ internal class KtFirSymbolContainingDeclarationProvider(
                 return false
             }
 
-            is KtSymbolWithKind -> {
-                if (symbol.symbolKind == KtSymbolKind.TOP_LEVEL) {
-                    val containingFile = (symbol.firSymbol.fir as? FirElementWithResolveState)?.getContainingFile()
-                    if (containingFile == null || containingFile.declarations.firstOrNull() !is FirScript) {
-                        // Should be replaced with proper check after KT-61451 and KT-61887
-                        return false
-                    }
-                }
+            else -> {}
+        }
 
-                return true
-            }
-
-            else -> {
-                return true
+        if (symbol is KtSymbolWithKind && symbol.symbolKind == KtSymbolKind.TOP_LEVEL) {
+            val containingFile = (symbol.firSymbol.fir as? FirElementWithResolveState)?.getContainingFile()
+            if (containingFile == null || containingFile.declarations.firstOrNull() !is FirScript) {
+                // Should be replaced with proper check after KT-61451 and KT-61887
+                return false
             }
         }
+
+        val firSymbol = symbol.firSymbol
+        if (firSymbol is FirPropertySymbol && firSymbol.isForeignValue) {
+            return false
+        }
+
+        return true
     }
 
     fun getContainingDeclarationByPsi(symbol: KtSymbol): KtDeclarationSymbol? {

@@ -7,13 +7,13 @@ KtSuccessCallInfo:
       signature = KtFunctionLikeSignature:
         receiverType = null
         returnType = java.util.Comparator<kotlin.Int!>
-        symbol = kotlin/Comparator(function: kotlin.Function2<ft<T & Any, T?>, ft<T & Any, T?>, kotlin.Int>): java.util.Comparator<T>
+        symbol = kotlin/Comparator(function: kotlin.Function2<T!, T!, kotlin.Int>): java.util.Comparator<T>
         valueParameters = [
           KtVariableLikeSignature:
             name = function
             receiverType = null
             returnType = kotlin.Function2<kotlin.Int!, kotlin.Int!, kotlin.Int>
-            symbol = function: kotlin.Function2<ft<T & Any, T?>, ft<T & Any, T?>, kotlin.Int>
+            symbol = function: kotlin.Function2<T!, T!, kotlin.Int>
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = kotlin/Comparator
@@ -25,6 +25,6 @@ KtSuccessCallInfo:
         name = function
         receiverType = null
         returnType = kotlin.Function2<kotlin.Int!, kotlin.Int!, kotlin.Int>
-        symbol = function: kotlin.Function2<ft<T & Any, T?>, ft<T & Any, T?>, kotlin.Int>
+        symbol = function: kotlin.Function2<T!, T!, kotlin.Int>
         callableIdIfNonLocal = null)
     }

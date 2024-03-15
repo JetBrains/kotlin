@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
- * A leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.inlinedFunctionBlock]
  */
 abstract class IrInlinedFunctionBlock : IrBlock() {

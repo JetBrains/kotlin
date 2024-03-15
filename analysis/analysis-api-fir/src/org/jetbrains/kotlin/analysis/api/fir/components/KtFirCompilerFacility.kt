@@ -186,7 +186,7 @@ internal class KtFirCompilerFacility(
         ProgressManager.checkCanceled()
         targetFir2IrResult.pluginContext.applyIrGenerationExtensions(targetFir2IrResult.irModuleFragment, irGeneratorExtensions)
 
-        val bindingContext = NoScopeRecordCliBindingTrace().bindingContext
+        val bindingContext = NoScopeRecordCliBindingTrace(project).bindingContext
         val codegenFactory = createJvmIrCodegenFactory(targetConfiguration, file is KtCodeFragment, targetFir2IrResult.irModuleFragment)
         val generateClassFilter = SingleFileGenerateClassFilter(file, compilationPeerData.inlinedClasses)
 

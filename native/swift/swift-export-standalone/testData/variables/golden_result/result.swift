@@ -1,4 +1,5 @@
 import KotlinBridges
+import KotlinRuntime
 
 public enum namespace {
     public enum main {

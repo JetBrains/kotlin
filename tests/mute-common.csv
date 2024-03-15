@@ -79,12 +79,6 @@ org.jetbrains.uast.test.kotlin.SimpleKotlinRenderLogTest.testReceiverFun, Analys
 org.jetbrains.kotlin.checkers.FirKotlinHighlightingPassTestGenerated.Regression.testJet53,,, FLAKY
 org.jetbrains.kotlin.checkers.FirKotlinHighlightingPassTestGenerated.Checker.testResolveTypeInAnnotationArgumentRuntime,,, FLAKY
 org.jetbrains.kotlin.idea.caches.resolve.MultiModuleHighlightingTest.testLanguageVersionsViaFacets,,, FLAKY
-org.jetbrains.kotlin.jps.build.IncrementalK2JvmJpsTestGenerated.PureKotlin.testRemoveMemberTypeAlias, KT-55195,,
-org.jetbrains.kotlin.jps.build.IncrementalK2LightTreeJvmJpsTestGenerated.PureKotlin.testRemoveMemberTypeAlias, KT-55195,,
-org.jetbrains.kotlin.jps.build.IncrementalK2FirICLightTreeJvmJpsTestGenerated.PureKotlin.testRemoveMemberTypeAlias, KT-55195,,
-org.jetbrains.kotlin.jps.build.IncrementalK2JvmJpsTestGenerated.PureKotlin.testAddMemberTypeAlias, KT-55195,,
-org.jetbrains.kotlin.jps.build.IncrementalK2LightTreeJvmJpsTestGenerated.PureKotlin.testAddMemberTypeAlias, KT-55195,,
-org.jetbrains.kotlin.jps.build.IncrementalK2FirICLightTreeJvmJpsTestGenerated.PureKotlin.testAddMemberTypeAlias, KT-55195,,
 org.jetbrains.kotlin.jps.build.IncrementalK2JvmJpsTestGenerated.IncrementalJvmCompilerOnly.testChangeAnnotationInJavaClass, KT-55696,,
 org.jetbrains.kotlin.jps.build.IncrementalK2LightTreeJvmJpsTestGenerated.IncrementalJvmCompilerOnly.testChangeAnnotationInJavaClass, KT-55696,,
 org.jetbrains.kotlin.jps.build.IncrementalK2FirICLightTreeJvmJpsTestGenerated.IncrementalJvmCompilerOnly.testChangeAnnotationInJavaClass, KT-55696,,

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.JvmMultifileClassPartInfo
 import org.jetbrains.kotlin.fileClasses.JvmSimpleFileClassInfo
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
@@ -98,7 +99,7 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
             else
                 IrDeclarationOrigin.SYNTHETIC_FILE_CLASS
         return context.irFactory.createClass(
-            startOffset = 0,
+            startOffset = if (fileEntry.maxOffset == UNDEFINED_OFFSET) UNDEFINED_OFFSET else 0,
             endOffset = fileEntry.maxOffset,
             origin = fileClassOrigin,
             name = fileClassInfo.fileClassFqName.shortName(),

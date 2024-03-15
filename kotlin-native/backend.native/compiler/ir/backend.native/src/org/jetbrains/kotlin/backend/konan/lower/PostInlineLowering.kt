@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.renderCompilerError
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irCallWithSubstitutedType
+import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -91,10 +92,9 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                         // Basic Multilingual Plane, so we could just append data "as is".
                         builder.append(value.toInt().toChar())
                     }
-                    expression.putValueArgument(0, IrConstImpl(
-                            expression.startOffset, expression.endOffset,
-                            context.irBuiltIns.stringType,
-                            IrConstKind.String, builder.toString()))
+                    return data.irCall(context.ir.symbols.immutableBlobOfImpl).apply {
+                        putValueArgument(0, data.irString(builder.toString()))
+                    }
                 }
 
                 return expression

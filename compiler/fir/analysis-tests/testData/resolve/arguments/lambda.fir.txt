@@ -22,7 +22,7 @@ FILE: lambda.kt
             ^@foo Unit
         }
         )
-        R|/foo<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /foo>#|(f = foo@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        R|/foo<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /foo>#|(foo@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^@foo Unit
         }
         , <L> = foo@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
@@ -33,7 +33,7 @@ FILE: lambda.kt
             ^@bar Unit
         }
         )
-        R|/bar|(x = Int(1), <L> = bar@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/bar|(Int(1), <L> = bar@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^@bar Unit
         }
         )
@@ -41,7 +41,7 @@ FILE: lambda.kt
             ^@bar Unit
         }
         )
-        R|/bar|(x = Int(1), f = bar@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/bar|(Int(1), bar@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^@bar Unit
         }
         )
@@ -53,7 +53,7 @@ FILE: lambda.kt
             ^@bar Unit
         }
         )
-        R|/baz|(other = Boolean(false), f = baz@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/baz|(Boolean(false), baz@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^@baz Unit
         }
         )
@@ -69,7 +69,7 @@ FILE: lambda.kt
             ^@baz Unit
         }
         )
-        R|/baz<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /baz>#|(other = Boolean(false), <L> = baz@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        R|/baz<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /baz>#|(Boolean(false), <L> = baz@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^@baz Unit
         }
         )

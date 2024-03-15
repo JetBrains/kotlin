@@ -7,7 +7,7 @@ fun <T, R> bar(f: (T) -> R) = f
 
 fun test() {
     foo <!ARGUMENT_TYPE_MISMATCH!>{ <!UNRESOLVED_REFERENCE!>it<!> }<!>
-    foo <!ARGUMENT_TYPE_MISMATCH!>{ x -> x}<!>
+    foo <!ARGUMENT_TYPE_MISMATCH!>{ <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> x}<!>
     foo <!ARGUMENT_TYPE_MISMATCH!>{ x: Int -> x}<!>
 
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!> <!CANNOT_INFER_PARAMETER_TYPE!>{ it + 1 }<!>

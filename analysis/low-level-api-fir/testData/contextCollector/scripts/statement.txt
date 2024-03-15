@@ -51,7 +51,7 @@ Tower Data Context:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-statement.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class ScriptClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] constructor(): R|ScriptClass| {
@@ -75,5 +75,5 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int, [ResolvedTo(RAW_FIR)] action: ( (Int) -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(LAZY_EXPRESSION, <L> = LAZY_EXPRESSION)
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(LAZY_EXPRESSION, LAZY_EXPRESSION)
             public [ResolvedTo(RAW_FIR)] get(): <implicit>

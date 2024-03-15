@@ -305,7 +305,6 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         override val getKClassFromExpression = getInternalWithoutPackage("getKClassFromExpression")
         override val primitiveClassesObject = context.getIrClass(FqName("kotlin.reflect.js.internal.PrimitiveClasses"))
         override val kTypeClass: IrClassSymbol = context.getIrClass(FqName("kotlin.reflect.KType"))
-        override val getClassData: IrSimpleFunctionSymbol get() = jsClass
     }
 
     internal val reflectionSymbols: JsReflectionSymbols = JsReflectionSymbols()

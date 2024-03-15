@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiPsiTypeProviderTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -128,5 +127,17 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiPsiTypeProviderTestGe
   @TestMetadata("suspendFunctionValueParameterWithStdlib.kt")
   public void testSuspendFunctionValueParameterWithStdlib() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/suspendFunctionValueParameterWithStdlib.kt");
+  }
+
+  @Test
+  @TestMetadata("wildcardSuppression_false.kt")
+  public void testWildcardSuppression_false() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/wildcardSuppression_false.kt");
+  }
+
+  @Test
+  @TestMetadata("wildcardSuppression_true.kt")
+  public void testWildcardSuppression_true() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/wildcardSuppression_true.kt");
   }
 }

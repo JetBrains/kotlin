@@ -4,9 +4,15 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.Name
 
+/**
+ * Note: At the time of writing this function (and comment) we found it easiest
+ * to construct the functions manually. Potentially, there is a way to get those functions from
+ * the Analysis API by requesting the combined member scope and looking for [KtSymbolOrigin.SOURCE_MEMBER_GENERATED].
+ */
 context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtClassOrObjectSymbol.translateEnumMembers(): List<ObjCExportStub> {
     if (classKind != KtClassKind.ENUM_CLASS) return emptyList()

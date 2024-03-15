@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
+import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COPY
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fir.*
@@ -16,10 +17,7 @@ import org.jetbrains.kotlin.fir.backend.generators.isExternalParent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
@@ -27,6 +25,7 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
+import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -39,6 +38,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.threadLocal
@@ -77,7 +78,14 @@ class Fir2IrDeclarationStorage(
 
     private val scriptCache: ConcurrentHashMap<FirScript, IrScript> = ConcurrentHashMap()
 
+    class DataClassGeneratedFunctionsStorage {
+        var hashCodeSymbol: IrSimpleFunctionSymbol? = null
+        var toStringSymbol: IrSimpleFunctionSymbol? = null
+        var equalsSymbol: IrSimpleFunctionSymbol? = null
+    }
+
     private val functionCache: ConcurrentHashMap<FirFunction, IrSimpleFunctionSymbol> = commonMemberStorage.functionCache
+    private val dataClassGeneratedFunctionsCache: ConcurrentHashMap<FirClass, DataClassGeneratedFunctionsStorage> = commonMemberStorage.dataClassGeneratedFunctionsCache
 
     private val constructorCache: ConcurrentHashMap<FirConstructor, IrConstructorSymbol> = commonMemberStorage.constructorCache
 
@@ -108,6 +116,7 @@ class Fir2IrDeclarationStorage(
             }
         }
     }
+
     private val propertyCache = PropertyCacheStorage(commonMemberStorage.propertyCache, commonMemberStorage.syntheticPropertyCache)
     private val getterForPropertyCache: ConcurrentHashMap<IrSymbol, IrSimpleFunctionSymbol> =
         commonMemberStorage.getterForPropertyCache
@@ -295,9 +304,16 @@ class Fir2IrDeclarationStorage(
         name: Name,
         source: SourceElement,
     ) : IrClassImpl(
-        UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrClassSymbolImpl(), name,
-        ClassKind.CLASS, DescriptorVisibilities.PUBLIC, Modality.FINAL,
-        source = source
+        startOffset = UNDEFINED_OFFSET,
+        endOffset = UNDEFINED_OFFSET,
+        origin = origin,
+        symbol = IrClassSymbolImpl(),
+        name = name,
+        kind = ClassKind.CLASS,
+        visibility = DescriptorVisibilities.PUBLIC,
+        modality = Modality.FINAL,
+        source = source,
+        factory = IrFactoryImpl,
     )
 
     private class NonCachedSourceFacadeContainerSource(
@@ -338,6 +354,17 @@ class Fir2IrDeclarationStorage(
     ): IrSimpleFunctionSymbol? {
         if (function.visibility == Visibilities.Local) {
             return localStorage.getLocalFunctionSymbol(function)
+        }
+        runIf(function.origin.generatedAnyMethod) {
+            val containingClass = function.getContainingClass(session)!!
+            val cache = dataClassGeneratedFunctionsCache.computeIfAbsent(containingClass) { DataClassGeneratedFunctionsStorage() }
+            val cachedFunction = when (function.nameOrSpecialName) {
+                OperatorNameConventions.EQUALS -> cache.equalsSymbol
+                OperatorNameConventions.HASH_CODE -> cache.hashCodeSymbol
+                OperatorNameConventions.TO_STRING -> cache.toStringSymbol
+                else -> return@runIf // componentN functions are the same for all sessions
+            }
+            return cachedFunction?.let(symbolsMappingForLazyClasses::remapFunctionSymbol)
         }
         val cachedIrCallable = getCachedIrCallableSymbol(
             function,
@@ -387,7 +414,7 @@ class Fir2IrDeclarationStorage(
         parentIsExternal: Boolean
     ): IrSimpleFunctionSymbol {
         if (
-            !configuration.useIrFakeOverrideBuilder ||
+            configuration.useFirBasedFakeOverrideGenerator ||
             parentIsExternal ||
             function !is FirSimpleFunction ||
             !function.isFakeOverride(fakeOverrideOwnerLookupTag)
@@ -433,6 +460,14 @@ class Fir2IrDeclarationStorage(
                 irForFirSessionDependantDeclarationMap[key] = irFunctionSymbol
             }
 
+            function.origin.generatedAnyMethod -> {
+                val name = function.nameOrSpecialName
+                require(OperatorNameConventions.isComponentN(name) || name == DATA_CLASS_COPY) {
+                    "Only componentN functions should be cached this way, but got: $name"
+                }
+                functionCache[function] = irFunctionSymbol
+            }
+
             else -> {
                 functionCache[function] = irFunctionSymbol
             }
@@ -455,7 +490,15 @@ class Fir2IrDeclarationStorage(
     }
 
     internal fun cacheGeneratedFunction(firFunction: FirSimpleFunction, irFunction: IrSimpleFunction) {
-        functionCache[firFunction] = irFunction.symbol
+        val containingClass = firFunction.getContainingClass(session)!!
+        val cache = dataClassGeneratedFunctionsCache.computeIfAbsent(containingClass) { DataClassGeneratedFunctionsStorage() }
+        val irSymbol = irFunction.symbol
+        when (val name = firFunction.nameOrSpecialName) {
+            OperatorNameConventions.EQUALS -> cache.equalsSymbol = irSymbol
+            OperatorNameConventions.HASH_CODE -> cache.hashCodeSymbol = irSymbol
+            OperatorNameConventions.TO_STRING -> cache.toStringSymbol = irSymbol
+            else -> error("Only toString, hashCode and equals should be cached this way, but got $name")
+        }
     }
 
     // ------------------------------------ constructors ------------------------------------
@@ -470,7 +513,7 @@ class Fir2IrDeclarationStorage(
         predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
     ): IrConstructor {
-        val symbol = getIrConstructorSymbol(constructor.symbol, isLocal)
+        val symbol = getIrConstructorSymbol(constructor.symbol, potentiallyExternal = !isLocal)
         return callablesGenerator.createIrConstructor(
             constructor,
             irParent(),
@@ -484,13 +527,13 @@ class Fir2IrDeclarationStorage(
         constructorCache[constructor] = irConstructorSymbol
     }
 
-    fun getIrConstructorSymbol(firConstructorSymbol: FirConstructorSymbol, isLocal: Boolean = false): IrConstructorSymbol {
+    fun getIrConstructorSymbol(firConstructorSymbol: FirConstructorSymbol, potentiallyExternal: Boolean = true): IrConstructorSymbol {
         val constructor = firConstructorSymbol.fir
         getCachedIrConstructorSymbol(constructor)?.let { return it }
 
         // caching of created constructor is not called here, because `callablesGenerator` calls `cacheIrConstructor` by itself
         val symbol = IrConstructorSymbolImpl()
-        if (!isLocal) {
+        if (potentiallyExternal) {
             val irParent = findIrParent(constructor, fakeOverrideOwnerLookupTag = null)
             val isIntrinsicConstEvaluation =
                 constructor.returnTypeRef.coneType.classId == StandardClassIds.Annotations.IntrinsicConstEvaluation
@@ -584,7 +627,7 @@ class Fir2IrDeclarationStorage(
         parentIsExternal: Boolean
     ): PropertySymbols {
         if (
-            configuration.useIrFakeOverrideBuilder &&
+            !configuration.useFirBasedFakeOverrideGenerator &&
             !parentIsExternal &&
             property.isFakeOverride(fakeOverrideOwnerLookupTag)
         ) {
@@ -596,7 +639,7 @@ class Fir2IrDeclarationStorage(
         val getterSymbol = runIf(!isJavaOrigin) { createFunctionSymbol(signature = null) }
         val setterSymbol = runIf(!isJavaOrigin && property.isVar) { createFunctionSymbol(signature = null) }
 
-        val backingFieldSymbol = runIf(isJavaOrigin || property.delegate != null || property.hasBackingField) {
+        val backingFieldSymbol = runIf(property.delegate != null || extensions.hasBackingField(property, session)) {
             createFieldSymbol()
         }
 
@@ -1181,7 +1224,7 @@ class Fir2IrDeclarationStorage(
                     )
                     irForFirSessionDependantDeclarationMap[key] = cachedInSymbolTable
                 }
-                configuration.useIrFakeOverrideBuilder -> {
+                !configuration.useFirBasedFakeOverrideGenerator -> {
                     /*
                      * If IR fake override builder is used for building fake-overrides, they are generated bypassing Fir2IrDeclarationStorage,
                      *   and are written directly to SymbolTable. So in this case it is normal to save the result from symbol table into

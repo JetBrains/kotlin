@@ -1266,6 +1266,39 @@ open class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    @DisplayName("KT-65954 Metadata Compilation should not fail when test source set has higher version of a library")
+    fun kt65954MetadataCompilationShouldNotFail(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        // publish version 1.0
+        publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion, localRepoDir = tempDir)
+
+        // publish version 2.0
+        publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion, localRepoDir = tempDir) {
+            buildGradleKts.appendText("\nversion = \"2.0\"\n")
+        }
+
+        nativeProject(
+            "my-lib-foo".withPrefix,
+            gradleVersion,
+            localRepoDir = tempDir,
+        ).run {
+            // add a dependency from jvmTest on 2.0 version
+            // and assert that this dependency isn't leaking to the main source sets, including metadata compilation
+            buildGradleKts.appendText(
+                """
+
+                    kotlin.sourceSets.getByName("jvmTest").dependencies {
+                        implementation("com.example.thirdparty:third-party-lib:2.0")
+                    }
+                """.trimIndent()
+            )
+            build(":compileJvmAndJsMainKotlinMetadata") {
+                assertTasksExecuted(":compileJvmAndJsMainKotlinMetadata")
+            }
+        }
+    }
+
+
     private fun TestProject.testDependencyTransformations(
         subproject: String? = null,
         check: BuildResult.(reports: Iterable<DependencyTransformationReport>) -> Unit,

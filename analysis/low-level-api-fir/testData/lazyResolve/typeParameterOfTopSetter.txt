@@ -52,6 +52,13 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetter.kt
             ^ IntegerLiteral(42)
         }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetter.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] val <[ResolvedTo(CONSTANT_EVALUATION)] Type> R|Type|.x: R|kotlin/Int|
+        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int| {
+            ^ IntegerLiteral(42)
+        }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetter.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <[ResolvedTo(ANNOTATION_ARGUMENTS)] Type> R|Type|.x: R|kotlin/Int|

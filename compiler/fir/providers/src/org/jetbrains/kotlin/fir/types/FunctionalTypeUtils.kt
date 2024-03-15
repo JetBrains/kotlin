@@ -59,6 +59,11 @@ fun ConeKotlinType.isBasicFunctionType(session: FirSession): Boolean {
     return isFunctionTypeWithPredicate(session) { it == FunctionTypeKind.Function }
 }
 
+// Function, SuspendFunction, KSuspendFunction, [Custom]Function, K[Custom]Function
+fun ConeKotlinType.isNonKFunctionType(session: FirSession): Boolean {
+    return isFunctionTypeWithPredicate(session) { it != FunctionTypeKind.KFunction }
+}
+
 // SuspendFunction, KSuspendFunction
 fun ConeKotlinType.isSuspendOrKSuspendFunctionType(session: FirSession): Boolean {
     return isFunctionTypeWithPredicate(session) {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
@@ -16,7 +17,7 @@ class IrTypeSystemContextWithAdditionalAxioms(
 ) : IrTypeSystemContext by typeSystem {
     init {
         assert(firstParameters.size == secondParameters.size) {
-            "different length of type parameter lists: $firstParameters vs $secondParameters"
+            "different length of type parameter lists: ${firstParameters.map { it.render() }} vs ${secondParameters.map { it.render() }}"
         }
     }
 

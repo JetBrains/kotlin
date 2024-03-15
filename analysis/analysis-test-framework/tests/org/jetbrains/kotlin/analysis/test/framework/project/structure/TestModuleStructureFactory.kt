@@ -9,11 +9,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
+import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
@@ -40,56 +39,62 @@ import kotlin.io.path.nameWithoutExtension
 
 private typealias LibraryCache = MutableMap<Set<Path>, KtBinaryModule>
 
-private typealias ModulesByName = Map<String, KtModuleWithFiles>
+private typealias ModulesByName = Map<String, KtTestModule>
 
 object TestModuleStructureFactory {
     fun createProjectStructureByTestStructure(
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project
-    ): KtModuleProjectStructure {
+    ): KtTestModuleProjectStructure {
         val modules = createModules(moduleStructure, testServices, project)
 
-        val modulesByName = modules.associateByName()
+        val modulesByName = modules.associateBy { it.testModule.name }
 
         val libraryCache: LibraryCache = mutableMapOf()
 
-        for (testModule in moduleStructure.modules) {
-            val ktModule = modulesByName.getByTestModule(testModule).ktModule
-
-            ktModule.addToLibraryCacheIfNeeded(libraryCache)
-            ktModule.addDependencies(testModule, testServices, modulesByName, libraryCache)
+        for (ktTestModule in modules) {
+            ktTestModule.ktModule.addToLibraryCacheIfNeeded(libraryCache)
+            ktTestModule.addDependencies(testServices, modulesByName, libraryCache)
         }
 
-        return KtModuleProjectStructure(modules, libraryCache.values)
+        return KtTestModuleProjectStructure(modules, libraryCache.values)
     }
 
+    /**
+     * The test infrastructure ensures that the given [moduleStructure] contains properly ordered dependencies: a [TestModule] can only
+     * depend on test modules which precede it. Hence, this function does not need to order dependencies itself.
+     *
+     * @return A list of [KtTestModule]s in the same order as [TestModuleStructure.modules].
+     */
     private fun createModules(
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
-        project: Project
-    ): List<KtModuleWithFiles> {
+        project: Project,
+    ): List<KtTestModule> {
         val moduleCount = moduleStructure.modules.size
-        val existingModules = HashMap<String, KtModuleWithFiles>(moduleCount)
-        val result = ArrayList<KtModuleWithFiles>(moduleCount)
+        val existingModules = HashMap<String, KtTestModule>(moduleCount)
+        val result = ArrayList<KtTestModule>(moduleCount)
 
         for (testModule in moduleStructure.modules) {
             val contextModuleName = testModule.directives.singleOrZeroValue(AnalysisApiTestDirectives.CONTEXT_MODULE)
             val contextModule = contextModuleName?.let(existingModules::getValue)
 
-            val moduleWithFiles = testServices
-                .getKtModuleFactoryForTestModule(testModule)
-                .createModule(testModule, contextModule, testServices, project)
+            val dependencyBinaryRoots = testModule.regularDependencies.flatMap { dependency ->
+                val libraryModule = existingModules.getValue(dependency.moduleName).ktModule as? KtLibraryModule
+                libraryModule?.getBinaryRoots().orEmpty()
+            }
 
-            existingModules[testModule.name] = moduleWithFiles
-            result.add(moduleWithFiles)
+            val ktTestModule = testServices
+                .getKtModuleFactoryForTestModule(testModule)
+                .createModule(testModule, contextModule, dependencyBinaryRoots, testServices, project)
+
+            existingModules[testModule.name] = ktTestModule
+            result.add(ktTestModule)
         }
 
         return result
     }
-
-    private fun ModulesByName.getByTestModule(testModule: TestModule): KtModuleWithFiles =
-        this[testModule.name] ?: this.getValue(testModule.files.single().name)
 
     /**
      * A main module may be a binary library module, which may be a dependency of subsequent main modules. We need to add such a module to
@@ -103,12 +108,11 @@ object TestModuleStructureFactory {
         }
     }
 
-    private fun KtModule.addDependencies(
-        testModule: TestModule,
+    private fun KtTestModule.addDependencies(
         testServices: TestServices,
         modulesByName: ModulesByName,
         libraryCache: LibraryCache,
-    ) = when (this) {
+    ) = when (ktModule) {
         is KtNotUnderContentRootModule -> {
             // Not-under-content-root modules have no external dependencies on purpose
         }
@@ -116,8 +120,8 @@ object TestModuleStructureFactory {
             // Dangling file modules get dependencies from their context
         }
         is KtModuleWithModifiableDependencies -> {
-            addModuleDependencies(testModule, modulesByName, this)
-            addLibraryDependencies(testModule, testServices, project, this, libraryCache::getOrPut)
+            addModuleDependencies(testModule, modulesByName, ktModule)
+            addLibraryDependencies(testModule, testServices, ktModule, libraryCache::getOrPut)
         }
         else -> error("Unexpected module type: " + javaClass.name)
     }
@@ -140,10 +144,11 @@ object TestModuleStructureFactory {
     private fun addLibraryDependencies(
         testModule: TestModule,
         testServices: TestServices,
-        project: Project,
         ktModule: KtModuleWithModifiableDependencies,
         libraryCache: (paths: Set<Path>, factory: () -> KtBinaryModule) -> KtBinaryModule
     ) {
+        val project = ktModule.project
+
         val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(testModule)
 
         val classpathRoots = compilerConfiguration[CLIConfigurationKeys.CONTENT_ROOTS, emptyList()]

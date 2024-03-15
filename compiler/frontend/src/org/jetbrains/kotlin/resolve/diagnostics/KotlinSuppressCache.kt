@@ -18,32 +18,39 @@ package org.jetbrains.kotlin.resolve.diagnostics
 
 import com.google.common.collect.ImmutableSet
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.AbstractKotlinSuppressCache
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
-import org.jetbrains.kotlin.util.ExtensionProvider
 
 interface DiagnosticSuppressor {
     fun isSuppressed(diagnostic: Diagnostic): Boolean
     fun isSuppressed(diagnostic: Diagnostic, bindingContext: BindingContext?): Boolean = isSuppressed(diagnostic)
 
-    companion object {
-        val EP_NAME: ExtensionPointName<DiagnosticSuppressor> =
-            ExtensionPointName.create("org.jetbrains.kotlin.diagnosticSuppressor")
+    companion object : ProjectExtensionDescriptor<DiagnosticSuppressor>(
+        "org.jetbrains.kotlin.diagnosticSuppressor", DiagnosticSuppressor::class.java
+    ) {
+        @Deprecated(
+            message = "This field is deprecated for compatibility reasons. Use ProjectExtensionDescriptor API instead",
+            replaceWith = ReplaceWith("DiagnosticSuppressor.extensionPointName"),
+            level = DeprecationLevel.WARNING
+        )
+        val EP_NAME: ExtensionPointName<DiagnosticSuppressor> = extensionPointName
     }
 }
 
-abstract class KotlinSuppressCache : AbstractKotlinSuppressCache<PsiElement>() {
+abstract class KotlinSuppressCache(project: Project?) : AbstractKotlinSuppressCache<PsiElement>() {
 
-    private val diagnosticSuppressors = ExtensionProvider.create(DiagnosticSuppressor.EP_NAME)
+    private val diagnosticSuppressors: List<DiagnosticSuppressor> = project?.let { DiagnosticSuppressor.getInstances(it) } ?: emptyList()
 
     val filter: (Diagnostic) -> Boolean = { diagnostic: Diagnostic ->
         !isSuppressed(DiagnosticSuppressRequest(diagnostic))
@@ -92,7 +99,7 @@ abstract class KotlinSuppressCache : AbstractKotlinSuppressCache<PsiElement>() {
         }
 
         if (request is DiagnosticSuppressRequest) {
-            for (suppressor in diagnosticSuppressors.get()) {
+            for (suppressor in diagnosticSuppressors) {
                 if (isSuppressedByExtension(suppressor, request.diagnostic)) return true
             }
         }
@@ -115,7 +122,7 @@ abstract class KotlinSuppressCache : AbstractKotlinSuppressCache<PsiElement>() {
     }
 }
 
-class BindingContextSuppressCache(val context: BindingContext) : KotlinSuppressCache() {
+class BindingContextSuppressCache(val context: BindingContext) : KotlinSuppressCache(context.project) {
     override fun getSuppressionAnnotations(annotated: PsiElement): List<AnnotationDescriptor> {
         val descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, annotated)
 

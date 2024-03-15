@@ -23,9 +23,9 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
     protected abstract fun createImplementation(element: Element, name: String?): Implementation
 
     fun configureImplementations(model: Model<Element>) {
-        configure()
+        configure(model)
         generateDefaultImplementations(model.elements)
-        configureAllImplementations()
+        configureAllImplementations(model)
     }
 
     /**
@@ -33,7 +33,7 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
      *
      * Override this method and use [noImpl] or [impl] in it to configure implementations of tree nodes.
      */
-    protected abstract fun configure()
+    protected abstract fun configure(model: Model<Element>)
 
     /**
      * A customization point for batch-applying rules to existing implementations.
@@ -41,7 +41,7 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
      * Override this method and use [configureFieldInAllImplementations] to configure fields that are common to multiple implementation
      * classes.
      */
-    protected abstract fun configureAllImplementations()
+    protected abstract fun configureAllImplementations(model: Model<Element>)
 
     /**
      * Disables generating any implementation classes for [element].
@@ -60,11 +60,8 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
      * @return The configured implementation.
      */
     protected fun impl(element: Element, name: String? = null, config: ImplementationContext.() -> Unit = {}): Implementation {
-        val implementation = if (name == null) {
-            element.defaultImplementation
-        } else {
-            element.customImplementations.firstOrNull { it.name == name }
-        } ?: createImplementation(element, name)
+        val implementation = element.implementations.firstOrNull { it.name == name }
+            ?: createImplementation(element, name)
         val context = ImplementationContext(implementation)
         context.apply(config)
         elementsWithImpl += element
@@ -72,42 +69,43 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
     }
 
     private fun generateDefaultImplementations(elements: List<Element>) {
-        collectLeafsWithoutImplementation(elements).forEach {
-            impl(it)
-        }
-    }
-
-    private fun collectLeafsWithoutImplementation(elements: List<Element>): Set<Element> {
-        val leafs = elements.toMutableSet()
-        elements.forEach { element ->
-            leafs.removeAll(element.elementParents.map { it.element }.toSet())
-        }
-        leafs.removeAll(elementsWithImpl)
-        return leafs
+        elements
+            .filter { it.subElements.isEmpty() && it !in elementsWithImpl && !it.doesNotNeedImplementation }
+            .forEach {
+                impl(it)
+            }
     }
 
     /**
      * Allows to batch-apply [config] to certain fields in _all_ the implementations that satisfy the given
      * [implementationPredicate].
      *
-     * @param field The name of the field to configure across all `Impl` classes.
+     * @param fieldName The name of the field to configure across all `Impl` classes, or `null` if [config] should be applied to all fields.
      * @param implementationPredicate Only implementations satisfying this predicate will be used in this configuration.
      * @param fieldPredicate Only fields satisfying this predicate will be configured
      * @param config The configuration block. Accepts the field name as an argument.
      * See [ImplementationContext]'s documentation for description of its DSL methods.
      */
     protected fun configureFieldInAllImplementations(
-        field: String,
+        fieldName: String?,
         implementationPredicate: (Implementation) -> Boolean = { true },
         fieldPredicate: (ImplementationField) -> Boolean = { true },
         config: ImplementationContext.(field: String) -> Unit,
     ) {
         for (element in elementsWithImpl) {
-            for (implementation in element.allImplementations) {
+            for (implementation in element.implementations) {
                 if (!implementationPredicate(implementation)) continue
-                if (!implementation.allFields.any { it.name == field }) continue
-                if (!fieldPredicate(implementation.getField(field))) continue
-                ImplementationContext(implementation).config(field)
+                if (fieldName != null && !implementation.allFields.any { it.name == fieldName }) continue
+
+                val fields = if (fieldName != null) {
+                    listOf(implementation.getField(fieldName))
+                } else {
+                    implementation.allFields
+                }
+
+                for (field in fields.filter(fieldPredicate)) {
+                    ImplementationContext(implementation).config(field.name)
+                }
             }
         }
     }
@@ -142,6 +140,10 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
          */
         fun publicImplementation() {
             implementation.isPublic = true
+        }
+
+        fun kDoc(kDoc: String) {
+            implementation.kDoc = kDoc
         }
 
         private fun getField(name: String): ImplementationField {
@@ -244,16 +246,16 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
         /**
          * Specifies that the default value of each field of [fields] in this implementation class should be [emptyList].
          *
-         * Always forces generation of a getter-only computed property.
+         * @param withGetter If `true`, the field will be generated as a computed property instead of stored one.
          */
-        fun defaultEmptyList(vararg fields: String) {
+        fun defaultEmptyList(vararg fields: String, withGetter: Boolean = false) {
             for (field in fields) {
                 require(getField(field).origin is ListField) {
                     "$field is list field"
                 }
                 default(field) {
                     value = "emptyList()"
-                    withGetter = true
+                    this.withGetter = withGetter
                 }
             }
         }
@@ -378,19 +380,10 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
                     withGetter = true
                 }
 
-            /**
-             * Whether this field semantically represents a reference to a child node of the tree.
-             *
-             * This has the effect of including or excluding this field from visiting it by visitors in the generated
-             * `acceptChildren` and `transformChildren` methods (child fields are always visited in those methods)
-             */
-            var isChild: Boolean = true
-
             fun applyConfiguration() {
                 field.withGetter = withGetter
                 field.customSetter = customSetter
                 isMutable?.let { field.isMutable = it }
-                field.isChild = isChild
 
                 when {
                     value != null -> field.defaultValueInImplementation = value

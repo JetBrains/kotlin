@@ -23,6 +23,7 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
         val lhs = expression.explicitReceiver as? FirResolvedQualifier ?: return
         val correspondingDeclaration = lhs.symbol ?: return
 
+        // TODO(KT-66344) Support inner classes
         var typeArgumentsWithSourceInfo = lhs.typeArguments.toTypeArgumentsWithSourceInfo()
         var typeParameterSymbols = correspondingDeclaration.typeParameterSymbols.filter { it.containingDeclarationSymbol is FirClassLikeSymbol }
         if (typeParameterSymbols.size != typeArgumentsWithSourceInfo.size) {

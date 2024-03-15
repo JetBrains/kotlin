@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
+import org.jetbrains.kotlin.konan.target.PlatformManager
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.regex.Pattern
@@ -93,6 +94,7 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
     override fun configure(config: Closure<*>): Task {
         super.configure(config)
 
+        notCompatibleWithConfigurationCache("This task uses Task.project at execution time")
         // Set Gradle properties for the better navigation
         group = LifecycleBasePlugin.VERIFICATION_GROUP
         description = "Kotlin/Native test infrastructure task"
@@ -372,6 +374,7 @@ open class KonanStandaloneTest : KonanLocalTest() {
 open class KonanDriverTest : KonanStandaloneTest() {
     override fun configure(config: Closure<*>): Task {
         super.configure(config)
+        notCompatibleWithConfigurationCache("This task uses Task.project at execution time")
         doFirst { konan() }
         doBeforeBuild?.let { doFirst(it) }
         return this
@@ -411,22 +414,6 @@ open class KonanDriverTest : KonanStandaloneTest() {
             }
         }
     }
-}
-
-open class KonanInteropTest : KonanStandaloneTest() {
-    /**
-     * Name of the interop library
-     */
-    @Input
-    lateinit var interop: String
-
-    @Input
-    @Optional
-    var interop2: String? = null
-
-    @Input
-    @Optional
-    var lib: String? = null
 }
 
 /**
@@ -481,7 +468,8 @@ open class KonanDynamicTest : KonanStandaloneTest() {
 
     private fun clang() {
         val log = ByteArrayOutputStream()
-        val plugin = project.extensions.getByType<ExecClang>()
+        val platformManager = project.extensions.getByType<PlatformManager>()
+        val plugin = ExecClang.create(project.objects, platformManager)
         val artifactsDir = "$outputDirectory/${project.testTarget}"
 
         fun flagsContain(opt: String) = project.globalTestArgs.contains(opt) || flags.contains(opt)

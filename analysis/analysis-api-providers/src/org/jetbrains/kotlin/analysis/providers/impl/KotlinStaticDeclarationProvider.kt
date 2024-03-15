@@ -11,7 +11,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
-import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
@@ -40,6 +39,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.util.concurrent.ConcurrentHashMap
 
 public class KotlinStaticDeclarationProvider internal constructor(
@@ -138,11 +138,22 @@ public class KotlinStaticDeclarationProvider internal constructor(
     }
 }
 
+/**
+ * [binaryRoots] and [sharedBinaryRoots] are used to build stubs for symbols from binary libraries. They only need to be specified if
+ * [shouldBuildStubsForBinaryLibraries] is true. In Standalone mode, binary roots don't need to be specified because library symbols are
+ * provided via class-based deserialization, not stub-based deserialization.
+ *
+ * @param binaryRoots Binary roots of the binary libraries that are specific to [project].
+ * @param sharedBinaryRoots Binary roots that are shared between multiple different projects. This allows Kotlin tests to cache stubs for
+ * shared libraries like the Kotlin stdlib.
+ */
 public class KotlinStaticDeclarationProviderFactory(
     private val project: Project,
-    files: Collection<KtFile>,
-    additionalRoots: List<VirtualFile> = emptyList(),
+    testKtFiles: Collection<KtFile>,
+    binaryRoots: List<VirtualFile> = emptyList(),
+    sharedBinaryRoots: List<VirtualFile> = emptyList(),
     skipBuiltins: Boolean = false,
+    shouldBuildStubsForBinaryLibraries: Boolean = false,
 ) : KotlinDeclarationProviderFactory() {
 
     private val index = KotlinStaticDeclarationIndex()
@@ -260,46 +271,6 @@ public class KotlinStaticDeclarationProviderFactory(
     init {
         val recorder = KtDeclarationRecorder()
 
-        fun indexStub(stub: StubElement<*>) {
-            when (stub) {
-                is KotlinClassStubImpl -> {
-                    addToClassMap(stub.psi)
-                    // member functions and properties
-                    stub.childrenStubs.forEach(::indexStub)
-                }
-                is KotlinObjectStubImpl -> {
-                    addToClassMap(stub.psi)
-                    // member functions and properties
-                    stub.childrenStubs.forEach(::indexStub)
-                }
-                is KotlinTypeAliasStubImpl -> addToTypeAliasMap(stub.psi)
-                is KotlinFunctionStubImpl -> addToFunctionMap(stub.psi)
-                is KotlinPropertyStubImpl -> addToPropertyMap(stub.psi)
-                is KotlinPlaceHolderStubImpl -> {
-                    if (stub.stubType == KtStubElementTypes.CLASS_BODY) {
-                        stub.getChildrenStubs().filterIsInstance<KotlinClassOrObjectStub<*>>().forEach(::indexStub)
-                    }
-                }
-            }
-        }
-
-        fun processStub(ktFileStub: KotlinFileStubImpl) {
-            val ktFile: KtFile = ktFileStub.psi
-            addToFacadeFileMap(ktFile)
-
-            val partNames = ktFileStub.facadePartSimpleNames
-            if (partNames != null) {
-                val packageFqName = ktFileStub.getPackageFqName()
-                for (partName in partNames) {
-                    val multiFileClassPartFqName: FqName = packageFqName.child(Name.identifier(partName))
-                    index.multiFileClassPartMap.computeIfAbsent(multiFileClassPartFqName) { mutableSetOf() }.add(ktFile)
-                }
-            }
-
-            // top-level functions and properties, built-in classes
-            ktFileStub.childrenStubs.forEach(::indexStub)
-        }
-
         // Indexing built-ins
         val builtins = mutableSetOf<String>()
         if (!skipBuiltins) {
@@ -309,37 +280,85 @@ public class KotlinStaticDeclarationProviderFactory(
             }
         }
 
-        val binaryClassCache = ClsKotlinBinaryClassCache.getInstance()
-        for (root in additionalRoots) {
-            KotlinFakeClsStubsCache.processAdditionalRoot(root) { additionalRoot ->
-                val stubs = mutableMapOf<VirtualFile, KotlinFileStubImpl>()
-                VfsUtilCore.visitChildrenRecursively(additionalRoot, object : VirtualFileVisitor<Void>() {
-                    override fun visitFile(file: VirtualFile): Boolean {
-                        if (!file.isDirectory) {
-                            val stub = buildStubByVirtualFile(file, binaryClassCache) ?: return true
-                            stubs.put(file, stub)
-                        }
-                        return true
-                    }
-                })
-                stubs
-            }?.forEach { entry ->
-                val stub = entry.value
-                val fakeFile = object : KtFile(KtClassFileViewProvider(psiManager, entry.key), isCompiled = true) {
-                    override fun getStub() = stub
-                    override fun isPhysical() = false
+        // We only need to index binary roots if we deserialize compiled symbols from stubs. When deserializing from class files, we don't
+        // need these symbols in the declaration provider.
+        if (shouldBuildStubsForBinaryLibraries) {
+            val binaryClassCache = ClsKotlinBinaryClassCache.getInstance()
+
+            for (root in sharedBinaryRoots) {
+                KotlinFakeClsStubsCache.processAdditionalRoot(root) { additionalRoot ->
+                    collectStubsFromBinaryRoot(additionalRoot, binaryClassCache)
+                }?.let(::processCollectedStubs)
+            }
+
+            // In contrast to `sharedBinaryRoots`, which are shared between many different projects (e.g. the Kotlin stdlib), `binaryRoots`
+            // come from binary libraries which are specific to the project. Caching them in `KotlinFakeClsStubsCache` won't have any
+            // performance advantage.
+            binaryRoots
+                .map { collectStubsFromBinaryRoot(it, binaryClassCache) }
+                .forEach { processCollectedStubs(it) }
+        }
+
+        testKtFiles.forEach { file ->
+            file.accept(recorder)
+        }
+    }
+
+    private fun indexStub(stub: StubElement<*>) {
+        when (stub) {
+            is KotlinClassStubImpl -> {
+                addToClassMap(stub.psi)
+                // member functions and properties
+                stub.childrenStubs.forEach(::indexStub)
+            }
+            is KotlinObjectStubImpl -> {
+                addToClassMap(stub.psi)
+                // member functions and properties
+                stub.childrenStubs.forEach(::indexStub)
+            }
+            is KotlinTypeAliasStubImpl -> addToTypeAliasMap(stub.psi)
+            is KotlinFunctionStubImpl -> addToFunctionMap(stub.psi)
+            is KotlinPropertyStubImpl -> addToPropertyMap(stub.psi)
+            is KotlinPlaceHolderStubImpl -> {
+                if (stub.stubType == KtStubElementTypes.CLASS_BODY) {
+                    stub.getChildrenStubs().filterIsInstance<KotlinClassOrObjectStub<*>>().forEach(::indexStub)
                 }
-                stub.psi = fakeFile
-                createdFakeKtFiles.add(fakeFile)
-                processStub(stub)
+            }
+        }
+    }
+
+    private fun processStub(ktFileStub: KotlinFileStubImpl) {
+        val ktFile: KtFile = ktFileStub.psi
+        addToFacadeFileMap(ktFile)
+
+        val partNames = ktFileStub.facadePartSimpleNames
+        if (partNames != null) {
+            val packageFqName = ktFileStub.getPackageFqName()
+            for (partName in partNames) {
+                val multiFileClassPartFqName: FqName = packageFqName.child(Name.identifier(partName))
+                index.multiFileClassPartMap.computeIfAbsent(multiFileClassPartFqName) { mutableSetOf() }.add(ktFile)
             }
         }
 
-        // Indexing user source files
-        files.forEach {
-            it.accept(recorder)
-        }
+        // top-level functions and properties, built-in classes
+        ktFileStub.childrenStubs.forEach(::indexStub)
     }
+
+    private fun collectStubsFromBinaryRoot(
+        binaryRoot: VirtualFile,
+        binaryClassCache: ClsKotlinBinaryClassCache,
+    ): Map<VirtualFile, KotlinFileStubImpl> =
+        buildMap {
+            VfsUtilCore.visitChildrenRecursively(binaryRoot, object : VirtualFileVisitor<Void>() {
+                override fun visitFile(file: VirtualFile): Boolean {
+                    if (!file.isDirectory) {
+                        val stub = buildStubByVirtualFile(file, binaryClassCache) ?: return true
+                        put(file, stub)
+                    }
+                    return true
+                }
+            })
+        }
 
     private fun buildStubByVirtualFile(file: VirtualFile, binaryClassCache: ClsKotlinBinaryClassCache): KotlinFileStubImpl? {
         val fileContent = FileContentImpl.createByFile(file)
@@ -358,6 +377,19 @@ public class KotlinStaticDeclarationProviderFactory(
         return stubBuilder.buildFileStub(fileContent) as? KotlinFileStubImpl
     }
 
+    private fun processCollectedStubs(stubs: Map<VirtualFile, KotlinFileStubImpl>) {
+        stubs.forEach { entry ->
+            val stub = entry.value
+            val fakeFile = object : KtFile(KtClassFileViewProvider(psiManager, entry.key), isCompiled = true) {
+                override fun getStub() = stub
+                override fun isPhysical() = false
+            }
+            stub.psi = fakeFile
+            createdFakeKtFiles.add(fakeFile)
+            processStub(stub)
+        }
+    }
+
     override fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KtModule?): KotlinDeclarationProvider {
         return KotlinStaticDeclarationProvider(index, scope)
     }
@@ -365,6 +397,8 @@ public class KotlinStaticDeclarationProviderFactory(
     public fun getAdditionalCreatedKtFiles(): List<KtFile> {
         return createdFakeKtFiles
     }
+
+    public fun getAllKtClasses(): List<KtClassOrObject> = index.classMap.values.flattenTo(mutableListOf())
 }
 
 /**

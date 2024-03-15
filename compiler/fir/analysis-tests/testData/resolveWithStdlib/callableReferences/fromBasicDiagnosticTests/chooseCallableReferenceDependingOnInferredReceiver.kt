@@ -14,18 +14,18 @@ class B {
 fun <T> bar(f: (T) -> Unit): T = TODO()
 
 fun test() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>myWith<!>(A()) {
-        val t1 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>(::foo)
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>myWith<!>(A()) {
+        val t1 = bar(::foo)
 
         val t2 = bar(::baz)
 
-        myWith(B()) {
+        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>myWith<!>(B()) {
             val a: A = bar(::foo)
             val b: B = bar(::foo)
 
             val t3 = bar(::baz)
 
-            bar(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>)
+            <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>)
         }
     }
 }

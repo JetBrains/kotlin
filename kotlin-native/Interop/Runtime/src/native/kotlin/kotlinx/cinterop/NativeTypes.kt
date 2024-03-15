@@ -62,6 +62,7 @@ internal fun CPointer<*>.cPointerToString() = "CPointer(raw=$rawValue)"
  */
 @ExperimentalForeignApi
 @TypedIntrinsic(IntrinsicType.INTEROP_STATIC_C_FUNCTION)
+// function is static, so it's never heap allocated anyway; no need to use @Escapes
 public external fun <R> staticCFunction(@VolatileLambda function: () -> R): CPointer<CFunction<() -> R>>
 
 @ExperimentalForeignApi

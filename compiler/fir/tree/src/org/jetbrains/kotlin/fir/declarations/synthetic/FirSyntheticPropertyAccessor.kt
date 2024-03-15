@@ -47,7 +47,7 @@ class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor
         get() = delegate.dispatchReceiverType
 
     override val receiverParameter: FirReceiverParameter?
-        get() = null
+        get() = delegate.receiverParameter
 
     override val deprecationsProvider: DeprecationsProvider
         get() = delegate.deprecationsProvider
@@ -75,7 +75,7 @@ class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor
     }
 
     override val contextReceivers: List<FirContextReceiver>
-        get() = emptyList()
+        get() = delegate.contextReceivers
 
     override val controlFlowGraphReference: FirControlFlowGraphReference? = null
 

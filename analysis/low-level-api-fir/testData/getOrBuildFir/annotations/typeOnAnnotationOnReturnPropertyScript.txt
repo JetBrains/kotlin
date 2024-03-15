@@ -9,7 +9,7 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnReturnPropertyScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeOnAnnotationOnReturnPropertyScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val i: R|@R|Anno|(s = String(ab))  kotlin/Int| = IntegerLiteral(1)
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(s = String(ab))  kotlin/Int|

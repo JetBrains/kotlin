@@ -1,3 +1,5 @@
+// ISSUE: KT-65105
+
 // FILE: kotlin.kt
 package kotlin
 
@@ -376,3 +378,13 @@ typealias ThrowableAlias = Throwable
 
 @Throws(ThrowableAlias::class)
 suspend fun suspendThrowsThrowableTypealias() {}
+
+interface Foo<T> {
+    @Throws(IllegalArgumentException::class)
+    public fun f(data: T) {}
+}
+
+class Bar<K> : Foo<K> {
+    @Throws(IllegalArgumentException::class)
+    override fun f(data: K) {}
+}

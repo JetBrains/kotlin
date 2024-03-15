@@ -77,7 +77,7 @@ class FirScriptDeclarationsScope(
     ) {
         val matchedClass = classIndex[name] ?: return
         val substitution = matchedClass.typeParameterSymbols.associateWith { it.toConeType() }
-        processor(matchedClass, ConeSubstitutorByMap(substitution, useSiteSession))
+        processor(matchedClass, ConeSubstitutorByMap.create(substitution, useSiteSession))
     }
 
     override fun getClassifierNames(): Set<Name> = classIndex.keys

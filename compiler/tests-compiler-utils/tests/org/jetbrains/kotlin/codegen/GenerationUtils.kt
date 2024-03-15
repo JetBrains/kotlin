@@ -59,7 +59,7 @@ object GenerationUtils {
         files: List<KtFile>,
         environment: KotlinCoreEnvironment,
         classBuilderFactory: ClassBuilderFactory = ClassBuilderFactories.TEST,
-        trace: BindingTrace = NoScopeRecordCliBindingTrace()
+        trace: BindingTrace = NoScopeRecordCliBindingTrace(environment.project)
     ): GenerationState =
         compileFiles(files, environment.configuration, classBuilderFactory, environment::createPackagePartProvider, trace)
 
@@ -70,7 +70,7 @@ object GenerationUtils {
         configuration: CompilerConfiguration,
         classBuilderFactory: ClassBuilderFactory,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-        trace: BindingTrace = NoScopeRecordCliBindingTrace()
+        trace: BindingTrace = NoScopeRecordCliBindingTrace(files.first().project)
     ): GenerationState {
         val project = files.first().project
         val state = if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
@@ -128,7 +128,7 @@ object GenerationUtils {
             irGeneratorExtensions = emptyList()
         )
 
-        val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
+        val dummyBindingContext = NoScopeRecordCliBindingTrace(project).bindingContext
 
         val codegenFactory = JvmIrCodegenFactory(
             configuration,

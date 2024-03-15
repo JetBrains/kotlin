@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.jps.statistic
 import org.jetbrains.kotlin.build.report.metrics.JpsBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.JpsBuildTime
 import org.jetbrains.kotlin.build.report.statistics.CompileStatisticsData
-import org.jetbrains.kotlin.build.report.statistics.file.FileReportService
-import org.jetbrains.kotlin.compilerRunner.JpsKotlinLogger
+import org.jetbrains.kotlin.build.report.statistics.file.Printer
+import org.jetbrains.kotlin.build.report.statistics.file.ReadableFileReportService
 import java.io.File
 import kotlin.math.min
 
@@ -17,14 +17,13 @@ internal class JpsFileReportService(
     buildReportDir: File,
     projectName: String,
     printMetrics: Boolean,
-    logger: JpsKotlinLogger,
     private val changedFileListPerLimit: Int?
-) : FileReportService<JpsBuildTime, JpsBuildPerformanceMetric>(buildReportDir, projectName, printMetrics, logger) {
-    override fun printCustomTaskMetrics(statisticsData: CompileStatisticsData<JpsBuildTime, JpsBuildPerformanceMetric>) {
+) : ReadableFileReportService<JpsBuildTime, JpsBuildPerformanceMetric>(buildReportDir, projectName, printMetrics) {
+    override fun printCustomTaskMetrics(statisticsData: CompileStatisticsData<JpsBuildTime, JpsBuildPerformanceMetric>, printer: Printer) {
         val changedFiles = statisticsData.getChanges().let { changes ->
             changedFileListPerLimit?.let { changes.subList(0, min(it, changes.size)) } ?: changes
         }
-        p.println("Changed files: ${changedFiles.sorted()}")
-        p.println("Execution result: ${statisticsData.getTaskResult()}")
+        printer.println("Changed files: ${changedFiles.sorted()}")
+        printer.println("Execution result: ${statisticsData.getTaskResult()}")
     }
 }

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeThrowsList
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.suppressWildcardMode
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
 import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
@@ -157,4 +158,9 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private 
     }
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()
+
+    override fun suppressWildcards(): Boolean? =
+        withFunctionSymbol { functionSymbol ->
+            functionSymbol.suppressWildcardMode()
+        }
 }

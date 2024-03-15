@@ -140,11 +140,11 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractIrJsTypeScriptExportTest> {
-                model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
+                model("typescript-export/js/", pattern = "^([^_](.+))\\.kt$")
             }
 
             testClass<AbstractIrJsES6TypeScriptExportTest> {
-                model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
+                model("typescript-export/js/", pattern = "^([^_](.+))\\.kt$")
             }
 
             testClass<AbstractJsIrLineNumberTest> {
@@ -163,10 +163,13 @@ fun main(args: Array<String>) {
                 model("box/", pattern = "^([^_](.+))\\.kt$")
             }
 
-            // see todo on defining class
-//            testClass<AbstractFirJsTypeScriptExportTest> {
-//                model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
-//            }
+            testClass<AbstractFirJsTypeScriptExportTest> {
+                model("typescript-export/js/", pattern = "^([^_](.+))\\.kt$")
+            }
+
+            testClass<AbstractFirJsES6TypeScriptExportTest> {
+                model("typescript-export/js/", pattern = "^([^_](.+))\\.kt$")
+            }
 
             testClass<AbstractFirJsLineNumberTest> {
                 model("lineNumbers/")
@@ -216,7 +219,9 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractIrJsLocalVariableTest> {
-                model("debug/localVariables")
+                // The tests in the 'inlineScopes' directory are meant to test a JVM backend
+                // specific feature, so there is no reason to enable them for JS.
+                model("debug/localVariables", excludeDirs = listOf("inlineScopes"))
             }
 
             testClass<AbstractFirPsiJsDiagnosticWithBackendTest>(suiteTestClassName = "FirPsiJsKlibDiagnosticsTestGenerated") {

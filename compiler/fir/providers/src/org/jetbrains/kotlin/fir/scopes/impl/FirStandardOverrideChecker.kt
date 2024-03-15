@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
-import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -162,16 +161,10 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         }
     }
 
-    override fun <D : FirCallableSymbol<*>> chooseIntersectionVisibility(
-        extractedOverrides: Collection<MemberWithBaseScope<D>>,
+    override fun chooseIntersectionVisibility(
+        overrides: Collection<FirCallableSymbol<*>>,
         dispatchClassSymbol: FirRegularClassSymbol?,
     ): Visibility {
-        // It's crucial that we only unwrap phantom intersection overrides.
-        // See comments in the following tests for explanation:
-        // - intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt
-        // - intersectionOverridesIntersection.kt
-        val overridesWithoutIntersections = extractedOverrides.flatMap { it.flattenPhantomIntersectionsRecursively() }
-        val nonSubsumed = overridesWithoutIntersections.nonSubsumed().filterOutDuplicates()
-        return chooseIntersectionVisibilityOrNull(nonSubsumed) ?: Visibilities.Unknown
+        return chooseIntersectionVisibilityOrNull(overrides) ?: Visibilities.Unknown
     }
 }

@@ -46,11 +46,10 @@ import javax.inject.Inject
 
 @CacheableTask
 abstract class Kotlin2JsCompile @Inject constructor(
-    override val compilerOptions: KotlinJsCompilerOptions,
+    final override val compilerOptions: KotlinJsCompilerOptions,
     objectFactory: ObjectFactory,
     workerExecutor: WorkerExecutor,
 ) : AbstractKotlinCompile<K2JSCompilerArguments>(objectFactory, workerExecutor),
-    KotlinCompilationTask<KotlinJsCompilerOptions>,
     UsesLibraryFilterCachingService,
     UsesBuildFusService,
     KotlinJsCompile,
@@ -61,6 +60,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
         compilerOptions.verbose.convention(logger.isDebugEnabled)
     }
 
+    @Suppress("DEPRECATION")
+    @Deprecated(KOTLIN_OPTIONS_DEPRECATION_MESSAGE)
     override val kotlinOptions: KotlinJsOptions = KotlinJsOptionsCompat(
         { this },
         compilerOptions

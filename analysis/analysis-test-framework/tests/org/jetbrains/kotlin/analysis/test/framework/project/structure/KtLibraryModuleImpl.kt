@@ -27,4 +27,6 @@ class KtLibraryModuleImpl(
     override val directRegularDependencies: MutableList<KtModule> = mutableListOf()
     override val directDependsOnDependencies: MutableList<KtModule> = mutableListOf()
     override val directFriendDependencies: MutableList<KtModule> = mutableListOf()
+
+    override fun toString(): String = libraryName
 }

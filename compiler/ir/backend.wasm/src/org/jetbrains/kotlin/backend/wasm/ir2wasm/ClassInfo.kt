@@ -86,7 +86,8 @@ class VirtualMethodMetadata(
 class ClassMetadata(
     val klass: IrClass,
     val superClass: ClassMetadata?,
-    irBuiltIns: IrBuiltIns
+    irBuiltIns: IrBuiltIns,
+    allowAccidentalOverride: Boolean,
 ) {
     // List of all fields including fields of super classes
     // In Wasm order
@@ -102,35 +103,33 @@ class ClassMetadata(
         val virtualFunctions = klass.declarations
             .asSequence()
             .filterVirtualFunctions()
-            .mapTo(mutableListOf()) { VirtualMethodMetadata(it, it.wasmSignature(irBuiltIns)) }
+        val virtualFunctionsMetadata = mutableListOf<VirtualMethodMetadata>()
+        val visitedSignature = mutableSetOf<WasmSignature>()
+        for (function in virtualFunctions) {
+            val signature = function.wasmSignature(irBuiltIns)
+            if (!visitedSignature.add(signature)) {
+                if (allowAccidentalOverride) {
+                    continue
+                } else {
+                    val alreadyAdded = virtualFunctionsMetadata.first { it.signature == signature }
+                    error("Class ${klass.fqNameWhenAvailable} has several methods with the same signature $signature\n$alreadyAdded\n$function")
+                }
+            }
+            virtualFunctionsMetadata.add(VirtualMethodMetadata(function, signature))
+        }
 
         val superClassVirtualMethods = superClass?.virtualMethods
-        if (superClassVirtualMethods.isNullOrEmpty()) return@run virtualFunctions
+        if (superClassVirtualMethods.isNullOrEmpty()) return@run virtualFunctionsMetadata
 
         val result = mutableListOf<VirtualMethodMetadata>()
 
-        val signatureToVirtualFunction = virtualFunctions.associateBy { it.signature }
+        val signatureToVirtualFunction = virtualFunctionsMetadata.associateBy { it.signature }
         superClassVirtualMethods.mapTo(result) { signatureToVirtualFunction[it.signature] ?: it }
 
         val superSignatures = superClassVirtualMethods.mapTo(mutableSetOf()) { it.signature }
-        virtualFunctions.filterTo(result) { it.signature !in superSignatures }
+        virtualFunctionsMetadata.filterTo(result) { it.signature !in superSignatures }
 
         result
-    }
-
-    init {
-        val signatureToFunctions = mutableMapOf<WasmSignature, MutableList<IrSimpleFunction>>()
-        for (vm in virtualMethods) {
-            signatureToFunctions.getOrPut(vm.signature) { mutableListOf() }.add(vm.function)
-        }
-
-        for ((sig, functions) in signatureToFunctions) {
-            if (functions.size > 1) {
-                val funcList = functions.joinToString { " ---- ${it.fqNameWhenAvailable} \n" }
-                // TODO: Check in FE
-                error("Class ${klass.fqNameWhenAvailable} has ${functions.size} methods with the same signature $sig\n $funcList")
-            }
-        }
     }
 }
 

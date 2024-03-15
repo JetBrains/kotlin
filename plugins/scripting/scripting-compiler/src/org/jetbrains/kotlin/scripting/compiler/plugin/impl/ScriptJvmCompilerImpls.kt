@@ -267,7 +267,7 @@ private fun analyze(sourceFiles: Collection<KtFile>, environment: KotlinCoreEnvi
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
             project,
             sourceFiles,
-            NoScopeRecordCliBindingTrace(),
+            NoScopeRecordCliBindingTrace(project),
             environment.configuration,
             environment::createPackagePartProvider
         )
@@ -434,7 +434,7 @@ private fun doCompileWithK2(
 
     val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment)
 
-    val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment, null)
+    val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)
 
     diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
 

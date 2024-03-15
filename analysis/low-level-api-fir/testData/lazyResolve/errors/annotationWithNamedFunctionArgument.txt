@@ -88,6 +88,15 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
+    @<ERROR TYPE REF: Symbol not found for Anno>[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
     @<ERROR TYPE REF: Symbol not found for Anno>[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {

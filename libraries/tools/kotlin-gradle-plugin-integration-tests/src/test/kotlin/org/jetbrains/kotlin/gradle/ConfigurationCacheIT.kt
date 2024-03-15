@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 
@@ -117,6 +118,32 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             build(":lib:compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(":commonizeNativeDistribution")
                 assertTasksExecuted(":lib:compileCommonMainKotlinMetadata")
+                assertConfigurationCacheReused()
+            }
+        }
+    }
+
+    @NativeGradlePluginTests
+    @DisplayName("Configuration cache works with Kotlin Native bundle and its dependencies downloading")
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_4,
+        additionalVersions = [TestVersions.Gradle.G_7_6],
+    )
+    @OsCondition(
+        supportedOn = [OS.LINUX, OS.MAC], // disabled on Windows because of tmp dir problem KT-62761
+        enabledOnCI = [OS.LINUX, OS.MAC],
+    )
+    @GradleTest
+    fun testWithDownloadingKotlinNativeAndDependencies(gradleVersion: GradleVersion, @TempDir konanTempDir: Path) {
+        // with Configuration Cache we currently have such problem KT-66423
+        val buildOptions = buildOptionsToAvoidKT66423(gradleVersion, konanTempDir)
+        project("native-configuration-cache", gradleVersion, buildOptions = buildOptions) {
+
+            build(":lib:compileCommonMainKotlinMetadata") {
+                assertConfigurationCacheStored()
+            }
+
+            build(":lib:compileCommonMainKotlinMetadata") {
                 assertConfigurationCacheReused()
             }
         }
@@ -278,6 +305,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 }
 
 abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
+
     override val defaultBuildOptions =
         super.defaultBuildOptions.copy(configurationCache = true)
 
@@ -294,4 +322,21 @@ abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
             buildOptions = buildOptions,
         )
     }
+
+    protected fun buildOptionsToAvoidKT66423(gradleVersion: GradleVersion, konanTempDir: Path) =
+        if (gradleVersion == GradleVersion.version(TestVersions.Gradle.G_8_6)) {
+            defaultBuildOptions.copy(
+                konanDataDir = konanDir,
+                nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
+                    version = System.getProperty("kotlinNativeVersion")
+                )
+            )
+        } else defaultBuildOptions.copy(
+            configurationCache = true,
+            konanDataDir = konanTempDir,
+            nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
+                // set the KGP's default Kotlin Native version, because in CI we don't have K/N versions in maven repo for each build
+                version = null
+            )
+        )
 }

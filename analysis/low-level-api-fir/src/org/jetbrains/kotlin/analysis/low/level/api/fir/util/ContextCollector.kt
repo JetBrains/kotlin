@@ -452,7 +452,7 @@ private class ContextCollectorVisitor(
     private fun Processor.processFileHeader(file: FirFile) {
         process(file.packageDirective)
         processList(file.imports)
-        process(file.annotationsContainer)
+        processList(file.annotations)
     }
 
     /**

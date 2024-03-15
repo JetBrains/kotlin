@@ -9,19 +9,22 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.transform.TransformAction
 import org.gradle.api.artifacts.transform.TransformParameters
-import org.gradle.api.artifacts.transform.TransformSpec
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
 
-internal interface UsesKotlinToolingDiagnostics : Task {
+internal interface UsesKotlinToolingDiagnosticsParameters {
     @get:Internal
     val toolingDiagnosticsCollector: Property<KotlinToolingDiagnosticsCollector>
 
     @get:Internal
     val diagnosticRenderingOptions: Property<ToolingDiagnosticRenderingOptions>
+}
 
+internal interface UsesKotlinToolingDiagnostics : UsesKotlinToolingDiagnosticsParameters, Task {
     fun reportDiagnostic(diagnostic: ToolingDiagnostic) {
         toolingDiagnosticsCollector.get().report(this, diagnostic)
     }
@@ -29,20 +32,14 @@ internal interface UsesKotlinToolingDiagnostics : Task {
 
 /**
  * Use this interface to make your [TransformAction] able to report [ToolingDiagnostic].
- * You must use [setupTransformActionToolingDiagnostics] to set up [TransformActionUsingKotlinToolingDiagnostics.Parameters].
+ * You must use [setupKotlinToolingDiagnosticsParameters] to set up the parameters.
  */
 internal interface TransformActionUsingKotlinToolingDiagnostics<P : TransformActionUsingKotlinToolingDiagnostics.Parameters> :
     TransformAction<P> {
-    interface Parameters : TransformParameters {
-        @get:Internal
-        val toolingDiagnosticsCollector: Property<KotlinToolingDiagnosticsCollector>
-
-        @get:Internal
-        val diagnosticRenderingOptions: Property<ToolingDiagnosticRenderingOptions>
-    }
+    interface Parameters : TransformParameters, UsesKotlinToolingDiagnosticsParameters
 
     fun reportDiagnostic(diagnostic: ToolingDiagnostic) {
-        parameters.toolingDiagnosticsCollector.get().report(this, logger, diagnostic)
+        parameters.toolingDiagnosticsCollector.get().report(parameters, logger, diagnostic)
     }
 
     companion object {
@@ -50,7 +47,24 @@ internal interface TransformActionUsingKotlinToolingDiagnostics<P : TransformAct
     }
 }
 
-internal fun TransformSpec<out TransformActionUsingKotlinToolingDiagnostics.Parameters>.setupTransformActionToolingDiagnostics(project: Project) {
-    parameters.toolingDiagnosticsCollector.set(project.kotlinToolingDiagnosticsCollectorProvider)
-    parameters.diagnosticRenderingOptions.set(ToolingDiagnosticRenderingOptions.forProject(project))
+/**
+ * Use this interface to make your [BuildService] able to report [ToolingDiagnostic].
+ * You must use [setupKotlinToolingDiagnosticsParameters] to set up the parameters.
+ */
+internal interface BuildServiceUsingKotlinToolingDiagnostics<P : BuildServiceUsingKotlinToolingDiagnostics.Parameters> :
+    BuildService<P> {
+    interface Parameters : BuildServiceParameters, UsesKotlinToolingDiagnosticsParameters
+
+    fun reportDiagnostic(diagnostic: ToolingDiagnostic) {
+        parameters.toolingDiagnosticsCollector.get().report(parameters, logger, diagnostic)
+    }
+
+    companion object {
+        internal val logger: Logger = Logging.getLogger(Project::class.java)
+    }
+}
+
+internal fun UsesKotlinToolingDiagnosticsParameters.setupKotlinToolingDiagnosticsParameters(project: Project) {
+    toolingDiagnosticsCollector.set(project.kotlinToolingDiagnosticsCollectorProvider)
+    diagnosticRenderingOptions.set(ToolingDiagnosticRenderingOptions.forProject(project))
 }

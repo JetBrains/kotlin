@@ -36,7 +36,7 @@ abstract class KotlinMultiplatformExtension
     KotlinTargetContainerWithWasmPresetFunctions,
     KotlinTargetContainerWithNativeShortcuts,
     KotlinHierarchyDsl,
-    HasConfigurableCompilerOptions<KotlinCommonCompilerOptions>,
+    HasConfigurableKotlinCompilerOptions<KotlinCommonCompilerOptions>,
     KotlinMultiplatformSourceSetConventions by KotlinMultiplatformSourceSetConventionsImpl {
     @Deprecated(
         PRESETS_API_IS_DEPRECATED_MESSAGE,
@@ -356,3 +356,5 @@ internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCre
 }
 
 internal val KotlinMultiplatformExtension.metadataTarget get() = metadata() as KotlinMetadataTarget
+
+internal val Collection<KotlinTarget>.platformTargets: List<KotlinTarget> get() = filter { it !is KotlinMetadataTarget }

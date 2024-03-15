@@ -1,12 +1,10 @@
 KT element: KtFileAnnotationList
-FIR element: FirFileAnnotationsContainerImpl
-FIR source kind: KtRealSourceElementKind
+FIR element: null
+FIR source kind: null
 
 FIR element rendered:
-@FILE:R|kotlin/Suppress|[Types](names = vararg(String()))
-[ResolvedTo(ANNOTATION_ARGUMENTS)] annotations container
+null
 
 FIR FILE:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotationList.kt
-    @FILE:R|kotlin/Suppress|[Types](names = vararg(String()))
-    [ResolvedTo(ANNOTATION_ARGUMENTS)] annotations container
+FILE: [ResolvedTo(RAW_FIR)] fileAnnotationList.kt
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.sir.impl.SirStructImpl
 class SirStructBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
+    var documentation: String? = null
     lateinit var name: String
     val declarations: MutableList<SirDeclaration> = mutableListOf()
 
@@ -25,10 +26,12 @@ class SirStructBuilder {
         return SirStructImpl(
             origin,
             visibility,
+            documentation,
             name,
             declarations,
         )
     }
+
 }
 
 @OptIn(ExperimentalContracts::class)
@@ -47,6 +50,7 @@ inline fun buildStructCopy(original: SirStruct, init: SirStructBuilder.() -> Uni
     val copyBuilder = SirStructBuilder()
     copyBuilder.origin = original.origin
     copyBuilder.visibility = original.visibility
+    copyBuilder.documentation = original.documentation
     copyBuilder.name = original.name
     copyBuilder.declarations.addAll(original.declarations)
     return copyBuilder.apply(init).build()

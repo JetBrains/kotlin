@@ -59,6 +59,8 @@ internal class UltraLightMembersCreator(
         usedPropertyNames: HashSet<String>,
         forceStatic: Boolean
     ): KtLightField? {
+        ProgressManager.checkCanceled()
+
         if (variable.nameAsSafeName.isSpecial) return null
         if (!hasBackingField(variable)) return null
 
@@ -118,6 +120,7 @@ internal class UltraLightMembersCreator(
         forceNonFinal: Boolean = false,
         additionalReceiverParameter: ((KtUltraLightMethod) -> KtUltraLightParameter)? = null,
     ): Collection<KtLightMethod> {
+        ProgressManager.checkCanceled()
 
         if (ktFunction.hasExpectModifier()
             || ktFunction.hasReifiedParameters()
@@ -436,6 +439,7 @@ internal class UltraLightMembersCreator(
         forceNonFinal: Boolean = false,
         additionalReceiverParameter: ((KtUltraLightMethod) -> KtUltraLightParameter)? = null,
     ): List<KtLightMethod> {
+        ProgressManager.checkCanceled()
 
         val propertyName = declaration.name ?: return emptyList()
         if (declaration.isConstOrJvmField() ||

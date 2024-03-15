@@ -29,7 +29,7 @@ abstract class AbstractIncrementalK1JsKlibMultiModuleCompilerRunnerTest :
         }
 
     override val buildLogFinder: BuildLogFinder
-        get() = super.buildLogFinder.copy(isKlibEnabled = true)
+        get() = super.buildLogFinder.copy(isFirEnabled = false, isKlibEnabled = true)
 
     override fun makeForSingleModule(
         moduleCacheDir: File,

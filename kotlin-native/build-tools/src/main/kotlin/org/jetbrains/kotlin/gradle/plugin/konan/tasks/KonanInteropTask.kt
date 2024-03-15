@@ -21,21 +21,16 @@ import org.jetbrains.kotlin.gradle.plugin.konan.konanExtension
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
-import kotlin.run
 
 /**
  * A task executing cinterop tool with the given args and compiling the stubs produced by this tool.
  */
 
-open class KonanInteropTask @Inject constructor(@Internal val workerExecutor: WorkerExecutor) : KonanBuildingTask(), KonanInteropSpec {
-
-    private val interopRunner = KonanCliInteropRunner(project, project.konanExtension.jvmArgs)
-
-    @get:Internal
-    override val toolRunner: KonanToolRunner = interopRunner
+abstract class KonanInteropTask @Inject constructor(private val workerExecutor: WorkerExecutor) : KonanBuildingTask(), KonanInteropSpec {
 
     override fun init(config: KonanBuildingConfig<*>, destinationDir: File, artifactName: String, target: KonanTarget) {
         super.init(config, destinationDir, artifactName, target)
+        this.notCompatibleWithConfigurationCache("Unsupported inputs")
         this.defFile = project.konanDefaultDefFile(artifactName)
     }
 
@@ -183,7 +178,11 @@ open class KonanInteropTask @Inject constructor(@Internal val workerExecutor: Wo
         }
     }
 
+    @get:Internal
+    val isolatedClassLoadersService = KonanCliRunnerIsolatedClassLoadersService.attachingToTask(this)
+
     override fun run() {
+        val interopRunner = KonanCliInteropRunner(project, isolatedClassLoadersService, project.konanExtension.jvmArgs)
         interopRunner.init(target)
 
         destinationDir.mkdirs()
@@ -193,13 +192,13 @@ open class KonanInteropTask @Inject constructor(@Internal val workerExecutor: Wo
         val args = buildArgs()
         if (enableParallel) {
             val workQueue = workerExecutor.noIsolation()
-            interchangeBox[this.path] = toolRunner
+            interchangeBox[this.path] = interopRunner
             workQueue.submit(RunTool::class.java) {
                 taskName = path
                 this.args = args
             }
         } else {
-            toolRunner.run(args)
+            interopRunner.run(args)
         }
     }
 }

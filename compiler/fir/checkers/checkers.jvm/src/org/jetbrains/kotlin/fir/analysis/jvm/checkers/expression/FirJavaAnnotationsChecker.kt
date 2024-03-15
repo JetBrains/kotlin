@@ -48,8 +48,9 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker(MppCheckerKind.Common) {
         if (expression is FirAnnotationCall) {
             val argumentList = expression.argumentList
             if (argumentList is FirResolvedArgumentList) {
-                for ((key, value) in argumentList.mapping) {
-                    if (value.name != Annotations.ParameterNames.value && key !is FirWrappedArgumentExpression) {
+                val arguments = argumentList.originalArgumentList?.arguments ?: return
+                for (key in arguments) {
+                    if (key !is FirWrappedArgumentExpression && argumentList.mapping[key]?.name.let { it != null && it != Annotations.ParameterNames.value}) {
                         reporter.reportOn(key.source, FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION, context)
                     }
                 }

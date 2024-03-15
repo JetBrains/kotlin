@@ -13,10 +13,10 @@ public final class Inv /* Inv*/<E>  {
 public final class JvmWildcardAnnotationsKt /* JvmWildcardAnnotationsKt*/ {
   @kotlin.jvm.JvmSuppressWildcards(suppress = false)
   @org.jetbrains.annotations.NotNull()
-  public static final Out<Open> bar();//  bar()
+  public static final Out<? extends Open> bar();//  bar()
 
   @kotlin.jvm.JvmSuppressWildcards(suppress = false)
-  public static final int foo(boolean, @org.jetbrains.annotations.NotNull() Out<java.lang.Integer>);//  foo(boolean, Out<java.lang.Integer>)
+  public static final int foo(boolean, @org.jetbrains.annotations.NotNull() Out<? extends java.lang.Integer>);//  foo(boolean, Out<? extends java.lang.Integer>)
 
   @kotlin.jvm.JvmSuppressWildcards(suppress = true)
   @org.jetbrains.annotations.NotNull()
@@ -27,13 +27,13 @@ public final class JvmWildcardAnnotationsKt /* JvmWildcardAnnotationsKt*/ {
   public static final Out<T> foo2();//  foo2()
 
   @kotlin.jvm.JvmSuppressWildcards(suppress = true)
-  public static final int bar(boolean, @org.jetbrains.annotations.NotNull() In<? super java.lang.Long>, long);//  bar(boolean, In<? super java.lang.Long>, long)
+  public static final int bar(boolean, @org.jetbrains.annotations.NotNull() In<java.lang.Long>, long);//  bar(boolean, In<java.lang.Long>, long)
 
   @kotlin.jvm.JvmSuppressWildcards(suppress = true)
-  public static final void deepOpen(@org.jetbrains.annotations.NotNull() Out<? extends Out<? extends Out<? extends Open>>>);//  deepOpen(Out<? extends Out<? extends Out<? extends Open>>>)
+  public static final void deepOpen(@org.jetbrains.annotations.NotNull() Out<Out<Out<Open>>>);//  deepOpen(Out<Out<Out<Open>>>)
 
   @org.jetbrains.annotations.NotNull()
-  public static final OutPair<Final, OutPair<Out<Final>, Out<Final>>> falseTrueFalse();//  falseTrueFalse()
+  public static final OutPair<? extends Final, OutPair<Out<Final>, Out<? extends Final>>> falseTrueFalse();//  falseTrueFalse()
 
   @org.jetbrains.annotations.NotNull()
   public static final OutPair<Open, ? extends OutPair<Open,? extends Out<Open>>> combination();//  combination()

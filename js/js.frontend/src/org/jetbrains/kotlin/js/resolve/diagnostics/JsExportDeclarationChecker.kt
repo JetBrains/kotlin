@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.js.common.SPECIAL_KEYWORDS
 import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -35,7 +36,10 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.*
 
-class JsExportDeclarationChecker(private val includeUnsignedNumbers: Boolean) : DeclarationChecker {
+class JsExportDeclarationChecker(
+    private val includeUnsignedNumbers: Boolean,
+    private val allowCompanionInInterface: Boolean
+) : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val trace = context.trace
         val bindingContext = trace.bindingContext
@@ -130,9 +134,13 @@ class JsExportDeclarationChecker(private val includeUnsignedNumbers: Boolean) : 
                         descriptor.isInlineClass() -> "${if (descriptor.isInline) "inline " else ""}${if (descriptor.isValue) "value " else ""}class"
                         else -> null
                     }
-                    else -> if (descriptor.isInsideInterface) {
+                    else -> if (descriptor.isInsideInterface && (!allowCompanionInInterface || !descriptor.isCompanionObject)) {
                         "${if (descriptor.isCompanionObject) "companion object" else "nested/inner declaration"} inside exported interface"
                     } else null
+                }
+
+                if (allowCompanionInInterface && descriptor.isCompanionObject && descriptor.isInsideInterface && descriptor.name != DEFAULT_NAME_FOR_COMPANION_OBJECT) {
+                    trace.report(ErrorsJs.NAMED_COMPANION_IN_EXPORTED_INTERFACE.on(declaration))
                 }
 
                 if (wrongDeclaration != null) {

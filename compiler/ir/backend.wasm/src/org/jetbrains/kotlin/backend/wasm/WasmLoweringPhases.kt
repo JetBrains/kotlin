@@ -139,7 +139,6 @@ private val functionInliningPhase = makeCustomPhase<WasmBackendContext>(
             inlineFunctionResolver = WasmInlineFunctionResolver(context),
             innerClassesSupport = context.innerClassesSupport,
             insertAdditionalImplicitCasts = true,
-            alwaysCreateTemporaryVariablesForArguments = true
         ).inline(module)
         module.patchDeclarationParents()
     },
@@ -432,11 +431,18 @@ private val excludeDeclarationsFromCodegenPhase = makeCustomPhase<WasmBackendCon
     description = "Move excluded declarations to separate place"
 )
 
+private val jsExceptionReveal = makeIrModulePhase(
+    ::JsExceptionRevealLowering,
+    name = "JsExceptionRevealLowering",
+    description = "Wraps try statement into try with revealed JS exception",
+    prerequisite = setOf(functionInliningPhase)
+)
+
 private val tryCatchCanonicalization = makeIrModulePhase(
     ::TryCatchCanonicalization,
     name = "TryCatchCanonicalization",
     description = "Transforms try/catch statements into canonical form supported by the wasm codegen",
-    prerequisite = setOf(functionInliningPhase)
+    prerequisite = setOf(functionInliningPhase, jsExceptionReveal)
 )
 
 private val bridgesConstructionPhase = makeIrModulePhase(
@@ -470,8 +476,8 @@ private val staticMembersLoweringPhase = makeIrModulePhase(
 )
 
 private val classReferenceLoweringPhase = makeIrModulePhase(
-    ::ClassReferenceLowering,
-    name = "ClassReferenceLowering",
+    ::WasmClassReferenceLowering,
+    name = "WasmClassReferenceLowering",
     description = "Handle class references"
 )
 
@@ -566,6 +572,7 @@ private val unhandledExceptionLowering = makeIrModulePhase(
     ::UnhandledExceptionLowering,
     name = "UnhandledExceptionLowering",
     description = "Wrap JsExport functions with try-catch to convert unhandled Wasm exception into Js exception",
+    prerequisite = setOf(jsExceptionReveal)
 )
 
 private val propertyAccessorInlinerLoweringPhase = makeIrModulePhase(
@@ -678,6 +685,8 @@ val loweringList = listOf(
 
     wasmStringSwitchOptimizerLowering,
 
+    associatedObjectsLowering,
+
     complexExternalDeclarationsToTopLevelFunctionsLowering,
     complexExternalDeclarationsUsagesLowering,
 
@@ -697,8 +706,8 @@ val loweringList = listOf(
 
     invokeOnExportedFunctionExitLowering,
 
+    jsExceptionReveal,
     unhandledExceptionLowering,
-
     tryCatchCanonicalization,
 
     forLoopsLoweringPhase,
@@ -723,8 +732,6 @@ val loweringList = listOf(
     expressionBodyTransformer,
     eraseVirtualDispatchReceiverParametersTypes,
     bridgesConstructionPhase,
-
-    associatedObjectsLowering,
 
     objectDeclarationLoweringPhase,
     genericReturnTypeLowering,

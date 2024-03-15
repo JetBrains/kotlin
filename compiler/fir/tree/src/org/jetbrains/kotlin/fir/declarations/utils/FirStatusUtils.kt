@@ -62,7 +62,7 @@ inline val FirClass.isEnumClass: Boolean
 inline val FirRegularClass.isSealed: Boolean get() = status.modality == Modality.SEALED
 
 inline val FirRegularClass.canHaveAbstractDeclaration: Boolean
-    get() = isAbstract || isSealed || isEnumClass
+    get() = isInterface || isAbstract || isSealed || isEnumClass
 
 inline val FirRegularClass.isCompanion: Boolean get() = status.isCompanion
 inline val FirRegularClass.isData: Boolean get() = status.isData

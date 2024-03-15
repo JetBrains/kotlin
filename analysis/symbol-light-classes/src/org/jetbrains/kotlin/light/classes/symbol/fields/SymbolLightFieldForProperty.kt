@@ -80,6 +80,7 @@ internal class SymbolLightFieldForProperty private constructor(
                 this@SymbolLightFieldForProperty,
                 allowErrorTypes = true,
                 typeMappingMode,
+                suppressWildcards = propertySymbol.suppressWildcardMode(),
             )
         } ?: nonExistentType()
     }

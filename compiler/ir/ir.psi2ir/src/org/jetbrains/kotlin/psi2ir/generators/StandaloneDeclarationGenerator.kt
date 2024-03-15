@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.createIrClassFromDescriptor
 import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.psi.KtParameter
@@ -181,7 +180,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
                 visibility = visibility,
                 isInline = isInline,
                 isExpect = isExpect,
-                returnType = IrUninitializedType,
+                returnType = descriptor.returnType.toIrType(),
                 symbol = symbol,
                 isPrimary = isPrimary,
                 isExternal = isEffectivelyExternal(),
@@ -193,7 +192,6 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
             val ctorTypeParameters = descriptor.typeParameters.filter { it.containingDeclaration === descriptor }
             generateScopedTypeParameterDeclarations(irConstructor, ctorTypeParameters)
             generateValueParameterDeclarations(irConstructor, descriptor, defaultArgumentFactory)
-            irConstructor.returnType = descriptor.returnType.toIrType()
         }
 
         return irConstructor
@@ -216,7 +214,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
                 visibility = visibility,
                 isInline = isInline,
                 isExpect = isExpect,
-                returnType = IrUninitializedType,
+                returnType = null,
                 modality = modality,
                 symbol = symbol,
                 isTailrec = isTailrec,

@@ -47,6 +47,7 @@ internal fun resolveCacheBinaries(
         val list = when (cache.kind) {
             CachedLibraries.Kind.DYNAMIC -> dynamicCaches
             CachedLibraries.Kind.STATIC -> staticCaches
+            CachedLibraries.Kind.HEADER -> error("Header cache ${cache.path} cannot be used for linking")
         }
 
         list += if (dependency.kind is DependenciesTracker.DependencyKind.CertainFiles && cache is CachedLibraries.Cache.PerFile)

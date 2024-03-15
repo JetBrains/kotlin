@@ -65,6 +65,16 @@ public class JvmAbiContentTestGenerated extends AbstractJvmAbiContentTest {
     runTest("plugins/jvm-abi-gen/testData/content/innerClasses/");
   }
 
+  @TestMetadata("internalClassAndCopyMethod")
+  public void testInternalClassAndCopyMethod() {
+    runTest("plugins/jvm-abi-gen/testData/content/internalClassAndCopyMethod/");
+  }
+
+  @TestMetadata("internalClassAndCopyMethodStrict")
+  public void testInternalClassAndCopyMethodStrict() {
+    runTest("plugins/jvm-abi-gen/testData/content/internalClassAndCopyMethodStrict/");
+  }
+
   @TestMetadata("kt50005")
   public void testKt50005() {
     runTest("plugins/jvm-abi-gen/testData/content/kt50005/");

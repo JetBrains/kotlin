@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support
 /**
  * Represents a package name.
  */
-internal class PackageName private constructor(private val fqn: String, val segments: List<String>): Comparable<PackageName> {
+class PackageName private constructor(private val fqn: String, val segments: List<String>): Comparable<PackageName> {
     constructor(segments: List<String>) : this(segments.joinToString("."), segments)
     constructor(fqn: String) : this(fqn, if (fqn.isNotEmpty()) fqn.split('.') else emptyList())
 
@@ -33,7 +33,7 @@ internal class PackageName private constructor(private val fqn: String, val segm
  * [packagePartClassName] - package-part class name (if there is any)
  * [functionName] - name of test function
  */
-internal class TestName: Comparable<TestName> {
+class TestName: Comparable<TestName> {
     private val fqn: String
 
     val packageName: PackageName

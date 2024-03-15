@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.google.common.collect.ImmutableMap
+import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
@@ -65,6 +66,10 @@ open class DelegatingBindingTrace(
         @TestOnly
         override fun <K, V> getSliceContents(slice: ReadOnlySlice<K, V>): ImmutableMap<K, V> {
             return ImmutableMap.copyOf(parentContext.getSliceContents(slice) + map.getSliceContents(slice))
+        }
+
+        override fun getProject(): Project? {
+            return this@DelegatingBindingTrace.getProject()
         }
     }
 
@@ -176,4 +181,8 @@ open class DelegatingBindingTrace(
     override fun wantsDiagnostics(): Boolean = mutableDiagnostics != null
 
     override fun toString(): String = name
+
+    override fun getProject(): Project? {
+        return parentContext.project
+    }
 }

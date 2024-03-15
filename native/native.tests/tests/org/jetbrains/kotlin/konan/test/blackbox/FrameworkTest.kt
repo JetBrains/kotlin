@@ -14,18 +14,15 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.doFileCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.createTestProvider
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.KtAssert.fail
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.io.FileWriter
 import kotlin.time.Duration
 
 @TestDataPath("\$PROJECT_ROOT")
@@ -83,7 +80,7 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         objCFrameworkCompilation.result.assertSuccess()
 
         val fileCheckDump = buildDir.resolve("out.$fileCheckStage.ll").also { assert(it.exists()) }
-        val result = doFileCheck(testCase.checks.fileCheckMatcher!!, fileCheckDump)
+        val result = testCase.checks.fileCheckMatcher!!.doFileCheck(fileCheckDump)
         if (!(result.stdout.isEmpty() && result.stderr.isEmpty())) {
             val shortOutText = result.stdout.lines().take(100)
             val shortErrText = result.stderr.lines().take(100)
@@ -204,6 +201,24 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
 
         val testCase = generateObjCFramework(testName, emptyList(), setOf(TestModule.Given(interopLibrary.klibFile)))
         compileAndRunSwift(testName, testCase)
+    }
+
+    @Test
+    fun testKT66565_usingModuleMapSyntaxInKotlinModuleNameMakesImportableModule() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val reservedModuleMapSyntax = "umbrella"
+        val testName = "kt66565"
+        generateObjCFramework(testName, moduleName = reservedModuleMapSyntax)
+        SwiftCompilation(
+            testRunSettings,
+            listOf(testSuiteDir.resolve(testName).resolve("$testName.swift")),
+            TestCompilationArtifact.BinaryLibrary(buildDir.resolve("swiftObject")),
+            listOf(
+                "-c",
+                "-F", buildDir.absolutePath
+            ),
+            outputFile = { library -> library.libraryFile }
+        ).result.assertSuccess()
     }
 
     @Test
@@ -471,13 +486,14 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         testCompilerArgs: List<String> = emptyList(),
         givenDependencies: Set<TestModule.Given> = emptySet(),
         checks: TestRunChecks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
+        moduleName: String = name.replaceFirstChar { it.uppercase() },
     ): TestCase {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
 
         val testCase = generateObjCFrameworkTestCase(
             TestKind.STANDALONE_NO_TR,
             extras,
-            name.replaceFirstChar { it.uppercase() },
+            moduleName,
             listOf(testSuiteDir.resolve(name).resolve("$name.kt")),
             TestCompilerArgs(testCompilerArgs + listOf("-Xbinary=bundleId=$name")),
             givenDependencies,

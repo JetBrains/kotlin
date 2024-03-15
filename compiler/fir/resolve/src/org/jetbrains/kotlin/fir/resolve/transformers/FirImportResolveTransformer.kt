@@ -5,17 +5,14 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
-import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.name.FqName
 
 class FirImportResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(
@@ -61,11 +58,10 @@ open class FirImportResolveTransformer protected constructor(
             return transformImportForFqName(fqName, import)
         }
 
-        val parentFqName = fqName.parent()
         currentFile?.let {
-            session.lookupTracker?.recordLookup(fqName.shortName(), parentFqName.asString(), import.source, it.source)
+            session.lookupTracker?.recordFqNameLookup(fqName, import.source, it.source)
         }
-        return transformImportForFqName(parentFqName, import)
+        return transformImportForFqName(fqName.parent(), import)
     }
 
     protected open val FqName.isAcceptable: Boolean

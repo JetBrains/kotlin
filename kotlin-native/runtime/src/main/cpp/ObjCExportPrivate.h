@@ -10,13 +10,10 @@
 
 #import <objc/runtime.h>
 
+#import "KotlinBase.h"
 #import "Types.h"
 #import "Memory.h"
 #import "ObjCExport.h"
-
-@interface KotlinBase : NSObject <NSCopying>
-+(instancetype)createRetainedWrapper:(ObjHeader*)obj;
-@end
 
 extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz);
 extern "C" const TypeInfo* Kotlin_ObjCExport_getAssociatedTypeInfo(Class clazz);

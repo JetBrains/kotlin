@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.ir
 
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
-import org.jetbrains.kotlin.backend.jvm.JvmSymbols.Companion.FLEXIBLE_VARIANCE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -14,10 +13,8 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.ir.types.impl.toBuilder
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.types.FlexibleTypeBoundsChecker
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
@@ -112,25 +109,28 @@ fun IrType.isWithFlexibleNullability(): Boolean =
 internal fun IrType.isWithFlexibleMutability(): Boolean =
     hasAnnotation(JvmSymbols.FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME)
 
-private fun IrType.isWithFlexibleVariance(): Boolean =
-    hasAnnotation(StandardClassIds.Annotations.FlexibleArrayElementVariance)
-
 internal fun IrType.asJvmFlexibleType(builtIns: IrBuiltIns): FlexibleTypeMarker? {
     if (this !is IrSimpleType || annotations.isEmpty()) return null
 
-    val nullability = isWithFlexibleNullability()
-    val mutability = isWithFlexibleMutability()
-    val flexibleVariance = isWithFlexibleVariance()
-    val raw = isRawType()
+    var nullability = false
+    var mutability = false
+    var flexibleVariance = false
+    var raw = false
+
+    val filteredAnnotations = annotations.filter {
+        val annotationClass = it.symbol.owner.parentAsClass
+        when {
+            annotationClass.hasEqualFqName(JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME) -> nullability = true
+            annotationClass.hasEqualFqName(JvmSymbols.FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME) -> mutability = true
+            annotationClass.hasEqualFqName(JvmSymbols.FLEXIBLE_VARIANCE_ANNOTATION_FQ_NAME) -> flexibleVariance = true
+            annotationClass.hasEqualFqName(JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME) -> raw = true
+            else -> return@filter true
+        }
+        false
+    }
+
     if (!nullability && !mutability && !flexibleVariance && !raw) return null
 
-    val baseType = this.removeAnnotations { irCtorCall ->
-        val fqName = irCtorCall.type.classFqName
-        fqName == JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME ||
-                fqName == JvmSymbols.FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME ||
-                fqName == FLEXIBLE_VARIANCE_ANNOTATION_FQ_NAME ||
-                fqName == JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME
-    } as IrSimpleType
-
+    val baseType = toBuilder().apply { annotations = filteredAnnotations }.buildSimpleType()
     return IrJvmFlexibleTypeImpl(baseType, builtIns, nullability, mutability, flexibleVariance, raw)
 }

@@ -1,5 +1,18 @@
 # kotlinx-metadata-jvm
 
+## 2.0.0 and higher
+
+Starting with Kotlin 2.0, kotlin-metadata-jvm library is promoted to stable, and is a part of Kotlin distribution now. 
+It means that it has the same versioning as Kotlin compiler and Kotlin standard library, and the same release cycle.
+To achieve this, coordinates of the library were changed: it is now in `org.jetbrains.kotlin` group with `kotlin-metadata-jvm` id (notice
+the drop of `X` from the coordinates).
+This also means that the root package was changed from `kotlinx.metadata` to `kotlin.metadata`.
+
+Among other noticeable changes, all previously deprecated declarations were removed from the library.
+In case you need to perform a migration with aid, migrate your project to 0.9.0 version first using [migration guide](Migration.md).
+
+This is the last entry of this changelog. General changelog for Kotlin's `Libraries` subsystem is available in the `ChangeLog.md` at the repository root.
+
 ## 0.9.0
 
 The main purpose of this release is to promote all previous deprecations to ERROR level if they were not already.

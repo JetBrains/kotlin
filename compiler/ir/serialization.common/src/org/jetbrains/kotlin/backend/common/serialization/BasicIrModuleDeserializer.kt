@@ -96,7 +96,7 @@ abstract class BasicIrModuleDeserializer(
         error("No file for ${idSig.topLevelSignature()} (@ $idSig) in module $moduleDescriptor")
     }
 
-    override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, linker.builtIns, emptyList())
+    override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, linker.builtIns)
 
     private fun deserializeIrFile(
         fileProto: ProtoFile, file: IrFile, fileReader: IrLibraryFileFromBytes,

@@ -235,7 +235,7 @@ class Fir2IrLazyClass(
             fir is FirConstructor -> isObject || isEnumClass || !Visibilities.isPrivate(fir.visibility) // This special case seams to be not needed anymore - KT-65172
             fir is FirCallableDeclaration && fir.isFakeOverride(this.fir) -> session.visibilityChecker.isVisibleForOverriding(
                 this.fir.moduleData,
-                this.fir.classId.packageFqName,
+                this.fir.symbol,
                 fir
             )
             else -> !Visibilities.isPrivate(fir.visibility)

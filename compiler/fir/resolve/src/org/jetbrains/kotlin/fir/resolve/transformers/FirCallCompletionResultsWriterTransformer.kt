@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -16,7 +17,10 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildSamConversionExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildSpreadArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -168,11 +172,11 @@ class FirCallCompletionResultsWriterTransformer(
 
         qualifiedAccessExpression.replaceContextReceiverArguments(subCandidate.contextReceiverArguments())
 
-        subCandidate.diagnostics.firstIsInstanceOrNull<PropertyAsOperator>()?.let { propertyAsOperator ->
-            val conePropertyAsOperator = ConePropertyAsOperator(propertyAsOperator.propertySymbol)
+        subCandidate.diagnostics.firstIsInstanceOrNull<NotFunctionAsOperator>()?.let { propertyAsOperator ->
+            val coneNotFunctionAsOperator = ConeNotFunctionAsOperator(propertyAsOperator.symbol)
             val nonFatalDiagnostics: List<ConeDiagnostic> = buildList {
                 addAll(qualifiedAccessExpression.nonFatalDiagnostics)
-                add(conePropertyAsOperator)
+                add(coneNotFunctionAsOperator)
             }
             qualifiedAccessExpression.replaceNonFatalDiagnostics(nonFatalDiagnostics)
         }
@@ -343,16 +347,17 @@ class FirCallCompletionResultsWriterTransformer(
         val calleeReference = functionCall.calleeReference as? FirNamedReferenceWithCandidate
             ?: return functionCall
         val result = prepareQualifiedTransform(functionCall, calleeReference)
+        val originalArgumentList = result.argumentList
         val subCandidate = calleeReference.candidate
         val resultType = result.resolvedType.substituteType(subCandidate)
         if (calleeReference.isError) {
             subCandidate.argumentMapping?.let {
-                result.replaceArgumentList(buildArgumentListForErrorCall(result.argumentList, it))
+                result.replaceArgumentList(buildArgumentListForErrorCall(originalArgumentList, it))
             }
         } else {
             subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
-                val newArgumentList = buildResolvedArgumentList(it, source = functionCall.argumentList.source)
+                val newArgumentList = buildResolvedArgumentList(originalArgumentList, it)
                 val symbol = subCandidate.symbol
                 val functionIsInline =
                     (symbol as? FirNamedFunctionSymbol)?.fir?.isInline == true || symbol.isArrayConstructorWithLambda
@@ -373,7 +378,7 @@ class FirCallCompletionResultsWriterTransformer(
         }
         val expectedArgumentsTypeMapping = runIf(!calleeReference.isError) { subCandidate.createArgumentsMapping() }
 
-        result.transformWithExpectedTypes(expectedArgumentsTypeMapping)
+        result.transformArgumentList(expectedArgumentsTypeMapping)
 
         result.replaceConeTypeOrNull(resultType)
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, functionCall.source, context.file.source)
@@ -396,8 +401,10 @@ class FirCallCompletionResultsWriterTransformer(
         }
     }
 
-    private fun FirCall.transformWithExpectedTypes(expectedArgumentsTypeMapping: ExpectedArgumentType.ArgumentsMap?) {
-        class SamConversionInsertionTransformer : FirTransformer<Nothing?>() {
+    private fun FirCall.transformArgumentList(expectedArgumentsTypeMapping: ExpectedArgumentType.ArgumentsMap?) {
+        val mapping = (argumentList as? FirResolvedArgumentList)?.mapping
+
+        class ArgumentTransformer : FirTransformer<Nothing?>() {
             override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
                 // We want to handle only the most top-level "real" expressions
                 // We only recursively transform named, spread, lambda argument and vararg expressions.
@@ -412,18 +419,35 @@ class FirCallCompletionResultsWriterTransformer(
                 // Finally, the result can be wrapped in a SAM conversion if necessary.
                 if (transformed is FirExpression) {
                     val key = (element as? FirAnonymousFunctionExpression)?.anonymousFunction ?: element
-                    if (expectedArgumentsTypeMapping?.samFunctionTypes?.get(key) != null) {
-                        val expectedArgumentType = expectedArgumentsTypeMapping.getExpectedType(key)
+                    expectedArgumentsTypeMapping?.samConversions?.get(key)?.let { samInfo ->
                         @Suppress("UNCHECKED_CAST")
-                        expectedArgumentType?.let { return transformed.wrapInSamExpression(it) as E }
+                        return transformed.wrapInSamExpression(samInfo.samType) as E
                     }
                 }
 
                 return transformed
             }
+
+            override fun transformNamedArgumentExpression(
+                namedArgumentExpression: FirNamedArgumentExpression,
+                data: Nothing?
+            ): FirStatement {
+                val expression = transformElement(namedArgumentExpression.expression, data)
+                val parameter = mapping?.get(namedArgumentExpression)
+                return if (namedArgumentExpression.isSpread || parameter?.isVararg == true) {
+                    buildSpreadArgumentExpression {
+                        this.source = namedArgumentExpression.source
+                        this.expression = expression
+                        this.isNamed = true
+                        this.isFakeSpread = !namedArgumentExpression.isSpread
+                    }
+                } else {
+                    expression
+                }
+            }
         }
 
-        argumentList.transformArguments(SamConversionInsertionTransformer(), null)
+        argumentList.transformArguments(ArgumentTransformer(), null)
     }
 
     private fun FirExpression.wrapInSamExpression(expectedArgumentType: ConeKotlinType): FirExpression {
@@ -434,7 +458,6 @@ class FirCallCompletionResultsWriterTransformer(
             source = this@wrapInSamExpression.source?.fakeElement(KtFakeSourceElementKind.SamConversion)
         }
     }
-
     private val FirBasedSymbol<*>.isArrayConstructorWithLambda: Boolean
         get() {
             val constructor = (this as? FirConstructorSymbol)?.fir ?: return false
@@ -468,9 +491,11 @@ class FirCallCompletionResultsWriterTransformer(
         } else {
             subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
-                annotationCall.replaceArgumentList(buildResolvedArgumentList(it, annotationCall.argumentList.source))
+                annotationCall.replaceArgumentList(buildResolvedArgumentList(annotationCall.argumentList, it))
             }
         }
+
+        annotationCall.transformArgumentList(expectedArgumentsTypeMapping = null)
         return annotationCall
     }
 
@@ -637,7 +662,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         val isIntegerOperator = symbol.isWrappedIntegerOperator()
 
-        var samConversions: MutableMap<FirElement, ConeKotlinType>? = null
+        var samConversions: MutableMap<FirElement, FirSamResolver.SamConversionInfo>? = null
         val arguments = argumentMapping?.flatMap { (argument, valueParameter) ->
             val expectedType = when {
                 isIntegerOperator -> ConeIntegerConstantOperatorTypeImpl(
@@ -650,10 +675,12 @@ class FirCallCompletionResultsWriterTransformer(
 
             argument.unwrapAndFlattenArgument(flattenArrays = false).map {
                 val element: FirElement = (it as? FirAnonymousFunctionExpression)?.anonymousFunction ?: it
-                val samFunctionType = functionTypesOfSamConversions?.get(it)
-                if (samFunctionType != null) {
+                functionTypesOfSamConversions?.get(it)?.let { samInfo ->
                     if (samConversions == null) samConversions = mutableMapOf()
-                    samConversions!![element] = samFunctionType.substitute(this)
+                    samConversions!![element] = FirSamResolver.SamConversionInfo(
+                        functionalType = samInfo.functionalType.substituteType(this),
+                        samType = samInfo.samType.substituteType(this)
+                    )
                 }
                 element to expectedType
             }
@@ -671,21 +698,22 @@ class FirCallCompletionResultsWriterTransformer(
             delegatedConstructorCall.calleeReference as? FirNamedReferenceWithCandidate ?: return delegatedConstructorCall
         val subCandidate = calleeReference.candidate
 
+        val originalArgumentList = delegatedConstructorCall.argumentList
         if (calleeReference.isError) {
             subCandidate.argumentMapping?.let {
-                delegatedConstructorCall.replaceArgumentList(buildArgumentListForErrorCall(delegatedConstructorCall.argumentList, it))
+                delegatedConstructorCall.replaceArgumentList(buildArgumentListForErrorCall(originalArgumentList, it))
             }
         } else {
             subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
-                delegatedConstructorCall.replaceArgumentList(buildResolvedArgumentList(it, delegatedConstructorCall.argumentList.source))
+                delegatedConstructorCall.replaceArgumentList(buildResolvedArgumentList(originalArgumentList, it))
             }
         }
 
         runPCLARelatedTasksForCandidate(subCandidate)
 
         val argumentsMapping = runIf(!calleeReference.isError) { subCandidate.createArgumentsMapping() }
-        delegatedConstructorCall.transformWithExpectedTypes(argumentsMapping)
+        delegatedConstructorCall.transformArgumentList(argumentsMapping)
 
         return delegatedConstructorCall.apply {
             replaceCalleeReference(calleeReference.toResolvedReference())
@@ -769,9 +797,9 @@ class FirCallCompletionResultsWriterTransformer(
                 expectedArgumentType.isSomeFunctionType(session) -> expectedArgumentType
                 // fun interface (a.k.a. SAM), then unwrap it and build a functional type from that interface function
                 else -> {
-                    val samFunctionType = (data as? ExpectedArgumentType.ArgumentsMap)?.samFunctionTypes?.get(anonymousFunction)
-                        ?: samResolver.getFunctionTypeForPossibleSamType(expectedArgumentType)
-                    samFunctionType?.lowerBoundIfFlexible()
+                    val samInfo = (data as? ExpectedArgumentType.ArgumentsMap)?.samConversions?.get(anonymousFunction)
+                        ?: samResolver.getSamInfoForPossibleSamType(expectedArgumentType)
+                    samInfo?.functionalType?.lowerBoundIfFlexible()
                 }
             }
         }
@@ -812,7 +840,10 @@ class FirCallCompletionResultsWriterTransformer(
         }
 
         if (needUpdateLambdaType) {
-            val kind = expectedType?.functionTypeKind(session)
+            // When we get the FunctionTypeKind, we have to check the deserialized ConeType first because it checks both
+            // class ID and annotations. On the other hand, `functionTypeKind()` checks only class ID.
+            val kind = expectedType?.functionTypeKindForDeserializedConeType()
+                ?: expectedType?.functionTypeKind(session)
                 ?: result.typeRef.coneTypeSafe<ConeClassLikeType>()?.functionTypeKind(session)
             result.replaceTypeRef(result.constructFunctionTypeRef(session, kind))
             session.lookupTracker?.recordTypeResolveAsLookup(result.typeRef, result.source, context.file.source)
@@ -820,6 +851,12 @@ class FirCallCompletionResultsWriterTransformer(
         // Have to delay this until the type is written to avoid adding a return if the type is Unit.
         result.addReturnToLastStatementIfNeeded(session)
         return result
+    }
+
+    private fun ConeKotlinType.functionTypeKindForDeserializedConeType(): FunctionTypeKind? {
+        val coneClassLikeType = type as? ConeClassLikeType ?: return null
+        val classId = coneClassLikeType.classId ?: return null
+        return session.functionTypeService.extractSingleExtensionKindForDeserializedConeType(classId, coneClassLikeType.customAnnotations)
     }
 
     private fun transformImplicitTypeRefInAnonymousFunction(
@@ -926,9 +963,25 @@ class FirCallCompletionResultsWriterTransformer(
 
         runPCLARelatedTasksForCandidate(calleeReference.candidate)
 
-        return syntheticCall.apply {
-            replaceCalleeReference(calleeReference.toResolvedReference())
+        val resolvedCalleeReference = calleeReference.toResolvedReference()
+
+        // If we have a conflict between the expected type and the inferred type, we would like to set the inferred type on the expression,
+        // so that we report INITIALIZER_TYPE_MISMATCH/RETURN_TYPE_MISMATCH.
+        // This is required so that the IDE provides the correct quick fixes.
+        if (syntheticCall.resultType !is ConeErrorType && resolvedCalleeReference is FirResolvedErrorReference) {
+            val diagnostic = resolvedCalleeReference.diagnostic
+            if (diagnostic is ConeConstraintSystemHasContradiction) {
+                val candidate = diagnostic.candidate as Candidate
+                val newSyntheticCallType = session.typeContext.commonSuperTypeOrNull(candidate.argumentMapping!!.keys.map { it.resolvedType })
+                if (newSyntheticCallType != null && !newSyntheticCallType.hasError()) {
+                    syntheticCall.replaceConeTypeOrNull(newSyntheticCallType)
+                }
+            }
         }
+
+        syntheticCall.replaceCalleeReference(resolvedCalleeReference)
+
+        return syntheticCall
     }
 
     private inline fun <reified D> transformSyntheticCallChildren(
@@ -1035,7 +1088,7 @@ sealed class ExpectedArgumentType {
     class ArgumentsMap(
         val map: Map<FirElement, ConeKotlinType>,
         val lambdasReturnTypes: Map<FirAnonymousFunction, ConeKotlinType>,
-        val samFunctionTypes: Map<FirElement, ConeKotlinType>,
+        val samConversions: Map<FirElement, FirSamResolver.SamConversionInfo>,
     ) : ExpectedArgumentType()
 
     class ExpectedType(val type: ConeKotlinType) : ExpectedArgumentType()

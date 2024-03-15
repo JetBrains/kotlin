@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.BindingTraceFilter
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
@@ -67,7 +66,6 @@ class GenerationState private constructor(
     moduleName: String?,
     val outDirectory: File?,
     private val onIndependentPartCompilationEnd: GenerationStateEventCallback,
-    wantsDiagnostics: Boolean,
     val jvmBackendClassResolver: JvmBackendClassResolver,
     val isIrBackend: Boolean,
     val ignoreErrors: Boolean,
@@ -117,10 +115,6 @@ class GenerationState private constructor(
         fun onIndependentPartCompilationEnd(v: GenerationStateEventCallback) =
             apply { onIndependentPartCompilationEnd = v }
 
-        private var wantsDiagnostics: Boolean = true
-        fun wantsDiagnostics(v: Boolean) =
-            apply { wantsDiagnostics = v }
-
         private var jvmBackendClassResolver: JvmBackendClassResolver = JvmBackendClassResolverForModuleWithDependencies(module)
         fun jvmBackendClassResolver(v: JvmBackendClassResolver) =
             apply { jvmBackendClassResolver = v }
@@ -149,7 +143,7 @@ class GenerationState private constructor(
             GenerationState(
                 project, builderFactory, module, bindingContext, configuration,
                 generateDeclaredClassFilter, targetId,
-                moduleName, outDirectory, onIndependentPartCompilationEnd, wantsDiagnostics,
+                moduleName, outDirectory, onIndependentPartCompilationEnd,
                 jvmBackendClassResolver, isIrBackend, ignoreErrors,
                 diagnosticReporter ?: DiagnosticReporterFactory.createReporter(),
                 isIncrementalCompilation
@@ -237,10 +231,7 @@ class GenerationState private constructor(
 
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
     val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode
-    val bindingTrace: BindingTrace = DelegatingBindingTrace(
-        originalFrontendBindingContext, "trace in GenerationState",
-        filter = if (wantsDiagnostics) BindingTraceFilter.ACCEPT_ALL else BindingTraceFilter.NO_DIAGNOSTICS
-    )
+    val bindingTrace: BindingTrace = DelegatingBindingTrace(originalFrontendBindingContext, "trace in GenerationState")
     val bindingContext: BindingContext = bindingTrace.bindingContext
     val mainFunctionDetector = MainFunctionDetector(originalFrontendBindingContext, languageVersionSettings)
     val typeMapper: KotlinTypeMapper = KotlinTypeMapper(

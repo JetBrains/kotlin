@@ -21,11 +21,13 @@ import kotlin.contracts.contract
 class FirAnonymousFunctionExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     lateinit var anonymousFunction: FirAnonymousFunction
+    var isTrailingLambda: Boolean = false
 
     override fun build(): FirAnonymousFunctionExpression {
         return FirAnonymousFunctionExpressionImpl(
             source,
-            anonymousFunction
+            anonymousFunction,
+            isTrailingLambda,
         )
     }
 

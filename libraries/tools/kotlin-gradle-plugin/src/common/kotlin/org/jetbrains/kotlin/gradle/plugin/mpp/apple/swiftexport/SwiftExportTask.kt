@@ -7,73 +7,40 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.internal.LogType
-import org.jetbrains.kotlin.gradle.internal.processLogMessage
-import org.jetbrains.kotlin.gradle.utils.getFile
-import org.jetbrains.kotlin.konan.target.Distribution
-import org.jetbrains.kotlin.swiftexport.standalone.*
+import org.gradle.workers.WorkerExecutor
+import javax.inject.Inject
+
 
 @DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
-abstract class SwiftExportTask : DefaultTask(), SwiftExportLogger {
-
-    @get:Input
-    abstract val bridgeModuleName: Property<String>
-
-    @get:Input
-    abstract val debugMode: Property<Boolean>
-
-    @get:InputDirectory
-    @get:PathSensitive(PathSensitivity.ABSOLUTE)
-    abstract val konanDistribution: DirectoryProperty
+internal abstract class SwiftExportTask : DefaultTask() {
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val sourceRoots: ConfigurableFileCollection
+    abstract val swiftExportClasspath: ConfigurableFileCollection
 
-    @get:OutputFile
-    abstract val swiftApiPath: RegularFileProperty
+    @get:Inject
+    abstract val workerExecutor: WorkerExecutor
 
-    @get:OutputFile
-    abstract val headerBridgePath: RegularFileProperty
-
-    @get:OutputFile
-    abstract val kotlinBridgePath: RegularFileProperty
+    @get:Nested
+    abstract val parameters: SwiftExportParameters
 
     @TaskAction
     fun run() {
-        runSwiftExport(
-            input = SwiftExportInput(
-                sourceRoot = sourceRoots.filter { it.exists() }.map { it.toPath() }.first()
-            ),
-            config = SwiftExportConfig(
-                settings = mapOf(
-                    SwiftExportConfig.DEBUG_MODE_ENABLED to debugMode.getOrElse(false).toString(),
-                    SwiftExportConfig.BRIDGE_MODULE_NAME to bridgeModuleName.getOrElse(SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME),
-                ),
-                this,
-                distribution = Distribution(konanDistribution.getFile().absolutePath),
-            ),
-            output = SwiftExportOutput(
-                swiftApi = swiftApiPath.get().asFile.toPath(),
-                kotlinBridges = kotlinBridgePath.get().asFile.toPath(),
-                cHeaderBridges = headerBridgePath.get().asFile.toPath(),
-            )
-        )
-    }
+        val workQueue = workerExecutor.classLoaderIsolation { workerSpec ->
+            workerSpec.classpath.from(swiftExportClasspath)
+        }
 
-    override fun report(severity: SwiftExportLogger.Severity, message: String) {
-        logger.processLogMessage(message, severity.logType())
-    }
-}
+        workQueue.submit(SwiftExportAction::class.java) { workParameters ->
+            workParameters.debugMode.set(parameters.debugMode)
+            workParameters.bridgeModuleName.set(parameters.bridgeModuleName)
+            workParameters.konanDistribution.set(parameters.konanDistribution)
+            workParameters.sourceRoot.set(parameters.sourceRoot)
 
-private fun SwiftExportLogger.Severity.logType(): LogType = when (this) {
-    SwiftExportLogger.Severity.Info -> LogType.INFO
-    SwiftExportLogger.Severity.Warning -> LogType.WARN
-    SwiftExportLogger.Severity.Error -> LogType.ERROR
-    else -> LogType.LOG
+            workParameters.swiftApiPath.set(parameters.swiftApiPath)
+            workParameters.headerBridgePath.set(parameters.headerBridgePath)
+            workParameters.kotlinBridgePath.set(parameters.kotlinBridgePath)
+        }
+    }
 }

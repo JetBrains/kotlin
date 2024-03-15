@@ -106,7 +106,7 @@ class Fir2IrJvmResultsConverter(
         val codegenFactory = JvmIrCodegenFactory(configuration, phaseConfig)
         val generationState = GenerationState.Builder(
             project, ClassBuilderFactories.TEST,
-            fir2irResult.irModuleFragment.descriptor, NoScopeRecordCliBindingTrace().bindingContext, configuration
+            fir2irResult.irModuleFragment.descriptor, NoScopeRecordCliBindingTrace(project).bindingContext, configuration
         ).isIrBackend(
             true
         ).jvmBackendClassResolver(

@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.backend
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.psi.PsiCompiledElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
@@ -13,7 +14,6 @@ import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COMPONENT_PREFIX
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.diagnostics.startOffsetSkippingComments
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.builder.buildFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.builder.buildPackageDirective
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildFile
@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
@@ -67,6 +68,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -277,7 +279,10 @@ fun FirCallableSymbol<*>.toSymbolForCall(
         }
         // Member fake override or bound callable reference
         dispatchReceiver != null -> {
-            val callSiteDispatchReceiverType = dispatchReceiver.resolvedType
+            val callSiteDispatchReceiverType = when (dispatchReceiver) {
+                is FirSmartCastExpression -> dispatchReceiver.smartcastTypeWithoutNullableNothing?.coneType ?: dispatchReceiver.resolvedType
+                else -> dispatchReceiver.resolvedType
+            }
             val declarationSiteDispatchReceiverType = dispatchReceiverType
             val type = if (callSiteDispatchReceiverType is ConeDynamicType && declarationSiteDispatchReceiverType != null) {
                 declarationSiteDispatchReceiverType
@@ -529,6 +534,9 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? = when (this) {
             source?.kind == KtFakeSourceElementKind.DesugaredForLoop && symbol.callableId.isIterator() ->
                 IrStatementOrigin.FOR_LOOP_ITERATOR
 
+            source?.kind == KtFakeSourceElementKind.DesugaredInvertedContains ->
+                IrStatementOrigin.NOT_IN
+
             source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement ->
                 incOrDeclSourceKindToIrStatementOrigin[source?.kind]
 
@@ -542,11 +550,12 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? = when (this) {
                 IrStatementOrigin.COMPONENT_N.withIndex(name.asString().removePrefix(DATA_CLASS_COMPONENT_PREFIX).toInt())
 
             source?.kind is KtFakeSourceElementKind.DesugaredCompoundAssignment -> when (name) {
-                OperatorNameConventions.PLUS_ASSIGN -> IrStatementOrigin.PLUSEQ
-                OperatorNameConventions.MINUS_ASSIGN -> IrStatementOrigin.MINUSEQ
-                OperatorNameConventions.TIMES_ASSIGN -> IrStatementOrigin.MULTEQ
-                OperatorNameConventions.DIV_ASSIGN -> IrStatementOrigin.DIVEQ
-                OperatorNameConventions.MOD_ASSIGN, OperatorNameConventions.REM_ASSIGN -> IrStatementOrigin.PERCEQ
+                OperatorNameConventions.PLUS_ASSIGN, OperatorNameConventions.PLUS -> IrStatementOrigin.PLUSEQ
+                OperatorNameConventions.MINUS_ASSIGN, OperatorNameConventions.MINUS -> IrStatementOrigin.MINUSEQ
+                OperatorNameConventions.TIMES_ASSIGN, OperatorNameConventions.TIMES -> IrStatementOrigin.MULTEQ
+                OperatorNameConventions.DIV_ASSIGN, OperatorNameConventions.DIV -> IrStatementOrigin.DIVEQ
+                OperatorNameConventions.MOD_ASSIGN, OperatorNameConventions.MOD,
+                OperatorNameConventions.REM_ASSIGN, OperatorNameConventions.REM -> IrStatementOrigin.PERCEQ
                 else -> null
             }
 
@@ -688,11 +697,6 @@ fun FirSession.createFilesWithGeneratedDeclarations(): List<FirFile> {
     return buildList {
         for (packageFqName in (topLevelClasses.keys + topLevelCallables.keys)) {
             this += buildFile {
-                symbol = FirFileSymbol()
-                annotationsContainer = buildFileAnnotationsContainer {
-                    moduleData = this@createFilesWithGeneratedDeclarations.moduleData
-                    containingFileSymbol = this@buildFile.symbol
-                }
                 origin = FirDeclarationOrigin.Synthetic.PluginFile
                 moduleData = this@createFilesWithGeneratedDeclarations.moduleData
                 packageDirective = buildPackageDirective {
@@ -896,7 +900,7 @@ internal fun FirQualifiedAccessExpression.buildSubstitutorByCalledCallable(): Co
         val typeProjection = typeArguments.getOrNull(index) as? FirTypeProjectionWithVariance ?: continue
         map[typeParameter.symbol] = typeProjection.typeRef.coneType
     }
-    return ConeSubstitutorByMap(map, session)
+    return ConeSubstitutorByMap.create(map, session)
 }
 
 val augmentedArrayAssignSourceKindToIrStatementOrigin = mapOf(
@@ -915,3 +919,16 @@ val incOrDeclSourceKindToIrStatementOrigin = mapOf(
     KtFakeSourceElementKind.DesugaredPrefixIncSecondGetReference to IrStatementOrigin.PREFIX_INCR,
     KtFakeSourceElementKind.DesugaredPrefixDecSecondGetReference to IrStatementOrigin.PREFIX_DECR
 )
+
+internal inline fun <R> convertCatching(element: FirElement, conversionScope: Fir2IrConversionScope? = null, block: () -> R): R {
+    try {
+        return block()
+    } catch (e: ProcessCanceledException) {
+        throw e
+    } catch (e: Throwable) {
+        errorWithAttachment("Exception was thrown during transformation of ${element::class.java}", cause = e) {
+            withFirEntry("element", element)
+            conversionScope?.containingFileIfAny()?.let { withEntry("file", it.path) }
+        }
+    }
+}

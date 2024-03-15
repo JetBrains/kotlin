@@ -47,6 +47,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
   }
 
   @Test
+  @TestMetadata("annotationWithVararg.kt")
+  public void testAnnotationWithVararg() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/annotationWithVararg.kt");
+  }
+
+  @Test
   @TestMetadata("classKinds.kt")
   public void testClassKinds() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/classKinds.kt");
@@ -206,6 +212,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
       @TestMetadata("extensionReceiverSmartCasted.kt")
       public void testExtensionReceiverSmartCasted() {
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/extensionReceiverSmartCasted.kt");
+      }
+
+      @Test
+      @TestMetadata("foreignValue.kt")
+      public void testForeignValue() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/foreignValue.kt");
       }
 
       @Test

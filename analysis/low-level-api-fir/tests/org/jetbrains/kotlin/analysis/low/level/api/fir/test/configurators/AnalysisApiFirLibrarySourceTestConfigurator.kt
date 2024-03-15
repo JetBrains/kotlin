@@ -10,13 +10,15 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiLibraryBaseTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.SealedClassesInheritorsCalculatorPreAnalysisHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibrarySourceModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibrarySourceTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleProjectStructure
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
+import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiJvmEnvironmentConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiIndexingConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.*
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
@@ -35,8 +37,9 @@ object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator
         disposable: Disposable
     ) {
         builder.apply {
-            useAdditionalService<KtModuleFactory> { KtLibrarySourceModuleFactory }
+            useAdditionalService<KtTestModuleFactory> { KtLibrarySourceTestModuleFactory }
             useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler() }
+            useAdditionalService { AnalysisApiIndexingConfiguration(AnalysisApiBinaryLibraryIndexingMode.INDEX_STUBS) }
             useDirectives(SealedClassesInheritorsCalculatorPreAnalysisHandler.Directives)
             usePreAnalysisHandlers(::SealedClassesInheritorsCalculatorPreAnalysisHandler)
             useConfigurators(
@@ -50,7 +53,7 @@ object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project
-    ): KtModuleProjectStructure {
+    ): KtTestModuleProjectStructure {
         return TestModuleStructureFactory.createProjectStructureByTestStructure(moduleStructure, testServices, project)
     }
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.objcexport.tests
 
+import org.jetbrains.kotlin.objcexport.KtObjCExportFile
 import org.jetbrains.kotlin.objcexport.StableFileOrder
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
 import org.junit.jupiter.api.Test
@@ -23,8 +24,8 @@ class TranslationOrderTest(
             sourceFile("C.kt", "package com.c")
         }
 
-        val unsorted = listOf(files.getValue("C.kt"), files.getValue("B.kt"), files.getValue("A.kt"))
-        val sorted = listOf(files.getValue("A.kt"), files.getValue("B.kt"), files.getValue("C.kt"))
+        val unsorted = listOf(files.getValue("C.kt"), files.getValue("B.kt"), files.getValue("A.kt")).map(::KtObjCExportFile)
+        val sorted = listOf(files.getValue("A.kt"), files.getValue("B.kt"), files.getValue("C.kt")).map(::KtObjCExportFile)
 
         assertNotEquals(sorted, unsorted)
         assertEquals(sorted, unsorted.sortedWith(StableFileOrder))
@@ -38,8 +39,8 @@ class TranslationOrderTest(
             sourceFile("B2.kt", "package com.b")
         }
 
-        val unsorted = listOf(files.getValue("B2.kt"), files.getValue("A.kt"), files.getValue("B1.kt"))
-        val sorted = listOf(files.getValue("A.kt"), files.getValue("B1.kt"), files.getValue("B2.kt"))
+        val unsorted = listOf(files.getValue("B2.kt"), files.getValue("A.kt"), files.getValue("B1.kt")).map(::KtObjCExportFile)
+        val sorted = listOf(files.getValue("A.kt"), files.getValue("B1.kt"), files.getValue("B2.kt")).map(::KtObjCExportFile)
 
         assertNotEquals(sorted, unsorted)
         assertEquals(sorted, unsorted.sortedWith(StableFileOrder))

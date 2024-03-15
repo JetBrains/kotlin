@@ -115,6 +115,10 @@ class FirSyntheticPropertiesScope private constructor(
         if (getter.valueParameters.isNotEmpty()) return
         if (getter.isStatic) return
 
+        // Should have Java among overridden _and_ don't have isHiddenEverywhereBesideSuperCalls among them
+        val (getterCompatibility, deprecatedOverrideOfHidden) = getterSymbol.computeGetterCompatibility()
+        if (getterCompatibility == Incompatible) return
+
         var getterReturnType = (getter.returnTypeRef as? FirResolvedTypeRef)?.type
         if (getterReturnType == null && needCheckForSetter) {
             // During implicit body resolve phase, we can encounter a reference to a not yet resolved Kotlin class that inherits a
@@ -125,10 +129,6 @@ class FirSyntheticPropertiesScope private constructor(
         // `void` type is the only case when we've got not-nullable non-enhanced Unit from Java
         // And it doesn't make sense to make a synthetic property for `void` typed getters
         if (getterReturnType?.isUnit == true && CompilerConeAttributes.EnhancedNullability !in getterReturnType.attributes) return
-
-        // Should have Java among overridden _and_ don't have isHiddenEverywhereBesideSuperCalls among them
-        val (getterCompatibility, deprecatedOverrideOfHidden) = getterSymbol.computeGetterCompatibility()
-        if (getterCompatibility == Incompatible) return
 
         var matchingSetter: FirSimpleFunction? = null
         if (needCheckForSetter && getterReturnType != null) {

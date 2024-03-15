@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -123,7 +122,7 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
                 conflictingDeclaration.isPrimaryConstructor && symbols.all { it.isPrimaryConstructor }
             ) return@forEach
 
-            if (symbols.singleOrNull()?.let { isExpectAndActual(conflictingDeclaration, it) } == true) {
+            if (symbols.singleOrNull()?.let { isExpectAndNonExpect(conflictingDeclaration, it) } == true) {
                 reporter.reportOn(source, FirErrors.EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, conflictingDeclaration, context)
                 return@forEach
             }

@@ -1,9 +1,5 @@
 // TARGET_BACKEND: JVM
 // !LANGUAGE: +MultiPlatformProjects
-// IGNORE_DIAGNOSTIC_API
-// IGNORE_REVERSED_RESOLVE
-//  Reason: MPP diagnostics are reported differentely in the compiler and AA
-
 // MODULE: common
 // TARGET_PLATFORM: Common
 // FILE: common.kt

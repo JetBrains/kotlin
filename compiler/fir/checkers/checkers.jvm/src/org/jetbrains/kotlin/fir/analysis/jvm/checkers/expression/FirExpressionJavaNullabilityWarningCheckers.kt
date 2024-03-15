@@ -80,7 +80,7 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
             }
         }
 
-        return ConeSubstitutorByMap(substitutionMap, session)
+        return ConeSubstitutorByMap.create(substitutionMap, session)
     }
 }
 

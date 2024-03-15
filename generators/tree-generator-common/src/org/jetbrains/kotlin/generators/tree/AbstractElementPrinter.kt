@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,8 +22,6 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, 
     context(ImportCollector)
     protected abstract fun SmartPrinter.printAdditionalMethods(element: Element)
 
-    protected open fun defaultElementKDoc(element: Element): String? = null
-
     protected open val separateFieldsWithBlankLine: Boolean
         get() = false
 
@@ -35,7 +33,7 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, 
         printer.run {
             val kind = element.kind ?: error("Expected non-null element kind")
 
-            printKDoc(element.extendedKDoc(defaultElementKDoc(element)))
+            printKDoc(element.extendedKDoc())
             print(kind.title, " ", element.typeName)
             print(element.params.typeParameters())
 
@@ -60,6 +58,7 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, 
                         if (separateFieldsWithBlankLine) println()
                         fieldPrinter.printField(
                             field,
+                            inImplementation = false,
                             override = field.fromParent,
                             modality = Modality.ABSTRACT.takeIf { !field.isFinal && !kind.isInterface },
                         )

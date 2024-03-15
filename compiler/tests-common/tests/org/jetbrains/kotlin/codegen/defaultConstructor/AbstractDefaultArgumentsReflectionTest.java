@@ -20,6 +20,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.CodegenTestCase;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +42,7 @@ public abstract class AbstractDefaultArgumentsReflectionTest extends CodegenTest
             doTestImpl(path);
         }
         catch (IOException e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 

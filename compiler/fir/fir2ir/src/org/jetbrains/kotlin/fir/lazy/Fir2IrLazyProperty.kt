@@ -12,13 +12,18 @@ import org.jetbrains.kotlin.descriptors.isAnnotationClass
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.generators.FirBasedFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.backend.generators.generateOverriddenPropertySymbols
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -26,6 +31,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
@@ -98,9 +104,21 @@ class Fir2IrLazyProperty(
     private fun toIrInitializer(initializer: FirExpression?): IrExpressionBody? {
         // Annotations need full initializer information to instantiate them correctly
         return when {
-            containingClass?.classKind?.isAnnotationClass == true -> initializer?.asCompileTimeIrInitializer(
-                components, fir.returnTypeRef.coneType
-            )
+            containingClass?.classKind?.isAnnotationClass == true -> {
+                var irInitializer: IrExpressionBody? = null
+                declarationStorage.withScope(symbol) {
+                    with(declarationStorage) {
+                        val firPrimaryConstructor =
+                            fir.containingClassLookupTag()?.toFirRegularClass(session)?.primaryConstructorIfAny(session) ?: return@with
+
+                        @OptIn(UnsafeDuringIrConstructionAPI::class)
+                        declarationStorage.getIrConstructorSymbol(firPrimaryConstructor).owner.putParametersInScope(firPrimaryConstructor.fir)
+                    }
+                    fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+                    irInitializer = initializer?.asCompileTimeIrInitializer(components, fir.returnTypeRef.coneType)
+                }
+                irInitializer
+            }
             // Setting initializers to every other class causes some cryptic errors in lowerings
             initializer is FirLiteralExpression<*> -> {
                 val constType = with(typeConverter) { initializer.resolvedType.toIrType() }
@@ -216,9 +234,9 @@ class Fir2IrLazyProperty(
     }
 
     override var overriddenSymbols: List<IrPropertySymbol> by symbolsMappingForLazyClasses.lazyMappedPropertyListVar(lock) {
-        when (configuration.useIrFakeOverrideBuilder) {
-            true -> computeOverriddenSymbolsForIrFakeOverrideGenerator()
-            false -> computeOverriddenUsingFir2IrFakeOverrideGenerator()
+        when (configuration.useFirBasedFakeOverrideGenerator) {
+            true -> computeOverriddenUsingFir2IrFakeOverrideGenerator()
+            false -> computeOverriddenSymbolsForIrFakeOverrideGenerator()
         }
     }
 

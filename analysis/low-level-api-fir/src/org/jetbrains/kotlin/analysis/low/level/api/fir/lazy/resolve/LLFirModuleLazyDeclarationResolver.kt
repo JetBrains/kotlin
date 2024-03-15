@@ -110,8 +110,11 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
     }
 
     private fun resolveFileToImportsWithLock(firFile: FirFile) {
-        moduleComponents.globalResolveComponents.lockProvider.withWriteLock(firFile, FirResolvePhase.IMPORTS) {
-            firFile.transformSingle(FirImportResolveTransformer(firFile.moduleData.session), null)
+        val lockProvider = moduleComponents.globalResolveComponents.lockProvider
+        lockProvider.withGlobalLock {
+            lockProvider.withWriteLock(firFile, FirResolvePhase.IMPORTS) {
+                firFile.transformSingle(FirImportResolveTransformer(firFile.moduleData.session), null)
+            }
         }
     }
 

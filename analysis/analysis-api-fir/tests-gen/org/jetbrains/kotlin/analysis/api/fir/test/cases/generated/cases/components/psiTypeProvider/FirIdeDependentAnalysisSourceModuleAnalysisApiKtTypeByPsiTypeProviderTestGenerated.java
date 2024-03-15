@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiKtTypeByPsiTypeProviderTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -59,6 +58,24 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiKtTypeByPsiTypeProvid
   }
 
   @Test
+  @TestMetadata("methodTypeParameterWithKotlinUseSite.kt")
+  public void testMethodTypeParameterWithKotlinUseSite() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/methodTypeParameterWithKotlinUseSite.kt");
+  }
+
+  @Test
+  @TestMetadata("methodTypeParameterWithMethodUseSite.kt")
+  public void testMethodTypeParameterWithMethodUseSite() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/methodTypeParameterWithMethodUseSite.kt");
+  }
+
+  @Test
+  @TestMetadata("methodTypeParameterWithTypeParameterUseSite.kt")
+  public void testMethodTypeParameterWithTypeParameterUseSite() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/methodTypeParameterWithTypeParameterUseSite.kt");
+  }
+
+  @Test
   @TestMetadata("methodTypeParameters.kt")
   public void testMethodTypeParameters() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/methodTypeParameters.kt");
@@ -80,6 +97,30 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiKtTypeByPsiTypeProvid
   @TestMetadata("primitive.kt")
   public void testPrimitive() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/primitive.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAnnotation.kt")
+  public void testTypeAnnotation() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAnnotationOnString.kt")
+  public void testTypeAnnotationOnString() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeAnnotationOnString.kt");
+  }
+
+  @Test
+  @TestMetadata("typeParameterWithKotlinUseSite.kt")
+  public void testTypeParameterWithKotlinUseSite() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeParameterWithKotlinUseSite.kt");
+  }
+
+  @Test
+  @TestMetadata("typeParameterWithMethodUseSite.kt")
+  public void testTypeParameterWithMethodUseSite() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeParameterWithMethodUseSite.kt");
   }
 
   @Test

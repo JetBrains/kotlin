@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
@@ -64,11 +63,15 @@ class IrPrettyKotlinDumpHandler(
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        if (dumper.isEmpty()) return
         val moduleStructure = testServices.moduleStructure
         val extension = computeDumpExtension(moduleStructure.modules.first(), DUMP_EXTENSION)
         val expectedFile = moduleStructure.originalTestDataFiles.first().withExtension(extension)
-        assertions.assertEqualsToFile(expectedFile, dumper.generateResultingDump())
+
+        if (dumper.isEmpty()) {
+            assertions.assertFileDoesntExist(expectedFile, DUMP_KT_IR)
+        } else {
+            assertions.assertEqualsToFile(expectedFile, dumper.generateResultingDump())
+        }
     }
 }
 

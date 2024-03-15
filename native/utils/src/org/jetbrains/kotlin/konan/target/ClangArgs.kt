@@ -134,6 +134,34 @@ sealed class ClangArgs(
         if (environmentOsVersionMinRequired != null) {
             add(listOf("-D__ENVIRONMENT_OS_VERSION_MIN_REQUIRED__=$environmentOsVersionMinRequired"))
         }
+
+        // Workaround to make Xcode 15.3 SDK headers work with older Clang from K/N. This should be removed after LLVM update: KT-49279
+        // We don't handle simulator targets here, because they use different machinery for macro-expansion (see DYNAMIC_TARGETS_ENABLED)
+        // YouTrack ticket:  KT-65542
+        val targetConditionals = when (target) {
+            KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> hashMapOf(
+                "TARGET_OS_OSX" to "1",
+            )
+            KonanTarget.IOS_ARM64 -> hashMapOf(
+                "TARGET_OS_EMBEDDED" to "1",
+                "TARGET_OS_IPHONE" to "1",
+                "TARGET_OS_IOS" to "1",
+            )
+            KonanTarget.TVOS_ARM64 -> hashMapOf(
+                "TARGET_OS_EMBEDDED" to "1",
+                "TARGET_OS_IPHONE" to "1",
+                "TARGET_OS_TV" to "1",
+            )
+            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_DEVICE_ARM64 -> hashMapOf(
+                "TARGET_OS_EMBEDDED" to "1",
+                "TARGET_OS_IPHONE" to "1",
+                "TARGET_OS_WATCH" to "1",
+            )
+            else -> null
+        }
+        if (targetConditionals != null) {
+            add(targetConditionals.map { "-D${it.key}=${it.value}" })
+        }
     }.flatten()
 
     private val specificClangArgs: List<String> = when (target) {
@@ -141,7 +169,7 @@ sealed class ClangArgs(
                 "-mfpu=vfp", "-mfloat-abi=hard"
         )
 
-        KonanTarget.IOS_ARM32, KonanTarget.WATCHOS_ARM32 -> listOf(
+       KonanTarget.WATCHOS_ARM32 -> listOf(
                 // Force generation of ARM instruction set instead of Thumb-2.
                 // It allows LLVM ARM backend to encode bigger offsets in BL instruction,
                 // thus allowing to generate a slightly bigger binaries.
@@ -162,38 +190,6 @@ sealed class ClangArgs(
                     "-I$toolchainSysroot/usr/include/$clangTarget"
             )
         }
-
-        // By default WASM target forces `hidden` visibility which causes linkage problems.
-        KonanTarget.WASM32 -> listOf(
-                    "-fno-rtti",
-                    "-fno-exceptions",
-                    "-fvisibility=default",
-                    "-D_LIBCPP_ABI_VERSION=2",
-                    "-D_LIBCPP_NO_EXCEPTIONS=1",
-                    "-nostdinc",
-                    "-Xclang", "-nobuiltininc",
-                    "-Xclang", "-nostdsysteminc",
-                    "-Xclang", "-isystem$absoluteTargetSysRoot/include/libcxx",
-                    "-Xclang", "-isystem$absoluteTargetSysRoot/lib/libcxxabi/include",
-                    "-Xclang", "-isystem$absoluteTargetSysRoot/include/compat",
-                    "-Xclang", "-isystem$absoluteTargetSysRoot/include/libc"
-        )
-
-        is KonanTarget.ZEPHYR -> listOf(
-                "-fno-rtti",
-                "-fno-exceptions",
-                "-fno-asynchronous-unwind-tables",
-                "-fno-pie",
-                "-fno-pic",
-                "-fshort-enums",
-                "-nostdinc",
-                // TODO: make it a libGcc property?
-                // We need to get rid of wasm sysroot first.
-                "-isystem ${configurables.targetToolchain}/../lib/gcc/arm-none-eabi/7.2.1/include",
-                "-isystem ${configurables.targetToolchain}/../lib/gcc/arm-none-eabi/7.2.1/include-fixed",
-                "-isystem$absoluteTargetSysRoot/include/libcxx",
-                "-isystem$absoluteTargetSysRoot/include/libc"
-        ) + (configurables as ZephyrConfigurables).constructClangArgs()
 
         else -> emptyList()
     }
@@ -286,4 +282,3 @@ sealed class ClangArgs(
      */
     class Native(configurables: Configurables) : ClangArgs(configurables, forJni = false)
 }
-

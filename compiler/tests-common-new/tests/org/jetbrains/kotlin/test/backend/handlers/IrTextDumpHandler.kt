@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE_LISTING
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_EXTERNAL_CLASS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.EXTERNAL_FILE
@@ -42,6 +43,7 @@ class IrTextDumpHandler(
 ) : AbstractIrHandler(testServices, artifactKind) {
     companion object {
         const val DUMP_EXTENSION = "ir.txt"
+        const val DUMP_EXTENSION2 = "ir2.txt"
 
         fun computeDumpExtension(module: TestModule, defaultExtension: String, ignoreFirIdentical: Boolean = false): String {
             return if (
@@ -85,7 +87,11 @@ class IrTextDumpHandler(
     private val baseDumper = MultiModuleInfoDumper()
     private val buildersForSeparateFileDumps: MutableMap<File, StringBuilder> = mutableMapOf()
 
+    private var byteCodeListingEnabled = false
+
     override fun processModule(module: TestModule, info: IrBackendInput) {
+        byteCodeListingEnabled = byteCodeListingEnabled || CHECK_BYTECODE_LISTING in module.directives
+
         if (DUMP_IR !in module.directives) return
 
         val irBuiltins = info.irModuleFragment.irBuiltins
@@ -149,11 +155,13 @@ class IrTextDumpHandler(
     private fun checkOneExpectedFile(expectedFile: File, actualDump: String) {
         if (actualDump.isNotEmpty()) {
             assertions.assertEqualsToFile(expectedFile, actualDump)
+        } else {
+            assertions.assertFileDoesntExist(expectedFile, DUMP_IR)
         }
     }
 
     private fun TestModule.getDumpExtension(ignoreFirIdentical: Boolean = false): String {
-        return computeDumpExtension(this, DUMP_EXTENSION, ignoreFirIdentical)
+        return computeDumpExtension(this, if (byteCodeListingEnabled) DUMP_EXTENSION2 else DUMP_EXTENSION, ignoreFirIdentical)
     }
 }
 

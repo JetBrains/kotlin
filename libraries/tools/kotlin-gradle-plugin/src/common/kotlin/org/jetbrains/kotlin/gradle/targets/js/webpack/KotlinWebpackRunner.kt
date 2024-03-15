@@ -50,7 +50,7 @@ internal data class KotlinWebpackRunner(
         clientType: LogType,
         progressLogger: ProgressLogger?
     ): TeamCityMessageCommonClient {
-        return TeamCityMessageCommonClient(clientType, logger)
+        return WebpackLogClient(clientType, logger)
             .apply {
                 if (progressLogger != null) {
                     this.progressLogger = progressLogger

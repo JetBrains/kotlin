@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiClass
@@ -225,8 +226,12 @@ abstract class KotlinAsJavaSupportBase<TModule : Any>(protected val project: Pro
 }
 
 private inline fun <T : PsiElement, V> ifValid(element: T, action: () -> V?): V? {
-    if (!element.isValid) return null
-    return action()
+    ProgressManager.checkCanceled()
+
+    return if (!element.isValid)
+        null
+    else
+        action()
 }
 
 class LightClassCachedValue<T : KtLightClass>(val value: T?, val tracker: ModificationTracker)

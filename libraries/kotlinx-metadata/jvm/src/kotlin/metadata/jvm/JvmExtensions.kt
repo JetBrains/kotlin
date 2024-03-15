@@ -8,6 +8,7 @@
 
 package kotlin.metadata.jvm
 
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import kotlin.metadata.*
 import kotlin.metadata.jvm.internal.jvm
 
@@ -40,19 +41,6 @@ public var KmClass.anonymousObjectOriginName: String?
     get() = jvm.anonymousObjectOriginName
     set(value) {
         jvm.anonymousObjectOriginName = value
-    }
-
-/**
- * JVM-specific flags of the class, consisting of [JvmFlag.Class] flags.
- */
-@Deprecated(
-    "Flag API is deprecated. Please use corresponding member extensions on KmClass, such as KmClass.hasMethodBodiesInInterface",
-    level = DeprecationLevel.ERROR
-)
-public var KmClass.jvmFlags: Int
-    get() = jvm.jvmFlags
-    set(value) {
-        jvm.jvmFlags = value
     }
 
 /**
@@ -95,19 +83,6 @@ public var KmFunction.lambdaClassOriginName: String?
     get() = jvm.lambdaClassOriginName
     set(value) {
         jvm.lambdaClassOriginName = value
-    }
-
-/**
- * JVM-specific flags of the property, consisting of [JvmFlag.Property] flags.
- */
-@Deprecated(
-    "Flag API is deprecated. Please use corresponding member extensions on KmProperty, such as KmProperty.isMovedFromInterfaceCompanion",
-    level = DeprecationLevel.ERROR
-)
-public var KmProperty.jvmFlags: Int
-    get() = jvm.jvmFlags
-    set(value) {
-        jvm.jvmFlags = value
     }
 
 /**
@@ -198,3 +173,11 @@ public var KmType.isRaw: Boolean
  */
 public val KmType.annotations: MutableList<KmAnnotation>
     get() = jvm.annotations
+
+
+/**
+ * The type flexibility id, signifying that the visited type is a JVM platform type.
+ *
+ * @see KmFlexibleTypeUpperBound.typeFlexibilityId
+ */
+public val KmFlexibleTypeUpperBound.Companion.JVM_PLATFORM_TYPE_ID: String get() = JvmProtoBufUtil.PLATFORM_TYPE_ID

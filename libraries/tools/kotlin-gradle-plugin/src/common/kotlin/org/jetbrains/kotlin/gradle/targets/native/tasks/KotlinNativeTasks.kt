@@ -6,7 +6,6 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.tasks
 
-import groovy.lang.Closure
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.*
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCInteropRunner.Companion.run
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -121,6 +119,7 @@ internal fun Collection<File>.filterKlibsPassedToCompiler(): List<File> = filter
 internal fun FileCollection.filterKlibsPassedToCompiler(): FileCollection = filter(File::canKlibBePassedToCompiler)
 
 // endregion
+@Suppress("DEPRECATION")
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class AbstractKotlinNativeCompile<
         T : KotlinCommonToolOptions,
@@ -187,21 +186,10 @@ abstract class AbstractKotlinNativeCompile<
     @Deprecated(
         message = "AbstractKotlinNativeCompile will not provide access to kotlinOptions." +
                 " Implementations should provide access to compilerOptions",
+        level = DeprecationLevel.ERROR
     )
     @get:Internal
     abstract val kotlinOptions: T
-
-    @Deprecated(
-        message = "AbstractKotlinNativeCompile will not provide access to kotlinOptions()." +
-                " Implementations should provide access to compilerOptions()",
-    )
-    abstract fun kotlinOptions(fn: T.() -> Unit)
-
-    @Deprecated(
-        message = "AbstractKotlinNativeCompile will not provide access to kotlinOptions()." +
-                " Implementations should provide access to compilerOptions()",
-    )
-    abstract fun kotlinOptions(fn: Closure<*>)
 
     @Deprecated("Use implementations compilerOptions to get/set freeCompilerArgs")
     @get:Input
@@ -238,7 +226,7 @@ abstract class AbstractKotlinNativeCompile<
                     outputKind == FRAMEWORK ->
                         it.asValidFrameworkName()
 
-                    outputKind in listOf(STATIC, DYNAMIC) || outputKind == PROGRAM && konanTarget == KonanTarget.WASM32 ->
+                    outputKind in listOf(STATIC, DYNAMIC) ->
                         it.replace('-', '_')
 
                     else -> it
@@ -279,6 +267,7 @@ abstract class AbstractKotlinNativeCompile<
 /**
  * A task producing a klibrary from a compilation.
  */
+@Suppress("DEPRECATION")
 @CacheableTask
 abstract class KotlinNativeCompile
 @Inject
@@ -288,13 +277,12 @@ internal constructor(
     final override val compilation: KotlinCompilationInfo,
     override val compilerOptions: KotlinNativeCompilerOptions,
     private val objectFactory: ObjectFactory,
-    private val providerFactory: ProviderFactory,
+    providerFactory: ProviderFactory,
     private val execOperations: ExecOperations,
 ) : AbstractKotlinNativeCompile<KotlinCommonOptions, K2NativeCompilerArguments>(objectFactory),
-    KotlinCompile<KotlinCommonOptions>,
+    KotlinNativeCompileTask,
     K2MultiplatformCompilationTask,
     UsesBuildMetricsService,
-    KotlinCompilationTask<KotlinNativeCompilerOptions>,
     UsesBuildFusService,
     UsesKotlinNativeBundleBuildService {
 
@@ -391,23 +379,11 @@ internal constructor(
 
     // region Kotlin options
 
+    @Suppress("DEPRECATION")
+    @Deprecated(KOTLIN_OPTIONS_DEPRECATION_MESSAGE)
     override val kotlinOptions: KotlinCommonOptions = object : KotlinCommonOptions {
         override val options: KotlinCommonCompilerOptions
             get() = compilerOptions
-    }
-
-    override fun kotlinOptions(fn: KotlinCommonOptions.() -> Unit) {
-        kotlinOptions.fn()
-    }
-
-    @Deprecated(
-        message = "Replaced with kotlinOptions()",
-        replaceWith = ReplaceWith("kotlinOptions(fn)")
-    )
-    override fun kotlinOptions(fn: Closure<*>) {
-        @Suppress("DEPRECATION")
-        fn.delegate = kotlinOptions
-        fn.call()
     }
 
     @Suppress("UNCHECKED_CAST")

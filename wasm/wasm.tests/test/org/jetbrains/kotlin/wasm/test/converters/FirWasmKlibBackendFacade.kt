@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
-import java.io.File
 
 class FirWasmKlibBackendFacade(
     testServices: TestServices,
@@ -50,7 +49,7 @@ class FirWasmKlibBackendFacade(
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val outputFile = WasmEnvironmentConfigurator.getWasmKlibArtifactPath(testServices, module.name)
+        val outputFile = WasmEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
 
         // TODO: consider avoiding repeated libraries resolution
         val target = configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS)
@@ -62,7 +61,7 @@ class FirWasmKlibBackendFacade(
                 configuration,
                 inputArtifact.diagnosticReporter,
                 inputArtifact.metadataSerializer,
-                klibPath = outputFile,
+                klibPath = outputFile.path,
                 libraries.map { it.library },
                 inputArtifact.irModuleFragment,
                 cleanFiles = inputArtifact.icData,
@@ -70,13 +69,14 @@ class FirWasmKlibBackendFacade(
                 perFile = false,
                 containsErrorCode = inputArtifact.hasErrors,
                 abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
-                jsOutputName = null
+                jsOutputName = null,
+                wasmTarget = target,
             )
         }
 
         // TODO: consider avoiding repeated libraries resolution
         val lib = CommonKLibResolver.resolve(
-            getAllWasmDependenciesPaths(module, testServices, target) + listOf(outputFile),
+            getAllWasmDependenciesPaths(module, testServices, target) + listOf(outputFile.path),
             configuration.getLogger(treatWarningsAsErrors = true)
         ).getFullResolvedList().last().library
 
@@ -94,8 +94,8 @@ class FirWasmKlibBackendFacade(
         )
 
         testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, moduleDescriptor)
-        testServices.libraryProvider.setDescriptorAndLibraryByName(outputFile, moduleDescriptor, lib)
+        testServices.libraryProvider.setDescriptorAndLibraryByName(outputFile.path, moduleDescriptor, lib)
 
-        return BinaryArtifacts.KLib(File(outputFile), inputArtifact.diagnosticReporter)
+        return BinaryArtifacts.KLib(outputFile, inputArtifact.diagnosticReporter)
     }
 }

@@ -111,23 +111,17 @@ fun compileModulesUsingFrontendIrAndLightTree(
     val renderDiagnosticNames = moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     val diagnosticsReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
 
-
-    performanceManager?.notifyAnalysisStarted()
-
     val analysisResults = compileModuleToAnalyzedFir(
         compilerInput,
         projectEnvironment,
         emptyList(),
         null,
         diagnosticsReporter,
-        performanceManager
     )
 
     if (!checkKotlinPackageUsageForLightTree(moduleConfiguration, analysisResults.outputs.flatMap { it.fir })) {
         return false
     }
-
-    performanceManager?.notifyAnalysisFinished()
 
     val mainClassFqName = runIf(moduleConfiguration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
         findMainClass(analysisResults.outputs.last().fir)
@@ -138,22 +132,14 @@ fun compileModulesUsingFrontendIrAndLightTree(
         return false
     }
 
-    performanceManager?.notifyGenerationStarted()
-    performanceManager?.notifyIRTranslationStarted()
-
     val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
     val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment)
 
-    performanceManager?.notifyIRTranslationFinished()
-
-    val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment, performanceManager)
+    val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)
 
     diagnosticsReporter.reportToMessageCollector(
         messageCollector, moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     )
-
-    performanceManager?.notifyIRGenerationFinished()
-    performanceManager?.notifyGenerationFinished()
 
     return writeOutputsIfNeeded(
         project,
@@ -197,6 +183,9 @@ fun FirResult.convertToIrAndActualizeForJvm(
     diagnosticsReporter: DiagnosticReporter,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
 ): Fir2IrActualizedResult {
+    val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
+    performanceManager?.notifyIRTranslationStarted()
+
     val fir2IrConfiguration = Fir2IrConfiguration.forJvmCompilation(configuration, diagnosticsReporter)
 
     return convertToIrAndActualize(
@@ -208,23 +197,24 @@ fun FirResult.convertToIrAndActualizeForJvm(
         FirJvmVisibilityConverter,
         DefaultBuiltIns.Instance,
         ::JvmIrTypeSystemContext,
-    )
+    ).also { performanceManager?.notifyIRTranslationFinished() }
 }
 
 fun generateCodeFromIr(
     input: ModuleCompilerIrBackendInput,
-    environment: ModuleCompilerEnvironment,
-    performanceManager: CommonCompilerPerformanceManager?
+    environment: ModuleCompilerEnvironment
 ): ModuleCompilerOutput {
     // IR
     val codegenFactory = JvmIrCodegenFactory(
         input.configuration,
         input.configuration.get(CLIConfigurationKeys.PHASE_CONFIG),
     )
-    val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
+    val project = (environment.projectEnvironment as VfsBasedProjectEnvironment).project
+
+    val dummyBindingContext = NoScopeRecordCliBindingTrace(project).bindingContext
 
     val generationState = GenerationState.Builder(
-        (environment.projectEnvironment as VfsBasedProjectEnvironment).project, ClassBuilderFactories.BINARIES,
+        project, ClassBuilderFactories.BINARIES,
         input.irModuleFragment.descriptor, dummyBindingContext, input.configuration
     ).targetId(
         input.targetId
@@ -242,6 +232,8 @@ fun generateCodeFromIr(
         environment.diagnosticsReporter
     ).build()
 
+    val performanceManager = input.configuration[CLIConfigurationKeys.PERF_MANAGER]
+    performanceManager?.notifyGenerationStarted()
     performanceManager?.notifyIRLoweringStarted()
     generationState.beforeCompile()
     codegenFactory.generateModuleInFrontendIRMode(
@@ -261,6 +253,9 @@ fun generateCodeFromIr(
     }
     CodegenFactory.doCheckCancelled(generationState)
     generationState.factory.done()
+    performanceManager?.notifyIRGenerationFinished()
+
+    performanceManager?.notifyGenerationFinished()
 
     return ModuleCompilerOutput(generationState)
 }
@@ -271,9 +266,10 @@ fun compileModuleToAnalyzedFir(
     previousStepsSymbolProviders: List<FirSymbolProvider>,
     incrementalExcludesScope: AbstractProjectFileSearchScope?,
     diagnosticsReporter: BaseDiagnosticsCollector,
-    performanceManager: CommonCompilerPerformanceManager?
 ): FirResult {
     val moduleConfiguration = input.configuration
+    val performanceManager = moduleConfiguration[CLIConfigurationKeys.PERF_MANAGER]
+    performanceManager?.notifyAnalysisStarted()
 
     var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
     val rootModuleName = input.targetId.name
@@ -317,6 +313,7 @@ fun compileModuleToAnalyzedFir(
     }
     outputs.runPlatformCheckers(diagnosticsReporter)
 
+    performanceManager?.notifyAnalysisFinished()
     return FirResult(outputs)
 }
 

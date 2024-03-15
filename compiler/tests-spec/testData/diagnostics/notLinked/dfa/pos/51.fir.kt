@@ -140,7 +140,7 @@ fun case_11(z: Any?, x: Any?) {
 fun case_12(z: Any?) {
     val y = z.let {
         return@let it as Int
-        it as? Float ?: 10f
+        it <!CAST_NEVER_SUCCEEDS!>as?<!> Float ?: 10f
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<*>")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<*>")!>y<!>.toByte()
@@ -164,7 +164,7 @@ fun case_13(z: Any?) {
 fun case_14(z: Any?) {
     val y = z.run {
         return@run this as Int
-        this as? Float ?: 10f
+        this <!CAST_NEVER_SUCCEEDS!>as?<!> Float ?: 10f
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<*>")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<*>")!>y<!>.toByte()

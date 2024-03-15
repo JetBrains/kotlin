@@ -210,6 +210,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INNER_CLASS_CONSTRUCTOR_NO_RECEIVER by error<PsiElement> {
             parameter<FirRegularClassSymbol>("classSymbol")
         }
+        val PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL by error<PsiElement> {
+            parameter<List<String>>("names")
+        }
         val RESOLUTION_TO_CLASSIFIER by error<PsiElement> {
             parameter<FirRegularClassSymbol>("classSymbol")
         }
@@ -627,7 +630,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("actualType")
         }
 
-        val MANY_LAMBDA_EXPRESSION_ARGUMENTS by error<KtValueArgument>()
+        val MANY_LAMBDA_EXPRESSION_ARGUMENTS by error<KtLambdaExpression>()
 
         val NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER by error<KtElement> {
             parameter<String>("name")
@@ -921,12 +924,25 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableSymbol<*>>("overridden")
             parameter<Name>("containingClassName")
         }
+        val CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING by warning<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER) {
+            parameter<Visibility>("overridingVisibility")
+            parameter<FirCallableSymbol<*>>("overridden")
+            parameter<Name>("containingClassName")
+        }
         val CANNOT_CHANGE_ACCESS_PRIVILEGE by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER) {
             parameter<Visibility>("overridingVisibility")
             parameter<FirCallableSymbol<*>>("overridden")
             parameter<Name>("containingClassName")
         }
+        val CANNOT_CHANGE_ACCESS_PRIVILEGE_WARNING by warning<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER) {
+            parameter<Visibility>("overridingVisibility")
+            parameter<FirCallableSymbol<*>>("overridden")
+            parameter<Name>("containingClassName")
+        }
         val CANNOT_INFER_VISIBILITY by error<KtDeclaration>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirCallableSymbol<*>>("callable")
+        }
+        val CANNOT_INFER_VISIBILITY_WARNING by warning<KtDeclaration>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirCallableSymbol<*>>("callable")
         }
 
@@ -1582,8 +1598,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirNamedFunctionSymbol>("functionSymbol")
             parameter<String>("operator")
         }
-        val PROPERTY_AS_OPERATOR by error<PsiElement>(PositioningStrategy.OPERATOR) {
-            parameter<FirPropertySymbol>("property")
+        val NOT_FUNCTION_AS_OPERATOR by error<PsiElement>(PositioningStrategy.OPERATOR) {
+            parameter<String>("elementName")
+            parameter<FirBasedSymbol<*>>("elementSymbol")
         }
         val DSL_SCOPE_VIOLATION by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<FirBasedSymbol<*>>("calleeSymbol")
@@ -1777,7 +1794,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     val ENUM_ENTRIES_DEPRECATIONS by object : DiagnosticGroup("Enum.entries resolve deprecations") {
         val DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY by warning<PsiElement>()
         val DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM by warning<PsiElement>()
+        val DEPRECATED_ACCESS_TO_ENTRIES_PROPERTY by warning<PsiElement>()
         val DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
+        val DEPRECATED_ACCESS_TO_ENTRIES_AS_QUALIFIER by warning<PsiElement>()
         val DEPRECATED_DECLARATION_OF_ENUM_ENTRY by warning<KtEnumEntry>()
     }
 

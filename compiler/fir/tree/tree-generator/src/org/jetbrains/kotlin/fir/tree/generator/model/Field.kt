@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -71,6 +71,8 @@ class FieldWithDefault(override val origin: Field) : Field(), AbstractFieldWithD
     override var withReplace: Boolean
         get() = origin.withReplace
         set(_) {}
+    override val isChild: Boolean
+        get() = origin.isChild
     override val containsElement: Boolean
         get() = origin.containsElement
     override var needsSeparateTransform: Boolean
@@ -101,6 +103,10 @@ class FieldWithDefault(override val origin: Field) : Field(), AbstractFieldWithD
         get() = origin.optInAnnotation
         set(_) {}
 
+    override var replaceOptInAnnotation: ClassRef<*>?
+        get() = origin.replaceOptInAnnotation
+        set(_) {}
+
     override var defaultValueInImplementation: String? = origin.defaultValueInImplementation
     override var defaultValueInBuilder: String? = null
     override var isMutable: Boolean = origin.isMutable
@@ -127,7 +133,6 @@ class FieldWithDefault(override val origin: Field) : Field(), AbstractFieldWithD
             it.isMutable = isMutable
             it.withGetter = withGetter
             it.fromDelegate = fromDelegate
-            it.isChild = isChild
         }
     }
 }
@@ -135,18 +140,21 @@ class FieldWithDefault(override val origin: Field) : Field(), AbstractFieldWithD
 class SimpleField(
     override val name: String,
     override val typeRef: TypeRefWithNullability,
+    override val isChild: Boolean,
+    override var isMutable: Boolean,
     override var withReplace: Boolean,
     override var isVolatile: Boolean = false,
     override var isFinal: Boolean = false,
     override var isLateinit: Boolean = false,
     override var isParameter: Boolean = false,
 ) : Field() {
-    override var isMutable: Boolean = withReplace
 
     override fun internalCopy(): Field {
         return SimpleField(
             name = name,
             typeRef = typeRef,
+            isChild = isChild,
+            isMutable = isMutable,
             withReplace = withReplace,
             isVolatile = isVolatile,
             isFinal = isFinal,
@@ -160,6 +168,8 @@ class SimpleField(
     override fun replaceType(newType: TypeRefWithNullability) = SimpleField(
         name = name,
         typeRef = newType,
+        isChild = isChild,
+        isMutable = isMutable,
         withReplace = withReplace,
         isVolatile = isVolatile,
         isFinal = isFinal,
@@ -170,40 +180,14 @@ class SimpleField(
         updateFieldsInCopy(it)
     }
 }
-
-class FirField(
-    override val name: String,
-    val element: ElementRef,
-    override var withReplace: Boolean,
-) : Field() {
-
-    override val typeRef: ElementRef
-        get() = element
-    override var isVolatile: Boolean = false
-    override var isFinal: Boolean = false
-
-    override var isMutable: Boolean = true
-    override var isLateinit: Boolean = false
-    override var isParameter: Boolean = false
-
-    override fun internalCopy(): Field {
-        return FirField(
-            name,
-            element,
-            withReplace
-        ).apply {
-            withBindThis = this@FirField.withBindThis
-        }
-    }
-}
-
 // ----------- Field list -----------
 
 class FieldList(
     override val name: String,
     override val baseType: TypeRef,
     override var withReplace: Boolean,
-    useMutableOrEmpty: Boolean = false
+    override val isChild: Boolean,
+    useMutableOrEmpty: Boolean = false,
 ) : Field(), ListField {
     override var defaultValueInImplementation: String? = null
 
@@ -225,6 +209,7 @@ class FieldList(
             name,
             baseType,
             withReplace,
+            isChild,
             isMutableOrEmptyList
         )
     }

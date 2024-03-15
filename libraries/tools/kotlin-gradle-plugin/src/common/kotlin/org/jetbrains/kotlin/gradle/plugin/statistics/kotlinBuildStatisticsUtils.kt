@@ -39,6 +39,7 @@ internal fun collectGeneralConfigurationTimeMetrics(
                 BuildReportType.HTTP -> configurationTimeMetrics.put(BooleanMetrics.HTTP_BUILD_REPORT, true)
                 BuildReportType.SINGLE_FILE -> configurationTimeMetrics.put(BooleanMetrics.SINGLE_FILE_BUILD_REPORT, true)
                 BuildReportType.TRY_NEXT_CONSOLE -> {}//ignore
+                BuildReportType.JSON -> configurationTimeMetrics.put(BooleanMetrics.JSON_BUILD_REPORT, true)
             }
         }
         configurationTimeMetrics.put(StringMetrics.PROJECT_PATH, gradle.rootProject.projectDir.absolutePath)

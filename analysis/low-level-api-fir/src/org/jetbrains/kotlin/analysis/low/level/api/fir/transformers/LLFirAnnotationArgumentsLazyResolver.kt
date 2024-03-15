@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.NonLocalAnnotationVisitor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.AnnotationVisitorVoid
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationsAreResolved
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirResolvePhase.ANNOTATION_ARGUMENTS) {
@@ -43,9 +42,7 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
                     checkAnnotationsAreResolved(target, receiverParameter.typeRef)
                 }
 
-                for (contextReceiver in target.contextReceivers) {
-                    checkAnnotationsAreResolved(target, contextReceiver.typeRef)
-                }
+                checkAnnotationsAreResolved(target.contextReceivers, target)
             }
 
             is FirTypeParameter -> {
@@ -54,15 +51,16 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
                 }
             }
 
-            is FirClass -> {
+            is FirRegularClass -> {
                 for (typeRef in target.superTypeRefs) {
                     checkAnnotationsAreResolved(target, typeRef)
                 }
+
+                checkAnnotationsAreResolved(target.contextReceivers, target)
             }
 
-            is FirTypeAlias -> {
-                checkAnnotationsAreResolved(target, target.expandedTypeRef)
-            }
+            is FirScript -> checkAnnotationsAreResolved(target.contextReceivers, target)
+            is FirTypeAlias -> checkAnnotationsAreResolved(target, target.expandedTypeRef)
         }
     }
 }
@@ -135,10 +133,10 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
     }
 
     private class ForeignAnnotationsContext(val collection: MutableCollection<FirBasedSymbol<*>>, val currentSymbol: FirCallableSymbol<*>)
-    private object ForeignAnnotationsCollector : AnnotationVisitorVoid<ForeignAnnotationsContext>() {
-        override fun visitAnnotation(annotation: FirAnnotation, data: ForeignAnnotationsContext) {}
-        override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: ForeignAnnotationsContext) {
-            val symbolToPostpone = annotationCall.containingDeclarationSymbol.symbolToPostponeIfCanBeResolvedOnDemand() ?: return
+    private object ForeignAnnotationsCollector : NonLocalAnnotationVisitor<ForeignAnnotationsContext>() {
+        override fun processAnnotation(annotation: FirAnnotation, data: ForeignAnnotationsContext) {
+            if (annotation !is FirAnnotationCall) return
+            val symbolToPostpone = annotation.containingDeclarationSymbol.symbolToPostponeIfCanBeResolvedOnDemand() ?: return
             if (symbolToPostpone != data.currentSymbol) {
                 data.collection += symbolToPostpone
             }
@@ -189,8 +187,12 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
             }
 
             target is FirScript -> target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
+            target is FirFile -> transformer.declarationsTransformer.withFile(target) {
+                target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
+            }
+
             target.isRegularDeclarationWithAnnotation -> target.transformSingle(transformer, ResolutionMode.ContextIndependent)
-            target is FirCodeFragment || target is FirFile -> {}
+            target is FirCodeFragment -> {}
             else -> throwUnexpectedFirElementError(target)
         }
     }
@@ -201,7 +203,6 @@ internal val FirElementWithResolveState.isRegularDeclarationWithAnnotation: Bool
         is FirCallableDeclaration,
         is FirAnonymousInitializer,
         is FirDanglingModifierList,
-        is FirFileAnnotationsContainer,
         is FirTypeAlias,
         -> true
         else -> false
@@ -243,19 +244,13 @@ internal object AnnotationArgumentsStateKeepers {
     }
 
     val DECLARATION: StateKeeper<FirElementWithResolveState, FirSession> = stateKeeper { target, session ->
-        val visitor = object : FirVisitorVoid() {
-            override fun visitElement(element: FirElement) {
-                when (element) {
-                    is FirDeclaration -> if (element !== target) return // Avoid nested declarations
-                    is FirAnnotation -> entity(element, ANNOTATION, session)
-                    is FirStatement -> return
-                }
-
-                element.acceptChildren(this)
+        val visitor = object : NonLocalAnnotationVisitor<Unit>() {
+            override fun processAnnotation(annotation: FirAnnotation, data: Unit) {
+                entity(annotation, ANNOTATION, session)
             }
         }
 
-        target.accept(visitor)
+        target.accept(visitor, Unit)
     }
 }
 

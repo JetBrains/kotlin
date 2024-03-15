@@ -60,7 +60,6 @@ fun foo(f: () -> Unit) {
 // test.kt:12 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:5 $box
 // test.kt:15 $foo (4, 4)
 // test.kt:6 $box$lambda.invoke (20, 12, 21)

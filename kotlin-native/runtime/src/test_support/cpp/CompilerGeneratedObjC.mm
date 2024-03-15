@@ -7,7 +7,7 @@
 
 #include "TestSupportCompilerGenerated.hpp"
 
-#include <Foundation/NSObject.h>
+#include <Foundation/Foundation.h>
 #include <objc/runtime.h>
 
 #include "Types.h"

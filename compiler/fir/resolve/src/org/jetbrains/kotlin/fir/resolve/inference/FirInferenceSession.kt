@@ -37,6 +37,19 @@ abstract class FirInferenceSession {
 
     open fun addSubtypeConstraintIfCompatible(lowerType: ConeKotlinType, upperType: ConeKotlinType, element: FirElement) {}
 
+    /**
+     * For non-trivial inference session (currently PCLA-only), if the type is a type variable that might be fixed,
+     * fix it and return a fixation result.
+     *
+     * Type variable might be fixed if it doesn't belong to an outer CS and have proper constraints.
+     *
+     * By semi-fixation we mean that only the relevant EQUALITY constraint is added,
+     * [org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext.fixVariable] is not expected to be called.
+     *
+     * NB: The callee must pay attention that exactly current common CS will be modified.
+     */
+    open fun getAndSemiFixCurrentResultIfTypeVariable(type: ConeKotlinType): ConeKotlinType? = null
+
     companion object {
         val DEFAULT: FirInferenceSession = object : FirInferenceSession() {
             override fun <T> processPartiallyResolvedCall(

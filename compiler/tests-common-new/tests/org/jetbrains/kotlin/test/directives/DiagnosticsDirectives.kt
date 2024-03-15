@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.directives
 
-import org.jetbrains.kotlin.test.backend.handlers.JvmBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_JAVAC
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ConstantValuesHandler
@@ -51,14 +50,6 @@ object DiagnosticsDirectives : SimpleDirectivesContainer() {
     val MARK_DYNAMIC_CALLS by directive(
         description = """
             Render debug info about dynamic calls
-        """.trimIndent()
-    )
-
-    val REPORT_JVM_DIAGNOSTICS_ON_FRONTEND by directive(
-        description = """
-            Collect additional jvm specific diagnostics on frontend
-            Note that this directive is not needed if ${JvmBackendDiagnosticsHandler::class} 
-              is enabled in test 
         """.trimIndent()
     )
 

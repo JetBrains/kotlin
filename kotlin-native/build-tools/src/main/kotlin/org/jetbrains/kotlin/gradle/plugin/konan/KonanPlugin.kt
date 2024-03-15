@@ -110,11 +110,7 @@ internal val Project.konanArtifactsContainer: KonanArtifactContainer
 // by using HostManager instead of PlatformManager. But we need to download the compiler at the configuration
 // stage (e.g. by getting it from maven as a plugin dependency) and bring back the PlatformManager here.
 internal val Project.hostManager: HostManager
-    get() = findProperty("hostManager") as HostManager? ?:
-            if (hasProperty("org.jetbrains.kotlin.native.experimentalTargets"))
-                HostManager(buildDistribution(rootProject.rootDir.absolutePath), true)
-            else
-                HostManager(customerDistribution(konanHome))
+    get() = findProperty("hostManager") as HostManager? ?: HostManager()
 
 internal val Project.konanTargets: List<KonanTarget>
     get() = hostManager.toKonanTargets(konanExtension.targets)
@@ -224,7 +220,6 @@ internal fun dumpProperties(task: Task) {
             println("languageVersion    : $languageVersion")
             println("apiVersion         : $apiVersion")
             println("konanVersion       : ${KotlinVersion.CURRENT}")
-            println("konanHome          : $konanHome")
             println()
         }
         is KonanInteropTask -> with(task) {
@@ -244,7 +239,6 @@ internal fun dumpProperties(task: Task) {
             println("headers            : ${headers.dump()}")
             println("linkFiles          : ${linkFiles.dump()}")
             println("konanVersion       : ${KotlinVersion.CURRENT}")
-            println("konanHome          : $konanHome")
             println()
         }
         else -> {

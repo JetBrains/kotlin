@@ -25,7 +25,7 @@ fun test() {
         b.<!UNRESOLVED_REFERENCE!>length<!> // error
         c.length // OK, since `c` is aliased to `a`
     }
-    if (b is String) {
+    if (<!USELESS_IS_CHECK!>b is String<!>) {
         a.<!UNRESOLVED_REFERENCE!>length<!> // error
         c.<!UNRESOLVED_REFERENCE!>length<!> // error
     }
@@ -35,11 +35,11 @@ fun test() {
     }
 
     a = 2 // break `c` -> `a`
-    if (a is String) {
+    if (<!USELESS_IS_CHECK!>a is String<!>) {
         b.<!UNRESOLVED_REFERENCE!>length<!> // error
         c.<!UNRESOLVED_REFERENCE!>length<!> // error
     }
-    if (b is String) {
+    if (<!USELESS_IS_CHECK!>b is String<!>) {
         a.<!UNRESOLVED_REFERENCE!>length<!> // error
         c.<!UNRESOLVED_REFERENCE!>length<!> // error
     }

@@ -52,10 +52,9 @@ class WasmSymbols(
 
     internal inner class WasmReflectionSymbols : ReflectionSymbols {
         override val createKType: IrSimpleFunctionSymbol = getInternalFunction("createKType")
-        override val getClassData: IrSimpleFunctionSymbol = getInternalFunction("wasmGetTypeInfoData")
         override val getKClass: IrSimpleFunctionSymbol = getInternalFunction("getKClass")
         override val getKClassFromExpression: IrSimpleFunctionSymbol = getInternalFunction("getKClassFromExpression")
-        override val createDynamicKType: IrSimpleFunctionSymbol get() = error("Dynamic type is not supported by WASM")
+        override val createDynamicKType: IrSimpleFunctionSymbol get() = error("Dynamic type is not supported by Wasm")
         override val createKTypeParameter: IrSimpleFunctionSymbol = getInternalFunction("createKTypeParameter")
         override val getStarKTypeProjection = getInternalFunction("getStarKTypeProjection")
         override val createCovariantKTypeProjection = getInternalFunction("createCovariantKTypeProjection")
@@ -67,6 +66,7 @@ class WasmSymbols(
 
         val getTypeInfoTypeDataByPtr: IrSimpleFunctionSymbol = getInternalFunction("getTypeInfoTypeDataByPtr")
         val wasmTypeInfoData: IrClassSymbol = getInternalClass("TypeInfoData")
+        val kClassImpl: IrClassSymbol = getInternalClass("KClassImpl")
     }
 
     internal val reflectionSymbols: WasmReflectionSymbols = WasmReflectionSymbols()
@@ -110,6 +110,8 @@ class WasmSymbols(
     override val returnIfSuspended =
         getInternalFunction("returnIfSuspended")
 
+    val throwLinkageError = getInternalFunction("throwLinkageError")
+
     val enumEntries = getIrClass(FqName.fromSegments(listOf("kotlin", "enums", "EnumEntries")))
     val createEnumEntries = findFunctions(enumsInternalPackage.memberScope, Name.identifier("enumEntries"))
         .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == false }
@@ -151,6 +153,22 @@ class WasmSymbols(
 
     fun findVoidConsumer(type: IrType): IrSimpleFunctionSymbol =
         consumePrimitiveIntoVoid[type] ?: consumeAnyIntoVoid
+
+    private val closureBoxAnyClass = getInternalClass("ClosureBoxAny")
+
+    private val closureBoxClasses = mapOf(
+        context.irBuiltIns.booleanType to getInternalClass("ClosureBoxBoolean"),
+        context.irBuiltIns.byteType to getInternalClass("ClosureBoxByte"),
+        context.irBuiltIns.shortType to getInternalClass("ClosureBoxShort"),
+        context.irBuiltIns.charType to getInternalClass("ClosureBoxChar"),
+        context.irBuiltIns.intType to getInternalClass("ClosureBoxInt"),
+        context.irBuiltIns.longType to getInternalClass("ClosureBoxLong"),
+        context.irBuiltIns.floatType to getInternalClass("ClosureBoxFloat"),
+        context.irBuiltIns.doubleType to getInternalClass("ClosureBoxDouble")
+    )
+
+    fun findClosureBoxClass(type: IrType): IrClassSymbol =
+        closureBoxClasses[type] ?: closureBoxAnyClass
 
     val equalityFunctions by lazy {
         mapOf(
@@ -224,6 +242,8 @@ class WasmSymbols(
         symbolTable.descriptorExtension.referenceSimpleFunction(it)
     }
 
+    val getBoxedBoolean: IrSimpleFunctionSymbol = getInternalFunction("getBoxedBoolean")
+    val boxBoolean: IrSimpleFunctionSymbol = getInternalFunction("boxBoolean")
     val boxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("boxIntrinsic")
     val unboxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("unboxIntrinsic")
 
@@ -388,6 +408,11 @@ class WasmSymbols(
 
         internal val throwAsJsException: IrSimpleFunctionSymbol =
             getInternalFunction("throwAsJsException")
+
+        val kExternalClassImpl: IrClassSymbol = getInternalClass("KExternalClassImpl")
+
+        val jsException = getIrClass(FqName("kotlin.js.JsException"))
+        val throwJsException = getInternalFunction("throwJsException")
     }
 
     private val wasmExportClass = getIrClass(FqName("kotlin.wasm.WasmExport"))

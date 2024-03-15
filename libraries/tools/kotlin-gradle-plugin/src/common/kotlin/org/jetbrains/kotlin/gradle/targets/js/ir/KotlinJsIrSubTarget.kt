@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
-import org.jetbrains.kotlin.gradle.utils.withType
 
 abstract class KotlinJsIrSubTarget(
     val target: KotlinJsIrTarget,
@@ -59,11 +58,6 @@ abstract class KotlinJsIrSubTarget(
             val npmProject = it.npmProject
             @Suppress("DEPRECATION")
             it.compilerOptions.options.freeCompilerArgs.add("$PER_MODULE_OUTPUT_NAME=${npmProject.name}")
-            it.binaries
-                .withType<ExecutableWasm>()
-                .configureEach { binary ->
-                    configureBinaryen(binary)
-                }
         }
     }
 
@@ -227,21 +221,6 @@ abstract class KotlinJsIrSubTarget(
                     assembleTaskProvider.dependsOn(distributionTask)
                 }
             }
-    }
-
-    private fun configureBinaryen(binary: ExecutableWasm) {
-        val binaryenExec = binary.optimizeTask
-        if (binary.compilation.isMain() && binary.mode == KotlinJsBinaryMode.PRODUCTION) {
-            if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
-
-                project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(binaryenExec)
-            } else {
-                binary.linkSyncTask.configure {
-                    it.from.setFrom(binaryenExec.flatMap { it.outputFileProperty.map { it.asFile.parentFile } })
-                    it.dependsOn(binaryenExec)
-                }
-            }
-        }
     }
 
     internal inline fun <reified T : Task> registerSubTargetTask(

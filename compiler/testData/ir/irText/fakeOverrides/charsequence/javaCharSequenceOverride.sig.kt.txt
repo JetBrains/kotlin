@@ -1,0 +1,679 @@
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : A {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#chars(){}java.util.stream.IntStream?
+  //   Public signature: /B.chars|3567322254123962192[0]
+  //   Public signature debug description: chars(){}java.util.stream.IntStream?
+  /* fake */ override fun chars(): IntStream?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#codePoints(){}java.util.stream.IntStream?
+  //   Public signature: /B.codePoints|4245234750821486131[0]
+  //   Public signature debug description: codePoints(){}java.util.stream.IntStream?
+  /* fake */ override fun codePoints(): IntStream?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#charAt(kotlin.Int){}kotlin.Char
+  //   Public signature: /B.charAt|7510361910485130692[0]
+  //   Public signature debug description: charAt(kotlin.Int){}kotlin.Char
+  override fun charAt(index: Int): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#length(){}kotlin.Int
+  //   Public signature: /B.length|2334822652264595979[0]
+  //   Public signature debug description: length(){}kotlin.Int
+  override fun length(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence
+  //   Public signature: /B.subSequence|7954975239934934955[0]
+  //   Public signature debug description: subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence
+  override fun subSequence(start: Int, end: Int): CharSequence
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java1 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#chars(){}java.util.stream.IntStream?
+  //   Public signature: /C.chars|3567322254123962192[0]
+  //   Public signature debug description: chars(){}java.util.stream.IntStream?
+  /* fake */ override fun chars(): IntStream?
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#codePoints(){}java.util.stream.IntStream?
+  //   Public signature: /C.codePoints|4245234750821486131[0]
+  //   Public signature debug description: codePoints(){}java.util.stream.IntStream?
+  /* fake */ override fun codePoints(): IntStream?
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#get(kotlin.Int){}kotlin.Char
+  //   Public signature: /C.get|6519934306502810002[0]
+  //   Public signature debug description: get(kotlin.Int){}kotlin.Char
+  @Override
+  /* fake */ override operator fun get(index: Int): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence{EnhancedNullability}
+  //   Public signature: /C.subSequence|5195057419205148885[0]
+  //   Public signature debug description: subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence{EnhancedNullability}
+  @Override
+  /* fake */ override fun subSequence(startIndex: Int, endIndex: Int): @EnhancedNullability CharSequence
+
+  // CHECK:
+  //   Mangled name: C{}length
+  //   Public signature: /C.length|8693345930578737573[0]
+  //   Public signature debug description: {}length
+  /* fake */ override val length: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-length>(){}kotlin.Int
+    //   Public signature: /C.length.<get-length>|2176130084070422186[0]
+    //   Public signature debug description: <get-length>(){}kotlin.Int
+    @Override
+    /* fake */ override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : Java1 {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#chars(){}java.util.stream.IntStream?
+  //   Public signature: /D.chars|3567322254123962192[0]
+  //   Public signature debug description: chars(){}java.util.stream.IntStream?
+  /* fake */ override fun chars(): IntStream?
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#codePoints(){}java.util.stream.IntStream?
+  //   Public signature: /D.codePoints|4245234750821486131[0]
+  //   Public signature debug description: codePoints(){}java.util.stream.IntStream?
+  /* fake */ override fun codePoints(): IntStream?
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence{EnhancedNullability}
+  //   Public signature: /D.subSequence|5195057419205148885[0]
+  //   Public signature debug description: subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence{EnhancedNullability}
+  @Override
+  /* fake */ override fun subSequence(startIndex: Int, endIndex: Int): @EnhancedNullability CharSequence
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#get(kotlin.Int){}kotlin.Char
+  //   Public signature: /D.get|6519934306502810002[0]
+  //   Public signature debug description: get(kotlin.Int){}kotlin.Char
+  override operator fun get(index: Int): Char
+
+  // CHECK:
+  //   Mangled name: D{}length
+  //   Public signature: /D.length|8693345930578737573[0]
+  //   Public signature debug description: {}length
+  override val length: Int
+    // CHECK JVM_IR:
+    //   Mangled name: D#<get-length>(){}kotlin.Int
+    //   Public signature: /D.length.<get-length>|2176130084070422186[0]
+    //   Public signature debug description: <get-length>(){}kotlin.Int
+    override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: E
+//   Public signature: /E|null[0]
+class E : Java1, Java2 {
+  // CHECK:
+  //   Mangled name: E#<init>(){}
+  //   Public signature: /E.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#chars(){}java.util.stream.IntStream?
+  //   Public signature: /E.chars|3567322254123962192[0]
+  //   Public signature debug description: chars(){}java.util.stream.IntStream?
+  /* fake */ override fun chars(): IntStream?
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#get(kotlin.Int){}kotlin.Char
+  //   Public signature: /E.get|6519934306502810002[0]
+  //   Public signature debug description: get(kotlin.Int){}kotlin.Char
+  @Override
+  /* fake */ override operator fun get(index: Int): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence{EnhancedNullability}
+  //   Public signature: /E.subSequence|5195057419205148885[0]
+  //   Public signature debug description: subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence{EnhancedNullability}
+  @Override
+  /* fake */ override fun subSequence(startIndex: Int, endIndex: Int): @EnhancedNullability CharSequence
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#codePoints(){}java.util.stream.IntStream
+  //   Public signature: /E.codePoints|-6284654057150065431[0]
+  //   Public signature debug description: codePoints(){}java.util.stream.IntStream
+  override fun codePoints(): IntStream
+
+  // CHECK:
+  //   Mangled name: E{}length
+  //   Public signature: /E.length|8693345930578737573[0]
+  //   Public signature debug description: {}length
+  /* fake */ override val length: Int
+    // CHECK JVM_IR:
+    //   Mangled name: E#<get-length>(){}kotlin.Int
+    //   Public signature: /E.length.<get-length>|2176130084070422186[0]
+    //   Public signature debug description: <get-length>(){}kotlin.Int
+    @Override
+    /* fake */ override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: F
+//   Public signature: /F|null[0]
+class F : Java1, KotlinInterface {
+  // CHECK:
+  //   Mangled name: F#<init>(){}
+  //   Public signature: /F.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: F#chars(){}java.util.stream.IntStream?
+  //   Public signature: /F.chars|3567322254123962192[0]
+  //   Public signature debug description: chars(){}java.util.stream.IntStream?
+  /* fake */ override fun chars(): IntStream?
+
+  // CHECK JVM_IR:
+  //   Mangled name: F#codePoints(){}java.util.stream.IntStream?
+  //   Public signature: /F.codePoints|4245234750821486131[0]
+  //   Public signature debug description: codePoints(){}java.util.stream.IntStream?
+  /* fake */ override fun codePoints(): IntStream?
+
+  // CHECK JVM_IR:
+  //   Mangled name: F#get(kotlin.Int){}kotlin.Char
+  //   Public signature: /F.get|6519934306502810002[0]
+  //   Public signature debug description: get(kotlin.Int){}kotlin.Char
+  @Override
+  /* fake */ override operator fun get(index: Int): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: F#subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence{EnhancedNullability}
+  //   Public signature: /F.subSequence|5195057419205148885[0]
+  //   Public signature debug description: subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence{EnhancedNullability}
+  @Override
+  /* fake */ override fun subSequence(startIndex: Int, endIndex: Int): @EnhancedNullability CharSequence
+
+  // CHECK JVM_IR:
+  //   Mangled name: F#get(kotlin.Number){}kotlin.Char
+  //   Public signature: /F.get|3168731888095368670[0]
+  //   Public signature debug description: get(kotlin.Number){}kotlin.Char
+  override operator fun get(index: Number): Char
+
+  // CHECK:
+  //   Mangled name: F{}length
+  //   Public signature: /F.length|8693345930578737573[0]
+  //   Public signature debug description: {}length
+  /* fake */ override val length: Int
+    // CHECK JVM_IR:
+    //   Mangled name: F#<get-length>(){}kotlin.Int
+    //   Public signature: /F.length.<get-length>|2176130084070422186[0]
+    //   Public signature debug description: <get-length>(){}kotlin.Int
+    @Override
+    /* fake */ override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: G
+//   Public signature: /G|null[0]
+class G : Java1, KotlinInterface {
+  // CHECK:
+  //   Mangled name: G#<init>(){}
+  //   Public signature: /G.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: G#chars(){}java.util.stream.IntStream?
+  //   Public signature: /G.chars|3567322254123962192[0]
+  //   Public signature debug description: chars(){}java.util.stream.IntStream?
+  /* fake */ override fun chars(): IntStream?
+
+  // CHECK JVM_IR:
+  //   Mangled name: G#codePoints(){}java.util.stream.IntStream?
+  //   Public signature: /G.codePoints|4245234750821486131[0]
+  //   Public signature debug description: codePoints(){}java.util.stream.IntStream?
+  /* fake */ override fun codePoints(): IntStream?
+
+  // CHECK JVM_IR:
+  //   Mangled name: G#subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence{EnhancedNullability}
+  //   Public signature: /G.subSequence|5195057419205148885[0]
+  //   Public signature debug description: subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence{EnhancedNullability}
+  @Override
+  /* fake */ override fun subSequence(startIndex: Int, endIndex: Int): @EnhancedNullability CharSequence
+
+  // CHECK JVM_IR:
+  //   Mangled name: G#get(kotlin.Int){}kotlin.Char
+  //   Public signature: /G.get|6519934306502810002[0]
+  //   Public signature debug description: get(kotlin.Int){}kotlin.Char
+  override operator fun get(index: Int): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: G#get(kotlin.Number){}kotlin.Char
+  //   Public signature: /G.get|3168731888095368670[0]
+  //   Public signature debug description: get(kotlin.Number){}kotlin.Char
+  override operator fun get(index: Number): Char
+
+  // CHECK:
+  //   Mangled name: G{}length
+  //   Public signature: /G.length|8693345930578737573[0]
+  //   Public signature debug description: {}length
+  /* fake */ override val length: Int
+    // CHECK JVM_IR:
+    //   Mangled name: G#<get-length>(){}kotlin.Int
+    //   Public signature: /G.length.<get-length>|2176130084070422186[0]
+    //   Public signature debug description: <get-length>(){}kotlin.Int
+    @Override
+    /* fake */ override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: H
+//   Public signature: /H|null[0]
+class H : Java1, Java2, KotlinInterface {
+  // CHECK:
+  //   Mangled name: H#<init>(){}
+  //   Public signature: /H.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: H#chars(){}java.util.stream.IntStream?
+  //   Public signature: /H.chars|3567322254123962192[0]
+  //   Public signature debug description: chars(){}java.util.stream.IntStream?
+  /* fake */ override fun chars(): IntStream?
+
+  // CHECK JVM_IR:
+  //   Mangled name: H#get(kotlin.Int){}kotlin.Char
+  //   Public signature: /H.get|6519934306502810002[0]
+  //   Public signature debug description: get(kotlin.Int){}kotlin.Char
+  @Override
+  /* fake */ override operator fun get(index: Int): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: H#subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence{EnhancedNullability}
+  //   Public signature: /H.subSequence|5195057419205148885[0]
+  //   Public signature debug description: subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence{EnhancedNullability}
+  @Override
+  /* fake */ override fun subSequence(startIndex: Int, endIndex: Int): @EnhancedNullability CharSequence
+
+  // CHECK JVM_IR:
+  //   Mangled name: H#codePoints(){}java.util.stream.IntStream
+  //   Public signature: /H.codePoints|-6284654057150065431[0]
+  //   Public signature debug description: codePoints(){}java.util.stream.IntStream
+  override fun codePoints(): IntStream
+
+  // CHECK JVM_IR:
+  //   Mangled name: H#get(kotlin.Number){}kotlin.Char
+  //   Public signature: /H.get|3168731888095368670[0]
+  //   Public signature debug description: get(kotlin.Number){}kotlin.Char
+  override operator fun get(index: Number): Char
+
+  // CHECK:
+  //   Mangled name: H{}length
+  //   Public signature: /H.length|8693345930578737573[0]
+  //   Public signature debug description: {}length
+  /* fake */ override val length: Int
+    // CHECK JVM_IR:
+    //   Mangled name: H#<get-length>(){}kotlin.Int
+    //   Public signature: /H.length.<get-length>|2176130084070422186[0]
+    //   Public signature debug description: <get-length>(){}kotlin.Int
+    @Override
+    /* fake */ override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
+class I : Java1, Java2, Java3 {
+  // CHECK:
+  //   Mangled name: I#<init>(){}
+  //   Public signature: /I.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: I#chars(){}java.util.stream.IntStream?
+  //   Public signature: /I.chars|3567322254123962192[0]
+  //   Public signature debug description: chars(){}java.util.stream.IntStream?
+  /* fake */ override fun chars(): IntStream?
+
+  // CHECK JVM_IR:
+  //   Mangled name: I#get(kotlin.Int){}kotlin.Char
+  //   Public signature: /I.get|6519934306502810002[0]
+  //   Public signature debug description: get(kotlin.Int){}kotlin.Char
+  @Override
+  /* fake */ override operator fun get(index: Int): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: I#subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence{EnhancedNullability}
+  //   Public signature: /I.subSequence|5195057419205148885[0]
+  //   Public signature debug description: subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence{EnhancedNullability}
+  @Override
+  /* fake */ override fun subSequence(startIndex: Int, endIndex: Int): @EnhancedNullability CharSequence
+
+  // CHECK JVM_IR:
+  //   Mangled name: I#codePoints(){}java.util.stream.IntStream
+  //   Public signature: /I.codePoints|-6284654057150065431[0]
+  //   Public signature debug description: codePoints(){}java.util.stream.IntStream
+  override fun codePoints(): IntStream
+
+  // CHECK:
+  //   Mangled name: I{}length
+  //   Public signature: /I.length|8693345930578737573[0]
+  //   Public signature debug description: {}length
+  /* fake */ override val length: Int
+    // CHECK JVM_IR:
+    //   Mangled name: I#<get-length>(){}kotlin.Int
+    //   Public signature: /I.length.<get-length>|2176130084070422186[0]
+    //   Public signature debug description: <get-length>(){}kotlin.Int
+    @Override
+    /* fake */ override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: J
+//   Public signature: /J|null[0]
+abstract class J : Java4 {
+  // CHECK:
+  //   Mangled name: J#<init>(){}
+  //   Public signature: /J.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: J#charAt(kotlin.Int){}kotlin.Char
+  //   Public signature: /J.charAt|7510361910485130692[0]
+  //   Public signature debug description: charAt(kotlin.Int){}kotlin.Char
+  abstract /* fake */ override fun charAt(p0: Int): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: J#chars(){}java.util.stream.IntStream?
+  //   Public signature: /J.chars|3567322254123962192[0]
+  //   Public signature debug description: chars(){}java.util.stream.IntStream?
+  /* fake */ override fun chars(): IntStream?
+
+  // CHECK JVM_IR:
+  //   Mangled name: J#codePoints(){}java.util.stream.IntStream?
+  //   Public signature: /J.codePoints|4245234750821486131[0]
+  //   Public signature debug description: codePoints(){}java.util.stream.IntStream?
+  /* fake */ override fun codePoints(): IntStream?
+
+  // CHECK JVM_IR:
+  //   Mangled name: J#length(){}kotlin.Int
+  //   Public signature: /J.length|2334822652264595979[0]
+  //   Public signature debug description: length(){}kotlin.Int
+  abstract /* fake */ override fun length(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: J#subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence?
+  //   Public signature: /J.subSequence|-4481341054013264804[0]
+  //   Public signature debug description: subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence?
+  abstract /* fake */ override fun subSequence(p0: Int, p1: Int): CharSequence?
+
+}
+
+// CHECK:
+//   Mangled name: K
+//   Public signature: /K|null[0]
+class K : Java4 {
+  // CHECK:
+  //   Mangled name: K#<init>(){}
+  //   Public signature: /K.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: K#chars(){}java.util.stream.IntStream?
+  //   Public signature: /K.chars|3567322254123962192[0]
+  //   Public signature debug description: chars(){}java.util.stream.IntStream?
+  /* fake */ override fun chars(): IntStream?
+
+  // CHECK JVM_IR:
+  //   Mangled name: K#codePoints(){}java.util.stream.IntStream?
+  //   Public signature: /K.codePoints|4245234750821486131[0]
+  //   Public signature debug description: codePoints(){}java.util.stream.IntStream?
+  /* fake */ override fun codePoints(): IntStream?
+
+  // CHECK JVM_IR:
+  //   Mangled name: K#charAt(kotlin.Int){}kotlin.Char
+  //   Public signature: /K.charAt|7510361910485130692[0]
+  //   Public signature debug description: charAt(kotlin.Int){}kotlin.Char
+  override fun charAt(index: Int): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: K#length(){}kotlin.Int
+  //   Public signature: /K.length|2334822652264595979[0]
+  //   Public signature debug description: length(){}kotlin.Int
+  override fun length(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: K#subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence
+  //   Public signature: /K.subSequence|7954975239934934955[0]
+  //   Public signature debug description: subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence
+  override fun subSequence(start: Int, end: Int): CharSequence
+
+}
+
+// CHECK:
+//   Mangled name: L
+//   Public signature: /L|null[0]
+abstract class L : Java1, A {
+  // CHECK:
+  //   Mangled name: L#<init>(){}
+  //   Public signature: /L.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: L#charAt(kotlin.Int){}kotlin.Char
+  //   Public signature: /L.charAt|7510361910485130692[0]
+  //   Public signature debug description: charAt(kotlin.Int){}kotlin.Char
+  abstract /* fake */ override fun charAt(p0: Int): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: L#get(kotlin.Int){}kotlin.Char
+  //   Public signature: /L.get|6519934306502810002[0]
+  //   Public signature debug description: get(kotlin.Int){}kotlin.Char
+  @Override
+  /* fake */ override operator fun get(index: Int): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: L#length(){}kotlin.Int
+  //   Public signature: /L.length|2334822652264595979[0]
+  //   Public signature debug description: length(){}kotlin.Int
+  abstract /* fake */ override fun length(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: L#subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence{EnhancedNullability}
+  //   Public signature: /L.subSequence|5195057419205148885[0]
+  //   Public signature debug description: subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence{EnhancedNullability}
+  @Override
+  /* fake */ override fun subSequence(startIndex: Int, endIndex: Int): @EnhancedNullability CharSequence
+
+  // CHECK JVM_IR:
+  //   Mangled name: L#chars(){}java.util.stream.IntStream
+  //   Public signature: /L.chars|1246952257971230815[0]
+  //   Public signature debug description: chars(){}java.util.stream.IntStream
+  override fun chars(): IntStream
+
+  // CHECK JVM_IR:
+  //   Mangled name: L#codePoints(){}java.util.stream.IntStream
+  //   Public signature: /L.codePoints|-6284654057150065431[0]
+  //   Public signature debug description: codePoints(){}java.util.stream.IntStream
+  override fun codePoints(): IntStream
+
+  // CHECK:
+  //   Mangled name: L{}length
+  //   Public signature: /L.length|8693345930578737573[0]
+  //   Public signature debug description: {}length
+  /* fake */ override val length: Int
+    // CHECK JVM_IR:
+    //   Mangled name: L#<get-length>(){}kotlin.Int
+    //   Public signature: /L.length.<get-length>|2176130084070422186[0]
+    //   Public signature debug description: <get-length>(){}kotlin.Int
+    @Override
+    /* fake */ override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: M
+//   Public signature: /M|null[0]
+abstract class M : Java1, CharSequence {
+  // CHECK:
+  //   Mangled name: M#<init>(){}
+  //   Public signature: /M.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: M#charAt(kotlin.Int){}kotlin.Char
+  //   Public signature: /M.charAt|7510361910485130692[0]
+  //   Public signature debug description: charAt(kotlin.Int){}kotlin.Char
+  abstract /* fake */ override fun charAt(p0: Int): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: M#get(kotlin.Int){}kotlin.Char
+  //   Public signature: /M.get|6519934306502810002[0]
+  //   Public signature debug description: get(kotlin.Int){}kotlin.Char
+  @Override
+  /* fake */ override operator fun get(index: Int): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: M#length(){}kotlin.Int
+  //   Public signature: /M.length|2334822652264595979[0]
+  //   Public signature debug description: length(){}kotlin.Int
+  abstract /* fake */ override fun length(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: M#subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence{EnhancedNullability}
+  //   Public signature: /M.subSequence|5195057419205148885[0]
+  //   Public signature debug description: subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence{EnhancedNullability}
+  @Override
+  /* fake */ override fun subSequence(startIndex: Int, endIndex: Int): @EnhancedNullability CharSequence
+
+  // CHECK JVM_IR:
+  //   Mangled name: M#chars(){}java.util.stream.IntStream
+  //   Public signature: /M.chars|1246952257971230815[0]
+  //   Public signature debug description: chars(){}java.util.stream.IntStream
+  override fun chars(): IntStream
+
+  // CHECK JVM_IR:
+  //   Mangled name: M#codePoints(){}java.util.stream.IntStream
+  //   Public signature: /M.codePoints|-6284654057150065431[0]
+  //   Public signature debug description: codePoints(){}java.util.stream.IntStream
+  override fun codePoints(): IntStream
+
+  // CHECK:
+  //   Mangled name: M{}length
+  //   Public signature: /M.length|8693345930578737573[0]
+  //   Public signature debug description: {}length
+  /* fake */ override val length: Int
+    // CHECK JVM_IR:
+    //   Mangled name: M#<get-length>(){}kotlin.Int
+    //   Public signature: /M.length.<get-length>|2176130084070422186[0]
+    //   Public signature debug description: <get-length>(){}kotlin.Int
+    @Override
+    /* fake */ override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+interface A : CharSequence {
+  // CHECK JVM_IR:
+  //   Mangled name: A#charAt(kotlin.Int){}kotlin.Char
+  //   Public signature: /A.charAt|7510361910485130692[0]
+  //   Public signature debug description: charAt(kotlin.Int){}kotlin.Char
+  abstract /* fake */ override fun charAt(p0: Int): Char
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#chars(){}java.util.stream.IntStream?
+  //   Public signature: /A.chars|3567322254123962192[0]
+  //   Public signature debug description: chars(){}java.util.stream.IntStream?
+  /* fake */ override fun chars(): IntStream?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#codePoints(){}java.util.stream.IntStream?
+  //   Public signature: /A.codePoints|4245234750821486131[0]
+  //   Public signature debug description: codePoints(){}java.util.stream.IntStream?
+  /* fake */ override fun codePoints(): IntStream?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#length(){}kotlin.Int
+  //   Public signature: /A.length|2334822652264595979[0]
+  //   Public signature debug description: length(){}kotlin.Int
+  abstract /* fake */ override fun length(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence?
+  //   Public signature: /A.subSequence|-4481341054013264804[0]
+  //   Public signature debug description: subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence?
+  abstract /* fake */ override fun subSequence(p0: Int, p1: Int): CharSequence?
+
+}
+
+// CHECK:
+//   Mangled name: KotlinInterface
+//   Public signature: /KotlinInterface|null[0]
+interface KotlinInterface {
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinInterface#get(kotlin.Number){}kotlin.Char
+  //   Public signature: /KotlinInterface.get|3168731888095368670[0]
+  //   Public signature debug description: get(kotlin.Number){}kotlin.Char
+  abstract fun get(index: Number): Char
+
+  // CHECK:
+  //   Mangled name: KotlinInterface{}length
+  //   Public signature: /KotlinInterface.length|8693345930578737573[0]
+  //   Public signature debug description: {}length
+  abstract val length: Number
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinInterface#<get-length>(){}kotlin.Number
+    //   Public signature: /KotlinInterface.length.<get-length>|-867400481956796465[0]
+    //   Public signature debug description: <get-length>(){}kotlin.Number
+    abstract get
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C;D;E;F;G;H;I;J;K;L;M){}
+//   Public signature: /test|-5618248177050682296[0]
+//   Public signature debug description: test(A;B;C;D;E;F;G;H;I;J;K;L;M){}
+fun test(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L, m: M): Unit

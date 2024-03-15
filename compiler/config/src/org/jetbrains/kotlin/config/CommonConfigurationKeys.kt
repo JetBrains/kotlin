@@ -98,8 +98,9 @@ object CommonConfigurationKeys {
         CompilerConfigurationKey.create<EvaluatedConstTracker>("Keeps track of all evaluated by IrInterpreter constants")
 
     @JvmField
-    val USE_IR_FAKE_OVERRIDE_BUILDER =
-        CompilerConfigurationKey.create<Boolean>("Generate fake overrides via IR. See KT-61514")
+    val USE_FIR_BASED_FAKE_OVERRIDE_GENERATOR = CompilerConfigurationKey.create<Boolean>(
+        "Generate all fake overrides via FIR2IR instead of IR, i.e. revert to behavior before KT-61514 was resolved."
+    )
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings

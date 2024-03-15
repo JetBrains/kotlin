@@ -17,6 +17,7 @@ fun updateCompilerXml() {
     val modulesExcludedFromJps = listOf(
         "buildSrc",
         "native/commonizer",
+        "native/objcexport-header-generator",
         "plugins/atomicfu/atomicfu-runtime",
         "libraries/tools/atomicfu",
         "libraries/tools/binary-compatibility-validator",
@@ -52,6 +53,7 @@ fun updateCompilerXml() {
         "libraries/tools/kotlin-noarg",
         "libraries/tools/kotlin-osgi-bundle",
         "libraries/tools/kotlin-prepush-hook",
+        "libraries/tools/kotlin-power-assert",
         "libraries/tools/kotlin-sam-with-receiver",
         "libraries/tools/kotlin-serialization",
         "libraries/tools/kotlin-serialization-unshaded",

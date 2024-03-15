@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
@@ -46,7 +45,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -969,18 +967,6 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
             || origin == IrDeclarationOrigin.FAKE_OVERRIDE
         ) {
             annotationGenerator.generate(this, firAnnotationContainer)
-        }
-    }
-
-    private inline fun <R> convertCatching(element: FirElement, block: () -> R): R {
-        try {
-            return block()
-        } catch (e: ProcessCanceledException) {
-            throw e
-        } catch (e: Exception) {
-            errorWithAttachment("Exception was thrown during transformation of ${element::class.java}", cause = e) {
-                withFirEntry("element", element)
-            }
         }
     }
 }

@@ -56,11 +56,23 @@ abstract class SirTransformerVoid : SirTransformer<Nothing?>() {
     final override fun transformStruct(struct: SirStruct, data: Nothing?): SirDeclaration =
         transformStruct(struct)
 
+    open fun transformClass(klass: SirClass): SirDeclaration =
+        transformNamedDeclaration(klass)
+
+    final override fun transformClass(klass: SirClass, data: Nothing?): SirDeclaration =
+        transformClass(klass)
+
     open fun transformCallable(callable: SirCallable): SirDeclaration =
         transformDeclaration(callable)
 
     final override fun transformCallable(callable: SirCallable, data: Nothing?): SirDeclaration =
         transformCallable(callable)
+
+    open fun transformInit(init: SirInit): SirDeclaration =
+        transformCallable(init)
+
+    final override fun transformInit(init: SirInit, data: Nothing?): SirDeclaration =
+        transformInit(init)
 
     open fun transformFunction(function: SirFunction): SirDeclaration =
         transformCallable(function)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -160,7 +160,7 @@ object FirPlatformDeclarationFilter {
         // Optimization: only check the annotations for functions named "getOrDefault" and "remove",
         // since only two functions with these names in kotlin.collections.Map are currently annotated with @PlatformDependent.
         // This also allows to optimize more heavyweight FirJvmPlatformDeclarationFilter as it uses this function
-        return function.name !in namesToCheck || !function.hasAnnotation(StandardNames.FqNames.platformDependentClassId, session)
+        return function.name !in namesToCheck || !function.symbol.hasAnnotation(StandardNames.FqNames.platformDependentClassId, session)
     }
 
     private val namesToCheck = listOf("getOrDefault", "remove").map(Name::identifier)

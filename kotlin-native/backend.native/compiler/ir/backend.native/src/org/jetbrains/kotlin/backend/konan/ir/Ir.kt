@@ -109,6 +109,7 @@ internal class KonanSymbols(
     val nativePtrType = nativePtr.typeWith(arguments = emptyList())
 
     val immutableBlobOf = nativeFunction(IMMUTABLE_BLOB_OF)
+    val immutableBlobOfImpl = internalFunction("immutableBlobOfImpl")
 
     val signedIntegerClasses = setOf(byte, short, int, long)
     val unsignedIntegerClasses = setOf(uByte!!, uShort!!, uInt!!, uLong!!)

@@ -918,6 +918,98 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
     }
     public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
+    public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class B : R|A| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|A|>
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface C : A {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+    }
+    public final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
+            LAZY_super<A>
+        }
+
+    }
+    public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+        protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object H : P {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class J : P {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] object V : P {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
+                    LAZY_super<P>
+                }
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] class M : P {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
+                    LAZY_super<P>
+                }
+
+            }
+
+        }
+
+        public final [ResolvedTo(STATUS)] val p: R|P| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): R|P|
+
+        public final [ResolvedTo(STATUS)] val r: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): <implicit>
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class K : P {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
+            LAZY_super<P>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] class I : R|P| {
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=I] constructor(): R|B.I| {
+                LAZY_super<R|P|>
+            }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
     public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {

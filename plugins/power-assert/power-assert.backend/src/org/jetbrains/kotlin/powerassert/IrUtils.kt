@@ -21,6 +21,7 @@ package org.jetbrains.kotlin.powerassert
 
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -28,6 +29,8 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
 fun IrBuilderWithScope.irString(builderAction: StringBuilder.() -> Unit) =
@@ -57,3 +60,17 @@ fun IrBuilderWithScope.irLambda(
     }
     return IrFunctionExpressionImpl(startOffset, endOffset, lambdaType, lambda, IrStatementOrigin.LAMBDA)
 }
+
+val IrElement.earliestStartOffset: Int
+    get() {
+        var offset = startOffset
+        this.acceptChildrenVoid(
+            object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    if (element.startOffset < offset) offset = element.startOffset
+                    element.acceptChildrenVoid(this)
+                }
+            },
+        )
+        return offset
+    }

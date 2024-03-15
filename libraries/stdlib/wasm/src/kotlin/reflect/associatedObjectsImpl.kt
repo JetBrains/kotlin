@@ -5,7 +5,6 @@
 
 package kotlin.wasm.internal
 
-import kotlin.reflect.wasm.internal.KClassImpl
 import kotlin.reflect.KClass
 
 @PublishedApi

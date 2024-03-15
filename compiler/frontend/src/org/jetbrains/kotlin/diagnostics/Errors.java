@@ -949,6 +949,7 @@ public interface Errors {
     DiagnosticFactory4<PsiElement, KotlinType, String, String, BuilderLambdaLabelingInfo> STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY = DiagnosticFactory4.create(ERROR);
     DiagnosticFactory2<PsiElement, Name, Name> BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<PsiElement, Name, Name> BUILDER_INFERENCE_STUB_RECEIVER = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory1<KtDeclaration, Name> BUILDER_INFERENCE_STUB_PARAMETER_TYPE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory4<KtElement, Name, Name, KotlinType, KotlinType> UPPER_BOUND_VIOLATION_IN_CONSTRAINT = DiagnosticFactory4.create(ERROR);
 
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> NONE_APPLICABLE = DiagnosticFactory1.create(ERROR);

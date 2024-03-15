@@ -1,7 +1,7 @@
 // LANGUAGE: +ReportErrorsForComparisonOperators
 
 fun nullableNothingIdentity(a: Int, b: Nothing?) {
-    <!FORBIDDEN_IDENTITY_EQUALS, SENSELESS_COMPARISON!>a === b<!>
+    <!SENSELESS_COMPARISON!>a === b<!>
 }
 
 fun samePrimitiveIdentity(a: Int, b: Int) {

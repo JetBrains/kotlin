@@ -28,15 +28,6 @@ class EmulatorExecutor(
             this.executableAbsolutePath = configurables.absoluteEmulatorExecutable
             this.workingDirectory = workingDirectory
             this.args.add(0, request.executableAbsolutePath)
-            when (configurables.target) {
-                KonanTarget.LINUX_MIPS32,
-                KonanTarget.LINUX_MIPSEL32 -> {
-                    // This is to workaround an endianess issue.
-                    // See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=731082 for details.
-                    this.args.addAll(0, listOf("$absoluteTargetSysRoot/lib/ld.so.1", "--inhibit-cache"))
-                }
-                else -> Unit
-            }
             // TODO: Move these to konan.properties when when it will be possible
             //       to represent absolute path there.
             this.args.addAll(0, listOf("-L", absoluteTargetSysRoot))

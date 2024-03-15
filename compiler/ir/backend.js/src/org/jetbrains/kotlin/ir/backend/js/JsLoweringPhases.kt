@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunc
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
@@ -56,12 +55,6 @@ private val preventExportOfSyntheticDeclarationsLowering = makeIrModulePhase(
     ::ExcludeSyntheticDeclarationsFromExportLowering,
     name = "ExcludeSyntheticDeclarationsFromExportLowering",
     description = "Exclude synthetic declarations which we don't want to export such as `Enum.entries` or `DataClass::componentN`",
-)
-
-val scriptRemoveReceiverLowering = makeIrModulePhase(
-    ::ScriptRemoveReceiverLowering,
-    name = "ScriptRemoveReceiver",
-    description = "Remove receivers for declarations in script"
 )
 
 val createScriptFunctionsPhase = makeIrModulePhase(
@@ -213,8 +206,6 @@ private val functionInliningPhase = makeIrModulePhase(
             it,
             JsInlineFunctionResolver(it),
             it.innerClassesSupport,
-            alwaysCreateTemporaryVariablesForArguments = true,
-            inlineArgumentsWithOriginalOffset = true,
         )
     },
     name = "FunctionInliningPhase",
@@ -676,8 +667,8 @@ private val jsClassUsageInReflectionPhase = makeIrModulePhase(
 )
 
 private val classReferenceLoweringPhase = makeIrModulePhase(
-    ::ClassReferenceLowering,
-    name = "ClassReferenceLowering",
+    ::JsClassReferenceLowering,
+    name = "JsClassReferenceLowering",
     description = "Handle class references",
     prerequisite = setOf(jsClassUsageInReflectionPhase)
 )
@@ -784,7 +775,6 @@ val mainFunctionCallWrapperLowering = makeIrModulePhase<JsIrBackendContext>(
 )
 
 val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>(
-    scriptRemoveReceiverLowering,
     validateIrBeforeLowering,
     prepareCollectionsToExportLowering,
     preventExportOfSyntheticDeclarationsLowering,

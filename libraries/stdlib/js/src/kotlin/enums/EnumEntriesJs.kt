@@ -6,7 +6,6 @@
 package kotlin.enums
 
 @SinceKotlin("1.9")
-@ExperimentalStdlibApi
 @PublishedApi
 internal actual fun <T : Enum<T>> enumEntriesIntrinsic(): EnumEntries<T> {
     throw NotImplementedError() // implemented as intrinsic

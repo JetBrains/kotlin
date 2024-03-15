@@ -33,9 +33,8 @@ enum class ArchiveType(val fileExtension: String) {
     }
 }
 
-class DependencyExtractor(
-        private val archiveType: ArchiveType
-) {
+class DependencyExtractor : ArchiveExtractor {
+
     private fun extractTarGz(tarGz: File, targetDirectory: File) {
         val tarProcess = ProcessBuilder().apply {
             command("tar", "-xzf", tarGz.canonicalPath)
@@ -47,18 +46,19 @@ class DependencyExtractor(
             finished && tarProcess.exitValue() != 0 ->
                 throw RuntimeException(
                     "Cannot extract archive with dependency: ${tarGz.canonicalPath}.\n" +
-                    "Tar exit code: ${tarProcess.exitValue()}."
+                            "Tar exit code: ${tarProcess.exitValue()}."
                 )
             !finished -> {
                 tarProcess.destroy()
                 throw RuntimeException(
                     "Cannot extract archive with dependency: ${tarGz.canonicalPath}.\n" +
-                    "Tar process hasn't finished in ${extractionTimeoutUntis.toSeconds(extractionTimeout)} sec.")
+                            "Tar process hasn't finished in ${extractionTimeoutUntis.toSeconds(extractionTimeout)} sec."
+                )
             }
         }
     }
 
-    fun extract(archive: File, targetDirectory: File) {
+    override fun extract(archive: File, targetDirectory: File, archiveType: ArchiveType) {
         when (archiveType) {
             ArchiveType.ZIP -> archive.toPath().unzipTo(targetDirectory.toPath())
             ArchiveType.TAR_GZ -> extractTarGz(archive, targetDirectory)

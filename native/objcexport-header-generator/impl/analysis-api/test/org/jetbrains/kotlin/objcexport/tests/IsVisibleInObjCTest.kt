@@ -181,4 +181,138 @@ class IsVisibleInObjCTest(
             assertFalse(fooSymbol.isVisibleInObjC())
         }
     }
+
+    @Test
+    fun `test - containing symbol visible`() {
+        val file = inlineSourceCodeAnalysis.createKtFile(
+            """
+                class PublicClass {
+                    fun foo()
+                }
+            """.trimIndent()
+        )
+
+        analyze(file) {
+            assertTrue(file.getClassOrFail("PublicClass").getFunctionOrFail("foo").isVisibleInObjC())
+        }
+    }
+
+    @Test
+    fun `test - invisible symbol inside private class`() {
+        val file = inlineSourceCodeAnalysis.createKtFile(
+            """
+                private class PrivateClass {
+                    fun foo()
+                }
+            """.trimIndent()
+        )
+
+        analyze(file) {
+            assertFalse(file.getClassOrFail("PrivateClass").getFunctionOrFail("foo").isVisibleInObjC())
+        }
+    }
+
+    @Test
+    fun `test - nested visible function`() {
+        val file = inlineSourceCodeAnalysis.createKtFile(
+            """
+            class PublicA {
+                class PublicB {
+                    class PublicC {
+                        fun foo() {}
+                    }   
+                }
+            }
+            """.trimIndent()
+        )
+
+        analyze(file) {
+            val foo = file
+                .getClassOrFail("PublicA").getMemberScope()
+                .getClassOrFail("PublicB").getMemberScope()
+                .getClassOrFail("PublicC")
+                .getFunctionOrFail("foo")
+            assertTrue(foo.isVisibleInObjC())
+        }
+    }
+
+    @Test
+    fun `test - nested invisible function`() {
+        val file = inlineSourceCodeAnalysis.createKtFile(
+            """
+            class PublicA {
+                private class PrivateB {
+                    class PublicC {
+                        fun foo() {}
+                    }   
+                }
+            }
+            """.trimIndent()
+        )
+
+        analyze(file) {
+            val foo = file
+                .getClassOrFail("PublicA").getMemberScope()
+                .getClassOrFail("PrivateB").getMemberScope()
+                .getClassOrFail("PublicC")
+                .getFunctionOrFail("foo")
+            assertFalse(foo.isVisibleInObjC())
+        }
+    }
+
+    @Test
+    fun `test - invisible symbol inside public class marked with @HidesFromObjC`() {
+        val file = inlineSourceCodeAnalysis.createKtFile(
+            """
+                @kotlin.native.HidesFromObjC
+                annotation class HideIt                       
+
+                @HideIt
+                class PublicClass {
+                    fun foo()
+                }
+            """.trimIndent()
+        )
+
+        analyze(file) {
+            assertFalse(file.getClassOrFail("PublicClass").getFunctionOrFail("foo").isVisibleInObjC())
+        }
+    }
+
+    @Test
+    fun `test - invisible member inside nested class marked with @HidesFromObjC`() {
+        val file = inlineSourceCodeAnalysis.createKtFile(
+            """
+            @kotlin.native.HidesFromObjC
+            annotation class HideIt                
+
+
+            class PublicA {
+                fun publicA() = Unit
+            
+                @HideIt
+                class HiddenB {
+                    fun hiddenB() = Unit
+
+                    class HiddenC {
+                        fun hiddenC() = Unit
+                    }   
+                }
+            }
+            """.trimIndent()
+        )
+
+        analyze(file) {
+            val publicA = file.getClassOrFail("PublicA")
+            val hiddenB = publicA.getMemberScope().getClassOrFail("HiddenB")
+            val hiddenC = hiddenB.getMemberScope().getClassOrFail("HiddenC")
+
+            assertFalse(hiddenB.isVisibleInObjC())
+            assertFalse(hiddenC.isVisibleInObjC())
+
+            assertTrue(publicA.getFunctionOrFail("publicA").isVisibleInObjC())
+            assertFalse(hiddenB.getFunctionOrFail("hiddenB").isVisibleInObjC())
+            assertFalse(hiddenC.getFunctionOrFail("hiddenC").isVisibleInObjC())
+        }
+    }
 }

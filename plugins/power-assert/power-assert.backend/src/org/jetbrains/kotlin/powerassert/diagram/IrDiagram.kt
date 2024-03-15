@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.lexer.KotlinLexer
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.powerassert.irString
 
 fun IrBuilderWithScope.irDiagramString(
@@ -38,7 +40,7 @@ fun IrBuilderWithScope.irDiagramString(
     val callInfo = sourceFile.getSourceRangeInfo(call)
     val callIndent = callInfo.startColumnNumber
 
-    val stackValues = variables.map { it.toValueDisplay(sourceFile, callIndent, callInfo) }
+    val stackValues = variables.map { it.toValueDisplay(callIndent, callInfo) }
 
     val valuesByRow = stackValues.groupBy { it.row }
     val rows = sourceFile.getText(callInfo)
@@ -94,17 +96,14 @@ private data class ValueDisplay(
 )
 
 private fun IrTemporaryVariable.toValueDisplay(
-    fileSource: SourceFile,
     callIndent: Int,
     originalInfo: SourceRangeInfo,
 ): ValueDisplay {
-    val info = fileSource.getSourceRangeInfo(original)
-    var indent = info.startColumnNumber - callIndent
-    var row = info.startLineNumber - originalInfo.startLineNumber
+    var indent = sourceRangeInfo.startColumnNumber - callIndent
+    var row = sourceRangeInfo.startLineNumber - originalInfo.startLineNumber
 
-    val source = fileSource.getText(info)
-        .replace("\n" + " ".repeat(callIndent), "\n") // Remove additional indentation
-    val columnOffset = findDisplayOffset(fileSource, original, source)
+    val source = text.replace("\n" + " ".repeat(callIndent), "\n") // Remove additional indentation
+    val columnOffset = findDisplayOffset(original, sourceRangeInfo, source)
 
     val prefix = source.substring(0, columnOffset)
     val rowShift = prefix.count { it == '\n' }
@@ -151,56 +150,28 @@ private fun IrTemporaryVariable.toValueDisplay(
  * ```
  */
 private fun findDisplayOffset(
-    sourceFile: SourceFile,
     expression: IrExpression,
+    sourceRangeInfo: SourceRangeInfo,
     source: String,
 ): Int {
     return when (expression) {
-        is IrMemberAccessExpression<*> -> memberAccessOffset(sourceFile, expression, source)
-        is IrTypeOperatorCall -> typeOperatorOffset(expression, source)
+        is IrMemberAccessExpression<*> -> memberAccessOffset(expression, sourceRangeInfo, source)
+        is IrTypeOperatorCall -> typeOperatorOffset(expression, sourceRangeInfo, source)
         else -> 0
     }
 }
 
 private fun memberAccessOffset(
-    sourceFile: SourceFile,
     expression: IrMemberAccessExpression<*>,
+    sourceRangeInfo: SourceRangeInfo,
     source: String,
 ): Int {
-    when (expression.origin) {
-        // special case to handle `value != null`
-        IrStatementOrigin.EXCLEQ, IrStatementOrigin.EXCLEQEQ -> return source.indexOf("!=")
-        // special case to handle `in` operator
-        IrStatementOrigin.IN -> return source.indexOf(" in ") + 1
-        // special case to handle `in` operator
-        IrStatementOrigin.NOT_IN -> return source.indexOf(" !in ") + 1
-        else -> Unit
-    }
-
     val owner = expression.symbol.owner
     if (owner !is IrSimpleFunction) return 0
 
     if (owner.isInfix || owner.isOperator || owner.origin == IrBuiltIns.BUILTIN_OPERATOR) {
-        // Ignore single value operators
-        val singleReceiver = (expression.dispatchReceiver != null) xor (expression.extensionReceiver != null)
-        if (singleReceiver && expression.valueArgumentsCount == 0) return 0
-
-        // Start after the dispatcher or first argument
-        val receiver = expression.dispatchReceiver
-            ?: expression.extensionReceiver
-            ?: expression.getValueArgument(0).takeIf { owner.origin == IrBuiltIns.BUILTIN_OPERATOR }
-            ?: return 0
-        val expressionInfo = sourceFile.getSourceRangeInfo(expression)
-        var offset = receiver.endOffset - expressionInfo.startOffset + 1
-        if (receiver is IrConst<*> && receiver.kind == IrConstKind.String) offset++ // String constants don't include the quote
-        if (offset < 0 || offset >= source.length) return 0 // infix function called using non-infix syntax
-
-        // Continue until there is a non-whitespace character
-        while (source[offset].isWhitespace() || source[offset] == '.') {
-            offset++
-            if (offset >= source.length) return 0
-        }
-        return offset
+        val lhs = expression.binaryOperatorLhs() ?: return 0
+        return binaryOperatorOffset(lhs, sourceRangeInfo, source)
     }
 
     return 0
@@ -208,12 +179,72 @@ private fun memberAccessOffset(
 
 private fun typeOperatorOffset(
     expression: IrTypeOperatorCall,
+    sourceRangeInfo: SourceRangeInfo,
     source: String,
 ): Int {
     return when (expression.operator) {
-        IrTypeOperator.INSTANCEOF -> source.indexOf(" is ") + 1
-        IrTypeOperator.NOT_INSTANCEOF -> source.indexOf(" !is ") + 1
+        IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF -> binaryOperatorOffset(expression.argument, sourceRangeInfo, source)
         else -> 0
+    }
+}
+
+/**
+ * The offset of the infix operator/function token itself.
+ *
+ * @param lhs The left-hand side expression of the operator.
+ * @param wholeOperatorSourceRangeInfo The source range of the whole operator expression.
+ * @param wholeOperatorSource The source text of the whole operator expression.
+ */
+private fun binaryOperatorOffset(lhs: IrExpression, wholeOperatorSourceRangeInfo: SourceRangeInfo, wholeOperatorSource: String): Int {
+    val offset = lhs.endOffset - wholeOperatorSourceRangeInfo.startOffset
+    if (offset < 0 || offset >= wholeOperatorSource.length) return 0 // infix function called using non-infix syntax
+
+    KotlinLexer().run {
+        start(wholeOperatorSource, offset, wholeOperatorSource.length)
+        while (tokenType != null && tokenType != KtTokens.EOF && (tokenType == KtTokens.DOT || tokenType !in KtTokens.OPERATIONS)) {
+            advance()
+        }
+        if (tokenStart >= wholeOperatorSource.length) return 0
+        return tokenStart
+    }
+}
+
+/**
+ * The left-hand side expression of an infix operator/function that takes into account special cases like `in`, `!in` and `!=` operators
+ * that have a more complex structure than just a single call with two arguments.
+ */
+private fun IrMemberAccessExpression<*>.binaryOperatorLhs(): IrExpression? = when (origin) {
+    IrStatementOrigin.EXCLEQ -> {
+        // The `!=` operator call is actually a sugar for `lhs.equals(rhs).not()`.
+        (dispatchReceiver as? IrCall)?.simpleBinaryOperatorLhs()
+    }
+    IrStatementOrigin.EXCLEQEQ -> {
+        // The `!==` operator call is actually a sugar for `(lhs === rhs).not()`.
+        (dispatchReceiver as? IrCall)?.simpleBinaryOperatorLhs()
+    }
+    IrStatementOrigin.IN -> {
+        // The `in` operator call is actually a sugar for `rhs.contains(lhs)`.
+        getValueArgument(0)
+    }
+    IrStatementOrigin.NOT_IN -> {
+        // The `!in` operator call is actually a sugar for `rhs.contains(lhs).not()`.
+        (dispatchReceiver as? IrCall)?.getValueArgument(0)
+    }
+    else -> simpleBinaryOperatorLhs()
+}
+
+/**
+ * The left-hand side expression of an infix operator/function.
+ * For single-value operators returns `null`, for all other infix operators/functions, returns the receiver or the first value argument.
+ */
+private fun IrMemberAccessExpression<*>.simpleBinaryOperatorLhs(): IrExpression? {
+    val singleReceiver = (dispatchReceiver != null) xor (extensionReceiver != null)
+    return if (singleReceiver && valueArgumentsCount == 0) {
+        null
+    } else {
+        dispatchReceiver
+            ?: extensionReceiver
+            ?: getValueArgument(0).takeIf { (symbol.owner as? IrSimpleFunction)?.origin == IrBuiltIns.BUILTIN_OPERATOR }
     }
 }
 

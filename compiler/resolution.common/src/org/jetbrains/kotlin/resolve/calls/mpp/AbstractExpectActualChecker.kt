@@ -162,43 +162,12 @@ object AbstractExpectActualChecker {
         actualClassSymbol: RegularClassSymbolMarker,
         substitutor: TypeSubstitutorMarker,
     ): Boolean {
-        return when (allowTransitiveSupertypesActualization) {
-            false -> areCompatibleSupertypesOneByOne(expectClassSymbol, actualClassSymbol, substitutor)
-            true -> areCompatibleSupertypesTransitive(expectClassSymbol, actualClassSymbol, substitutor)
-        }
-    }
-
-    context(ExpectActualMatchingContext<*>)
-    private fun areCompatibleSupertypesOneByOne(
-        expectClassSymbol: RegularClassSymbolMarker,
-        actualClassSymbol: RegularClassSymbolMarker,
-        substitutor: TypeSubstitutorMarker,
-    ): Boolean {
-        // Subtract kotlin.Any from supertypes because it's implicitly added if no explicit supertype is specified,
-        // and not added if an explicit supertype _is_ specified
-        val expectSupertypes = expectClassSymbol.superTypes.filterNot { it.typeConstructor().isAnyConstructor() }
-        val actualSupertypes = actualClassSymbol.superTypes.filterNot { it.typeConstructor().isAnyConstructor() }
-        return expectSupertypes.all { expectSupertype ->
-            val substitutedExpectType = substitutor.safeSubstitute(expectSupertype)
-            actualSupertypes.any { actualSupertype ->
-                areCompatibleExpectActualTypes(substitutedExpectType, actualSupertype, parameterOfAnnotationComparisonMode = false)
-            }
-        }
-    }
-
-    context(ExpectActualMatchingContext<*>)
-    private fun areCompatibleSupertypesTransitive(
-        expectClassSymbol: RegularClassSymbolMarker,
-        actualClassSymbol: RegularClassSymbolMarker,
-        substitutor: TypeSubstitutorMarker,
-    ): Boolean {
         val expectSupertypes = expectClassSymbol.superTypes.filterNot { it.typeConstructor().isAnyConstructor() }
         val actualType = actualClassSymbol.defaultType
         return expectSupertypes.all { expectSupertype ->
-            actualTypeIsSubtypeOfExpectType(
-                expectType = substitutor.safeSubstitute(expectSupertype),
-                actualType = actualType
-            )
+            val expectType = substitutor.safeSubstitute(expectSupertype)
+            isSubtypeOf(superType = expectType, subType = actualType) &&
+                    !isSubtypeOf(superType = actualType, subType = expectType)
         }
     }
 
@@ -505,7 +474,6 @@ object AbstractExpectActualChecker {
         val expectVisibility = expectClassSymbol.visibility
         val actualVisibility = actualClassSymbol.visibility
         if (expectVisibility == actualVisibility) return true
-        if (!allowClassActualizationWithWiderVisibility) return false
         val result = Visibilities.compare(actualVisibility, expectVisibility)
         return result != null && result > 0
     }

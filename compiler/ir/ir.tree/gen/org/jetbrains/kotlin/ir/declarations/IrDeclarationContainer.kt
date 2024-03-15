@@ -11,8 +11,6 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 
 /**
- * A non-leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.declarationContainer]
  */
 interface IrDeclarationContainer : IrDeclarationParent {

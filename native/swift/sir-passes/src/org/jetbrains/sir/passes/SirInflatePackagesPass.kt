@@ -5,7 +5,9 @@
 
 package org.jetbrains.sir.passes
 
+import org.jetbrains.kotlin.analysis.api.calls.KtCall
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildEnum
 import org.jetbrains.kotlin.sir.builder.buildModule
@@ -57,14 +59,7 @@ public class SirInflatePackagesPass : SirModulePass {
             for (declaration in module.declarations) {
                 val origin = declaration.origin as? KotlinSource
                 if (origin != null) {
-                    // FIXME: for now we assume everything before the last dot is a package name.
-                    //  This should change as we add type declarations into the mix
-                    val path = (origin.symbol as? KtCallableSymbol)
-                        ?.callableIdIfNonLocal?.packageName
-                        ?.pathSegments()
-                        ?.map { it.toString() }
-                        ?: emptyList()
-                    data.root.getOrCreate(path).elements.add(declaration)
+                    data.root.getOrCreate(origin.getPackagePath()).elements.add(declaration)
                     continue
                 }
                 declarations += declaration
@@ -90,3 +85,19 @@ private fun SirDeclarationContainer.fixParents() = declarations
     .onEach { it.parent = this }
     .filterIsInstance<SirDeclarationContainer>()
     .forEach(SirDeclarationContainer::fixParents)
+
+private fun KotlinSource.getPackagePath(): List<String> {
+    val fqName = when (symbol) {
+        is KtCallableSymbol -> {
+            symbol.callableIdIfNonLocal?.packageName
+        }
+        is KtClassOrObjectSymbol -> {
+            symbol.classIdIfNonLocal?.packageFqName
+        }
+        else ->
+            TODO("encountered unknown origin: $symbol. This exception should be reworked during KT-65980")
+    }
+    return fqName?.pathSegments()
+        ?.map { it.toString() }
+        ?: TODO("encountered empty FqName on source: ${this}. This exception should be reworked during KT-65980")
+}

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.native
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
@@ -30,11 +31,11 @@ internal interface UsesKonanPropertiesBuildService : Task {
 abstract class KonanPropertiesBuildService : BuildService<KonanPropertiesBuildService.Parameters> {
 
     internal interface Parameters : BuildServiceParameters {
-        val konanHome: Property<String>
+        val konanHome: DirectoryProperty
     }
 
     private val properties: Properties by lazy {
-        Distribution(parameters.konanHome.get()).properties
+        Distribution(parameters.konanHome.get().asFile.absolutePath).properties
     }
 
     private val cacheableTargets: List<KonanTarget> by lazy {
@@ -62,14 +63,10 @@ abstract class KonanPropertiesBuildService : BuildService<KonanPropertiesBuildSe
     internal fun additionalCacheFlags(target: KonanTarget): List<String> =
         properties.resolvablePropertyList("additionalCacheFlags", target.visibleName)
 
-    internal val compilerVersion: String? by lazy {
-        properties["compilerVersion"]?.toString()
-    }
-
     companion object {
         fun registerIfAbsent(project: Project): Provider<KonanPropertiesBuildService> =
             project.gradle.sharedServices.registerIfAbsent(serviceName, KonanPropertiesBuildService::class.java) { service ->
-                service.parameters.konanHome.set(project.rootProject.konanHome.absolutePath)
+                service.parameters.konanHome.set(project.konanHome)
             }.also { serviceProvider ->
                 SingleActionPerProject.run(project, UsesKonanPropertiesBuildService::class.java.name) {
                     project.tasks.withType<UsesKonanPropertiesBuildService>().configureEach { task ->

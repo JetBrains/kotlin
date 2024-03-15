@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirControlFlowGraphRenderVisitor
+import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
 import org.jetbrains.kotlin.test.directives.DumpCfgOption
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DUMP_CFG
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.TestModule
@@ -23,8 +25,8 @@ class FirCfgDumpHandler(testServices: TestServices) : FirAnalysisHandler(testSer
     private var alreadyDumped: Boolean = false
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
-        if (alreadyDumped || FirDiagnosticsDirectives.DUMP_CFG !in module.directives) return
-        val options = module.directives[FirDiagnosticsDirectives.DUMP_CFG].map { it.uppercase() }
+        if (alreadyDumped || DUMP_CFG !in module.directives) return
+        val options = module.directives[DUMP_CFG].map { it.uppercase() }
 
         val file = info.mainFirFiles.values.first()
         val renderLevels = DumpCfgOption.LEVELS in options
@@ -34,9 +36,13 @@ class FirCfgDumpHandler(testServices: TestServices) : FirAnalysisHandler(testSer
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        if (!alreadyDumped) return
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         val expectedFile = testDataFile.parentFile.resolve("${testDataFile.nameWithoutFirExtension}.dot")
-        assertions.assertEqualsToFile(expectedFile, builder.toString())
+
+        if (!alreadyDumped) {
+            assertions.assertFileDoesntExist(expectedFile, DUMP_CFG)
+        } else {
+            assertions.assertEqualsToFile(expectedFile, builder.toString())
+        }
     }
 }

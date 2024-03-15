@@ -236,6 +236,10 @@ fun transformFirToIr(
     }
 
     val firResult = FirResult(firOutputs)
+
+    val performanceManager = moduleStructure.compilerConfiguration[CLIConfigurationKeys.PERF_MANAGER]
+    performanceManager?.notifyIRTranslationStarted()
+
     return firResult.convertToIrAndActualize(
         fir2IrExtensions,
         Fir2IrConfiguration.forKlibCompilation(moduleStructure.compilerConfiguration, diagnosticsReporter),
@@ -247,6 +251,8 @@ fun transformFirToIr(
         actualizerTypeContextProvider = ::IrTypeSystemContextImpl
     ) { _, irPart ->
         (irPart.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
+    }.also {
+        performanceManager?.notifyIRTranslationFinished()
     }
 }
 
@@ -260,6 +266,7 @@ fun serializeFirKlib(
     diagnosticsReporter: BaseDiagnosticsCollector,
     jsOutputName: String?,
     useWasmPlatform: Boolean,
+    wasmTarget: WasmTarget?,
 ) {
     val fir2KlibMetadataSerializer = Fir2KlibMetadataSerializer(
         moduleStructure.compilerConfiguration,
@@ -285,5 +292,6 @@ fun serializeFirKlib(
         abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
         jsOutputName = jsOutputName,
         builtInsPlatform = if (useWasmPlatform) BuiltInsPlatform.WASM else BuiltInsPlatform.JS,
+        wasmTarget = wasmTarget,
     )
 }

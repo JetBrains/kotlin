@@ -117,6 +117,7 @@ abstract class MochaTestTask : NpmTask(), VerificationTask
 
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
 val typescriptTestsDir = testDataDir.resolve("typescript-export")
+val jsTestsDir = typescriptTestsDir.resolve("js")
 
 val installTsDependencies by task<NpmTask> {
     val packageLockFile = testDataDir.resolve("package-lock.json")
@@ -129,30 +130,12 @@ val installTsDependencies by task<NpmTask> {
     args.set(listOf("install"))
 }
 
-fun parallel(tasksToRun: List<TaskProvider<*>>, beforeAll: TaskProvider<*>? = null, afterAll: TaskProvider<*>? = null): RegisteringDomainObjectDelegateProviderWithAction<out TaskContainer, Task> {
-    return tasks.registering {
-        tasksToRun.forEach { dependsOn(it) }
-
-        if (afterAll != null) {
-            finalizedBy(afterAll)
-        }
-    }.apply {
-        if (beforeAll != null) {
-            tasksToRun.forEach {
-                it.configure {
-                    dependsOn(beforeAll)
-                }
-            }
-        }
-    }
-}
-
 val exportFileDirPostfix = "-in-exported-file"
 
 fun generateJsExportOnFileTestFor(dir: String): TaskProvider<Copy> = tasks.register<Copy>("generate-js-export-on-file-for-$dir") {
     val dirPostfix = exportFileDirPostfix
-    val inputDir = fileTree(typescriptTestsDir.resolve(dir))
-    val outputDir = typescriptTestsDir.resolve("$dir$dirPostfix")
+    val inputDir = fileTree(jsTestsDir.resolve(dir))
+    val outputDir = jsTestsDir.resolve("$dir$dirPostfix")
 
     inputs.files(inputDir.matching {
         include("**/*.kt")
@@ -191,7 +174,7 @@ fun generateJsExportOnFileTestFor(dir: String): TaskProvider<Copy> = tasks.regis
 }
 
 fun generateTypeScriptTestFor(dir: String): TaskProvider<NpmTask> = tasks.register<NpmTask>("generate-ts-for-$dir") {
-    val baseDir = typescriptTestsDir.resolve(dir)
+    val baseDir = jsTestsDir.resolve(dir)
     val mainTsFile = fileTree(baseDir).files.find { it.name.endsWith("__main.ts") } ?: return@register
     val mainJsFile = baseDir.resolve("${mainTsFile.nameWithoutExtension}.js")
 
@@ -201,12 +184,12 @@ fun generateTypeScriptTestFor(dir: String): TaskProvider<NpmTask> = tasks.regist
     outputs.file(mainJsFile)
     outputs.upToDateWhen { mainJsFile.exists() }
 
-    args.set(listOf("run", "generateTypeScriptTests", "--", "./typescript-export/$dir/tsconfig.json"))
+    args.set(listOf("run", "generateTypeScriptTests", "--", "./typescript-export/js/$dir/tsconfig.json"))
 }
 
 val generateTypeScriptTests by parallel(
     beforeAll = installTsDependencies,
-    tasksToRun = typescriptTestsDir.listFiles { it: File ->
+    tasksToRun = jsTestsDir.listFiles { it: File ->
         it.isDirectory &&
                 !it.path.endsWith("module-systems") &&
                 !it.path.endsWith("module-systems-in-exported-file")
@@ -215,7 +198,7 @@ val generateTypeScriptTests by parallel(
 )
 
 val generateTypeScriptJsExportOnFileTests by parallel(
-    typescriptTestsDir
+    jsTestsDir
         .listFiles { it: File ->
             it.isDirectory &&
                     !it.path.endsWith("selective-export") &&

@@ -48,6 +48,11 @@ FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: @<ERROR TYPE REF: Symbol not found for Anno>[Unresolved](Foo#) <ERROR TYPE REF: Symbol not found for Foo>
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): @<ERROR TYPE REF: Symbol not found for Anno>[Unresolved](Foo#) <ERROR TYPE REF: Symbol not found for Foo>
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] val prop: @<ERROR TYPE REF: Symbol not found for Anno>[Unresolved](Foo#) <ERROR TYPE REF: Symbol not found for Foo>
+        public [ResolvedTo(CONSTANT_EVALUATION)] get(): @<ERROR TYPE REF: Symbol not found for Anno>[Unresolved](Foo#) <ERROR TYPE REF: Symbol not found for Foo>
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo>

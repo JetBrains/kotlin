@@ -19,13 +19,11 @@ enum class PlatformIntWidth {
 
 object PlatformWidthIndex {
     private val widthByLeafTargets = mapOf(
-        LeafCommonizerTarget(KonanTarget.IOS_ARM32) to PlatformIntWidth.INT,
         LeafCommonizerTarget(KonanTarget.IOS_ARM64) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.IOS_X64) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.IOS_SIMULATOR_ARM64) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.WATCHOS_ARM32) to PlatformIntWidth.INT,
         LeafCommonizerTarget(KonanTarget.WATCHOS_ARM64) to PlatformIntWidth.INT,
-        LeafCommonizerTarget(KonanTarget.WATCHOS_X86) to PlatformIntWidth.INT,
         LeafCommonizerTarget(KonanTarget.WATCHOS_X64) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.WATCHOS_SIMULATOR_ARM64) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.WATCHOS_DEVICE_ARM64) to PlatformIntWidth.LONG,
@@ -33,15 +31,11 @@ object PlatformWidthIndex {
         LeafCommonizerTarget(KonanTarget.TVOS_X64) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.TVOS_SIMULATOR_ARM64) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.LINUX_X64) to PlatformIntWidth.LONG,
-        LeafCommonizerTarget(KonanTarget.MINGW_X86) to PlatformIntWidth.INT,
         LeafCommonizerTarget(KonanTarget.MINGW_X64) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.MACOS_X64) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.MACOS_ARM64) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.LINUX_ARM64) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.LINUX_ARM32_HFP) to PlatformIntWidth.INT,
-        LeafCommonizerTarget(KonanTarget.LINUX_MIPS32) to PlatformIntWidth.INT,
-        LeafCommonizerTarget(KonanTarget.LINUX_MIPSEL32) to PlatformIntWidth.INT,
-        LeafCommonizerTarget(KonanTarget.WASM32) to PlatformIntWidth.INT,
     )
 
     fun platformWidthOf(target: CommonizerTarget): PlatformIntWidth? {
@@ -56,4 +50,3 @@ object PlatformWidthIndex {
         }
     }
 }
-

@@ -290,8 +290,7 @@ public expect fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.l
  * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  *  or when that index is out of the [destination] array indices range.
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@SinceKotlin("2.0")
 public expect fun String.toCharArray(
     destination: CharArray,
     destinationOffset: Int = 0,

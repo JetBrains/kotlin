@@ -30,7 +30,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     private val definition: kotlin.script.experimental.host.ScriptDefinition by lazy(LazyThreadSafetyMode.PUBLICATION) {
         messageReporter(
             ScriptDiagnostic.Severity.DEBUG,
-            "Configure scripting: loading script definition class $className using classpath $classpath\n.  ${Thread.currentThread().stackTrace}"
+            "Configure scripting: loading script definition class $className using classpath $classpath"
         )
         try {
             createScriptDefinitionFromTemplate(

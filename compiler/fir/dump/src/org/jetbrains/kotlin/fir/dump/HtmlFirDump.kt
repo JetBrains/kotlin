@@ -1573,11 +1573,6 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                     generate(expression.expression)
 
                 }
-                is FirLambdaArgumentExpression -> {
-                    keyword("lambda")
-                    +" = "
-                    generate(expression.expression)
-                }
                 is FirTypeOperatorCall -> generate(expression)
                 is FirEqualityOperatorCall -> generate(expression)
                 is FirBinaryLogicExpression -> generate(expression)

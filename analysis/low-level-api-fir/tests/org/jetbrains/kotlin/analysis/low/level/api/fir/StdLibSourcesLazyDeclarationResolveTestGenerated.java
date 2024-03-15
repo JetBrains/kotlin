@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -22,6 +21,12 @@ public class StdLibSourcesLazyDeclarationResolveTestGenerated extends AbstractSt
   @Test
   public void testAllFilesPresentInLazyResolveStdlibSources() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveStdlibSources"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
+
+  @Test
+  @TestMetadata("linkedHashMap.kt")
+  public void testLinkedHashMap() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolveStdlibSources/linkedHashMap.kt");
   }
 
   @Test

@@ -125,6 +125,7 @@ abstract class FirAbstractInvalidationTest(
             diagnosticsReporter = diagnosticsReporter,
             jsOutputName = moduleName,
             useWasmPlatform = false,
+            wasmTarget = null,
         )
 
         if (messageCollector.hasErrors()) {

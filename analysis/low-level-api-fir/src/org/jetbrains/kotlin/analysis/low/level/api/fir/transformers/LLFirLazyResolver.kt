@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
  * @see LLFirLazyResolverRunner
  * @see LLFirTargetResolver
  */
-internal abstract class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
+internal sealed class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
     fun resolve(target: LLFirResolveTarget) {
         val resolver = createTargetResolver(target)
         requireWithAttachment(
@@ -32,6 +32,9 @@ internal abstract class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
         )
 
         resolver.resolveDesignation()
+        target.forEachTarget(::checkIsResolved)
+
+        checkCanceled()
     }
 
     protected abstract fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver
@@ -48,18 +51,6 @@ internal abstract class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
      * @see checkNestedDeclarationsAreResolved
      */
     protected abstract fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState)
-
-    fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
-        LLFirPhaseUpdater.updateDeclarationInternalsPhase(
-            target = target,
-            newPhase = resolverPhase,
-            updateForLocalDeclarations = resolverPhase == FirResolvePhase.BODY_RESOLVE,
-        )
-    }
-
-    fun checkIsResolved(designation: LLFirResolveTarget) {
-        designation.forEachTarget(::checkIsResolved)
-    }
 
     private fun checkNestedDeclarationsAreResolved(target: FirElementWithResolveState) {
         if (target !is FirDeclaration) return

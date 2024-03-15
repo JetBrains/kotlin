@@ -114,8 +114,8 @@ private fun String.toBuildDependenciesTaskName(pod: CocoapodsDependency): String
 private val KotlinNativeTarget.toValidSDK: String
     get() = when (konanTarget) {
         IOS_X64, IOS_SIMULATOR_ARM64 -> "iphonesimulator"
-        IOS_ARM32, IOS_ARM64 -> "iphoneos"
-        WATCHOS_X86, WATCHOS_X64, WATCHOS_SIMULATOR_ARM64 -> "watchsimulator"
+        IOS_ARM64 -> "iphoneos"
+        WATCHOS_X64, WATCHOS_SIMULATOR_ARM64 -> "watchsimulator"
         WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_DEVICE_ARM64 -> "watchos"
         TVOS_X64, TVOS_SIMULATOR_ARM64 -> "appletvsimulator"
         TVOS_ARM64 -> "appletvos"
@@ -524,8 +524,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 else -> error("Unknown cocoapods platform: $family")
             }
 
-            val xcodeVersionTask = XcodeVersionTask.locateOrRegister(project)
-
             val podGenTask = project.registerTask<PodGenTask>(family.toPodGenTaskName) { task ->
                 task.description = "Сreates a synthetic Xcode project to retrieve CocoaPods dependencies"
                 task.podName.set(project.provider { cocoapodsExtension.name })
@@ -533,7 +531,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 task.family.set(family)
                 task.platformSettings.set(platformSettings)
                 task.pods.set(cocoapodsExtension.pods)
-                task.xcodeVersion.set(xcodeVersionTask.version)
             }
 
             project.registerTask<PodInstallSyntheticTask>(family.toPodInstallSyntheticTaskName) { task ->
@@ -816,19 +813,16 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     }
 
 
-    private fun checkEmbedAndSignNotUsedTogetherWithPodDependencies(project: Project, kotlinExtension: KotlinMultiplatformExtension, cocoapodsExtension: CocoapodsExtension) {
+    private fun checkEmbedAndSignNotUsedTogetherWithPodDependencies(project: Project, cocoapodsExtension: CocoapodsExtension) {
         cocoapodsExtension.pods.all {
             SingleActionPerProject.run(project, "assertEmbedAndSignNotUsedTogetherWithPodDependencies") {
-                kotlinExtension.targets.withType<KotlinNativeTarget>().all { target ->
-                    target.binaries.withType<Framework>().all {
-                        project.tasks.withType<EmbedAndSignTask>().all { embedAndSignTask ->
-                            embedAndSignTask.doFirst {
-                                embedAndSignTask.reportDiagnostic(CocoapodsPluginDiagnostics.EmbedAndSignUsedWithPodDependencies())
-                            }
+                project.tasks.withType<EmbedAndSignTask>().all { embedAndSignTask ->
+                    project.gradle.taskGraph.whenReady { taskGraph ->
+                        if (taskGraph.hasTask(embedAndSignTask)) {
+                            project.reportDiagnostic(CocoapodsPluginDiagnostics.EmbedAndSignUsedWithPodDependencies())
                         }
                     }
                 }
-
             }
         }
     }
@@ -891,7 +885,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             createInterops(project, kotlinExtension, cocoapodsExtension)
             configureLinkingOptions(project, cocoapodsExtension)
             checkLinkOnlyNotUsedWithStaticFramework(project, cocoapodsExtension)
-            checkEmbedAndSignNotUsedTogetherWithPodDependencies(project, kotlinExtension, cocoapodsExtension)
+            checkEmbedAndSignNotUsedTogetherWithPodDependencies(project, cocoapodsExtension)
         }
     }
 

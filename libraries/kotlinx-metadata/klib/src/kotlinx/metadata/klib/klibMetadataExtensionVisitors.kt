@@ -2,14 +2,12 @@
  * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION_ERROR")  // Extension visitors
-
 package kotlinx.metadata.klib
 
 import kotlin.metadata.*
-import kotlin.metadata.internal.common.KmModuleFragmentExtensionVisitor
+import kotlin.metadata.internal.extensions.*
 
-abstract class KlibFunctionExtensionVisitor : KmFunctionExtensionVisitor {
+abstract class KlibFunctionExtensionVisitor : KmFunctionExtension {
 
     abstract fun visitAnnotation(annotation: KmAnnotation)
 
@@ -25,7 +23,7 @@ abstract class KlibFunctionExtensionVisitor : KmFunctionExtensionVisitor {
     }
 }
 
-abstract class KlibClassExtensionVisitor : KmClassExtensionVisitor {
+abstract class KlibClassExtensionVisitor : KmClassExtension {
 
     abstract fun visitAnnotation(annotation: KmAnnotation)
 
@@ -43,7 +41,7 @@ abstract class KlibClassExtensionVisitor : KmClassExtensionVisitor {
     }
 }
 
-abstract class KlibTypeExtensionVisitor : KmTypeExtensionVisitor {
+abstract class KlibTypeExtensionVisitor : KmTypeExtension {
 
     abstract fun visitAnnotation(annotation: KmAnnotation)
 
@@ -55,7 +53,7 @@ abstract class KlibTypeExtensionVisitor : KmTypeExtensionVisitor {
     }
 }
 
-abstract class KlibPropertyExtensionVisitor : KmPropertyExtensionVisitor {
+abstract class KlibPropertyExtensionVisitor : KmPropertyExtension {
 
     abstract fun visitAnnotation(annotation: KmAnnotation)
 
@@ -77,7 +75,7 @@ abstract class KlibPropertyExtensionVisitor : KmPropertyExtensionVisitor {
     }
 }
 
-abstract class KlibConstructorExtensionVisitor : KmConstructorExtensionVisitor {
+abstract class KlibConstructorExtensionVisitor : KmConstructorExtension {
 
     abstract fun visitAnnotation(annotation: KmAnnotation)
 
@@ -91,7 +89,7 @@ abstract class KlibConstructorExtensionVisitor : KmConstructorExtensionVisitor {
     }
 }
 
-abstract class KlibTypeParameterExtensionVisitor : KmTypeParameterExtensionVisitor {
+abstract class KlibTypeParameterExtensionVisitor : KmTypeParameterExtension {
 
     abstract fun visitAnnotation(annotation: KmAnnotation)
 
@@ -105,7 +103,7 @@ abstract class KlibTypeParameterExtensionVisitor : KmTypeParameterExtensionVisit
     }
 }
 
-abstract class KlibPackageExtensionVisitor : KmPackageExtensionVisitor {
+abstract class KlibPackageExtensionVisitor : KmPackageExtension {
 
     abstract fun visitFqName(name: String)
 
@@ -117,7 +115,7 @@ abstract class KlibPackageExtensionVisitor : KmPackageExtensionVisitor {
     }
 }
 
-abstract class KlibModuleFragmentExtensionVisitor : KmModuleFragmentExtensionVisitor {
+abstract class KlibModuleFragmentExtensionVisitor : KmModuleFragmentExtension {
 
     abstract fun visitFile(file: KlibSourceFile)
 
@@ -133,7 +131,7 @@ abstract class KlibModuleFragmentExtensionVisitor : KmModuleFragmentExtensionVis
     }
 }
 
-abstract class KlibTypeAliasExtensionVisitor : KmTypeAliasExtensionVisitor {
+abstract class KlibTypeAliasExtensionVisitor : KmTypeAliasExtension {
 
     abstract fun visitUniqId(uniqId: UniqId)
 
@@ -145,7 +143,7 @@ abstract class KlibTypeAliasExtensionVisitor : KmTypeAliasExtensionVisitor {
     }
 }
 
-abstract class KlibValueParameterExtensionVisitor : KmValueParameterExtensionVisitor {
+abstract class KlibValueParameterExtensionVisitor : KmValueParameterExtension {
 
     abstract fun visitAnnotation(annotation: KmAnnotation)
 

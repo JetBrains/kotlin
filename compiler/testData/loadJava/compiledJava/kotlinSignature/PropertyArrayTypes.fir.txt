@@ -3,7 +3,7 @@ public open class PropertyArrayTypes<T : R|kotlin/Any!|> : R|kotlin/Any| {
 
     public open field array: R|ft<kotlin/Array<kotlin/String!>, kotlin/Array<out kotlin/String!>?>|
 
-    public open field genericArray: R|ft<kotlin/Array<ft<T & Any, T?>>, kotlin/Array<out ft<T & Any, T?>>?>|
+    public open field genericArray: R|ft<kotlin/Array<T!>, kotlin/Array<out T!>?>|
 
     public constructor<T : R|kotlin/Any!|>(): R|test/PropertyArrayTypes<T>|
 

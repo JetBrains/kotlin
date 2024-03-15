@@ -92,7 +92,6 @@ class CustomK2Tests : KGPBaseTest() {
         }
     }
 
-    @Disabled("disable until kotlin/native dependency is updated to include KT-61461")
     @GradleTest
     @DisplayName("Native metadata of intermediate with multiple targets. KT-61461")
     fun nativeMetadataOfIntermediateWithMultipleTargets(gradleVersion: GradleVersion) {
@@ -104,7 +103,6 @@ class CustomK2Tests : KGPBaseTest() {
         }
     }
 
-    @Disabled("disable until kotlin/native dependency is updated to include KT-58145")
     @GradleTest
     @DisplayName("Compiling shared native source with FirFakeOverrideGenerator referencing a common entity. KT-58145")
     fun kt581450MppNativeSharedCrash(gradleVersion: GradleVersion) {
@@ -121,7 +119,6 @@ class CustomK2Tests : KGPBaseTest() {
         }
     }
 
-    @Disabled("disable until kotlin/native dependency is updated to include KT-58444")
     @GradleTest
     @DisplayName("Compiling shared native source with intrinsic initializer from common source set in Native-shared source set. KT-58444")
     fun kt58444NativeSharedConstantIntrinsic(gradleVersion: GradleVersion) {
@@ -217,6 +214,16 @@ class CustomK2Tests : KGPBaseTest() {
         project("k2-native-metadata-compilation-with-constant-expressions", gradleVersion) {
             build("compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Native metadata compilation against other klib (KT-65840)")
+    fun nativeMetadataCompilationWithAgainstOtherKlib(gradleVersion: GradleVersion) {
+        project("k2-common-native-against-other-klib", gradleVersion) {
+            build(":app:compileNativeMainKotlinMetadata") {
+                assertTasksExecuted(":app:compileNativeMainKotlinMetadata")
             }
         }
     }

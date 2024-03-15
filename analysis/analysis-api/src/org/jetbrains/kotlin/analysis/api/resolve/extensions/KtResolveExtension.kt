@@ -5,23 +5,43 @@
 
 package org.jetbrains.kotlin.analysis.api.resolve.extensions
 
+import com.intellij.openapi.Disposable
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.name.FqName
 
 /**
- * Provides a list of Kotlin files which provides additional, generated declarations for resolution.
+ * Provides a list of Kotlin files which contain additional generated declarations for resolution.
  *
- * Provided by the [KtResolveExtensionProvider].
+ * It is created by [KtResolveExtensionProvider].
  *
  * All member implementations should:
  * - consider caching the results for subsequent invocations.
  * - be lightweight and not build the whole file structure inside.
- * - not use the Kotlin resolve inside, as this function is called during session initialization, so Analysis API access is forbidden.
+ * - not use Kotlin resolve inside, as these functions are called during session initialization, so Analysis API access is forbidden.
+ *
+ * #### Lifecycle Management
+ *
+ * A [KtResolveExtension] is tied to the lifetime of its module's analysis session. It is created by [KtResolveExtensionProvider] during
+ * creation of an analysis session, and disposed after the analysis session has been invalidated.
+ *
+ * [KtResolveExtension] implements the [Disposable] interface. The resolve extension can then act as a parent disposable, e.g. for a message
+ * bus connection.
+ *
+ * You *must not* implement [KtResolveExtension]s as module-level services, due to the following reasons:
+ *
+ * 1. The IntelliJ platform SDK [discourages](https://plugins.jetbrains.com/docs/intellij/plugin-services.html#types) the use of
+ *    module-level services due to memory consumption. In particular, resolve extensions implemented as module-level services live longer
+ *    than their corresponding analysis session, so the resolve extension would not be garbage collected after its corresponding analysis
+ *    session has been invalidated.
+ * 2. The module-level service living longer than the analysis session increases the risk of caching invalidated entities in a resolve
+ *    extension.
+ * 3. Because the [KtResolveExtension] is a [Disposable], if implemented as a module-level service, the service would be disposed too early
+ *    during invalidation of the corresponding analysis session.
  *
  * @see KtResolveExtensionFile
  * @see KtResolveExtensionProvider
  */
-public abstract class KtResolveExtension {
+public abstract class KtResolveExtension : Disposable {
     /**
      * Get the list of files that should be generated for the module. Returned files should contain valid Kotlin code.
      *
@@ -64,4 +84,7 @@ public abstract class KtResolveExtension {
      * (potentially stale) externally generated sources.
      */
     public open fun getShadowedScope(): GlobalSearchScope = GlobalSearchScope.EMPTY_SCOPE
+
+    override fun dispose() {
+    }
 }

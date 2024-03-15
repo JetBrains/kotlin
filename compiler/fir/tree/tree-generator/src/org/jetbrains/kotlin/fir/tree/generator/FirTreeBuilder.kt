@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,7 +31,6 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val contextReceiver by element(Declaration)
 
     val elementWithResolveState by element(Other)
-    val fileAnnotationsContainer by element(Other, elementWithResolveState, annotationContainer)
     val declaration by sealedElement(Declaration, elementWithResolveState, annotationContainer)
     val typeParameterRefsOwner by sealedElement(Declaration)
     val typeParametersOwner by sealedElement(Declaration, typeParameterRefsOwner)
@@ -144,7 +143,6 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val getClassCall by element(Expression, expression, call)
     val wrappedExpression by element(Expression, expression)
     val wrappedArgumentExpression by element(Expression, wrappedExpression)
-    val lambdaArgumentExpression by element(Expression, wrappedArgumentExpression)
     val spreadArgumentExpression by element(Expression, wrappedArgumentExpression)
     val namedArgumentExpression by element(Expression, wrappedArgumentExpression)
     val varargArgumentsExpression by element(Expression, expression)
