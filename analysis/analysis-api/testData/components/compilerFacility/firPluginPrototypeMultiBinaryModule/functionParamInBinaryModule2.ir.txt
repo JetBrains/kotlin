@@ -1,0 +1,33 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:main.kt
+    FUN name:ArticleScreenContent visibility:private modality:FINAL <> (title:kotlin.String, bottomBarContent:@[MyComposable] kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
+      annotations:
+        MyComposable
+      VALUE_PARAMETER name:title index:0 type:kotlin.String
+      VALUE_PARAMETER name:bottomBarContent index:1 type:@[MyComposable] kotlin.Function0<kotlin.Unit>
+        EXPRESSION_BODY
+          FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+              annotations:
+                MyComposable
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.ArticleScreenContent'
+                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      BLOCK_BODY
+        CALL 'public final fun Scaffold (bars: kotlin.collections.List<@[MyComposable] kotlin.Function0<kotlin.Unit>>): kotlin.Unit declared in p3' type=kotlin.Unit origin=null
+          bars: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<@[MyComposable] some.MyComposableFunction0<kotlin.Unit>> origin=null
+            <T>: @[MyComposable] some.MyComposableFunction0<kotlin.Unit>
+            elements: VARARG type=kotlin.Array<out @[MyComposable] some.MyComposableFunction0<kotlin.Unit>> varargElementType=@[MyComposable] some.MyComposableFunction0<kotlin.Unit>
+              FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+                  annotations:
+                    MyComposable
+                  BLOCK_BODY
+                    CALL 'private final fun TopAppBar (title: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                      title: GET_VAR 'title: kotlin.String declared in <root>.ArticleScreenContent' type=kotlin.String origin=null
+              GET_VAR 'bottomBarContent: @[MyComposable] kotlin.Function0<kotlin.Unit> declared in <root>.ArticleScreenContent' type=@[MyComposable] kotlin.Function0<kotlin.Unit> origin=null
+    FUN name:TopAppBar visibility:private modality:FINAL <> (title:kotlin.String) returnType:kotlin.Unit
+      annotations:
+        MyComposable
+      VALUE_PARAMETER name:title index:0 type:kotlin.String
+      BLOCK_BODY

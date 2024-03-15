@@ -63,4 +63,22 @@ public class FirIdeNormalAnalysisLibraryBinaryModuleFirPluginPrototypeMultiBinar
     public void testComposableInlineFunctionExpressionParameter() throws Exception {
         runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiBinaryModule/composableInlineFunctionExpressionParameter.kt");
     }
+
+    @Test
+    @TestMetadata("functionParamInBinaryModule.kt")
+    public void testFunctionParamInBinaryModule() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiBinaryModule/functionParamInBinaryModule.kt");
+    }
+
+    @Test
+    @TestMetadata("functionParamInBinaryModule2.kt")
+    public void testFunctionParamInBinaryModule2() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiBinaryModule/functionParamInBinaryModule2.kt");
+    }
+
+    @Test
+    @TestMetadata("functionParamInBinaryModule3.kt")
+    public void testFunctionParamInBinaryModule3() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiBinaryModule/functionParamInBinaryModule3.kt");
+    }
 }
