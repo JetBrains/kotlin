@@ -6,29 +6,30 @@
 package org.jetbrains.kotlin.fir.analysis.cfa.util
 
 import kotlinx.collections.immutable.PersistentMap
-import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.contracts.description.MarkedEventOccurrencesRange
+import org.jetbrains.kotlin.contracts.description.canBeVisited
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 typealias EventOccurrencesRangeAtNode = MarkedEventOccurrencesRange<CFGNode<*>>
 
-@Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE") // K2 warning suppression, TODO: KT-62472
-abstract class EventOccurrencesRangeInfo<E : EventOccurrencesRangeInfo<E, K>, K : Any>(
-    map: PersistentMap<K, EventOccurrencesRangeAtNode> = persistentMapOf()
-) : ControlFlowInfo<E, K, EventOccurrencesRangeAtNode>(map) {
+typealias EventOccurrencesRangeInfo<K> = PersistentMap<K, EventOccurrencesRangeAtNode>
 
-    override fun merge(other: E, node: CFGNode<*>): E {
-        @Suppress("UNCHECKED_CAST")
-        var result = this as E
+typealias PathAwareEventOccurrencesRangeInfo<K> = PathAwareControlFlowInfo<K, EventOccurrencesRangeAtNode>
+
+abstract class EventCollectingControlFlowGraphVisitor<K : Any> : PathAwareControlFlowGraphVisitor<K, EventOccurrencesRangeAtNode>() {
+    override fun mergeInfo(
+        a: EventOccurrencesRangeInfo<K>,
+        b: EventOccurrencesRangeInfo<K>,
+        node: CFGNode<*>
+    ): EventOccurrencesRangeInfo<K> {
         val isUnion = node.isUnion
-        if (isUnion && isEmpty()) return other
+        if (isUnion && a.isEmpty()) return b
         // For union nodes, iterating over keys not present in the other branch is pointless as the result
         // is unchanged. For non-union nodes, lower bounds for keys only present on one side become 0.
-        for (symbol in (if (isUnion) other.keys else keys union other.keys)) {
-            val kind1 = this[symbol] ?: MarkedEventOccurrencesRange.Zero
-            val kind2 = other[symbol] ?: MarkedEventOccurrencesRange.Zero
-            val newKind = if (kind1.location != null && kind1 == kind2) {
+        return (if (isUnion) b.keys else a.keys union b.keys).associateWithTo(a.builder()) { symbol ->
+            val kind1 = a[symbol] ?: MarkedEventOccurrencesRange.Zero
+            val kind2 = b[symbol] ?: MarkedEventOccurrencesRange.Zero
+            if (kind1.location != null && kind1 == kind2) {
                 // If ranges are equal and have the same location, the event happened before branching:
                 //   <x>; if (p) { ... } else { ... }
                 //   ExactlyOnce(x) ---> ExactlyOnce(x) ---> ExactlyOnce(x)
@@ -63,22 +64,28 @@ abstract class EventOccurrencesRangeInfo<E : EventOccurrencesRangeInfo<E, K>, K 
                 }
                 (kind1.withoutMarker or kind2.withoutMarker).at(newLocation)
             }
-            result = result.put(symbol, newKind)
-        }
-        return result
+        }.build()
     }
 }
 
-@Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE") // K2 warning suppression, TODO: KT-62472
-class PropertyInitializationInfo(
-    map: PersistentMap<FirPropertySymbol, EventOccurrencesRangeAtNode> = persistentMapOf()
-) : EventOccurrencesRangeInfo<PropertyInitializationInfo, FirPropertySymbol>(map) {
-    companion object {
-        val EMPTY = PropertyInitializationInfo()
+fun <K : Any> PathAwareEventOccurrencesRangeInfo<K>.addRange(
+    key: K,
+    range: EventOccurrencesRangeAtNode,
+): PathAwareEventOccurrencesRangeInfo<K> =
+    if (!range.canBeVisited()) this else transformValues {
+        val newRange = it[key]?.let { oldRange ->
+            // Can discard the old location since the sum can only be `ExactlyOnce` or `AtMostOnce`
+            // if the old range is `Zero`.
+            (oldRange.withoutMarker + range.withoutMarker).at(range.location)
+        } ?: range
+        it.put(key, newRange)
     }
 
-    override val constructor: (PersistentMap<FirPropertySymbol, EventOccurrencesRangeAtNode>) -> PropertyInitializationInfo =
-        ::PropertyInitializationInfo
-}
+fun <K : Any> PathAwareEventOccurrencesRangeInfo<K>.overwriteRange(
+    key: K,
+    range: EventOccurrencesRangeAtNode,
+): PathAwareEventOccurrencesRangeInfo<K> =
+    transformValues { it.put(key, range) }
 
-typealias PathAwarePropertyInitializationInfo = PathAwareControlFlowInfo<PropertyInitializationInfo>
+fun <K : Any> PathAwareEventOccurrencesRangeInfo<K>.removeRange(key: K): PathAwareEventOccurrencesRangeInfo<K> =
+    transformValues { it.remove(key) }

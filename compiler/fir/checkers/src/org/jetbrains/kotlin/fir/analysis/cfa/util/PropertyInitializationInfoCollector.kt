@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.cfa.util
 
-import kotlinx.collections.immutable.mutate
-import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.contracts.description.MarkedEventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
-import org.jetbrains.kotlin.contracts.description.canBeVisited
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -20,6 +17,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.util.SetMultimap
 import org.jetbrains.kotlin.fir.util.setMultimapOf
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+
+typealias PropertyInitializationEvent = FirPropertySymbol
+typealias PropertyInitializationInfo = EventOccurrencesRangeInfo<PropertyInitializationEvent>
+typealias PathAwarePropertyInitializationInfo = PathAwareEventOccurrencesRangeInfo<PropertyInitializationEvent>
 
 class PropertyInitializationInfoData(
     val properties: Set<FirPropertySymbol>,
@@ -46,14 +47,7 @@ class PropertyInitializationInfoCollector(
     private val localProperties: Set<FirPropertySymbol>,
     private val expectedReceiver: FirBasedSymbol<*>? = null,
     private val declaredVariablesInLoop: SetMultimap<FirStatement, FirPropertySymbol>,
-) : PathAwareControlFlowGraphVisitor<PropertyInitializationInfo>() {
-    companion object {
-        private val EMPTY_INFO: PathAwarePropertyInitializationInfo = persistentMapOf(NormalPath to PropertyInitializationInfo.EMPTY)
-    }
-
-    override val emptyInfo: PathAwarePropertyInitializationInfo
-        get() = EMPTY_INFO
-
+) : EventCollectingControlFlowGraphVisitor<PropertyInitializationEvent>() {
     // When looking for initializations of member properties, skip subgraphs of member functions;
     // all properties are assumed to be initialized there.
     override fun visitSubGraph(node: CFGNodeWithSubgraphs<*>, graph: ControlFlowGraph): Boolean =
@@ -88,8 +82,8 @@ class PropertyInitializationInfoCollector(
 
     override fun visitPropertyInitializerExitNode(
         node: PropertyInitializerExitNode,
-        data: PathAwareControlFlowInfo<PropertyInitializationInfo>
-    ): PathAwareControlFlowInfo<PropertyInitializationInfo> {
+        data: PathAwarePropertyInitializationInfo
+    ): PathAwarePropertyInitializationInfo {
         // If member property initializer is empty (there are no nodes between enter and exit node)
         //   then property is not initialized in its declaration
         // Otherwise it is
@@ -156,44 +150,3 @@ private class PropertyDeclarationCollector(
         }
     }
 }
-
-internal fun <S : EventOccurrencesRangeInfo<S, K>, K : Any> PathAwareControlFlowInfo<S>.addRange(
-    key: K,
-    range: EventOccurrencesRangeAtNode,
-): PathAwareControlFlowInfo<S> =
-    if (!range.canBeVisited()) this else mutate {
-        // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
-        // after (if key is p1):
-        //   { |-> { p1 |-> PI1 + r }, l1 |-> { p1 |-> r, p2 |-> PI2 } }
-        for ((label, dataPerLabel) in this) {
-            val newRange = dataPerLabel[key]?.let { oldRange ->
-                // Can discard the old location since the sum can only be `ExactlyOnce` or `AtMostOnce`
-                // if the old range is `Zero`.
-                (oldRange.withoutMarker + range.withoutMarker).at(range.location)
-            } ?: range
-            it[label] = dataPerLabel.put(key, newRange)
-        }
-    }
-
-private fun <S : EventOccurrencesRangeInfo<S, K>, K : Any> PathAwareControlFlowInfo<S>.overwriteRange(
-    key: K,
-    range: EventOccurrencesRangeAtNode,
-): PathAwareControlFlowInfo<S> =
-    mutate {
-        // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
-        // after (if key is p1):
-        //   { |-> { p1 |-> r }, l1 |-> { p1 |-> r, p2 |-> PI2 } }
-        for ((label, dataPerLabel) in this) {
-            it[label] = dataPerLabel.put(key, range)
-        }
-    }
-
-private fun <S : EventOccurrencesRangeInfo<S, K>, K : Any> PathAwareControlFlowInfo<S>.removeRange(key: K): PathAwareControlFlowInfo<S> =
-    mutate {
-        // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
-        // after (if key is p1):
-        //   { |-> { }, l1 |-> { p2 |-> PI2 } }
-        for ((label, dataPerLabel) in this) {
-            it[label] = dataPerLabel.remove(key)
-        }
-    }

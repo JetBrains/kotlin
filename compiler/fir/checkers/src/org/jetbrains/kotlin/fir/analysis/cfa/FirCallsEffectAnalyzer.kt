@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.cfa
 
-import kotlinx.collections.immutable.PersistentMap
-import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.MarkedEventOccurrencesRange
@@ -206,28 +204,9 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         }
     }
 
-    @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE") // K2 warning suppression, TODO: KT-62472
-    class LambdaInvocationInfo(
-        map: PersistentMap<FirBasedSymbol<*>, EventOccurrencesRangeAtNode> = persistentMapOf(),
-    ) : EventOccurrencesRangeInfo<LambdaInvocationInfo, FirBasedSymbol<*>>(map) {
-        companion object {
-            val EMPTY = LambdaInvocationInfo()
-        }
-
-        override val constructor: (PersistentMap<FirBasedSymbol<*>, EventOccurrencesRangeAtNode>) -> LambdaInvocationInfo =
-            ::LambdaInvocationInfo
-    }
-
     private class InvocationDataCollector(
         val functionalTypeSymbols: Set<FirBasedSymbol<*>>
-    ) : PathAwareControlFlowGraphVisitor<LambdaInvocationInfo>() {
-        companion object {
-            private val EMPTY_INFO: PathAwareLambdaInvocationInfo = persistentMapOf(NormalPath to LambdaInvocationInfo.EMPTY)
-        }
-
-        override val emptyInfo: PathAwareLambdaInvocationInfo
-            get() = EMPTY_INFO
-
+    ) : EventCollectingControlFlowGraphVisitor<LambdaInvocationEvent>() {
         override fun visitFunctionCallNode(
             node: FunctionCallNode,
             data: PathAwareLambdaInvocationInfo
@@ -318,4 +297,6 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
     }
 }
 
-private typealias PathAwareLambdaInvocationInfo = PathAwareControlFlowInfo<FirCallsEffectAnalyzer.LambdaInvocationInfo>
+private typealias LambdaInvocationEvent = FirBasedSymbol<*>
+private typealias LambdaInvocationInfo = EventOccurrencesRangeInfo<LambdaInvocationEvent>
+private typealias PathAwareLambdaInvocationInfo = PathAwareEventOccurrencesRangeInfo<LambdaInvocationEvent>
