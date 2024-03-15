@@ -460,6 +460,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         File(it).loadProperties()
     }
 
+    internal val nativeTargetsForManifest = configuration.get(KonanConfigKeys.MANIFEST_NATIVE_TARGETS)
+
     internal val isInteropStubs: Boolean get() = manifestProperties?.getProperty("interop") == "true"
 
     private val defaultPropertyLazyInitialization = true

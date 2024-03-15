@@ -20,19 +20,52 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.io.StringWriter
-import java.util.Properties
+import java.util.*
 
+/**
+ * Testdata:
+ *  - manifest   - expected klib manifest to be generated
+ *  - output.txt - expected compiler output
+ *
+ * [doManifestTest] runs compiler with designated arguments on a stub-file and asserts that
+ * the generated manifest and compiler output correspond to the respective golden files in test data.
+ */
 @TestDataPath("\$PROJECT_ROOT/native/native.tests/testData/compilerOutput")
 abstract class ManifestWritingTest : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("simpleManifest")
     fun testSimpleManifest() {
-        val rootDir = File("native/native.tests/testData/compilerOutput/simpleManifest")
+        doManifestTest("native/native.tests/testData/compilerOutput/simpleManifest")
+    }
+
+    @Test
+    @TestMetadata("nativeTargetsOverwrite")
+    fun testNativeTargetsOverwrite() {
+        doManifestTest(
+            "native/native.tests/testData/compilerOutput/nativeTargetsOverwrite",
+            // note some leading and trailing spaces
+            "-Xmanifest-native-targets=ios_arm64, ios_x64,linux_x64 ,mingw_x64,macos_x64,macos_arm64"
+        )
+    }
+
+    @Test
+    @TestMetadata("nativeTargetsOverwriteUnknownTarget")
+    fun testNativeTargetsOverwriteUnknownTargetName() {
+        doManifestTest(
+            "native/native.tests/testData/compilerOutput/nativeTargetsOverwriteUnknownTarget",
+            "-Xmanifest-native-targets=ios_arm64,ios_x64, unknown_target"
+        )
+    }
+
+    private fun doManifestTest(testDataDir: String, vararg additionalCompilerArguments: String) {
+        val rootDir = File(testDataDir)
+        require(rootDir.exists()) { "File doesn't exist: ${rootDir.absolutePath}" }
+
         val compilationResult = compileLibrary(
             testRunSettings,
-            rootDir.resolve("hello.kt"),
-            packed = false
+            stubSourceFile,
+            packed = false,
+            freeCompilerArgs = additionalCompilerArguments.toList()
         )
 
         val expectedOutput = rootDir.resolve("output.txt")
@@ -84,6 +117,11 @@ abstract class ManifestWritingTest : AbstractNativeSimpleTest() {
 
             return result.sortedBy { it.first }
         }
+
+        private val stubSourceFile: File
+            get() = File("native/native.tests/testData/compilerOutput/stub.kt").also {
+                require(it.exists()) { "Missing stub.kt-file, looked at: ${it.absolutePath}" }
+            }
     }
 }
 

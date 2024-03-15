@@ -468,6 +468,12 @@ The default value is 1."""
     @Argument(value = "-Xkonan-data-dir", description = "Custom path to the location of konan distributions.")
     var konanDataDir: String? = null
 
+    @Argument(
+        value = "-Xmanifest-native-targets",
+        description = "Comma-separated list that will be written as the value of 'native_targets' property in the .klib manifest. Unknown values are discarded."
+    )
+    var manifestNativeTargets: Array<String>? = null
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
         super.configureAnalysisFlags(collector, languageVersion).also {
             val optInList = it[AnalysisFlags.optIn] as List<*>

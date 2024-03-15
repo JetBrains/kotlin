@@ -51,6 +51,7 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
     if (input.produceHeaderKlib) {
         manifestProperties.setProperty(KLIB_PROPERTY_HEADER, "true")
     }
+    val nativeTargetsForManifest = config.nativeTargetsForManifest?.map { it.visibleName } ?: listOf(target.visibleName)
 
     if (!nopack) {
         val suffix = outputFiles.produce.suffix(target)
@@ -75,6 +76,7 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
             ir = input.serializerOutput.serializedIr,
             versions = versions,
             target = target,
+            nativeTargetsForManifest = nativeTargetsForManifest,
             output = output,
             moduleName = libraryName,
             nopack = nopack,
