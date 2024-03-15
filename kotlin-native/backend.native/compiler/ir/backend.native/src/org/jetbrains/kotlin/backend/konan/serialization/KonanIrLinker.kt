@@ -113,7 +113,7 @@ internal object InlineFunctionBodyReferenceSerializer {
 
 // [binaryType] is needed in case a field is of a private inline class type (which can't be deserialized).
 // But it is safe to just set the field's type to the primitive type the inline class will be erased to.
-class SerializedClassFieldInfo(val name: String, val binaryType: Int, val type: Int, val flags: Int, val alignment: Int) {
+class SerializedClassFieldInfo(val name: Int, val binaryType: Int, val type: Int, val flags: Int, val alignment: Int) {
     companion object {
         const val FLAG_IS_CONST = 1
     }
@@ -152,7 +152,6 @@ internal object ClassFieldsSerializer {
             classFields.forEach {
                 +it.file.fqName
                 +it.file.path
-                it.fields.forEach { +it.name }
             }
         }
         val size = stringTable.sizeBytes + classFields.sumOf { Int.SIZE_BYTES * (6 + it.typeParameterSigs.size + it.fields.size * 5) }
@@ -166,7 +165,7 @@ internal object ClassFieldsSerializer {
             stream.writeInt(it.outerThisIndex)
             stream.writeInt(it.fields.size)
             it.fields.forEach { field ->
-                stream.writeInt(stringTable.indices[field.name]!!)
+                stream.writeInt(field.name)
                 stream.writeInt(field.binaryType)
                 stream.writeInt(field.type)
                 stream.writeInt(field.flags)
@@ -207,7 +206,7 @@ internal object ClassFieldsSerializer {
             val outerThisIndex = stream.readInt()
             val fieldsCount = stream.readInt()
             val fields = Array(fieldsCount) {
-                val name = stringTable[stream.readInt()]
+                val name = stream.readInt()
                 val binaryType = stream.readInt()
                 val type = stream.readInt()
                 val flags = stream.readInt()

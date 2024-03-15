@@ -241,7 +241,7 @@ internal class KonanPartialModuleDeserializer(
                         val nameAndType = BinaryNameAndType.decode(outerProtoClass.thisReceiver.nameType)
 
                         SerializedClassFieldInfo(
-                                name = "",
+                                name = INVALID_INDEX,
                                 binaryType = INVALID_INDEX,
                                 nameAndType.typeIndex,
                                 flags = 0,
@@ -258,7 +258,7 @@ internal class KonanPartialModuleDeserializer(
                         val primitiveBinaryType = field.type.computePrimitiveBinaryTypeOrNull()
 
                         SerializedClassFieldInfo(
-                                field.name,
+                                nameAndType.nameIndex,
                                 primitiveBinaryType?.ordinal ?: INVALID_INDEX,
                                 if (with(KonanManglerIr) { (classifier as? IrClassSymbol)?.owner?.isExported(compatibleMode) } == false)
                                     INVALID_INDEX
@@ -478,7 +478,7 @@ internal class KonanPartialModuleDeserializer(
                     require(it.alignment == field.alignment) { "Mismatched align information for outer this" }
                 }
             } else {
-                val name = field.name
+                val name = fileDeserializationState.fileReader.string(field.name)
                 val type = when {
                     field.type != INVALID_INDEX -> declarationDeserializer.deserializeIrType(field.type)
                     field.binaryType == INVALID_INDEX -> builtIns.anyNType
