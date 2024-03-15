@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.konan.library.impl
 import org.jetbrains.kotlin.konan.library.BitcodeWriter
 import org.jetbrains.kotlin.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -27,14 +26,12 @@ class KonanLibraryLayoutForWriter(
 class KonanLibraryWriterImpl(
     moduleName: String,
     versions: KotlinLibraryVersioning,
-    target: KonanTarget,
+    nativeTargets: List<String>,
     builtInsPlatform: BuiltInsPlatform,
     nopack: Boolean = false,
     shortName: String? = null,
-
     val layout: KonanLibraryLayoutForWriter,
-
-    base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, listOf(target.visibleName), nopack, shortName),
+    base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nativeTargets, nopack, shortName),
     bitcode: BitcodeWriter = BitcodeWriterImpl(layout),
     metadata: MetadataWriter = MetadataWriterImpl(layout),
     ir: IrWriter = IrMonoliticWriterImpl(layout),
@@ -55,6 +52,10 @@ fun buildLibrary(
     shortName: String?,
     manifestProperties: Properties?,
     dataFlowGraph: ByteArray?, // TODO (KT-66218): remove this property
+    /**
+     * This property affects *only* the property of 'native_targets' written in manifest
+     */
+    nativeTargetsForManifest: List<String> = listOf(target.visibleName),
 ): KonanLibraryLayout {
 
     val libFile = File(output)
@@ -63,7 +64,7 @@ fun buildLibrary(
     val library = KonanLibraryWriterImpl(
         moduleName,
         versions,
-        target,
+        nativeTargetsForManifest,
         BuiltInsPlatform.NATIVE,
         nopack,
         shortName,
