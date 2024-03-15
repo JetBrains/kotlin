@@ -1,6 +1,6 @@
 // FULL_JDK
 // WITH_STDLIB
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
+// LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN
 import java.util.EnumMap
 
 interface I

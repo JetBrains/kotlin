@@ -3544,6 +3544,12 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       }
 
       @Test
+      @TestMetadata("onlyInputTypesCapturedTypeWithRecursiveBoundsAfter.kt")
+      public void testOnlyInputTypesCapturedTypeWithRecursiveBoundsAfter() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inference/onlyInputTypesCapturedTypeWithRecursiveBoundsAfter.kt");
+      }
+
+      @Test
       @TestMetadata("overloadResolutionByLambdaArgumentType.kt")
       public void testOverloadResolutionByLambdaArgumentType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/overloadResolutionByLambdaArgumentType.kt");
