@@ -54576,6 +54576,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("outOuOrderDecls.kt")
+    public void testOutOuOrderDecls() {
+      runTest("compiler/testData/codegen/box/script/outOuOrderDecls.kt");
+    }
+
+    @Test
     @TestMetadata("scripInstance.kt")
     public void testScripInstance() {
       runTest("compiler/testData/codegen/box/script/scripInstance.kt");
