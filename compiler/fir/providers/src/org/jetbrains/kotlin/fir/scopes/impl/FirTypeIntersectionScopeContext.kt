@@ -387,7 +387,7 @@ class FirTypeIntersectionScopeContext(
             val setters = nonSubsumedNonPhantomOverrides.mapNotNull {
                 (it as? FirPropertySymbol)?.unwrapSubstitutionOverrides()?.setterSymbol
             }
-            val setterVisibility = chooseIntersectionVisibilityOrNull(setters) ?: Visibilities.Unknown
+            val setterVisibility = overrideChecker.chooseIntersectionVisibility(setters, dispatchClassSymbol)
 
             FirFakeOverrideGenerator.createCopyForFirProperty(
                 symbol, fir, derivedClassLookupTag = null, session,

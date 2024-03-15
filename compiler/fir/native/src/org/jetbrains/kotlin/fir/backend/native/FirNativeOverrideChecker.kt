@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 
 /**
  * The same code, as in this class also exists in [org.jetbrains.kotlin.ir.objcinterop.ObjCOverridabilityCondition]
@@ -41,12 +38,13 @@ class FirNativeOverrideChecker(private val session: FirSession) : FirOverrideChe
         overrides: Collection<FirCallableSymbol<*>>,
         dispatchClassSymbol: FirRegularClassSymbol?,
     ): Visibility {
-        return chooseIntersectionVisibilityOrNull(overrides) { it.isAbstractAccordingToRawStatus || it.isObjCClassProperty(session) }
+        return chooseIntersectionVisibilityOrNull(overrides) { it.isAbstractAccordingToRawStatus || it.isObjCClassPropertyOrAccessor(session) }
             ?: Visibilities.Unknown
     }
 
-    private fun FirCallableSymbol<*>.isObjCClassProperty(session: FirSession) =
-        this is FirPropertySymbol && (containingClassLookupTag()?.toSymbol(session) as? FirClassSymbol<*>)?.isObjCClass(session) ?: false
+    private fun FirCallableSymbol<*>.isObjCClassPropertyOrAccessor(session: FirSession) =
+        (this is FirPropertySymbol || this is FirPropertyAccessorSymbol)
+                && (containingClassLookupTag()?.toSymbol(session) as? FirClassSymbol<*>)?.isObjCClass(session) ?: false
 
     /**
      * mimics ObjCOverridabilityCondition.isOverridable
