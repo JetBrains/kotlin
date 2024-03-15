@@ -2,12 +2,12 @@ import KotlinBridges
 import KotlinRuntime
 
 /**
- * Function foo description
- *
- * @param p first Integer to consume
- * @param p2 second Double to consume
- * @return Short, constant 1
- */
+* Function foo description
+*
+* @param p first Integer to consume
+* @param p2 second Double to consume
+* @return Short, constant 1
+*/
 public func foo(
     p: Swift.Int32,
     p2: Swift.Double

@@ -17,12 +17,12 @@ import org.jetbrains.kotlin.sir.visitors.SirVisitor
 internal class SirInitImpl(
     override val origin: SirOrigin,
     override val visibility: SirVisibility,
+    override var documentation: String?,
     override val kind: SirCallableKind,
     override var body: SirFunctionBody?,
     override val isFailable: Boolean,
     override val parameters: MutableList<SirParameter>,
     override val initKind: SirInitializerKind,
-    override var documentation: String?,
 ) : SirInit() {
     override lateinit var parent: SirDeclarationParent
 

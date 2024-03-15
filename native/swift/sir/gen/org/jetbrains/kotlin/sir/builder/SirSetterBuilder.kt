@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.sir.impl.SirSetterImpl
 class SirSetterBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
+    var documentation: String? = null
     lateinit var kind: SirCallableKind
     var body: SirFunctionBody? = null
     var parameterName: String = "newValue"
@@ -26,6 +27,7 @@ class SirSetterBuilder {
         return SirSetterImpl(
             origin,
             visibility,
+            documentation,
             kind,
             body,
             parameterName,
@@ -50,6 +52,7 @@ inline fun buildSetterCopy(original: SirSetter, init: SirSetterBuilder.() -> Uni
     val copyBuilder = SirSetterBuilder()
     copyBuilder.origin = original.origin
     copyBuilder.visibility = original.visibility
+    copyBuilder.documentation = original.documentation
     copyBuilder.kind = original.kind
     copyBuilder.body = original.body
     copyBuilder.parameterName = original.parameterName

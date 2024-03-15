@@ -23,7 +23,7 @@ abstract class SirFunction : SirCallable() {
     abstract val name: String
     abstract val parameters: List<SirParameter>
     abstract val returnType: SirType
-    abstract var documentation: String?
+    abstract override var documentation: String?
 
     override fun <R, D> accept(visitor: SirVisitor<R, D>, data: D): R =
         visitor.visitFunction(this, data)

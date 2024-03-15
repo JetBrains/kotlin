@@ -17,13 +17,13 @@ import org.jetbrains.kotlin.sir.visitors.SirVisitor
 abstract class SirInit : SirCallable() {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
+    abstract override var documentation: String?
     abstract override var parent: SirDeclarationParent
     abstract override val kind: SirCallableKind
     abstract override var body: SirFunctionBody?
     abstract val isFailable: Boolean
     abstract val parameters: List<SirParameter>
     abstract val initKind: SirInitializerKind
-    abstract var documentation: String?
 
     override fun <R, D> accept(visitor: SirVisitor<R, D>, data: D): R =
         visitor.visitInit(this, data)

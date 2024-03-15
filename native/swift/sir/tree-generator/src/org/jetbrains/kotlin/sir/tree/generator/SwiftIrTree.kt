@@ -37,6 +37,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = rootElement
         +field("origin", originType)
         +field("visibility", swiftVisibilityType)
+        +field(name = "documentation", string, nullable = true, mutable = true)
         +field("parent", declarationParent, mutable = true, isChild = false) {
             useInBaseTransformerDetection = false
         }
@@ -89,8 +90,6 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +listField("parameters", parameterType)
 
         +field("initKind", initKind)
-
-        +field(name = "documentation", string, nullable = true, mutable = true)
     }
 
     val function by element {
@@ -129,6 +128,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
 
         +field("getter", getter)
         +field("setter", setter, nullable = true)
+
+        +field(name = "documentation", string, nullable = true, mutable = true)
     }
 
     val import by element {

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.sir.impl.SirGetterImpl
 class SirGetterBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
+    var documentation: String? = null
     lateinit var kind: SirCallableKind
     var body: SirFunctionBody? = null
 
@@ -25,6 +26,7 @@ class SirGetterBuilder {
         return SirGetterImpl(
             origin,
             visibility,
+            documentation,
             kind,
             body,
         )
@@ -48,6 +50,7 @@ inline fun buildGetterCopy(original: SirGetter, init: SirGetterBuilder.() -> Uni
     val copyBuilder = SirGetterBuilder()
     copyBuilder.origin = original.origin
     copyBuilder.visibility = original.visibility
+    copyBuilder.documentation = original.documentation
     copyBuilder.kind = original.kind
     copyBuilder.body = original.body
     return copyBuilder.apply(init).build()

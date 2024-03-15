@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.sir.visitors.SirVisitor
 internal class SirGetterImpl(
     override val origin: SirOrigin,
     override val visibility: SirVisibility,
+    override var documentation: String?,
     override val kind: SirCallableKind,
     override var body: SirFunctionBody?,
 ) : SirGetter() {

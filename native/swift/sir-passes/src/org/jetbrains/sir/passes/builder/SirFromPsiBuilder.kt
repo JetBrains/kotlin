@@ -149,6 +149,8 @@ internal fun buildSirClassFromPsi(classOrObject: KtClassOrObject): SirNamedDecla
             )
         )
 
+        documentation = classOrObject.docComment?.text
+
         // HACK to support default constructors.
         // todo: We should rework builder from PSI to AnalysisApi during KT-66310
         val constructors = symbol.getMemberScope().getConstructors()
@@ -236,6 +238,8 @@ internal fun buildSirVariableFromPsi(variable: KtProperty): SirVariable = buildV
     setter = if (variable.isVar) buildSetter {
         kind = accessorKind
     } else null
+
+    documentation = variable.docComment?.text
 }.also {
     it.getter.parent = it
     it.setter?.parent = it

@@ -270,7 +270,7 @@ class SirAsSwiftSourcesPrinterTests {
     }
 
     @Test
-    fun `should print DocC comment`() {
+    fun `should print DocC comment on function`() {
 
         val module = buildModule {
             name = "Test"
@@ -300,6 +300,89 @@ class SirAsSwiftSourcesPrinterTests {
         runTest(
             module,
             "testData/commented_function"
+        )
+    }
+
+    @Test
+    fun `should print DocC comment on class`() {
+
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildClass {
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.PUBLIC
+                    name = "Foo"
+                    documentation = """
+                            /// Function foo description.
+                            /// - Parameters:
+                            ///   - p: first Integer to consume
+                            /// - Returns: Bool
+                        """.trimIndent()
+                }
+            )
+        }
+
+        runTest(
+            module,
+            "testData/commented_class"
+        )
+    }
+
+    @Test
+    fun `should print DocC comment on namespaced class`() {
+
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildEnum {
+                    name = "NAMESPACE"
+                    declarations += buildClass {
+                        origin = SirOrigin.Unknown
+                        visibility = SirVisibility.PUBLIC
+                        name = "Foo"
+                        documentation = """
+                            /**
+                             *  demo comment for
+                             *  NAMESPACED_CLASS
+                             */
+                        """.trimIndent()
+                    }
+                }
+            )
+        }
+
+        runTest(
+            module,
+            "testData/commented_namespaced_class"
+        )
+    }
+
+    @Test
+    fun `should print DocC comment on variable`() {
+
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildVariable {
+                    name = "myVariable"
+                    type = SirNominalType(SirSwiftModule.bool)
+                    getter = buildGetter {
+                        kind = SirCallableKind.INSTANCE_METHOD
+                    }
+                    documentation = """
+                            /// Function foo description.
+                            /// - Parameters:
+                            ///   - p: first Integer to consume
+                            /// - Returns: Bool
+                        """.trimIndent()
+                }
+            )
+        }
+
+        runTest(
+            module,
+            "testData/commented_variable"
         )
     }
 

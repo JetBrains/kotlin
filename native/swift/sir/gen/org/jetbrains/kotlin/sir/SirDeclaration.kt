@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.sir.visitors.SirVisitor
 sealed interface SirDeclaration : SirElement {
     val origin: SirOrigin
     val visibility: SirVisibility
+    var documentation: String?
     var parent: SirDeclarationParent
 
     override fun <R, D> accept(visitor: SirVisitor<R, D>, data: D): R =

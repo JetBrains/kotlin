@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.sir.visitors.SirVisitor
 internal class SirStructImpl(
     override val origin: SirOrigin,
     override val visibility: SirVisibility,
+    override var documentation: String?,
     override val name: String,
     override val declarations: MutableList<SirDeclaration>,
 ) : SirStruct() {

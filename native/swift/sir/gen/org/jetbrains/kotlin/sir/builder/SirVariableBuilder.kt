@@ -22,6 +22,7 @@ class SirVariableBuilder {
     lateinit var type: SirType
     lateinit var getter: SirGetter
     var setter: SirSetter? = null
+    var documentation: String? = null
 
     fun build(): SirVariable {
         return SirVariableImpl(
@@ -31,6 +32,7 @@ class SirVariableBuilder {
             type,
             getter,
             setter,
+            documentation,
         )
     }
 
@@ -56,5 +58,6 @@ inline fun buildVariableCopy(original: SirVariable, init: SirVariableBuilder.() 
     copyBuilder.type = original.type
     copyBuilder.getter = original.getter
     copyBuilder.setter = original.setter
+    copyBuilder.documentation = original.documentation
     return copyBuilder.apply(init).build()
 }

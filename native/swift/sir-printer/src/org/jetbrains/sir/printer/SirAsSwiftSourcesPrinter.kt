@@ -42,6 +42,7 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
     }
 
     override fun visitClass(klass: SirClass): Unit = with(printer) {
+        printDocumentation(klass)
         printVisibility(klass)
         println(
             "class ",
@@ -55,6 +56,7 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
     }
 
     override fun visitVariable(variable: SirVariable): Unit = with(printer) {
+        printDocumentation(variable)
         printVisibility(variable)
         printCallableKind(variable.kind)
         print(
@@ -94,7 +96,7 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
     }
 
     override fun visitFunction(function: SirFunction): Unit = with(printer) {
-        function.documentation?.let { println(it) }
+        printDocumentation(function)
         printVisibility(function)
         printCallableKind(function.kind)
         print(
@@ -118,7 +120,7 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
     }
 
     override fun visitInit(init: SirInit): Unit = with(printer) {
-        init.documentation?.let { println(it) }
+        printDocumentation(init)
         printVisibility(init)
         printInitKind(init.initKind)
         print("init")
@@ -190,6 +192,10 @@ internal fun SmartPrinter.printVisibility(decl: SirDeclaration) {
     print(
         decl.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " } ?: ""
     )
+}
+
+internal fun SmartPrinter.printDocumentation(decl: SirDeclaration) {
+    decl.documentation?.lines()?.forEach { println(it.trimIndent()) }
 }
 
 internal fun SmartPrinter.printInitKind(decl: SirInitializerKind) {
