@@ -40,5 +40,6 @@
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugins/compose-compiler-plugin" vcs="Git" />
   </component>
 </project>
