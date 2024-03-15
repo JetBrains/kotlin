@@ -24,9 +24,7 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.getTargetAnnotation
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -35,14 +33,12 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
-import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeResolverVisitor
-import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
+import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
@@ -218,7 +214,27 @@ class FirJavaElementFinder(
         if (!firProperty.isConst) return
 
         val psiField = object : StubBase<PsiField>(classStub, JavaStubElementTypes.FIELD), PsiFieldStub, NotEvaluatedConstAware {
-            private val lazyInitializerText by lazy { propertyEvaluator?.invoke(firProperty) }
+            private val lazyInitializerText by lazy {
+                if (propertyEvaluator == null) {
+                    transformJavaFieldAndGetResultAsString(firProperty)
+                } else {
+                    propertyEvaluator?.invoke(firProperty)
+                }
+            }
+
+            // Null result means that the evaluator encountered an error during evaluation.
+            // Later on, the compiler should report proper diagnostic.
+            fun transformJavaFieldAndGetResultAsString(firProperty: FirProperty): String? {
+                fun FirLiteralExpression<*>.asString(): String {
+                    return when (val constVal = value) {
+                        is Char -> constVal.code.toString()
+                        is String -> "\"$constVal\""
+                        else -> constVal.toString()
+                    }
+                }
+
+                return FirExpressionEvaluator.evaluatePropertyInitializer(firProperty, session)?.unwrapOr<FirLiteralExpression<*>> {}?.asString()
+            }
 
             override fun getName(): String = firProperty.name.identifier
 
