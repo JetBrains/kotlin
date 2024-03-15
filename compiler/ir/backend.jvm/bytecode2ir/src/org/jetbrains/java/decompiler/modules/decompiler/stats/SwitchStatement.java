@@ -5,7 +5,6 @@ import org.jetbrains.java.decompiler.code.SwitchInstruction;
 import org.jetbrains.java.decompiler.code.cfg.BasicBlock;
 import org.jetbrains.java.decompiler.main.DecompilerContext;
 import org.jetbrains.java.decompiler.main.collectors.CounterContainer;
-import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
 import org.jetbrains.java.decompiler.modules.decompiler.DecHelper;
 import org.jetbrains.java.decompiler.modules.decompiler.ExprProcessor;
 import org.jetbrains.java.decompiler.modules.decompiler.StatEdge;
@@ -113,13 +112,6 @@ public final class SwitchStatement extends Statement {
     TextBuffer buf = new TextBuffer();
     buf.append(ExprProcessor.listToJava(varDefinitions, indent));
     buf.append(first.toJava(indent));
-
-    boolean showPhantom = DecompilerContext.getOption(IFernflowerPreferences.SHOW_HIDDEN_STATEMENTS);
-
-    // Is phantom and we don't want to show- just return what we have so far
-    if (this.isPhantom() && !showPhantom) {
-      return buf;
-    }
 
     if (isLabeled()) {
       buf.appendIndent(indent).append("label").append(this.id).append(":").appendLineSeparator();
@@ -528,11 +520,7 @@ public final class SwitchStatement extends Statement {
     return phantom;
   }
 
-  public void setPhantom(boolean phantom) {
-    this.phantom = phantom;
-  }
-
-  public List<Exprent> getCaseGuards() {
+    public List<Exprent> getCaseGuards() {
     return caseGuards;
   }
 

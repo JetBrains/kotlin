@@ -1,7 +1,6 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.java.decompiler.main;
 
-import net.fabricmc.fernflower.api.IFabricJavadocProvider;
 import org.jetbrains.java.decompiler.api.StatementWriter;
 import org.jetbrains.java.decompiler.code.CodeConstants;
 import org.jetbrains.java.decompiler.code.Instruction;
@@ -51,11 +50,9 @@ public class ClassWriter implements StatementWriter {
     "ClassWriter.classLambdaToJava"
   ));
   private final PoolInterceptor interceptor;
-  private final IFabricJavadocProvider javadocProvider;
 
   public ClassWriter() {
     interceptor = DecompilerContext.getPoolInterceptor();
-    javadocProvider = (IFabricJavadocProvider) DecompilerContext.getProperty(IFabricJavadocProvider.PROPERTY_NAME);
   }
 
   private static boolean invokeProcessors(TextBuffer buffer, ClassNode node) {
@@ -126,16 +123,6 @@ public class ClassWriter implements StatementWriter {
   public static void writeException(TextBuffer buffer, Throwable t) {
     buffer.append("// $VF: Couldn't be decompiled");
     buffer.appendLineSeparator();
-    if (DecompilerContext.getOption(IFernflowerPreferences.DUMP_EXCEPTION_ON_ERROR)) {
-      List<String> lines = new ArrayList<>();
-      lines.addAll(ClassWriter.getErrorComment());
-      collectErrorLines(t, lines);
-      for (String line : lines) {
-        buffer.append("//");
-        if (!line.isEmpty()) buffer.append(' ').append(line);
-        buffer.appendLineSeparator();
-      }
-    }
   }
 
   public void classLambdaToJava(ClassNode node, TextBuffer buffer, Exprent method_object, int indent) {
@@ -219,47 +206,6 @@ public class ClassWriter implements StatementWriter {
             buffer.append(")");
           }
           buffer.append(" ->");
-
-          RootStatement root = wrapper.getMethodWrapper(mt.getName(), mt.getDescriptor()).root;
-          if (DecompilerContext.getOption(IFernflowerPreferences.INLINE_SIMPLE_LAMBDAS) && methodWrapper.decompileError == null && root != null) {
-            Statement firstStat = root.getFirst();
-            if (firstStat instanceof BasicBlockStatement && firstStat.getExprents() != null && firstStat.getExprents().size() == 1) {
-              Exprent firstExpr = firstStat.getExprents().get(0);
-              boolean isVarDefinition = firstExpr instanceof AssignmentExprent &&
-                ((AssignmentExprent)firstExpr).getLeft() instanceof VarExprent &&
-                ((VarExprent)((AssignmentExprent)firstExpr).getLeft()).isDefinition();
-
-              boolean isThrow = firstExpr instanceof ExitExprent &&
-                ((ExitExprent)firstExpr).getExitType() == ExitExprent.Type.THROW;
-
-              if (!isVarDefinition && !isThrow) {
-                simpleLambda = true;
-                MethodWrapper outerWrapper = (MethodWrapper)DecompilerContext.getProperty(DecompilerContext.CURRENT_METHOD_WRAPPER);
-                DecompilerContext.setProperty(DecompilerContext.CURRENT_METHOD_WRAPPER, methodWrapper);
-                try {
-                  TextBuffer codeBuffer = firstExpr.toJava(indent + 1);
-
-                  if (firstExpr instanceof ExitExprent)
-                    codeBuffer.setStart(6); // skip return
-                  else
-                    codeBuffer.prepend(" ");
-
-                  codeBuffer.addBytecodeMapping(root.getDummyExit().bytecode);
-                  buffer.append(codeBuffer, node.classStruct.qualifiedName, InterpreterUtil.makeUniqueKey(methodWrapper.methodStruct.getName(), methodWrapper.methodStruct.getDescriptor()));
-                }
-                catch (Throwable ex) {
-                  DecompilerContext.getLogger().writeMessage("Method " + mt.getName() + " " + mt.getDescriptor() + " in class " + node.classStruct.qualifiedName + " couldn't be written.",
-                    IFernflowerLogger.Severity.WARN,
-                    ex);
-                  methodWrapper.decompileError = ex;
-                  buffer.append(" // $VF: Couldn't be decompiled");
-                }
-                finally {
-                  DecompilerContext.setProperty(DecompilerContext.CURRENT_METHOD_WRAPPER, outerWrapper);
-                }
-              }
-            }
-          }
         }
 
         if (!simpleLambda) {
@@ -294,21 +240,6 @@ public class ClassWriter implements StatementWriter {
       StructClass cl = wrapper.getClassStruct();
 
       DecompilerContext.getLogger().startWriteClass(cl.qualifiedName);
-
-      if (DecompilerContext.getOption(IFernflowerPreferences.SOURCE_FILE_COMMENTS)) {
-        StructSourceFileAttribute sourceFileAttr = node.classStruct
-          .getAttribute(StructGeneralAttribute.ATTRIBUTE_SOURCE_FILE);
-
-        if (sourceFileAttr != null) {
-          ConstantPool pool = node.classStruct.getPool();
-          String sourceFile = sourceFileAttr.getSourceFile(pool);
-
-          buffer
-            .appendIndent(indent)
-            .append("// $VF: Compiled from " + sourceFile)
-            .appendLineSeparator();
-        }
-      }
 
       // write class definition
       writeClassDefinition(node, buffer, indent);
@@ -586,10 +517,6 @@ public class ClassWriter implements StatementWriter {
       appendComment(buffer, "synthetic class", indent);
     }
 
-    if (javadocProvider != null) {
-      appendJavadoc(buffer, javadocProvider.getClassDoc(cl), indent);
-    }
-
     appendAnnotations(buffer, indent, cl, -1);
 
     buffer.appendIndent(indent);
@@ -748,9 +675,6 @@ public class ClassWriter implements StatementWriter {
       appendComment(buffer, "synthetic field", indent);
     }
 
-    if (javadocProvider != null) {
-      appendJavadoc(buffer, javadocProvider.getFieldDoc(cl, fd), indent);
-    }
     appendAnnotations(buffer, indent, fd, TypeAnnotation.FIELD);
 
     buffer.appendIndent(indent);
@@ -989,24 +913,7 @@ public class ClassWriter implements StatementWriter {
         }
       }
 
-      if (javadocProvider != null) {
-        appendJavadoc(buffer, javadocProvider.getMethodDoc(cl, mt), indent);
-      }
-
       appendAnnotations(buffer, indent, mt, TypeAnnotation.METHOD_RETURN_TYPE);
-
-      // Try append @Override after all other annotations
-      if (DecompilerContext.getOption(IFernflowerPreferences.OVERRIDE_ANNOTATION) && mt.getBytecodeVersion().hasOverride() && !CodeConstants.INIT_NAME.equals(mt.getName()) && !CodeConstants.CLINIT_NAME.equals(mt.getName()) && !mt.hasModifier(CodeConstants.ACC_STATIC)  && !mt.hasModifier(CodeConstants.ACC_PRIVATE)) {
-        // Search superclasses for methods that match the name and descriptor of this one.
-        // Make sure not to search the current class otherwise it will return the current method itself!
-        // TODO: record overrides
-        boolean isOverride = searchForMethod(cl, mt.getName(), md, false);
-        if (isOverride) {
-          buffer.appendIndent(indent);
-          buffer.append("@Override");
-          buffer.appendLineSeparator();
-        }
-      }
 
       buffer.appendIndent(indent);
 
@@ -1191,7 +1098,7 @@ public class ClassWriter implements StatementWriter {
             } else {
               TextBuffer code = root.toJava(indent + 1);
               code.addBytecodeMapping(root.getDummyExit().bytecode);
-              hideMethod = code.length() == 0 && (clInit || dInit || hideConstructor(node, init, throwsExceptions, paramCount, flags));
+              hideMethod = code.length() == 0 && (clInit || dInit);
               buffer.append(code, cl.qualifiedName, InterpreterUtil.makeUniqueKey(mt.getName(), mt.getDescriptor()));
             }
           }
@@ -1222,26 +1129,6 @@ public class ClassWriter implements StatementWriter {
   private static void dumpError(TextBuffer buffer, MethodWrapper wrapper, int indent) {
     List<String> lines = new ArrayList<>();
     lines.add("$VF: Couldn't be decompiled");
-    boolean exceptions = DecompilerContext.getOption(IFernflowerPreferences.DUMP_EXCEPTION_ON_ERROR);
-    boolean bytecode = DecompilerContext.getOption(IFernflowerPreferences.DUMP_BYTECODE_ON_ERROR);
-    if (exceptions) {
-      lines.addAll(ClassWriter.getErrorComment());
-      collectErrorLines(wrapper.decompileError, lines);
-      if (bytecode) {
-        lines.add("");
-      }
-    }
-    if (bytecode) {
-      try {
-        lines.add("Bytecode:");
-        collectBytecode(wrapper, lines);
-      } catch (Exception e) {
-        lines.add("Error collecting bytecode:");
-        collectErrorLines(e, lines);
-      } finally {
-        wrapper.methodStruct.releaseResources();
-      }
-    }
     for (String line : lines) {
       buffer.appendIndent(indent);
       buffer.append("//");
@@ -1406,31 +1293,7 @@ public class ClassWriter implements StatementWriter {
   }
 
   private static boolean hideConstructor(ClassNode node, boolean init, boolean throwsExceptions, int paramCount, int methodAccessFlags) {
-    if (!init || throwsExceptions || paramCount > 0 || !DecompilerContext.getOption(IFernflowerPreferences.HIDE_DEFAULT_CONSTRUCTOR)) {
       return false;
-    }
-
-    ClassWrapper wrapper = node.getWrapper();
-	  StructClass cl = wrapper.getClassStruct();
-
-	  int classAccessFlags = node.type == ClassNode.Type.ROOT ? cl.getAccessFlags() : node.access;
-    boolean isEnum = cl.hasModifier(CodeConstants.ACC_ENUM) && DecompilerContext.getOption(IFernflowerPreferences.DECOMPILE_ENUM);
-
-    // default constructor requires same accessibility flags. Exception: enum constructor which is always private
-  	if(!isEnum && ((classAccessFlags & ACCESSIBILITY_FLAGS) != (methodAccessFlags & ACCESSIBILITY_FLAGS))) {
-  	  return false;
-  	}
-
-    int count = 0;
-    for (StructMethod mt : cl.getMethods()) {
-      if (CodeConstants.INIT_NAME.equals(mt.getName())) {
-        if (++count > 1) {
-          return false;
-        }
-      }
-    }
-
-    return true;
   }
 
   private static Map.Entry<VarType, GenericFieldDescriptor> getFieldTypeData(StructField fd) {

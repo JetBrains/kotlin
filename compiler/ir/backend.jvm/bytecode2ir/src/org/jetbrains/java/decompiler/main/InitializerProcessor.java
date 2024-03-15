@@ -42,10 +42,6 @@ public final class InitializerProcessor {
     // required e.g. if anonymous class is being decompiled as a standard one.
     // This can happen if InnerClasses attributes are erased
     liftConstructor(wrapper);
-
-    if (DecompilerContext.getOption(IFernflowerPreferences.HIDE_EMPTY_SUPER)) {
-      hideEmptySuper(wrapper);
-    }
   }
 
   private static void liftConstructor(ClassWrapper wrapper) {

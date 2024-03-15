@@ -93,12 +93,6 @@ public final class IfHelper {
               continue loop;
             }
 
-            if (DecompilerContext.getOption(IFernflowerPreferences.TERNARY_CONDITIONS) && collapseTernary(rtnode)) {
-              res = true;
-              ValidationHelper.validateStatement(stat.getTopParent());
-              continue loop;
-            }
-
             // TODO: This should maybe be moved (probably to reorderIf)
             if (ifElseChainDenesting(rtnode)) {
               res = true;

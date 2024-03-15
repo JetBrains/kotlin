@@ -3,31 +3,22 @@ package org.jetbrains.java.decompiler.main;
 
 import org.jetbrains.java.decompiler.main.ClassesProcessor.ClassNode;
 import org.jetbrains.java.decompiler.main.extern.*;
-import org.jetbrains.java.decompiler.modules.renamer.ConverterHelper;
-import org.jetbrains.java.decompiler.modules.renamer.IdentifierConverter;
-import org.jetbrains.java.decompiler.modules.renamer.PoolInterceptor;
 import org.jetbrains.java.decompiler.struct.IDecompiledData;
 import org.jetbrains.java.decompiler.struct.StructClass;
 import org.jetbrains.java.decompiler.struct.StructContext;
-import org.jetbrains.java.decompiler.struct.lazy.LazyLoader;
 import org.jetbrains.java.decompiler.util.ClasspathScanner;
-import org.jetbrains.java.decompiler.util.JADNameProvider;
 import org.jetbrains.java.decompiler.util.JrtFinder;
 import org.jetbrains.java.decompiler.util.TextBuffer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 public class Fernflower implements IDecompiledData {
   private final StructContext structContext;
   private final ClassesProcessor classProcessor;
-  private final IIdentifierRenamer helper;
-  private final IdentifierConverter converter;
 
   public Fernflower(IResultSaver saver, Map<String, Object> customProperties, IFernflowerLogger logger) {
     this(null, saver, customProperties, logger);
@@ -51,36 +42,8 @@ public class Fernflower implements IDecompiledData {
     structContext = new StructContext(provider, saver, this);
     classProcessor = new ClassesProcessor(structContext);
 
-    PoolInterceptor interceptor = null;
-    if ("1".equals(properties.get(IFernflowerPreferences.RENAME_ENTITIES))) {
-      helper = loadHelper((String)properties.get(IFernflowerPreferences.USER_RENAMER_CLASS), logger);
-      interceptor = new PoolInterceptor();
-      converter = new IdentifierConverter(structContext, helper, interceptor);
-    }
-    else {
-      helper = null;
-      converter = null;
-    }
-
-    IVariableNamingFactory renamerFactory = null;
-    String factoryClazz = (String) properties.get(DecompilerContext.RENAMER_FACTORY);
-    if (factoryClazz != null) {
-      try {
-        renamerFactory = Class.forName(factoryClazz).asSubclass(IVariableNamingFactory.class).getDeclaredConstructor().newInstance();
-      } catch (Exception e) {
-        logger.writeMessage("Error loading renamer factory class: " + factoryClazz, e);
-      }
-    }
-    if (renamerFactory == null) {
-      if("1".equals(properties.get(IFernflowerPreferences.USE_JAD_VARNAMING))) {
-        boolean renameParams = "1".equals(properties.get(IFernflowerPreferences.USE_JAD_PARAMETER_NAMING));
-        renamerFactory = new JADNameProvider.JADNameProviderFactory(renameParams);
-      } else {
-        renamerFactory = new IdentityRenamerFactory();
-      }
-    }
-
-    DecompilerContext context = new DecompilerContext(properties, logger, structContext, classProcessor, interceptor, renamerFactory);
+    IVariableNamingFactory renamerFactory = new IdentityRenamerFactory();
+    DecompilerContext context = new DecompilerContext(properties, logger, structContext, classProcessor, null, renamerFactory);
     DecompilerContext.setCurrentContext(context);
 
     String vendor = System.getProperty("java.vendor", "missing vendor");
@@ -100,20 +63,6 @@ public class Fernflower implements IDecompiledData {
     }
   }
 
-  private static IIdentifierRenamer loadHelper(String className, IFernflowerLogger logger) {
-    if (className != null) {
-      try {
-        Class<?> renamerClass = Fernflower.class.getClassLoader().loadClass(className);
-        return (IIdentifierRenamer) renamerClass.getDeclaredConstructor().newInstance();
-      }
-      catch (Exception e) {
-        logger.writeMessage("Cannot load renamer '" + className + "'", IFernflowerLogger.Severity.WARN, e);
-      }
-    }
-
-    return new ConverterHelper();
-  }
-
   public void addSource(IContextSource source) {
     structContext.addSpace(source, true);
   }
@@ -131,11 +80,7 @@ public class Fernflower implements IDecompiledData {
   }
 
   public void decompileContext() {
-    if (converter != null) {
-      converter.rename();
-    }
-
-    classProcessor.loadClasses(helper);
+    classProcessor.loadClasses(null);
 
     structContext.saveContext();
   }
@@ -154,10 +99,6 @@ public class Fernflower implements IDecompiledData {
     ClassNode node = classProcessor.getMapRootClasses().get(cl.qualifiedName);
     if (node == null || node.type != ClassNode.Type.ROOT) {
       return null;
-    }
-    else if (converter != null) {
-      String simpleClassName = cl.qualifiedName.substring(cl.qualifiedName.lastIndexOf('/') + 1);
-      return entryName.substring(0, entryName.lastIndexOf('/') + 1) + simpleClassName + ".java";
     }
     else {
       final int clazzIdx = entryName.lastIndexOf(".class");
@@ -178,7 +119,6 @@ public class Fernflower implements IDecompiledData {
   public String getClassContent(StructClass cl) {
     TextBuffer buffer = new TextBuffer(ClassesProcessor.AVERAGE_CLASS_SIZE);
     try {
-      buffer.append(DecompilerContext.getProperty(IFernflowerPreferences.BANNER).toString());
       classProcessor.writeClass(cl, buffer);
       String res = buffer.convertToStringAndAllowDataDiscard();
       if (res == null) {
@@ -189,17 +129,7 @@ public class Fernflower implements IDecompiledData {
     }
     catch (Throwable t) {
       DecompilerContext.getLogger().writeMessage("Class " + cl.qualifiedName + " couldn't be fully decompiled.", t);
-      if (DecompilerContext.getOption(IFernflowerPreferences.DUMP_EXCEPTION_ON_ERROR)) {
-        List<String> lines = new ArrayList<>();
-        lines.add("/*");
-        lines.add("$VF: Unable to decompile class");
-        lines.addAll(ClassWriter.getErrorComment());
-        ClassWriter.collectErrorLines(t, lines);
-        lines.add("*/");
-        return String.join(DecompilerContext.getNewLineSeparator(), lines);
-      } else {
-        return null;
-      }
+      return null;
     }
   }
 }

@@ -216,9 +216,6 @@ public class ConstExprent extends Exprent {
 
   @Override
   public TextBuffer toJava(int indent) {
-    boolean literal = DecompilerContext.getOption(IFernflowerPreferences.LITERALS_AS_IS);
-    boolean ascii = DecompilerContext.getOption(IFernflowerPreferences.ASCII_STRING_CHARACTERS);
-
     TextBuffer buf = new TextBuffer();
     buf.addBytecodeMapping(bytecode);
 
@@ -241,12 +238,7 @@ public class ConstExprent extends Exprent {
         String ret = CHAR_ESCAPES.get(val);
         if (ret == null) {
           char c = (char)val.intValue();
-          if (isPrintableAscii(c) || !ascii && TextUtil.isPrintableUnicode(c)) {
-            ret = String.valueOf(c);
-          }
-          else {
-            ret = TextUtil.charToUnicodeLiteral(c);
-          }
+          ret = String.valueOf(c);
         }
         return buf.append(ret).enclose("'", "'");
 
@@ -256,81 +248,31 @@ public class ConstExprent extends Exprent {
       case CodeConstants.TYPE_SHORTCHAR:
       case CodeConstants.TYPE_INT:
         int intVal = (Integer)value;
-        if (!literal) {
-          if (intVal == Integer.MAX_VALUE) {
-            return buf.append(new FieldExprent("MAX_VALUE", "java/lang/Integer", true, null, FieldDescriptor.INTEGER_DESCRIPTOR, bytecode).toJava(0));
-          }
-          else if (intVal == Integer.MIN_VALUE) {
-            return buf.append(new FieldExprent("MIN_VALUE", "java/lang/Integer", true, null, FieldDescriptor.INTEGER_DESCRIPTOR, bytecode).toJava(0));
-          }
-        }
         return buf.append(value.toString());
 
       case CodeConstants.TYPE_LONG:
-
         long longVal = (Long)value;
-
-        if (!literal) {
-          if (longVal == Long.MAX_VALUE) {
-            return buf.append(new FieldExprent("MAX_VALUE", "java/lang/Long", true, null, FieldDescriptor.LONG_DESCRIPTOR, bytecode).toJava(0));
-          }
-          else if (longVal == Long.MIN_VALUE) {
-            return buf.append(new FieldExprent("MIN_VALUE", "java/lang/Long", true, null, FieldDescriptor.LONG_DESCRIPTOR, bytecode).toJava(0));
-          }
-        }
         return buf.append(value.toString()).append('L');
 
       case CodeConstants.TYPE_FLOAT:
         float floatVal = (Float)value;
-        if (!literal) {
-          if (Float.isNaN(floatVal)) {
-            return buf.append(new FieldExprent("NaN", "java/lang/Float", true, null, FieldDescriptor.FLOAT_DESCRIPTOR, bytecode).toJava(0));
-          }
-          else if (UNINLINED_FLOATS.containsKey(floatVal)) {
-            return buf.append(UNINLINED_FLOATS.get(floatVal).apply(bytecode));
-          }
+        // Check for special values that can't be used directly in code
+        // (and we can't replace with the constant due to the user requesting not to)
+        if (Float.isNaN(floatVal)) {
+          return buf.append("0.0F / 0.0F");
         }
-        else {
-          // Check for special values that can't be used directly in code
-          // (and we can't replace with the constant due to the user requesting not to)
-          if (Float.isNaN(floatVal)) {
-            return buf.append("0.0F / 0.0F");
-          }
-          else if (floatVal == Float.POSITIVE_INFINITY) {
-            return buf.append("1.0F / 0.0F");
-          }
-          else if (floatVal == Float.NEGATIVE_INFINITY) {
-            return buf.append("-1.0F / 0.0F");
-          }
+        else if (floatVal == Float.POSITIVE_INFINITY) {
+          return buf.append("1.0F / 0.0F");
         }
+        else if (floatVal == Float.NEGATIVE_INFINITY) {
+          return buf.append("-1.0F / 0.0F");
+        }
+
         return buf.append(trimFloat(Float.toString(floatVal), floatVal)).append('F');
 
       case CodeConstants.TYPE_DOUBLE:
         double doubleVal = (Double)value;
-        if (!literal) {
-          if (Double.isNaN(doubleVal)) {
-            return buf.append(new FieldExprent("NaN", "java/lang/Double", true, null, FieldDescriptor.DOUBLE_DESCRIPTOR, bytecode).toJava(0));
-          }
-          else if (UNINLINED_DOUBLES.containsKey(doubleVal)) {
-            return buf.append(UNINLINED_DOUBLES.get(doubleVal).apply(bytecode));
-          }
-
-          // Try to convert the double representation of the value to the float representation, to output the cleanest version of the value.
-          // This patch is based on work in ForgeFlower submitted by Pokechu22.
-          float floatRepresentation = (float) doubleVal;
-          if (floatRepresentation == doubleVal) {
-            if (trimFloat(Float.toString(floatRepresentation), floatRepresentation).length() < trimDouble(Double.toString(doubleVal), doubleVal).length()) {
-              // Check the uninlined values to see if we have one of those
-              if (UNINLINED_FLOATS.containsKey(floatRepresentation)) {
-                return buf.append(UNINLINED_FLOATS.get(floatRepresentation).apply(bytecode));
-              } else {
-                // Return the standard representation if the value is not able to be uninlined
-                return buf.append(trimFloat(Float.toString(floatRepresentation), floatRepresentation)).append("F");
-              }
-            }
-          }
-        }
-        else if (Double.isNaN(doubleVal)) {
+        if (Double.isNaN(doubleVal)) {
           return buf.append("0.0 / 0.0");
         }
         else if (doubleVal == Double.POSITIVE_INFINITY) {
@@ -346,7 +288,7 @@ public class ConstExprent extends Exprent {
 
       case CodeConstants.TYPE_OBJECT:
         if (constType.equals(VarType.VARTYPE_STRING)) {
-          return buf.append(convertStringToJava(value.toString(), ascii)).enclose("\"", "\"");
+          return buf.append(convertStringToJava(value.toString(), false)).enclose("\"", "\"");
         }
         else if (constType.equals(VarType.VARTYPE_CLASS)) {
           String stringVal = value.toString();
@@ -358,36 +300,6 @@ public class ConstExprent extends Exprent {
     // prevent gc without discarding
     buf.convertToStringAndAllowDataDiscard();
     throw new RuntimeException("invalid constant type: " + constType);
-  }
-
-  @Override
-  public int getPrecedence() {
-    if (value == null || DecompilerContext.getOption(IFernflowerPreferences.LITERALS_AS_IS)) {
-      return super.getPrecedence();
-    }
-
-    VarType unboxed = VarType.UNBOXING_TYPES.getOrDefault(constType, constType);
-
-    // FIXME: this entire system is terrible, and pi constants need to be fixed to not create field exprents
-
-    switch (unboxed.type) {
-      case CodeConstants.TYPE_FLOAT:
-        float floatVal = (Float)value;
-
-        if (UNINLINED_FLOATS.containsKey(floatVal) && !NO_PAREN_VALUES.contains(floatVal) && UNINLINED_FLOATS.get(floatVal).apply(bytecode).countChars('(') < 2) {
-          return 4;
-        }
-        break;
-      case CodeConstants.TYPE_DOUBLE:
-        double doubleVal = (Double)value;
-
-        if (UNINLINED_DOUBLES.containsKey(doubleVal) && !NO_PAREN_VALUES.contains(doubleVal) && UNINLINED_DOUBLES.get(doubleVal).apply(bytecode).countChars('(') < 2) {
-          return 4;
-        }
-        break;
-    }
-
-    return super.getPrecedence();
   }
 
   private static TextBuffer getPiDouble(BitSet bytecode) {

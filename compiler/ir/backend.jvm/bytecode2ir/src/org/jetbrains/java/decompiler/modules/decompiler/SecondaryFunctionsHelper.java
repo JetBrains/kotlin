@@ -323,38 +323,6 @@ public final class SecondaryFunctionsHelper {
                   return lstOperands.get(0);
                 }
               }
-            } else if (DecompilerContext.getOption(IFernflowerPreferences.TERNARY_CONSTANT_SIMPLIFICATION)) {
-              if (expr1 instanceof ConstExprent && expr1.getExprType().type == CodeConstants.TYPE_BOOLEAN) {
-                ConstExprent cexpr1 = (ConstExprent) expr1;
-                boolean val = cexpr1.getIntValue() != 0;
-
-                if (val) {
-                  // bl ? true : bl2 <-> bl || bl2
-                  return new FunctionExprent(FunctionType.BOOLEAN_OR, Arrays.asList(lstOperands.get(0), lstOperands.get(2)), fexpr.bytecode);
-                } else {
-                  // bl ? false : bl2 <-> !bl && bl2
-                  FunctionExprent fnot = new FunctionExprent(FunctionType.BOOL_NOT, lstOperands.get(0), fexpr.bytecode);
-                  return new FunctionExprent(FunctionType.BOOLEAN_AND, Arrays.asList(fnot, lstOperands.get(2)), fexpr.bytecode);
-                }
-              } else if (expr2 instanceof ConstExprent && expr2.getExprType().type == CodeConstants.TYPE_BOOLEAN) {
-                ConstExprent cexpr2 = (ConstExprent) expr2;
-                boolean val = cexpr2.getIntValue() != 0;
-
-                if (val) {
-                  // bl ? bl2 : true <-> !bl || bl2
-                  FunctionExprent fnot = new FunctionExprent(FunctionType.BOOL_NOT, lstOperands.get(0), fexpr.bytecode);
-                  return new FunctionExprent(FunctionType.BOOLEAN_OR, Arrays.asList(fnot, lstOperands.get(1)), fexpr.bytecode);
-                } else {
-                  // bl ? bl2 : false <-> bl && bl2
-                  return new FunctionExprent(FunctionType.BOOLEAN_AND, Arrays.asList(lstOperands.get(0), lstOperands.get(1)), fexpr.bytecode);
-                }
-              } else if (expr1.getExprType().type == CodeConstants.TYPE_BOOLEAN && expr1.equals(expr0)) {
-                // bl ? bl : bl2 <-> bl || bl2
-                return new FunctionExprent(FunctionType.BOOLEAN_OR, Arrays.asList(lstOperands.get(0), lstOperands.get(2)), fexpr.bytecode);
-              } else if (expr2.getExprType().type == CodeConstants.TYPE_BOOLEAN && expr2.equals(expr0)) {
-                // bl ? bl2 : bl <-> bl && bl2
-                return new FunctionExprent(FunctionType.BOOLEAN_AND, Arrays.asList(lstOperands.get(0), lstOperands.get(1)), fexpr.bytecode);
-              }
             }
             break;
           case LCMP:

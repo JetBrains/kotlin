@@ -5,7 +5,6 @@ import org.jetbrains.java.decompiler.code.cfg.BasicBlock;
 import org.jetbrains.java.decompiler.main.DecompilerContext;
 import org.jetbrains.java.decompiler.main.collectors.CounterContainer;
 import org.jetbrains.java.decompiler.modules.decompiler.stats.BasicBlockStatement;
-import org.jetbrains.java.decompiler.modules.decompiler.stats.RootStatement;
 import org.jetbrains.java.decompiler.modules.decompiler.stats.SequenceStatement;
 import org.jetbrains.java.decompiler.modules.decompiler.stats.Statement;
 import org.jetbrains.java.decompiler.modules.decompiler.stats.Statement.EdgeDirection;
@@ -356,19 +355,5 @@ public final class SequenceHelper {
         edge.getSource().removeSuccessor(edge);
       }
     }
-  }
-
-  public static Statement firstNonSeq(Statement stat) {
-    Statement first = stat.getFirst();
-
-    if (first == null) {
-      return stat;
-    }
-
-    while (first instanceof SequenceStatement) {
-      first = first.getFirst();
-    }
-
-    return first;
   }
 }
