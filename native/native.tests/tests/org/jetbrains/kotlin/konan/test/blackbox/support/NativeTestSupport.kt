@@ -277,10 +277,8 @@ internal object NativeTestSupport {
             CacheMode.Alias.STATIC_ONLY_DIST -> false
             CacheMode.Alias.STATIC_EVERYWHERE -> true
             CacheMode.Alias.STATIC_PER_FILE_EVERYWHERE -> true
-            CacheMode.Alias.STATIC_USE_HEADERS_EVERYWHERE -> true
         }
         val makePerFileCaches = cacheMode == CacheMode.Alias.STATIC_PER_FILE_EVERYWHERE
-        val useHeaders = cacheMode == CacheMode.Alias.STATIC_USE_HEADERS_EVERYWHERE
 
         return if (defaultCache == CacheMode.Alias.NO)
             CacheMode.WithoutCache
@@ -290,7 +288,6 @@ internal object NativeTestSupport {
             optimizationMode,
             useStaticCacheForUserLibraries,
             makePerFileCaches,
-            useHeaders,
             cacheMode
         )
     }

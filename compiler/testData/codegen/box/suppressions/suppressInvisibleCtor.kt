@@ -1,6 +1,5 @@
 // ISSUE: KT-58421
 // TARGET_BACKEND: JVM
-// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
 
 // MODULE: lib
 // FILE: ContinuationImpl.kt

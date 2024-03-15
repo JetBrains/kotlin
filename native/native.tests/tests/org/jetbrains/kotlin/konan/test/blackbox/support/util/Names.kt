@@ -33,7 +33,6 @@ internal const val SHARED_MODULES_DIR_NAME = "__shared_modules__"
 internal const val GIVEN_MODULES_DIR_NAME = "__given_modules__"
 
 internal const val STATIC_CACHE_DIR_NAME = "__static_cache__"
-internal const val HEADER_CACHE_DIR_NAME = "__header_cache__"
 
 internal fun prettyHash(hash: Int): String = hash.toUInt().toString(16).padStart(8, '0')
 

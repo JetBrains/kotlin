@@ -12,27 +12,16 @@ sealed interface TestCompilationArtifact {
 
     data class KLIB(val klibFile: File) : TestCompilationArtifact {
         val path: String get() = klibFile.path
-
-        val headerKlib: File get() = klibFile.resolveSibling(klibFile.name.replaceAfterLast(".", "header.klib"))
         override val logFile: File get() = klibFile.resolveSibling("${klibFile.name}.log")
     }
 
-    interface KLIBStaticCache : TestCompilationArtifact {
-        val cacheDir: File
-        val klib: KLIB
-        val fileCheckStage: String?
+    data class KLIBStaticCache(val cacheDir: File, val klib: KLIB, val fileCheckStage: String? = null) : TestCompilationArtifact {
         override val logFile: File get() = cacheDir.resolve("${klib.klibFile.nameWithoutExtension}-cache.log")
         val fileCheckDump: File?
             get() = fileCheckStage?.let {
                 cacheDir.resolveSibling("out.$it.ll")
             }
     }
-
-    data class KLIBStaticCacheImpl(override val cacheDir: File, override val klib: KLIB, override val fileCheckStage: String? = null) :
-        KLIBStaticCache
-
-    data class KLIBStaticCacheHeader(override val cacheDir: File, override val klib: KLIB, override val fileCheckStage: String? = null) :
-        KLIBStaticCache
 
     data class Executable(val executableFile: File, val fileCheckStage: String? = null) : TestCompilationArtifact {
         val path: String get() = executableFile.path
