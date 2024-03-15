@@ -1,5 +1,5 @@
 fun testAssignment() {
-    var <!UNUSED_VARIABLE!>a<!> = 1
+    var <!VARIABLE_NEVER_READ!>a<!> = 1
     <!UNREACHABLE_CODE!><!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> =<!> todo()
 }
 
