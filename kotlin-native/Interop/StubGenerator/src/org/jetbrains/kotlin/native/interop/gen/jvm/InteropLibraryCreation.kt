@@ -48,8 +48,7 @@ fun createInteropLibrary(
     KonanLibraryWriterImpl(
             moduleName,
             version,
-            target,
-
+            listOf(target.visibleName),
             BuiltInsPlatform.NATIVE,
             nopack = nopack,
             shortName = shortName,
