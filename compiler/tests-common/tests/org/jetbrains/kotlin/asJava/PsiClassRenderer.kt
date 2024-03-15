@@ -44,6 +44,10 @@ class PsiClassRenderer private constructor(
             membersFilter: MembersFilter = MembersFilter.DEFAULT
         ): String =
             PsiClassRenderer(renderInner, membersFilter).renderClass(psiClass)
+
+        fun renderType(psiType: PsiType): String = with(PsiClassRenderer(renderInner = false, membersFilter = MembersFilter.DEFAULT)) {
+            psiType.renderType()
+        }
     }
 
     private fun PrettyPrinter.renderClass(psiClass: PsiClass) {

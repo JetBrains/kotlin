@@ -1,2 +1,2 @@
 KtType: @kotlin.jvm.JvmSuppressWildcards(suppress = true) (AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?)?
-PsiType: kotlin.jvm.functions.@kotlin.jvm.JvmSuppressWildcards(suppress = true) Function1<AnimatedContentTransitionScope<NavBackStackEntry>,EnterTransition>
+PsiType: @kotlin.jvm.JvmSuppressWildcards(suppress = true) kotlin.jvm.functions.Function1<AnimatedContentTransitionScope<NavBackStackEntry>, EnterTransition>
