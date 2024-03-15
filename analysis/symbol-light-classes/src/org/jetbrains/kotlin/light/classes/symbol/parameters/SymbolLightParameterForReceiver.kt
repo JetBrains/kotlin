@@ -9,7 +9,6 @@ import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
 import com.intellij.psi.util.TypeConversionUtil
-import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
@@ -88,15 +87,12 @@ internal class SymbolLightParameterForReceiver private constructor(
     private val _type: PsiType by lazyPub {
         withReceiverSymbol { receiver ->
             val ktType = receiver.type
-            val psiType = ktType.asPsiTypeElement(
+            val psiType = ktType.asPsiType(
                 this,
                 allowErrorTypes = true,
                 ktType.typeMappingMode(),
                 suppressWildcards = receiver.suppressWildcard() ?: method.suppressWildcards(),
-            )?.let {
-                @OptIn(KtAnalysisNonPublicApi::class)
-                annotateByKtType(it.type, ktType, it, modifierList)
-            }
+            )
 
             if (method is SymbolLightAnnotationsMethod) {
                 val erased = TypeConversionUtil.erasure(psiType)

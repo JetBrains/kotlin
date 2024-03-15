@@ -40,14 +40,15 @@ internal class KtFe10PsiTypeProvider(
 
     private val typeMapper by lazy { KtFe10JvmTypeMapperContext(analysisContext.resolveSession) }
 
-    override fun asPsiTypeElement(
+    override fun asPsiType(
         type: KtType,
         useSitePosition: PsiElement,
+        allowErrorTypes: Boolean,
         mode: KtTypeMappingMode,
         isAnnotationMethod: Boolean,
         suppressWildcards: Boolean?,
-        allowErrorTypes: Boolean,
-    ): PsiTypeElement? {
+        preserveAnnotations: Boolean
+    ): PsiType? {
         val kotlinType = (type as KtFe10Type).fe10Type
 
         with(typeMapper.typeContext) {
@@ -58,29 +59,14 @@ internal class KtFe10PsiTypeProvider(
 
         if (!analysisSession.useSiteModule.platform.has<JvmPlatform>()) return null
 
-        return asPsiTypeElement(
+        val typeElement = asPsiTypeElement(
             simplifyType(kotlinType),
             useSitePosition,
             mode.toTypeMappingMode(type, isAnnotationMethod, suppressWildcards),
         )
-    }
 
-    override fun asPsiType(
-        type: KtType,
-        useSitePosition: PsiElement,
-        allowErrorTypes: Boolean,
-        mode: KtTypeMappingMode,
-        isAnnotationMethod: Boolean,
-        suppressWildcards: Boolean?,
-        preserveAnnotations: Boolean
-    ): PsiType? = asPsiTypeElement(
-        type = type,
-        useSitePosition = useSitePosition,
-        mode = mode,
-        isAnnotationMethod = isAnnotationMethod,
-        suppressWildcards = suppressWildcards,
-        allowErrorTypes = allowErrorTypes,
-    )?.type
+        return typeElement?.type
+    }
 
     private fun KtTypeMappingMode.toTypeMappingMode(
         type: KtType,

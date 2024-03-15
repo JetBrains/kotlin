@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 import com.intellij.psi.*
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.mutate
-import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.hasAnnotation
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
@@ -230,16 +229,13 @@ internal class SymbolLightSimpleMethod(
             else
                 KtTypeMappingMode.RETURN_TYPE
 
-            ktType.asPsiTypeElement(
+            ktType.asPsiType(
                 this@SymbolLightSimpleMethod,
                 allowErrorTypes = true,
                 typeMappingMode,
                 this@SymbolLightSimpleMethod.containingClass.isAnnotationType,
                 suppressWildcards = suppressWildcards(),
-            )?.let {
-                @OptIn(KtAnalysisNonPublicApi::class)
-                annotateByKtType(it.type, ktType, it, modifierList)
-            }
+            )
         } ?: nonExistentType()
     }
 

@@ -70,15 +70,15 @@ internal class KtFirPsiTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
     override val token: KtLifetimeToken,
 ) : KtPsiTypeProvider(), KtFirAnalysisSessionComponent {
-
-    override fun asPsiTypeElement(
+    override fun asPsiType(
         type: KtType,
         useSitePosition: PsiElement,
+        allowErrorTypes: Boolean,
         mode: KtTypeMappingMode,
         isAnnotationMethod: Boolean,
         suppressWildcards: Boolean?,
-        allowErrorTypes: Boolean,
-    ): PsiTypeElement? {
+        preserveAnnotations: Boolean,
+    ): PsiType? {
         val coneType = type.coneType
 
         with(rootModuleSession.typeContext) {
@@ -89,30 +89,10 @@ internal class KtFirPsiTypeProvider(
 
         if (!rootModuleSession.moduleData.platform.has<JvmPlatform>()) return null
 
-        return coneType.simplifyType(rootModuleSession, useSitePosition)
-            .asPsiTypeElement(
-                rootModuleSession,
-                mode.toTypeMappingMode(type, isAnnotationMethod, suppressWildcards),
-                useSitePosition,
-                allowErrorTypes,
-            )
-    }
-
-    override fun asPsiType(
-        type: KtType,
-        useSitePosition: PsiElement,
-        allowErrorTypes: Boolean,
-        mode: KtTypeMappingMode,
-        isAnnotationMethod: Boolean,
-        suppressWildcards: Boolean?,
-        preserveAnnotations: Boolean,
-    ): PsiType? {
-        val typeElement = asPsiTypeElement(
-            type = type,
+        val typeElement = coneType.simplifyType(rootModuleSession, useSitePosition).asPsiTypeElement(
+            session = rootModuleSession,
+            mode = mode.toTypeMappingMode(type, isAnnotationMethod, suppressWildcards),
             useSitePosition = useSitePosition,
-            mode = mode,
-            isAnnotationMethod = isAnnotationMethod,
-            suppressWildcards = suppressWildcards,
             allowErrorTypes = allowErrorTypes,
         ) ?: return null
 
@@ -125,7 +105,6 @@ internal class KtFirPsiTypeProvider(
                 psiType = psiType,
                 ktType = type,
                 psiContext = typeElement,
-                modifierListAsParent = null,
             )
         }
     }
