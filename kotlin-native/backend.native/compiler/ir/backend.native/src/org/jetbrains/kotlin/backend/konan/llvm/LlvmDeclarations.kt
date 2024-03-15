@@ -63,7 +63,8 @@ internal class ClassLlvmDeclarations(
         val typeInfo: ConstPointer,
         val objCDeclarations: KotlinObjCClassLlvmDeclarations?,
         val alignment: Int,
-        val fieldIndices: Map<IrFieldSymbol, Int>
+        val fieldIndices: Map<IrFieldSymbol, Int>,
+        val objectFieldIndices: List<Int>,
 )
 
 internal class KotlinObjCClassLlvmDeclarations(
@@ -252,6 +253,14 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                 context.getLayoutBuilder(declaration).getFields(llvm)
         val (bodyType, alignment, fieldIndices) = createClassBody("kclassbody:$internalName", fields)
 
+        val objectFieldIndices = fields.mapNotNull {
+            if (it.type.binaryTypeIsReference()) {
+                fieldIndices.getValue(it.irFieldSymbol)
+            } else {
+                null
+            }
+        }
+
         require(alignment == runtime.objectAlignment) {
             "Over-aligned objects are not supported yet: expected alignment for ${declaration.fqNameWhenAvailable} is $alignment"
         }
@@ -335,7 +344,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             it.setZeroInitializer()
         }
 
-        return ClassLlvmDeclarations(bodyType, typeInfoGlobal, writableTypeInfoGlobal, typeInfoPtr, objCDeclarations, alignment, fieldIndices)
+        return ClassLlvmDeclarations(bodyType, typeInfoGlobal, writableTypeInfoGlobal, typeInfoPtr, objCDeclarations, alignment, fieldIndices, objectFieldIndices)
     }
 
     private fun createUniqueDeclarations(
