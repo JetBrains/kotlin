@@ -390,7 +390,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
 
 
         [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|MyClass| = R|/MyClass.MyClass|().R|kotlin/let|<R|MyClass|, R|MyClass|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|MyClass|): R|MyClass| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|<local>/a1|
+            R|/a1|
             ^ R|<local>/it|
         }
         )
@@ -422,7 +422,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
 
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val $$result: R|kotlin/String| = R|<local>/a4|
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val $$result: R|kotlin/String| = R|/a4|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
 
@@ -440,7 +440,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
 
 
         [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|MyClass| = R|/MyClass.MyClass|().R|kotlin/let|<R|MyClass|, R|MyClass|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|MyClass|): R|MyClass| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|<local>/a1|
+            R|/a1|
             ^ R|<local>/it|
         }
         )
@@ -472,7 +472,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
 
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] val $$result: R|kotlin/String| = R|<local>/a4|
+        public final [ResolvedTo(CONSTANT_EVALUATION)] val $$result: R|kotlin/String| = R|/a4|
             public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/String|
 
 
@@ -490,7 +490,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
 
 
         [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|MyClass| = R|/MyClass.MyClass|().R|kotlin/let|<R|MyClass|, R|MyClass|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|MyClass|): R|MyClass| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|<local>/a1|
+            R|/a1|
             ^ R|<local>/it|
         }
         )
@@ -522,7 +522,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val $$result: R|kotlin/String| = R|<local>/a4|
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val $$result: R|kotlin/String| = R|/a4|
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String|
 
 
@@ -540,7 +540,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
 
 
         [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|MyClass| = R|/MyClass.MyClass|().R|kotlin/let|<R|MyClass|, R|MyClass|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|MyClass|): R|MyClass| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|<local>/a1|
+            R|/a1|
             ^ R|<local>/it|
         }
         )
@@ -572,7 +572,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/String| = R|<local>/a4|
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/String| = R|/a4|
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
 
@@ -590,7 +590,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] lastStatementWithDestructuringDeclarationRefere
 
 
         [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|MyClass| = R|/MyClass.MyClass|().R|kotlin/let|<R|MyClass|, R|MyClass|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|MyClass|): R|MyClass| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|<local>/a1|
+            R|/a1|
             ^ R|<local>/it|
         }
         )
@@ -622,5 +622,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] lastStatementWithDestructuringDeclarationRefere
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/String| = R|<local>/a4|
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/String| = R|/a4|
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|

@@ -243,10 +243,6 @@ internal val FirCallableSymbol<*>.isLocalForLazyResolutionPurposes: Boolean
         // Script parameters should be treated as non-locals as they are visible from FirScript
         fir.origin == FirDeclarationOrigin.ScriptCustomization.Parameter || fir.origin == FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass -> false
 
-        // We should treat destructuring declaration entries as non-local explicitly as its CallableId is local
-        // TODO: can be dropped after KT-65727
-        (fir as? FirProperty)?.destructuringDeclarationContainerVariable != null -> false
-
         else -> callableId.isLocal || fir.status.visibility == Visibilities.Local
     }
 

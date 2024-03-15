@@ -207,7 +207,7 @@ class LightTreeRawFirExpressionBuilder(
                         multiDeclaration,
                         multiParameter,
                         tmpVariable = false,
-                        localEntries = true
+                        forceLocal = true,
                     )
                     multiParameter
                 } else {
@@ -1217,7 +1217,7 @@ class LightTreeRawFirExpressionBuilder(
                             multiDeclaration,
                             firLoopParameter,
                             tmpVariable = true,
-                            localEntries = true,
+                            forceLocal = true,
                         )
                     } else {
                         statements.add(firLoopParameter)

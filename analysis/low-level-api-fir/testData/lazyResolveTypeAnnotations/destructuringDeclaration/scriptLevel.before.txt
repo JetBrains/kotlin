@@ -143,51 +143,51 @@
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?
-  context -> FirPropertySymbol <local>/a
+  context -> FirPropertySymbol util/a
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>
-  context -> FirPropertySymbol <local>/a
+  context -> FirPropertySymbol util/a
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String
-  context -> FirPropertySymbol <local>/a
+  context -> FirPropertySymbol util/a
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?
-  context -> FirPropertySymbol <local>/b
+  context -> FirPropertySymbol util/b
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>
-  context -> FirPropertySymbol <local>/b
+  context -> FirPropertySymbol util/b
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int
-  context -> FirPropertySymbol <local>/b
+  context -> FirPropertySymbol util/b
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?
-  context -> FirPropertySymbol <local>/c
+  context -> FirPropertySymbol util/c
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>
-  context -> FirPropertySymbol <local>/c
+  context -> FirPropertySymbol util/c
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String
-  context -> FirPropertySymbol <local>/c
+  context -> FirPropertySymbol util/c
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?
-  context -> FirPropertySymbol <local>/d
+  context -> FirPropertySymbol util/d
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>
-  context -> FirPropertySymbol <local>/d
+  context -> FirPropertySymbol util/d
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int
-  context -> FirPropertySymbol <local>/d
+  context -> FirPropertySymbol util/d
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 FILE: [ResolvedTo(IMPORTS)] scriptLevel.kts

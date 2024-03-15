@@ -1,13 +1,13 @@
 @R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>
-  context -> FirPropertySymbol <local>/left
+  context -> FirPropertySymbol util/left
   anchor -> [FirConstructorSymbol util/MyPair.MyPair]
 
 @R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>
-  context -> FirPropertySymbol <local>/left
+  context -> FirPropertySymbol util/left
   anchor -> [FirConstructorSymbol util/MyPair.MyPair]
 
 @R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int
-  context -> FirPropertySymbol <local>/left
+  context -> FirPropertySymbol util/left
   anchor -> [FirConstructorSymbol util/MyPair.MyPair]
 
 FILE: [ResolvedTo(IMPORTS)] destructEntry.kts

@@ -36,7 +36,7 @@ fun <T> MutableList<in FirVariable>.addDestructuringVariables(
     entries: List<T>,
     isVar: Boolean,
     tmpVariable: Boolean,
-    localEntries: Boolean,
+    forceLocal: Boolean,
     configure: (FirVariable) -> Unit = {}
 ) {
     if (tmpVariable) {
@@ -48,7 +48,7 @@ fun <T> MutableList<in FirVariable>.addDestructuringVariables(
             container,
             entry,
             isVar,
-            localEntries,
+            forceLocal,
             index,
             configure,
         )
@@ -61,11 +61,12 @@ fun <T> buildDestructuringVariable(
     container: FirVariable,
     entry: T,
     isVar: Boolean,
-    localEntries: Boolean,
+    forceLocal: Boolean,
     index: Int,
     configure: (FirVariable) -> Unit = {}
 ): FirVariable = buildProperty {
-    symbol = FirPropertySymbol(entry.name)
+    symbol = if (forceLocal) FirPropertySymbol(entry.name) else FirPropertySymbol(callableIdForName(entry.name))
+    val localEntries = forceLocal || context.inLocalContext
     withContainerSymbol(symbol, localEntries) {
         this.moduleData = moduleData
         origin = FirDeclarationOrigin.Source

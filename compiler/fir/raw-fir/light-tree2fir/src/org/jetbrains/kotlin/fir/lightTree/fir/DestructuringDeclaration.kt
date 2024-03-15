@@ -35,7 +35,6 @@ data class DestructuringDeclaration(
     fun toFirDestructingDeclaration(
         moduleData: FirModuleData,
         tmpVariable: Boolean = true,
-        localEntries: Boolean = true,
     ): FirExpression {
         val baseVariable = generateTemporaryVariable(
             moduleData,
@@ -45,7 +44,7 @@ data class DestructuringDeclaration(
             extractedAnnotations = annotations
         )
         return buildBlock {
-            statements.addDestructuringStatements(moduleData, this@DestructuringDeclaration, baseVariable, tmpVariable, localEntries)
+            statements.addDestructuringStatements(moduleData, this@DestructuringDeclaration, baseVariable, tmpVariable, forceLocal = false)
         }
     }
 }
@@ -77,7 +76,8 @@ fun MutableList<FirStatement>.addDestructuringStatements(
     multiDeclaration: DestructuringDeclaration,
     container: FirVariable,
     tmpVariable: Boolean,
-    localEntries: Boolean,
+    forceLocal: Boolean
+
 ) {
     with(DestructuringEntry) {
         addDestructuringVariables(
@@ -86,7 +86,7 @@ fun MutableList<FirStatement>.addDestructuringStatements(
             multiDeclaration.entries,
             multiDeclaration.isVar,
             tmpVariable,
-            localEntries
+            forceLocal
         )
     }
 }

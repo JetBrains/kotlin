@@ -1313,7 +1313,7 @@ open class PsiRawFirBuilder(
                                     declaration,
                                     destructuringContainerVar,
                                     tmpVariable = false,
-                                    localEntries = false,
+                                    forceLocal = false,
                                 ) {
                                     configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
                                 }
@@ -1882,7 +1882,7 @@ open class PsiRawFirBuilder(
                             multiDeclaration,
                             multiParameter,
                             tmpVariable = false,
-                            localEntries = true,
+                            forceLocal = true,
                         )
                         multiParameter
                     } else {
@@ -2801,7 +2801,7 @@ open class PsiRawFirBuilder(
                                 multiDeclaration = multiDeclaration,
                                 container = firLoopParameter,
                                 tmpVariable = true,
-                                localEntries = true,
+                                forceLocal = true,
                             )
                         } else {
                             blockBuilder.statements.add(firLoopParameter)
@@ -3186,7 +3186,6 @@ open class PsiRawFirBuilder(
                 multiDeclaration,
                 baseVariable,
                 tmpVariable = true,
-                localEntries = true,
             )
         }
 

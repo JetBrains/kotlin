@@ -1,14 +1,14 @@
 @R|util/Anno|(IntegerLiteral(0).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>
-  context -> FirPropertySymbol <local>/left
-  anchor -> [FirPropertySymbol <local>/left]
+  context -> FirPropertySymbol util/left
+  anchor -> [FirPropertySymbol util/left]
 
 @R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>
-  context -> FirPropertySymbol <local>/left
-  anchor -> [FirPropertySymbol <local>/left]
+  context -> FirPropertySymbol util/left
+  anchor -> [FirPropertySymbol util/left]
 
 @R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int
-  context -> FirPropertySymbol <local>/left
-  anchor -> [FirPropertySymbol <local>/left]
+  context -> FirPropertySymbol util/left
+  anchor -> [FirPropertySymbol util/left]
 
 FILE: [ResolvedTo(IMPORTS)] destructEntryWithType.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)

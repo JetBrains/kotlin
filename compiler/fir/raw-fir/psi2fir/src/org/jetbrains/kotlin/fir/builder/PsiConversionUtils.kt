@@ -128,7 +128,6 @@ internal fun generateDestructuringBlock(
     multiDeclaration: KtDestructuringDeclaration,
     container: FirVariable,
     tmpVariable: Boolean,
-    localEntries: Boolean,
 ): FirBlock {
     return buildBlock {
         source = multiDeclaration.toKtPsiSourceElement()
@@ -137,7 +136,7 @@ internal fun generateDestructuringBlock(
             multiDeclaration,
             container,
             tmpVariable,
-            localEntries
+            forceLocal = false,
         )
     }
 }
@@ -148,10 +147,10 @@ internal fun MutableList<in FirVariable>.addDestructuringVariables(
     multiDeclaration: KtDestructuringDeclaration,
     container: FirVariable,
     tmpVariable: Boolean,
-    localEntries: Boolean,
+    forceLocal: Boolean,
     configure: (FirVariable) -> Unit = {}
 ) {
     this@addDestructuringVariables.addDestructuringVariables(
-        moduleData, container, multiDeclaration.entries, multiDeclaration.isVar, tmpVariable, localEntries, configure
+        moduleData, container, multiDeclaration.entries, multiDeclaration.isVar, tmpVariable, forceLocal, configure
     )
 }

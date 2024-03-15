@@ -165,7 +165,7 @@ digraph destructuringDeclarationsScript_fir_kts {
             subgraph cluster_28 {
                 color=blue
                 75 [label="Enter block [3]"];
-                76 [label="Access variable R|<local>/a1| [3]"];
+                76 [label="Access variable R|/a1| [3]"];
                 77 [label="Exit block [3]"];
             }
             78 [label="Exit init block [3]" style="filled" fillcolor=red];
@@ -176,7 +176,7 @@ digraph destructuringDeclarationsScript_fir_kts {
             subgraph cluster_30 {
                 color=blue
                 80 [label="Enter block [3]"];
-                81 [label="Access variable R|<local>/a2| [3]"];
+                81 [label="Access variable R|/a2| [3]"];
                 82 [label="Exit block [3]"];
             }
             83 [label="Exit init block [3]" style="filled" fillcolor=red];
@@ -187,7 +187,7 @@ digraph destructuringDeclarationsScript_fir_kts {
             subgraph cluster_32 {
                 color=blue
                 85 [label="Enter block [3]"];
-                86 [label="Access variable R|<local>/e1| [3]"];
+                86 [label="Access variable R|/e1| [3]"];
                 87 [label="Exit block [3]"];
             }
             88 [label="Exit init block [3]" style="filled" fillcolor=red];
