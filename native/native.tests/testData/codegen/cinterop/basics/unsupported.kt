@@ -10,7 +10,7 @@ compilerOpts = -mno-xsave
 ---
 
 static void noAttr() {}
-__attribute__((always_inline)) noTargetAttr() {}
+__attribute__((always_inline)) void noTargetAttr() {}
 
 __attribute__((always_inline, __target__("xsave"))) void plainAttrs1() {}
 __attribute__((__target__("xsave"), always_inline)) void plainAttrs2() {}

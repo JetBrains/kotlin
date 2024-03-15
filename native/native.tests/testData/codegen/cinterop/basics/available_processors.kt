@@ -11,6 +11,9 @@ compilerOpts.mingw = -D ADD_WINDOWS_ENV_FUNCTIONS
 ---
 
 #ifdef ADD_WINDOWS_ENV_FUNCTIONS
+// It is not declared in the included headers.
+__declspec(dllimport) errno_t __cdecl getenv_s(size_t *_ReturnSize,char *_DstBuf,rsize_t _DstSize,const char *_VarName);
+
 static inline int setenv(const char *name, const char *value, int overwrite)
 {
     int errcode = 0;
