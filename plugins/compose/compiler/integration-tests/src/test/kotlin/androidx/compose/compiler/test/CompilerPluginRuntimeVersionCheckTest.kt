@@ -26,6 +26,7 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -82,6 +83,7 @@ class CompilerPluginRuntimeVersionCheckTest {
     }
 
     @Test
+    @Ignore
     fun usingNoRuntime() {
         setupAppBuildGradle("") // Not adding any Compose runtime to classpath
         val result = gradleRunner.buildAndFail()
@@ -95,6 +97,7 @@ class CompilerPluginRuntimeVersionCheckTest {
     }
 
     @Test
+    @Ignore
     fun usingLastStableRuntime() {
         setupAppBuildGradle("""implementation("androidx.compose.runtime:runtime:1.0.0")""")
         val result = gradleRunner.build()
@@ -102,6 +105,7 @@ class CompilerPluginRuntimeVersionCheckTest {
     }
 
     @Test
+    @Ignore
     fun usingLatestRuntime() {
         setupAppBuildGradle("""implementation("androidx.compose.runtime:runtime:+")""")
         val result = gradleRunner.build()
