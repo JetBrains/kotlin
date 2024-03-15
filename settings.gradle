@@ -419,7 +419,8 @@ include ":compiler:build-tools:kotlin-build-tools-api",
         ":compiler:build-tools:kotlin-build-tools-api-tests"
 
 // Experimental modules, should be placed into plugins/compose-compiler-plugin folder
-include ":plugins:compose-compiler-plugin:compiler",
+include ":plugins:compose-compiler-plugin",
+        ":plugins:compose-compiler-plugin:compiler",
         ":plugins:compose-compiler-plugin:compiler:integration-tests",
         ":plugins:compose-compiler-plugin:compiler-hosted"
 
@@ -859,6 +860,7 @@ project(':kotlin-atomicfu-compiler-plugin-embeddable').projectDir = file("$rootD
 project(':kotlinx-atomicfu-runtime').projectDir = file("$rootDir/plugins/atomicfu/atomicfu-runtime")
 project(':atomicfu').projectDir = file("$rootDir/libraries/tools/atomicfu")
 
+project(':plugins:compose-compiler-plugin').projectDir = file("$rootDir/plugins/compose")
 project(':plugins:compose-compiler-plugin:compiler').projectDir = file("$rootDir/plugins/compose/compiler")
 project(':plugins:compose-compiler-plugin:compiler:integration-tests').projectDir = file("$rootDir/plugins/compose/compiler/integration-tests")
 project(':plugins:compose-compiler-plugin:compiler-hosted').projectDir = file("$rootDir/plugins/compose/compiler-hosted")
