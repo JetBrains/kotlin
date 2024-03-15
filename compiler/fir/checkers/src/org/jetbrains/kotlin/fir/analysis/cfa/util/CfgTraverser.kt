@@ -11,11 +11,11 @@ enum class TraverseDirection {
     Forward, Backward
 }
 
-fun <I : ControlFlowInfo<I, *, *>> ControlFlowGraph.collectDataForNode(
+fun <K : Any, V : Any> ControlFlowGraph.collectDataForNode(
     direction: TraverseDirection,
-    visitor: PathAwareControlFlowGraphVisitor<I>,
-): Map<CFGNode<*>, PathAwareControlFlowInfo<I>> {
-    val nodeMap = LinkedHashMap<CFGNode<*>, PathAwareControlFlowInfo<I>>()
+    visitor: PathAwareControlFlowGraphVisitor<K, V>,
+): Map<CFGNode<*>, PathAwareControlFlowInfo<K, V>> {
+    val nodeMap = LinkedHashMap<CFGNode<*>, PathAwareControlFlowInfo<K, V>>()
     var shouldContinue: Boolean
     do {
         shouldContinue = collectDataForNodeInternal(direction, visitor, nodeMap)
@@ -23,10 +23,10 @@ fun <I : ControlFlowInfo<I, *, *>> ControlFlowGraph.collectDataForNode(
     return nodeMap
 }
 
-private fun <I : ControlFlowInfo<I, *, *>> ControlFlowGraph.collectDataForNodeInternal(
+private fun <K : Any, V : Any> ControlFlowGraph.collectDataForNodeInternal(
     direction: TraverseDirection,
-    visitor: PathAwareControlFlowGraphVisitor<I>,
-    nodeMap: MutableMap<CFGNode<*>, PathAwareControlFlowInfo<I>>,
+    visitor: PathAwareControlFlowGraphVisitor<K, V>,
+    nodeMap: MutableMap<CFGNode<*>, PathAwareControlFlowInfo<K, V>>,
 ): Boolean {
     var changed = false
     for (node in getNodesInOrder(direction)) {
@@ -47,8 +47,8 @@ private fun <I : ControlFlowInfo<I, *, *>> ControlFlowGraph.collectDataForNodeIn
                 }
                 visitor.visitEdge(source, node, edge, it)
             }
-        }.reduceOrNull { a, b -> a.join(b, node) }
-        val newData = node.accept(visitor, previousData ?: visitor.emptyInfo)
+        }.reduceOrNull { a, b -> visitor.mergeInfo(a, b, node) }
+        val newData = node.accept(visitor, previousData ?: emptyNormalPathInfo())
         if (newData != nodeMap.put(node, newData)) {
             changed = true
         }

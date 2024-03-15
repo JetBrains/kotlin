@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
-import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.mutate
-import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -116,39 +114,20 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
         }
     }
 
-    @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE") // K2 warning suppression, TODO: KT-62472
-    class VariableStatusInfo(
-        map: PersistentMap<FirPropertySymbol, VariableStatus> = persistentMapOf()
-    ) : ControlFlowInfo<VariableStatusInfo, FirPropertySymbol, VariableStatus>(map) {
-        companion object {
-            val EMPTY = VariableStatusInfo()
-        }
-
-        override val constructor: (PersistentMap<FirPropertySymbol, VariableStatus>) -> VariableStatusInfo =
-            ::VariableStatusInfo
-
-        override fun merge(other: VariableStatusInfo, node: CFGNode<*>): VariableStatusInfo {
+    private class ValueWritesWithoutReading(
+        private val localProperties: Set<FirPropertySymbol>
+    ) : PathAwareControlFlowGraphVisitor<FirPropertySymbol, VariableStatus>() {
+        override fun mergeInfo(a: VariableStatusInfo, b: VariableStatusInfo, node: CFGNode<*>): VariableStatusInfo {
             // TODO, KT-59834: not sure what to do if `node.isUnion`
-            var result = this
-            for (symbol in keys.union(other.keys)) {
-                val kind1 = this[symbol] ?: VariableStatus.UNUSED
-                val kind2 = other[symbol] ?: VariableStatus.UNUSED
+            var result = a
+            for (symbol in a.keys.union(b.keys)) {
+                val kind1 = a[symbol] ?: VariableStatus.UNUSED
+                val kind2 = b[symbol] ?: VariableStatus.UNUSED
                 val new = kind1.merge(kind2)
                 result = result.put(symbol, new)
             }
             return result
         }
-    }
-
-    private class ValueWritesWithoutReading(
-        private val localProperties: Set<FirPropertySymbol>
-    ) : PathAwareControlFlowGraphVisitor<VariableStatusInfo>() {
-        companion object {
-            private val EMPTY_INFO: PathAwareVariableStatusInfo = persistentMapOf(NormalPath to VariableStatusInfo.EMPTY)
-        }
-
-        override val emptyInfo: PathAwareVariableStatusInfo
-            get() = EMPTY_INFO
 
         fun getData(graph: ControlFlowGraph): Map<CFGNode<*>, PathAwareVariableStatusInfo> {
             return graph.collectDataForNode(TraverseDirection.Backward, this)
@@ -297,4 +276,5 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
         }
 }
 
-private typealias PathAwareVariableStatusInfo = PathAwareControlFlowInfo<UnusedChecker.VariableStatusInfo>
+private typealias VariableStatusInfo = ControlFlowInfo<FirPropertySymbol, UnusedChecker.VariableStatus>
+private typealias PathAwareVariableStatusInfo = PathAwareControlFlowInfo<FirPropertySymbol, UnusedChecker.VariableStatus>

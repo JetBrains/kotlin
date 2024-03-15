@@ -10,29 +10,38 @@ import kotlinx.collections.immutable.mutate
 import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 
-typealias PathAwareControlFlowInfo<I> = PersistentMap<EdgeLabel, I>
+typealias ControlFlowInfo<K, V> = PersistentMap<K, V>
 
-fun <I : ControlFlowInfo<I, *, *>> PathAwareControlFlowInfo<I>.join(
-    other: PathAwareControlFlowInfo<I>,
-    node: CFGNode<*>
-): PathAwareControlFlowInfo<I> = mutate {
-    for ((label, rightValue) in other) {
-        // disjoint merging to preserve paths. i.e., merge the property initialization info if and only if both have the key.
-        // merge({ |-> I1 }, { |-> I2, l1 |-> I3 })
-        //   == { |-> merge(I1, I2), l1 |-> I3 }
-        it[label] = this[label]?.merge(rightValue, node) ?: rightValue
-    }
-}
+typealias PathAwareControlFlowInfo<K, V> = PersistentMap<EdgeLabel, ControlFlowInfo<K, V>>
 
-abstract class PathAwareControlFlowGraphVisitor<I : ControlFlowInfo<I, *, *>> :
-    ControlFlowGraphVisitor<PathAwareControlFlowInfo<I>, PathAwareControlFlowInfo<I>>() {
+// The inputs to `PathAwareControlFlowGraphVisitor`'s methods should contain keys for all labels with
+// which a node can be reached, so a completely empty `PathAwareControlFlowInfo` is NOT equivalent
+// to one that contains empty data for just the `NormalPath`.
+private val EMPTY_NORMAL_PATH_INFO: PathAwareControlFlowInfo<Nothing, Nothing> =
+    persistentMapOf(NormalPath to persistentMapOf())
 
-    abstract val emptyInfo: PathAwareControlFlowInfo<I>
+@Suppress("UNCHECKED_CAST")
+fun <K : Any, V : Any> emptyNormalPathInfo(): PathAwareControlFlowInfo<K, V> =
+    EMPTY_NORMAL_PATH_INFO as PathAwareControlFlowInfo<K, V>
+
+abstract class PathAwareControlFlowGraphVisitor<K : Any, V : Any> :
+    ControlFlowGraphVisitor<PathAwareControlFlowInfo<K, V>, PathAwareControlFlowInfo<K, V>>() {
+
+    abstract fun mergeInfo(a: ControlFlowInfo<K, V>, b: ControlFlowInfo<K, V>, node: CFGNode<*>): ControlFlowInfo<K, V>
+
+    @JvmName("mergePathAwareInfo")
+    fun mergeInfo(a: PathAwareControlFlowInfo<K, V>, b: PathAwareControlFlowInfo<K, V>, node: CFGNode<*>): PathAwareControlFlowInfo<K, V> =
+        a.merge(b) { left, right -> mergeInfo(left, right, node) }
 
     open fun visitSubGraph(node: CFGNodeWithSubgraphs<*>, graph: ControlFlowGraph): Boolean =
         true // false to skip
 
-    open fun visitEdge(from: CFGNode<*>, to: CFGNode<*>, metadata: Edge, data: PathAwareControlFlowInfo<I>): PathAwareControlFlowInfo<I> {
+    open fun visitEdge(
+        from: CFGNode<*>,
+        to: CFGNode<*>,
+        metadata: Edge,
+        data: PathAwareControlFlowInfo<K, V>,
+    ): PathAwareControlFlowInfo<K, V> {
         val label = metadata.label
         return when {
             // Finally exit is splitting labeled flow. So if we have data for different labels, then
@@ -47,9 +56,9 @@ abstract class PathAwareControlFlowGraphVisitor<I : ControlFlowInfo<I, *, *>> :
                                 it.remove(otherLabel)
                             }
                         }
-                    }.ifEmpty { emptyInfo } // there should always be UncaughtExceptionPath data, but just in case
+                    }
                 } else {
-                    val info = data[label] ?: return emptyInfo
+                    val info = data[label] ?: return emptyNormalPathInfo()
                     persistentMapOf(NormalPath to info)
                 }
             }
@@ -59,12 +68,22 @@ abstract class PathAwareControlFlowGraphVisitor<I : ControlFlowInfo<I, *, *>> :
             // Labeled edge from a jump statement to a `finally` block forks flow. Usually we'd only have
             // NormalPath data here, but technically it's possible (though questionable) to jump from a `finally`
             // (discarding the exception or aborting a previous jump in the process) so merge all data just in case.
-            else -> persistentMapOf(label to data.values.reduce { a, b -> a.merge(b, to) })
+            else -> persistentMapOf(label to data.values.reduce { a, b -> mergeInfo(a, b, to) })
         }
     }
 
     override fun visitNode(
         node: CFGNode<*>,
-        data: PathAwareControlFlowInfo<I>
-    ): PathAwareControlFlowInfo<I> = data
+        data: PathAwareControlFlowInfo<K, V>
+    ): PathAwareControlFlowInfo<K, V> = data
 }
+
+inline fun <K, V> PersistentMap<K, V>.merge(other: PersistentMap<K, V>, block: (V, V) -> V): PersistentMap<K, V> =
+    mutate {
+        other.mapValuesTo(it) { (label, rightValue) ->
+            this[label]?.let { leftValue -> block(leftValue, rightValue) } ?: rightValue
+        }
+    }
+
+inline fun <K, V> PersistentMap<K, V>.transformValues(block: (V) -> V): PersistentMap<K, V> =
+    mutate { mapValuesTo(it) { (_, values) -> block(values) } }

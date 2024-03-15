@@ -335,6 +335,12 @@
     kotlinx.collections.immutable.PersistentMap persistentHashMapOf(kotlin.Pair[]);
     kotlinx.collections.immutable.PersistentSet persistentHashSetOf(java.lang.Object[]);
 }
+-keepclassmembers class kotlinx.collections.immutable.PersistentMap {
+    public *;
+}
+-keepclassmembers class kotlinx.collections.immutable.PersistentSet {
+    public *;
+}
 -keepclassmembers class com.intellij.lang.jvm.JvmParameter {
     com.intellij.lang.jvm.types.JvmType getType();
 }
