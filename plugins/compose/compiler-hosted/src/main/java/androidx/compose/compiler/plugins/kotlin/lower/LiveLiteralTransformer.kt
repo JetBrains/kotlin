@@ -87,7 +87,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrElseBranchImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
@@ -267,7 +266,7 @@ open class LiveLiteralTransformer(
             }.also { f ->
                 f.correspondingPropertySymbol = p.symbol
                 f.parent = clazz
-                f.initializer = IrExpressionBodyImpl(
+                f.initializer = context.irFactory.createExpressionBody(
                     SYNTHETIC_OFFSET,
                     SYNTHETIC_OFFSET,
                     literalValue
@@ -537,7 +536,7 @@ open class LiveLiteralTransformer(
                             }.also { f ->
                                 f.correspondingPropertySymbol = p.symbol
                                 f.parent = it
-                                f.initializer = IrExpressionBodyImpl(
+                                f.initializer = context.irFactory.createExpressionBody(
                                     SYNTHETIC_OFFSET,
                                     SYNTHETIC_OFFSET,
                                     irConst(false)

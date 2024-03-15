@@ -52,28 +52,8 @@ import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
-import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrBreakContinue
@@ -96,7 +76,6 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
@@ -874,37 +853,38 @@ class ComposableFunctionBodyTransformer(
             scope.realizeCoalescableGroup()
         }
 
-        declaration.body = IrBlockBodyImpl(
-            body.startOffset,
-            body.endOffset,
-            listOfNotNull(
-                when {
-                    outerGroupRequired ->
-                        irStartReplaceGroup(
-                            body,
-                            scope,
-                            irFunctionSourceKey()
-                        )
-                    collectSourceInformation && !hasExplicitGroups ->
-                        irSourceInformationMarkerStart(
-                            body,
-                            scope,
-                            irFunctionSourceKey()
-                        )
-                    else -> null
-                },
-                *scope.markerPreamble.statements.toTypedArray(),
-                *bodyPreamble.statements.toTypedArray(),
-                *transformed.statements.toTypedArray(),
-                when {
-                    outerGroupRequired -> irEndReplaceGroup(scope = scope)
-                    collectSourceInformation && !hasExplicitGroups ->
-                        irSourceInformationMarkerEnd(body, scope)
-                    else -> null
-                },
-                returnVar?.let { irReturnVar(declaration.symbol, it) }
+        declaration.body = context.irFactory.createBlockBody(body.startOffset, body.endOffset).apply {
+            this.statements.addAll(
+                listOfNotNull(
+                    when {
+                        outerGroupRequired ->
+                            irStartReplaceGroup(
+                                body,
+                                scope,
+                                irFunctionSourceKey()
+                            )
+                        collectSourceInformation && !hasExplicitGroups ->
+                            irSourceInformationMarkerStart(
+                                body,
+                                scope,
+                                irFunctionSourceKey()
+                            )
+                        else -> null
+                    },
+                    *scope.markerPreamble.statements.toTypedArray(),
+                    *bodyPreamble.statements.toTypedArray(),
+                    *transformed.statements.toTypedArray(),
+                    when {
+                        outerGroupRequired -> irEndReplaceGroup(scope = scope)
+                        collectSourceInformation && !hasExplicitGroups ->
+                            irSourceInformationMarkerEnd(body, scope)
+                        else -> null
+                    },
+                    returnVar?.let { irReturnVar(declaration.symbol, it) }
+                )
             )
-        )
+        }
+
         if (!outerGroupRequired && !hasExplicitGroups) {
             scope.realizeEndCalls {
                 irComposite(
@@ -1061,33 +1041,33 @@ class ComposableFunctionBodyTransformer(
                 endOffset = body.endOffset
             )
             scope.realizeCoalescableGroup()
-            declaration.body = IrBlockBodyImpl(
-                body.startOffset,
-                body.endOffset,
-                listOfNotNull(
-                    *sourceInformationPreamble.statements.toTypedArray(),
-                    *scope.markerPreamble.statements.toTypedArray(),
-                    *skipPreamble.statements.toTypedArray(),
-                    *bodyPreamble.statements.toTypedArray(),
-                    transformedBody,
-                    returnVar?.let { irReturnVar(declaration.symbol, it) }
+            declaration.body = context.irFactory.createBlockBody(body.startOffset, body.endOffset).apply {
+                this.statements.addAll(
+                    listOfNotNull(
+                        *sourceInformationPreamble.statements.toTypedArray(),
+                        *scope.markerPreamble.statements.toTypedArray(),
+                        *skipPreamble.statements.toTypedArray(),
+                        *bodyPreamble.statements.toTypedArray(),
+                        transformedBody,
+                        returnVar?.let { irReturnVar(declaration.symbol, it) }
+                    )
                 )
-            )
+            }
         } else {
             scope.realizeCoalescableGroup()
-            declaration.body = IrBlockBodyImpl(
-                body.startOffset,
-                body.endOffset,
-                listOfNotNull(
-                    *scope.markerPreamble.statements.toTypedArray(),
-                    *sourceInformationPreamble.statements.toTypedArray(),
-                    *skipPreamble.statements.toTypedArray(),
-                    *bodyPreamble.statements.toTypedArray(),
-                    transformed,
-                    *bodyEpilogue.statements.toTypedArray(),
-                    returnVar?.let { irReturnVar(declaration.symbol, it) }
+            declaration.body = context.irFactory.createBlockBody(body.startOffset, body.endOffset).apply {
+                this.statements.addAll(
+                    listOfNotNull(
+                        *scope.markerPreamble.statements.toTypedArray(),
+                        *sourceInformationPreamble.statements.toTypedArray(),
+                        *skipPreamble.statements.toTypedArray(),
+                        *bodyPreamble.statements.toTypedArray(),
+                        transformed,
+                        *bodyEpilogue.statements.toTypedArray(),
+                        returnVar?.let { irReturnVar(declaration.symbol, it) }
+                    )
                 )
-            )
+            }
         }
         scope.metrics.recordFunction(
             composable = true,
@@ -1259,22 +1239,22 @@ class ComposableFunctionBodyTransformer(
 
         scope.realizeGroup(endWithTraceEventEnd)
 
-        declaration.body = IrBlockBodyImpl(
-            body.startOffset,
-            body.endOffset,
-            listOfNotNull(
-                irStartRestartGroup(
-                    body,
-                    scope,
-                    irFunctionSourceKey()
-                ),
-                *scope.markerPreamble.statements.toTypedArray(),
-                *skipPreamble.statements.toTypedArray(),
-                transformedBody,
-                if (returnVar == null) end() else null,
-                returnVar?.let { irReturnVar(declaration.symbol, it) }
+        declaration.body = context.irFactory.createBlockBody(body.startOffset, body.endOffset).apply {
+            this.statements.addAll(
+                listOfNotNull(
+                    irStartRestartGroup(
+                        body,
+                        scope,
+                        irFunctionSourceKey()
+                    ),
+                    *scope.markerPreamble.statements.toTypedArray(),
+                    *skipPreamble.statements.toTypedArray(),
+                    transformedBody,
+                    if (returnVar == null) end() else null,
+                    returnVar?.let { irReturnVar(declaration.symbol, it) }
+                )
             )
-        )
+        }
         scope.metrics.recordFunction(
             composable = true,
             restartable = true,
