@@ -43,7 +43,19 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
     }
 
     private fun getKindSpecificClangFlags(binaryLibrary: TestCompilationArtifact.BinaryLibrary): List<String> = when (libraryKind) {
-        BinaryLibraryKind.STATIC -> testRunSettings.configurables.linkerKonanFlags.flatMap { listOf("-Xlinker", it) }
+        BinaryLibraryKind.STATIC -> {
+            val flags = testRunSettings.configurables.linkerKonanFlags
+            flags.filterIndexed { index, value ->
+                // Filter out linker option that defines __cxa_demangle because Konan_cxa_demangle is not defined in tests.
+                if (value == "__cxa_demangle=Konan_cxa_demangle" && flags[index - 1] == "--defsym") {
+                    false
+                } else if (value == "--defsym" && flags[index + 1] == "__cxa_demangle=Konan_cxa_demangle") {
+                    false
+                } else {
+                    true
+                }
+            }.flatMap { listOf("-Xlinker", it) }
+        }
         BinaryLibraryKind.DYNAMIC -> {
             if (testRunSettings.get<KotlinNativeTargets>().testTarget.family != Family.MINGW) {
                 listOf("-rpath", binaryLibrary.libraryFile.parentFile.absolutePath)
