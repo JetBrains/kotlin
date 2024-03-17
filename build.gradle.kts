@@ -1,8 +1,7 @@
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 buildscript {
@@ -698,6 +697,15 @@ tasks.register("createIdeaHomeForTests") {
 }
 
 tasks {
+    register("compileAll") {
+        allprojects
+            .filter { !it.path.startsWith(":native") || kotlinBuildProperties.isKotlinNativeEnabled }
+            .forEach {
+                dependsOn(it.tasks.withType<KotlinCompilationTask<*>>())
+                dependsOn(it.tasks.withType<JavaCompile>())
+            }
+    }
+
     named<Delete>("clean") {
         delete(distDir)
         delete(layout.buildDirectory.dir("repo"))
