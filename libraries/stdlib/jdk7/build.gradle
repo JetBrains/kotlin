@@ -44,9 +44,10 @@ artifacts {
 }
 
 compileKotlin {
-    kotlinJavaToolchain.toolchain.use(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_1_7))
+    kotlinJavaToolchain.toolchain.use(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_11_0))
     kotlinOptions.jvmTarget = "1.8"
     kotlinOptions.moduleName = project.name
+    kotlinOptions.freeCompilerArgs = [ "-Xjdk-release=7" ]
 }
 
 compileTestKotlin {

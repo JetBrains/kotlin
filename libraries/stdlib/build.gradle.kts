@@ -113,13 +113,14 @@ kotlin {
             val main by getting {
                 compileTaskProvider.configure {
                     this as UsesKotlinJavaToolchain
-                    kotlinJavaToolchain.toolchain.use(getToolchainLauncherFor(JdkMajorVersion.JDK_1_6))
+                    kotlinJavaToolchain.toolchain.use(getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
                     compilerOptions {
                         moduleName = "kotlin-stdlib"
                         jvmTarget = JvmTarget.JVM_1_8
                         // providing exhaustive list of args here
                         freeCompilerArgs.set(
                             listOfNotNull(
+                                "-Xjdk-release=6",
                                 "-Xallow-kotlin-package",
                                 "-Xexpect-actual-classes",
                                 "-Xmultifile-parts-inherit",
@@ -142,12 +143,13 @@ kotlin {
                 associateWith(main)
                 compileTaskProvider.configure {
                     this as UsesKotlinJavaToolchain
-                    kotlinJavaToolchain.toolchain.use(getToolchainLauncherFor(JdkMajorVersion.JDK_1_7))
+                    kotlinJavaToolchain.toolchain.use(getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
                     compilerOptions {
                         moduleName = "kotlin-stdlib-jdk7"
                         jvmTarget = JvmTarget.JVM_1_8
                         freeCompilerArgs.set(
                             listOfNotNull(
+                                "-Xjdk-release=7",
                                 "-Xallow-kotlin-package",
                                 "-Xexpect-actual-classes",
                                 "-Xmultifile-parts-inherit",
