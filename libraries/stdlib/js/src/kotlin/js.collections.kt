@@ -14,6 +14,15 @@ package kotlin.js.collections
 @ExperimentalJsCollectionsApi
 public external interface JsReadonlyArray<out E>
 
+
+@SinceKotlin("2.0")
+@ExperimentalJsCollectionsApi
+public inline fun <E> JsReadonlyArray<E>.toList(): List<E> = createListFrom(this)
+
+@SinceKotlin("2.0")
+@ExperimentalJsCollectionsApi
+public inline fun <E> JsReadonlyArray<E>.toMutableList(): MutableList<E> = createMutableListFrom(this)
+
 /**
  * Exposes the JavaScript [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) to Kotlin.
  */
@@ -30,6 +39,14 @@ public external open class JsArray<E> : JsReadonlyArray<E>
 @ExperimentalJsCollectionsApi
 public external interface JsReadonlySet<out E>
 
+@SinceKotlin("2.0")
+@ExperimentalJsCollectionsApi
+public inline fun <E> JsReadonlySet<E>.toSet(): Set<E> = createSetFrom(this)
+
+@SinceKotlin("2.0")
+@ExperimentalJsCollectionsApi
+public inline fun <E> JsReadonlySet<E>.toMutableSet(): MutableSet<E> = createMutableSetFrom(this)
+
 /**
  * Exposes the JavaScript [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) to Kotlin.
  */
@@ -45,6 +62,14 @@ public external open class JsSet<E> : JsReadonlySet<E>
 @SinceKotlin("2.0")
 @ExperimentalJsCollectionsApi
 public external interface JsReadonlyMap<K, out V>
+
+@SinceKotlin("2.0")
+@ExperimentalJsCollectionsApi
+public inline fun <K, V> JsReadonlyMap<K, V>.toMap(): Map<K, V> = createMapFrom(this)
+
+@SinceKotlin("2.0")
+@ExperimentalJsCollectionsApi
+public inline fun <K, V> JsReadonlyMap<K, V>.toMutableMap(): MutableMap<K, V> = createMutableMapFrom(this)
 
 /**
  * Exposes the JavaScript [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) to Kotlin.

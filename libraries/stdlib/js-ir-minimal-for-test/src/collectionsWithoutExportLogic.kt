@@ -107,3 +107,10 @@ public interface MutableMap<K, V> : Map<K, V> {
         public fun setValue(newValue: V): V
     }
 }
+
+public fun <E> createListFrom(array: dynamic): List<E> = TODO("Use WITH_STDLIB pragma to use this function")
+public fun <E> createMutableListFrom(array: dynamic): MutableList<E> = TODO("Use WITH_STDLIB pragma to use this function")
+public fun <E> createSetFrom(set: dynamic): Set<E> = TODO("Use WITH_STDLIB pragma to use this function")
+public fun <E> createMutableSetFrom(set: dynamic): MutableSet<E> = TODO("Use WITH_STDLIB pragma to use this function")
+public fun <K, V> createMapFrom(map: dynamic): Map<K, V> = TODO("Use WITH_STDLIB pragma to use this function")
+public fun <K, V> createMutableMapFrom(map: dynamic): MutableMap<K, V> = TODO("Use WITH_STDLIB pragma to use this function")

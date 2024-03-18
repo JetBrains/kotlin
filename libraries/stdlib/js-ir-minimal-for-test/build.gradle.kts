@@ -95,6 +95,7 @@ val jsMainSources by task<Sync> {
             "org.w3c/**",
             "kotlin/char.kt",
             "kotlin/collectionJs.kt",
+            "kotlin/js.collections.kt",
             "kotlin/collections/**",
             "kotlin/time/**",
             "kotlin/console.kt",
