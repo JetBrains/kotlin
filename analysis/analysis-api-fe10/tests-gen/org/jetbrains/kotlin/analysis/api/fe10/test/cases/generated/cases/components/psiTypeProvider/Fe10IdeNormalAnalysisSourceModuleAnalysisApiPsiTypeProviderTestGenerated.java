@@ -76,6 +76,96 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiPsiTypeProviderTestGene
   }
 
   @Test
+  @TestMetadata("javaBoxed.kt")
+  public void testJavaBoxed() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/javaBoxed.kt");
+  }
+
+  @Test
+  @TestMetadata("javaBoxedArray.kt")
+  public void testJavaBoxedArray() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/javaBoxedArray.kt");
+  }
+
+  @Test
+  @TestMetadata("javaBoxedArrayWithTypeAnnotation.kt")
+  public void testJavaBoxedArrayWithTypeAnnotation() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/javaBoxedArrayWithTypeAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("javaBoxedWithDeclarationAnnotation.kt")
+  public void testJavaBoxedWithDeclarationAnnotation() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/javaBoxedWithDeclarationAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("javaBoxedWithTypeAnnotation.kt")
+  public void testJavaBoxedWithTypeAnnotation() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/javaBoxedWithTypeAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("javaList.kt")
+  public void testJavaList() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/javaList.kt");
+  }
+
+  @Test
+  @TestMetadata("javaListWithExtendsWildcard.kt")
+  public void testJavaListWithExtendsWildcard() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/javaListWithExtendsWildcard.kt");
+  }
+
+  @Test
+  @TestMetadata("javaListWithSuperWildcard.kt")
+  public void testJavaListWithSuperWildcard() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/javaListWithSuperWildcard.kt");
+  }
+
+  @Test
+  @TestMetadata("javaNestedList.kt")
+  public void testJavaNestedList() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/javaNestedList.kt");
+  }
+
+  @Test
+  @TestMetadata("javaNestedListWithTypeAnnotation.kt")
+  public void testJavaNestedListWithTypeAnnotation() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/javaNestedListWithTypeAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("javaNotNullList.kt")
+  public void testJavaNotNullList() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/javaNotNullList.kt");
+  }
+
+  @Test
+  @TestMetadata("javaNotNullString.kt")
+  public void testJavaNotNullString() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/javaNotNullString.kt");
+  }
+
+  @Test
+  @TestMetadata("javaPrimitive.kt")
+  public void testJavaPrimitive() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/javaPrimitive.kt");
+  }
+
+  @Test
+  @TestMetadata("javaPrimitiveArray.kt")
+  public void testJavaPrimitiveArray() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/javaPrimitiveArray.kt");
+  }
+
+  @Test
+  @TestMetadata("javaRawList.kt")
+  public void testJavaRawList() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/javaRawList.kt");
+  }
+
+  @Test
   @TestMetadata("localClass_exposedAsMemberInAnonymousObject.kt")
   public void testLocalClass_exposedAsMemberInAnonymousObject() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_exposedAsMemberInAnonymousObject.kt");
