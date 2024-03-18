@@ -99,6 +99,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFact
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.isGraalVm
 import java.io.File
 import java.nio.file.FileSystems
 import java.util.zip.ZipFile
@@ -698,6 +699,8 @@ class KotlinCoreEnvironment private constructor(
 
             val pluginRoot: File =
                 configuration.get(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT)?.let(::File)
+                    // Load from current working directory. FIXME: KT-66666 embed compiler.xml to native image
+                    ?: (if (isGraalVm) File("").absoluteFile else null)
                     ?: PathUtil.getResourcePathForClass(this::class.java).takeIf { it.hasConfigFile(configFilePath) }
                     // hack for load extensions when compiler run directly from project directory (e.g. in tests)
                     ?: File("compiler/cli/cli-common/resources").takeIf { it.hasConfigFile(configFilePath) }
