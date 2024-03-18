@@ -1,0 +1,99 @@
+{
+    "resources": {
+        "includes": [
+            {
+                "pattern": "\\QMETA-INF/allow-configuring-from-environment\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/compiler.version\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/maven/org.jline/jline-native/pom.properties\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/services/java.lang.System$LoggerFinder\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/services/java.nio.charset.spi.CharsetProvider\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/services/java.nio.file.spi.FileSystemProvider\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/services/java.time.zone.ZoneRulesProvider\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/services/org.jetbrains.kotlin.builtins.BuiltInsLoader\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/services/org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/services/org.jetbrains.kotlin.util.ModuleVisibilityHelper\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/services/org/jline/terminal/provider/exec\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/services/org/jline/terminal/provider/ffm\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/services/org/jline/terminal/provider/jansi\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/services/org/jline/terminal/provider/jna\\E"
+            },
+            {
+                "pattern": "\\QMETA-INF/services/org/jline/terminal/provider/jni\\E"
+            },
+            {
+                "pattern": "\\Qcom/sun/jna/darwin-aarch64/libjnidispatch.jnilib\\E"
+            },
+            {
+                "pattern": "\\Qkotlin/annotation/annotation.kotlin_builtins\\E"
+            },
+            {
+                "pattern": "\\Qkotlin/collections/collections.kotlin_builtins\\E"
+            },
+            {
+                "pattern": "\\Qkotlin/coroutines/coroutines.kotlin_builtins\\E"
+            },
+            {
+                "pattern": "\\Qkotlin/internal/internal.kotlin_builtins\\E"
+            },
+            {
+                "pattern": "\\Qkotlin/kotlin.kotlin_builtins\\E"
+            },
+            {
+                "pattern": "\\Qkotlin/ranges/ranges.kotlin_builtins\\E"
+            },
+            {
+                "pattern": "\\Qkotlin/reflect/reflect.kotlin_builtins\\E"
+            },
+            {
+                "pattern": "\\Qorg/fusesource/jansi/internal/native/Mac/arm64/libjansi.jnilib\\E"
+            },
+            {
+                "pattern": "\\Qorg/fusesource/jansi/jansi.properties\\E"
+            },
+            {
+                "pattern": "\\Qorg/jetbrains/kotlin/cli/jvm/compiler/KotlinCoreEnvironment$Companion.class\\E"
+            },
+            {
+                "pattern": "\\Qorg/jetbrains/kotlin/utils/PathUtil.class\\E"
+            },
+            {
+                "pattern": "\\Qorg/jline/nativ/Mac/arm64/libjlinenative.jnilib\\E"
+            },
+            {
+                "pattern": "\\Qorg/jline/utils/capabilities.txt\\E"
+            },
+            {
+                "pattern": "\\Qorg/jline/utils/dumb.caps\\E"
+            }
+        ]
+    },
+    "bundles": [
+        
+    ]
+}

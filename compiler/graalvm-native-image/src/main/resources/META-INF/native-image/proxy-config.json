@@ -1,0 +1,22 @@
+[
+    {
+        "interfaces": [
+            "com.intellij.openapi.command.CommandListener"
+        ]
+    },
+    {
+        "interfaces": [
+            "com.intellij.openapi.vfs.VirtualFileListener"
+        ]
+    },
+    {
+        "interfaces": [
+            "com.intellij.psi.util.PsiModificationTracker$Listener"
+        ]
+    },
+    {
+        "interfaces": [
+            "org.jline.terminal.impl.jna.osx.CLibrary"
+        ]
+    }
+]

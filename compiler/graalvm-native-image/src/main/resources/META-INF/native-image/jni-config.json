@@ -1,0 +1,704 @@
+[
+    {
+        "name": "com.sun.jna.Callback"
+    },
+    {
+        "name": "com.sun.jna.CallbackReference",
+        "methods": [
+            {
+                "name": "getCallback",
+                "parameterTypes": [
+                    "java.lang.Class",
+                    "com.sun.jna.Pointer",
+                    "boolean"
+                ]
+            },
+            {
+                "name": "getFunctionPointer",
+                "parameterTypes": [
+                    "com.sun.jna.Callback",
+                    "boolean"
+                ]
+            },
+            {
+                "name": "getNativeString",
+                "parameterTypes": [
+                    "java.lang.Object",
+                    "boolean"
+                ]
+            },
+            {
+                "name": "initializeThread",
+                "parameterTypes": [
+                    "com.sun.jna.Callback",
+                    "com.sun.jna.CallbackReference$AttachOptions"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "com.sun.jna.CallbackReference$AttachOptions"
+    },
+    {
+        "name": "com.sun.jna.FromNativeConverter",
+        "methods": [
+            {
+                "name": "nativeType",
+                "parameterTypes": [
+                    
+                ]
+            }
+        ]
+    },
+    {
+        "name": "com.sun.jna.IntegerType",
+        "fields": [
+            {
+                "name": "value"
+            }
+        ]
+    },
+    {
+        "name": "com.sun.jna.JNIEnv"
+    },
+    {
+        "name": "com.sun.jna.Native",
+        "methods": [
+            {
+                "name": "dispose",
+                "parameterTypes": [
+                    
+                ]
+            },
+            {
+                "name": "fromNative",
+                "parameterTypes": [
+                    "com.sun.jna.FromNativeConverter",
+                    "java.lang.Object",
+                    "java.lang.reflect.Method"
+                ]
+            },
+            {
+                "name": "fromNative",
+                "parameterTypes": [
+                    "java.lang.Class",
+                    "java.lang.Object"
+                ]
+            },
+            {
+                "name": "fromNative",
+                "parameterTypes": [
+                    "java.lang.reflect.Method",
+                    "java.lang.Object"
+                ]
+            },
+            {
+                "name": "nativeType",
+                "parameterTypes": [
+                    "java.lang.Class"
+                ]
+            },
+            {
+                "name": "toNative",
+                "parameterTypes": [
+                    "com.sun.jna.ToNativeConverter",
+                    "java.lang.Object"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "com.sun.jna.Native$ffi_callback",
+        "methods": [
+            {
+                "name": "invoke",
+                "parameterTypes": [
+                    "long",
+                    "long",
+                    "long"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "com.sun.jna.NativeMapped",
+        "methods": [
+            {
+                "name": "toNative",
+                "parameterTypes": [
+                    
+                ]
+            }
+        ]
+    },
+    {
+        "name": "com.sun.jna.Pointer",
+        "fields": [
+            {
+                "name": "peer"
+            }
+        ],
+        "methods": [
+            {
+                "name": "<init>",
+                "parameterTypes": [
+                    "long"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "com.sun.jna.PointerType",
+        "fields": [
+            {
+                "name": "pointer"
+            }
+        ]
+    },
+    {
+        "name": "com.sun.jna.Structure",
+        "fields": [
+            {
+                "name": "memory"
+            },
+            {
+                "name": "typeInfo"
+            }
+        ],
+        "methods": [
+            {
+                "name": "autoRead",
+                "parameterTypes": [
+                    
+                ]
+            },
+            {
+                "name": "autoWrite",
+                "parameterTypes": [
+                    
+                ]
+            },
+            {
+                "name": "getTypeInfo",
+                "parameterTypes": [
+                    
+                ]
+            },
+            {
+                "name": "newInstance",
+                "parameterTypes": [
+                    "java.lang.Class",
+                    "long"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "com.sun.jna.Structure$ByValue"
+    },
+    {
+        "name": "com.sun.jna.Structure$FFIType$FFITypes",
+        "fields": [
+            {
+                "name": "ffi_type_double"
+            },
+            {
+                "name": "ffi_type_float"
+            },
+            {
+                "name": "ffi_type_longdouble"
+            },
+            {
+                "name": "ffi_type_pointer"
+            },
+            {
+                "name": "ffi_type_sint16"
+            },
+            {
+                "name": "ffi_type_sint32"
+            },
+            {
+                "name": "ffi_type_sint64"
+            },
+            {
+                "name": "ffi_type_sint8"
+            },
+            {
+                "name": "ffi_type_uint16"
+            },
+            {
+                "name": "ffi_type_uint32"
+            },
+            {
+                "name": "ffi_type_uint64"
+            },
+            {
+                "name": "ffi_type_uint8"
+            },
+            {
+                "name": "ffi_type_void"
+            }
+        ]
+    },
+    {
+        "name": "com.sun.jna.WString",
+        "methods": [
+            {
+                "name": "<init>",
+                "parameterTypes": [
+                    "java.lang.String"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.lang.Boolean",
+        "fields": [
+            {
+                "name": "TYPE"
+            },
+            {
+                "name": "value"
+            }
+        ],
+        "methods": [
+            {
+                "name": "<init>",
+                "parameterTypes": [
+                    "boolean"
+                ]
+            },
+            {
+                "name": "getBoolean",
+                "parameterTypes": [
+                    "java.lang.String"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.lang.Byte",
+        "fields": [
+            {
+                "name": "TYPE"
+            },
+            {
+                "name": "value"
+            }
+        ],
+        "methods": [
+            {
+                "name": "<init>",
+                "parameterTypes": [
+                    "byte"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.lang.Character",
+        "fields": [
+            {
+                "name": "TYPE"
+            },
+            {
+                "name": "value"
+            }
+        ],
+        "methods": [
+            {
+                "name": "<init>",
+                "parameterTypes": [
+                    "char"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.lang.Class",
+        "methods": [
+            {
+                "name": "getComponentType",
+                "parameterTypes": [
+                    
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.lang.Double",
+        "fields": [
+            {
+                "name": "TYPE"
+            },
+            {
+                "name": "value"
+            }
+        ],
+        "methods": [
+            {
+                "name": "<init>",
+                "parameterTypes": [
+                    "double"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.lang.Float",
+        "fields": [
+            {
+                "name": "TYPE"
+            },
+            {
+                "name": "value"
+            }
+        ],
+        "methods": [
+            {
+                "name": "<init>",
+                "parameterTypes": [
+                    "float"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.lang.Integer",
+        "fields": [
+            {
+                "name": "TYPE"
+            },
+            {
+                "name": "value"
+            }
+        ],
+        "methods": [
+            {
+                "name": "<init>",
+                "parameterTypes": [
+                    "int"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.lang.Long",
+        "fields": [
+            {
+                "name": "TYPE"
+            },
+            {
+                "name": "value"
+            }
+        ],
+        "methods": [
+            {
+                "name": "<init>",
+                "parameterTypes": [
+                    "long"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.lang.Object",
+        "methods": [
+            {
+                "name": "toString",
+                "parameterTypes": [
+                    
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.lang.Short",
+        "fields": [
+            {
+                "name": "TYPE"
+            },
+            {
+                "name": "value"
+            }
+        ],
+        "methods": [
+            {
+                "name": "<init>",
+                "parameterTypes": [
+                    "short"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.lang.String",
+        "methods": [
+            {
+                "name": "<init>",
+                "parameterTypes": [
+                    "byte[]"
+                ]
+            },
+            {
+                "name": "<init>",
+                "parameterTypes": [
+                    "byte[]",
+                    "java.lang.String"
+                ]
+            },
+            {
+                "name": "getBytes",
+                "parameterTypes": [
+                    
+                ]
+            },
+            {
+                "name": "getBytes",
+                "parameterTypes": [
+                    "java.lang.String"
+                ]
+            },
+            {
+                "name": "lastIndexOf",
+                "parameterTypes": [
+                    "int"
+                ]
+            },
+            {
+                "name": "substring",
+                "parameterTypes": [
+                    "int"
+                ]
+            },
+            {
+                "name": "toCharArray",
+                "parameterTypes": [
+                    
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.lang.System",
+        "methods": [
+            {
+                "name": "getProperty",
+                "parameterTypes": [
+                    "java.lang.String"
+                ]
+            },
+            {
+                "name": "setProperty",
+                "parameterTypes": [
+                    "java.lang.String",
+                    "java.lang.String"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.lang.Void",
+        "fields": [
+            {
+                "name": "TYPE"
+            }
+        ]
+    },
+    {
+        "name": "java.lang.reflect.Method",
+        "methods": [
+            {
+                "name": "getParameterTypes",
+                "parameterTypes": [
+                    
+                ]
+            },
+            {
+                "name": "getReturnType",
+                "parameterTypes": [
+                    
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.nio.Buffer",
+        "methods": [
+            {
+                "name": "position",
+                "parameterTypes": [
+                    
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.nio.ByteBuffer",
+        "methods": [
+            {
+                "name": "array",
+                "parameterTypes": [
+                    
+                ]
+            },
+            {
+                "name": "arrayOffset",
+                "parameterTypes": [
+                    
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.nio.CharBuffer",
+        "methods": [
+            {
+                "name": "array",
+                "parameterTypes": [
+                    
+                ]
+            },
+            {
+                "name": "arrayOffset",
+                "parameterTypes": [
+                    
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.nio.DoubleBuffer",
+        "methods": [
+            {
+                "name": "array",
+                "parameterTypes": [
+                    
+                ]
+            },
+            {
+                "name": "arrayOffset",
+                "parameterTypes": [
+                    
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.nio.FloatBuffer",
+        "methods": [
+            {
+                "name": "array",
+                "parameterTypes": [
+                    
+                ]
+            },
+            {
+                "name": "arrayOffset",
+                "parameterTypes": [
+                    
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.nio.IntBuffer",
+        "methods": [
+            {
+                "name": "array",
+                "parameterTypes": [
+                    
+                ]
+            },
+            {
+                "name": "arrayOffset",
+                "parameterTypes": [
+                    
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.nio.LongBuffer",
+        "methods": [
+            {
+                "name": "array",
+                "parameterTypes": [
+                    
+                ]
+            },
+            {
+                "name": "arrayOffset",
+                "parameterTypes": [
+                    
+                ]
+            }
+        ]
+    },
+    {
+        "name": "java.nio.ShortBuffer",
+        "methods": [
+            {
+                "name": "array",
+                "parameterTypes": [
+                    
+                ]
+            },
+            {
+                "name": "arrayOffset",
+                "parameterTypes": [
+                    
+                ]
+            }
+        ]
+    },
+    {
+        "name": "org.fusesource.jansi.internal.CLibrary",
+        "fields": [
+            {
+                "name": "HAVE_ISATTY"
+            },
+            {
+                "name": "HAVE_TTYNAME"
+            },
+            {
+                "name": "TCSADRAIN"
+            },
+            {
+                "name": "TCSAFLUSH"
+            },
+            {
+                "name": "TCSANOW"
+            },
+            {
+                "name": "TIOCGETA"
+            },
+            {
+                "name": "TIOCGETD"
+            },
+            {
+                "name": "TIOCGWINSZ"
+            },
+            {
+                "name": "TIOCSETA"
+            },
+            {
+                "name": "TIOCSETD"
+            },
+            {
+                "name": "TIOCSWINSZ"
+            }
+        ]
+    },
+    {
+        "name": "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler",
+        "methods": [
+            {
+                "name": "main",
+                "parameterTypes": [
+                    "java.lang.String[]"
+                ]
+            }
+        ]
+    }
+]
