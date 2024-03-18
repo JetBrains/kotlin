@@ -24,6 +24,7 @@ private val allowedFakeElementKinds = setOf(
     KtFakeSourceElementKind.EnumGeneratedDeclaration,
     KtFakeSourceElementKind.DataClassGeneratedMembers,
     KtFakeSourceElementKind.ImplicitConstructor,
+    KtFakeSourceElementKind.ImplicitJavaAnnotationConstructor,
 )
 
 internal fun FirElement.getAllowedPsi() = when (val source = source) {
