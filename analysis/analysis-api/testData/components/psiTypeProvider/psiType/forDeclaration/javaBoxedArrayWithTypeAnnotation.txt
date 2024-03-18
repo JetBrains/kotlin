@@ -1,0 +1,2 @@
+KtType: @MyAnno(value = "array annotation") kotlin.Array<@MyAnno(value = "array value annotation") kotlin.Int!>!
+PsiType: @MyAnno(value = "array annotation") java.lang.Integer[]
