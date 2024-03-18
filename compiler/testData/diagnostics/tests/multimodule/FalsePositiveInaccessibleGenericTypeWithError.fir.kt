@@ -1,4 +1,4 @@
-// LANGUAGE: -ForbidUsingExpressionTypesWithInaccessibleContent
+// LANGUAGE: +ForbidUsingExpressionTypesWithInaccessibleContent
 // ISSUE: KT-66690
 // MODULE: base
 // FILE: base.kt
@@ -20,5 +20,5 @@ fun register(owner: Owner<*>) {}
 // FILE: user.kt
 
 fun test(some: Some<String>) {
-    register(some.g)
+    register(some.<!MISSING_DEPENDENCY_CLASS!>g<!>)
 }

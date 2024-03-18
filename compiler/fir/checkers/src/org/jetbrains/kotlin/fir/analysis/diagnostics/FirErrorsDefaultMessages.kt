@@ -391,6 +391,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.METHOD_OF_ANY_IMP
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISPLACED_TYPE_PARAMETER_CONSTRAINTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_CONSTRUCTOR_KEYWORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_SUPERCLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_STDLIB_CLASS
@@ -796,6 +797,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             MISSING_DEPENDENCY_CLASS,
             "Cannot access class ''{0}''. Check your module classpath for missing or conflicting dependencies.",
+            RENDER_TYPE,
+        )
+        map.put(
+            MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE,
+            "Cannot access class ''{0}'' in the expression type. While it may work, this case is dangerous and may be forbidden soon. Consider adding a necessary dependency to your module classpath.",
             RENDER_TYPE,
         )
         map.put(

@@ -1,3 +1,5 @@
+// LANGUAGE: -ForbidUsingExpressionTypesWithInaccessibleContent
+// ISSUE: KT-66690
 // MODULE: base
 // FILE: base.kt
 
@@ -18,5 +20,5 @@ fun register(owner: Owner<*>) {}
 // FILE: user.kt
 
 fun test(some: Some<String>) {
-    register(some.<!MISSING_DEPENDENCY_CLASS!>g<!>)
+    register(some.<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>g<!>)
 }

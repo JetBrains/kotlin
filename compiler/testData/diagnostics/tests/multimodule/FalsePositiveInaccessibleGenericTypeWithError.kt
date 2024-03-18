@@ -1,4 +1,4 @@
-// LANGUAGE: -ForbidUsingExpressionTypesWithInaccessibleContent
+// LANGUAGE: +ForbidUsingExpressionTypesWithInaccessibleContent
 // ISSUE: KT-66690
 // MODULE: base
 // FILE: base.kt

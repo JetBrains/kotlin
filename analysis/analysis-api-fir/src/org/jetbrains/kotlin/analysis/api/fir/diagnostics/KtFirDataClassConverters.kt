@@ -424,6 +424,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE) { firDiagnostic ->
+        MissingDependencyClassInExpressionTypeImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.MISSING_DEPENDENCY_SUPERCLASS) { firDiagnostic ->
         MissingDependencySuperclassImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),

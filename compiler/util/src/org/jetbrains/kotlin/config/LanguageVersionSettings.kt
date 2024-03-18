@@ -317,7 +317,7 @@ enum class LanguageFeature(
     PrioritizedEnumEntries(KOTLIN_2_1, kind = UNSTABLE_FEATURE), // KT-58920
     ProhibitInlineModifierOnPrimaryConstructorParameters(KOTLIN_2_1, kind = BUG_FIX), // KT-59664
     ProhibitSingleNamedFunctionAsExpression(KOTLIN_2_1, kind = BUG_FIX), // KT-62573
-    ForbidLambdaParameterWithMissingDependencyType(KOTLIN_2_1, kind = BUG_FIX), // KT-64266
+    ForbidLambdaParameterWithMissingDependencyType(KOTLIN_2_1, kind = BUG_FIX), // KT-64474
     JsAllowInvalidCharsIdentifiersEscaping(KOTLIN_2_1, kind = OTHER), // KT-31799
     SupportJavaErrorEnhancementOfArgumentsOfWarningLevelEnhanced(KOTLIN_2_1, kind = BUG_FIX), // KT-63209
     ProhibitPrivateOperatorCallInInline(KOTLIN_2_1, kind = BUG_FIX), // KT-65494
@@ -385,6 +385,7 @@ enum class LanguageFeature(
     ContextSensitiveEnumResolutionInWhen(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-52774
     ForbidSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = null, kind = OTHER), // KT-64358
     JavaTypeParameterDefaultRepresentationWithDNN(sinceVersion = null, kind = OTHER), // KT-59138
+    ForbidUsingExpressionTypesWithInaccessibleContent(sinceVersion = null, kind = BUG_FIX), // KT-66691
     ;
 
     init {
