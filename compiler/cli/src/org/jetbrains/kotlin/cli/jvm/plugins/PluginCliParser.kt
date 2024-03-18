@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.util.ServiceLoaderLite
+import org.jetbrains.kotlin.utils.isGraalVm
 import java.io.File
 import java.lang.ref.WeakReference
 import java.net.URLClassLoader
@@ -151,6 +152,7 @@ object PluginCliParser {
         configuration: CompilerConfiguration,
         parentDisposable: Disposable,
     ) {
+        if (isGraalVm) return // TODO KT-66665: loading legacy plugins are not supported in GraalVM Native image
         val classLoader = createClassLoader(pluginClasspaths ?: emptyList(), parentDisposable)
         val componentRegistrars = ServiceLoaderLite.loadImplementations(ComponentRegistrar::class.java, classLoader)
         configuration.addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, componentRegistrars)
