@@ -68,7 +68,7 @@ private fun parseType(typeName: String): SirType {
         "ulong" -> SirSwiftModule.uint64
 
         else -> error("Unknown type: $typeName")
-    }.let { SirNominalType(it) }
+    }.let { SirPredefinedNominalType(it) }
 }
 
 private fun readRequestFromFile(file: File): BridgeRequest {
