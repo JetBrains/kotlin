@@ -24463,6 +24463,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("FalsePositiveInaccessibleGenericType.kt")
+      public void testFalsePositiveInaccessibleGenericType() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/FalsePositiveInaccessibleGenericType.kt");
+      }
+
+      @Test
       @TestMetadata("friendModule.kt")
       public void testFriendModule() {
         runTest("compiler/testData/diagnostics/tests/multimodule/friendModule.kt");
