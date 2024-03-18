@@ -304,16 +304,16 @@ digraph destructuringDeclarationsScript_fir_kts {
 
     subgraph cluster_35 {
         color=red
-        95 [label="Enter function component1 [3]" style="filled" fillcolor=red];
+        95 [label="Enter function component1 [4]" style="filled" fillcolor=red];
         subgraph cluster_36 {
             color=blue
-            96 [label="Enter block [3]"];
-            97 [label="Const: Int(1) [3]"];
-            98 [label="Jump: ^component1 Int(1) [3]"];
-            99 [label="Stub [3]" style="filled" fillcolor=gray];
-            100 [label="Exit block [3]" style="filled" fillcolor=gray];
+            96 [label="Enter block [4]"];
+            97 [label="Const: Int(1) [4]"];
+            98 [label="Jump: ^component1 Int(1) [4]"];
+            99 [label="Stub [4]" style="filled" fillcolor=gray];
+            100 [label="Exit block [4]" style="filled" fillcolor=gray];
         }
-        101 [label="Exit function component1 [3]" style="filled" fillcolor=red];
+        101 [label="Exit function component1 [4]" style="filled" fillcolor=red];
     }
     95 -> {96};
     96 -> {97};
@@ -325,16 +325,16 @@ digraph destructuringDeclarationsScript_fir_kts {
 
     subgraph cluster_37 {
         color=red
-        102 [label="Enter function component2 [3]" style="filled" fillcolor=red];
+        102 [label="Enter function component2 [4]" style="filled" fillcolor=red];
         subgraph cluster_38 {
             color=blue
-            103 [label="Enter block [3]"];
-            104 [label="Const: String() [3]"];
-            105 [label="Jump: ^component2 String() [3]"];
-            106 [label="Stub [3]" style="filled" fillcolor=gray];
-            107 [label="Exit block [3]" style="filled" fillcolor=gray];
+            103 [label="Enter block [4]"];
+            104 [label="Const: String() [4]"];
+            105 [label="Jump: ^component2 String() [4]"];
+            106 [label="Stub [4]" style="filled" fillcolor=gray];
+            107 [label="Exit block [4]" style="filled" fillcolor=gray];
         }
-        108 [label="Exit function component2 [3]" style="filled" fillcolor=red];
+        108 [label="Exit function component2 [4]" style="filled" fillcolor=red];
     }
     102 -> {103};
     103 -> {104};
