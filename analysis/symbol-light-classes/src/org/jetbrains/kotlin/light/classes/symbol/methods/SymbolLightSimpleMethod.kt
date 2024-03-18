@@ -214,7 +214,7 @@ internal class SymbolLightSimpleMethod(
     private val KtType.isVoidType: Boolean
         get() {
             val expandedType = fullyExpandedType
-            return expandedType.isUnit && expandedType.nullabilityType != KtTypeNullability.NULLABLE
+            return expandedType.isUnit && expandedType.nullability != KtTypeNullability.NULLABLE
         }
 
     private val _returnedType: PsiType by lazyPub {

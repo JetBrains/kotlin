@@ -78,7 +78,7 @@ internal class SymbolLightParameterForReceiver private constructor(
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withReceiverSymbol { receiver ->
-                        receiver.type.let { if (it.isPrimitiveBacked) KtTypeNullability.UNKNOWN else it.nullabilityType }
+                        receiver.type.let { if (it.isPrimitiveBacked) KtTypeNullability.UNKNOWN else it.nullability }
                     }
                 },
             ),
