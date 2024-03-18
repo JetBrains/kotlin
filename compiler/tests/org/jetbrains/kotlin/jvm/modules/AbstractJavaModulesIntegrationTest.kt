@@ -387,4 +387,27 @@ abstract class AbstractJavaModulesIntegrationTest(
         val lib = module("lib", destination = File(tmpdir, name))
         module("main", additionalKotlinArguments = listOf("-classpath", lib.path))
     }
+
+    fun testNamedDoesNotReadAutomaticWithUnrelatedNamed() {
+        // This test should result in an error because 'main' does not depend on 'lib' or any other automatic module.
+        // But currently it's OK for compatibility, see KT-66622.
+        val lib = module("lib")
+        val unrelated = module("unrelated")
+        module("main", listOf(lib, unrelated))
+    }
+
+    fun testNamedDoesNotReadAutomaticWithTransitiveStdlib() {
+        // This test should result in an error because 'main' does not depend on 'lib' or any other automatic module.
+        // But currently it's OK for compatibility, see KT-66622.
+        val lib = module("lib")
+        module("main", listOf(lib))
+    }
+
+    fun testNamedReadsAutomaticWithUnrelatedAutomatic() {
+        // Similarly to how it works in javac, if we depend on one automatic module, we depend on all of them. So even though 'main' does
+        // not have explicit "requires lib", in fact it depends on 'lib' because it has "requires unrelated". So "OK" is expected.
+        val lib = module("lib")
+        val unrelated = module("unrelated")
+        module("main", listOf(lib, unrelated))
+    }
 }

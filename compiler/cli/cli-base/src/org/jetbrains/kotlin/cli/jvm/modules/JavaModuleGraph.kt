@@ -78,6 +78,9 @@ class JavaModuleGraph(finder: JavaModuleFinder) {
                     for ((dependencyModuleName, isTransitive) in module.moduleInfo.requires) {
                         if (dependencyModuleName == dependencyName) return true
                         if (isTransitive && dfs(dependencyModuleName)) return true
+
+                        // This is incorrect, but is left for compatibility, see KT-66622.
+                        if (isTransitive && dfs(dependencyName)) return true
                     }
                     return false
                 }
