@@ -15,6 +15,7 @@ import kotlinx.validation.api.resolve
 import kotlinx.validation.api.runner
 import kotlinx.validation.api.test
 import org.assertj.core.api.Assertions
+import org.junit.Ignore
 import org.junit.Test
 import kotlin.test.assertTrue
 

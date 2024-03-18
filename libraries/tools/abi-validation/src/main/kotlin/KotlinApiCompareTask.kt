@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 JetBrains s.r.o.
+ * Copyright 2016-2024 JetBrains s.r.o.
  * Use of this source code is governed by the Apache 2.0 License that can be found in the LICENSE.txt file.
  */
 
@@ -17,40 +17,12 @@ import org.gradle.api.tasks.*
 
 public open class KotlinApiCompareTask @Inject constructor(private val objects: ObjectFactory): DefaultTask() {
 
-    /*
-     * Nullability and optionality is a workaround for
-     * https://github.com/gradle/gradle/issues/2016
-     *
-     * Unfortunately, there is no way to skip validation apart from setting 'null'
-     */
-    @Optional
-    @InputDirectory
+    @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
-    public var projectApiDir: File? = null
+    public lateinit var projectApiFile: File
 
-    // Used for diagnostic error message when projectApiDir doesn't exist
-    @Input
-    @Optional
-    public var nonExistingProjectApiDir: String? = null
-
-    internal fun compareApiDumps(apiReferenceDir: File, apiBuildDir: File) {
-        if (apiReferenceDir.exists()) {
-            projectApiDir = apiReferenceDir
-        } else {
-            projectApiDir = null
-            nonExistingProjectApiDir = apiReferenceDir.toString()
-        }
-        this.apiBuildDir = apiBuildDir
-    }
-
-    @InputDirectory
-    @PathSensitive(PathSensitivity.RELATIVE)
-    public lateinit var apiBuildDir: File
-
-    @OutputFile
-    @Optional
-    @Suppress("unused")
-    public val dummyOutputFile: File? = null
+    @InputFiles
+    public lateinit var generatedApiFile: File
 
     private val projectName = project.name
 
@@ -58,10 +30,15 @@ public open class KotlinApiCompareTask @Inject constructor(private val objects: 
 
     @TaskAction
     internal fun verify() {
-        val projectApiDir = projectApiDir
-            ?: error("Expected folder with API declarations '$nonExistingProjectApiDir' does not exist.\n" +
+        val projectApiDir = projectApiFile.parentFile
+        if (!projectApiDir.exists()) {
+            error("Expected folder with API declarations '$projectApiDir' does not exist.\n" +
                     "Please ensure that ':apiDump' was executed in order to get API dump to compare the build against")
-
+        }
+        val buildApiDir = generatedApiFile.parentFile
+        if (!buildApiDir.exists()) {
+            error("Expected folder with generate API declarations '$buildApiDir' does not exist.")
+        }
         val subject = projectName
 
         /*
@@ -72,35 +49,34 @@ public open class KotlinApiCompareTask @Inject constructor(private val objects: 
          * To workaround that, we replace paths we are looking for the same paths that
          * actually exist on FS.
          */
-        fun caseInsensitiveMap() = TreeMap<RelativePath, RelativePath> { rp, rp2 ->
-            rp.toString().compareTo(rp2.toString(), true)
+        fun caseInsensitiveMap() = TreeMap<String, RelativePath> { rp, rp2 ->
+            rp.compareTo(rp2, true)
         }
 
         val apiBuildDirFiles = caseInsensitiveMap()
         val expectedApiFiles = caseInsensitiveMap()
 
-        objects.fileTree().from(apiBuildDir).visit { file ->
-            apiBuildDirFiles[file.relativePath] = file.relativePath
+        objects.fileTree().from(buildApiDir).visit { file ->
+            apiBuildDirFiles[file.name] = file.relativePath
         }
         objects.fileTree().from(projectApiDir).visit { file ->
-            expectedApiFiles[file.relativePath] = file.relativePath
+            expectedApiFiles[file.name] = file.relativePath
         }
 
-        if (apiBuildDirFiles.size != 1) {
-            error("Expected a single file $subject.api, but found: $expectedApiFiles")
-        }
-
-        var expectedApiDeclaration = apiBuildDirFiles.keys.single()
-        if (expectedApiDeclaration !in expectedApiFiles) {
-            error("File ${expectedApiDeclaration.lastName} is missing from ${projectApiDir.relativeDirPath()}, please run " +
+        if (!expectedApiFiles.containsKey(projectApiFile.name)) {
+            error("File ${projectApiFile.name} is missing from ${projectApiDir.relativeDirPath()}, please run " +
                     ":$subject:apiDump task to generate one")
         }
+        if (!apiBuildDirFiles.containsKey(generatedApiFile.name)) {
+            error("File ${generatedApiFile.name} is missing from dump results.")
+        }
+
         // Normalize case-sensitivity
-        expectedApiDeclaration = expectedApiFiles.getValue(expectedApiDeclaration)
-        val actualApiDeclaration = apiBuildDirFiles.getValue(expectedApiDeclaration)
+        val expectedApiDeclaration = expectedApiFiles.getValue(projectApiFile.name)
+        val actualApiDeclaration = apiBuildDirFiles.getValue(generatedApiFile.name)
         val diffSet = mutableSetOf<String>()
         val expectedFile = expectedApiDeclaration.getFile(projectApiDir)
-        val actualFile = actualApiDeclaration.getFile(apiBuildDir)
+        val actualFile = actualApiDeclaration.getFile(buildApiDir)
         val diff = compareFiles(expectedFile, actualFile)
         if (diff != null) diffSet.add(diff)
         if (diffSet.isNotEmpty()) {

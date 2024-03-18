@@ -1,0 +1,14 @@
+// Klib ABI Dump
+// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, linuxArm64, linuxX64, mingwX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <testproject>
+final class subclasses/A { // subclasses/A|null[0]
+    constructor <init>() // subclasses/A.<init>|<init>(){}[0]
+    final class D { // subclasses/A.D|null[0]
+        constructor <init>() // subclasses/A.D.<init>|<init>(){}[0]
+    }
+}

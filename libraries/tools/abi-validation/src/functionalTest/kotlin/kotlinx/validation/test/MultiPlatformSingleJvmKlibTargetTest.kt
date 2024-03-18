@@ -10,7 +10,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.io.File
 
-internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
+internal class MultiPlatformSingleJvmKlibTargetTest : BaseKotlinGradleTest() {
     private fun BaseKotlinScope.createProjectHierarchyWithPluginOnRoot() {
         settingsGradleKts {
             resolve("/examples/gradle/settings/settings-name-testproject.gradle.kts")

@@ -5,6 +5,8 @@
 
 package kotlinx.validation
 
+import kotlinx.validation.api.klib.KlibSignatureVersion
+
 public open class ApiValidationExtension {
 
     /**
@@ -71,4 +73,51 @@ public open class ApiValidationExtension {
      * By default, it's `api`.
      */
     public var apiDumpDirectory: String = "api"
+
+    /**
+     * KLib ABI validation settings.
+     *
+     * @see KlibValidationSettings
+     */
+    @ExperimentalBCVApi
+    public val klib: KlibValidationSettings = KlibValidationSettings()
+
+    /**
+     * Configure KLib ABI validation settings.
+     */
+    @ExperimentalBCVApi
+    public fun klib(block: KlibValidationSettings.() -> Unit) {
+        block(this.klib)
+    }
+}
+
+/**
+ * Settings affecting KLib ABI validation.
+ */
+@ExperimentalBCVApi
+public open class KlibValidationSettings {
+    /**
+     * Enables KLib ABI validation checks.
+     */
+    public var enabled: Boolean = false
+    /**
+     * Specifies which version of signature KLib ABI dump should contain.
+     * By default, or when explicitly set to null, the latest supported version will be used.
+     *
+     * This option covers some advanced scenarios and does not require any configuration by default.
+     *
+     * A linker uses signatures to look up symbols, thus signature changes brake binary compatibility and
+     * should be tracked. Signature format itself is not stabilized yet and may change in the future. In that case,
+     * a new version of a signature will be introduced. Change of a signature version will be reflected in a dump
+     * causing a validation failure even if declarations itself remained unchanged.
+     * However, if a klib supports multiple signature versions simultaneously, one my explicitly specify the version
+     * that will be dumped to prevent changes in a dump file.
+     */
+    public var signatureVersion: KlibSignatureVersion = KlibSignatureVersion.LATEST
+    /**
+     * Fail validation if some build targets are not supported by the host compiler.
+     * By default, ABI dumped only for supported files will be validated. This option makes validation behavior
+     * stricter and treats having unsupported targets as an error.
+     */
+    public var strictValidation: Boolean = false
 }
