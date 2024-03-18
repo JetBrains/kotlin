@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtFlexibleType
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
@@ -168,24 +169,32 @@ fun annotateByKtType(
     ktType: KtType,
     psiContext: PsiTypeElement,
 ): PsiType {
-    fun KtType.getAnnotationsSequence(): Sequence<List<PsiAnnotation>> = sequence {
-        yield(
-            annotations.map { annoApp ->
-                SymbolLightSimpleAnnotation(
-                    annoApp.classId?.asFqNameString(),
-                    psiContext,
-                    annoApp.arguments,
-                    annoApp.psi,
-                )
-            }
-        )
+    fun getAnnotationsSequence(type: KtType): Sequence<List<PsiAnnotation>> = sequence {
+        // We assume that flexible types have to have the same set of annotations on upper and lower bound.
+        // Also, the upper bound is more similar to the resulting PsiType as it has fewer restrictions.
+        if (type is KtFlexibleType) {
+            yieldAll(getAnnotationsSequence(type.upperBound))
+        } else {
+            yield(
+                type.annotations.map { annoApp ->
+                    SymbolLightSimpleAnnotation(
+                        annoApp.classId?.asFqNameString(),
+                        psiContext,
+                        annoApp.arguments,
+                        annoApp.psi,
+                    )
+                }
+            )
+        }
 
-        (this@getAnnotationsSequence as? KtNonErrorClassType)?.ownTypeArguments?.forEach { typeProjection ->
-            typeProjection.type?.let {
-                yieldAll(it.getAnnotationsSequence())
+        if (type is KtNonErrorClassType) {
+            type.ownTypeArguments.forEach { typeProjection ->
+                typeProjection.type?.let {
+                    yieldAll(getAnnotationsSequence(it))
+                }
             }
         }
     }
 
-    return psiType.annotateByTypeAnnotationProvider(ktType.getAnnotationsSequence())
+    return psiType.annotateByTypeAnnotationProvider(getAnnotationsSequence(ktType))
 }
