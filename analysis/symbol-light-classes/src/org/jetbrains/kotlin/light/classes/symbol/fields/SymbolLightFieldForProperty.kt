@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThi
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -167,9 +168,9 @@ internal class SymbolLightFieldForProperty private constructor(
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withPropertySymbol { propertySymbol ->
                         when {
-                            propertySymbol.isDelegatedProperty -> NullabilityType.NotNull
+                            propertySymbol.isDelegatedProperty -> KtTypeNullability.NON_NULLABLE
                             !(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit) -> getTypeNullability(propertySymbol.returnType)
-                            else -> NullabilityType.Unknown
+                            else -> KtTypeNullability.UNKNOWN
                         }
                     }
                 }

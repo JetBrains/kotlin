@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -156,19 +157,19 @@ internal class SymbolLightSimpleMethod(
                 additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
                     NullabilityAnnotationsProvider {
                         if (modifierList.hasModifierProperty(PsiModifier.PRIVATE)) {
-                            NullabilityType.Unknown
+                            KtTypeNullability.UNKNOWN
                         } else {
                             withFunctionSymbol { functionSymbol ->
                                 when {
                                     functionSymbol.isSuspend -> { // Any?
-                                        NullabilityType.Nullable
+                                        KtTypeNullability.NULLABLE
                                     }
                                     forceBoxedReturnType(functionSymbol) -> {
-                                        NullabilityType.NotNull
+                                        KtTypeNullability.NON_NULLABLE
                                     }
                                     else -> {
                                         val returnType = functionSymbol.returnType
-                                        if (returnType.isVoidType) NullabilityType.Unknown else getTypeNullability(returnType)
+                                        if (returnType.isVoidType) KtTypeNullability.UNKNOWN else getTypeNullability(returnType)
                                     }
                                 }
                             }
@@ -213,7 +214,7 @@ internal class SymbolLightSimpleMethod(
     private val KtType.isVoidType: Boolean
         get() {
             val expandedType = fullyExpandedType
-            return expandedType.isUnit && expandedType.nullabilityType != NullabilityType.Nullable
+            return expandedType.isUnit && expandedType.nullabilityType != KtTypeNullability.NULLABLE
         }
 
     private val _returnedType: PsiType by lazyPub {
