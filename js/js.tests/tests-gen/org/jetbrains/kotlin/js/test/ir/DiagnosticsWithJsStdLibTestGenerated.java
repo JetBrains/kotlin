@@ -44,6 +44,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
   }
 
   @Test
+  @TestMetadata("externalTypeInheritsExternalTypeViaTypeAlias.kt")
+  public void testExternalTypeInheritsExternalTypeViaTypeAlias() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/externalTypeInheritsExternalTypeViaTypeAlias.kt");
+  }
+
+  @Test
   @TestMetadata("funConstructorCallJS.kt")
   public void testFunConstructorCallJS() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/funConstructorCallJS.kt");
