@@ -1,5 +1,6 @@
-// ISSUE: KT-51298
-// compiler crashes with StackOverflowError
+// KT-51298: compiler crashes with StackOverflowError. Possible fix: probably a new checker in IR Inliner, raising a diagnostic.
+// Then, it would make sense to convert this test to Some kind of Diagnostic Test,
+// however not for FIR diagnostics, but for Inliner diagnostics
 // IGNORE_BACKEND: ANY
 
 inline fun factorial1(n: Int): Int =
