@@ -272,7 +272,16 @@ open class IrFileSerializer(
     /* ------- IrTypes ---------------------------------------------------------- */
 
     private fun serializeAnnotations(annotations: List<IrConstructorCall>) =
-        annotations.map { serializeConstructorCall(it) }
+        annotations.map {
+            for (index in 0 until it.valueArgumentsCount) {
+                it.getValueArgument(index)?.let { param ->
+                    require(param.isValidConstantAnnotationArgument()) {
+                        "This is a compiler bug, please report it to https://kotl.in/issue : parameter value of an annotation constructor must be a const:\nCALL: ${it.render()}\nPARAM: ${param.render()}"
+                    }
+                }
+            }
+            serializeConstructorCall(it)
+        }
 
     private fun serializeFqName(fqName: String): List<Int> = fqName.split(".").map(::serializeString)
 
@@ -1058,6 +1067,11 @@ open class IrFileSerializer(
         }
 
         function.valueParameters.forEach {
+            if (((function as? IrConstructor)?.returnType?.classifierOrNull as? IrClass)?.kind == ClassKind.ANNOTATION_CLASS) {
+                require(it.isValidConstantAnnotationArgument()) {
+                    "This is a compiler bug, please report it to https://kotl.in/issue : default value of annotation construction parameter must have const initializer:\n${it.render()}"
+                }
+            }
             proto.addValueParameter(serializeIrValueParameter(it))
         }
 
@@ -1127,6 +1141,11 @@ open class IrFileSerializer(
                     (field.initializer?.expression !is IrConst<*>))
         ) {
             val initializer = field.initializer?.expression
+            if (field.correspondingPropertySymbol?.owner?.isConst == true)
+                require(initializer is IrConst<*>) {
+                    "This is a compiler bug, please report it to https://kotl.in/issue : const val property must have a const initializer:\n${field.render()}"
+                }
+
             if (initializer != null) {
                 proto.initializer = serializeIrExpressionBody(initializer)
             }
@@ -1411,3 +1430,9 @@ open class IrFileSerializer(
 
     }
 }
+
+internal fun IrElement.isValidConstantAnnotationArgument(): Boolean =
+    this is IrConst<*> || this is IrGetEnumValue || this is IrClassReference ||
+            (this is IrVararg && elements.all { it.isValidConstantAnnotationArgument() }) ||
+            (this is IrConstructorCall &&
+                    (0 until valueArgumentsCount).all { getValueArgument(it)?.isValidConstantAnnotationArgument() ?: true })

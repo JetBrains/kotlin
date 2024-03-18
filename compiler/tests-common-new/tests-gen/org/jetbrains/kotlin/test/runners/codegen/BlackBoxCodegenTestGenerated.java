@@ -354,6 +354,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
 
     @Test
+    @TestMetadata("spreadOperatorInAnnotationArguments.kt")
+    public void testSpreadOperatorInAnnotationArguments() {
+      runTest("compiler/testData/codegen/box/annotations/spreadOperatorInAnnotationArguments.kt");
+    }
+
+    @Test
     @TestMetadata("syntheticMethodForJvmStaticProperty.kt")
     public void testSyntheticMethodForJvmStaticProperty() {
       runTest("compiler/testData/codegen/box/annotations/syntheticMethodForJvmStaticProperty.kt");

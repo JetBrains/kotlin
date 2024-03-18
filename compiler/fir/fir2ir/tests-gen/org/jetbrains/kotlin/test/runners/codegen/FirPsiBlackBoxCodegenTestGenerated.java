@@ -408,6 +408,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("spreadOperatorInAnnotationArguments.kt")
+    public void testSpreadOperatorInAnnotationArguments() {
+      runTest("compiler/testData/codegen/box/annotations/spreadOperatorInAnnotationArguments.kt");
+    }
+
+    @Test
     @TestMetadata("suppressInvisibleMember.kt")
     public void testSuppressInvisibleMember() {
       runTest("compiler/testData/codegen/box/annotations/suppressInvisibleMember.kt");

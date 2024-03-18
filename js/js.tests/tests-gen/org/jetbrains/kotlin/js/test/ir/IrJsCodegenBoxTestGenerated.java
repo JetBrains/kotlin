@@ -89,6 +89,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
       runTest("compiler/testData/codegen/box/annotations/selfReferentialAnnotation.kt");
     }
 
+    @Test
+    @TestMetadata("spreadOperatorInAnnotationArguments.kt")
+    public void testSpreadOperatorInAnnotationArguments() {
+      runTest("compiler/testData/codegen/box/annotations/spreadOperatorInAnnotationArguments.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
     @TestDataPath("$PROJECT_ROOT")
