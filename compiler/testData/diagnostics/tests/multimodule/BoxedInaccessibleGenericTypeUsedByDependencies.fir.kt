@@ -1,3 +1,4 @@
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // MODULE: missing
 
 class InaccessibleType<ITTP>
@@ -12,5 +13,5 @@ fun consumeBoxedInaccessibleType(arg: Box<InaccessibleType<Any?>>) {}
 // MODULE: main(library)
 
 fun test() {
-    consumeBoxedInaccessibleType(<!ARGUMENT_TYPE_MISMATCH("Box<InaccessibleType<kotlin.Any?>>; Box<CapturedType(out ERROR CLASS: Inconsistent type: InaccessibleType<kotlin/Any?> (parameters.size = 0, arguments.size = 1))>")!>produceBoxedInaccessibleType()<!>)
+    consumeBoxedInaccessibleType(<!ARGUMENT_TYPE_MISMATCH!><!MISSING_DEPENDENCY_CLASS!>produceBoxedInaccessibleType<!>()<!>)
 }

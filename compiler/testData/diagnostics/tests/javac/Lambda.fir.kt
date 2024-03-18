@@ -81,9 +81,9 @@ import com.repo.request_withNested
 
 class Model {
     fun call() {
-        request_a().mapError <!MISSING_DEPENDENCY_CLASS!>{ 1 + 1 }<!>
-        request_a().mapError { <!MISSING_DEPENDENCY_CLASS!>it<!> -> 1 + 1 }
-        request_withNested().mapError <!MISSING_DEPENDENCY_CLASS!>{ 1 + 1 }<!>
+        <!MISSING_DEPENDENCY_CLASS!>request_a<!>().mapError <!MISSING_DEPENDENCY_CLASS!>{ 1 + 1 }<!>
+        <!MISSING_DEPENDENCY_CLASS!>request_a<!>().mapError { <!MISSING_DEPENDENCY_CLASS!>it<!> -> 1 + 1 }
+        <!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>request_withNested<!>().<!MISSING_DEPENDENCY_CLASS!>mapError<!> <!MISSING_DEPENDENCY_CLASS!>{ 1 + 1 }<!>
     }
 }
 

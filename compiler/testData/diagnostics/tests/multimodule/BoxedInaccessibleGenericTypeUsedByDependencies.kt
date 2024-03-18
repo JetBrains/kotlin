@@ -1,3 +1,4 @@
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // MODULE: missing
 
 class InaccessibleType<ITTP>
