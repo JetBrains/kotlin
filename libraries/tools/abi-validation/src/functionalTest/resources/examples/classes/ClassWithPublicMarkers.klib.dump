@@ -1,0 +1,45 @@
+// Klib ABI Dump
+// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, linuxArm64, linuxX64, mingwX64]
+// Alias: androidNative => [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86]
+// Alias: linux => [linuxArm64, linuxX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <testproject>
+final class foo.api/ClassInPublicPackage { // foo.api/ClassInPublicPackage|null[0]
+    constructor <init>() // foo.api/ClassInPublicPackage.<init>|<init>(){}[0]
+    final class Inner { // foo.api/ClassInPublicPackage.Inner|null[0]
+        constructor <init>() // foo.api/ClassInPublicPackage.Inner.<init>|<init>(){}[0]
+    }
+}
+final class foo/ClassWithPublicMarkers { // foo/ClassWithPublicMarkers|null[0]
+    constructor <init>() // foo/ClassWithPublicMarkers.<init>|<init>(){}[0]
+    final class MarkedClass { // foo/ClassWithPublicMarkers.MarkedClass|null[0]
+        constructor <init>() // foo/ClassWithPublicMarkers.MarkedClass.<init>|<init>(){}[0]
+        final val bar1 // foo/ClassWithPublicMarkers.MarkedClass.bar1|{}bar1[0]
+            final fun <get-bar1>(): kotlin/Int // foo/ClassWithPublicMarkers.MarkedClass.bar1.<get-bar1>|<get-bar1>(){}[0]
+    }
+    final class NotMarkedClass { // foo/ClassWithPublicMarkers.NotMarkedClass|null[0]
+        constructor <init>() // foo/ClassWithPublicMarkers.NotMarkedClass.<init>|<init>(){}[0]
+    }
+    final var bar1 // foo/ClassWithPublicMarkers.bar1|{}bar1[0]
+        final fun <get-bar1>(): kotlin/Int // foo/ClassWithPublicMarkers.bar1.<get-bar1>|<get-bar1>(){}[0]
+        final fun <set-bar1>(kotlin/Int) // foo/ClassWithPublicMarkers.bar1.<set-bar1>|<set-bar1>(kotlin.Int){}[0]
+    final var bar2 // foo/ClassWithPublicMarkers.bar2|{}bar2[0]
+        final fun <get-bar2>(): kotlin/Int // foo/ClassWithPublicMarkers.bar2.<get-bar2>|<get-bar2>(){}[0]
+        final fun <set-bar2>(kotlin/Int) // foo/ClassWithPublicMarkers.bar2.<set-bar2>|<set-bar2>(kotlin.Int){}[0]
+    final var notMarkedPublic // foo/ClassWithPublicMarkers.notMarkedPublic|{}notMarkedPublic[0]
+        final fun <get-notMarkedPublic>(): kotlin/Int // foo/ClassWithPublicMarkers.notMarkedPublic.<get-notMarkedPublic>|<get-notMarkedPublic>(){}[0]
+        final fun <set-notMarkedPublic>(kotlin/Int) // foo/ClassWithPublicMarkers.notMarkedPublic.<set-notMarkedPublic>|<set-notMarkedPublic>(kotlin.Int){}[0]
+}
+open annotation class foo/PublicClass : kotlin/Annotation { // foo/PublicClass|null[0]
+    constructor <init>() // foo/PublicClass.<init>|<init>(){}[0]
+}
+open annotation class foo/PublicField : kotlin/Annotation { // foo/PublicField|null[0]
+    constructor <init>() // foo/PublicField.<init>|<init>(){}[0]
+}
+open annotation class foo/PublicProperty : kotlin/Annotation { // foo/PublicProperty|null[0]
+    constructor <init>() // foo/PublicProperty.<init>|<init>(){}[0]
+}

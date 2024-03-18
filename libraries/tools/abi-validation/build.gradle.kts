@@ -62,6 +62,7 @@ val createClasspathManifest = tasks.register("createClasspathManifest") {
 dependencies {
     implementation(gradleApi())
     implementation(libs.kotlinx.metadata)
+    compileOnly(libs.kotlin.compiler.embeddable)
     implementation(libs.ow2.asm)
     implementation(libs.ow2.asmTree)
     implementation(libs.javaDiffUtils)
@@ -78,7 +79,6 @@ dependencies {
 
 tasks.compileKotlin {
     compilerOptions {
-        freeCompilerArgs.add("-Xexplicit-api=strict")
         allWarningsAsErrors.set(true)
         @Suppress("DEPRECATION") // Compatibility with Gradle 7 requires Kotlin 1.4
         languageVersion.set(KotlinVersion.KOTLIN_1_4)
@@ -87,7 +87,9 @@ tasks.compileKotlin {
         // Suppressing "w: Language version 1.4 is deprecated and its support will be removed" message
         // because LV=1.4 in practice is mandatory as it is a default language version in Gradle 7.0+ for users' kts scripts.
         freeCompilerArgs.addAll(
-            "-Xsuppress-version-warnings"
+            "-Xexplicit-api=strict",
+            "-Xsuppress-version-warnings",
+            "-Xopt-in=kotlin.RequiresOptIn"
         )
     }
 }
@@ -162,6 +164,7 @@ testing {
                 implementation(project())
                 implementation(libs.assertJ.core)
                 implementation(libs.kotlin.test)
+                implementation(libs.kotlin.compiler.embeddable)
             }
         }
 

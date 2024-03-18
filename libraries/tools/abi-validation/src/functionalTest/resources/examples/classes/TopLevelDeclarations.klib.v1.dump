@@ -1,0 +1,67 @@
+// Klib ABI Dump
+// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, linuxArm64, linuxX64, mingwX64]
+// Rendering settings:
+// - Signature version: 1
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <testproject>
+abstract class examples.classes/AC { // examples.classes/AC|null[0]
+    abstract fun a() // examples.classes/AC.a|-4432112437378250461[0]
+    constructor <init>() // examples.classes/AC.<init>|-5645683436151566731[0]
+    final fun b() // examples.classes/AC.b|4789657038926421504[0]
+}
+abstract interface examples.classes/I // examples.classes/I|null[0]
+final class examples.classes/C { // examples.classes/C|null[0]
+    constructor <init>(kotlin/Any) // examples.classes/C.<init>|4518179880532599055[0]
+    final fun m() // examples.classes/C.m|-1029306787563722981[0]
+    final val v // examples.classes/C.v|138869847852828796[0]
+        final fun <get-v>(): kotlin/Any // examples.classes/C.v.<get-v>|4964732996156868941[0]
+}
+final class examples.classes/D { // examples.classes/D|null[0]
+    constructor <init>(kotlin/Int) // examples.classes/D.<init>|-5182794243525578284[0]
+    final fun component1(): kotlin/Int // examples.classes/D.component1|162597135895221648[0]
+    final fun copy(kotlin/Int =...): examples.classes/D // examples.classes/D.copy|-6971662324481626298[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // examples.classes/D.equals|4638265728071529943[0]
+    final fun hashCode(): kotlin/Int // examples.classes/D.hashCode|3409210261493131192[0]
+    final fun toString(): kotlin/String // examples.classes/D.toString|-1522858123163872138[0]
+    final val x // examples.classes/D.x|-8060530855978347579[0]
+        final fun <get-x>(): kotlin/Int // examples.classes/D.x.<get-x>|1482705010654679335[0]
+}
+final class examples.classes/Outer { // examples.classes/Outer|null[0]
+    constructor <init>() // examples.classes/Outer.<init>|-5645683436151566731[0]
+    final class Nested { // examples.classes/Outer.Nested|null[0]
+        constructor <init>() // examples.classes/Outer.Nested.<init>|-5645683436151566731[0]
+        final inner class Inner { // examples.classes/Outer.Nested.Inner|null[0]
+            constructor <init>() // examples.classes/Outer.Nested.Inner.<init>|-5645683436151566731[0]
+        }
+    }
+}
+final const val examples.classes/con // examples.classes/con|-2899158152154217071[0]
+    final fun <get-con>(): kotlin/String // examples.classes/con.<get-con>|-2604863570302238407[0]
+final enum class examples.classes/E : kotlin/Enum<examples.classes/E> { // examples.classes/E|null[0]
+    enum entry A // examples.classes/E.A|null[0]
+    enum entry B // examples.classes/E.B|null[0]
+    enum entry C // examples.classes/E.C|null[0]
+    final fun valueOf(kotlin/String): examples.classes/E // examples.classes/E.valueOf|-4683474617854611729[0]
+    final fun values(): kotlin/Array<examples.classes/E> // examples.classes/E.values|-8715569000920726747[0]
+    final val entries // examples.classes/E.entries|-5134227801081826149[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<examples.classes/E> // examples.classes/E.entries.<get-entries>|-6068527377476727729[0]
+}
+final fun <#A: kotlin/Any?> examples.classes/consume(#A) // examples.classes/consume|8042761629495509481[0]
+final fun examples.classes/testFun(): kotlin/Int // examples.classes/testFun|6322333980269160703[0]
+final inline fun examples.classes/testInlineFun() // examples.classes/testInlineFun|-9193388292326484960[0]
+final object examples.classes/O // examples.classes/O|null[0]
+final val examples.classes/l // examples.classes/l|3307215303229595169[0]
+    final fun <get-l>(): kotlin/Long // examples.classes/l.<get-l>|3795442967620585[0]
+final var examples.classes/r // examples.classes/r|-8117627916896159533[0]
+    final fun <get-r>(): kotlin/Float // examples.classes/r.<get-r>|-7424184448774736572[0]
+    final fun <set-r>(kotlin/Float) // examples.classes/r.<set-r>|9171637170963327464[0]
+open annotation class examples.classes/A : kotlin/Annotation { // examples.classes/A|null[0]
+    constructor <init>() // examples.classes/A.<init>|-5645683436151566731[0]
+}
+open class examples.classes/OC { // examples.classes/OC|null[0]
+    constructor <init>() // examples.classes/OC.<init>|-5645683436151566731[0]
+    final fun c() // examples.classes/OC.c|-2724918380551733646[0]
+    open fun o(): kotlin/Int // examples.classes/OC.o|-3264635847192431671[0]
+}

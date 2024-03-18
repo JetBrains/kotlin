@@ -1,0 +1,7 @@
+public final class subclasses/A {
+	public fun <init> ()V
+}
+
+public final class subclasses/A$D {
+	public fun <init> ()V
+}

@@ -46,6 +46,41 @@ class PublicMarkersTest : BaseKotlinGradleTest() {
         }
     }
 
+    // Public markers are not supported in KLIB ABI dumps
+    @Test
+    fun testPublicMarkersForNativeTargets() {
+        val runner = test {
+            settingsGradleKts {
+                resolve("/examples/gradle/settings/settings-name-testproject.gradle.kts")
+            }
+
+            buildGradleKts {
+                resolve("/examples/gradle/base/withNativePlugin.gradle.kts")
+                resolve("/examples/gradle/configuration/publicMarkers/markers.gradle.kts")
+            }
+
+            kotlin("ClassWithPublicMarkers.kt", sourceSet = "commonMain") {
+                resolve("/examples/classes/ClassWithPublicMarkers.kt")
+            }
+
+            kotlin("ClassInPublicPackage.kt", sourceSet = "commonMain") {
+                resolve("/examples/classes/ClassInPublicPackage.kt")
+            }
+
+            abiFile(projectName = "testproject") {
+                resolve("/examples/classes/ClassWithPublicMarkers.klib.dump")
+            }
+
+            runner {
+                arguments.add(":apiCheck")
+            }
+        }
+
+        runner.withDebug(true).build().apply {
+            assertTaskSuccess(":apiCheck")
+        }
+    }
+
     @Test
     fun testFiltrationByPackageLevelAnnotations() {
         val runner = test {
