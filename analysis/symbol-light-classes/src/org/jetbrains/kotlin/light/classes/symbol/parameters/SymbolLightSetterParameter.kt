@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.analysis.api.annotations.SetterParameterAnnotationUs
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.isLateInit
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
@@ -61,8 +61,10 @@ internal class SymbolLightSetterParameter(
         )
     }
 
-    override fun nullabilityType(): NullabilityType =
-        if (containingPropertySymbolPointer.withSymbol(ktModule) { it.isLateInit }) NullabilityType.NotNull else super.nullabilityType()
+    override fun nullabilityType(): KtTypeNullability {
+        val isLateInit = containingPropertySymbolPointer.withSymbol(ktModule) { it.isLateInit }
+        return if (isLateInit) KtTypeNullability.NON_NULLABLE else super.nullabilityType()
+    }
 
     override fun isDeclaredAsVararg(): Boolean = false
 

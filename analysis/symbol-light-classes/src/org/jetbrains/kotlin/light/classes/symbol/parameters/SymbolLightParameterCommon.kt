@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
+import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -52,8 +53,8 @@ internal abstract class SymbolLightParameterCommon(
         // true only if this is "last" `vararg`
         containingMethod.parameterList.parameters.lastOrNull() == this && isDeclaredAsVararg()
 
-    protected open fun nullabilityType(): NullabilityType {
-        if (isDeclaredAsVararg()) return NullabilityType.NotNull
+    protected open fun nullabilityType(): KtTypeNullability {
+        if (isDeclaredAsVararg()) return KtTypeNullability.NON_NULLABLE
 
         val nullabilityApplicable = !containingMethod.hasModifierProperty(PsiModifier.PRIVATE) &&
                 !containingMethod.containingClass.isAnnotationType &&
@@ -66,7 +67,7 @@ internal abstract class SymbolLightParameterCommon(
         return if (nullabilityApplicable) {
             parameterSymbolPointer.withSymbol(ktModule) { getTypeNullability(it.returnType) }
         } else {
-            NullabilityType.Unknown
+            KtTypeNullability.UNKNOWN
         }
     }
 

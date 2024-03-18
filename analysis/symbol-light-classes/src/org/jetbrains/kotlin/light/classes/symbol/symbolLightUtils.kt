@@ -60,19 +60,9 @@ internal fun KtAnalysisSession.mapType(
     return psiType as? PsiClassType
 }
 
-internal enum class NullabilityType {
-    Nullable,
-    NotNull,
-    Unknown
-}
-
 //todo get rid of NullabilityType as it corresponds to KtTypeNullability
-internal val KtType.nullabilityType: NullabilityType
-    get() = when (nullability) {
-        KtTypeNullability.NULLABLE -> NullabilityType.Nullable
-        KtTypeNullability.NON_NULLABLE -> NullabilityType.NotNull
-        KtTypeNullability.UNKNOWN -> NullabilityType.Unknown
-    }
+internal val KtType.nullabilityType: KtTypeNullability
+    get() = nullability
 
 internal fun KtSymbolWithModality.computeSimpleModality(): String? = when (modality) {
     Modality.SEALED -> PsiModifier.ABSTRACT
@@ -147,24 +137,25 @@ internal fun KtLightElement<*, *>.isOriginEquivalentTo(that: PsiElement?): Boole
     return kotlinOrigin?.isEquivalentTo(that) == true
 }
 
-internal fun KtAnalysisSession.getTypeNullability(type: KtType): NullabilityType {
-    if (type is KtClassErrorType) return NullabilityType.NotNull
+internal fun KtAnalysisSession.getTypeNullability(type: KtType): KtTypeNullability {
+    if (type is KtClassErrorType) return KtTypeNullability.NON_NULLABLE
 
     val ktType = type.fullyExpandedType
-    if (ktType.nullabilityType != NullabilityType.NotNull) return ktType.nullabilityType
+    if (ktType.nullabilityType != KtTypeNullability.NON_NULLABLE) return ktType.nullabilityType
 
-    if (ktType.isUnit) return NullabilityType.NotNull
+    if (ktType.isUnit) return KtTypeNullability.NON_NULLABLE
 
-    if (ktType.isPrimitiveBacked) return NullabilityType.Unknown
+    if (ktType.isPrimitiveBacked) return KtTypeNullability.UNKNOWN
 
     if (ktType is KtTypeParameterType) {
-        if (ktType.isMarkedNullable) return NullabilityType.Nullable
+        if (ktType.isMarkedNullable) return KtTypeNullability.NULLABLE
         val subtypeOfNullableSuperType = ktType.symbol.upperBounds.all { upperBound -> upperBound.canBeNull }
-        return if (!subtypeOfNullableSuperType) NullabilityType.NotNull else NullabilityType.Unknown
+        return if (!subtypeOfNullableSuperType) KtTypeNullability.NON_NULLABLE else KtTypeNullability.UNKNOWN
     }
-    if (ktType !is KtNonErrorClassType) return NullabilityType.NotNull
-    if (ktType.ownTypeArguments.any { it.type is KtClassErrorType }) return NullabilityType.NotNull
-    if (ktType.classId.shortClassName.asString() == SpecialNames.ANONYMOUS_STRING) return NullabilityType.NotNull
+
+    if (ktType !is KtNonErrorClassType) return KtTypeNullability.NON_NULLABLE
+    if (ktType.ownTypeArguments.any { it.type is KtClassErrorType }) return KtTypeNullability.NON_NULLABLE
+    if (ktType.classId.shortClassName.asString() == SpecialNames.ANONYMOUS_STRING) return KtTypeNullability.NON_NULLABLE
 
     return ktType.nullabilityType
 }
