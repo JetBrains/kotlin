@@ -220,4 +220,16 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+
+    @DisplayName("Browser print works with null type")
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_6)
+    fun testBrowserNullPrint(gradleVersion: GradleVersion) {
+        project("kt-63230", gradleVersion) {
+            build("check", "-Pkotlin.tests.individualTaskReports=true") {
+                assertTestResults(projectPath.resolve("TEST-wasm.xml"), "wasmJsBrowserTest")
+            }
+        }
+    }
 }
