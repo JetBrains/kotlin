@@ -97,7 +97,7 @@ class IrValidator(val context: CommonBackendContext, val config: IrValidatorConf
 
 fun IrElement.checkDeclarationParents() {
     val checker = CheckDeclarationParentsVisitor()
-    acceptVoid(checker)
+    accept(checker, null)
     if (checker.errors.isNotEmpty()) {
         val expectedParents = LinkedHashSet<IrDeclarationParent>()
         throw AssertionError(

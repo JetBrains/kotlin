@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.isExpect
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.NameUtils
@@ -57,7 +57,7 @@ internal fun JvmBackendContext.irInlinerIsEnabled(): Boolean =
 
 private class PatchDeclarationParents : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(PatchDeclarationParentsVisitor())
+        irFile.patchDeclarationParents()
     }
 }
 

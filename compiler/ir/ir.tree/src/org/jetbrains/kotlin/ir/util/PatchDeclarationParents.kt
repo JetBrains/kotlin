@@ -7,53 +7,34 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import java.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-fun <T : IrElement> T.patchDeclarationParents(initialParent: IrDeclarationParent? = null) =
-    apply {
-        val visitor = initialParent?.let { PatchDeclarationParentsVisitor(it) } ?: PatchDeclarationParentsVisitor()
-        acceptVoid(visitor)
+fun <T : IrElement> T.patchDeclarationParents(initialParent: IrDeclarationParent? = null) = apply {
+    accept(PatchDeclarationParentsVisitor, initialParent)
+}
+
+abstract class DeclarationParentsVisitor : IrElementVisitor<Unit, IrDeclarationParent?> {
+    override fun visitElement(element: IrElement, data: IrDeclarationParent?) {
+        element.acceptChildren(this, data)
     }
 
-abstract class DeclarationParentsVisitor : IrElementVisitorVoid {
-    protected val declarationParentsStack = ArrayDeque<IrDeclarationParent>()
-
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
+    override fun visitPackageFragment(declaration: IrPackageFragment, data: IrDeclarationParent?) {
+        declaration.acceptChildren(this, declaration)
     }
 
-    override fun visitPackageFragment(declaration: IrPackageFragment) {
-        declarationParentsStack.push(declaration)
-        super.visitPackageFragment(declaration)
-        declarationParentsStack.pop()
-    }
-
-    override fun visitDeclaration(declaration: IrDeclarationBase) {
-        handleParent(declaration, declarationParentsStack.peekFirst())
-
-        if (declaration is IrDeclarationParent) {
-            declarationParentsStack.push(declaration)
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) {
+        if (data != null) {
+            handleParent(declaration, data)
         }
 
-        super.visitDeclaration(declaration)
-
-        if (declaration is IrDeclarationParent) {
-            declarationParentsStack.pop()
-        }
+        val downParent = declaration as? IrDeclarationParent ?: data
+        declaration.acceptChildren(this, downParent)
     }
 
     protected abstract fun handleParent(declaration: IrDeclaration, parent: IrDeclarationParent)
 }
 
-class PatchDeclarationParentsVisitor() : DeclarationParentsVisitor() {
-
-    constructor(containingDeclaration: IrDeclarationParent) : this() {
-        declarationParentsStack.push(containingDeclaration)
-    }
-
+private object PatchDeclarationParentsVisitor : DeclarationParentsVisitor() {
     override fun handleParent(declaration: IrDeclaration, parent: IrDeclarationParent) {
         declaration.parent = parent
     }
