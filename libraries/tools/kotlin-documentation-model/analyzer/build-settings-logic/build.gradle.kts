@@ -8,6 +8,10 @@ plugins {
 
 description = "Conventions for use in settings.gradle.kts scripts"
 
+kotlin {
+    jvmToolchain(11)
+}
+
 dependencies {
     implementation(libs.gradlePlugin.gradle.enterprise)
     implementation(libs.gradlePlugin.gradle.customUserData)
