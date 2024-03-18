@@ -10,32 +10,14 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
-class IrReturnImpl internal constructor(
-    @Suppress("UNUSED_PARAMETER")
-    constructorIndicator: IrElementConstructorIndicator?,
+class IrReturnImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
     override var returnTargetSymbol: IrReturnTargetSymbol,
-    override var value: IrExpression,
+    override var value: IrExpression
 ) : IrReturn() {
     override var attributeOwnerId: IrAttributeContainer = this
     override var originalBeforeInline: IrAttributeContainer? = null
 }
-
-fun IrReturnImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    returnTargetSymbol: IrReturnTargetSymbol,
-    value: IrExpression,
-) = IrReturnImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    returnTargetSymbol = returnTargetSymbol,
-    value = value,
-)
