@@ -60,10 +60,6 @@ internal fun KtAnalysisSession.mapType(
     return psiType as? PsiClassType
 }
 
-//todo get rid of NullabilityType as it corresponds to KtTypeNullability
-internal val KtType.nullabilityType: KtTypeNullability
-    get() = nullability
-
 internal fun KtSymbolWithModality.computeSimpleModality(): String? = when (modality) {
     Modality.SEALED -> PsiModifier.ABSTRACT
     Modality.FINAL -> PsiModifier.FINAL
@@ -141,7 +137,7 @@ internal fun KtAnalysisSession.getTypeNullability(type: KtType): KtTypeNullabili
     if (type is KtClassErrorType) return KtTypeNullability.NON_NULLABLE
 
     val ktType = type.fullyExpandedType
-    if (ktType.nullabilityType != KtTypeNullability.NON_NULLABLE) return ktType.nullabilityType
+    if (ktType.nullability != KtTypeNullability.NON_NULLABLE) return ktType.nullability
 
     if (ktType.isUnit) return KtTypeNullability.NON_NULLABLE
 
@@ -157,7 +153,7 @@ internal fun KtAnalysisSession.getTypeNullability(type: KtType): KtTypeNullabili
     if (ktType.ownTypeArguments.any { it.type is KtClassErrorType }) return KtTypeNullability.NON_NULLABLE
     if (ktType.classId.shortClassName.asString() == SpecialNames.ANONYMOUS_STRING) return KtTypeNullability.NON_NULLABLE
 
-    return ktType.nullabilityType
+    return ktType.nullability
 }
 
 private fun escapeString(s: String): String = buildString {
