@@ -110,6 +110,10 @@
 
 #### Fixes
 
+- [`KT-66673`](https://youtrack.jetbrains.com/issue/KT-66673) K2/JS: FirJsInheritanceClassChecker doesn't expand type aliases to supertypes
+- [`KT-66475`](https://youtrack.jetbrains.com/issue/KT-66475) K2/KMP/Wasm: report WRONG_JS_INTEROP_TYPE from a platform checker
+- [`KT-66474`](https://youtrack.jetbrains.com/issue/KT-66474) K2/KMP/JS: report EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE from a platform checker
+- [`KT-66473`](https://youtrack.jetbrains.com/issue/KT-66473) K2/Wasm: FirWasmExternalInheritanceChecker doesn't expand type aliases
 - [`KT-65062`](https://youtrack.jetbrains.com/issue/KT-65062) K2: build kotlinx.collections.immutable and pass to CI
 - [`KT-65410`](https://youtrack.jetbrains.com/issue/KT-65410) K2: ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED  for 'removeAt' in KJK hierarchy
 - [`KT-65377`](https://youtrack.jetbrains.com/issue/KT-65377) K2: "Argument type mismatch" caused by approximated captured type argument of generic type
