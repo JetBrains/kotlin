@@ -1,3 +1,43 @@
+## 1.9.23
+
+### Apple Ecosystem
+
+- [`KT-65542`](https://youtrack.jetbrains.com/issue/KT-65542) Cinterop tasks fails if Xcode 15.3 is used
+
+### Backend. Wasm
+
+- [`KT-64486`](https://youtrack.jetbrains.com/issue/KT-64486) Kotlin/Wasm/WASI exported function callback for coroutines support
+
+### Compiler
+
+- [`KT-53478`](https://youtrack.jetbrains.com/issue/KT-53478) Could not load module <Error module>
+- [`KT-66044`](https://youtrack.jetbrains.com/issue/KT-66044) JDK's new API is used over Kotlin's SDK functions
+- [`KT-64640`](https://youtrack.jetbrains.com/issue/KT-64640) Prevent mutating SequenceCollection methods from JDK 21 be available on read-only collections
+- [`KT-65441`](https://youtrack.jetbrains.com/issue/KT-65441) K1: Remove JDK 21 getFirst()/getLast() in (Mutable)List interfaces
+- [`KT-65634`](https://youtrack.jetbrains.com/issue/KT-65634) K/N: data race during monolithic cache creation
+- [`KT-53109`](https://youtrack.jetbrains.com/issue/KT-53109) CompilationErrorException generateUnboundSymbolsAsDependencies with builder inference and lambdas
+- [`KT-52757`](https://youtrack.jetbrains.com/issue/KT-52757) Type inference for builders fails if inferred from a function
+
+### Tools. Gradle
+
+- [`KT-65792`](https://youtrack.jetbrains.com/issue/KT-65792) Add JSON build report
+- [`KT-65091`](https://youtrack.jetbrains.com/issue/KT-65091) Update compiler metrics in build reports
+- [`KT-62490`](https://youtrack.jetbrains.com/issue/KT-62490) KGP dropping resource directories
+
+### Tools. Gradle. JS
+
+- [`KT-64119`](https://youtrack.jetbrains.com/issue/KT-64119) K/JS: Migrate package manager from Yarn onto NPM
+- [`KT-64561`](https://youtrack.jetbrains.com/issue/KT-64561) K/JS tests are not executed after upgrade to 1.9.22
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-65954`](https://youtrack.jetbrains.com/issue/KT-65954) commonTest dependencies affect commoMainMetadata compilation
+
+### Tools. Gradle. Native
+
+- [`KT-64573`](https://youtrack.jetbrains.com/issue/KT-64573) Default value for `produceUnpackedKlib` was not provided
+
+
 ## 1.9.22
 
 ### JavaScript
