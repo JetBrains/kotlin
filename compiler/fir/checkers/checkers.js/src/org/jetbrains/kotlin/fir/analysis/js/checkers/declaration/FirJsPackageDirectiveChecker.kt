@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.forEachChildOfType
 import org.jetbrains.kotlin.fir.analysis.js.checkers.sanitizeName
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.packageFqName
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.text
 
 object FirJsPackageDirectiveChecker: FirFileChecker(MppCheckerKind.Common) {
@@ -26,7 +27,7 @@ object FirJsPackageDirectiveChecker: FirFileChecker(MppCheckerKind.Common) {
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping)) return
 
         declaration.packageDirective.source?.forEachChildOfType(setOf(KtNodeTypes.REFERENCE_EXPRESSION)) {
-            val name = it.text.toString()
+            val name = KtPsiUtil.unquoteIdentifier(it.text.toString())
             if (sanitizeName(name) != name) {
                 reporter.reportOn(
                     it,
