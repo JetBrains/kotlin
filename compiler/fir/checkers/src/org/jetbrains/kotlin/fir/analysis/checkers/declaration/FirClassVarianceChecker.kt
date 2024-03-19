@@ -165,7 +165,7 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
                         checkVarianceConflict(
                             typeArgumentType, newVariance, subTypeRefAndSource?.typeRef, containingType,
                             context, reporter, subTypeRefAndSource?.typeRef?.source ?: source,
-                            fullyExpandedType != type
+                            type.isTypealiasExpansion
                         )
                     }
                 }
