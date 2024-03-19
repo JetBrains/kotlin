@@ -35,7 +35,7 @@ fun test(j: J) {
     j.<!DEPRECATION!>javaDeprecatedKotlinHidden<!>()
     j.<!DEPRECATION!>javaDeprecatedKotlinWarning<!>()
     j.<!DEPRECATION!>javaDeprecatedKotlinError<!>()
-    j.<!DEPRECATION!>kotlinHidden<!>()
+    j.<!UNRESOLVED_REFERENCE!>kotlinHidden<!>()
     j.<!DEPRECATION!>kotlinWarning<!>()
-    j.<!DEPRECATION!>kotlinError<!>()
+    j.<!DEPRECATION_ERROR!>kotlinError<!>()
 }

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -171,6 +172,8 @@ internal object FirAnnotationValueConverter {
                     else -> null
                 }
             }
+
+            is FirEnumEntryDeserializedAccessExpression -> KtEnumEntryAnnotationValue(CallableId(enumClassId, enumEntryName), sourcePsi)
 
             is FirGetClassCall -> {
                 var symbol = (argument as? FirResolvedQualifier)?.symbol

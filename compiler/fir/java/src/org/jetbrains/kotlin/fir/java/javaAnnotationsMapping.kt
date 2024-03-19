@@ -19,14 +19,8 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaExternalAnnotation
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
-import org.jetbrains.kotlin.fir.references.builder.buildFromMissingDependenciesNamedReference
-import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.bindSymbolToLookupTag
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
-import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -34,7 +28,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.load.java.structure.*
@@ -44,7 +37,6 @@ import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.util.*
-import kotlin.math.exp
 
 internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
     session: FirSession,
@@ -123,15 +115,17 @@ internal fun JavaAnnotationArgument.toFirExpression(
                 getElements().mapTo(arguments) { it.toFirExpression(session, javaTypeParameterStack, argumentTypeRef) }
             }
         }
-        is JavaEnumValueAnnotationArgument -> buildEnumCall(
-            session,
-            // enumClassId can be null when a java annotation uses a Kotlin enum as parameter and declares the default value using
-            // a static import. In this case, the parameter default initializer will not have its type set, which isn't usually an
-            // issue except in edge cases like KT-47702 where we do need to evaluate the default values of annotations.
-            // As a fallback, we use the expected type which should be the type of the enum.
-            classId = requireNotNull(enumClassId ?: expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId),
-            entryName = entryName
-        )
+        is JavaEnumValueAnnotationArgument -> {
+            val classId = requireNotNull(enumClassId ?: expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId)
+            buildEnumEntryDeserializedAccessExpression {
+                // enumClassId can be null when a java annotation uses a Kotlin enum as parameter and declares the default value using
+                // a static import. In this case, the parameter default initializer will not have its type set, which isn't usually an
+                // issue except in edge cases like KT-47702 where we do need to evaluate the default values of annotations.
+                // As a fallback, we use the expected type which should be the type of the enum.
+                enumClassId = classId
+                enumEntryName = entryName ?: SpecialNames.NO_NAME_PROVIDED
+            }
+        }
         is JavaClassObjectAnnotationArgument -> buildGetClassCall {
             val resolvedClassTypeRef = getReferencedType().toFirResolvedTypeRef(session, javaTypeParameterStack)
             val resolvedTypeRef = buildResolvedTypeRef {
@@ -181,41 +175,7 @@ private val JAVA_TARGETS_TO_KOTLIN = mapOf(
     "TYPE_USE" to EnumSet.of(AnnotationTarget.TYPE)
 )
 
-private fun buildEnumCall(session: FirSession, classId: ClassId, entryName: Name?): FirPropertyAccessExpression {
-    return buildPropertyAccessExpression {
-        val resolvedCalleeReference: FirResolvedNamedReference? = if (entryName != null) {
-            session.symbolProvider.getClassDeclaredPropertySymbols(classId, entryName)
-                .firstOrNull()?.let { propertySymbol ->
-                    buildResolvedNamedReference {
-                        name = entryName
-                        resolvedSymbol = propertySymbol
-                    }
-                }
-        } else {
-            null
-        }
-
-        this.calleeReference =
-            resolvedCalleeReference
-                // if we haven't found the containing class for the entry in the classpath, let's just remember its name, so we could use it,
-                // e.g. during Java enhancement
-                ?: entryName?.let {
-                    buildFromMissingDependenciesNamedReference {
-                        name = entryName
-                    }
-                } ?: buildErrorNamedReference {
-                    diagnostic = ConeSimpleDiagnostic("Enum entry name is null in Java for $classId", DiagnosticKind.Java)
-                }
-
-        this.coneTypeOrNull = ConeClassLikeTypeImpl(
-            classId.toLookupTag(),
-            emptyArray(),
-            isNullable = false
-        )
-    }
-}
-
-private fun List<JavaAnnotationArgument>.mapJavaTargetArguments(session: FirSession): FirExpression? {
+private fun List<JavaAnnotationArgument>.mapJavaTargetArguments(): FirExpression? {
     return buildVarargArgumentsExpression {
         val resultSet = EnumSet.noneOf(AnnotationTarget::class.java)
         for (target in this@mapJavaTargetArguments) {
@@ -223,7 +183,12 @@ private fun List<JavaAnnotationArgument>.mapJavaTargetArguments(session: FirSess
             resultSet.addAll(JAVA_TARGETS_TO_KOTLIN[target.entryName?.asString()] ?: continue)
         }
         val classId = StandardClassIds.AnnotationTarget
-        resultSet.mapTo(arguments) { buildEnumCall(session, classId, Name.identifier(it.name)) }
+        resultSet.mapTo(arguments) {
+            buildEnumEntryDeserializedAccessExpression {
+                enumClassId = classId
+                enumEntryName = Name.identifier(it.name)
+            }
+        }
         val elementConeType = ConeClassLikeTypeImpl(
             classId.toLookupTag(),
             emptyArray(),
@@ -235,9 +200,12 @@ private fun List<JavaAnnotationArgument>.mapJavaTargetArguments(session: FirSess
     }
 }
 
-private fun JavaAnnotationArgument.mapJavaRetentionArgument(session: FirSession): FirExpression? {
+private fun JavaAnnotationArgument.mapJavaRetentionArgument(): FirExpression? {
     return JAVA_RETENTION_TO_KOTLIN[(this as? JavaEnumValueAnnotationArgument)?.entryName?.asString()]?.let {
-        buildEnumCall(session, StandardClassIds.AnnotationRetention, Name.identifier(it.name))
+        buildEnumEntryDeserializedAccessExpression {
+            enumClassId = StandardClassIds.AnnotationRetention
+            enumEntryName = Name.identifier(it.name)
+        }
     }
 }
 
@@ -316,8 +284,8 @@ private fun buildFirAnnotation(javaAnnotation: JavaAnnotation, session: FirSessi
             when {
                 classId == JvmStandardClassIds.Annotations.Java.Target -> {
                     when (val argument = javaAnnotation.arguments.firstOrNull()) {
-                        is JavaArrayAnnotationArgument -> argument.getElements().mapJavaTargetArguments(session)
-                        is JavaEnumValueAnnotationArgument -> listOf(argument).mapJavaTargetArguments(session)
+                        is JavaArrayAnnotationArgument -> argument.getElements().mapJavaTargetArguments()
+                        is JavaEnumValueAnnotationArgument -> listOf(argument).mapJavaTargetArguments()
                         else -> null
                     }?.let {
                         mapOf(StandardClassIds.Annotations.ParameterNames.targetAllowedTargets to it)
@@ -325,7 +293,7 @@ private fun buildFirAnnotation(javaAnnotation: JavaAnnotation, session: FirSessi
                 }
 
                 classId == JvmStandardClassIds.Annotations.Java.Retention -> {
-                    javaAnnotation.arguments.firstOrNull()?.mapJavaRetentionArgument(session)?.let {
+                    javaAnnotation.arguments.firstOrNull()?.mapJavaRetentionArgument()?.let {
                         mapOf(StandardClassIds.Annotations.ParameterNames.retentionValue to it)
                     }
                 }
