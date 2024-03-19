@@ -1,4 +1,5 @@
 // LANGUAGE: -MultiplatformRestrictions
+// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
