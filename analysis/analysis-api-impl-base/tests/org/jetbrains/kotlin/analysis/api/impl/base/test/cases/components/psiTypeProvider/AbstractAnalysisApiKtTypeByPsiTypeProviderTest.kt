@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTyp
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleProjectStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
@@ -44,7 +44,7 @@ private fun getTestDataContext(testServices: TestServices): TestDataContext {
     var psiMethod: PsiMethod? = null
     var useSitePosition: PsiElement? = null
 
-    testServices.ktTestModuleProjectStructure.mainModules.forEach { ktTestModule ->
+    testServices.ktTestModuleStructure.mainModules.forEach { ktTestModule ->
         val psiFiles = ktTestModule.files
         for (psiFile in psiFiles) {
             val targetOffset = testServices.expressionMarkerProvider.getCaretPositionOrNull(psiFile)

@@ -35,13 +35,13 @@ class KtTestModule(
 }
 
 /**
- * A project structure of [KtTestModule]s, and additional [KtBinaryModule]s not originating from test modules. This project structure
+ * A module structure of [KtTestModule]s, and additional [KtBinaryModule]s not originating from test modules. This module structure
  * is created by [AnalysisApiTestConfigurator.createModules][org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator.createModules].
  *
  * [mainModules] are created from the configured [TestModule]s and must be in the same order as [testModuleStructure]'s
  * [modules][TestModuleStructure.modules].
  */
-class KtTestModuleProjectStructure(
+class KtTestModuleStructure(
     val testModuleStructure: TestModuleStructure,
     val mainModules: List<KtTestModule>,
     val binaryModules: Iterable<KtBinaryModule>,

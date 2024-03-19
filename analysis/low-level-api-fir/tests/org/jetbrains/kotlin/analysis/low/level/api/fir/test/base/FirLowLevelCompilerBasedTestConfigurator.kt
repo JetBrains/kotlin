@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.allDirectDependenciesOfType
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtScriptModuleByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleByCompilerConfiguration
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleProjectStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
@@ -47,7 +47,7 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() 
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project
-    ): KtTestModuleProjectStructure {
+    ): KtTestModuleStructure {
         val mainModules = moduleStructure.modules.map { testModule ->
             val files = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project)
             val scriptFile = files.singleOrNull() as? KtFile
@@ -67,7 +67,7 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() 
             KtTestModule(testModuleKind, testModule, ktModule, files)
         }
 
-        return KtTestModuleProjectStructure(
+        return KtTestModuleStructure(
             testModuleStructure = moduleStructure,
             mainModules = mainModules,
             binaryModules = mainModules.asSequence().flatMap { it.ktModule.allDirectDependenciesOfType<KtBinaryModule>() }.asIterable(),

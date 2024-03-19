@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typePr
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleProjectStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
@@ -24,7 +24,7 @@ import java.io.File
 
 abstract class AbstractHasCommonSubtypeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: TestModule, testServices: TestServices) {
-        val ktFile = mainFile ?: testServices.ktTestModuleProjectStructure.getKtTestModule(mainModule).ktFiles.first()
+        val ktFile = mainFile ?: testServices.ktTestModuleStructure.getKtTestModule(mainModule).ktFiles.first()
         val errors = mutableListOf<String>()
         val originalText = ktFile.text
         val actualTextBuilder = StringBuilder()

@@ -22,7 +22,7 @@ import kotlin.concurrent.withLock
 import kotlin.reflect.KClass
 import org.jetbrains.kotlin.analysis.providers.KotlinGlobalModificationService
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleProjectStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
 
 abstract class AnalysisApiTestConfigurator {
     open val testPrefix: String? get() = null
@@ -47,7 +47,7 @@ abstract class AnalysisApiTestConfigurator {
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project,
-    ): KtTestModuleProjectStructure
+    ): KtTestModuleStructure
 
     fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
         serviceRegistrars.forEach { it.registerProjectExtensionPoints(project, testServices) }

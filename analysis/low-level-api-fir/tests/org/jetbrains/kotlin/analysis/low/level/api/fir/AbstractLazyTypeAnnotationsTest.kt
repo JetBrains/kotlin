@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleProjectStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -49,7 +49,7 @@ abstract class AbstractLazyTypeAnnotationsTest : AbstractFirLazyDeclarationResol
         val builderBeforeAnnotationResolve = StringBuilder()
         val builderAfterAnnotationResolve = StringBuilder()
 
-        val allKtFiles = testServices.ktTestModuleProjectStructure.allMainKtFiles
+        val allKtFiles = testServices.ktTestModuleStructure.allMainKtFiles
         resolveWithClearCaches(mainFile) { session ->
             val moduleStructure = testServices.moduleStructure
             val (declaration, resolver) = findFirDeclarationToResolve(mainFile, moduleStructure, testServices, session)

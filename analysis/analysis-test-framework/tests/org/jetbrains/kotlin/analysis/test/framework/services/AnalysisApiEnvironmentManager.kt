@@ -10,7 +10,7 @@ import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleProjectStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
@@ -54,7 +54,7 @@ class AnalysisApiEnvironmentManagerImpl(
     }
 
     override fun initializeProjectStructure() {
-        val ktTestModuleProjectStructure = testServices.ktTestModuleProjectStructure
+        val ktTestModuleStructure = testServices.ktTestModuleStructure
         val useSiteModule = testServices.moduleStructure.modules.first()
         val useSiteCompilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(useSiteModule)
         val builtinsModule = KtBuiltinsModule(
@@ -67,7 +67,7 @@ class AnalysisApiEnvironmentManagerImpl(
 
         StandaloneProjectFactory.registerServicesForProjectEnvironment(
             _projectEnvironment,
-            KtTestProjectStructureProvider(globalLanguageVersionSettings, builtinsModule, ktTestModuleProjectStructure),
+            KtTestProjectStructureProvider(globalLanguageVersionSettings, builtinsModule, ktTestModuleStructure),
             useSiteCompilerConfiguration.languageVersionSettings,
             useSiteCompilerConfiguration.get(JVMConfigurationKeys.JDK_HOME)?.toPath(),
         )

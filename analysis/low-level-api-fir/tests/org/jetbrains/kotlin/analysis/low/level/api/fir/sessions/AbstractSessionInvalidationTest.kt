@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.directives.ModificationEventKind
 import org.jetbrains.kotlin.analysis.test.framework.directives.publishWildcardModificationEventsByDirective
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleProjectStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
@@ -28,10 +28,10 @@ abstract class AbstractSessionInvalidationTest : AbstractAnalysisApiBasedTest() 
     protected abstract val modificationEventKind: ModificationEventKind
 
     override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val allKtModules = testServices.ktTestModuleProjectStructure.mainModules.map { it.ktModule }
+        val allKtModules = testServices.ktTestModuleStructure.mainModules.map { it.ktModule }
 
         val sessionsBeforeModification = getSessionsFor(allKtModules)
-        testServices.ktTestModuleProjectStructure.publishWildcardModificationEventsByDirective(modificationEventKind)
+        testServices.ktTestModuleStructure.publishWildcardModificationEventsByDirective(modificationEventKind)
         val sessionsAfterModification = getSessionsFor(allKtModules)
 
         val invalidatedSessions = buildSet {

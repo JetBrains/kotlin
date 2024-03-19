@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.directives.publishModificationEventByDirective
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleProjectStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.name.FqName
@@ -35,7 +35,7 @@ abstract class AbstractResolveExtensionDisposalAfterModificationEventTest : Abst
         testServices: TestServices,
     ) {
         val project = mainFile.project
-        val ktTestModule = testServices.ktTestModuleProjectStructure.getKtTestModule(mainModule)
+        val ktTestModule = testServices.ktTestModuleStructure.getKtTestModule(mainModule)
         val session = LLFirSessionCache.getInstance(project).getSession(ktTestModule.ktModule)
         val resolveExtension = session.llResolveExtensionTool!!.extensions.single() as KtResolveExtensionWithDisposalTracker
 

@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleProjectStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -153,7 +153,7 @@ class ExpressionMarkerProvider : TestService {
         caretTag: String? = null,
     ): Collection<Pair<P, KtFile>> {
         return moduleStructure.modules.flatMap { module ->
-            val ktFiles = testServices.ktTestModuleProjectStructure.getKtTestModule(module).ktFiles
+            val ktFiles = testServices.ktTestModuleStructure.getKtTestModule(module).ktFiles
             getElementsOfTypeAtCarets<P>(ktFiles, caretTag)
         }
 

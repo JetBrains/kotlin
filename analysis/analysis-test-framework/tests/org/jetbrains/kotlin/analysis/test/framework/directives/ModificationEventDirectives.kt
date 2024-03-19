@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
 import org.jetbrains.kotlin.analysis.providers.topics.KotlinModuleStateModificationKind
 import org.jetbrains.kotlin.analysis.providers.topics.KotlinTopics
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleProjectStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 
@@ -93,7 +93,7 @@ fun KtTestModule.publishWildcardModificationEventByDirectiveIfPresent(modificati
  * modules contain, as long as at least one test module contains it (to support test cases which don't want to publish any modification
  * events).
  */
-fun KtTestModuleProjectStructure.publishWildcardModificationEventsByDirective(modificationEventKind: ModificationEventKind) {
+fun KtTestModuleStructure.publishWildcardModificationEventsByDirective(modificationEventKind: ModificationEventKind) {
     if (modificationEventKind.isModuleLevel) {
         mainModules.forEach { ktTestModule ->
             ktTestModule.publishWildcardModificationEventByDirectiveIfPresent(modificationEventKind)

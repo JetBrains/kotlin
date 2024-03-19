@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBu
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleProjectStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
@@ -46,7 +46,7 @@ object AnalysisApiFirOutOfContentRootTestConfigurator : AnalysisApiFirSourceLike
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project
-    ): KtTestModuleProjectStructure {
+    ): KtTestModuleStructure {
         if (Directives.SKIP_WHEN_OUT_OF_CONTENT_ROOT in moduleStructure.allDirectives) {
             throw SkipWhenOutOfContentRootException()
         }

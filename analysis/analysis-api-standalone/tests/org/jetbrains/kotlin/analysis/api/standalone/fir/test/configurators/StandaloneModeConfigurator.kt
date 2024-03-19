@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleProjectStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -32,7 +32,7 @@ object StandaloneModeConfigurator : StandaloneModeConfiguratorBase() {
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project
-    ): KtTestModuleProjectStructure {
+    ): KtTestModuleStructure {
         return sourceConfigurator.createModules(moduleStructure, testServices, project)
     }
 }

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryDecompiledTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleProjectStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiJvmEnvironmentConfigurator
@@ -58,7 +58,7 @@ object AnalysisApiFirLibraryBinaryDecompiledTestConfigurator : AnalysisApiTestCo
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project
-    ): KtTestModuleProjectStructure {
+    ): KtTestModuleStructure {
         return TestModuleStructureFactory.createProjectStructureByTestStructure(moduleStructure, testServices, project)
     }
 

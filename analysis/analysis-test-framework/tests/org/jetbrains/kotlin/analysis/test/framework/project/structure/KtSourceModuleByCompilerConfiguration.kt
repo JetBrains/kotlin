@@ -44,7 +44,7 @@ abstract class KtModuleByCompilerConfiguration(
 
     val directRegularDependencies: List<KtModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildList {
-            testModule.allDependencies.mapTo(this) { testServices.ktTestModuleProjectStructure.getKtTestModule(it.moduleName).ktModule }
+            testModule.allDependencies.mapTo(this) { testServices.ktTestModuleStructure.getKtTestModule(it.moduleName).ktModule }
             addAll(computeLibraryDependencies())
         }
     }
@@ -85,14 +85,14 @@ abstract class KtModuleByCompilerConfiguration(
     @Suppress("MemberVisibilityCanBePrivate") // used for overrides in subclasses
     val directDependsOnDependencies: List<KtModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         testModule.dependsOnDependencies
-            .map { testServices.ktTestModuleProjectStructure.getKtTestModule(it.moduleName).ktModule }
+            .map { testServices.ktTestModuleStructure.getKtTestModule(it.moduleName).ktModule }
     }
 
     val transitiveDependsOnDependencies: List<KtModule> by lazy { computeTransitiveDependsOnDependencies(directDependsOnDependencies) }
 
     val directFriendDependencies: List<KtModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildList {
-            testModule.friendDependencies.mapTo(this) { testServices.ktTestModuleProjectStructure.getKtTestModule(it.moduleName).ktModule }
+            testModule.friendDependencies.mapTo(this) { testServices.ktTestModuleStructure.getKtTestModule(it.moduleName).ktModule }
             addAll(
                 librariesByRoots(configuration[JVMConfigurationKeys.FRIEND_PATHS].orEmpty().map(Paths::get))
             )

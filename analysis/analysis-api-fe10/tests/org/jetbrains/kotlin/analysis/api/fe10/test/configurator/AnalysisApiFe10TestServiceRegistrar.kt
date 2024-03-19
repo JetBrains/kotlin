@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSessionProvid
 import org.jetbrains.kotlin.analysis.api.descriptors.references.ReadWriteAccessCheckerDescriptorsImpl
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleProjectStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -40,7 +40,7 @@ object AnalysisApiFe10TestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             registerService(ReadWriteAccessChecker::class.java, ReadWriteAccessCheckerDescriptorsImpl())
             registerService(KotlinReferenceProviderContributor::class.java, KtFe10KotlinReferenceProviderContributor::class.java)
         }
-        testServices.ktTestModuleProjectStructure.mainModules.forEach { ktTestModule ->
+        testServices.ktTestModuleStructure.mainModules.forEach { ktTestModule ->
             val sourceModule = ktTestModule.ktModule as? KtSourceModule ?: return@forEach
             AnalysisHandlerExtension.registerExtension(project, KtFe10AnalysisHandlerExtension(sourceModule))
         }

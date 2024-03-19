@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.analyzeCopy
 import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleProjectStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSourceFilePreprocessor
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -205,7 +205,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         testServices: TestServices,
         acceptSingleFileWithoutAdditionalChecks: Boolean = true,
     ): KtFile? {
-        val ktFiles = testServices.ktTestModuleProjectStructure.getKtTestModule(module).ktFiles
+        val ktFiles = testServices.ktTestModuleStructure.getKtTestModule(module).ktFiles
         if (acceptSingleFileWithoutAdditionalChecks) {
             // Simple case with one file
             ktFiles.singleOrNull()?.let { return it }
@@ -346,7 +346,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         testConfiguration.preAnalysisHandlers.forEach { preprocessor -> preprocessor.preprocessModuleStructure(moduleStructure) }
         testConfiguration.preAnalysisHandlers.forEach { preprocessor -> preprocessor.prepareSealedClassInheritors(moduleStructure) }
 
-        testServices.ktTestModuleProjectStructure.mainModules.forEach { ktTestModule ->
+        testServices.ktTestModuleStructure.mainModules.forEach { ktTestModule ->
             configurator.prepareFilesInModule(ktTestModule, testServices)
         }
     }

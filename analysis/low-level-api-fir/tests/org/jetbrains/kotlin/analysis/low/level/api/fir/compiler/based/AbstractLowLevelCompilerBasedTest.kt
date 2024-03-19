@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.test.framework.AbstractCompilerBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.base.registerAnalysisApiBaseTestServices
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleByCompilerConfiguration
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleProjectStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
@@ -93,7 +93,7 @@ abstract class AbstractLowLevelCompilerBasedTest : AbstractCompilerBasedTest() {
         }
 
         private fun analyzeDependsOnModule(module: TestModule): FirOutputPartForDependsOnModule {
-            val ktTestModule = testServices.ktTestModuleProjectStructure.getKtTestModule(module.name)
+            val ktTestModule = testServices.ktTestModuleStructure.getKtTestModule(module.name)
             val ktModule = ktTestModule.ktModule as KtModuleByCompilerConfiguration
 
             val project = ktModule.project

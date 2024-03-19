@@ -46,7 +46,7 @@ object TestModuleStructureFactory {
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project
-    ): KtTestModuleProjectStructure {
+    ): KtTestModuleStructure {
         val modules = createModules(moduleStructure, testServices, project)
 
         val modulesByName = modules.associateBy { it.testModule.name }
@@ -58,7 +58,7 @@ object TestModuleStructureFactory {
             ktTestModule.addDependencies(testServices, modulesByName, libraryCache)
         }
 
-        return KtTestModuleProjectStructure(moduleStructure, modules, libraryCache.values)
+        return KtTestModuleStructure(moduleStructure, modules, libraryCache.values)
     }
 
     /**
