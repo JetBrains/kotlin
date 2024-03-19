@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -28,16 +30,16 @@ dependencies {
 optInToUnsafeDuringIrConstructionAPI()
 optInToObsoleteDescriptorBasedAPI()
 
-kotlin.jvmToolchain(11)
+kotlin.jvmToolchain(8)
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
-        freeCompilerArgs = freeCompilerArgs + listOf(
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_1_8)
+        freeCompilerArgs.addAll(
             "-Xskip-metadata-version-check",
             "-Xjvm-default=all"
         )
-        allWarningsAsErrors = false
+        allWarningsAsErrors.set(false)
     }
 }
 
