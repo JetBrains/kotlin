@@ -252,7 +252,9 @@ private val rangeContainsLoweringPhase = createFileLoweringPhase(
 
 private val forLoopsPhase = createFileLoweringPhase(
         { context, irFile ->
-            ForLoopsLowering(context, KonanBCEForLoopBodyTransformer()).lower(irFile)
+            ForLoopsLowering(context).apply {
+                loopBodyTransformer = KonanBCEForLoopBodyTransformer()
+            }.lower(irFile)
         },
         name = "ForLoops",
         description = "For loops lowering",
