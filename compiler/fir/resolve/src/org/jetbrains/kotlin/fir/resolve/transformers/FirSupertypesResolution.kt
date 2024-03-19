@@ -165,11 +165,21 @@ private class FirApplySupertypesTransformer(
 
     private fun applyResolvedSupertypesToClass(firClass: FirClass) {
         if (firClass.superTypeRefs.any { it !is FirResolvedTypeRef || it is FirImplicitBuiltinTypeRef }) {
-            val supertypeRefs = getResolvedSupertypeRefs(firClass)
+            val supertypeRefs = getResolvedSupertypeRefs(firClass).map(::expandTypealiasInPlace)
             firClass.replaceSuperTypeRefs(supertypeRefs)
         }
 
         session.platformSupertypeUpdater?.updateSupertypesIfNeeded(firClass, scopeSession)
+    }
+
+    private fun expandTypealiasInPlace(typeRef: FirTypeRef): FirTypeRef {
+        return when (typeRef) {
+            is FirImplicitBuiltinTypeRef, is FirErrorTypeRef -> typeRef
+            else -> when (val expanded = typeRef.coneType.fullyExpandedType(session, ::getResolvedExpandedType)) {
+                typeRef.coneType -> typeRef
+                else -> expanded.assign(AbbreviatedTypeAttribute(typeRef.coneType)).let(typeRef::withReplacedConeType)
+            }
+        }
     }
 
 
@@ -191,15 +201,20 @@ private class FirApplySupertypesTransformer(
         if (typeAlias.expandedTypeRef is FirResolvedTypeRef) {
             return typeAlias
         }
-        val supertypeRefs = getResolvedSupertypeRefs(typeAlias)
+        typeAlias.replaceExpandedTypeRef(expandTypealiasInPlace(getResolvedExpandedTypeRef(typeAlias)))
+        return typeAlias
+    }
 
+    private fun getResolvedExpandedTypeRef(typeAlias: FirTypeAlias): FirTypeRef {
+        val supertypeRefs = getResolvedSupertypeRefs(typeAlias)
         assert(supertypeRefs.size == 1) {
             "Expected single supertypeRefs, but found ${supertypeRefs.size} in ${typeAlias.symbol.classId}"
         }
-
-        typeAlias.replaceExpandedTypeRef(supertypeRefs[0])
-        return typeAlias
+        return supertypeRefs[0]
     }
+
+    private fun getResolvedExpandedType(typeAlias: FirTypeAlias): ConeClassLikeType? =
+        typeAlias.expandedConeType ?: getResolvedExpandedTypeRef(typeAlias).coneTypeSafe<ConeClassLikeType>()
 }
 
 private fun FirClassLikeDeclaration.typeParametersScope(): FirScope? {

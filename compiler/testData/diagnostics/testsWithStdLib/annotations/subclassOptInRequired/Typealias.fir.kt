@@ -8,4 +8,4 @@ interface Interface
 
 typealias TypeAlias = Interface
 
-class InterfaceInheritorB: TypeAlias
+class InterfaceInheritorB: <!OPT_IN_USAGE_ERROR!>TypeAlias<!>

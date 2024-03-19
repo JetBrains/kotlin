@@ -171,6 +171,14 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
     } as T
 }
 
+/**
+ * Adds or replaces an attribute.
+ */
+fun ConeKotlinType.assign(attribute: ConeAttribute<*>): ConeKotlinType {
+    val clearedAttributes = attributes.abbreviatedType?.let(attributes::remove) ?: attributes
+    return withAttributes(clearedAttributes + attribute)
+}
+
 fun <T : ConeKotlinType> T.withNullability(
     nullability: ConeNullability,
     typeContext: ConeTypeContext,
