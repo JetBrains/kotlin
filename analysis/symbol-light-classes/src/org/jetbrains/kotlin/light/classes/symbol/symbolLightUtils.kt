@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClas
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterface
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
 import org.jetbrains.kotlin.light.classes.symbol.classes.modificationTrackerForClassInnerStuff
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -49,12 +50,12 @@ internal fun KtDeclarationSymbol.getContainingSymbolsWithSelf(): Sequence<KtDecl
 internal fun KtAnalysisSession.mapType(
     type: KtType,
     psiContext: PsiElement,
-    mode: KtTypeMappingMode
+    mode: KtTypeMappingMode,
 ): PsiClassType? {
     val psiType = type.asPsiType(
-        psiContext,
+        useSitePosition = psiContext,
         allowErrorTypes = true,
-        mode,
+        mode = mode,
     )
 
     return psiType as? PsiClassType
@@ -155,6 +156,13 @@ internal fun KtAnalysisSession.getTypeNullability(type: KtType): KtTypeNullabili
 
     return ktType.nullability
 }
+
+internal val KtTypeNullability.asAnnotationQualifier: String?
+    get() = when (this) {
+        KtTypeNullability.NON_NULLABLE -> JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION
+        KtTypeNullability.NULLABLE -> JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION
+        else -> null
+    }?.asString()
 
 private fun escapeString(s: String): String = buildString {
     s.forEach {

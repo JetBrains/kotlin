@@ -144,8 +144,6 @@ open class AbstractSymbolLightClassesParentingTestBase(
             override fun visitField(field: PsiField) {
                 checkParentAndVisitChildren(field) { visitor ->
                     annotations.forEach { it.accept(visitor) }
-
-                    type.annotations.forEach { it.accept(visitor) }
                 }
             }
 
@@ -154,8 +152,6 @@ open class AbstractSymbolLightClassesParentingTestBase(
 
                 checkParentAndVisitChildren(method) { visitor ->
                     annotations.forEach { it.accept(visitor) }
-
-                    returnType?.annotations?.forEach { it.accept(visitor) }
                 }
             }
 

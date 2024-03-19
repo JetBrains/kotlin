@@ -1,0 +1,2 @@
+KtType: java.lang.Runnable
+PsiType: java.lang.Runnable

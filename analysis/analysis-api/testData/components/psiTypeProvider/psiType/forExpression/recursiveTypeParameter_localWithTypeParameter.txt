@@ -1,97 +1,97 @@
 KtType: kotlin.collections.List<Wrapper>
 asPsiType(allowErrorTypes=false, mode=DEFAULT, isAnnotationMethod=false):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=false, mode=DEFAULT, isAnnotationMethod=true):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=false, mode=DEFAULT_UAST, isAnnotationMethod=false):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=false, mode=DEFAULT_UAST, isAnnotationMethod=true):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=false, mode=GENERIC_ARGUMENT, isAnnotationMethod=false):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=false, mode=GENERIC_ARGUMENT, isAnnotationMethod=true):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=false, mode=SUPER_TYPE, isAnnotationMethod=false):
-  PsiType: java.util.List<java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=false, mode=SUPER_TYPE, isAnnotationMethod=true):
-  PsiType: java.util.List<java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=false, mode=SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS, isAnnotationMethod=false):
-  PsiType: kotlin.collections.List<java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.collections.List<@org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=false, mode=SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS, isAnnotationMethod=true):
-  PsiType: kotlin.collections.List<java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.collections.List<@org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=false, mode=RETURN_TYPE_BOXED, isAnnotationMethod=false):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=false, mode=RETURN_TYPE_BOXED, isAnnotationMethod=true):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=false, mode=RETURN_TYPE, isAnnotationMethod=false):
-  PsiType: java.util.List<java.lang.Comparable<Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Comparable<Wrapper<T>>>
 
 asPsiType(allowErrorTypes=false, mode=RETURN_TYPE, isAnnotationMethod=true):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=false, mode=VALUE_PARAMETER, isAnnotationMethod=false):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=false, mode=VALUE_PARAMETER, isAnnotationMethod=true):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=true, mode=DEFAULT, isAnnotationMethod=false):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=true, mode=DEFAULT, isAnnotationMethod=true):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=true, mode=DEFAULT_UAST, isAnnotationMethod=false):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=true, mode=DEFAULT_UAST, isAnnotationMethod=true):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=true, mode=GENERIC_ARGUMENT, isAnnotationMethod=false):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=true, mode=GENERIC_ARGUMENT, isAnnotationMethod=true):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=true, mode=SUPER_TYPE, isAnnotationMethod=false):
-  PsiType: java.util.List<java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=true, mode=SUPER_TYPE, isAnnotationMethod=true):
-  PsiType: java.util.List<java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=true, mode=SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS, isAnnotationMethod=false):
-  PsiType: kotlin.collections.List<java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.collections.List<@org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=true, mode=SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS, isAnnotationMethod=true):
-  PsiType: kotlin.collections.List<java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.collections.List<@org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=true, mode=RETURN_TYPE_BOXED, isAnnotationMethod=false):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=true, mode=RETURN_TYPE_BOXED, isAnnotationMethod=true):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=true, mode=RETURN_TYPE, isAnnotationMethod=false):
-  PsiType: java.util.List<java.lang.Comparable<Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Comparable<Wrapper<T>>>
 
 asPsiType(allowErrorTypes=true, mode=RETURN_TYPE, isAnnotationMethod=true):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=true, mode=VALUE_PARAMETER, isAnnotationMethod=false):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 
 asPsiType(allowErrorTypes=true, mode=VALUE_PARAMETER, isAnnotationMethod=true):
-  PsiType: java.util.List<? extends java.lang.Comparable<? super Wrapper<T>>>
+  PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 

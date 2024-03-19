@@ -1,10 +1,10 @@
 public final class C /* C*/ {
   @kotlin.jvm.JvmField()
   @org.jetbrains.annotations.NotNull()
-  public static final java.lang.String foo;
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String foo;
 
   @org.jetbrains.annotations.NotNull()
-  public static final C.Companion Companion;
+  public static final @org.jetbrains.annotations.NotNull() C.Companion Companion;
 
   public  C();//  .ctor()
 

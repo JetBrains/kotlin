@@ -1,2 +1,2 @@
 KtType: @foo.MyAnno(s = "str1") kotlin.String
-PsiType: @foo.MyAnno(s = "str1") java.lang.String
+PsiType: @foo.MyAnno(s = "str1") @org.jetbrains.annotations.NotNull() java.lang.String

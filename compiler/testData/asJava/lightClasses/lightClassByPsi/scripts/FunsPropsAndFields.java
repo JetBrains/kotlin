@@ -7,7 +7,7 @@ public final class FunsPropsAndFields /* FunsPropsAndFields*/ extends kotlin.scr
   private int testPropVar = 42 /* initializer type: int */;
 
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.String testFun(int);//  testFun(int)
+  public final @org.jetbrains.annotations.NotNull() java.lang.String testFun(int);//  testFun(int)
 
   public  FunsPropsAndFields(java.lang.String[]);//  .ctor(java.lang.String[])
 
