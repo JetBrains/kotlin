@@ -42,8 +42,6 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ENUM_CLASS name:JEnum modality:FINAL vis
     overridden:
       public final name: kotlin.String [val]
     FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:<root>.JEnum) returnType:kotlin.String [fake_override]
-      annotations:
-        IntrinsicConstEvaluation
       correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
       overridden:
         public final fun <get-name> (): kotlin.String declared in kotlin.Enum

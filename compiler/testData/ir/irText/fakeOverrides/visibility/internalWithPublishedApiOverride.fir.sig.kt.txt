@@ -62,7 +62,6 @@ class A : Java1 {
     //   Mangled name: A#<get-a>(){}kotlin.Int
     //   Public signature: /A.a.<get-a>|4232747788241509192[0]
     //   Public signature debug description: <get-a>(){}kotlin.Int
-    @PublishedApi
     internal /* fake */ override get(): Int
 
 }
@@ -93,7 +92,6 @@ class B : Java1 {
     //   Mangled name: B#<get-a>(){}kotlin.Int
     //   Public signature: /B.a.<get-a>|4232747788241509192[0]
     //   Public signature debug description: <get-a>(){}kotlin.Int
-    @PublishedApi
     internal /* fake */ override get(): Int
 
 }
@@ -124,7 +122,6 @@ class C : Java2 {
     //   Mangled name: C#<get-a>(){}kotlin.Int
     //   Public signature: /C.a.<get-a>|4232747788241509192[0]
     //   Public signature debug description: <get-a>(){}kotlin.Int
-    @PublishedApi
     internal /* fake */ override get(): Int
 
 }
@@ -242,3 +239,4 @@ open class InternalVisibility {
 //   Public signature: /test|-3020703466980043959[0]
 //   Public signature debug description: test(A;B;C;D;E;F;G){}
 fun test(a: A, b: B, c: C, d: D, e: E, f: F, g: G): Unit
+

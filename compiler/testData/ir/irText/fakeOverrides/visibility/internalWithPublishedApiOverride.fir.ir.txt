@@ -66,8 +66,6 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         internal open a: kotlin.Int
       FUN FAKE_OVERRIDE name:<get-a> visibility:internal modality:OPEN <> ($this:<root>.Java1) returnType:kotlin.Int [fake_override]
-        annotations:
-          PublishedApi
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:internal modality:OPEN [fake_override,val]
         overridden:
           internal open fun <get-a> (): kotlin.Int declared in <root>.Java1
@@ -102,8 +100,6 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         internal open a: kotlin.Int
       FUN FAKE_OVERRIDE name:<get-a> visibility:internal modality:OPEN <> ($this:<root>.Java1) returnType:kotlin.Int [fake_override]
-        annotations:
-          PublishedApi
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:internal modality:OPEN [fake_override,val]
         overridden:
           internal open fun <get-a> (): kotlin.Int declared in <root>.Java1
@@ -137,8 +133,6 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         internal open a: kotlin.Int
       FUN FAKE_OVERRIDE name:<get-a> visibility:internal modality:OPEN <> ($this:<root>.Java2) returnType:kotlin.Int [fake_override]
-        annotations:
-          PublishedApi
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:internal modality:OPEN [fake_override,val]
         overridden:
           internal open fun <get-a> (): kotlin.Int declared in <root>.Java2

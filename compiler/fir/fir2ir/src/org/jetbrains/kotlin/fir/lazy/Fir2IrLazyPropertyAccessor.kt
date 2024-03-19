@@ -50,7 +50,10 @@ class Fir2IrLazyPropertyAccessor(
         get() = firAccessor?.isInline == true
         set(_) = mutationNotSupported()
 
-    override var annotations: List<IrConstructorCall> by createLazyAnnotations()
+    override var annotations: List<IrConstructorCall> by when {
+        firAccessor != null -> createLazyAnnotations()
+        else -> lazyVar<List<IrConstructorCall>>(lock) { emptyList() }
+    }
 
     override var name: Name
         get() = Name.special("<${if (isSetter) "set" else "get"}-${firParentProperty.name}>")

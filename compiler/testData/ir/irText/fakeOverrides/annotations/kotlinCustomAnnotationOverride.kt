@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM
-// SEPARATE_SIGNATURE_DUMP_FOR_K2
-// ^ ISSUE: KT-65388
+// ISSUE: KT-65388
 
 // FILE: Java1.java
 public class Java1 extends A {
