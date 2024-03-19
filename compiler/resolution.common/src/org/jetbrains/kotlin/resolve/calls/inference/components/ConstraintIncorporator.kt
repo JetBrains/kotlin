@@ -18,7 +18,7 @@ import java.util.*
 class ConstraintIncorporator(
     val typeApproximator: AbstractTypeApproximator,
     val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
-    val utilContext: ConstraintSystemUtilContext
+    val utilContext: ConstraintSystemUtilContext,
 ) {
 
     interface Context : TypeSystemInferenceExtensionContext {
@@ -34,7 +34,7 @@ class ConstraintIncorporator(
             upperType: KotlinTypeMarker,
             shouldTryUseDifferentFlexibilityForUpperType: Boolean,
             isFromNullabilityConstraint: Boolean = false,
-            isFromDeclaredUpperBound: Boolean = false
+            isFromDeclaredUpperBound: Boolean = false,
         )
 
         fun addNewIncorporatedConstraint(typeVariable: TypeVariableMarker, type: KotlinTypeMarker, constraintContext: ConstraintContext)
@@ -57,7 +57,7 @@ class ConstraintIncorporator(
     // A <:(=) \alpha <:(=) B => A <: B
     private fun Context.directWithVariable(
         typeVariable: TypeVariableMarker,
-        constraint: Constraint
+        constraint: Constraint,
     ) {
         val shouldBeTypeVariableFlexible =
             if (useRefinedBoundsForTypeVariableInFlexiblePosition())
@@ -105,7 +105,7 @@ class ConstraintIncorporator(
     // \alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>
     private fun Context.insideOtherConstraint(
         typeVariable: TypeVariableMarker,
-        constraint: Constraint
+        constraint: Constraint,
     ) {
         val freshTypeConstructor = typeVariable.freshTypeConstructor()
         for (typeVariableWithConstraint in this@insideOtherConstraint.allTypeVariablesWithConstraints) {
@@ -124,7 +124,7 @@ class ConstraintIncorporator(
         targetVariable: TypeVariableMarker,
         otherVariable: TypeVariableMarker,
         otherConstraint: Constraint,
-        needApproximation: Boolean = true
+        needApproximation: Boolean = true,
     ) {
         val typeWithSubstitution = baseConstraint.type.substitute(this, otherVariable, type)
         val prepareType = { toSuper: Boolean ->
@@ -143,7 +143,7 @@ class ConstraintIncorporator(
         targetVariable: TypeVariableMarker,
         baseConstraint: Constraint,
         otherVariable: TypeVariableMarker,
-        otherConstraint: Constraint
+        otherConstraint: Constraint,
     ) {
         val isBaseGenericType = baseConstraint.type.argumentsCount() != 0
         val isBaseOrOtherCapturedType = baseConstraint.type.isCapturedType() || otherConstraint.type.isCapturedType()
@@ -208,7 +208,7 @@ class ConstraintIncorporator(
         otherVariable: TypeVariableMarker,
         otherConstraint: Constraint,
         newConstraint: KotlinTypeMarker,
-        isSubtype: Boolean
+        isSubtype: Boolean,
     ) {
         if (targetVariable in getNestedTypeVariables(newConstraint)) return
 
@@ -249,7 +249,7 @@ class ConstraintIncorporator(
 
     private fun Context.containsConstrainingTypeWithoutProjection(
         newConstraint: KotlinTypeMarker,
-        otherConstraint: Constraint
+        otherConstraint: Constraint,
     ): Boolean {
         return getNestedArguments(newConstraint).any {
             it.getType().typeConstructor() == otherConstraint.type.typeConstructor() && it.getVariance() == TypeVariance.INV
@@ -259,7 +259,7 @@ class ConstraintIncorporator(
     private fun Context.isPotentialUsefulNullabilityConstraint(
         newConstraint: KotlinTypeMarker,
         otherConstraint: KotlinTypeMarker,
-        kind: ConstraintKind
+        kind: ConstraintKind,
     ): Boolean {
         if (trivialConstraintTypeInferenceOracle.isSuitableResultedType(newConstraint)) return false
 
