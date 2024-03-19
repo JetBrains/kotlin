@@ -64,7 +64,7 @@ val BOUND_RECEIVER_PARAMETER by IrDeclarationOriginImpl
   semantically incorrect (TODO: needs further fix), but code generation seems
   to proceed nevertheless.
 */
-class LocalDeclarationsLowering(
+open class LocalDeclarationsLowering(
     val context: CommonBackendContext,
     val localNameSanitizer: (String) -> String = { it },
     val visibilityPolicy: VisibilityPolicy = VisibilityPolicy.DEFAULT,

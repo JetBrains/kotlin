@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.ir.getDefaultAdditionalStatementsFrom
 import org.jetbrains.kotlin.backend.common.ir.getNonDefaultAdditionalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.ir.getOriginalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
-import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -98,7 +97,7 @@ private class RemoveDuplicatedInlinedLocalClassesLowering(val context: JvmBacken
             ?.filterIsInstance<IrFunction>()?.firstOrNull()?.takeIf { it.body != null }
         container?.let {
             LocalDeclarationsLowering(
-                context, NameUtils::sanitizeAsJavaIdentifier, JvmVisibilityPolicy(),
+                context, NameUtils::sanitizeAsJavaIdentifier, JvmVisibilityPolicy,
                 compatibilityModeForInlinedLocalDelegatedPropertyAccessors = true, forceFieldsForInlineCaptures = true
             ).lowerWithoutActualChange(it.body!!, it)
         }
