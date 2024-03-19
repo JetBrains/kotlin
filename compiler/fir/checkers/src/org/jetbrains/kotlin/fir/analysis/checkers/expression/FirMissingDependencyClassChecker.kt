@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirMissingDependencyClassProxy.MissingTypeOrigin.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithSingleCandidate
@@ -29,11 +31,21 @@ import org.jetbrains.kotlin.fir.types.*
 object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common), FirMissingDependencyClassProxy {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val calleeReference = expression.calleeReference
+        val missingTypes = mutableSetOf<ConeKotlinType>()
         val missingTypesFromExpression = mutableSetOf<ConeKotlinType>()
+        val containingElements = context.containingElements
         if (!calleeReference.isError()) {
             expression.resolvedType.forEachType {
                 if (it is ConeErrorType) {
-                    considerType(it, missingTypesFromExpression, context)
+                    // To report error instead of warning in a known corner case (KT-66356)
+                    val partOfErroneousOuterCall =
+                        containingElements.any { it is FirFunctionCall && it.calleeReference is FirResolvedErrorReference } &&
+                                !context.session.languageVersionSettings.supportsFeature(ForbidUsingExpressionTypesWithInaccessibleContent)
+                    considerType(
+                        type = it,
+                        missingTypes = if (partOfErroneousOuterCall) missingTypes else missingTypesFromExpression,
+                        context
+                    )
                 }
             }
         }
@@ -45,7 +57,6 @@ object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(Mp
             missingTypesFromExpression.isEmpty()
         ) return
 
-        val missingTypes = mutableSetOf<ConeKotlinType>()
         val symbol = calleeReference.toResolvedCallableSymbol() ?: return
         considerType(symbol.resolvedReturnTypeRef.coneType, missingTypes, context)
         symbol.resolvedReceiverTypeRef?.coneType?.let {

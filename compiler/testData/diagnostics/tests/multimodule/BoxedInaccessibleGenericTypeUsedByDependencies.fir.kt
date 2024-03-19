@@ -13,5 +13,5 @@ fun consumeBoxedInaccessibleType(arg: Box<InaccessibleType<Any?>>) {}
 // MODULE: main(library)
 
 fun test() {
-    consumeBoxedInaccessibleType(<!ARGUMENT_TYPE_MISMATCH!><!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedInaccessibleType<!>()<!>)
+    consumeBoxedInaccessibleType(<!ARGUMENT_TYPE_MISMATCH!><!MISSING_DEPENDENCY_CLASS!>produceBoxedInaccessibleType<!>()<!>)
 }
