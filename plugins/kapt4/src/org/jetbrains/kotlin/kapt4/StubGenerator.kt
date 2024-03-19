@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.kapt4
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap
 import com.intellij.lang.ASTNode
-import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.KtNodeTypes
@@ -49,7 +48,6 @@ import org.jetbrains.kotlin.utils.toMetadataVersion
 import org.jetbrains.kotlin.kapt3.base.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.stubs.MembersPositionComparator
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.psiUtil.children
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.utils.Printer
@@ -280,17 +278,22 @@ private class StubGenerator(
                 }
 
                 val classPosition = lineMappings.getPosition(psiClass)
+                val fields = psiClass.fields
+
+                // A workaround for KT-66687
+                fun fieldName(field: PsiField) =
+                    if (!field.isStatic && fields.any { it.name == field.name && it.isStatic}) "${field.name}$1" else field.name
 
                 val fieldsPositions = psiClass.fields
                     .filterNot { it is PsiEnumConstant }
                     .onEach { lineMappings.registerField(psiClass, it) }
-                    .associateWith { MemberData(it.name, it.signature, lineMappings.getPosition(psiClass, it)) }
+                    .associateWith { MemberData(fieldName(it), it.signature, lineMappings.getPosition(psiClass, it)) }
 
                 if (!psiClass.isRecord) {
                     fieldsPositions.keys.sortedWith(MembersPositionComparator(classPosition, fieldsPositions))
                         .forEachIndexed { index, field ->
                             if (index > 0) printlnWithNoIndent()
-                            printField(field)
+                            printField(field, fieldsPositions[field]!!.name)
                         }
                 }
 
@@ -332,13 +335,13 @@ private class StubGenerator(
                 }
             }
 
-            private fun Printer.printField(field: PsiField) {
+            private fun Printer.printField(field: PsiField, name: String) {
                 if (!isValidIdentifier(field.name) || !checkIfValidTypeName(field.type)) return
 
                 printComment(field)
                 printModifiers(field)
                 printType(field.type)
-                printWithNoIndent(" ", field.name)
+                printWithNoIndent(" ", name)
                 if (field.hasInitializer() && (dumpDefaultParameterValues || field.navigationElement !is KtParameter)) {
                     printWithNoIndent(" = ", field.initializer?.text)
                 } else if (field.isFinal) {

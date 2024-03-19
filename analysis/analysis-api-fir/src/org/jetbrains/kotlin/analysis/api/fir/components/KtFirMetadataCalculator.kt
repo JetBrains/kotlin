@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.generateLanguageVersionSettingsBasedMetadata
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.JvmAbiStability
 import org.jetbrains.kotlin.config.JvmDefaultMode
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmSerializerExtension
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmSerializerExtension.Companion.
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.psi
@@ -90,6 +92,18 @@ internal class KtFirMetadataCalculator(override val analysisSession: KtFirAnalys
         mapping: Multimap<KtElement, PsiElement>,
         bindings: JvmSerializationBindings,
     ) {
+        // A workaround for KT-66687
+        val staticFields = declarations
+            .asSequence()
+            .filterIsInstance<FirRegularClass>()
+            .find { it.status.isCompanion }
+            ?.declarations
+            ?.asSequence()
+            ?.filterIsInstance<FirProperty>()
+            ?.filter { it.hasBackingField }
+            ?.map { mapping[it.psi as KtElement].firstIsInstanceOrNull<PsiField>()!!.name }
+            ?.toSet() ?: emptySet()
+
         for (fir in declarations) {
             if (fir !is FirFunction && fir !is FirProperty && fir !is FirTypeAlias) continue
 
@@ -108,7 +122,8 @@ internal class KtFirMetadataCalculator(override val analysisSession: KtFirAnalys
                 is FirProperty -> {
                     if (fir.hasBackingField || fir.delegateFieldSymbol != null) {
                         psiElements.firstIsInstanceOrNull<PsiField>()?.let {
-                            bindings.put(FIELD_FOR_PROPERTY, fir, Type.getType(getBinaryPresentationWithCorrection(it.type)) to it.name)
+                            val name = if (!fir.isStatic && it.name in staticFields) "${it.name}$1" else it.name
+                            bindings.put(FIELD_FOR_PROPERTY, fir, Type.getType(getBinaryPresentationWithCorrection(it.type)) to name)
                         }
                     }
                     fir.getter?.let { getter ->
