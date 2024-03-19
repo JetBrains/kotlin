@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.ir.Ir
+import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -86,6 +87,8 @@ interface CommonBackendContext : BackendContext, LoggingContext, ErrorReportingC
 
     val partialLinkageSupport: PartialLinkageSupportForLowerings
         get() = PartialLinkageSupportForLowerings.DISABLED
+
+    val innerClassesSupport: InnerClassesSupport
 }
 
 /**

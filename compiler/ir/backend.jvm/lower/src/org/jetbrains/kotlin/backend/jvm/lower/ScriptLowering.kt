@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmInnerClassesSupport
 import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -52,14 +51,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.topologicalSort
 
 internal val scriptsToClassesPhase = makeIrModulePhase(
-    { context: JvmBackendContext -> ScriptsToClassesLowering(context, context.innerClassesSupport) },
+    { context: JvmBackendContext -> ScriptsToClassesLowering(context) },
     name = "ScriptsToClasses",
     description = "Put script declarations into classes",
 )
 
-private class ScriptsToClassesLowering(
-    val context: JvmBackendContext, val innerClassesSupport: JvmInnerClassesSupport,
-) : ModuleLoweringPass {
+private class ScriptsToClassesLowering(val context: JvmBackendContext) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
         val scripts = mutableListOf<IrScript>()
         val scriptDependencies = mutableMapOf<IrScript, List<IrScript>>()
@@ -199,7 +196,6 @@ private class ScriptsToClassesLowering(
             typeRemapper,
             context,
             capturingClasses,
-            innerClassesSupport,
             earlierScriptField,
             implicitReceiversFieldsWithParameters
         )
@@ -614,7 +610,6 @@ private class ScriptToClassTransformer(
     val typeRemapper: TypeRemapper,
     val context: JvmBackendContext,
     val capturingClasses: Set<IrClassImpl>,
-    val innerClassesSupport: JvmInnerClassesSupport,
     val earlierScriptsField: IrField?,
     val implicitReceiversFieldsWithParameters: Collection<Pair<IrField, IrValueParameter>>
 ) : IrElementTransformer<ScriptToClassTransformerContext> {
@@ -723,7 +718,7 @@ private class ScriptToClassTransformer(
                 it.isInner = true
                 dataForChildren =
                     ScriptToClassTransformerContext(
-                        null, innerClassesSupport.getOuterThisField(it).symbol, it.thisReceiver?.symbol, false
+                        null, context.innerClassesSupport.getOuterThisField(it).symbol, it.thisReceiver?.symbol, false
                     )
             }
         }
