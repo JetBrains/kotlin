@@ -75,7 +75,7 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
     private val context: IrPluginContext,
     private val symbolRemapper: DeepCopySymbolRemapper,
     private val typeRemapper: TypeRemapper,
-    symbolRenamer: SymbolRenamer = SymbolRenamer.DEFAULT
+    @Suppress("DEPRECATION") symbolRenamer: SymbolRenamer = SymbolRenamer.DEFAULT
 ) : DeepCopyPreservingMetadata(symbolRemapper, typeRemapper, symbolRenamer) {
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction {

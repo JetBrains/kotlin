@@ -38,7 +38,6 @@ kotlin {
             "-Xskip-metadata-version-check",
             "-Xjvm-default=all"
         )
-        allWarningsAsErrors.set(false)
     }
 }
 
