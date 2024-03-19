@@ -32,6 +32,12 @@ public class FirCExportStaticInterfaceNoneTestGenerated extends AbstractNativeCE
   }
 
   @Test
+  @TestMetadata("nativeRefs")
+  public void testNativeRefs() {
+    runTest("native/native.tests/testData/CExport/InterfaceNone/nativeRefs/");
+  }
+
+  @Test
   @TestMetadata("primitiveTypes")
   public void testPrimitiveTypes() {
     runTest("native/native.tests/testData/CExport/InterfaceNone/primitiveTypes/");

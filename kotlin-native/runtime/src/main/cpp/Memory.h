@@ -605,4 +605,11 @@ RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processObjectInMark(void* s
 RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processArrayInMark(void* state, ObjHeader* object);
 RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object);
 
+RUNTIME_NOTHROW extern "C" OBJ_GETTER(Kotlin_Interop_derefSpecialRef, kotlin::mm::RawSpecialRef *ref);
+RUNTIME_NOTHROW extern "C" kotlin::mm::RawSpecialRef *Kotlin_Interop_createSpecialRef(ObjHeader *object);
+RUNTIME_NOTHROW extern "C" void Kotlin_Interop_disposeSpecialRef(kotlin::mm::RawSpecialRef *ref);
+RUNTIME_NOTHROW extern "C" void Kotlin_Interop_retainSpecialRef(kotlin::mm::RawSpecialRef *ref);
+RUNTIME_NOTHROW extern "C" bool Kotlin_Interop_tryRetainSpecialRef(kotlin::mm::RawSpecialRef *ref);
+RUNTIME_NOTHROW extern "C" void Kotlin_Interop_releaseSpecialRef(kotlin::mm::RawSpecialRef *ref);
+
 #endif // RUNTIME_MEMORY_H
