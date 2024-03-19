@@ -17,6 +17,9 @@ dependencies {
     api(project(":compiler:backend.js"))
     api(project(":wasm:wasm.ir"))
 
+    implementation(project(":wasm:wasm.frontend"))
+    implementation(project(":wasm:wasm.config"))
+
     compileOnly(intellijCore())
 }
 

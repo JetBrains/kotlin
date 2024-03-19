@@ -11,11 +11,7 @@ import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.isJps
 import org.jetbrains.kotlin.extensions.ApplicationExtensionDescriptor
-import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
-import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
-import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
-import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
-import org.jetbrains.kotlin.platform.impl.WasmIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.*
 
 abstract class IdePlatformKind {
     abstract fun supportsTargetPlatform(platform: TargetPlatform): Boolean
@@ -54,7 +50,8 @@ abstract class IdePlatformKind {
             get() = listOf(
                 JvmIdePlatformKind,
                 JsIdePlatformKind,
-                WasmIdePlatformKind,
+                WasmJsIdePlatformKind,
+                WasmWasiIdePlatformKind,
                 CommonIdePlatformKind,
                 NativeIdePlatformKind
             )

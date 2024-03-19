@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.wasm.test
 
+import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.wasmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -27,7 +27,7 @@ abstract class AbstractK1WasmTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
 ) : AbstractWasmBlackBoxCodegenTestBase<ClassicFrontendOutputArtifact, IrBackendInput, BinaryArtifacts.KLib>(
-    FrontendKinds.ClassicFrontend, TargetBackend.WASM, pathToTestDir, testGroupOutputDirPrefix
+    FrontendKinds.ClassicFrontend, TargetBackend.WASM, WasmPlatforms.wasmJs, pathToTestDir, testGroupOutputDirPrefix
 ) {
     override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
         get() = ::ClassicFrontendFacade

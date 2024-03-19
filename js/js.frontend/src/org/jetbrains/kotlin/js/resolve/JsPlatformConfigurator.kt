@@ -37,7 +37,6 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
     ),
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
-        container.useInstance(JsNameSuggestion())
         container.useImpl<JsCallChecker>()
         container.useImpl<JsTypeSpecificityComparator>()
         container.useImpl<JsNameClashChecker>()

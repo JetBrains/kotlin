@@ -46,8 +46,6 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
@@ -58,12 +56,15 @@ import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.FakeTopDownAnalyzerFacadeForNative
 import org.jetbrains.kotlin.platform.*
-import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import org.jetbrains.kotlin.resolve.TargetEnvironment
+import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
@@ -81,6 +82,7 @@ import org.jetbrains.kotlin.test.services.configuration.getDependencies
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.types.typeUtil.closure
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
 
 class ClassicFrontendFacade(
@@ -346,7 +348,7 @@ class ClassicFrontendFacade(
         dependencyDescriptors: List<ModuleDescriptor>,
         friendsDescriptors: List<ModuleDescriptor>,
     ): AnalysisResult {
-        val suffix = when (configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS)) {
+        val suffix = when (configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)) {
             WasmTarget.JS -> "-js"
             WasmTarget.WASI -> "-wasi"
             else -> error("Unexpected wasi target")
@@ -366,7 +368,7 @@ class ClassicFrontendFacade(
         val allDependencies = runtimeKlibs + dependencyDescriptors + friendLibraries + friendsDescriptors + transitiveLibraries
 
         val builtInModuleDescriptor = allDependencies.firstNotNullOfOrNull { it.builtIns }?.builtInsModule
-        val analyzerFacade = TopDownAnalyzerFacadeForWasm.facadeFor(configuration.get(JSConfigurationKeys.WASM_TARGET))
+        val analyzerFacade = TopDownAnalyzerFacadeForWasm.facadeFor(configuration.get(WasmConfigurationKeys.WASM_TARGET))
 
         return analyzerFacade.analyzeFiles(
             files,

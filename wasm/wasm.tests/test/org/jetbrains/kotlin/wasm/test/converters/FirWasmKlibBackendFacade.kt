@@ -13,9 +13,8 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 class FirWasmKlibBackendFacade(
     testServices: TestServices,
@@ -52,7 +52,7 @@ class FirWasmKlibBackendFacade(
         val outputFile = WasmEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
 
         // TODO: consider avoiding repeated libraries resolution
-        val target = configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS)
+        val target = configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)
         val libraries = resolveLibraries(configuration, getAllWasmDependenciesPaths(module, testServices, target))
 
         if (firstTimeCompilation) {

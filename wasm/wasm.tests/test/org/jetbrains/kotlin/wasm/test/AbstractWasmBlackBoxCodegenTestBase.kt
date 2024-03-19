@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.test
 
-import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.wasm.test.handlers.WasmDtsHandler
 abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>, A : ResultingArtifact.Binary<A>>(
     private val targetFrontend: FrontendKind<R>,
     targetBackend: TargetBackend,
+    private val targetPlatform: TargetPlatform,
     private val pathToTestDir: String,
     private val testGroupOutputDirPrefix: String,
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
@@ -44,7 +45,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
     protected fun TestConfigurationBuilder.commonConfigurationForWasmBlackBoxCodegenTest() {
         globalDefaults {
             frontend = targetFrontend
-            targetPlatform = WasmPlatforms.Default
+            targetPlatform = this@AbstractWasmBlackBoxCodegenTestBase.targetPlatform
             dependencyKind = DependencyKind.Binary
         }
 

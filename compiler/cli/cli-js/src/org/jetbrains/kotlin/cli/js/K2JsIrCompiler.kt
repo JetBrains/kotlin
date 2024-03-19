@@ -60,12 +60,14 @@ import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.join
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
 import java.io.IOException
 
@@ -195,12 +197,12 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         configuration.put(JSConfigurationKeys.LIBRARIES, libraries)
         configuration.put(JSConfigurationKeys.TRANSITIVE_LIBRARIES, libraries)
-        configuration.put(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, arguments.wasmEnableArrayRangeChecks)
-        configuration.put(JSConfigurationKeys.WASM_ENABLE_ASSERTS, arguments.wasmEnableAsserts)
-        configuration.put(JSConfigurationKeys.WASM_GENERATE_WAT, arguments.wasmGenerateWat)
-        configuration.put(JSConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS, arguments.wasmUseTrapsInsteadOfExceptions)
-        configuration.put(JSConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, arguments.wasmUseNewExceptionProposal)
-        configuration.putIfNotNull(JSConfigurationKeys.WASM_TARGET, arguments.wasmTarget?.let(WasmTarget::fromName))
+        configuration.put(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, arguments.wasmEnableArrayRangeChecks)
+        configuration.put(WasmConfigurationKeys.WASM_ENABLE_ASSERTS, arguments.wasmEnableAsserts)
+        configuration.put(WasmConfigurationKeys.WASM_GENERATE_WAT, arguments.wasmGenerateWat)
+        configuration.put(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS, arguments.wasmUseTrapsInsteadOfExceptions)
+        configuration.put(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, arguments.wasmUseNewExceptionProposal)
+        configuration.putIfNotNull(WasmConfigurationKeys.WASM_TARGET, arguments.wasmTarget?.let(WasmTarget::fromName))
 
         configuration.put(JSConfigurationKeys.OPTIMIZE_GENERATED_JS, arguments.optimizeGeneratedJs)
 
@@ -406,7 +408,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     baseFileName = outputName,
                     emitNameSection = arguments.wasmDebug,
                     allowIncompleteImplementations = arguments.irDce,
-                    generateWat = configuration.get(JSConfigurationKeys.WASM_GENERATE_WAT, false),
+                    generateWat = configuration.get(WasmConfigurationKeys.WASM_GENERATE_WAT, false),
                     generateSourceMaps = generateSourceMaps,
                 )
 
@@ -463,7 +465,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         lateinit var sourceModule: ModulesStructure
         do {
             val analyzerFacade = when (arguments.wasm) {
-                true -> TopDownAnalyzerFacadeForWasm.facadeFor(environmentForJS.configuration.get(JSConfigurationKeys.WASM_TARGET))
+                true -> TopDownAnalyzerFacadeForWasm.facadeFor(environmentForJS.configuration.get(WasmConfigurationKeys.WASM_TARGET))
                 else -> TopDownAnalyzerFacadeForJSIR
             }
             sourceModule = prepareAnalyzedSourceModule(

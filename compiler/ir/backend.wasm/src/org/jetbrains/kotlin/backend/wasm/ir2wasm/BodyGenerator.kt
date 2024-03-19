@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.WasmSymbols
 import org.jetbrains.kotlin.backend.wasm.lower.JsExceptionRevealOrigin
 import org.jetbrains.kotlin.backend.wasm.utils.*
-import org.jetbrains.kotlin.backend.wasm.utils.isCanonical
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -24,7 +23,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
@@ -138,7 +137,7 @@ class BodyGenerator(
 
     override fun visitThrow(expression: IrThrow) {
         generateExpression(expression.value)
-        if (context.backendContext.configuration.getBoolean(JSConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)) {
+        if (context.backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)) {
             body.buildUnreachable(SourceLocation.NoLocation("Unreachable is inserted instead of a `throw` instruction"))
             return
         }
@@ -149,12 +148,12 @@ class BodyGenerator(
     override fun visitTry(aTry: IrTry) {
         assert(aTry.isCanonical(irBuiltIns)) { "expected canonical try/catch" }
 
-        if (context.backendContext.configuration.getBoolean(JSConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)) {
+        if (context.backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)) {
             generateExpression(aTry.tryResult)
             return
         }
 
-        if (context.backendContext.configuration.getBoolean(JSConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL)) {
+        if (context.backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL)) {
             generateTryFollowingNewProposal(aTry)
         } else {
             generateTryFollowingOldProposal(aTry)
@@ -478,13 +477,13 @@ class BodyGenerator(
         }
 
         // Some intrinsics are a special case because we want to remove them completely, including their arguments.
-        if (!backendContext.configuration.getNotNull(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS)) {
+        if (!backendContext.configuration.getNotNull(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS)) {
             if (call.symbol == wasmSymbols.rangeCheck) {
                 body.buildGetUnit()
                 return
             }
         }
-        if (!backendContext.configuration.getNotNull(JSConfigurationKeys.WASM_ENABLE_ASSERTS)) {
+        if (!backendContext.configuration.getNotNull(WasmConfigurationKeys.WASM_ENABLE_ASSERTS)) {
             if (call.symbol in wasmSymbols.assertFuncs) {
                 body.buildGetUnit()
                 return
@@ -800,7 +799,7 @@ class BodyGenerator(
         }
 
         if (context.backendContext.isWasmJsTarget && expression.origin == JsExceptionRevealOrigin.JS_EXCEPTION_REVEAL) {
-            if (context.backendContext.configuration.getBoolean(JSConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL)) {
+            if (context.backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL)) {
                 generateTryCatchAllFollowingNewProposal(expression)
             } else {
                 generateTryCatchAllFollowingOldProposal(expression)

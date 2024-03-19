@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class WasmSymbols(
@@ -421,7 +421,7 @@ class WasmSymbols(
 
 
     private val invokeOnExportedFunctionExitIfWasi =
-        when (context.configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS) == WasmTarget.WASI) {
+        when (context.configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS) == WasmTarget.WASI) {
             true -> getInternalFunction("invokeOnExportedFunctionExit")
             else -> null
         }

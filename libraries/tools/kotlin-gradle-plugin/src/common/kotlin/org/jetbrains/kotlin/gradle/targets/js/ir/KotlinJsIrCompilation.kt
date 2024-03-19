@@ -7,8 +7,12 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import javax.inject.Inject
 
 open class KotlinJsIrCompilation @Inject internal constructor(
-    compilation: KotlinCompilationImpl,
-) : KotlinJsCompilation(compilation)
+    compilation: KotlinCompilationImpl
+) : KotlinJsCompilation(compilation) {
+    var wasmTarget: WasmTarget? = null
+        internal set
+}

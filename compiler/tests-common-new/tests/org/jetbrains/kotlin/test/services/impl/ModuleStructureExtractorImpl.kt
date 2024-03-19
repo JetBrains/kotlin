@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.services.impl
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
@@ -377,7 +376,7 @@ class ModuleStructureExtractorImpl(
                 nameSuffix == "COMMON" -> CommonPlatforms.defaultCommonPlatform
                 nameSuffix == "JVM" -> JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): determine JvmTarget precisely
                 nameSuffix == "JS" -> JsPlatforms.defaultJsPlatform
-                nameSuffix == "WASM" -> WasmPlatforms.Default
+                nameSuffix == "WASM" -> WasmPlatforms.wasmJs
                 nameSuffix == "NATIVE" -> NativePlatforms.unspecifiedNativePlatform
                 nameSuffix.isEmpty() -> null // TODO(dsavvinov): this leads to 'null'-platform in ModuleDescriptor
                 else -> throw IllegalStateException("Can't determine platform by name $nameSuffix")

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.test.diagnostics
 
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -26,12 +27,13 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
 abstract class AbstractDiagnosticsWasmTestBase(
+    private val targetPlatform: TargetPlatform,
     private val wasmEnvironmentConfigurator: Constructor<AbstractEnvironmentConfigurator>,
 ) : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = FrontendKinds.ClassicFrontend
-            targetPlatform = WasmPlatforms.Default
+            targetPlatform = this@AbstractDiagnosticsWasmTestBase.targetPlatform
             dependencyKind = DependencyKind.Source
         }
 
@@ -68,5 +70,12 @@ abstract class AbstractDiagnosticsWasmTestBase(
     }
 }
 
-abstract class AbstractDiagnosticsWasmTest : AbstractDiagnosticsWasmTestBase(::WasmEnvironmentConfiguratorJs)
-abstract class AbstractDiagnosticsWasmWasiTest : AbstractDiagnosticsWasmTestBase(::WasmEnvironmentConfiguratorWasi)
+abstract class AbstractDiagnosticsWasmTest : AbstractDiagnosticsWasmTestBase(
+    WasmPlatforms.wasmJs,
+    ::WasmEnvironmentConfiguratorJs
+)
+
+abstract class AbstractDiagnosticsWasmWasiTest : AbstractDiagnosticsWasmTestBase(
+    WasmPlatforms.wasmWasi,
+    ::WasmEnvironmentConfiguratorWasi
+)

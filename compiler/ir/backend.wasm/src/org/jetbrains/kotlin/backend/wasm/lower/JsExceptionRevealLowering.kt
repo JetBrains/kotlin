@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 /**
  * Wraps try block with finalizer and/or catch block for Throwable/JsException into JS reveal intrinsic
@@ -44,7 +44,7 @@ interface JsExceptionRevealOrigin : IrStatementOrigin {
 
 class JsExceptionRevealLowering(private val context: WasmBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        if (context.isWasmJsTarget && !context.configuration.getBoolean(JSConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)) {
+        if (context.isWasmJsTarget && !context.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)) {
             irBody.transformChildrenVoid(JsExceptionRevealTransformer(context, container.symbol))
         }
     }

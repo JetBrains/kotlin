@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.test.diagnostics
 
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
@@ -28,12 +29,13 @@ import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSource
 
 abstract class AbstractFirWasmDiagnosticTestBase(
     val parser: FirParser,
+    private val targetPlatform: TargetPlatform,
     private val wasmEnvironmentConfigurator: Constructor<AbstractEnvironmentConfigurator>,
 ) : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = FrontendKinds.FIR
-            targetPlatform = WasmPlatforms.Default
+            targetPlatform = this@AbstractFirWasmDiagnosticTestBase.targetPlatform
             dependencyKind = DependencyKind.Source
         }
 
@@ -74,5 +76,14 @@ abstract class AbstractFirWasmDiagnosticTestBase(
     }
 }
 
-abstract class AbstractDiagnosticsFirWasmTest : AbstractFirWasmDiagnosticTestBase(FirParser.Psi, ::WasmEnvironmentConfiguratorJs)
-abstract class AbstractDiagnosticsFirWasmWasiTest : AbstractFirWasmDiagnosticTestBase(FirParser.Psi, ::WasmEnvironmentConfiguratorWasi)
+abstract class AbstractDiagnosticsFirWasmTest : AbstractFirWasmDiagnosticTestBase(
+    FirParser.Psi,
+    WasmPlatforms.wasmJs,
+    ::WasmEnvironmentConfiguratorJs
+)
+
+abstract class AbstractDiagnosticsFirWasmWasiTest : AbstractFirWasmDiagnosticTestBase(
+    FirParser.Psi,
+    WasmPlatforms.wasmWasi,
+    ::WasmEnvironmentConfiguratorWasi
+)

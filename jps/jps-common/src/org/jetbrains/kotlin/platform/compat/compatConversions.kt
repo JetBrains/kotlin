@@ -10,19 +10,15 @@ package org.jetbrains.kotlin.platform.compat
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.IdePlatform
-import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
-import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
-import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
-import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.platform.JsPlatform
 import org.jetbrains.kotlin.platform.WasmPlatform
-import org.jetbrains.kotlin.platform.impl.WasmIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.*
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatform
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 
 typealias OldPlatform = org.jetbrains.kotlin.resolve.TargetPlatform
@@ -54,7 +50,7 @@ fun IdePlatform<*, *>.toNewPlatform(): NewPlatform = when (this) {
     is CommonIdePlatformKind.Platform -> CommonPlatforms.defaultCommonPlatform
     is JvmIdePlatformKind.Platform -> JvmPlatforms.jvmPlatformByTargetVersion(this.version)
     is JsIdePlatformKind.Platform -> JsPlatforms.defaultJsPlatform
-    is WasmIdePlatformKind.Platform -> WasmPlatforms.Default
+    is WasmIdePlatformKind.Platform -> WasmPlatforms.wasmJs
     is NativeIdePlatformKind.Platform -> NativePlatforms.unspecifiedNativePlatform
     else -> error("Unknown platform $this")
 }

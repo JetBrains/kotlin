@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.sourcesJarTask
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinJsCompilerOptionsFactory
+import org.jetbrains.kotlin.gradle.targets.js.toCompilerTarget
 
 class KotlinJsIrCompilationFactory internal constructor(
     override val target: KotlinJsIrTarget,
@@ -52,5 +53,7 @@ class KotlinJsIrCompilationFactory internal constructor(
 
     override fun create(name: String): KotlinJsIrCompilation = target.project.objects.newInstance(
         itemClass, compilationImplFactory.create(target, name)
-    )
+    ).also {
+        it.wasmTarget = target.wasmTargetType?.toCompilerTarget()
+    }
 }

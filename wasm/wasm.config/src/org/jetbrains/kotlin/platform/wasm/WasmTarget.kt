@@ -3,9 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.config
-
-import org.jetbrains.kotlin.config.CompilerConfiguration
+package org.jetbrains.kotlin.platform.wasm
 
 enum class WasmTarget(val alias: String) {
     JS("wasm-js"),
@@ -15,6 +13,3 @@ enum class WasmTarget(val alias: String) {
         fun fromName(name: String): WasmTarget? = WasmTarget.entries.firstOrNull { it.alias == name }
     }
 }
-
-val CompilerConfiguration.wasmTarget: WasmTarget
-    get() = get(JSConfigurationKeys.WASM_TARGET, /* defaultValue = */ WasmTarget.JS)

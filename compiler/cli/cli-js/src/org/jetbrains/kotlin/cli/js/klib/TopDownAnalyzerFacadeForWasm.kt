@@ -12,17 +12,15 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForWeb
-import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.wasm.resolve.WasmJsPlatformAnalyzerServices
 import org.jetbrains.kotlin.wasm.resolve.WasmWasiPlatformAnalyzerServices
 
 abstract class TopDownAnalyzerFacadeForWasm : AbstractTopDownAnalyzerFacadeForWeb() {
-    override val platform: TargetPlatform = WasmPlatforms.Default
-
     override fun loadIncrementalCacheMetadata(
         incrementalData: IncrementalDataProvider,
         moduleContext: ModuleContext,
@@ -47,9 +45,13 @@ abstract class TopDownAnalyzerFacadeForWasm : AbstractTopDownAnalyzerFacadeForWe
 }
 
 object TopDownAnalyzerFacadeForWasmJs : TopDownAnalyzerFacadeForWasm() {
+    override val platform: TargetPlatform = WasmPlatforms.wasmJs
+
     override val analyzerServices: PlatformDependentAnalyzerServices = WasmJsPlatformAnalyzerServices
 }
 
 object TopDownAnalyzerFacadeForWasmWasi : TopDownAnalyzerFacadeForWasm() {
+    override val platform: TargetPlatform = WasmPlatforms.wasmWasi
+
     override val analyzerServices: PlatformDependentAnalyzerServices = WasmWasiPlatformAnalyzerServices
 }

@@ -35,15 +35,16 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.nio.file.Paths
 
 inline fun <F> compileModuleToAnalyzedFir(
@@ -63,8 +64,12 @@ inline fun <F> compileModuleToAnalyzedFir(
 
     val mainModuleName = moduleStructure.compilerConfiguration.get(CommonConfigurationKeys.MODULE_NAME)!!
     val escapedMainModuleName = Name.special("<$mainModuleName>")
-    val platform = if (useWasmPlatform) WasmPlatforms.Default else JsPlatforms.defaultJsPlatform
-
+    val platform = if (useWasmPlatform) {
+        when (moduleStructure.compilerConfiguration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)) {
+            WasmTarget.JS -> WasmPlatforms.wasmJs
+            WasmTarget.WASI -> WasmPlatforms.wasmWasi
+        }
+    } else JsPlatforms.defaultJsPlatform
     val binaryModuleData = BinaryModuleData.initialize(escapedMainModuleName, platform)
     val dependencyList = DependencyListForCliModule.build(binaryModuleData) {
         dependencies(libraries.map { Paths.get(it).toAbsolutePath() })

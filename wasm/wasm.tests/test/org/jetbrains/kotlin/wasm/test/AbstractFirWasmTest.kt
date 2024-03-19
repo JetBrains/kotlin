@@ -5,17 +5,27 @@
 
 package org.jetbrains.kotlin.wasm.test
 
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.frontend.fir.*
-import org.jetbrains.kotlin.test.frontend.fir.handlers.*
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrWasmResultsConverter
+import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
+import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgConsistencyHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgDumpHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.codegen.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
@@ -29,10 +39,11 @@ import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunner
 
 abstract class AbstractFirWasmTest(
+    targetPlatform: TargetPlatform,
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
 ) : AbstractWasmBlackBoxCodegenTestBase<FirOutputArtifact, IrBackendInput, BinaryArtifacts.KLib>(
-    FrontendKinds.FIR, TargetBackend.WASM, pathToTestDir, testGroupOutputDirPrefix
+    FrontendKinds.FIR, TargetBackend.WASM, targetPlatform, pathToTestDir, testGroupOutputDirPrefix
 ) {
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirFrontendFacade
@@ -70,7 +81,7 @@ abstract class AbstractFirWasmTest(
 open class AbstractFirWasmJsTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-) : AbstractFirWasmTest(pathToTestDir, testGroupOutputDirPrefix) {
+) : AbstractFirWasmTest(WasmPlatforms.wasmJs, pathToTestDir, testGroupOutputDirPrefix) {
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
         get() = ::WasmBoxRunner
 
@@ -128,7 +139,7 @@ open class AbstractFirWasmJsSteppingTest : AbstractFirWasmJsTest(
 open class AbstractFirWasmWasiTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-) : AbstractFirWasmTest(pathToTestDir, testGroupOutputDirPrefix) {
+) : AbstractFirWasmTest(WasmPlatforms.wasmWasi, pathToTestDir, testGroupOutputDirPrefix) {
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
         get() = ::WasiBoxRunner
 

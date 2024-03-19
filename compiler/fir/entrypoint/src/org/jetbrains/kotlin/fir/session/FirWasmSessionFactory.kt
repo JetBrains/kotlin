@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.fir.scopes.FirDefaultImportProviderHolder
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper.registerDefaultComponents
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.wasm.resolve.WasmPlatformAnalyzerServices
 import org.jetbrains.kotlin.wasm.resolve.WasmWasiPlatformAnalyzerServices
 

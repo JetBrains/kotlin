@@ -28,11 +28,14 @@ import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
+import org.jetbrains.kotlin.platform.wasm.isWasmJs
+import org.jetbrains.kotlin.platform.wasm.isWasmWasi
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 import org.jetbrains.kotlin.wasm.resolve.WasmJsPlatformAnalyzerServices
+import org.jetbrains.kotlin.wasm.resolve.WasmWasiPlatformAnalyzerServices
 import java.io.IOException
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
@@ -42,7 +45,8 @@ internal fun TargetPlatform.getAnalyzerServices(): PlatformDependentAnalyzerServ
     return when {
         isJvm() -> JvmPlatformAnalyzerServices
         isJs() -> JsPlatformAnalyzerServices
-        isWasm() -> WasmJsPlatformAnalyzerServices
+        isWasmJs() -> WasmJsPlatformAnalyzerServices
+        isWasmWasi() -> WasmWasiPlatformAnalyzerServices
         isNative() -> NativePlatformAnalyzerServices
         isCommon() -> CommonPlatformAnalyzerServices
         else -> error("Unknown target platform: $this")

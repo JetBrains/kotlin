@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.js.config;
 
-import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor;
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
-import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker;
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider;
+import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker;
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
+import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -118,24 +117,6 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> GENERATE_STRICT_IMPLICIT_EXPORT =
             CompilerConfigurationKey.create("enable strict implicitly exported entities types inside d.ts files");
-
-    public static final CompilerConfigurationKey<Boolean> WASM_ENABLE_ARRAY_RANGE_CHECKS =
-            CompilerConfigurationKey.create("enable array range checks");
-
-    public static final CompilerConfigurationKey<Boolean> WASM_ENABLE_ASSERTS =
-            CompilerConfigurationKey.create("enable asserts");
-
-    public static final CompilerConfigurationKey<Boolean> WASM_GENERATE_WAT =
-            CompilerConfigurationKey.create("generate wat file");
-
-    public static final CompilerConfigurationKey<WasmTarget> WASM_TARGET =
-            CompilerConfigurationKey.create("wasm target");
-
-    public static final CompilerConfigurationKey<Boolean> WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS =
-            CompilerConfigurationKey.create("use wasm traps instead of throwing exceptions");
-
-    public static final CompilerConfigurationKey<Boolean> WASM_USE_NEW_EXCEPTION_PROPOSAL =
-            CompilerConfigurationKey.create("use wasm new exception proposal");
 
     public static final CompilerConfigurationKey<ZipFileSystemAccessor> ZIP_FILE_SYSTEM_ACCESSOR =
             CompilerConfigurationKey.create("zip file system accessor, used for klib reading");

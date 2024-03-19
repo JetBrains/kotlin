@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.js.config.wasmTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
@@ -27,9 +26,12 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 val isCommonSourceForPsi: (KtFile) -> Boolean = { it.isCommonSource == true }
 val fileBelongsToModuleForPsi: (KtFile, String) -> Boolean = { file, moduleName -> file.hmppModuleName == moduleName }
@@ -230,8 +232,12 @@ fun <F> prepareWasmSessions(
     lookupTracker: LookupTracker?,
     icData: KlibIcData?,
 ): List<SessionWithSources<F>> {
+    val platform = when (configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)) {
+        WasmTarget.JS -> WasmPlatforms.wasmJs
+        WasmTarget.WASI -> WasmPlatforms.wasmWasi
+    }
     return prepareSessions(
-        files, configuration, rootModuleName, WasmPlatforms.Default,
+        files, configuration, rootModuleName, platform,
         metadataCompilationMode = false, libraryList, isCommonSource, isScript = { false },
         fileBelongsToModule,
         createLibrarySession = { sessionProvider ->

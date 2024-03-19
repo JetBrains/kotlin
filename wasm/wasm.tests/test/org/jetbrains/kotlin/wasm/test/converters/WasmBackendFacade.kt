@@ -21,9 +21,8 @@ import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
 import org.jetbrains.kotlin.wasm.test.tools.WasmOptimizer
 import java.io.File
@@ -71,7 +71,7 @@ class WasmBackendFacade(
             PhaseConfig(wasmPhases)
         }
 
-        val suffix = when (configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS)) {
+        val suffix = when (configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)) {
             WasmTarget.JS -> "-js"
             WasmTarget.WASI -> "-wasi"
             else -> error("Unexpected wasi target")
@@ -102,7 +102,7 @@ class WasmBackendFacade(
             propertyLazyInitialization = true,
             generateTypeScriptFragment = generateDts
         )
-        val generateWat = debugMode >= DebugMode.DEBUG || configuration.getBoolean(JSConfigurationKeys.WASM_GENERATE_WAT)
+        val generateWat = debugMode >= DebugMode.DEBUG || configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT)
         val baseFileName = "index"
 
         val compilerResult = compileWasm(

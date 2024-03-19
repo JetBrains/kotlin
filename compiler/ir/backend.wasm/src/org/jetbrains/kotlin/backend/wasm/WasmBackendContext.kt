@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.irMessageLogger
-import org.jetbrains.kotlin.js.config.WasmTarget
-import org.jetbrains.kotlin.js.config.wasmTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 class WasmBackendContext(
     val module: ModuleDescriptor,
