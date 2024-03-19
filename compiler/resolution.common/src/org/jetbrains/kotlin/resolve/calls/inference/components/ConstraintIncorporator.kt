@@ -24,6 +24,10 @@ class ConstraintIncorporator(
     interface Context : TypeSystemInferenceExtensionContext {
         val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
 
+        fun getVariablesWithConstraintsContainingGivenTypeVariable(
+            variableConstructorMarker: TypeConstructorMarker,
+        ): Collection<VariableWithConstraints>
+
         // if such type variable is fixed then it is error
         fun getTypeVariable(typeConstructor: TypeConstructorMarker): TypeVariableMarker?
 
@@ -108,12 +112,14 @@ class ConstraintIncorporator(
         constraint: Constraint,
     ) {
         val freshTypeConstructor = typeVariable.freshTypeConstructor()
-        for (typeVariableWithConstraint in this@insideOtherConstraint.allTypeVariablesWithConstraints) {
-            val constraintsWhichConstraintMyVariable = typeVariableWithConstraint.constraints.filter {
-                containsTypeVariable(it.type, freshTypeConstructor)
-            }
-            constraintsWhichConstraintMyVariable.forEach {
-                generateNewConstraint(typeVariable, constraint, typeVariableWithConstraint.typeVariable, it)
+        for (storageForOtherVariable in getVariablesWithConstraintsContainingGivenTypeVariable(freshTypeConstructor)) {
+            for (otherConstraint in storageForOtherVariable.getConstraintsContainedSpecifiedTypeVariable(freshTypeConstructor)) {
+                generateNewConstraint(
+                    typeVariable,
+                    constraint,
+                    storageForOtherVariable.typeVariable,
+                    otherConstraint
+                )
             }
         }
     }

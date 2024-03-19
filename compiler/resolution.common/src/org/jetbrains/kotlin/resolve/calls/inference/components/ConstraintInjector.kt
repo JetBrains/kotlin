@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.ForkPointBranchDescription
 import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
+import org.jetbrains.kotlin.resolve.calls.inference.extractAllContainingTypeVariables
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.*
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
@@ -36,6 +37,12 @@ class ConstraintInjector(
         val notFixedTypeVariables: MutableMap<TypeConstructorMarker, MutableVariableWithConstraints>
         val fixedTypeVariables: MutableMap<TypeConstructorMarker, KotlinTypeMarker>
         val constraintsFromAllForkPoints: MutableList<Pair<IncorporationConstraintPosition, ForkPointData>>
+
+        /**
+         * @see org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.typeVariableDependencies
+         */
+        val typeVariableDependencies: Map<TypeConstructorMarker, Set<TypeConstructorMarker>>
+
         val atCompletionState: Boolean
 
         fun addInitialConstraint(initialConstraint: InitialConstraint)
@@ -47,6 +54,11 @@ class ConstraintInjector(
         )
 
         fun resolveForkPointsConstraints()
+
+        fun recordTypeVariableReferenceInConstraint(
+            constraintOwner: TypeConstructorMarker,
+            referencedVariable: TypeConstructorMarker,
+        )
     }
 
     fun addInitialSubtypeConstraint(c: Context, lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition) {
@@ -209,8 +221,9 @@ class ConstraintInjector(
         for ((typeVariable, constraint) in constraintsToProcess) {
             if (c.shouldWeSkipConstraint(typeVariable, constraint)) continue
 
+            val typeVariableConstructor = typeVariable.freshTypeConstructor(c)
             val constraints =
-                c.notFixedTypeVariables[typeVariable.freshTypeConstructor(c)] ?: typeCheckerState.fixedTypeVariable(typeVariable)
+                c.notFixedTypeVariables[typeVariableConstructor] ?: typeCheckerState.fixedTypeVariable(typeVariable)
 
             // it is important, that we add constraint here(not inside TypeCheckerContext), because inside incorporation we read constraints
             val (addedOrNonRedundantExistedConstraint, wasAdded) = constraints.addConstraint(constraint)
@@ -222,9 +235,23 @@ class ConstraintInjector(
                 else -> null
             }
 
+            if (wasAdded) {
+                recordReferencesOfOtherTypeVariableInConstraint(c, constraint, typeVariableConstructor)
+            }
+
             if (constraintToIncorporate != null) {
                 constraintIncorporator.incorporate(typeCheckerState, typeVariable, constraintToIncorporate)
             }
+        }
+    }
+
+    private fun recordReferencesOfOtherTypeVariableInConstraint(
+        c: Context,
+        constraint: Constraint,
+        constraintOwnerTypeVariableConstructor: TypeConstructorMarker,
+    ) {
+        for (referencedTypeVariableConstructor in c.extractAllContainingTypeVariables(constraint.type)) {
+            c.recordTypeVariableReferenceInConstraint(constraintOwnerTypeVariableConstructor, referencedTypeVariableConstructor)
         }
     }
 
@@ -536,6 +563,12 @@ class ConstraintInjector(
 
         override val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
             get() = c.notFixedTypeVariables.values
+
+        override fun getVariablesWithConstraintsContainingGivenTypeVariable(
+            variableConstructorMarker: TypeConstructorMarker
+        ): Collection<VariableWithConstraints> =
+            c.typeVariableDependencies[variableConstructorMarker]?.mapNotNull { c.notFixedTypeVariables[it] }
+                ?: emptyList()
 
         override fun getTypeVariable(typeConstructor: TypeConstructorMarker): TypeVariableMarker? {
             val typeVariable = c.allTypeVariables[typeConstructor]
