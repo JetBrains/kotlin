@@ -1,7 +1,7 @@
 public final class C /* C*/ {
   @kotlin.jvm.Throws(exceptionClasses = {java.io.IOException.class, MyException.class})
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.String readFile(@org.jetbrains.annotations.NotNull() java.lang.String) throws java.io.IOException, MyException;//  readFile(java.lang.String)
+  public final @org.jetbrains.annotations.NotNull() java.lang.String readFile(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String) throws java.io.IOException, MyException;//  readFile(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @kotlin.jvm.Throws(exceptionClasses = {java.lang.Exception.class})
   public  C(int) throws java.lang.Exception;//  .ctor(int)

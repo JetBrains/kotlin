@@ -1,5 +1,3 @@
-// IGNORE_PARENTING_CHECK
-
 class Inv<E>
 class Out<out T>
 class OutPair<out Final, out Y>

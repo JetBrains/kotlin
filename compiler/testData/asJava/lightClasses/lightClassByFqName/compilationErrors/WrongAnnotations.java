@@ -1,6 +1,6 @@
 public final class A /* A*/ {
   @org.jetbrains.annotations.NotNull()
-  public static final A.Companion Companion;
+  public static final @org.jetbrains.annotations.NotNull() A.Companion Companion;
 
   @kotlin.jvm.JvmStatic()
   public static final void f3();//  f3()

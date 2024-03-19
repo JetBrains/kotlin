@@ -1,2 +1,2 @@
 KtType: kotlin.String
-PsiType: java.lang.String
+PsiType: @org.jetbrains.annotations.NotNull() java.lang.String

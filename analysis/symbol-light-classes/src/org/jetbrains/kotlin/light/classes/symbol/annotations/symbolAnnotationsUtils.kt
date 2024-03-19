@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.getContainingSymbolsWithSelf
+import org.jetbrains.kotlin.light.classes.symbol.getTypeNullability
+import org.jetbrains.kotlin.light.classes.symbol.asAnnotationQualifier
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_CLASS_ID
@@ -167,28 +169,35 @@ context(KtAnalysisSession)
 fun annotateByKtType(
     psiType: PsiType,
     ktType: KtType,
-    psiContext: PsiTypeElement,
+    annotationParent: PsiElement,
 ): PsiType {
     fun getAnnotationsSequence(type: KtType): Sequence<List<PsiAnnotation>> = sequence {
-        // We assume that flexible types have to have the same set of annotations on upper and lower bound.
-        // Also, the upper bound is more similar to the resulting PsiType as it has fewer restrictions.
-        if (type is KtFlexibleType) {
-            yieldAll(getAnnotationsSequence(type.upperBound))
-        } else {
-            yield(
-                type.annotations.map { annoApp ->
-                    SymbolLightSimpleAnnotation(
-                        annoApp.classId?.asFqNameString(),
-                        psiContext,
-                        annoApp.arguments,
-                        annoApp.psi,
-                    )
-                }
+        val unwrappedType = when (type) {
+            // We assume that flexible types have to have the same set of annotations on upper and lower bound.
+            // Also, the upper bound is more similar to the resulting PsiType as it has fewer restrictions.
+            is KtFlexibleType -> type.upperBound
+            else -> type
+        }
+
+        val explicitTypeAnnotations = unwrappedType.annotations.map { annoApp ->
+            SymbolLightSimpleAnnotation(
+                annoApp.classId?.asFqNameString(),
+                annotationParent,
+                annoApp.arguments,
+                annoApp.psi,
             )
         }
 
-        if (type is KtNonErrorClassType) {
-            type.ownTypeArguments.forEach { typeProjection ->
+        // Original type should be used to infer nullability
+        val typeNullability = getTypeNullability(type)
+        val nullabilityAnnotation = typeNullability.asAnnotationQualifier?.let {
+            SymbolLightSimpleAnnotation(it, annotationParent)
+        }
+
+        yield(explicitTypeAnnotations + listOfNotNull(nullabilityAnnotation))
+
+        if (unwrappedType is KtNonErrorClassType) {
+            unwrappedType.ownTypeArguments.forEach { typeProjection ->
                 typeProjection.type?.let {
                     yieldAll(getAnnotationsSequence(it))
                 }

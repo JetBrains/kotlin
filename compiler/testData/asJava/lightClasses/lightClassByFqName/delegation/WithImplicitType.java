@@ -1,6 +1,6 @@
 public final class A /* one.A*/ implements one.I {
   @org.jetbrains.annotations.NotNull()
-  private final one.I p;
+  private final @org.jetbrains.annotations.NotNull() one.I p;
 
   @java.lang.Override()
   public int bar();//  bar()
@@ -8,5 +8,5 @@ public final class A /* one.A*/ implements one.I {
   @java.lang.Override()
   public int foo();//  foo()
 
-  public  A(@org.jetbrains.annotations.NotNull() one.I);//  .ctor(one.I)
+  public  A(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() one.I);//  .ctor(@org.jetbrains.annotations.NotNull() one.I)
 }

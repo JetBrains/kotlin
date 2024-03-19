@@ -1,0 +1,2 @@
+KtType: kotlin.collections.MutableList<TagData>
+PsiType: java.util.List<TagData>

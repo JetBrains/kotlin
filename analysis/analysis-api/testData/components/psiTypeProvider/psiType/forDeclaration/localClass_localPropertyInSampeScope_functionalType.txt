@@ -1,2 +1,2 @@
 KtType: () -> Local
-PsiType: kotlin.jvm.functions.Function0<? extends Local>
+PsiType: @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function0<? extends @org.jetbrains.annotations.NotNull() Local>

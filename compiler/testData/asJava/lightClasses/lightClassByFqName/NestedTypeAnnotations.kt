@@ -1,5 +1,4 @@
 // foo.Nested
-// IGNORE_PARENTING_CHECK
 package foo
 
 import kotlin.reflect.KClass
