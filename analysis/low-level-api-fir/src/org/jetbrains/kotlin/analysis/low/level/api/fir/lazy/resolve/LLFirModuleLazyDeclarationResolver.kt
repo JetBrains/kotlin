@@ -122,9 +122,6 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         var currentPhase = getMinResolvePhase(target).coerceAtLeast(FirResolvePhase.IMPORTS)
         if (currentPhase >= toPhase) return
 
-        // to catch a contract violation for jumping phases
-        moduleComponents.globalResolveComponents.lockProvider.checkContractViolations(toPhase)
-
         while (currentPhase < toPhase) {
             currentPhase = currentPhase.next
             checkCanceled()

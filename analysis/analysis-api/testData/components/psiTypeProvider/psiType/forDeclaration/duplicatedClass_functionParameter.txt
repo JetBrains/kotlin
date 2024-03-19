@@ -1,2 +1,2 @@
 KtType: kotlin.Int
-PsiType: PsiType:int
+PsiType: int

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.klib.reader.tests
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.klib.reader.*
 import org.jetbrains.kotlin.analysis.api.klib.reader.testUtils.providedTestProjectKlib
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryMod
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.native.analysis.api.*
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import kotlin.io.path.nameWithoutExtension
 import kotlin.test.Test

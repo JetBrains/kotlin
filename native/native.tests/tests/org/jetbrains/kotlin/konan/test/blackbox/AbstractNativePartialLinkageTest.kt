@@ -209,7 +209,7 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
     private fun KLIB.toFriendDependency() = ExistingDependency(this, FriendLibrary)
     private fun KLIBStaticCache.toDependency() = ExistingDependency(this, LibraryStaticCache)
 
-    private fun KLIB.toStaticCacheArtifact() = KLIBStaticCache(
+    private fun KLIB.toStaticCacheArtifact() = KLIBStaticCacheImpl(
         cacheDir = klibFile.parentFile.resolve(STATIC_CACHE_DIR_NAME).apply { mkdirs() },
         klib = this
     )

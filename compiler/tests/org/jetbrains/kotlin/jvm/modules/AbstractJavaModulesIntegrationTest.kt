@@ -210,6 +210,32 @@ abstract class AbstractJavaModulesIntegrationTest(
         module("moduleD", listOf(c, b, a))
     }
 
+    fun testInheritedDeclarationFromTwiceTransitiveDependency() {
+        // module A <-t- module B <-t- module C <--- module D
+
+        // Java: class A { String ok() { /* ... */ } }
+        val a = module("moduleA")
+
+        // Java: class B extends A
+        val b = module("moduleB", listOf(a))
+
+        val c = module("moduleC", listOf(a, b))
+
+        // Java: new B().ok()
+        // Kotlin: B().ok()
+        val d = module("moduleD", listOf(a, b, c))
+
+        // validate the run-time behavior of Java-compiled code for the sake of comparison
+        val (javaStdout, javaStderr) = runModule("moduleD/d.JavaMain", listOf(d, c, b, a))
+        assertEquals("", javaStderr)
+        assertEquals("OK", javaStdout)
+
+        // test the run-time behavior of Kotlin-compiled code
+        val (kotlinStdout, kotlinStderr) = runModule("moduleD/d.KotlinMainKt", listOf(d, c, b, a))
+        assertEquals("", kotlinStderr)
+        assertEquals("OK", kotlinStdout)
+    }
+
     fun testSpecifyPathToModuleInfoInArguments() {
         val a = module("moduleA")
 
@@ -360,5 +386,28 @@ abstract class AbstractJavaModulesIntegrationTest(
         // In this test we're checking the diagnostic about using symbols from unnamed modules, so we need to compile 'lib' to a directory.
         val lib = module("lib", destination = File(tmpdir, name))
         module("main", additionalKotlinArguments = listOf("-classpath", lib.path))
+    }
+
+    fun testNamedDoesNotReadAutomaticWithUnrelatedNamed() {
+        // This test should result in an error because 'main' does not depend on 'lib' or any other automatic module.
+        // But currently it's OK for compatibility, see KT-66622.
+        val lib = module("lib")
+        val unrelated = module("unrelated")
+        module("main", listOf(lib, unrelated))
+    }
+
+    fun testNamedDoesNotReadAutomaticWithTransitiveStdlib() {
+        // This test should result in an error because 'main' does not depend on 'lib' or any other automatic module.
+        // But currently it's OK for compatibility, see KT-66622.
+        val lib = module("lib")
+        module("main", listOf(lib))
+    }
+
+    fun testNamedReadsAutomaticWithUnrelatedAutomatic() {
+        // Similarly to how it works in javac, if we depend on one automatic module, we depend on all of them. So even though 'main' does
+        // not have explicit "requires lib", in fact it depends on 'lib' because it has "requires unrelated". So "OK" is expected.
+        val lib = module("lib")
+        val unrelated = module("unrelated")
+        module("main", listOf(lib, unrelated))
     }
 }

@@ -76,7 +76,7 @@ abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
 
     private fun setupEnvironment(files: List<TestFile>) {
         val configuration = createConfiguration(
-            ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, backend,
+            ConfigurationKind.ALL, TestJdkKind.MOCK_JDK,
             listOf<File>(KtTestUtil.getAnnotationsJar()),
             listOfNotNull(writeJavaFiles(files)),
             files

@@ -265,6 +265,12 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
   }
 
   @Test
+  @TestMetadata("NestedTypeAnnotations.kt")
+  public void testNestedTypeAnnotations() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/NestedTypeAnnotations.kt");
+  }
+
+  @Test
   @TestMetadata("NonDataClassWithComponentFunctions.kt")
   public void testNonDataClassWithComponentFunctions() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/NonDataClassWithComponentFunctions.kt");

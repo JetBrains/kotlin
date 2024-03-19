@@ -55,7 +55,7 @@ internal object LLFirCompilerAnnotationsLazyResolver : LLFirLazyResolver(FirReso
 private class LLFirCompilerRequiredAnnotationsTargetResolver(
     target: LLFirResolveTarget,
     computationSession: LLFirCompilerRequiredAnnotationsComputationSession? = null,
-) : LLFirTargetResolver(target, FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS, isJumpingPhase = false) {
+) : LLFirTargetResolver(target, FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) {
     inner class LLFirCompilerRequiredAnnotationsComputationSession : CompilerRequiredAnnotationsComputationSession() {
         override fun resolveAnnotationSymbol(symbol: FirRegularClassSymbol, scopeSession: ScopeSession) {
             val regularClass = symbol.fir

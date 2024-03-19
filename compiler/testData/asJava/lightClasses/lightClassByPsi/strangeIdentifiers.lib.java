@@ -35,13 +35,13 @@ public enum StrangeEnum /* StrangeEnum*/ {
   public final java.lang.String getSize();//  getSize()
 
   @org.jetbrains.annotations.NotNull()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<StrangeEnum> getEntries();//  getEntries()
+
+  @org.jetbrains.annotations.NotNull()
   public static StrangeEnum valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
   public static StrangeEnum[] values();//  values()
-
-  @org.jetbrains.annotations.NotNull()
-  public static kotlin.enums.EnumEntries<StrangeEnum> getEntries();//  getEntries()
 
   private  StrangeEnum(java.lang.String);//  .ctor(java.lang.String)
 }

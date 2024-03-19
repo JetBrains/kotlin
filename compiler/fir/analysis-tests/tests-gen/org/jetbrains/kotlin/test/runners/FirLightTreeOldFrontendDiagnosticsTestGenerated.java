@@ -11651,6 +11651,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("hiddenComponentInDestructuringDeclaration.kt")
+      public void testHiddenComponentInDestructuringDeclaration() {
+        runTest("compiler/testData/diagnostics/tests/deprecated/hiddenComponentInDestructuringDeclaration.kt");
+      }
+
+      @Test
       @TestMetadata("hiddenPropertyAccessors.kt")
       public void testHiddenPropertyAccessors() {
         runTest("compiler/testData/diagnostics/tests/deprecated/hiddenPropertyAccessors.kt");
@@ -21955,6 +21961,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("jkjPrivateProperty.kt")
+      public void testJkjPrivateProperty() {
+        runTest("compiler/testData/diagnostics/tests/j+k/jkjPrivateProperty.kt");
+      }
+
+      @Test
       @TestMetadata("KJKInheritance.kt")
       public void testKJKInheritance() {
         runTest("compiler/testData/diagnostics/tests/j+k/KJKInheritance.kt");
@@ -25826,6 +25838,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       @TestMetadata("implicitInvokeOnPropertyInItsInitializer.kt")
       public void testImplicitInvokeOnPropertyInItsInitializer() {
         runTest("compiler/testData/diagnostics/tests/operatorsOverloading/implicitInvokeOnPropertyInItsInitializer.kt");
+      }
+
+      @Test
+      @TestMetadata("implicitInvokeOnPropertyInItsInitializer2.kt")
+      public void testImplicitInvokeOnPropertyInItsInitializer2() {
+        runTest("compiler/testData/diagnostics/tests/operatorsOverloading/implicitInvokeOnPropertyInItsInitializer2.kt");
       }
 
       @Test

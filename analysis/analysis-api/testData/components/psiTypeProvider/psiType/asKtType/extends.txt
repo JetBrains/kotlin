@@ -1,2 +1,2 @@
-PsiType: PsiType:List<? extends String>
+PsiType: java.util.List<? extends java.lang.String>
 KtType: kotlin.collections.List<kotlin.String?>?

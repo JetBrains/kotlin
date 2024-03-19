@@ -1,2 +1,2 @@
-PsiType: PsiType:K
+PsiType: K
 KtType: K?

@@ -26,11 +26,11 @@ abstract class AbstractAnalysisApiKtTypeByPsiTypeProviderTest : AbstractAnalysis
         val actual = buildString {
             executeOnPooledThreadInReadAction {
                 analyseForTest(mainFile) {
-                    val returnType = psiMethod.returnType
-                    testServices.assertions.assertNotNull(returnType)
-                    val asKtTypeSuper = returnType!!.asKtType(useSitePosition ?: psiMethod)!!
-                    appendLine("PsiType: $returnType")
-                    appendLine("KtType: ${asKtTypeSuper.render(position = Variance.OUT_VARIANCE)}")
+                    val psiType = psiMethod.returnType
+                    testServices.assertions.assertNotNull(psiType)
+                    val ktType = psiType!!.asKtType(useSitePosition ?: psiMethod)!!
+                    appendLine("PsiType: ${AnalysisApiPsiTypeProviderTestUtils.render(psiType)}")
+                    appendLine("KtType: ${AnalysisApiPsiTypeProviderTestUtils.render(ktType, Variance.OUT_VARIANCE)}")
                 }
             }
         }

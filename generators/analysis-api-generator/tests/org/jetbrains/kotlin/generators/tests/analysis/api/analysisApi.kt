@@ -398,7 +398,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             model(it, "psiType/forDeclaration")
         }
 
-        test<AbstractAnalysisApiExpressionPsiTypeProviderTest>(filter = frontendIs(FrontendKind.Fir)) {
+        test<AbstractAnalysisApiExpressionPsiTypeProviderTest> {
             model(it, "psiType/forExpression")
         }
 

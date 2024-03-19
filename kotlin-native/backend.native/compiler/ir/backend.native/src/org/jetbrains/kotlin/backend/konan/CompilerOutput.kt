@@ -20,7 +20,7 @@ import java.io.File
 val KonanConfig.isFinalBinary: Boolean get() = when (this.produce) {
     CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC,
     CompilerOutputKind.STATIC -> true
-    CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE,
+    CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE, CompilerOutputKind.HEADER_CACHE,
     CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE -> false
     CompilerOutputKind.FRAMEWORK -> !omitFrameworkBinary
     CompilerOutputKind.TEST_BUNDLE -> true
@@ -55,8 +55,14 @@ internal val CacheDeserializationStrategy?.containsRuntime: Boolean
 internal val NativeGenerationState.shouldLinkRuntimeNativeLibraries: Boolean
     get() = producedLlvmModuleContainsStdlib && cacheDeserializationStrategy.containsRuntime
 
-val CompilerOutputKind.isCache: Boolean
+val CompilerOutputKind.isFullCache: Boolean
     get() = this == CompilerOutputKind.STATIC_CACHE || this == CompilerOutputKind.DYNAMIC_CACHE
+
+val CompilerOutputKind.isHeaderCache: Boolean
+    get() = this == CompilerOutputKind.HEADER_CACHE
+
+val CompilerOutputKind.isCache: Boolean
+    get() = this.isFullCache || this.isHeaderCache
 
 internal fun produceCStubs(generationState: NativeGenerationState) {
     generationState.cStubsManager.compile(

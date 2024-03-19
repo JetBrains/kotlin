@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.mapping
 
-import org.jetbrains.kotlin.ir.util.parentsWithSelf
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
@@ -255,26 +254,21 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
         for (i in 0 until function.contextReceiverParametersCount) {
             val contextReceiver = function.valueParameters[i]
-            writeParameter(sw, JvmMethodParameterKind.CONTEXT_RECEIVER, contextReceiver.type, function)
+            writeParameter(sw, false, contextReceiver.type, function)
         }
 
         val receiverParameter = function.extensionReceiverParameter
         if (receiverParameter != null) {
-            writeParameter(sw, JvmMethodParameterKind.RECEIVER, receiverParameter.type, function)
+            writeParameter(sw, false, receiverParameter.type, function)
         }
 
         for (i in function.contextReceiverParametersCount until function.valueParameters.size) {
             val parameter = function.valueParameters[i]
-            val kind = when (parameter.origin) {
-                JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> JvmMethodParameterKind.OUTER
-                JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER -> JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL
-                else -> JvmMethodParameterKind.VALUE
-            }
             val type =
                 if (shouldBoxSingleValueParameterForSpecialCaseOfRemove(function))
                     parameter.type.makeNullable()
                 else parameter.type
-            writeParameter(sw, kind, type, function, materialized)
+            writeParameter(sw, parameter.isSkippedInGenericSignature, type, function, materialized)
         }
 
         sw.writeReturnType()
@@ -338,12 +332,12 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
     private fun writeParameter(
         sw: JvmSignatureWriter,
-        kind: JvmMethodParameterKind,
+        isSkippedInGenericSignature: Boolean,
         type: IrType,
         function: IrFunction,
         materialized: Boolean = true
     ) {
-        sw.writeParameterType(kind)
+        sw.writeParameterType(JvmMethodParameterKind.VALUE, isSkippedInGenericSignature)
         writeParameterType(sw, type, function, materialized)
         sw.writeParameterTypeEnd()
     }

@@ -23,3 +23,6 @@ class Dash
 // FILE: question.kt
 package <!INVALID_CHARACTERS!>`?`<!>
 class Question
+
+// FILE: backticks.kt
+package com.spacesandtabs.`foo`

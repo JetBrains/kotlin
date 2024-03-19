@@ -66,6 +66,12 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
   }
 
   @Test
+  @TestMetadata("GeneratedSerializerInaccessible.kt")
+  public void testGeneratedSerializerInaccessible() {
+    runTest("plugins/kotlinx-serialization/testData/diagnostics/GeneratedSerializerInaccessible.kt");
+  }
+
+  @Test
   @TestMetadata("GenericArrays.kt")
   public void testGenericArrays() {
     runTest("plugins/kotlinx-serialization/testData/diagnostics/GenericArrays.kt");

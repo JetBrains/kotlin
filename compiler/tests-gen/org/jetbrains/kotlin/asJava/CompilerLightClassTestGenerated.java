@@ -229,6 +229,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/NestedObjects.kt");
   }
 
+  @TestMetadata("NestedTypeAnnotations.kt")
+  public void testNestedTypeAnnotations() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/NestedTypeAnnotations.kt");
+  }
+
   @TestMetadata("NonDataClassWithComponentFunctions.kt")
   public void testNonDataClassWithComponentFunctions() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/NonDataClassWithComponentFunctions.kt");

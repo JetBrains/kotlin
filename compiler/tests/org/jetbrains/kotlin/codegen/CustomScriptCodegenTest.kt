@@ -25,9 +25,8 @@ import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStdlib
 
-class CustomScriptCodegenTest : CodegenTestCase() {
-
-    fun testAnnotatedDefinition() {
+open class CustomScriptCodegenTest : CodegenTestCase() {
+    open fun testAnnotatedDefinition() {
         createScriptTestEnvironment("org.jetbrains.kotlin.codegen.TestScriptWithAnnotatedBaseClass")
         loadScript("val x = 1")
         val res = generateScriptClass()
@@ -41,6 +40,9 @@ class CustomScriptCodegenTest : CodegenTestCase() {
     private fun loadScript(text: String) {
         myFiles = CodegenTestFiles.create("scriptTest.kts", text, myEnvironment.project)
     }
+
+    override val backend: TargetBackend
+        get() = TargetBackend.JVM
 
     private fun createScriptTestEnvironment(vararg scriptDefinitions: String) {
         if (myEnvironment != null) {
@@ -60,7 +62,6 @@ class CustomScriptCodegenTest : CodegenTestCase() {
         val configuration = createConfiguration(
             ConfigurationKind.ALL,
             TestJdkKind.MOCK_JDK,
-            TargetBackend.JVM,
             additionalDependencies,
             emptyList(),
             emptyList()

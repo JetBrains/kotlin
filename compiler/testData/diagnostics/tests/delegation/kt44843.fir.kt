@@ -1,13 +1,13 @@
 // WITH_STDLIB
 
 // FILE: test.kt
-val bar2 by <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, RECURSION_IN_IMPLICIT_TYPES!>bar2<!><!NO_VALUE_FOR_PARAMETER!>()<!>
+val bar2 by <!UNRESOLVED_REFERENCE!>bar2<!>()
 
 // FILE: lt/neworld/compiler/Foo.kt
 package lt.neworld.compiler
 
 class Foo {
-    val bar by <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, RECURSION_IN_IMPLICIT_TYPES!>bar<!><!NO_VALUE_FOR_PARAMETER!>()<!>
+    val bar by <!UNRESOLVED_REFERENCE!>bar<!>()
 }
 
 // FILE: lt/neworld/compiler/bar/Bar.kt

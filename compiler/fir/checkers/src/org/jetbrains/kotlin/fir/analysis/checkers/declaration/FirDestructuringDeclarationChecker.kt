@@ -124,6 +124,15 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                     context
                 )
             }
+            is ConeHiddenCandidateError -> {
+                reporter.reportOn(
+                    source,
+                    FirErrors.COMPONENT_FUNCTION_MISSING,
+                    diagnostic.candidate.callInfo.name,
+                    destructuringDeclarationType,
+                    context
+                )
+            }
             is ConeInapplicableWrongReceiver -> {
                 reporter.reportOn(
                     source,

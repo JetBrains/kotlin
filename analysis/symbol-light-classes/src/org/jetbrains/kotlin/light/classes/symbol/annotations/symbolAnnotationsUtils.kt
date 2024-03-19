@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightReferenceListBuilder
+import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.annotations.KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue
@@ -161,18 +162,18 @@ internal fun KtAnnotatedSymbol.computeThrowsList(
 }
 
 context(KtAnalysisSession)
-internal fun annotateByKtType(
+@KtAnalysisNonPublicApi
+fun annotateByKtType(
     psiType: PsiType,
     ktType: KtType,
     psiContext: PsiTypeElement,
-    modifierListAsParent: PsiModifierList?,
 ): PsiType {
-    fun KtType.getAnnotationsSequence(modifierList: PsiModifierList?): Sequence<List<PsiAnnotation>> = sequence {
+    fun KtType.getAnnotationsSequence(): Sequence<List<PsiAnnotation>> = sequence {
         yield(
             annotations.map { annoApp ->
                 SymbolLightSimpleAnnotation(
                     annoApp.classId?.asFqNameString(),
-                    modifierList ?: psiContext,
+                    psiContext,
                     annoApp.arguments,
                     annoApp.psi,
                 )
@@ -181,10 +182,10 @@ internal fun annotateByKtType(
 
         (this@getAnnotationsSequence as? KtNonErrorClassType)?.ownTypeArguments?.forEach { typeProjection ->
             typeProjection.type?.let {
-                yieldAll(it.getAnnotationsSequence(modifierList = null))
+                yieldAll(it.getAnnotationsSequence())
             }
         }
     }
 
-    return psiType.annotateByTypeAnnotationProvider(ktType.getAnnotationsSequence(modifierListAsParent))
+    return psiType.annotateByTypeAnnotationProvider(ktType.getAnnotationsSequence())
 }

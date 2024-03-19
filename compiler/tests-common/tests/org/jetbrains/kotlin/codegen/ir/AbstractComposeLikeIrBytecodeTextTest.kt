@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.test.TargetBackend
 
 @OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractComposeLikeIrBytecodeTextTest : AbstractBytecodeTextTest() {
-    override val backend = TargetBackend.JVM_IR
+    override val backend
+        get() = TargetBackend.JVM_IR
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         ComposeLikeExtensionRegistrar.registerComponents(environment.project)

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ
 import org.jetbrains.kotlin.name.JvmStandardClassIds.STRICTFP_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -273,18 +272,18 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
     ) {
         val iterator = irFunction.valueParameters.iterator()
         val kotlinParameterTypes = jvmSignature.valueParameters
-        val syntheticParameterCount = kotlinParameterTypes.count { it.kind.isSkippedInGenericSignature }
+        val syntheticParameterCount = irFunction.valueParameters.count { it.isSkippedInGenericSignature }
 
         visitAnnotableParameterCount(mv, kotlinParameterTypes.size - syntheticParameterCount)
 
         kotlinParameterTypes.forEachIndexed { i, parameterSignature ->
-            val kind = parameterSignature.kind
-            val annotated = when (kind) {
-                JvmMethodParameterKind.RECEIVER -> irFunction.extensionReceiverParameter
-                else -> iterator.next()
-            }
+            val extensionReceiverParameter = irFunction.extensionReceiverParameter
+            val annotated = if (extensionReceiverParameter != null && i == irFunction.contextReceiverParametersCount)
+                extensionReceiverParameter
+            else
+                iterator.next()
 
-            if (annotated != null && !kind.isSkippedInGenericSignature && !annotated.isSyntheticMarkerParameter()) {
+            if (i >= syntheticParameterCount && !annotated.isSyntheticMarkerParameter()) {
                 object : AnnotationCodegen(classCodegen, skipNullabilityAnnotations) {
                     override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                         return mv.visitParameterAnnotation(

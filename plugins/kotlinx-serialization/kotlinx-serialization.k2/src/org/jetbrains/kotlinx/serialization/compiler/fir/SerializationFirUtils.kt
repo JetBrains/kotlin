@@ -8,8 +8,9 @@ package org.jetbrains.kotlinx.serialization.compiler.fir
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
@@ -27,9 +28,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.konan.isNative
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.dependencySerializationInfoProvider
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
@@ -279,4 +282,33 @@ fun FirDeclaration.excludeFromJsExport() {
     }
 
     replaceAnnotations(annotations + jsExportIgnoreAnnotationCall)
+}
+
+context(FirExtension)
+fun createDeprecatedHiddenAnnotation(): FirAnnotation = buildAnnotation {
+    val deprecatedAnno =
+        session.symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.Annotations.Deprecated) as FirRegularClassSymbol
+
+    annotationTypeRef = deprecatedAnno.defaultType().toFirResolvedTypeRef()
+
+    argumentMapping = buildAnnotationArgumentMapping {
+        mapping[Name.identifier("message")] = buildLiteralExpression(
+            null,
+            ConstantValueKind.String,
+            "This synthesized declaration should not be used directly",
+            setType = true
+        )
+
+        // It has nothing to do with enums deserialization, but it is simply easier to build it this way.
+        mapping[Name.identifier("level")] = buildEnumEntryDeserializedAccessExpression {
+            enumClassId = StandardClassIds.DeprecationLevel
+            enumEntryName = Name.identifier("HIDDEN")
+        }.toQualifiedPropertyAccessExpression(session)
+    }
+}
+
+context(FirExtension)
+fun FirClassLikeDeclaration.markAsDeprecatedHidden() {
+    replaceAnnotations(annotations + listOf(createDeprecatedHiddenAnnotation()))
+    replaceDeprecationsProvider(this.getDeprecationsProvider(session))
 }

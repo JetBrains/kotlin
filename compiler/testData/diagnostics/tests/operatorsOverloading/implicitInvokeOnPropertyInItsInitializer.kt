@@ -33,10 +33,10 @@ object ImplicitIndirect {
 fun takeInt(x: Int) {}
 
 fun test() {
-    takeInt(Implicit.foo) // should be an error
+    takeInt(Implicit.foo)
     takeInt(<!TYPE_MISMATCH!>Explicit.foo<!>) // should be an error
     takeInt(ImplicitWrapped.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo<!>) // should be an error
     takeInt(<!TYPE_MISMATCH!>ImplicitIndirect.foo<!>) // should be an error
     takeInt(<!TYPE_MISMATCH!>ImplicitIndirect.bar<!>) // should be an error
-    takeInt(ImplicitIndirect.baz) // should be an error
+    takeInt(ImplicitIndirect.baz)
 }

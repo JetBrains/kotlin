@@ -83,7 +83,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         }
 
         val configuration = createConfiguration(
-            configurationKind, jdkKind, backend,
+            configurationKind, jdkKind,
             listOf<File>(getAnnotationsJar()),
             listOfNotNull(writeJavaFiles(files)),
             files

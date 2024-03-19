@@ -366,7 +366,8 @@ abstract class KotlinAndroidProjectExtension(project: Project) : KotlinSingleTar
 enum class NativeCacheKind(val produce: String?, val outputKind: CompilerOutputKind?) {
     NONE(null, null),
     DYNAMIC("dynamic_cache", CompilerOutputKind.DYNAMIC_CACHE),
-    STATIC("static_cache", CompilerOutputKind.STATIC_CACHE);
+    STATIC("static_cache", CompilerOutputKind.STATIC_CACHE),
+    HEADER("header_cache", CompilerOutputKind.HEADER_CACHE);
 
     companion object {
         fun byCompilerArgument(argument: String): NativeCacheKind? =

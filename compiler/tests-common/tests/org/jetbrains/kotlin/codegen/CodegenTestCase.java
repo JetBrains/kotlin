@@ -89,7 +89,6 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         CompilerConfiguration configuration = createConfiguration(
                 configurationKind,
                 testJdkKind,
-                getBackend(),
                 Collections.singletonList(getAnnotationsJar()),
                 ArraysKt.filterNotNull(javaSourceRoots),
                 testFilesWithConfigurationDirectives
@@ -379,6 +378,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
     @Override
     protected void updateConfiguration(@NotNull CompilerConfiguration configuration) {
         setCustomDefaultJvmTarget(configuration);
+        configureIrFir(configuration);
     }
 
     protected ClassBuilderFactory getClassBuilderFactory() {
@@ -414,7 +414,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         configurationKind = extractConfigurationKind(files);
 
         CompilerConfiguration configuration = createConfiguration(
-                configurationKind, getTestJdkKind(files), getBackend(),
+                configurationKind, getTestJdkKind(files),
                 Collections.singletonList(getAnnotationsJar()),
                 ArraysKt.filterNotNull(new File[] {javaSourceDir}),
                 files
@@ -508,7 +508,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
     @NotNull
     @Override
-    protected TargetBackend getBackend() {
+    public TargetBackend getBackend() {
         return TargetBackend.JVM;
     }
 

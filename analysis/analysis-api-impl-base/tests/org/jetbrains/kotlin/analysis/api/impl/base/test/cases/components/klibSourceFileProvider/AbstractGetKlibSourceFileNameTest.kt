@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.klibSourceFileProvider
 
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.klib.reader.getSymbols
-import org.jetbrains.kotlin.analysis.api.klib.reader.readKlibDeclarationAddresses
+import org.jetbrains.kotlin.native.analysis.api.getSymbols
+import org.jetbrains.kotlin.native.analysis.api.readKlibDeclarationAddresses
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol

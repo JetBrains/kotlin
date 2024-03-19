@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -40,14 +40,15 @@ internal class KtFe10PsiTypeProvider(
 
     private val typeMapper by lazy { KtFe10JvmTypeMapperContext(analysisContext.resolveSession) }
 
-    override fun asPsiTypeElement(
+    override fun asPsiType(
         type: KtType,
         useSitePosition: PsiElement,
+        allowErrorTypes: Boolean,
         mode: KtTypeMappingMode,
         isAnnotationMethod: Boolean,
         suppressWildcards: Boolean?,
-        allowErrorTypes: Boolean,
-    ): PsiTypeElement? {
+        preserveAnnotations: Boolean
+    ): PsiType? {
         val kotlinType = (type as KtFe10Type).fe10Type
 
         with(typeMapper.typeContext) {
@@ -58,11 +59,13 @@ internal class KtFe10PsiTypeProvider(
 
         if (!analysisSession.useSiteModule.platform.has<JvmPlatform>()) return null
 
-        return asPsiTypeElement(
+        val typeElement = asPsiTypeElement(
             simplifyType(kotlinType),
             useSitePosition,
             mode.toTypeMappingMode(type, isAnnotationMethod, suppressWildcards),
         )
+
+        return typeElement?.type
     }
 
     private fun KtTypeMappingMode.toTypeMappingMode(

@@ -7,8 +7,12 @@ package org.jetbrains.kotlin.scripting.test.definition
 
 import kotlin.script.experimental.annotations.KotlinScript
 import org.jetbrains.kotlin.scripting.definitions.getEnvironment
+import org.jetbrains.kotlin.scripting.test.definition.gradleLike.CompiledKotlinBuildScript
+import org.jetbrains.kotlin.scripting.test.definition.gradleLike.Project
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
+import kotlin.script.experimental.jvm.jvm
 
 @Suppress("unused", "UNUSED_PARAMETER")
 @KotlinScript(fileExtension = "test.kts", compilationConfiguration = ConfigurableTestScriptConfiguration::class)
@@ -23,6 +27,15 @@ class ConfigurableTestScriptConfiguration : ScriptCompilationConfiguration(
                 if (env == null) makeFailureResult("Unable to retrieve environment for the custom test script")
                 else
                     ScriptCompilationConfiguration(ctx.compilationConfiguration) {
+                        env["gradleLikeScript"]?.let {
+                            @Suppress("UNCHECKED_CAST")
+                            defaultImports("org.jetbrains.kotlin.scripting.test.definition.gradleLike.*")
+                            jvm {
+                                dependenciesFromCurrentContext(wholeClasspath = true)
+                            }
+                            baseClass(CompiledKotlinBuildScript::class)
+                            implicitReceivers(Project::class)
+                        }
                         env["defaultImports"]?.let {
                             @Suppress("UNCHECKED_CAST")
                             defaultImports.append(it as List<String>)

@@ -9,11 +9,12 @@ import org.jetbrains.kotlin.checkers.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.test.testFramework.FrontendBackendConfiguration
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
-abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() {
+abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase(), FrontendBackendConfiguration {
     @Throws(Exception::class)
     override fun setUp() {
         super.setUp()
@@ -51,26 +52,25 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
         return Companion.extractConfigurationKind(files)
     }
 
-    protected open fun updateConfiguration(configuration: CompilerConfiguration) {}
+    protected open fun updateConfiguration(configuration: CompilerConfiguration) {
+        configureIrFir(configuration)
+    }
 
     protected open fun setupEnvironment(environment: KotlinCoreEnvironment) {}
 
     protected open fun parseDirectivesPerFiles() = false
 
-    protected open val backend = TargetBackend.ANY
 
     protected open fun configureTestSpecific(configuration: CompilerConfiguration, testFiles: List<TestFile>) {}
 
     protected fun createConfiguration(
         kind: ConfigurationKind,
         jdkKind: TestJdkKind,
-        backend: TargetBackend,
         classpath: List<File?>,
         javaSource: List<File?>,
         testFilesWithConfigurationDirectives: List<TestFile>
     ): CompilerConfiguration {
         val configuration = KotlinTestUtils.newConfiguration(kind, jdkKind, classpath, javaSource)
-        configuration.put(JVMConfigurationKeys.IR, backend.isIR)
         updateConfigurationByDirectivesInTestFiles(
             testFilesWithConfigurationDirectives,
             configuration,

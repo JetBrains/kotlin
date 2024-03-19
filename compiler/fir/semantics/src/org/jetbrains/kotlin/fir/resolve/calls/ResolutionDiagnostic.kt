@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
@@ -167,3 +168,5 @@ class TypeVariableAsExplicitReceiver(
 object CallToDeprecatedOverrideOfHidden : ResolutionDiagnostic(RESOLVED)
 
 class AmbiguousInterceptedSymbol(val pluginNames: List<String>) : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
+
+class MissingInnerClassConstructorReceiver(val candidateSymbol: FirRegularClassSymbol) : ResolutionDiagnostic(INAPPLICABLE)

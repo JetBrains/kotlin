@@ -30,6 +30,12 @@ public class LLFirPreresolvedReversedScriptDiagnosticCompilerTestDataTestGenerat
   }
 
   @Test
+  @TestMetadata("invokeResolve.test.kts")
+  public void testInvokeResolve_test() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/invokeResolve.test.kts");
+  }
+
+  @Test
   @TestMetadata("providedPropertiesShadowing.test.kts")
   public void testProvidedPropertiesShadowing_test() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/providedPropertiesShadowing.test.kts");

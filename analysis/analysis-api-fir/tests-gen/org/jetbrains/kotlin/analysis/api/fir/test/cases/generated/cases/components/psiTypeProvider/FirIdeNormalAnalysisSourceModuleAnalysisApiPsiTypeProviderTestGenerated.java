@@ -118,6 +118,12 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiPsiTypeProviderTestGener
   }
 
   @Test
+  @TestMetadata("nestedTypeAnnotation.kt")
+  public void testNestedTypeAnnotation() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/nestedTypeAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("suspendFunctionValueParameterNoStdlib.kt")
   public void testSuspendFunctionValueParameterNoStdlib() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/suspendFunctionValueParameterNoStdlib.kt");
@@ -127,6 +133,12 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiPsiTypeProviderTestGener
   @TestMetadata("suspendFunctionValueParameterWithStdlib.kt")
   public void testSuspendFunctionValueParameterWithStdlib() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/suspendFunctionValueParameterWithStdlib.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAnnotation.kt")
+  public void testTypeAnnotation() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/typeAnnotation.kt");
   }
 
   @Test
