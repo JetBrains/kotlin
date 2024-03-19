@@ -58,7 +58,7 @@ object TestModuleStructureFactory {
             ktTestModule.addDependencies(testServices, modulesByName, libraryCache)
         }
 
-        return KtTestModuleProjectStructure(modules, libraryCache.values)
+        return KtTestModuleProjectStructure(moduleStructure, modules, libraryCache.values)
     }
 
     /**

@@ -10,12 +10,9 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
 import org.jetbrains.kotlin.analysis.providers.topics.KotlinModuleStateModificationKind
 import org.jetbrains.kotlin.analysis.providers.topics.KotlinTopics
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.getKtModule
-import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleProjectStructure
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestModuleStructure
-import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 
 /**
@@ -23,7 +20,7 @@ import org.jetbrains.kotlin.test.testFramework.runWriteAction
  *
  * These directives are available by default in Analysis API tests and do not need to be registered separately. They are not applied
  * automatically, however, and tests interested in publishing modification events must call one of the following publishing functions for
- * the appropriate [TestModule]: [publishModificationEventByDirective] or [publishWildcardModificationEventByDirectiveIfPresent].
+ * the appropriate [KtTestModule]: [publishModificationEventByDirective] or [publishWildcardModificationEventByDirectiveIfPresent].
  */
 object ModificationEventDirectives : SimpleDirectivesContainer() {
     val MODIFICATION_EVENT by enumDirective<ModificationEventKind>(
@@ -56,12 +53,12 @@ val ModificationEventKind.isGlobalLevel: Boolean
  * Publishes a modification event as defined in [KotlinTopics][org.jetbrains.kotlin.analysis.providers.topics.KotlinTopics] based on the
  * [ModificationEventDirectives.MODIFICATION_EVENT] directive present in the test module in a write action.
  *
- * Module-level modification events will be published for the [TestModule]'s [KtModule].
+ * Module-level modification events will be published for the [KtTestModule]'s [KtModule].
  *
  * The function expects exactly one `MODIFICATION_EVENT` directive to be present, unless [isOptional] is `true`.
  */
-fun TestModule.publishModificationEventByDirective(testServices: TestServices, isOptional: Boolean = false) {
-    val modificationEventKinds = directives[ModificationEventDirectives.MODIFICATION_EVENT]
+fun KtTestModule.publishModificationEventByDirective(isOptional: Boolean = false) {
+    val modificationEventKinds = testModule.directives[ModificationEventDirectives.MODIFICATION_EVENT]
     val modificationEventKind = when (modificationEventKinds.size) {
         0 -> {
             if (isOptional) return
@@ -70,7 +67,7 @@ fun TestModule.publishModificationEventByDirective(testServices: TestServices, i
         1 -> modificationEventKinds.single()
         else -> error("The test module `$this` must not specify multiple modification events.")
     }
-    publishModificationEvent(modificationEventKind, getKtModule(testServices))
+    publishModificationEvent(modificationEventKind, ktModule)
 }
 
 /**
@@ -78,16 +75,13 @@ fun TestModule.publishModificationEventByDirective(testServices: TestServices, i
  * as defined in [KotlinTopics][org.jetbrains.kotlin.analysis.providers.topics.KotlinTopics] based on the given [modificationEventKind] in
  * a write action.
  *
- * Module-level modification events will be published for the [TestModule]'s [KtModule].
+ * Module-level modification events will be published for the [KtTestModule]'s [KtModule].
  */
-fun TestModule.publishWildcardModificationEventByDirectiveIfPresent(
-    modificationEventKind: ModificationEventKind,
-    testServices: TestServices,
-) {
-    if (ModificationEventDirectives.WILDCARD_MODIFICATION_EVENT !in directives) {
+fun KtTestModule.publishWildcardModificationEventByDirectiveIfPresent(modificationEventKind: ModificationEventKind) {
+    if (ModificationEventDirectives.WILDCARD_MODIFICATION_EVENT !in testModule.directives) {
         return
     }
-    publishModificationEvent(modificationEventKind, getKtModule(testServices))
+    publishModificationEvent(modificationEventKind, ktModule)
 }
 
 /**
@@ -99,19 +93,16 @@ fun TestModule.publishWildcardModificationEventByDirectiveIfPresent(
  * modules contain, as long as at least one test module contains it (to support test cases which don't want to publish any modification
  * events).
  */
-fun TestModuleStructure.publishWildcardModificationEventsByDirective(
-    modificationEventKind: ModificationEventKind,
-    testServices: TestServices,
-) {
+fun KtTestModuleProjectStructure.publishWildcardModificationEventsByDirective(modificationEventKind: ModificationEventKind) {
     if (modificationEventKind.isModuleLevel) {
-        modules.forEach { testModule ->
-            testModule.publishWildcardModificationEventByDirectiveIfPresent(modificationEventKind, testServices)
+        mainModules.forEach { ktTestModule ->
+            ktTestModule.publishWildcardModificationEventByDirectiveIfPresent(modificationEventKind)
         }
     } else {
-        if (!allDirectives.contains(ModificationEventDirectives.WILDCARD_MODIFICATION_EVENT)) {
+        if (!testModuleStructure.allDirectives.contains(ModificationEventDirectives.WILDCARD_MODIFICATION_EVENT)) {
             return
         }
-        publishGlobalModificationEvent(modificationEventKind, testServices.environmentManager.getProject())
+        publishGlobalModificationEvent(modificationEventKind, project)
     }
 }
 

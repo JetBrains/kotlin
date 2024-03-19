@@ -31,7 +31,7 @@ abstract class AbstractSessionInvalidationTest : AbstractAnalysisApiBasedTest() 
         val allKtModules = testServices.ktTestModuleProjectStructure.mainModules.map { it.ktModule }
 
         val sessionsBeforeModification = getSessionsFor(allKtModules)
-        moduleStructure.publishWildcardModificationEventsByDirective(modificationEventKind, testServices)
+        testServices.ktTestModuleProjectStructure.publishWildcardModificationEventsByDirective(modificationEventKind)
         val sessionsAfterModification = getSessionsFor(allKtModules)
 
         val invalidatedSessions = buildSet {

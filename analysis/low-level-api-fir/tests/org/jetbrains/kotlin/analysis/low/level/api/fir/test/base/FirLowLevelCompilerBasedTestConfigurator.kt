@@ -68,6 +68,7 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() 
         }
 
         return KtTestModuleProjectStructure(
+            testModuleStructure = moduleStructure,
             mainModules = mainModules,
             binaryModules = mainModules.asSequence().flatMap { it.ktModule.allDirectDependenciesOfType<KtBinaryModule>() }.asIterable(),
         )

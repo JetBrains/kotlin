@@ -43,7 +43,7 @@ abstract class AbstractResolveExtensionDisposalAfterModificationEventTest : Abst
             "The resolve extension should not be disposed before the modification event is published."
         }
 
-        mainModule.publishModificationEventByDirective(testServices)
+        ktTestModule.publishModificationEventByDirective()
 
         testServices.assertions.assertTrue(resolveExtension.isDisposed) {
             "The resolve extension should be disposed after the modification event has been published."
