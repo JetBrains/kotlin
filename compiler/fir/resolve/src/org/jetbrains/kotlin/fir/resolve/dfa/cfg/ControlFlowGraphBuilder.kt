@@ -375,10 +375,6 @@ class ControlFlowGraphBuilder {
     // they may reassign variables and so the data we've gathered about them should be
     // invalidated. So what we do here is merge the data from the lambdas with the data
     // obtained without them: this can only erase statements that are not provably correct.
-    //
-    // TODO: an alternative is to delay computing incoming flow for "branch result exit" nodes
-    //   until the entire "when" is resolved; then either unify each branch's lambdas into its
-    //   exit node, or create N union nodes (1/branch) and point them into the merge node. KT-59730
     private fun mergeDataFlowFromPostponedLambdas(node: CFGNode<*>, callCompleted: Boolean) {
         val currentLevelExits = postponedLambdaExits.pop().exits
         if (currentLevelExits.isEmpty()) return
@@ -545,9 +541,6 @@ class ControlFlowGraphBuilder {
         val exitNode = currentGraph.exitNode as ClassExitNode
         val klass = enterNode.fir
         if ((klass as FirControlFlowGraphOwner).controlFlowGraphReference != null) {
-            // TODO: IDE LL API sometimes attempts to analyze a enum class while already analyzing it, causing
-            //  this graph to be built twice (or more). Not sure what this means. Nothing good, probably.
-            //  In any case, attempting to add more edges to subgraphs will be fatal. KT-59728
             graphs.pop()
             return null to null
         }
@@ -1223,13 +1216,11 @@ class ControlFlowGraphBuilder {
     private fun levelOfNextExceptionCatchingGraph(): Int =
         graphs.all().first { it.kind != ControlFlowGraph.Kind.AnonymousFunctionCalledInPlace }.exitNode.level
 
-    // this is a workaround to make function call dead when call is completed _after_ building its node in the graph
-    // this happens when completing the last call in try/catch blocks
-    // TODO: this doesn't make fully 'right' Nothing node (doesn't support going to catch and pass through finally)
-    //  because doing those afterwards is quite challenging
-    //  it would be much easier if we could build calls after full completion only, at least for Nothing calls
-    //  KT-59726
-    // @returns `true` if node actually returned Nothing
+    /**
+     * this is a workaround to make function call dead when call is completed _after_ building its node in the graph
+     * this happens when completing the last call in try/catch blocks
+     * @returns `true` if node actually returned Nothing
+     */
     private fun completeFunctionCall(node: FunctionCallNode): Boolean {
         if (!node.fir.hasNothingType) return false
         val stub = StubNode(node.owner, node.level)
