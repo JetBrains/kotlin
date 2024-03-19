@@ -9,8 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.getKtFiles
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleProjectStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
@@ -61,7 +60,7 @@ abstract class AbstractSymbolLightClassesTestBase(
     }
 
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: TestModule, testServices: TestServices) {
-        val ktFiles = testServices.ktModuleProvider.getKtFiles(mainModule)
+        val ktFiles = testServices.ktTestModuleProjectStructure.getKtTestModule(mainModule).ktFiles
         doLightClassTest(ktFiles, mainModule, testServices)
     }
 

@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionPr
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.directives.publishModificationEventByDirective
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleProjectStructure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.name.FqName
@@ -35,8 +35,8 @@ abstract class AbstractResolveExtensionDisposalAfterModificationEventTest : Abst
         testServices: TestServices,
     ) {
         val project = mainFile.project
-        val module = ProjectStructureProvider.getModule(project, mainFile, contextualModule = null)
-        val session = LLFirSessionCache.getInstance(project).getSession(module)
+        val ktTestModule = testServices.ktTestModuleProjectStructure.getKtTestModule(mainModule)
+        val session = LLFirSessionCache.getInstance(project).getSession(ktTestModule.ktModule)
         val resolveExtension = session.llResolveExtensionTool!!.extensions.single() as KtResolveExtensionWithDisposalTracker
 
         testServices.assertions.assertFalse(resolveExtension.isDisposed) {

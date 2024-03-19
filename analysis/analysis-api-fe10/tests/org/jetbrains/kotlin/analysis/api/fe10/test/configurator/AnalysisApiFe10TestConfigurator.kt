@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.test.framework.services.configuration.Analy
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -72,7 +71,7 @@ object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
         val compilerConfiguration = compilerConfigurationProvider.getCompilerConfiguration(testModule)
         val project = compilerConfigurationProvider.getProject(testModule)
         val packageProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(testModule)
-        JvmResolveUtil.analyze(project, ktTestModule.files.filterIsInstance<KtFile>(), compilerConfiguration, packageProviderFactory)
+        JvmResolveUtil.analyze(project, ktTestModule.ktFiles, compilerConfiguration, packageProviderFactory)
     }
 
     override fun computeTestDataPath(path: Path): Path {

@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.test.framework.base
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.directives.ModificationEventDirectives
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.AnalysisApiKtModuleProvider
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.AnalysisApiKtModuleProviderImpl
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.AnalysisApiKtTestModuleProjectStructureProvider
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.AnalysisApiKtTestModuleProjectStructureProviderImpl
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.AnalysisApiTestCodeFragmentDirectives
 import org.jetbrains.kotlin.analysis.test.framework.services.*
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
@@ -27,7 +27,7 @@ fun TestConfigurationBuilder.registerAnalysisApiBaseTestServices(
     configurator: AnalysisApiTestConfigurator,
 ) {
     useAdditionalService<TestDisposableProvider>(::TestDisposableProviderImpl)
-    useAdditionalService<AnalysisApiKtModuleProvider>(::AnalysisApiKtModuleProviderImpl)
+    useAdditionalService<AnalysisApiKtTestModuleProjectStructureProvider>(::AnalysisApiKtTestModuleProjectStructureProviderImpl)
     useAdditionalService<AnalysisApiEnvironmentManager>(::AnalysisApiEnvironmentManagerImpl.bind(testDisposable))
     useAdditionalService<ApplicationDisposableProvider> { ExecutionListenerBasedDisposableProvider() }
     useAdditionalService<KotlinStandardLibrariesPathProvider> { StandardLibrariesPathProviderForKotlinProject }

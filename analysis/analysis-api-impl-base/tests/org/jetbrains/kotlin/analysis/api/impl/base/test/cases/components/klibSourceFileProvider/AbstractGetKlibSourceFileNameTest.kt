@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.klibSo
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.mainModules
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleProjectStructure
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
@@ -31,7 +30,7 @@ import org.jetbrains.kotlin.konan.file.File as KonanFile
  */
 abstract class AbstractGetKlibSourceFileNameTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val mainModule = testServices.ktModuleProvider.mainModules
+        val mainModule = testServices.ktTestModuleProjectStructure.mainModules
             .let { modules -> if (modules.size == 1) modules.first() else fail("Expected single main module. Found $modules") }
 
         val libraryModule = mainModule.ktModule as? KtLibraryModule

@@ -8,16 +8,13 @@ package org.jetbrains.kotlin.analysis.test.framework.base
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.TestDataFile
-import junit.framework.ComparisonFailure
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.analyzeCopy
 import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.getKtFiles
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.mainModules
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleProjectStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSourceFilePreprocessor
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -208,7 +205,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         testServices: TestServices,
         acceptSingleFileWithoutAdditionalChecks: Boolean = true,
     ): KtFile? {
-        val ktFiles = testServices.ktModuleProvider.getKtFiles(module)
+        val ktFiles = testServices.ktTestModuleProjectStructure.getKtTestModule(module).ktFiles
         if (acceptSingleFileWithoutAdditionalChecks) {
             // Simple case with one file
             ktFiles.singleOrNull()?.let { return it }
@@ -349,7 +346,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         testConfiguration.preAnalysisHandlers.forEach { preprocessor -> preprocessor.preprocessModuleStructure(moduleStructure) }
         testConfiguration.preAnalysisHandlers.forEach { preprocessor -> preprocessor.prepareSealedClassInheritors(moduleStructure) }
 
-        testServices.ktModuleProvider.mainModules.forEach { ktTestModule ->
+        testServices.ktTestModuleProjectStructure.mainModules.forEach { ktTestModule ->
             configurator.prepareFilesInModule(ktTestModule, testServices)
         }
     }

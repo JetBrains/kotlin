@@ -52,7 +52,7 @@ class KtTestProjectStructureProvider(
                 )
     }
 
-    override val allKtModules: List<KtModule> = projectStructure.allKtModules()
+    override val allKtModules: List<KtModule> = projectStructure.mainAndBinaryKtModules
 
-    override val allSourceFiles: List<PsiFileSystemItem> = projectStructure.allSourceFiles()
+    override val allSourceFiles: List<PsiFileSystemItem> = projectStructure.allSourceFiles
 }

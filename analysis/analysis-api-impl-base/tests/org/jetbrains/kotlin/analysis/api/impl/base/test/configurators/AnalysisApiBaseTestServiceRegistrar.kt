@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.providers.*
 import org.jetbrains.kotlin.analysis.providers.impl.*
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleProjectStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.libraryIndexingConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
@@ -71,8 +71,8 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     }
 
     override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
-        val moduleStructure = testServices.ktModuleProvider.getModuleStructure()
-        val testKtFiles = moduleStructure.mainModules.flatMap { it.files.filterIsInstance<KtFile>() }
+        val moduleStructure = testServices.ktTestModuleProjectStructure
+        val testKtFiles = moduleStructure.mainModules.flatMap { it.ktFiles }
 
         // We explicitly exclude decompiled libraries. Their decompiled PSI files are indexed by the declaration provider, so it shouldn't
         // additionally build and index stubs for the library.

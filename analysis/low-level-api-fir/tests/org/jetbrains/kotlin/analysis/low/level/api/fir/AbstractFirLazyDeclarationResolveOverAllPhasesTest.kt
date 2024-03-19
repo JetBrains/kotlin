@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveDesignationCollector
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.allKtFiles
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleProjectStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -38,7 +38,8 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
 
         resolveWithClearCaches(ktFile) { firResolveSession ->
             checkSession(firResolveSession)
-            val allKtFiles = testServices.allKtFiles()
+            val allKtFiles = testServices.ktTestModuleProjectStructure.allMainKtFiles
+
             testServices.expressionMarkerProvider.getElementsOfTypeAtCarets<KtDeclaration>(
                 files = allKtFiles,
                 caretTag = "preresolved"

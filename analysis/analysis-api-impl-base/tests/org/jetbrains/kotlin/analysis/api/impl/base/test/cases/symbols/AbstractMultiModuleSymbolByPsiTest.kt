@@ -10,7 +10,7 @@ import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.allKtFiles
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleProjectStructure
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractMultiModuleSymbolByPsiTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val files = testServices.allKtFiles()
+        val files = testServices.ktTestModuleProjectStructure.allMainKtFiles
         val debugRenderer = DebugSymbolRenderer()
 
         val debugPrinter = PrettyPrinter()
