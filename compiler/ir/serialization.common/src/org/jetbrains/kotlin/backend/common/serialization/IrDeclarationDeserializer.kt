@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.linkage.issues.IrDisallowedErrorNode
 import org.jetbrains.kotlin.backend.common.linkage.issues.IrSymbolTypeMismatchException
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
-import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.*
@@ -76,8 +75,7 @@ class IrDeclarationDeserializer(
     private var deserializeBodies: Boolean,
     val symbolDeserializer: IrSymbolDeserializer,
     private val platformFakeOverrideClassFilter: FakeOverrideClassFilter,
-    private val fakeOverrideBuilder: IrLinkerFakeOverrideProvider,
-    private val compatibilityMode: CompatibilityMode,
+    private val onDeserializedClass: (IrClass, IdSignature) -> Unit,
     private val partialLinkageEnabled: Boolean,
     private val internationService: IrInterningService,
 ) {
@@ -405,7 +403,7 @@ class IrDeclarationDeserializer(
                 // It has been decided not to deserialize the list of sealed subclasses because of KT-54028
                 // sealedSubclasses = proto.sealedSubclassList.memoryOptimizedMap { deserializeIrSymbol(it).checkSymbolType(CLASS_SYMBOL) }
 
-                fakeOverrideBuilder.enqueueClass(this, signature, compatibilityMode)
+                onDeserializedClass(this, signature)
             }
         }
 
