@@ -531,8 +531,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             default("name", "Name.special(\"<\${diagnostic.reason}>\")")
         }
 
-        impl(fromMissingDependenciesNamedReference)
-
         impl(breakExpression) {
             defaultBuiltInType("Nothing")
             additionalImports(implicitNothingTypeRefType)

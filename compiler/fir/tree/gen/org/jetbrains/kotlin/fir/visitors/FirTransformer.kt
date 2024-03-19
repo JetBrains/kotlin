@@ -1067,14 +1067,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformErrorNamedReference(errorNamedReference, data)
     }
 
-    open fun transformFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference, data: D): FirReference {
-        return transformElement(fromMissingDependenciesNamedReference, data)
-    }
-
-    final override fun visitFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference, data: D): FirReference {
-        return transformFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference, data)
-    }
-
     open fun transformSuperReference(superReference: FirSuperReference, data: D): FirReference {
         return transformElement(superReference, data)
     }

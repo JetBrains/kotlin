@@ -1067,14 +1067,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(errorNamedReference)
     }
 
-    final override fun visitFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference, data: Nothing?) {
-        visitFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference)
-    }
-
-    open fun visitFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference) {
-        visitElement(fromMissingDependenciesNamedReference)
-    }
-
     final override fun visitSuperReference(superReference: FirSuperReference, data: Nothing?) {
         visitSuperReference(superReference)
     }

@@ -128,11 +128,10 @@ internal fun checkReferenceIsResolved(
     extraAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ) {
     checkWithAttachment(
-        condition = reference is FirResolvedNamedReference || reference is FirErrorNamedReference || reference is FirFromMissingDependenciesNamedReference,
+        condition = reference is FirResolvedNamedReference || reference is FirErrorNamedReference,
         message = {
-            "Expected ${FirNamedReference::class.simpleName}, " +
+            "Expected ${FirNamedReference::class.simpleName} or " +
                     "${FirErrorNamedReference::class.simpleName} " +
-                    "or ${FirFromMissingDependenciesNamedReference::class.simpleName}, " +
                     "but ${reference::class.simpleName} found"
         }
     ) {

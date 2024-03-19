@@ -150,8 +150,6 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase: FirNamedReferenceWithCandidateBase) = visitNamedReference(namedReferenceWithCandidateBase)
 
-    override fun visitFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference) = visitNamedReference(fromMissingDependenciesNamedReference)
-
     override fun visitSuperReference(superReference: FirSuperReference) = visitReference(superReference)
 
     override fun visitThisReference(thisReference: FirThisReference) = visitReference(thisReference)

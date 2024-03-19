@@ -413,9 +413,6 @@ abstract class FirVisitor<out R, in D> {
     open fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: D): R =
         visitElement(errorNamedReference, data)
 
-    open fun visitFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference, data: D): R =
-        visitElement(fromMissingDependenciesNamedReference, data)
-
     open fun visitSuperReference(superReference: FirSuperReference, data: D): R =
         visitElement(superReference, data)
 

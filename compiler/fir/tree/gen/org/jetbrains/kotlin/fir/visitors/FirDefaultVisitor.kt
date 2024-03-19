@@ -215,9 +215,6 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase: FirNamedReferenceWithCandidateBase, data: D): R =
         visitNamedReference(namedReferenceWithCandidateBase, data)
 
-    override fun visitFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference, data: D): R =
-        visitNamedReference(fromMissingDependenciesNamedReference, data)
-
     override fun visitSuperReference(superReference: FirSuperReference, data: D): R =
         visitReference(superReference, data)
 
