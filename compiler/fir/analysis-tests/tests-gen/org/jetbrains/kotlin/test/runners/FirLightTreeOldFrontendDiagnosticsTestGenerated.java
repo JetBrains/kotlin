@@ -33375,6 +33375,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("smartcastToAliasedFunctionalType.kt")
+      public void testSmartcastToAliasedFunctionalType() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/smartcastToAliasedFunctionalType.kt");
+      }
+
+      @Test
       @TestMetadata("smartcastToInvisibleType_java.kt")
       public void testSmartcastToInvisibleType_java() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/smartcastToInvisibleType_java.kt");
