@@ -99,6 +99,5 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
 internal fun FirCallableDeclaration.isFakeOverride(firContainingClass: FirRegularClass?): Boolean {
     val declaration = unwrapUseSiteSubstitutionOverrides()
     return declaration.isSubstitutionOrIntersectionOverride ||
-            firContainingClass?.symbol?.toLookupTag() != declaration.containingClassLookupTag() ||
-            declaration.isHiddenToOvercomeSignatureClash == true
+            firContainingClass?.symbol?.toLookupTag() != declaration.containingClassLookupTag()
 }
