@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.isExhaustive
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 
 object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker(MppCheckerKind.Common) {
@@ -93,7 +94,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker(MppChec
                 }
             }
         } else if (resultExpression.source?.kind is KtFakeSourceElementKind.ImplicitUnit &&
-            !functionReturnType.lowerBoundIfFlexible().isUnit
+            !functionReturnType.fullyExpandedType(context.session).lowerBoundIfFlexible().isUnit
         ) {
             // Disallow cases like
             //     fun foo(): Any { return }
