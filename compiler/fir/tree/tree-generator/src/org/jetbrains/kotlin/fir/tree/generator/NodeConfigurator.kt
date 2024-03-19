@@ -358,7 +358,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         contractDescriptionOwner.configure {
-            +field(contractDescription, withReplace = true).withTransform()
+            +field(contractDescription, withReplace = true, nullable = true).withTransform()
         }
 
         property.configure {

@@ -89,7 +89,6 @@ val firScopeProviderType = type("fir.scopes", "FirScopeProvider")
 val pureAbstractElementType = generatedType("FirPureAbstractElement")
 val coneContractElementType = type("fir.contracts.description", "ConeContractDescriptionElement")
 val coneEffectDeclarationType = type("fir.contracts.description", "ConeEffectDeclaration")
-val emptyContractDescriptionType = generatedType("contracts.impl", "FirEmptyContractDescription")
 val coneDiagnosticType = generatedType("diagnostics", "ConeDiagnostic", kind = TypeKind.Interface)
 val coneStubDiagnosticType = generatedType("diagnostics", "ConeStubDiagnostic")
 

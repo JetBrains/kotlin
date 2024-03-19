@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -285,7 +284,6 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
 private fun throwTwiceVisitingError(element: FirElement, parent: FirElement?) {
     if (element is FirTypeRef || element is FirTypeParameter ||
         element is FirTypeProjection || element is FirValueParameter || element is FirAnnotation || element is FirFunctionTypeParameter ||
-        element is FirEmptyContractDescription ||
         element is FirStubReference || element.isExtensionFunctionAnnotation || element is FirEmptyArgumentList ||
         element === FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS ||
         ((parent is FirContractCallBlock || parent is FirContractDescription) && element is FirFunctionCall)

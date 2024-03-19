@@ -43,7 +43,7 @@ interface FirAbstractConstructorBuilder : FirFunctionBuilder {
     abstract val typeParameters: MutableList<FirTypeParameterRef>
     abstract var receiverParameter: FirReceiverParameter?
     abstract var controlFlowGraphReference: FirControlFlowGraphReference?
-    abstract var contractDescription: FirContractDescription
+    abstract var contractDescription: FirContractDescription?
     abstract var symbol: FirConstructorSymbol
     abstract var delegatedConstructor: FirDelegatedConstructorCall?
     override fun build(): FirConstructor

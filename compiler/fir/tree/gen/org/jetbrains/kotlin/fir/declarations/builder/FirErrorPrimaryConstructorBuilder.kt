@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirErrorPrimaryConstructorImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -47,7 +46,7 @@ class FirErrorPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnno
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
     override val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
-    override var contractDescription: FirContractDescription = FirEmptyContractDescription
+    override var contractDescription: FirContractDescription? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var symbol: FirConstructorSymbol
     override var delegatedConstructor: FirDelegatedConstructorCall? = null

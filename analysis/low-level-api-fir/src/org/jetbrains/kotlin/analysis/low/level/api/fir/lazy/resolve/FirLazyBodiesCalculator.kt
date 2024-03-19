@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
-import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.*
@@ -38,7 +37,9 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtAnnotated
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -118,7 +119,7 @@ private fun replaceLazyBody(target: FirFunction, copy: FirFunction) {
 private fun replaceLazyContractDescription(target: FirContractDescriptionOwner, copy: FirContractDescriptionOwner) {
     val shouldReplace = when (val currentContractDescription = target.contractDescription) {
         is FirRawContractDescription -> currentContractDescription.rawEffects.any { it is FirLazyExpression }
-        is FirEmptyContractDescription -> copy.contractDescription !is FirEmptyContractDescription
+        null -> copy.contractDescription != null
         else -> false
     }
 

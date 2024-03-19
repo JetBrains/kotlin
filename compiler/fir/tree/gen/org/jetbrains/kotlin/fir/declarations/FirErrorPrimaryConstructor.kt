@@ -43,7 +43,7 @@ abstract class FirErrorPrimaryConstructor : FirConstructor(), FirDiagnosticHolde
     abstract override val contextReceivers: List<FirContextReceiver>
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val valueParameters: List<FirValueParameter>
-    abstract override val contractDescription: FirContractDescription
+    abstract override val contractDescription: FirContractDescription?
     abstract override val annotations: List<FirAnnotation>
     abstract override val symbol: FirConstructorSymbol
     abstract override val delegatedConstructor: FirDelegatedConstructorCall?
@@ -72,7 +72,7 @@ abstract class FirErrorPrimaryConstructor : FirConstructor(), FirDiagnosticHolde
 
     abstract override fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
 
-    abstract override fun replaceContractDescription(newContractDescription: FirContractDescription)
+    abstract override fun replaceContractDescription(newContractDescription: FirContractDescription?)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 

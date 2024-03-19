@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.fir.java.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirConstructorBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -28,7 +26,6 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import kotlin.properties.Delegates
 
-@OptIn(FirImplementationDetail::class)
 class FirJavaConstructor @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
@@ -45,7 +42,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
 ) : FirConstructor() {
     override val receiverParameter: FirReceiverParameter? get() = null
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
-    override val contractDescription: FirContractDescription get() = FirEmptyContractDescription
+    override val contractDescription: FirContractDescription? get() = null
 
     init {
         symbol.bind(this)
@@ -157,7 +154,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {}
-    override fun replaceContractDescription(newContractDescription: FirContractDescription) {
+    override fun replaceContractDescription(newContractDescription: FirContractDescription?) {
         error("Contract description cannot be replaced for FirJavaConstructor")
     }
 

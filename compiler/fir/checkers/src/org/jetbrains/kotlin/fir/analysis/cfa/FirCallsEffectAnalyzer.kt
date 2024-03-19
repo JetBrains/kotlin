@@ -41,7 +41,6 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
-
     override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
         // TODO, KT-59816: this is quadratic due to `graph.traverse`, surely there is a better way?
         for (subGraph in graph.subGraphs) {
@@ -51,19 +50,20 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         val session = context.session
         val function = (graph.declaration as? FirFunction) ?: return
         if (function !is FirContractDescriptionOwner) return
-        if (function.contractDescription.effects?.any { it.effect is ConeCallsEffectDeclaration } != true) return
+        val contractDescription = function.contractDescription ?: return
+        if (contractDescription.effects?.any { it.effect is ConeCallsEffectDeclaration } != true) return
 
         val functionalTypeEffects = mutableMapOf<FirBasedSymbol<*>, ConeCallsEffectDeclaration>()
 
         function.valueParameters.forEachIndexed { index, parameter ->
             if (parameter.returnTypeRef.isFunctionTypeRef(session)) {
-                val effectDeclaration = function.contractDescription.getParameterCallsEffectDeclaration(index)
+                val effectDeclaration = contractDescription.getParameterCallsEffectDeclaration(index)
                 if (effectDeclaration != null) functionalTypeEffects[parameter.symbol] = effectDeclaration
             }
         }
 
         if (function.receiverParameter?.typeRef.isFunctionTypeRef(session)) {
-            val effectDeclaration = function.contractDescription.getParameterCallsEffectDeclaration(-1)
+            val effectDeclaration = contractDescription.getParameterCallsEffectDeclaration(-1)
             if (effectDeclaration != null) functionalTypeEffects[function.symbol] = effectDeclaration
         }
 
@@ -76,7 +76,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         )
 
         for ((symbol, leakedPlaces) in leakedSymbols) {
-            reporter.reportOn(function.contractDescription.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol, context)
+            reporter.reportOn(contractDescription.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol, context)
             leakedPlaces.forEach {
                 reporter.reportOn(it, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol, context)
             }
@@ -108,7 +108,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         val foundRange = info[symbol]?.withoutMarker ?: EventOccurrencesRange.ZERO
         if (foundRange !in requiredRange) {
             reporter.reportOn(
-                function.contractDescription.source,
+                function.contractDescription?.source,
                 FirErrors.WRONG_INVOCATION_KIND,
                 symbol,
                 requiredRange,

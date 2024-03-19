@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.*
-import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 
 val FirContractDescription?.isNullOrEmpty: Boolean
-    get() = (this == null) || (this is FirEmptyContractDescription)
+    get() = (this == null)
 
 private fun ConeEffectDeclaration.substitute(substitutor: ConeSubstitutor): ConeEffectDeclaration {
     return when (this) {

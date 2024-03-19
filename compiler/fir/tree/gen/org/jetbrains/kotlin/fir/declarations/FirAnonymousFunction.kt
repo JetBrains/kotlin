@@ -43,7 +43,7 @@ abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner, Fir
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val valueParameters: List<FirValueParameter>
     abstract override val body: FirBlock?
-    abstract override val contractDescription: FirContractDescription
+    abstract override val contractDescription: FirContractDescription?
     abstract override val symbol: FirAnonymousFunctionSymbol
     abstract val label: FirLabel?
     abstract val invocationKind: EventOccurrencesRange?
@@ -78,7 +78,7 @@ abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner, Fir
 
     abstract override fun replaceBody(newBody: FirBlock?)
 
-    abstract override fun replaceContractDescription(newContractDescription: FirContractDescription)
+    abstract override fun replaceContractDescription(newContractDescription: FirContractDescription?)
 
     abstract fun replaceInvocationKind(newInvocationKind: EventOccurrencesRange?)
 
