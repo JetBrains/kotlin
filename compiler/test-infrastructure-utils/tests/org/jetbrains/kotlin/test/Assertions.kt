@@ -15,6 +15,8 @@ abstract class Assertions {
         assertEqualsToFile(expectedFile, actual, sanitizer) { "Actual data differs from file content" }
     }
 
+    abstract fun doesEqualToFile(expectedFile: File, actual: String, sanitizer: (String) -> String = { it }): Boolean
+
     fun assertEqualsToFile(expectedFile: Path, actual: String, sanitizer: (String) -> String = { it }) {
         assertEqualsToFile(expectedFile.toFile(), actual, sanitizer)
     }

@@ -16,6 +16,7 @@ import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.util.lang.JavaVersion;
 import junit.framework.TestCase;
+import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
@@ -259,7 +260,7 @@ public class KotlinTestUtils {
         assertEqualsToFile("Actual data differs from file content", expectedFile, actual, sanitizer);
     }
 
-    public static void assertEqualsToFile(@NotNull String message, @NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
+    public static Pair<Boolean, String> doesEqualToFile(@NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
         try {
             String actualText = StringUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(actual.trim()));
 
@@ -275,13 +276,19 @@ public class KotlinTestUtils {
 
             String expectedText = StringUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(expected.trim()));
 
-            if (!Objects.equals(sanitizer.invoke(expectedText), sanitizer.invoke(actualText))) {
-                throw new FileComparisonFailure(message + ": " + expectedFile.getName(),
-                                                expected, actual, expectedFile.getAbsolutePath());
-            }
+            return new Pair<>(Objects.equals(sanitizer.invoke(expectedText), sanitizer.invoke(actualText)), expected);
         }
         catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);
+        }
+    }
+
+    public static void assertEqualsToFile(@NotNull String message, @NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
+        Pair<Boolean, String> pair = doesEqualToFile(expectedFile, actual, sanitizer);
+        String expected = pair.getSecond();
+        if (!pair.getFirst()) {
+            throw new FileComparisonFailure(message + ": " + expectedFile.getName(),
+                                            expected, actual, expectedFile.getAbsolutePath());
         }
     }
 
