@@ -1,8 +1,10 @@
 CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:J modality:OPEN visibility:public superTypes:[kotlin.Any]
   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.J
-  CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public <> () returnType:<root>.J [primary]
   FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public
   FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f2 type:kotlin.Int visibility:public
+  FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static]
+  FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s2 type:kotlin.Int visibility:public [static]
+  CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public <> () returnType:<root>.J [primary]
   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
     overridden:
       public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
@@ -16,5 +18,3 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:J modality:OPEN visibility:pu
     overridden:
       public open fun toString (): kotlin.String declared in kotlin.Any
     $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
-  FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static]
-  FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s2 type:kotlin.Int visibility:public [static]

@@ -14,46 +14,18 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:JavaChild modality:OPEN visib
     overridden:
       public open fun toString (): kotlin.String [fake_override] declared in <root>.KotlinBase
     $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
-  PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:e visibility:public modality:OPEN [var]
+  PROPERTY IR_EXTERNAL_DECLARATION_STUB name:a visibility:public modality:FINAL [fake_override,var]
     overridden:
-      public open e: kotlin.Int [var]
-    FUN IR_EXTERNAL_DECLARATION_STUB name:<get-e> visibility:public modality:OPEN <> ($this:<root>.JavaChild) returnType:kotlin.Int
-      correspondingProperty: PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:e visibility:public modality:OPEN [var]
+      public final a: kotlin.Int [var]
+    FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:FINAL <> ($this:<root>.KotlinBase) returnType:kotlin.Int [fake_override]
+      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public open fun <get-e> (): kotlin.Int declared in <root>.KotlinBase
-      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:<root>.JavaChild
-    FUN IR_EXTERNAL_DECLARATION_STUB name:<set-e> visibility:public/*package*/ modality:OPEN <> ($this:<root>.JavaChild, <set-?>:kotlin.Int) returnType:kotlin.Unit
-      correspondingProperty: PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:e visibility:public modality:OPEN [var]
-      overridden:
-        public open fun <set-e> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.KotlinBase
-      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:<root>.JavaChild
-      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<set-?> index:0 type:kotlin.Int
-  PROPERTY IR_EXTERNAL_DECLARATION_STUB name:d visibility:public modality:FINAL [fake_override,var]
-    overridden:
-      public final d: kotlin.Int [var]
-    FUN FAKE_OVERRIDE name:<get-d> visibility:public modality:FINAL <> ($this:<root>.KotlinBase) returnType:kotlin.Int [fake_override]
-      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:d visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final fun <get-d> (): kotlin.Int declared in <root>.KotlinBase
+        public final fun <get-a> (): kotlin.Int declared in <root>.KotlinBase
       $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.KotlinBase
-    FUN FAKE_OVERRIDE name:<set-d> visibility:internal modality:FINAL <> ($this:<root>.KotlinBase, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
-      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:d visibility:public modality:FINAL [fake_override,var]
+    FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:FINAL <> ($this:<root>.KotlinBase, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        internal final fun <set-d> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.KotlinBase
-      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.KotlinBase
-      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<set-?> index:0 type:kotlin.Int
-  PROPERTY IR_EXTERNAL_DECLARATION_STUB name:c visibility:public modality:FINAL [fake_override,var]
-    overridden:
-      public final c: kotlin.Int [var]
-    FUN FAKE_OVERRIDE name:<get-c> visibility:public modality:FINAL <> ($this:<root>.KotlinBase) returnType:kotlin.Int [fake_override]
-      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:c visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        public final fun <get-c> (): kotlin.Int declared in <root>.KotlinBase
-      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.KotlinBase
-    FUN FAKE_OVERRIDE name:<set-c> visibility:invisible_fake modality:FINAL <> ($this:<root>.KotlinBase, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
-      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:c visibility:public modality:FINAL [fake_override,var]
-      overridden:
-        private final fun <set-c> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.KotlinBase
+        public final fun <set-a> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.KotlinBase
       $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.KotlinBase
       VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<set-?> index:0 type:kotlin.Int
   PROPERTY IR_EXTERNAL_DECLARATION_STUB name:b visibility:public modality:FINAL [fake_override,var]
@@ -70,17 +42,45 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:JavaChild modality:OPEN visib
         protected final fun <set-b> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.KotlinBase
       $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.KotlinBase
       VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<set-?> index:0 type:kotlin.Int
-  PROPERTY IR_EXTERNAL_DECLARATION_STUB name:a visibility:public modality:FINAL [fake_override,var]
+  PROPERTY IR_EXTERNAL_DECLARATION_STUB name:c visibility:public modality:FINAL [fake_override,var]
     overridden:
-      public final a: kotlin.Int [var]
-    FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:FINAL <> ($this:<root>.KotlinBase) returnType:kotlin.Int [fake_override]
-      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:a visibility:public modality:FINAL [fake_override,var]
+      public final c: kotlin.Int [var]
+    FUN FAKE_OVERRIDE name:<get-c> visibility:public modality:FINAL <> ($this:<root>.KotlinBase) returnType:kotlin.Int [fake_override]
+      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:c visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final fun <get-a> (): kotlin.Int declared in <root>.KotlinBase
+        public final fun <get-c> (): kotlin.Int declared in <root>.KotlinBase
       $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.KotlinBase
-    FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:FINAL <> ($this:<root>.KotlinBase, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
-      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:a visibility:public modality:FINAL [fake_override,var]
+    FUN FAKE_OVERRIDE name:<set-c> visibility:invisible_fake modality:FINAL <> ($this:<root>.KotlinBase, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:c visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final fun <set-a> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.KotlinBase
+        private final fun <set-c> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.KotlinBase
       $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.KotlinBase
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<set-?> index:0 type:kotlin.Int
+  PROPERTY IR_EXTERNAL_DECLARATION_STUB name:d visibility:public modality:FINAL [fake_override,var]
+    overridden:
+      public final d: kotlin.Int [var]
+    FUN FAKE_OVERRIDE name:<get-d> visibility:public modality:FINAL <> ($this:<root>.KotlinBase) returnType:kotlin.Int [fake_override]
+      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:d visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final fun <get-d> (): kotlin.Int declared in <root>.KotlinBase
+      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.KotlinBase
+    FUN FAKE_OVERRIDE name:<set-d> visibility:internal modality:FINAL <> ($this:<root>.KotlinBase, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:d visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        internal final fun <set-d> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.KotlinBase
+      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.KotlinBase
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<set-?> index:0 type:kotlin.Int
+  PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:e visibility:public modality:OPEN [var]
+    overridden:
+      public open e: kotlin.Int [var]
+    FUN IR_EXTERNAL_DECLARATION_STUB name:<get-e> visibility:public modality:OPEN <> ($this:<root>.JavaChild) returnType:kotlin.Int
+      correspondingProperty: PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:e visibility:public modality:OPEN [var]
+      overridden:
+        public open fun <get-e> (): kotlin.Int declared in <root>.KotlinBase
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:<root>.JavaChild
+    FUN IR_EXTERNAL_DECLARATION_STUB name:<set-e> visibility:public/*package*/ modality:OPEN <> ($this:<root>.JavaChild, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      correspondingProperty: PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:e visibility:public modality:OPEN [var]
+      overridden:
+        public open fun <set-e> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.KotlinBase
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:<root>.JavaChild
       VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<set-?> index:0 type:kotlin.Int
