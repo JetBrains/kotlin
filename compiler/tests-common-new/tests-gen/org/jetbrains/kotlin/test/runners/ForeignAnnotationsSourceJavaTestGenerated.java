@@ -293,6 +293,12 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         }
 
         @Test
+        @TestMetadata("kt65193.kt")
+        public void testKt65193() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/kt65193.kt");
+        }
+
+        @Test
         @TestMetadata("localInference.kt")
         public void testLocalInference() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/localInference.kt");

@@ -1693,6 +1693,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleReferenceResolveTestGenerate
       }
 
       @Test
+      @TestMetadata("NoSyntheticFieldInClass.kt")
+      public void testNoSyntheticFieldInClass() {
+        runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/NoSyntheticFieldInClass.kt");
+      }
+
+      @Test
       @TestMetadata("StaticFieldQualified.kt")
       public void testStaticFieldQualified() {
         runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/StaticFieldQualified.kt");
@@ -1726,6 +1732,24 @@ public class FirIdeNormalAnalysisLibrarySourceModuleReferenceResolveTestGenerate
       @TestMetadata("StaticFunctionQualifiedWithKotlinSubclass.kt")
       public void testStaticFunctionQualifiedWithKotlinSubclass() {
         runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/StaticFunctionQualifiedWithKotlinSubclass.kt");
+      }
+
+      @Test
+      @TestMetadata("SyntheticFieldInAnnotationInterface.kt")
+      public void testSyntheticFieldInAnnotationInterface() {
+        runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/SyntheticFieldInAnnotationInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("SyntheticFieldInClass.kt")
+      public void testSyntheticFieldInClass() {
+        runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/SyntheticFieldInClass.kt");
+      }
+
+      @Test
+      @TestMetadata("SyntheticPropertyInKotlinSubclass.kt")
+      public void testSyntheticPropertyInKotlinSubclass() {
+        runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/SyntheticPropertyInKotlinSubclass.kt");
       }
     }
 

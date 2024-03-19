@@ -24391,6 +24391,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("BoxedInaccessibleGenericTypeUsedByDependencies.kt")
+      public void testBoxedInaccessibleGenericTypeUsedByDependencies() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/BoxedInaccessibleGenericTypeUsedByDependencies.kt");
+      }
+
+      @Test
       @TestMetadata("dependencyModule.kt")
       public void testDependencyModule() {
         runTest("compiler/testData/diagnostics/tests/multimodule/dependencyModule.kt");
@@ -31959,6 +31965,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     @TestMetadata("compiler/testData/diagnostics/tests/resolve")
     @TestDataPath("$PROJECT_ROOT")
     public class Resolve {
+      @Test
+      @TestMetadata("accessOnComplexProjectedReceiver.kt")
+      public void testAccessOnComplexProjectedReceiver() {
+        runTest("compiler/testData/diagnostics/tests/resolve/accessOnComplexProjectedReceiver.kt");
+      }
+
       @Test
       public void testAllFilesPresentInResolve() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);

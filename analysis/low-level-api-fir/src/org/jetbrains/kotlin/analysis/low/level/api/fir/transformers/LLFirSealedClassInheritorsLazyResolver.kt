@@ -21,11 +21,11 @@ internal object LLFirSealedClassInheritorsLazyResolver : LLFirLazyResolver(FirRe
 /**
  * This resolver is responsible for [SEALED_CLASS_INHERITORS][FirResolvePhase.SEALED_CLASS_INHERITORS] phase.
  *
- * LL FIR use [LLSealedInheritorsProviderByAnalysisApiProvider][org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLSealedInheritorsProviderByAnalysisApiProvider]
+ * LL FIR uses [LLSealedInheritorsProvider][org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLSealedInheritorsProvider]
  * instead of the compiler [SealedClassInheritorsProviderImpl][org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl],
- * so it does nothing during this phase as sealed class hierarchy will be provided later on demand.
+ * so it does nothing during this phase as sealed inheritors will be provided later on demand.
  *
- * @see org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLSealedInheritorsProviderFactory
+ * @see org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLSealedInheritorsProvider
  * @see org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
  * @see FirResolvePhase.SEALED_CLASS_INHERITORS
  */

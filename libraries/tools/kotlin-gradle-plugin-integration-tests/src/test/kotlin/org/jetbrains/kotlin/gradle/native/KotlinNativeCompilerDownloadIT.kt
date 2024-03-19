@@ -77,6 +77,7 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
                 assertOutputDoesNotContain(DOWNLOAD_KONAN_FINISHED_LOG)
                 assertOutputContains(UNPUCK_KONAN_FINISHED_LOG)
                 assertOutputDoesNotContain("Please wait while Kotlin/Native")
+                assertFileExists(konanTemp.resolve(STABLE_VERSION_DIR_NAME).resolve("provisioned.ok"))
             }
         }
     }

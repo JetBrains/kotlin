@@ -183,16 +183,7 @@ fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObject>>.ge
 
         val file = containingFile
         if (file is KtFile) {
-            val directive = file.findImportByAlias(referencedName)
-            if (directive != null) {
-                var reference = directive.importedReference
-                while (reference is KtDotQualifiedExpression) {
-                    reference = reference.selectorExpression
-                }
-                if (reference is KtSimpleNameExpression) {
-                    result.add(reference.getReferencedName())
-                }
-            }
+            getImportedSimpleNameByImportAlias(file, referencedName)?.let(result::add)
         }
     }
 
@@ -721,4 +712,18 @@ internal fun isKtFile(parent: PsiElement?): Boolean {
     //avoid loading KtFile which depends on java psi, which is not available in some setup
     //e.g. remote dev https://youtrack.jetbrains.com/issue/GTW-7554
     return parent is PsiFile && parent.language == KotlinLanguage.INSTANCE
+}
+
+fun getImportedSimpleNameByImportAlias(file: KtFile, aliasName: String): String? {
+    val directive = file.findImportByAlias(aliasName) ?: return null
+
+    var reference = directive.importedReference
+    while (reference is KtDotQualifiedExpression) {
+        reference = reference.selectorExpression
+    }
+    if (reference is KtSimpleNameExpression) {
+        return reference.getReferencedName()
+    }
+
+    return null
 }

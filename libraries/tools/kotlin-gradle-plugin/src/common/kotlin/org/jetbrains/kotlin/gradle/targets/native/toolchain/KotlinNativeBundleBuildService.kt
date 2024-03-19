@@ -40,7 +40,7 @@ import java.nio.file.attribute.PosixFilePermission
 import java.util.zip.GZIPInputStream
 import javax.inject.Inject
 
-private const val KONAN_DIRECTORY_NAME_TO_CHECK_EXISTENCE = "konan"
+private const val MARKER_FILE = "provisioned.ok"
 
 internal interface UsesKotlinNativeBundleBuildService : Task {
     @get:Internal
@@ -106,7 +106,7 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<BuildServi
 
             removeBundleIfNeeded(reinstallFlag || needToReinstall, bundleDir)
 
-            if (!bundleDir.resolve(KONAN_DIRECTORY_NAME_TO_CHECK_EXISTENCE).exists()) {
+            if (!bundleDir.resolve(MARKER_FILE).exists()) {
                 val gradleCachesKotlinNativeDir =
                     resolveKotlinNativeConfiguration(kotlinNativeVersion, kotlinNativeBundleConfiguration)
 
@@ -115,6 +115,7 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<BuildServi
                     it.from(gradleCachesKotlinNativeDir)
                     it.into(bundleDir)
                 }
+                createSuccessfulInstallationFile(bundleDir)
                 project.logger.info("Moved Kotlin/Native bundle from $gradleCachesKotlinNativeDir to ${bundleDir.absolutePath}")
             }
         }
@@ -249,5 +250,9 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<BuildServi
                 add(permission)
             }
         }
+    }
+
+    private fun createSuccessfulInstallationFile(bundleDir: File) {
+        bundleDir.resolve(MARKER_FILE).createNewFile()
     }
 }

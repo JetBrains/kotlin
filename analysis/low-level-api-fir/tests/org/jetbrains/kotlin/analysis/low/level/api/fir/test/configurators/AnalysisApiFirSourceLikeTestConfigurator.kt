@@ -9,7 +9,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.SealedClassesInheritorsCalculatorPreAnalysisHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleProjectStructure
@@ -34,8 +33,6 @@ abstract class AnalysisApiFirSourceLikeTestConfigurator(override val analyseInDe
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         builder.apply {
             useAdditionalService { AnalysisApiIndexingConfiguration(AnalysisApiBinaryLibraryIndexingMode.INDEX_STUBS) }
-            useDirectives(SealedClassesInheritorsCalculatorPreAnalysisHandler.Directives)
-            usePreAnalysisHandlers(::SealedClassesInheritorsCalculatorPreAnalysisHandler)
             configureOptionalTestCompilerPlugin()
             useConfigurators(
                 ::CommonEnvironmentConfigurator,

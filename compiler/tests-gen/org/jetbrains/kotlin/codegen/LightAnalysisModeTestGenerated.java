@@ -43545,6 +43545,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/script/localCaptureTests.kt");
     }
 
+    @TestMetadata("outOuOrderDecls.kt")
+    public void testOutOuOrderDecls() {
+      runTest("compiler/testData/codegen/box/script/outOuOrderDecls.kt");
+    }
+
     @TestMetadata("scripInstance.kt")
     public void testScripInstance() {
       runTest("compiler/testData/codegen/box/script/scripInstance.kt");

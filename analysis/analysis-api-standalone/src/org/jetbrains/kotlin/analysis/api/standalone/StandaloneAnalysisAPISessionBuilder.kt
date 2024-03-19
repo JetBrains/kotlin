@@ -10,14 +10,12 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirStandaloneServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.LLFirStandaloneLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLSealedInheritorsProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderBuilder
@@ -33,8 +31,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
-import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
-import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import kotlin.contracts.ExperimentalContracts
@@ -137,15 +133,6 @@ public class StandaloneAnalysisAPISessionBuilder(
                 KotlinStaticPackageProviderFactory(project, sourceKtFiles + declarationProviderFactory.getAdditionalCreatedKtFiles())
             )
             registerService(KotlinPackageProviderMerger::class.java, KotlinStaticPackageProviderMerger(this))
-
-            registerService(
-                LLSealedInheritorsProviderFactory::class.java,
-                object : LLSealedInheritorsProviderFactory {
-                    override fun createSealedInheritorsProvider(): SealedClassInheritorsProvider {
-                        return SealedClassInheritorsProviderImpl
-                    }
-                }
-            )
 
             registerService(
                 PackagePartProviderFactory::class.java,

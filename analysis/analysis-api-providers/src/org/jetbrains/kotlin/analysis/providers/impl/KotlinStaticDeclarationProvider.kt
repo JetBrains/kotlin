@@ -35,10 +35,13 @@ import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getImportedSimpleNameByImportAlias
+import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.util.concurrent.ConcurrentHashMap
 
@@ -149,7 +152,7 @@ public class KotlinStaticDeclarationProvider internal constructor(
  */
 public class KotlinStaticDeclarationProviderFactory(
     private val project: Project,
-    testKtFiles: Collection<KtFile>,
+    sourceKtFiles: Collection<KtFile>,
     binaryRoots: List<VirtualFile> = emptyList(),
     sharedBinaryRoots: List<VirtualFile> = emptyList(),
     skipBuiltins: Boolean = false,
@@ -203,12 +206,12 @@ public class KotlinStaticDeclarationProviderFactory(
         }
 
         override fun visitClassOrObject(classOrObject: KtClassOrObject) {
-            addToClassMap(classOrObject)
+            indexClassOrObject(classOrObject)
             super.visitClassOrObject(classOrObject)
         }
 
         override fun visitTypeAlias(typeAlias: KtTypeAlias) {
-            addToTypeAliasMap(typeAlias)
+            indexTypeAlias(typeAlias)
             super.visitTypeAlias(typeAlias)
         }
 
@@ -236,6 +239,11 @@ public class KotlinStaticDeclarationProviderFactory(
         }.add(script)
     }
 
+    private fun indexClassOrObject(classOrObject: KtClassOrObject) {
+        addToClassMap(classOrObject)
+        indexSupertypeNames(classOrObject)
+    }
+
     private fun addToClassMap(classOrObject: KtClassOrObject) {
         classOrObject.getClassId()?.let { classId ->
             index.classMap.computeIfAbsent(classId.packageFqName) {
@@ -244,11 +252,62 @@ public class KotlinStaticDeclarationProviderFactory(
         }
     }
 
+    private fun indexSupertypeNames(classOrObject: KtClassOrObject) {
+        classOrObject.getSuperNames().forEach { superName ->
+            index.classesBySupertypeName
+                .computeIfAbsent(Name.identifier(superName)) { mutableSetOf() }
+                .add(classOrObject)
+        }
+    }
+
+    private fun indexTypeAlias(typeAlias: KtTypeAlias) {
+        addToTypeAliasMap(typeAlias)
+        indexTypeAliasDefinition(typeAlias)
+    }
+
     private fun addToTypeAliasMap(typeAlias: KtTypeAlias) {
         typeAlias.getClassId()?.let { classId ->
             index.typeAliasMap.computeIfAbsent(classId.packageFqName) {
                 mutableSetOf()
             }.add(typeAlias)
+        }
+    }
+
+    private fun indexTypeAliasDefinition(typeAlias: KtTypeAlias) {
+        val typeElement = typeAlias.getTypeReference()?.typeElement ?: return
+
+        findInheritableSimpleNames(typeElement).forEach { expandedName ->
+            index.inheritableTypeAliasesByAliasedName
+                .computeIfAbsent(Name.identifier(expandedName)) { mutableSetOf() }
+                .add(typeAlias)
+        }
+    }
+
+    /**
+     * This is a simplified version of `KtTypeElement.index()` from the IDE. If we need to move more indexing code to Standalone, we should
+     * consider moving more code from the IDE to the Analysis API.
+     *
+     * @see KotlinStaticDeclarationIndex.inheritableTypeAliasesByAliasedName
+     */
+    private fun findInheritableSimpleNames(typeElement: KtTypeElement): List<String> {
+        return when (typeElement) {
+            is KtUserType -> {
+                val referenceName = typeElement.referencedName ?: return emptyList()
+
+                buildList {
+                    add(referenceName)
+
+                    val ktFile = typeElement.containingKtFile
+                    if (!ktFile.isCompiled) {
+                        addIfNotNull(getImportedSimpleNameByImportAlias(typeElement.containingKtFile, referenceName))
+                    }
+                }
+            }
+
+            // `typealias T = A?` is inheritable.
+            is KtNullableType -> typeElement.innerType?.let(::findInheritableSimpleNames) ?: emptyList()
+
+            else -> emptyList()
         }
     }
 
@@ -299,7 +358,7 @@ public class KotlinStaticDeclarationProviderFactory(
                 .forEach { processCollectedStubs(it) }
         }
 
-        testKtFiles.forEach { file ->
+        sourceKtFiles.forEach { file ->
             file.accept(recorder)
         }
     }
@@ -307,16 +366,16 @@ public class KotlinStaticDeclarationProviderFactory(
     private fun indexStub(stub: StubElement<*>) {
         when (stub) {
             is KotlinClassStubImpl -> {
-                addToClassMap(stub.psi)
+                indexClassOrObject(stub.psi)
                 // member functions and properties
                 stub.childrenStubs.forEach(::indexStub)
             }
             is KotlinObjectStubImpl -> {
-                addToClassMap(stub.psi)
+                indexClassOrObject(stub.psi)
                 // member functions and properties
                 stub.childrenStubs.forEach(::indexStub)
             }
-            is KotlinTypeAliasStubImpl -> addToTypeAliasMap(stub.psi)
+            is KotlinTypeAliasStubImpl -> indexTypeAlias(stub.psi)
             is KotlinFunctionStubImpl -> addToFunctionMap(stub.psi)
             is KotlinPropertyStubImpl -> addToPropertyMap(stub.psi)
             is KotlinPlaceHolderStubImpl -> {
@@ -399,6 +458,12 @@ public class KotlinStaticDeclarationProviderFactory(
     }
 
     public fun getAllKtClasses(): List<KtClassOrObject> = index.classMap.values.flattenTo(mutableListOf())
+
+    public fun getDirectInheritorCandidates(baseClassName: Name): Set<KtClassOrObject> =
+        index.classesBySupertypeName[baseClassName].orEmpty()
+
+    public fun getInheritableTypeAliases(aliasedName: Name): Set<KtTypeAlias> =
+        index.inheritableTypeAliasesByAliasedName[aliasedName].orEmpty()
 }
 
 /**

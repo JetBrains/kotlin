@@ -27,12 +27,19 @@ import org.jetbrains.kotlin.fir.types.*
 object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common), FirMissingDependencyClassProxy {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val calleeReference = expression.calleeReference
+        val missingTypes = mutableSetOf<ConeKotlinType>()
+        if (!calleeReference.isError()) {
+            expression.resolvedType.forEachType {
+                if (it is ConeErrorType) {
+                    considerType(it, missingTypes, context)
+                }
+            }
+        }
+
 
         // To replicate K1 behavior, MISSING_DEPENDENCY_CLASS errors should still be reported on error references with a single candidate.
         // All other callee errors should skip reporting of MISSING_DEPENDENCY_CLASS.
-        if (calleeReference.isError() && calleeReference.diagnostic !is ConeDiagnosticWithSingleCandidate) return
-
-        val missingTypes = mutableSetOf<ConeKotlinType>()
+        if (calleeReference.isError() && calleeReference.diagnostic !is ConeDiagnosticWithSingleCandidate && missingTypes.isEmpty()) return
 
         val symbol = calleeReference.toResolvedCallableSymbol() ?: return
         considerType(symbol.resolvedReturnTypeRef.coneType, missingTypes, context)
