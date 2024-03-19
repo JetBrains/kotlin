@@ -1,9 +1,15 @@
 public abstract interface PrivateInTrait /* PrivateInTrait*/ {
+  private abstract @org.jetbrains.annotations.NotNull() java.lang.String getNn();//  getNn()
+
+  private abstract @org.jetbrains.annotations.Nullable() java.lang.String getN();//  getN()
+
+  private abstract void setNn(@org.jetbrains.annotations.NotNull() java.lang.String);//  setNn(@org.jetbrains.annotations.NotNull() java.lang.String)
+
   public static final class DefaultImpls /* PrivateInTrait.DefaultImpls*/ {
-    private static java.lang.String getN(@org.jetbrains.annotations.NotNull() PrivateInTrait);//  getN(PrivateInTrait)
+    private static final @org.jetbrains.annotations.NotNull() java.lang.String getNn(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() PrivateInTrait);//  getNn(@org.jetbrains.annotations.NotNull() PrivateInTrait)
 
-    private static java.lang.String getNn(@org.jetbrains.annotations.NotNull() PrivateInTrait);//  getNn(PrivateInTrait)
+    private static final @org.jetbrains.annotations.Nullable() java.lang.String getN(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() PrivateInTrait);//  getN(@org.jetbrains.annotations.NotNull() PrivateInTrait)
 
-    private static void setNn(@org.jetbrains.annotations.NotNull() PrivateInTrait, java.lang.String);//  setNn(PrivateInTrait, java.lang.String)
+    private static final void setNn(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() PrivateInTrait, @org.jetbrains.annotations.NotNull() java.lang.String);//  setNn(@org.jetbrains.annotations.NotNull() PrivateInTrait, @org.jetbrains.annotations.NotNull() java.lang.String)
   }
 }

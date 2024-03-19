@@ -1,5 +1,5 @@
 public abstract interface Base /* Base*/ {
-  public abstract int foo(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.Object);//  foo(java.lang.String, java.lang.Object)
+  public abstract int foo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  foo(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.Object)
 
   public abstract int getX();//  getX()
 
@@ -15,27 +15,27 @@ public abstract interface Base /* Base*/ {
 public final class BaseImpl /* BaseImpl*/ implements Base {
   private final int x;
 
-  public  BaseImpl(int);//  .ctor(int)
-
+  @java.lang.Override()
   public final int getX();//  getX()
 
+  @java.lang.Override()
   public void printMessage();//  printMessage()
 
+  @java.lang.Override()
   public void printMessageLine();//  printMessageLine()
+
+  public  BaseImpl(int);//  .ctor(int)
 }
 
 public final class Derived /* Derived*/ implements Base {
-  public  Derived(@org.jetbrains.annotations.NotNull() Base);//  .ctor(Base)
+  @java.lang.Override()
+  public int foo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  foo(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.Object)
 
-  public int foo(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.Object);//  foo(java.lang.String, java.lang.Object)
-
-  public int getX();//  getX()
-
-  public int getY();//  getY()
-
+  @java.lang.Override()
   public void printMessage();//  printMessage()
 
+  @java.lang.Override()
   public void printMessageLine();//  printMessageLine()
 
-  public void setY(int);//  setY(int)
+  public  Derived(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Base);//  .ctor(@org.jetbrains.annotations.NotNull() Base)
 }

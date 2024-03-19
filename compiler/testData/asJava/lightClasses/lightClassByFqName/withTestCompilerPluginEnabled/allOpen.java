@@ -1,12 +1,12 @@
 @org.jetbrains.kotlin.fir.plugin.AllOpen()
-public final class BaseClass /* test.BaseClass*/ {
-  private int prop;
+public class BaseClass /* test.BaseClass*/ {
+  private int prop = 42 /* initializer type: int */;
 
   public  BaseClass();//  .ctor()
 
-  public final int getProp();//  getProp()
+  public int getProp();//  getProp()
 
-  public final void function();//  function()
+  public void function();//  function()
 
-  public final void setProp(int);//  setProp(int)
+  public void setProp(int);//  setProp(int)
 }

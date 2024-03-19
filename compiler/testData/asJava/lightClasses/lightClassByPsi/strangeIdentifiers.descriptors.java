@@ -35,7 +35,7 @@ public enum StrangeEnum /* StrangeEnum*/ {
   private final java.lang.String size;
 
   @org.jetbrains.annotations.NotNull()
-  public static @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StrangeEnum[] values();//  values()
+  public static @org.jetbrains.annotations.NotNull() StrangeEnum @org.jetbrains.annotations.NotNull() [] values();//  values()
 
   @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() StrangeEnum valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)

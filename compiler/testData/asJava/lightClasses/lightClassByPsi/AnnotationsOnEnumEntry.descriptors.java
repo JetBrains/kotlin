@@ -4,10 +4,10 @@ public enum AnnotationsOnEnumEntry /* two.AnnotationsOnEnumEntry*/ {
   EntryWithConstructor2;
 
   @org.jetbrains.annotations.NotNull()
-  public static @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() two.AnnotationsOnEnumEntry[] values();//  values()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<two.AnnotationsOnEnumEntry> getEntries();//  getEntries()
 
   @org.jetbrains.annotations.NotNull()
-  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<two.AnnotationsOnEnumEntry> getEntries();//  getEntries()
+  public static @org.jetbrains.annotations.NotNull() two.AnnotationsOnEnumEntry @org.jetbrains.annotations.NotNull() [] values();//  values()
 
   @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() two.AnnotationsOnEnumEntry valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
