@@ -72,7 +72,7 @@ private val stripTypeAliasDeclarationsPhase = createFileLoweringPhase(
 )
 
 private val annotationImplementationPhase = createFileLoweringPhase(
-        { context -> AnnotationImplementationLowering { NativeAnnotationImplementationTransformer(context, it) } },
+        ::NativeAnnotationImplementationLowering,
         name = "AnnotationImplementation",
         description = "Create synthetic annotations implementations and use them in annotations constructor calls"
 )
