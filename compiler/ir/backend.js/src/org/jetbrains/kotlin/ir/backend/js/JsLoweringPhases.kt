@@ -414,20 +414,20 @@ private val localClassExtractionPhase = makeIrModulePhase(
 )
 
 private val innerClassesLoweringPhase = makeIrModulePhase<JsIrBackendContext>(
-    { context -> InnerClassesLowering(context, context.innerClassesSupport) },
+    ::InnerClassesLowering,
     name = "InnerClassesLowering",
     description = "Capture outer this reference to inner class"
 )
 
 private val innerClassesMemberBodyLoweringPhase = makeIrModulePhase(
-    { context -> InnerClassesMemberBodyLowering(context, context.innerClassesSupport) },
+    ::InnerClassesMemberBodyLowering,
     name = "InnerClassesMemberBody",
     description = "Replace `this` with 'outer this' field references",
     prerequisite = setOf(innerClassesLoweringPhase)
 )
 
 private val innerClassConstructorCallsLoweringPhase = makeIrModulePhase<JsIrBackendContext>(
-    { context -> InnerClassConstructorCallsLowering(context, context.innerClassesSupport) },
+    ::InnerClassConstructorCallsLowering,
     name = "InnerClassConstructorCallsLowering",
     description = "Replace inner class constructor invocation"
 )

@@ -10,12 +10,9 @@ import org.jetbrains.kotlin.backend.common.DefaultDelegateFactory
 import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
+import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
-import org.jetbrains.kotlin.backend.konan.ir.BridgeDirections
-import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
-import org.jetbrains.kotlin.backend.konan.ir.GlobalHierarchyAnalysisResult
-import org.jetbrains.kotlin.backend.konan.ir.KonanIr
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
@@ -76,7 +73,7 @@ internal class Context(
 
     override val optimizeLoopsOverUnsignedArrays = true
 
-    val innerClassesSupport by lazy { InnerClassesSupport(mapping, irFactory) }
+    override val innerClassesSupport: InnerClassesSupport by lazy { NativeInnerClassesSupport(mapping, irFactory) }
     val bridgesSupport by lazy { BridgesSupport(mapping, irBuiltIns, irFactory) }
     val inlineFunctionsSupport by lazy { InlineFunctionsSupport(mapping) }
     val enumsSupport by lazy { EnumsSupport(mapping, irBuiltIns, irFactory) }
