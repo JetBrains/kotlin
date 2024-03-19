@@ -34,10 +34,7 @@ import org.jetbrains.kotlin.util.component2
  */
 fun ConeClassLikeType.fullyExpandedType(
     useSiteSession: FirSession,
-    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = { alias ->
-        alias.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
-        alias.expandedConeType
-    },
+    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
 ): ConeClassLikeType {
     if (this is ConeClassLikeTypeImpl) {
         val (cachedSession, cachedExpandedType) = cachedExpandedType
@@ -53,16 +50,22 @@ fun ConeClassLikeType.fullyExpandedType(
     return fullyExpandedTypeNoCache(useSiteSession, expandedConeType)
 }
 
+fun FirTypeAlias.expandedConeTypeWithEnsuredPhase(): ConeClassLikeType? {
+    lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+    return expandedConeType
+}
+
 /**
  * @see fullyExpandedType
  */
 fun ConeKotlinType.fullyExpandedType(
-    useSiteSession: FirSession
+    useSiteSession: FirSession,
+    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
 ): ConeKotlinType = when (this) {
     is ConeDynamicType -> this
     is ConeFlexibleType ->
-        ConeFlexibleType(lowerBound.fullyExpandedType(useSiteSession), upperBound.fullyExpandedType(useSiteSession))
-    is ConeClassLikeType -> fullyExpandedType(useSiteSession)
+        ConeFlexibleType(lowerBound.fullyExpandedType(useSiteSession), upperBound.fullyExpandedType(useSiteSession, expandedConeType))
+    is ConeClassLikeType -> fullyExpandedType(useSiteSession, expandedConeType)
     else -> this
 }
 
@@ -70,9 +73,10 @@ fun ConeKotlinType.fullyExpandedType(
  * @see fullyExpandedType
  */
 fun ConeSimpleKotlinType.fullyExpandedType(
-    useSiteSession: FirSession
+    useSiteSession: FirSession,
+    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
 ): ConeSimpleKotlinType = when (this) {
-    is ConeClassLikeType -> fullyExpandedType(useSiteSession)
+    is ConeClassLikeType -> fullyExpandedType(useSiteSession, expandedConeType)
     else -> this
 }
 

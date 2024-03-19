@@ -451,7 +451,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 )
                 val resolvedExpandedType = when {
                     expandTypeAliases && resolvedType.toSymbol(session) is FirTypeAliasSymbol -> {
-                        resolvedType.fullyExpandedType(session) + AbbreviatedTypeAttribute(resolvedType)
+                        resolvedType.fullyExpandedType(session).withAbbreviation(AbbreviatedTypeAttribute(resolvedType))
                     }
                     else -> resolvedType
                 }
@@ -478,8 +478,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             session.lookupTracker?.recordTypeResolveAsLookup(it.type, typeRef.source, useSiteFile?.source)
         }
     }
-
-    private operator fun ConeKotlinType.plus(attribute: ConeAttribute<*>): ConeKotlinType = withAttributes(attributes + attribute)
 
     class TypeCandidate(
         override val symbol: FirBasedSymbol<*>,

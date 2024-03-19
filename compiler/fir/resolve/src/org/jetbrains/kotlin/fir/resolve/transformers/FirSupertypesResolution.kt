@@ -164,7 +164,8 @@ private class FirApplySupertypesTransformer(
 
     private fun applyResolvedSupertypesToClass(firClass: FirClass) {
         if (firClass.superTypeRefs.any { it !is FirResolvedTypeRef || it is FirImplicitBuiltinTypeRef }) {
-            val supertypeRefs = getResolvedSupertypeRefs(firClass)
+            val supertypeRefs = supertypeComputationSession.getResolvedSupertypeRefs(firClass)
+                .map { supertypeComputationSession.expandTypealiasInPlace(it, session) }
             firClass.replaceSuperTypeRefs(supertypeRefs)
         }
 
@@ -178,25 +179,13 @@ private class FirApplySupertypesTransformer(
         return anonymousObject.transformChildren(this, data) as FirAnonymousObject
     }
 
-    private fun getResolvedSupertypeRefs(classLikeDeclaration: FirClassLikeDeclaration): List<FirResolvedTypeRef> {
-        val status = supertypeComputationSession.getSupertypesComputationStatus(classLikeDeclaration)
-        require(status is SupertypeComputationStatus.Computed) {
-            "Unexpected status at FirApplySupertypesTransformer: $status for ${classLikeDeclaration.symbol.classId}"
-        }
-        return status.supertypeRefs
-    }
-
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirStatement {
         if (typeAlias.expandedTypeRef is FirResolvedTypeRef) {
             return typeAlias
         }
-        val supertypeRefs = getResolvedSupertypeRefs(typeAlias)
-
-        assert(supertypeRefs.size == 1) {
-            "Expected single supertypeRefs, but found ${supertypeRefs.size} in ${typeAlias.symbol.classId}"
-        }
-
-        typeAlias.replaceExpandedTypeRef(supertypeRefs[0])
+        val resolvedTypeRef = supertypeComputationSession.getResolvedExpandedTypeRef(typeAlias)
+        val resolvedExpandedTypeRef = supertypeComputationSession.expandTypealiasInPlace(resolvedTypeRef, session)
+        typeAlias.replaceExpandedTypeRef(resolvedExpandedTypeRef)
         return typeAlias
     }
 }
@@ -335,7 +324,7 @@ open class FirSupertypeResolverVisitor(
     ) {
         if (!visited.add(classLikeDeclaration)) return
         val supertypes: List<ConeKotlinType> =
-            resolveSpecificClassLikeSupertypes(classLikeDeclaration, supertypeRefs).map { it.coneType }
+            resolveSpecificClassLikeSupertypes(classLikeDeclaration, supertypeRefs, resolveRecursively = true).map { it.coneType }
 
         for (supertype in supertypes) {
             if (supertype !is ConeClassLikeType) continue
@@ -436,14 +425,14 @@ open class FirSupertypeResolverVisitor(
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: Any?) {
         withClass(regularClass) {
-            resolveSpecificClassLikeSupertypes(regularClass, regularClass.superTypeRefs)
+            resolveSpecificClassLikeSupertypes(regularClass, regularClass.superTypeRefs, resolveRecursively = true)
             visitDeclarationContent(regularClass, null)
         }
     }
 
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?) {
         withClass(anonymousObject) {
-            resolveSpecificClassLikeSupertypes(anonymousObject, anonymousObject.superTypeRefs)
+            resolveSpecificClassLikeSupertypes(anonymousObject, anonymousObject.superTypeRefs, resolveRecursively = true)
             visitDeclarationContent(anonymousObject, null)
         }
     }
@@ -454,11 +443,19 @@ open class FirSupertypeResolverVisitor(
     fun resolveSpecificClassLikeSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
         supertypeRefs: List<FirTypeRef>,
+        resolveRecursively: Boolean,
     ): List<FirResolvedTypeRef> {
         return resolveSpecificClassLikeSupertypes(classLikeDeclaration) { transformer, scopeDeclaration ->
             supertypeRefs.mapTo(mutableListOf()) {
                 val superTypeRef = it.transform<FirTypeRef, ScopeClassDeclaration>(transformer, scopeDeclaration)
                 val typeParameterType = superTypeRef.coneTypeSafe<ConeTypeParameterType>()
+                val typealiasSymbol = superTypeRef.coneTypeSafe<ConeClassLikeType>()?.toSymbol(session) as? FirTypeAliasSymbol
+                if (resolveRecursively && typealiasSymbol != null) {
+                    // Jump to typealiases in supertypes of class-like types.
+                    // We need to make sure that by the time we want to fully expand typealiases in supertypes
+                    // we already have analyzed them.
+                    visitTypeAlias(typealiasSymbol.fir, null)
+                }
                 when {
                     typeParameterType != null ->
                         buildErrorTypeRef {
@@ -830,6 +827,36 @@ open class SupertypeComputationSession {
 
         newClassifiersForBreakingLoops.clear()
     }
+
+    fun getResolvedSupertypeRefs(classLikeDeclaration: FirClassLikeDeclaration): List<FirResolvedTypeRef> {
+        val status = getSupertypesComputationStatus(classLikeDeclaration)
+        require(status is SupertypeComputationStatus.Computed) {
+            "Unexpected status at FirApplySupertypesTransformer: $status for ${classLikeDeclaration.symbol.classId}"
+        }
+        return status.supertypeRefs
+    }
+
+    fun getResolvedExpandedTypeRef(typeAlias: FirTypeAlias): FirTypeRef {
+        val supertypeRefs = getResolvedSupertypeRefs(typeAlias)
+        assert(supertypeRefs.size == 1) {
+            "Expected single supertypeRefs, but found ${supertypeRefs.size} in ${typeAlias.symbol.classId}"
+        }
+        return supertypeRefs[0]
+    }
+
+    fun expandTypealiasInPlace(typeRef: FirTypeRef, session: FirSession): FirTypeRef {
+        return when (typeRef) {
+            is FirImplicitBuiltinTypeRef, is FirErrorTypeRef -> typeRef
+            else -> when (val expanded = typeRef.coneType.fullyExpandedType(session, ::getResolvedExpandedType)) {
+                typeRef.coneType -> typeRef
+                else -> expanded.withAbbreviation(AbbreviatedTypeAttribute(typeRef.coneType)).let(typeRef::withReplacedConeType)
+            }
+        }
+    }
+
+    private fun getResolvedExpandedType(typeAlias: FirTypeAlias): ConeClassLikeType? =
+        (typeAlias.expandedTypeRef.takeIf { it is FirResolvedTypeRef } ?: getResolvedExpandedTypeRef(typeAlias))
+            .coneTypeSafe<ConeClassLikeType>()
 }
 
 sealed class SupertypeComputationStatus {

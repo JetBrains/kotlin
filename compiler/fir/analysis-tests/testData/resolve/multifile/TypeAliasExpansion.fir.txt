@@ -11,7 +11,7 @@ FILE: B.kt
 FILE: A.kt
     package a
 
-    public final class MyClass : R|b/TA| {
+    public final class MyClass : R|{b/TA=} b/A| {
         public constructor(): R|a/MyClass| {
             super<R|{b/TA=} b/A|>()
         }

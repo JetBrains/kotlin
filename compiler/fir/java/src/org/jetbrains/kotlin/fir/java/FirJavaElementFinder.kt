@@ -266,7 +266,7 @@ class FirJavaElementFinder(
 private fun FirRegularClass.resolveSupertypesOnAir(session: FirSession): List<FirTypeRef> {
     val visitor = FirSupertypeResolverVisitor(session, SupertypeComputationSession(), ScopeSession())
     return visitor.withFile(session.firProvider.getFirClassifierContainerFile(this.symbol)) {
-        visitor.resolveSpecificClassLikeSupertypes(this, superTypeRefs)
+        visitor.resolveSpecificClassLikeSupertypes(this, superTypeRefs, resolveRecursively = true)
     }
 }
 
