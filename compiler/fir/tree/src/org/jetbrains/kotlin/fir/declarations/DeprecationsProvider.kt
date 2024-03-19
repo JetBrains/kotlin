@@ -41,7 +41,7 @@ class DeprecationsProviderImpl(
     }
 
     private fun List<DeprecationAnnotationInfo>.computeDeprecationInfoOrNull(version: LanguageVersionSettings): DeprecationInfo? {
-        return firstNotNullOfOrNull { it.computeDeprecationInfo(version) }
+        return mapNotNull { it.computeDeprecationInfo(version) }.maxByOrNull { it.deprecationLevel }
     }
 }
 
