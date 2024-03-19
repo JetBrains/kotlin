@@ -88,9 +88,11 @@ class FileDeserializationState(
         deserializeInlineFunctions,
         deserializeBodies,
         symbolDeserializer,
-        linker.fakeOverrideBuilder.platformSpecificClassFilter,
         onDeserializedClass = { clazz, idSignature ->
             linker.fakeOverrideBuilder.enqueueClass(clazz, idSignature, moduleDeserializer.compatibilityMode)
+        },
+        needToConstructFakeOverrides = { clazz ->
+            linker.fakeOverrideBuilder.platformSpecificClassFilter.needToConstructFakeOverrides(clazz)
         },
         linker.partialLinkageSupport.isEnabled,
         internationService = linker.internationService,

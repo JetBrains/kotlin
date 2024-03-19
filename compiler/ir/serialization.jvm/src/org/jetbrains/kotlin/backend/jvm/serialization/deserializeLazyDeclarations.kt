@@ -83,8 +83,8 @@ fun deserializeFromByteArray(
         deserializeInlineFunctions = true,
         deserializeBodies = true,
         symbolDeserializer,
-        DefaultFakeOverrideClassFilter,
         onDeserializedClass = { _, _ -> },
+        needToConstructFakeOverrides = { true },
         partialLinkageEnabled = false,
         internationService = internationService
     )

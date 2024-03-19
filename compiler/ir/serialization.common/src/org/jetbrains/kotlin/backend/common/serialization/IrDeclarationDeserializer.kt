@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.linkage.issues.IrDisallowedErrorNode
 import org.jetbrains.kotlin.backend.common.linkage.issues.IrSymbolTypeMismatchException
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.*
@@ -74,8 +73,8 @@ class IrDeclarationDeserializer(
     private val deserializeInlineFunctions: Boolean,
     private var deserializeBodies: Boolean,
     val symbolDeserializer: IrSymbolDeserializer,
-    private val platformFakeOverrideClassFilter: FakeOverrideClassFilter,
     private val onDeserializedClass: (IrClass, IdSignature) -> Unit,
+    private val needToConstructFakeOverrides: (IrClass) -> Boolean,
     private val partialLinkageEnabled: Boolean,
     private val internationService: IrInterningService,
 ) {
@@ -383,7 +382,8 @@ class IrDeclarationDeserializer(
                 withExternalValue(isExternal) {
                     val oldDeclarations = declarations.toSet()
                     proto.declarationList
-                        .filterNot { isSkippableFakeOverride(it, this) }
+                        .asSequence()
+                        .filterNot { isSkippedFakeOverride(it, this) }
                         // On JVM, deserialization may fill bodies of existing declarations, so avoid adding duplicates.
                         .mapNotNullTo(declarations) { declProto -> deserializeDeclaration(declProto).takeIf { it !in oldDeclarations } }
                 }
@@ -833,21 +833,21 @@ class IrDeclarationDeserializer(
 
     // Depending on deserialization strategy we either deserialize public api fake overrides
     // or reconstruct them after IR linker completes.
-    private fun isSkippableFakeOverride(proto: ProtoDeclaration, parent: IrClass): Boolean {
-        if (!platformFakeOverrideClassFilter.needToConstructFakeOverrides(parent)) return false
+    private fun isSkippedFakeOverride(fakeOverrideProto: ProtoDeclaration, parent: IrClass): Boolean {
+        if (!needToConstructFakeOverrides(parent)) return false
 
-        val symbol = when (proto.declaratorCase!!) {
-            IR_FUNCTION -> symbolDeserializer.deserializeIrSymbol(proto.irFunction.base.base.symbol)
-            IR_PROPERTY -> symbolDeserializer.deserializeIrSymbol(proto.irProperty.base.symbol)
+        val symbol = when (fakeOverrideProto.declaratorCase!!) {
+            IR_FUNCTION -> symbolDeserializer.deserializeIrSymbol(fakeOverrideProto.irFunction.base.base.symbol)
+            IR_PROPERTY -> symbolDeserializer.deserializeIrSymbol(fakeOverrideProto.irProperty.base.symbol)
             // Don't consider IR_FIELDS here.
             else -> return false
         }
         if (symbol !is IrPublicSymbolBase<*>) return false
         if (!symbol.signature.isPubliclyVisible) return false
 
-        return when (proto.declaratorCase!!) {
-            IR_FUNCTION -> FunctionFlags.decode(proto.irFunction.base.base.flags).isFakeOverride
-            IR_PROPERTY -> PropertyFlags.decode(proto.irProperty.base.flags).isFakeOverride
+        return when (fakeOverrideProto.declaratorCase!!) {
+            IR_FUNCTION -> FunctionFlags.decode(fakeOverrideProto.irFunction.base.base.flags).isFakeOverride
+            IR_PROPERTY -> PropertyFlags.decode(fakeOverrideProto.irProperty.base.flags).isFakeOverride
             // Don't consider IR_FIELDS here.
             else -> false
         }
