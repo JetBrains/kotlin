@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.util
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.target.ClangArgs
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.MingwConfigurables
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.buildDir
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
@@ -83,12 +84,11 @@ internal fun AbstractNativeSimpleTest.compileWithClang(
                 "-lpthread", // on Linux: libpthread.so.0: error adding symbols: DSO missing from command line. Maybe because of old llvm.
             )
         else emptyArray()),
-        *(if (configurables.target.family == Family.MINGW)
-            arrayOf(
-                "-femulated-tls", // https://youtrack.jetbrains.com/issue/KT-46612
-                "-static-libgcc", "-static-libstdc++", "-Wl,--dynamicbase", "-Wl,-Bstatic,--whole-archive", "-Wl,--no-whole-archive,-Bdynamic",
-                "-lwinpthread", // Maybe because of old llvm
-            )
+        *(if (configurables is MingwConfigurables)
+            buildList {
+                add("-femulated-tls") // https://youtrack.jetbrains.com/issue/KT-46612
+                addAll(configurables.linkerKonanFlags)
+            }.toTypedArray()
         else emptyArray()),
         *additionalClangFlags.toTypedArray(),
         "-o", outputFile.absolutePath
