@@ -3264,14 +3264,6 @@ internal class ExpectedFunctionSourceWithDefaultArgumentsNotFoundImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.ExpectedFunctionSourceWithDefaultArgumentsNotFound
 
-internal class NoActualForExpectImpl(
-    override val declaration: KtSymbol,
-    override val module: FirModuleData,
-    override val compatibility: Map<ExpectActualCompatibility<FirBasedSymbol<*>>, List<KtSymbol>>,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.NoActualForExpect
-
 internal class ActualWithoutExpectImpl(
     override val declaration: KtSymbol,
     override val compatibility: Map<ExpectActualCompatibility<FirBasedSymbol<*>>, List<KtSymbol>>,

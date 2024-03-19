@@ -2709,13 +2709,6 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ExpectedFunctionSourceWithDefaultArgumentsNotFound::class
     }
 
-    interface NoActualForExpect : KtFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = NoActualForExpect::class
-        val declaration: KtSymbol
-        val module: FirModuleData
-        val compatibility: Map<ExpectActualCompatibility<FirBasedSymbol<*>>, List<KtSymbol>>
-    }
-
     interface ActualWithoutExpect : KtFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = ActualWithoutExpect::class
         val declaration: KtSymbol
