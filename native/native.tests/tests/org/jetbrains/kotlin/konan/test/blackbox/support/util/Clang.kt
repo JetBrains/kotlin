@@ -79,6 +79,7 @@ internal fun AbstractNativeSimpleTest.compileWithClang(
         *libraryDirectories.flatMap { listOf("-L", it.absolutePath) }.toTypedArray(),
         *libraries.map { "-l$it" }.toTypedArray(),
         "-lpthread", // on Linux: libpthread.so.0: error adding symbols: DSO missing from command line. Maybe because of old llvm.
+        *(if (host.family == Family.MINGW) arrayOf("-femulated-tls") else emptyArray()), // https://youtrack.jetbrains.com/issue/KT-46612
         *additionalClangFlags.toTypedArray(),
         "-o", outputFile.absolutePath
     )
