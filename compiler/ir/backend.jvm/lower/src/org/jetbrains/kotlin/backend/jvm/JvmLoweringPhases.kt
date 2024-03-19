@@ -10,11 +10,8 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.backend.jvm.ir.constantValue
-import org.jetbrains.kotlin.backend.jvm.ir.shouldContainSuspendMarkers
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.util.isExpect
@@ -90,7 +87,7 @@ private val defaultArgumentStubPhase = makeIrFilePhase(
 )
 
 val defaultArgumentCleanerPhase = makeIrFilePhase(
-    { context: JvmBackendContext -> DefaultParameterCleaner(context, replaceDefaultValuesWithStubs = true) },
+    ::JvmDefaultParameterCleaner,
     name = "DefaultParameterCleaner",
     description = "Replace default values arguments with stubs",
     prerequisite = setOf(defaultArgumentStubPhase)
@@ -111,21 +108,21 @@ private val interfacePhase = makeIrFilePhase(
 )
 
 private val innerClassesPhase = makeIrFilePhase(
-    ::InnerClassesLowering,
+    ::JvmInnerClassesLowering,
     name = "InnerClasses",
     description = "Add 'outer this' fields to inner classes",
     prerequisite = setOf(localDeclarationsPhase)
 )
 
 private val innerClassesMemberBodyPhase = makeIrFilePhase(
-    ::InnerClassesMemberBodyLowering,
+    ::JvmInnerClassesMemberBodyLowering,
     name = "InnerClassesMemberBody",
     description = "Replace `this` with 'outer this' field references",
     prerequisite = setOf(innerClassesPhase)
 )
 
-private val innerClassConstructorCallsPhase = makeIrFilePhase<JvmBackendContext>(
-    ::InnerClassConstructorCallsLowering,
+private val innerClassConstructorCallsPhase = makeIrFilePhase(
+    ::JvmInnerClassConstructorCallsLowering,
     name = "InnerClassConstructorCalls",
     description = "Handle constructor calls for inner classes"
 )
@@ -137,7 +134,7 @@ private val staticInitializersPhase = makeIrFilePhase(
 )
 
 private val initializersPhase = makeIrFilePhase(
-    ::InitializersLowering,
+    ::JvmInitializersLowering,
     name = "Initializers",
     description = "Merge init blocks and field initializers into constructors",
     // Depends on local class extraction, because otherwise local classes in initializers will be copied into each constructor.
@@ -145,18 +142,14 @@ private val initializersPhase = makeIrFilePhase(
 )
 
 private val initializersCleanupPhase = makeIrFilePhase(
-    { context ->
-        InitializersCleanupLowering(context) {
-            it.constantValue() == null && (!it.isStatic || it.correspondingPropertySymbol?.owner?.isConst != true)
-        }
-    },
+    ::JvmInitializersCleanupLowering,
     name = "InitializersCleanup",
     description = "Remove non-static anonymous initializers and non-constant non-static field init expressions",
     prerequisite = setOf(initializersPhase)
 )
 
 private val returnableBlocksPhase = makeIrFilePhase(
-    ::ReturnableBlockLowering,
+    ::JvmReturnableBlockLowering,
     name = "ReturnableBlock",
     description = "Replace returnable blocks with do-while(false) loops",
     prerequisite = setOf(arrayConstructorPhase, assertionPhase, directInvokeLowering)
@@ -183,8 +176,8 @@ private val tailrecPhase = makeIrFilePhase(
     description = "Handle tailrec calls",
 )
 
-private val kotlinNothingValueExceptionPhase = makeIrFilePhase<CommonBackendContext>(
-    { context -> KotlinNothingValueExceptionLowering(context) { it is IrFunction && !it.shouldContainSuspendMarkers() } },
+private val kotlinNothingValueExceptionPhase = makeIrFilePhase(
+    ::JvmKotlinNothingValueExceptionLowering,
     name = "KotlinNothingValueException",
     description = "Throw proper exception for calls returning value of type 'kotlin.Nothing'"
 )

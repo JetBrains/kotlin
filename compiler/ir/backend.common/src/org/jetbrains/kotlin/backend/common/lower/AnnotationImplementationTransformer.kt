@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isArray
+import org.jetbrains.kotlin.ir.types.isBoxedArray
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -30,7 +33,7 @@ import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 val ANNOTATION_IMPLEMENTATION by IrDeclarationOriginImpl.Synthetic
 
-class AnnotationImplementationLowering(
+open class AnnotationImplementationLowering(
     val transformer: (IrFile) -> AnnotationImplementationTransformer
 ) : FileLoweringPass {
     override fun lower(irFile: IrFile) {

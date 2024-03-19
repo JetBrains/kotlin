@@ -30,13 +30,17 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal val annotationImplementationPhase = makeIrFilePhase<JvmBackendContext>(
-    { ctxt -> AnnotationImplementationLowering { JvmAnnotationImplementationTransformer(ctxt, it) } },
+internal val annotationImplementationPhase = makeIrFilePhase(
+    ::JvmAnnotationImplementationLowering,
     name = "AnnotationImplementation",
     description = "Create synthetic annotations implementations and use them in annotations constructor calls"
 )
 
-class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, file: IrFile) :
+private class JvmAnnotationImplementationLowering(context: JvmBackendContext) : AnnotationImplementationLowering(
+    { JvmAnnotationImplementationTransformer(context, it) }
+)
+
+class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendContext, file: IrFile) :
     AnnotationImplementationTransformer(jvmContext, file) {
     private val publicAnnotationImplementationClasses = mutableSetOf<IrClassSymbol>()
 
