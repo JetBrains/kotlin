@@ -19,7 +19,7 @@ FILE: destructuring.kt
 
         public? final operator fun component3(): String
 
-        public final fun copy(first: Int = this@R|/Some|.R|/Some.first|, second: Double = this@R|/Some|.R|/Some.second|, third: String = this@R|/Some|.R|/Some.third|): R|Some|
+        public? final fun copy(first: Int = this@R|/Some|.R|/Some.first|, second: Double = this@R|/Some|.R|/Some.second|, third: String = this@R|/Some|.R|/Some.third|): R|Some|
 
     }
     public? final? fun foo(some: Some): R|kotlin/Unit| { LAZY_BLOCK }

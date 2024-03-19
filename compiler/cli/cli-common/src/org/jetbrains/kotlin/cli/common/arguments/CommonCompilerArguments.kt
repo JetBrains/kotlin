@@ -597,6 +597,17 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         }
 
     @Argument(
+        value = "-Xconsistent-data-class-copy-visibility",
+        description = "The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. " +
+                "See https://youtrack.jetbrains.com/issue/KT-11914"
+    )
+    var consistentDataClassCopyVisibility = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xunrestricted-builder-inference",
         description = "Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls."
     )
@@ -766,6 +777,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             put(AnalysisFlags.extendedCompilerChecks, extendedCompilerChecks)
             put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
             put(AnalysisFlags.muteExpectActualClassesWarning, expectActualClasses)
+            put(AnalysisFlags.consistentDataClassCopyVisibility, consistentDataClassCopyVisibility)
             put(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
             put(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)
         }

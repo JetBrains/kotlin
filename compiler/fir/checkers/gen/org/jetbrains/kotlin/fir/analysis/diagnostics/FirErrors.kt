@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.ErrorAboutDataClassCopyVisibilityChange
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidExposingTypesInPrimaryConstructorProperties
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidUsingExtensionPropertyTypeParameterInDelegate
@@ -103,6 +104,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtReturnExpression
@@ -259,6 +261,10 @@ object FirErrors {
     val DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR: KtDiagnosticFactory0 by error0<PsiElement>()
     val EXPLICIT_DELEGATION_CALL_REQUIRED: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
     val SEALED_CLASS_CONSTRUCTOR_CALL: KtDiagnosticFactory0 by error0<PsiElement>()
+    val DATA_CLASS_CONSISTENT_COPY_AND_EXPOSED_COPY_ARE_INCOMPATIBLE_ANNOTATIONS: KtDiagnosticFactory0 by error0<KtAnnotationEntry>()
+    val DATA_CLASS_CONSISTENT_COPY_WRONG_ANNOTATION_TARGET: KtDiagnosticFactory0 by error0<KtAnnotationEntry>()
+    val DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED: KtDiagnosticFactoryForDeprecation0 by deprecationError0<KtPrimaryConstructor>(ErrorAboutDataClassCopyVisibilityChange, SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
+    val DATA_CLASS_INVISIBLE_COPY_USAGE: KtDiagnosticFactoryForDeprecation0 by deprecationError0<KtNameReferenceExpression>(ErrorAboutDataClassCopyVisibilityChange)
     val DATA_CLASS_WITHOUT_PARAMETERS: KtDiagnosticFactory0 by error0<KtNamedDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val DATA_CLASS_VARARG_PARAMETER: KtDiagnosticFactory0 by error0<KtParameter>()
     val DATA_CLASS_NOT_PROPERTY_PARAMETER: KtDiagnosticFactory0 by error0<KtParameter>()
@@ -290,6 +296,7 @@ object FirErrors {
     val DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val OVERRIDE_DEPRECATION: KtDiagnosticFactory2<FirBasedSymbol<*>, DeprecationInfo> by warning2<KtNamedDeclaration, FirBasedSymbol<*>, DeprecationInfo>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val REDUNDANT_ANNOTATION: KtDiagnosticFactory1<ClassId> by warning1<KtAnnotationEntry, ClassId>()
     val ANNOTATION_ON_SUPERCLASS: KtDiagnosticFactoryForDeprecation0 by deprecationError0<KtAnnotationEntry>(ProhibitUseSiteTargetAnnotationsOnSuperTypes)
     val RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION: KtDiagnosticFactoryForDeprecation0 by deprecationError0<PsiElement>(RestrictRetentionForExpressionAnnotations)
     val WRONG_ANNOTATION_TARGET: KtDiagnosticFactory1<String> by error1<KtAnnotationEntry, String>()

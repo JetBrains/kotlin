@@ -1280,6 +1280,13 @@ public open class ConcurrentModificationException : kotlin.RuntimeException {
     public constructor ConcurrentModificationException(cause: kotlin.Throwable?)
 }
 
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS})
+@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE)
+@kotlin.SinceKotlin(version = "2.0")
+public final annotation class ConsistentCopyVisibility : kotlin.Annotation {
+    public constructor ConsistentCopyVisibility()
+}
+
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE})
 @kotlin.annotation.MustBeDocumented
 @kotlin.SinceKotlin(version = "1.7")
@@ -1614,6 +1621,13 @@ public final annotation class ExperimentalSubclassOptIn : kotlin.Annotation {
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
 public final annotation class ExperimentalUnsignedTypes : kotlin.Annotation {
     public constructor ExperimentalUnsignedTypes()
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS})
+@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE)
+@kotlin.SinceKotlin(version = "2.0")
+public final annotation class ExposedCopyVisibility : kotlin.Annotation {
+    public constructor ExposedCopyVisibility()
 }
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE})

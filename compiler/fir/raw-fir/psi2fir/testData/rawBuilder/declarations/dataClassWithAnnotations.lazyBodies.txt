@@ -14,6 +14,6 @@ FILE: dataClassWithAnnotations.kt
 
         public? final operator fun component2(): @Anno(LAZY_EXPRESSION) C<@Anno(LAZY_EXPRESSION) CNested<@Anno(LAZY_EXPRESSION) CNestedNested>>
 
-        public final fun copy(@Anno(LAZY_EXPRESSION) @Anno(LAZY_EXPRESSION) b: @Anno(LAZY_EXPRESSION) B<@Anno(LAZY_EXPRESSION) BNested<@Anno(LAZY_EXPRESSION) BNestedNested>> = this@R|/Derived|.R|/Derived.b|, c: @Anno(LAZY_EXPRESSION) C<@Anno(LAZY_EXPRESSION) CNested<@Anno(LAZY_EXPRESSION) CNestedNested>> = this@R|/Derived|.R|/Derived.c|): R|Derived|
+        public? final fun copy(@Anno(LAZY_EXPRESSION) @Anno(LAZY_EXPRESSION) b: @Anno(LAZY_EXPRESSION) B<@Anno(LAZY_EXPRESSION) BNested<@Anno(LAZY_EXPRESSION) BNestedNested>> = this@R|/Derived|.R|/Derived.b|, c: @Anno(LAZY_EXPRESSION) C<@Anno(LAZY_EXPRESSION) CNested<@Anno(LAZY_EXPRESSION) CNestedNested>> = this@R|/Derived|.R|/Derived.c|): R|Derived|
 
     }
