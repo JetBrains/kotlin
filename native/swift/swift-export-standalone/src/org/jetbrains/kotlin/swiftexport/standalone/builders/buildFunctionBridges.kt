@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.util.*
 import org.jetbrains.kotlin.sir.bridge.BridgeRequest
 import org.jetbrains.kotlin.sir.bridge.createFunctionBodyFromRequest
+import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.visitors.SirVisitorVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.sir.passes.SirPass
-import org.jetbrains.sir.passes.builder.KotlinSource
 import org.jetbrains.sir.passes.run
 
 internal fun SirModule.buildFunctionBridges(): List<BridgeRequest> {

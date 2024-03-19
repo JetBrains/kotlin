@@ -10,26 +10,47 @@ import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sir.SirModule
-import org.jetbrains.kotlin.sir.builder.buildImport
-import org.jetbrains.kotlin.sir.builder.buildModule
+import org.jetbrains.kotlin.sir.builder.buildModuleCopy
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportInput
-import org.jetbrains.sir.passes.builder.buildSirDeclarationList
+import org.jetbrains.kotlin.swiftexport.standalone.session.StandaloneSirSession
 import kotlin.io.path.Path
 
-@OptIn(KtAnalysisApiInternals::class)
 internal fun buildSwiftModule(
     input: SwiftExportInput,
     kotlinDistribution: Distribution,
     shouldSortInputFiles: Boolean,
     bridgeModuleName: String,
 ): SirModule {
-    val session = buildStandaloneAnalysisAPISession {
+    val (module, ktFiles) = extractModuleWithFiles(kotlinDistribution, input, shouldSortInputFiles)
+
+    return analyze(module) {
+        with(StandaloneSirSession(this, bridgeModuleName)) {
+            val result = module.sirModule()
+            val extractedDeclarations = ktFiles.flatMap {
+                it.getFileSymbol().getFileScope().extractDeclarations()
+            }
+
+            buildModuleCopy(result) {
+                declarations += extractedDeclarations
+            }
+        }
+    }
+}
+
+@OptIn(KtAnalysisApiInternals::class)
+private fun extractModuleWithFiles(
+    kotlinDistribution: Distribution,
+    input: SwiftExportInput,
+    shouldSortInputFiles: Boolean,
+): Pair<KtSourceModule, List<KtFile>> {
+    val analysisAPISession = buildStandaloneAnalysisAPISession {
         registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
 
         buildKtModuleProvider {
@@ -54,7 +75,7 @@ internal fun buildSwiftModule(
         }
     }
 
-    val (sourceModule, rawFiles) = session.modulesWithFiles.entries.single()
+    val (sourceModule, rawFiles) = analysisAPISession.modulesWithFiles.entries.single()
 
     var ktFiles = rawFiles.filterIsInstance<KtFile>()
 
@@ -62,24 +83,5 @@ internal fun buildSwiftModule(
         ktFiles = ktFiles.sortedBy { it.name }
     }
 
-    return analyze(sourceModule) {
-        buildModule {
-            name = sourceModule.moduleName
-            declarations += buildImport {
-                moduleName = bridgeModuleName
-            }
-            declarations += buildImport {
-                moduleName = KOTLIN_RUNTIME_MODULE_NAME
-            }
-            ktFiles
-                .map { it.getFileSymbol() }
-                .forEach {
-                    declarations += it.buildSirDeclarationList()
-                }
-        }.apply {
-            declarations.forEach { it.parent = this }
-        }
-    }
+    return Pair(sourceModule, ktFiles)
 }
-
-private const val KOTLIN_RUNTIME_MODULE_NAME: String = "KotlinRuntime"

@@ -19,6 +19,7 @@ if (kotlinBuildProperties.isSwiftExportPluginPublishingEnabled) {
             ":native:swift:sir-compiler-bridge:publish",
             ":native:swift:sir-passes:publish",
             ":native:swift:sir-printer:publish",
+            ":native:swift:sir-providers:publish",
             ":native:swift:swift-export-standalone:publish",
             ":native:swift:swift-export-embeddable:publish",
         )

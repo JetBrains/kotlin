@@ -5,7 +5,7 @@ plugins {
     id("jps-compatible")
 }
 
-description = "Infrastructure of transformations over SIR"
+description = "SIR Providers - family of classes, that transforms KtSymbol into corresponding SIR nodes"
 
 kotlin {
     explicitApi()
@@ -14,11 +14,9 @@ kotlin {
 dependencies {
     compileOnly(kotlinStdlib())
 
-    api(project(":native:swift:sir"))
-    api(project(":native:swift:sir-providers"))
-
-    api(project(":compiler:psi"))
-    api(project(":analysis:analysis-api"))
+    implementation(project(":native:swift:sir"))
+    implementation(project(":analysis:analysis-api"))
+    implementation(project(":compiler:psi"))
 }
 
 sourceSets {
