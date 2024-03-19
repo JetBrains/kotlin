@@ -18,15 +18,35 @@ import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 
 internal val processOptionalAnnotationsPhase = makeIrModulePhase(
-    { context: JvmBackendContext ->
-        if (context.config.useFir) ProcessOptionalAnnotationsFir(context) else ProcessOptionalAnnotationsDescriptors(context)
-    },
+    ::ProcessOptionalAnnotations,
     name = "ProcessOptionalAnnotations",
     description = "Record metadata of @OptionalExpectation-annotated classes to backend-specific storage, later written to .kotlin_module"
 )
 
-class ProcessOptionalAnnotationsDescriptors(private val context: JvmBackendContext) : ProcessOptionalAnnotations() {
-    override fun IrClass.processClassFrontendSpecific() {
+class ProcessOptionalAnnotations(private val context: JvmBackendContext) : FileLoweringPass {
+    override fun lower(irFile: IrFile) {
+        for (declaration in irFile.declarations) {
+            if (declaration is IrClass && declaration.isOptionalAnnotationClass) {
+                declaration.registerOptionalAnnotations()
+            }
+        }
+    }
+
+    private fun IrClass.registerOptionalAnnotations() {
+        if (context.config.useFir) {
+            processClassFir()
+        } else {
+            processClassDescriptors()
+        }
+
+        for (declaration in declarations) {
+            if (declaration is IrClass && declaration.isOptionalAnnotationClass) {
+                declaration.registerOptionalAnnotations()
+            }
+        }
+    }
+
+    private fun IrClass.processClassDescriptors() {
         val classMetadata = metadata
 
         require(classMetadata is DescriptorMetadataSource.Class?) { "IrClass has unexpected metadata: ${classMetadata!!::class.simpleName}" }
@@ -39,10 +59,8 @@ class ProcessOptionalAnnotationsDescriptors(private val context: JvmBackendConte
             }
         }
     }
-}
 
-class ProcessOptionalAnnotationsFir(private val context: JvmBackendContext) : ProcessOptionalAnnotations() {
-    override fun IrClass.processClassFrontendSpecific() {
+    private fun IrClass.processClassFir() {
         val classMetadata = metadata
         require(classMetadata is MetadataSource.Class?) { "IrClass has unexpected metadata: ${classMetadata!!::class.simpleName}" }
 
@@ -50,24 +68,4 @@ class ProcessOptionalAnnotationsFir(private val context: JvmBackendContext) : Pr
             context.optionalAnnotations += classMetadata
         }
     }
-}
-
-abstract class ProcessOptionalAnnotations : FileLoweringPass {
-    override fun lower(irFile: IrFile) {
-        for (declaration in irFile.declarations) {
-            if (declaration !is IrClass || !declaration.isOptionalAnnotationClass) continue
-            declaration.registerOptionalAnnotations()
-        }
-    }
-
-    abstract fun IrClass.processClassFrontendSpecific()
-
-    private fun IrClass.registerOptionalAnnotations() {
-        processClassFrontendSpecific()
-
-        declarations.forEach {
-            if (it is IrClass && it.isOptionalAnnotationClass) it.registerOptionalAnnotations()
-        }
-    }
-
 }

@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.isExpect
 
 private val validateIrBeforeLowering = makeIrModulePhase(
     ::JvmIrValidationBeforeLoweringPhase,
@@ -41,18 +39,10 @@ private val arrayConstructorPhase = makeIrFilePhase(
 )
 
 internal val expectDeclarationsRemovingPhase = makeIrModulePhase(
-    { context: JvmBackendContext ->
-        if (context.config.useFir) object : FileLoweringPass {
-            override fun lower(irFile: IrFile) {
-                irFile.declarations.removeIf { it.isExpect }
-            }
-        }
-        else ExpectDeclarationRemover(context)
-    },
+    ::JvmExpectDeclarationRemover,
     name = "ExpectDeclarationsRemoving",
     description = "Remove expect declaration from module fragment"
 )
-
 
 internal val propertiesPhase = makeIrFilePhase(
     ::JvmPropertiesLowering,

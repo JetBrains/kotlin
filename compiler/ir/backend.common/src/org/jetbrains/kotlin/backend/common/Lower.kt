@@ -50,12 +50,6 @@ interface FileLoweringPass : ModuleLoweringPass {
             }
         }
     }
-
-    object Empty : FileLoweringPass {
-        override fun lower(irFile: IrFile) {
-            // Do nothing
-        }
-    }
 }
 
 interface ClassLoweringPass : FileLoweringPass {
