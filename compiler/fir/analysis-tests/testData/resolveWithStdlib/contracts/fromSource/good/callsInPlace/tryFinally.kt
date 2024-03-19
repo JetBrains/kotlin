@@ -78,7 +78,7 @@ inline fun test_7(f: () -> Unit) {
 
 @OptIn(ExperimentalContracts::class)
 inline fun test_8(f: () -> Int): Int {
-    contract { callsInPlace(f, InvocationKind.EXACTLY_ONCE) } // should be error
+    <!WRONG_INVOCATION_KIND!>contract { callsInPlace(f, InvocationKind.EXACTLY_ONCE) }<!> // should be error
     try {
         return f()
     } catch (_: Exception) {
