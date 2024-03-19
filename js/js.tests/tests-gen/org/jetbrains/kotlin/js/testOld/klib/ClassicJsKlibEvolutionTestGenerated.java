@@ -110,6 +110,11 @@ public class ClassicJsKlibEvolutionTestGenerated extends AbstractClassicJsKlibEv
     runTest("compiler/testData/klib/evolution/changeConstInitialization.kt");
   }
 
+  @TestMetadata("changeFakeOverrides.kt")
+  public void testChangeFakeOverrides() {
+    runTest("compiler/testData/klib/evolution/changeFakeOverrides.kt");
+  }
+
   @TestMetadata("changeNamesOfTypeParameters.kt")
   public void testChangeNamesOfTypeParameters() {
     runTest("compiler/testData/klib/evolution/changeNamesOfTypeParameters.kt");

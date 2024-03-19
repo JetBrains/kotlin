@@ -120,6 +120,12 @@ public class NativeKlibEvolutionTestGenerated extends AbstractNativeKlibEvolutio
   }
 
   @Test
+  @TestMetadata("changeFakeOverrides.kt")
+  public void testChangeFakeOverrides() {
+    runTest("compiler/testData/klib/evolution/changeFakeOverrides.kt");
+  }
+
+  @Test
   @TestMetadata("changeNamesOfTypeParameters.kt")
   public void testChangeNamesOfTypeParameters() {
     runTest("compiler/testData/klib/evolution/changeNamesOfTypeParameters.kt");

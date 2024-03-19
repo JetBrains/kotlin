@@ -881,19 +881,6 @@ standaloneTest("kt51302") {
     flags = ["-l", "$projectDir/serialization/KT-51302/kt51302_dependency"]
 }
 
-standaloneTest("fake_override_0") {
-    def sources = "$projectDir/link/fake_overrides"
-    doBeforeBuild {
-        konanc("$sources/base.kt -p library -target ${target.name} -o $outputDirectory/base.klib")
-        konanc("$sources/move.kt -p library -target ${target.name} -o $outputDirectory/move.klib -l $outputDirectory/base.klib")
-        konanc("$sources/use.kt -p library -target ${target.name} -o $outputDirectory/use.klib -l $outputDirectory/move.klib -l $outputDirectory/base.klib")
-        konanc("$sources/move2.kt -p library -target ${target.name} -o $outputDirectory/move.klib -l $outputDirectory/base.klib")
-    }
-    source = "$sources/main.kt"
-    flags = ["-l", "$outputDirectory/use.klib", "-l", "$outputDirectory/move.klib", "-l", "$outputDirectory/base.klib"]
-    useGoldenData = true
-}
-
 standaloneTest("split_compilation_pipeline") {
     // Test infrastructure does not support passing flags only to the second stage,
     // and we can't pass -Xcompile-from-bitcode when producing library. Thus, this test
