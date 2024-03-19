@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestReport
 import org.jetbrains.kotlin.native.executors.RunProcessResult
@@ -303,7 +304,7 @@ data class TestRunChecks(
         @Suppress("TestFunctionName")
         fun Default(timeout: Duration) = TestRunChecks(
             executionTimeoutCheck = ExecutionTimeout.ShouldNotExceed(timeout),
-            testFiltering = TestFiltering(TestOutputFilter.NO_FILTERING),
+            testFiltering = TestFiltering(TCTestOutputFilter),
             exitCodeCheck = ExitCode.Expected(0),
             outputDataFile = null,
             outputMatcher = null,
