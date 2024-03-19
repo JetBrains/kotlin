@@ -82,8 +82,8 @@ abstract class KlibCrossCompilationOutputTest : AbstractNativeSimpleTest() {
             error: KLIB resolver: Could not find "(.*)" in \[(.*)]
         """.trimIndent().toRegex()
 
-        private val KLIB_ROOTS_STUB = "<klib roots>"
-        private val KONAN_HOME_STUB = "\$KONAN_HOME"
+        private const val KLIB_ROOTS_STUB = "<klib roots>"
+        private const val KONAN_HOME_STUB = "\$KONAN_HOME"
     }
 }
 
