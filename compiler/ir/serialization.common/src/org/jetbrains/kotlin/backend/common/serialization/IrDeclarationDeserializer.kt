@@ -75,7 +75,7 @@ class IrDeclarationDeserializer(
     val symbolDeserializer: IrSymbolDeserializer,
     private val onDeserializedClass: (IrClass, IdSignature) -> Unit,
     private val needToConstructFakeOverrides: (IrClass) -> Boolean,
-    private val partialLinkageEnabled: Boolean,
+    private val specialProcessingForMismatchedSymbolKind: ((deserializedSymbol: IrSymbol, fallbackSymbolKind: SymbolKind?) -> IrSymbol)?,
     private val irInterner: IrInterningService,
 ) {
 
@@ -862,14 +862,10 @@ class IrDeclarationDeserializer(
     internal inline fun <reified S : IrSymbol> IrSymbol.checkSymbolType(fallbackSymbolKind: SymbolKind?): S {
         if (this is S) return this // Fast pass.
 
-        if (!partialLinkageEnabled)
-            throw IrSymbolTypeMismatchException(S::class.java, this)
+        specialProcessingForMismatchedSymbolKind?.let {
+            return it(this, fallbackSymbolKind) as S
+        }
 
-        return referenceDeserializedSymbol(
-            symbolTable = symbolDeserializer.symbolTable,
-            fileSymbol = null,
-            symbolKind = fallbackSymbolKind ?: error("No fallback symbol kind specified for symbol $this"),
-            idSig = signature?.takeIf { it.isPubliclyVisible } ?: error("No public signature for symbol $this")
-        ) as S
+        throw IrSymbolTypeMismatchException(S::class.java, this)
     }
 }
