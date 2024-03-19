@@ -113,43 +113,68 @@ class ConstraintIncorporator(
                 containsTypeVariable(it.type, freshTypeConstructor)
             }
             constraintsWhichConstraintMyVariable.forEach {
-                generateNewConstraint(typeVariableWithConstraint.typeVariable, it, typeVariable, constraint)
+                generateNewConstraint(typeVariable, constraint, typeVariableWithConstraint.typeVariable, it)
             }
         }
     }
 
+    // \alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>
     private fun Context.approximateIfNeededAndAddNewConstraint(
-        baseConstraint: Constraint,
-        type: KotlinTypeMarker,
+        // \alpha
+        causeOfIncorporationVariable: TypeVariableMarker,
+        // \alpha <: Number
+        causeOfIncorporationConstraint: Constraint,
+        // \beta
         targetVariable: TypeVariableMarker,
-        otherVariable: TypeVariableMarker,
+        // \beta <: Inv<\alpha>
         otherConstraint: Constraint,
+        // Captured(out Number)
+        type: KotlinTypeMarker,
         needApproximation: Boolean = true,
     ) {
-        val typeWithSubstitution = baseConstraint.type.substitute(this, otherVariable, type)
+        val typeWithSubstitution = otherConstraint.type.substitute(this, causeOfIncorporationVariable, type)
         val prepareType = { toSuper: Boolean ->
             if (needApproximation) approximateCapturedTypes(typeWithSubstitution, toSuper) else typeWithSubstitution
         }
 
-        if (baseConstraint.kind != ConstraintKind.LOWER) {
-            addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, prepareType(true), isSubtype = false)
+        if (otherConstraint.kind != ConstraintKind.LOWER) {
+            addNewConstraint(
+                causeOfIncorporationVariable,
+                causeOfIncorporationConstraint,
+                targetVariable,
+                otherConstraint,
+                prepareType(true),
+                isSubtype = false
+            )
         }
-        if (baseConstraint.kind != ConstraintKind.UPPER) {
-            addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, prepareType(false), isSubtype = true)
+        if (otherConstraint.kind != ConstraintKind.UPPER) {
+            addNewConstraint(
+                causeOfIncorporationVariable,
+                causeOfIncorporationConstraint,
+                targetVariable,
+                otherConstraint,
+                prepareType(false),
+                isSubtype = true
+            )
         }
     }
 
+    // \alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>
     private fun Context.generateNewConstraint(
-        targetVariable: TypeVariableMarker,
-        baseConstraint: Constraint,
+        // \alpha
+        causeOfIncorporationVariable: TypeVariableMarker,
+        // \alpha <: Number
+        causeOfIncorporationConstraint: Constraint,
+        // \beta
         otherVariable: TypeVariableMarker,
+        // \beta <: Inv<\alpha>
         otherConstraint: Constraint,
     ) {
-        val isBaseGenericType = baseConstraint.type.argumentsCount() != 0
-        val isBaseOrOtherCapturedType = baseConstraint.type.isCapturedType() || otherConstraint.type.isCapturedType()
-        val (type, needApproximation) = when (otherConstraint.kind) {
+        val isBaseGenericType = otherConstraint.type.argumentsCount() != 0
+        val isBaseOrOtherCapturedType = otherConstraint.type.isCapturedType() || causeOfIncorporationConstraint.type.isCapturedType()
+        val (type, needApproximation) = when (causeOfIncorporationConstraint.kind) {
             ConstraintKind.EQUALITY -> {
-                otherConstraint.type to false
+                causeOfIncorporationConstraint.type to false
             }
             ConstraintKind.UPPER -> {
                 /*
@@ -161,14 +186,14 @@ class ConstraintIncorporator(
                  *      incorporatedConstraint = Approx(CapturedType(out Number)) <: TypeVariable(A) => Nothing <: TypeVariable(A)
                  * TODO: implement this for generics and captured types
                  */
-                if (baseConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
+                if (otherConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
                     nothingType() to false
-                } else if (baseConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
-                    otherConstraint.type to false
+                } else if (otherConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
+                    causeOfIncorporationConstraint.type to false
                 } else {
                     createCapturedType(
-                        createTypeArgument(otherConstraint.type, TypeVariance.OUT),
-                        listOf(otherConstraint.type),
+                        createTypeArgument(causeOfIncorporationConstraint.type, TypeVariance.OUT),
+                        listOf(causeOfIncorporationConstraint.type),
                         null,
                         CaptureStatus.FOR_INCORPORATION
                     ) to true
@@ -184,67 +209,85 @@ class ConstraintIncorporator(
                  *      incorporatedConstraint = TypeVariable(A) <: Approx(CapturedType(in Number)) => TypeVariable(A) <: Any?
                  * TODO: implement this for generics and captured types
                  */
-                if (baseConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
+                if (otherConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
                     nullableAnyType() to false
-                } else if (baseConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
-                    otherConstraint.type to false
+                } else if (otherConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
+                    causeOfIncorporationConstraint.type to false
                 } else {
                     createCapturedType(
-                        createTypeArgument(otherConstraint.type, TypeVariance.IN),
+                        createTypeArgument(causeOfIncorporationConstraint.type, TypeVariance.IN),
                         emptyList(),
-                        otherConstraint.type,
+                        causeOfIncorporationConstraint.type,
                         CaptureStatus.FOR_INCORPORATION
                     ) to true
                 }
             }
         }
 
-        approximateIfNeededAndAddNewConstraint(baseConstraint, type, targetVariable, otherVariable, otherConstraint, needApproximation)
+        approximateIfNeededAndAddNewConstraint(
+            causeOfIncorporationVariable,
+            causeOfIncorporationConstraint,
+            otherVariable,
+            otherConstraint,
+            type,
+            needApproximation
+        )
     }
 
+    // \alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>
     private fun Context.addNewConstraint(
+        // \alpha
+        causeOfIncorporationVariable: TypeVariableMarker,
+        // \alpha <: Number
+        causeOfIncorporationConstraint: Constraint,
+        // \beta
         targetVariable: TypeVariableMarker,
-        baseConstraint: Constraint,
-        otherVariable: TypeVariableMarker,
+        // \beta <: Inv<\alpha>
         otherConstraint: Constraint,
-        newConstraint: KotlinTypeMarker,
+        // Inv<out Number>
+        newConstraintType: KotlinTypeMarker,
         isSubtype: Boolean,
     ) {
-        if (targetVariable in getNestedTypeVariables(newConstraint)) return
+        if (targetVariable in getNestedTypeVariables(newConstraintType)) return
 
         val isUsefulForNullabilityConstraint =
-            isPotentialUsefulNullabilityConstraint(newConstraint, otherConstraint.type, otherConstraint.kind)
-        val isFromVariableFixation = baseConstraint.position.from is FixVariableConstraintPosition<*>
-                || otherConstraint.position.from is FixVariableConstraintPosition<*>
+            isPotentialUsefulNullabilityConstraint(
+                newConstraintType,
+                causeOfIncorporationConstraint.type,
+                causeOfIncorporationConstraint.kind,
+            )
+        val isFromVariableFixation = otherConstraint.position.from is FixVariableConstraintPosition<*>
+                || causeOfIncorporationConstraint.position.from is FixVariableConstraintPosition<*>
 
-        if (!otherConstraint.kind.isEqual() &&
+        if (!causeOfIncorporationConstraint.kind.isEqual() &&
             !isUsefulForNullabilityConstraint &&
             !isFromVariableFixation &&
-            !containsConstrainingTypeWithoutProjection(newConstraint, otherConstraint)
+            !containsConstrainingTypeWithoutProjection(newConstraintType, causeOfIncorporationConstraint)
         ) return
 
         if (trivialConstraintTypeInferenceOracle.isGeneratedConstraintTrivial(
-                baseConstraint, otherConstraint, newConstraint, isSubtype
+                otherConstraint, causeOfIncorporationConstraint, newConstraintType, isSubtype
             )
         ) return
 
-        val derivedFrom = SmartSet.create(baseConstraint.derivedFrom).also { it.addAll(otherConstraint.derivedFrom) }
-        if (otherVariable in derivedFrom) return
+        val derivedFrom = SmartSet.create(otherConstraint.derivedFrom).also { it.addAll(causeOfIncorporationConstraint.derivedFrom) }
+        if (causeOfIncorporationVariable in derivedFrom) return
 
-        derivedFrom.add(otherVariable)
+        derivedFrom.add(causeOfIncorporationVariable)
 
         val kind = if (isSubtype) ConstraintKind.LOWER else ConstraintKind.UPPER
 
         val inputTypePosition =
-            baseConstraint.position.from as? OnlyInputTypeConstraintPosition ?: baseConstraint.inputTypePositionBeforeIncorporation
+            otherConstraint.position.from as? OnlyInputTypeConstraintPosition ?: otherConstraint.inputTypePositionBeforeIncorporation
 
-        val isNewConstraintUsefulForNullability = isUsefulForNullabilityConstraint && newConstraint.isNullableNothing()
-        val isOtherConstraintUsefulForNullability = otherConstraint.isNullabilityConstraint && otherConstraint.type.isNullableNothing()
+        val isNewConstraintUsefulForNullability = isUsefulForNullabilityConstraint && newConstraintType.isNullableNothing()
+        val isOtherConstraintUsefulForNullability =
+            causeOfIncorporationConstraint.isNullabilityConstraint && causeOfIncorporationConstraint.type.isNullableNothing()
         val isNullabilityConstraint = isNewConstraintUsefulForNullability || isOtherConstraintUsefulForNullability
 
         val constraintContext = ConstraintContext(kind, derivedFrom, inputTypePosition, isNullabilityConstraint)
 
-        addNewIncorporatedConstraint(targetVariable, newConstraint, constraintContext)
+        addNewIncorporatedConstraint(targetVariable, newConstraintType, constraintContext)
     }
 
     private fun Context.containsConstrainingTypeWithoutProjection(
