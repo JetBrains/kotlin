@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor
 import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
 
 object ComposeConfiguration {
@@ -375,7 +376,7 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                 project,
                 ComposableTargetChecker()
             )
-            ComposeDiagnosticSuppressor.registerExtension(project, ComposeDiagnosticSuppressor())
+            DiagnosticSuppressor.registerExtension(project, ComposeDiagnosticSuppressor())
             @Suppress("OPT_IN_USAGE_ERROR")
             TypeResolutionInterceptor.registerExtension(
                 project,
