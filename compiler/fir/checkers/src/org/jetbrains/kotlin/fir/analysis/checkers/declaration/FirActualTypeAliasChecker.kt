@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.Variance
@@ -22,8 +22,8 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirTypeAlias, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isActual) return
 
-        val expandedTypeRef = declaration.expandedTypeRef
-        val expandedTypeSymbol = expandedTypeRef.toClassLikeSymbol(context.session) ?: return
+        val expandedType = declaration.expandedTypeRef.coneType.abbreviatedTypeOrSelf
+        val expandedTypeSymbol = expandedType.toSymbol(context.session) as? FirClassLikeSymbol<*> ?: return
 
         if (expandedTypeSymbol is FirTypeAliasSymbol) {
             reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_NOT_TO_CLASS, context)
@@ -36,7 +36,7 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
             }
         }
 
-        for (typeArgument in expandedTypeRef.coneType.typeArguments) {
+        for (typeArgument in expandedType.typeArguments) {
             if (typeArgument.kind != ProjectionKind.INVARIANT) {
                 reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE, context)
                 break
@@ -44,11 +44,11 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
         }
 
         var reportActualTypeAliasWithComplexSubstitution = false
-        if (declaration.typeParameters.size != expandedTypeRef.coneType.typeArguments.size) {
+        if (declaration.typeParameters.size != expandedType.typeArguments.size) {
             reportActualTypeAliasWithComplexSubstitution = true
         } else {
             for (i in 0 until declaration.typeParameters.size) {
-                val typeArgument = expandedTypeRef.coneType.typeArguments[i]
+                val typeArgument = expandedType.typeArguments[i]
                 if (typeArgument is ConeTypeParameterType) {
                     if (declaration.typeParameters[i].symbol != typeArgument.lookupTag.typeParameterSymbol) {
                         reportActualTypeAliasWithComplexSubstitution = true
@@ -65,13 +65,12 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
         }
 
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) {
-            @OptIn(UnexpandedTypeCheck::class)
             // an earlier check ensures we have an ACTUAL_TYPE_ALIAS_NOT_TO_CLASS error on non-expanded type alias
-            if (expandedTypeRef.isNothing) {
+            if (expandedType.isNothing) {
                 reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NOTHING, context)
             }
 
-            if (expandedTypeRef.isMarkedNullable == true) {
+            if (expandedType.isMarkedNullable) {
                 reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE, context)
             }
         }
