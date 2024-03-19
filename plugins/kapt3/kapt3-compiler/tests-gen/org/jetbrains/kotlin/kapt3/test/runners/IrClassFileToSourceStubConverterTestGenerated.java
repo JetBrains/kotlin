@@ -414,12 +414,6 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
   }
 
   @Test
-  @TestMetadata("kr66687.kt")
-  public void testKr66687() {
-    runTest("plugins/kapt3/kapt3-compiler/testData/converter/kr66687.kt");
-  }
-
-  @Test
   @TestMetadata("kt14996.kt")
   public void testKt14996() {
     runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt14996.kt");
@@ -531,6 +525,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
   @TestMetadata("kt65453.kt")
   public void testKt65453() {
     runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt65453.kt");
+  }
+
+  @Test
+  @TestMetadata("kt66687.kt")
+  public void testKt66687() {
+    runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt66687.kt");
   }
 
   @Test
