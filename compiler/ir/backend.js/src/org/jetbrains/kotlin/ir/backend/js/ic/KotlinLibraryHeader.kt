@@ -31,7 +31,7 @@ internal interface KotlinLibraryHeader {
  */
 internal class KotlinLoadedLibraryHeader(
     private val library: KotlinLibrary,
-    private val internationService: IrInterningService
+    private val irInterner: IrInterningService
 ) : KotlinLibraryHeader {
     private fun parseFingerprintsFromManifest(): Map<KotlinSourceFile, FingerprintHash>? {
         val manifestFingerprints = library.serializedIrFileFingerprints?.takeIf { it.size == sourceFiles.size } ?: return null
@@ -55,7 +55,7 @@ internal class KotlinLoadedLibraryHeader(
                 override fun string(index: Int): ByteArray = library.string(index, it)
                 override fun body(index: Int): ByteArray = err()
                 override fun debugInfo(index: Int): ByteArray? = null
-            }), null, internationService)
+            }), null, irInterner)
 
             put(sourceFiles[it], deserializer)
         }

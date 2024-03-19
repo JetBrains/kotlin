@@ -75,18 +75,12 @@ class IrDeclarationDeserializer(
     private val onDeserializedClass: (IrClass, IdSignature) -> Unit,
     private val needToDeserializeFakeOverrides: (IrClass) -> Boolean,
     private val partialLinkageEnabled: Boolean,
-    private val internationService: IrInterningService,
+    private val irInterner: IrInterningService,
 ) {
 
     private val bodyDeserializer = IrBodyDeserializer(builtIns, allowErrorNodes, irFactory, libraryFile, this)
 
-    private fun deserializeString(index: Int): String {
-        return libraryFile.string(index)
-    }
-
-    private fun deserializeName(index: Int): Name {
-        return internationService.name(Name.guessByFirstCharacter(deserializeString(index)))
-    }
+    private fun deserializeName(index: Int): Name = irInterner.name(Name.guessByFirstCharacter(libraryFile.string(index)))
 
     private val irTypeCache = hashMapOf<Int, IrType>()
 

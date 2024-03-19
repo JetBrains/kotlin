@@ -75,7 +75,7 @@ class JsIrBackendContext(
 
     val polyfills = JsPolyfills()
     val fieldToInitializer = WeakHashMap<IrField, IrExpression>()
-    val globalInternationService = IrInterningService()
+    val globalIrInterner = IrInterningService()
 
     val localClassNames = WeakHashMap<IrClass, String>()
     val classToItsId = WeakHashMap<IrClass, String>()
