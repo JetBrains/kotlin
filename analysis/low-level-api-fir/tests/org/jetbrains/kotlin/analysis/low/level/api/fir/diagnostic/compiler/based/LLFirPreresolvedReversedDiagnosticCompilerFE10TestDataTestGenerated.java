@@ -21967,6 +21967,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("jkjPrivateProperty.kt")
+      public void testJkjPrivateProperty() {
+        runTest("compiler/testData/diagnostics/tests/j+k/jkjPrivateProperty.kt");
+      }
+
+      @Test
       @TestMetadata("KJKInheritance.kt")
       public void testKJKInheritance() {
         runTest("compiler/testData/diagnostics/tests/j+k/KJKInheritance.kt");
