@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.lower.LocalClassPopupLowering
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.findInlineLambdas
-import org.jetbrains.kotlin.backend.jvm.isGeneratedLambdaClass
 import org.jetbrains.kotlin.ir.declarations.*
 
 class JvmLocalClassPopupLowering(context: JvmBackendContext) : LocalClassPopupLowering(context) {
