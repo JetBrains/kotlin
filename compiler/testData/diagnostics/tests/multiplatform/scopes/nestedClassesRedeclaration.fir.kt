@@ -8,9 +8,9 @@ expect class A {
 
 expect class B {}
 
-expect class C {
-    class N
-}
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class C {
+    <!NO_ACTUAL_FOR_EXPECT{JVM}!>class N<!>
+}<!>
 
 expect abstract class D()
 

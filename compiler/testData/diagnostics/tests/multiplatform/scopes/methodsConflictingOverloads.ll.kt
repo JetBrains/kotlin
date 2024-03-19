@@ -2,16 +2,16 @@
 
 // MODULE: common
 // FILE: common.kt
-expect class <!NO_ACTUAL_FOR_EXPECT!>A<!> {
+expect class A {
     fun foo()
 }
 
-expect abstract class <!NO_ACTUAL_FOR_EXPECT!>B<!>
+expect abstract class B
 
-expect class <!NO_ACTUAL_FOR_EXPECT!>C<!> : B
+expect class C : B
 
-expect abstract class <!NO_ACTUAL_FOR_EXPECT!>D<!>() {
-    fun <!AMBIGUOUS_ACTUALS{JVM}!>foo<!>()
+expect abstract class D() {
+    fun foo()
 }
 
 class E : D()
@@ -32,7 +32,7 @@ actual abstract class B() {
 
 actual class C : B(), I {}
 
-actual abstract class D {
+actual abstract class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>D<!> {
     <!CONFLICTING_OVERLOADS!>actual fun foo()<!> {}
     <!CONFLICTING_OVERLOADS!>fun <!ACTUAL_MISSING!>foo<!>()<!> {}
 }

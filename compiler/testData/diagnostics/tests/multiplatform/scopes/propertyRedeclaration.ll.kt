@@ -2,16 +2,16 @@
 
 // MODULE: common
 // FILE: common.kt
-expect class <!NO_ACTUAL_FOR_EXPECT!>A<!> {
+expect class A {
     val x: Int
 }
 
-expect abstract class <!NO_ACTUAL_FOR_EXPECT!>B<!>
+expect abstract class B
 
-expect class <!NO_ACTUAL_FOR_EXPECT!>C<!> : B
+expect class C : B
 
-expect abstract class <!NO_ACTUAL_FOR_EXPECT!>D<!>() {
-    val <!AMBIGUOUS_ACTUALS{JVM}!>x<!>: Int
+expect abstract class D() {
+    val x: Int
 }
 
 class E : D()
@@ -32,7 +32,7 @@ actual abstract class B() {
 
 actual class C : B(), I {}
 
-actual abstract class D {
+actual abstract class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>D<!> {
     actual val <!REDECLARATION!>x<!> = 0
     val <!ACTUAL_MISSING, REDECLARATION!>x<!> = 0
 }
