@@ -1064,7 +1064,7 @@ class CallAndReferenceGenerator(
                 val parameterType = parameter.returnTypeRef.coneType
                 val unwrappedParameterType = if (parameter.isVararg) parameterType.arrayElementType()!! else parameterType
                 val samFunctionType = getFunctionTypeForPossibleSamType(unwrappedParameterType)
-                irArgument = irArgument.applySuspendConversionIfNeeded(argument, samFunctionType ?: unwrappedParameterType)
+                irArgument = irArgument.applySuspendConversionIfNeeded(argument, substitutor.substituteOrSelf(samFunctionType ?: unwrappedParameterType))
                 irArgument = irArgument.applySamConversionIfNeeded(argument, parameter)
             }
         }

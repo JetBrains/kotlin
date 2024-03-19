@@ -20,7 +20,7 @@ object Retry {
 
   fun <W : Any?> withExponentialBackoff(action: Function0<W>): Builder<W> {
     return Builder<W>(action = { // BLOCK
-      local suspend fun Function0<W>.suspendConversion(): B {
+      local suspend fun Function0<W>.suspendConversion(): W {
         return callee.invoke()
       }
 
