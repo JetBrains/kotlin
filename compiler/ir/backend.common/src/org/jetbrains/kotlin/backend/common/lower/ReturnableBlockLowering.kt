@@ -70,7 +70,7 @@ import org.jetbrains.kotlin.ir.types.isUnit
  * }
  *
  */
-class ReturnableBlockLowering(val context: CommonBackendContext) : BodyLoweringPass {
+open class ReturnableBlockLowering(val context: CommonBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         container.transform(ReturnableBlockTransformer(context, (container as IrSymbolOwner).symbol), null)
     }
