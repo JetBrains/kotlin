@@ -33,6 +33,16 @@ class A<T> : ArrayList<T>() {
     }
 }
 
+abstract class B<T>: List<T> {
+    override fun <!OVERRIDE_DEPRECATION!>getFirst<!>(): T {
+        return super.<!UNRESOLVED_REFERENCE!>getFirst<!>()
+    }
+
+    override fun <!OVERRIDE_DEPRECATION!>getLast<!>(): T{
+        return super.<!UNRESOLVED_REFERENCE!>getLast<!>()
+    }
+}
+
 fun foo(x: MutableList<String>, y: ArrayList<String>, z: A<String>) {
     x.addFirst("")
     x.addLast("")
