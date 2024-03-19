@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtReturnExpression
@@ -639,6 +640,30 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = SealedClassConstructorCall::class
     }
 
+    interface DataClassConsistentCopyAndInconsistentCopyAreIncompatibleAnnotations : KtFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = DataClassConsistentCopyAndInconsistentCopyAreIncompatibleAnnotations::class
+    }
+
+    interface DataClassConsistentCopyWrongAnnotationTarget : KtFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = DataClassConsistentCopyWrongAnnotationTarget::class
+    }
+
+    interface DataClassCopyVisibilityWillBeChangedError : KtFirDiagnostic<KtPrimaryConstructor> {
+        override val diagnosticClass get() = DataClassCopyVisibilityWillBeChangedError::class
+    }
+
+    interface DataClassCopyVisibilityWillBeChangedWarning : KtFirDiagnostic<KtPrimaryConstructor> {
+        override val diagnosticClass get() = DataClassCopyVisibilityWillBeChangedWarning::class
+    }
+
+    interface DataClassCopyUsageWillBecomeInaccessibleError : KtFirDiagnostic<KtNameReferenceExpression> {
+        override val diagnosticClass get() = DataClassCopyUsageWillBecomeInaccessibleError::class
+    }
+
+    interface DataClassCopyUsageWillBecomeInaccessibleWarning : KtFirDiagnostic<KtNameReferenceExpression> {
+        override val diagnosticClass get() = DataClassCopyUsageWillBecomeInaccessibleWarning::class
+    }
+
     interface DataClassWithoutParameters : KtFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = DataClassWithoutParameters::class
     }
@@ -761,6 +786,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = OverrideDeprecation::class
         val overridenSymbol: KtSymbol
         val deprecationInfo: DeprecationInfo
+    }
+
+    interface RedundantAnnotation : KtFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = RedundantAnnotation::class
+        val annotation: FqName
     }
 
     interface AnnotationOnSuperclassError : KtFirDiagnostic<KtAnnotationEntry> {

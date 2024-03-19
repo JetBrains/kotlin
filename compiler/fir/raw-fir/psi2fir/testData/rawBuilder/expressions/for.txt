@@ -76,7 +76,7 @@ FILE: for.kt
 
         public? final operator fun component2(): Int
 
-        public final fun copy(x: Int = this@R|/Some|.R|/Some.x|, y: Int = this@R|/Some|.R|/Some.y|): R|Some|
+        public? final fun copy(x: Int = this@R|/Some|.R|/Some.x|, y: Int = this@R|/Some|.R|/Some.y|): R|Some|
 
     }
     public? final? fun baz(set: Set<Some>): R|kotlin/Unit| {

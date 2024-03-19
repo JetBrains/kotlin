@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.doesDataClassCopyRespectConstructorVisibility
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -14,13 +16,16 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visibilityChecker
+import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class FirStatusResolver(
@@ -245,7 +250,6 @@ class FirStatusResolver(
                 isLocal -> Visibilities.Local
                 else -> resolveVisibility(declaration, containingClass, containingProperty, overriddenStatuses)
             }
-            Visibilities.Private -> Visibilities.Private
             else -> status.visibility
         }
 
@@ -316,6 +320,21 @@ class FirStatusResolver(
         val fallbackVisibility = when {
             declaration is FirPropertyAccessor && containingProperty != null -> containingProperty.visibility
             else -> Visibilities.Public
+        }
+
+        if (containingClass?.status?.isData == true &&
+            declaration is FirSimpleFunction &&
+            declaration.origin == FirDeclarationOrigin.Synthetic.DataClassMember &&
+            DataClassResolver.isCopy(declaration.name)
+        ) {
+            return when {
+                containingClass.annotations.any { it.fqName(session) == StandardNames.INCONSISTENT_DATA_COPY_VISIBILITY } ->
+                    Visibilities.Public
+                session.languageVersionSettings.doesDataClassCopyRespectConstructorVisibility() ||
+                        containingClass.annotations.any { it.fqName(session) == StandardNames.CONSISTENT_DATA_COPY_VISIBILITY } ->
+                    containingClass.primaryConstructorIfAny(session)?.fir?.visibility ?: fallbackVisibility
+                else -> fallbackVisibility
+            }
         }
 
         return overriddenStatuses.map { it.visibility }

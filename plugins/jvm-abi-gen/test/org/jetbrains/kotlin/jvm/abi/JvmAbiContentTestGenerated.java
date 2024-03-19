@@ -55,6 +55,11 @@ public class JvmAbiContentTestGenerated extends AbstractJvmAbiContentTest {
     runTest("plugins/jvm-abi-gen/testData/content/class/");
   }
 
+  @TestMetadata("dataClassNonPublicConstructor")
+  public void testDataClassNonPublicConstructor() {
+    runTest("plugins/jvm-abi-gen/testData/content/dataClassNonPublicConstructor/");
+  }
+
   @TestMetadata("effectivelyPrivateAnnotation")
   public void testEffectivelyPrivateAnnotation() {
     runTest("plugins/jvm-abi-gen/testData/content/effectivelyPrivateAnnotation/");

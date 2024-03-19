@@ -9348,6 +9348,64 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/dataClassPrivateConstructor")
+    @TestDataPath("$PROJECT_ROOT")
+    public class DataClassPrivateConstructor {
+      @Test
+      public void testAllFilesPresentInDataClassPrivateConstructor() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dataClassPrivateConstructor"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+      }
+
+      @Test
+      @TestMetadata("deprecationPhase1_incompatibleAnnotations.kt")
+      public void testDeprecationPhase1_incompatibleAnnotations() {
+        runTest("compiler/testData/diagnostics/tests/dataClassPrivateConstructor/deprecationPhase1_incompatibleAnnotations.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecationPhase1_warning.kt")
+      public void testDeprecationPhase1_warning() {
+        runTest("compiler/testData/diagnostics/tests/dataClassPrivateConstructor/deprecationPhase1_warning.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecationPhase1_wrongAnnotationTarget.kt")
+      public void testDeprecationPhase1_wrongAnnotationTarget() {
+        runTest("compiler/testData/diagnostics/tests/dataClassPrivateConstructor/deprecationPhase1_wrongAnnotationTarget.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecationPhase2_consistentDataCopy.kt")
+      public void testDeprecationPhase2_consistentDataCopy() {
+        runTest("compiler/testData/diagnostics/tests/dataClassPrivateConstructor/deprecationPhase2_consistentDataCopy.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecationPhase2_customCopy.kt")
+      public void testDeprecationPhase2_customCopy() {
+        runTest("compiler/testData/diagnostics/tests/dataClassPrivateConstructor/deprecationPhase2_customCopy.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecationPhase2_internalConstructor.kt")
+      public void testDeprecationPhase2_internalConstructor() {
+        runTest("compiler/testData/diagnostics/tests/dataClassPrivateConstructor/deprecationPhase2_internalConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecationPhase2_privateConstructor.kt")
+      public void testDeprecationPhase2_privateConstructor() {
+        runTest("compiler/testData/diagnostics/tests/dataClassPrivateConstructor/deprecationPhase2_privateConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecationPhase3_redundantConsistentDataCopyAnnotation.kt")
+      public void testDeprecationPhase3_redundantConsistentDataCopyAnnotation() {
+        runTest("compiler/testData/diagnostics/tests/dataClassPrivateConstructor/deprecationPhase3_redundantConsistentDataCopyAnnotation.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/dataClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class DataClasses {

@@ -1280,6 +1280,13 @@ public open class ConcurrentModificationException : kotlin.RuntimeException {
     public constructor ConcurrentModificationException(cause: kotlin.Throwable?)
 }
 
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS})
+@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE)
+@kotlin.SinceKotlin(version = "2.0")
+public final annotation class ConsistentDataCopyVisibility : kotlin.Annotation {
+    public constructor ConsistentDataCopyVisibility()
+}
+
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE})
 @kotlin.annotation.MustBeDocumented
 @kotlin.SinceKotlin(version = "1.7")
@@ -1836,6 +1843,13 @@ public open class IllegalStateException : kotlin.RuntimeException {
     public constructor IllegalStateException(message: kotlin.String?, cause: kotlin.Throwable?)
 
     public constructor IllegalStateException(cause: kotlin.Throwable?)
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS})
+@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE)
+@kotlin.SinceKotlin(version = "2.0")
+public final annotation class InconsistentDataCopyVisibility : kotlin.Annotation {
+    public constructor InconsistentDataCopyVisibility()
 }
 
 public open class IndexOutOfBoundsException : kotlin.RuntimeException {
