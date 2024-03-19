@@ -18,5 +18,3 @@ interface Trait {
     val notNullVal: String
     var notNullVar: String
 }
-
-// FIR_COMPARISON

@@ -3,7 +3,7 @@ public enum Em /* Em*/ {
   BAR;
 
   @org.jetbrains.annotations.NotNull()
-  public static @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Em[] values();//  values()
+  public static @org.jetbrains.annotations.NotNull() Em @org.jetbrains.annotations.NotNull() [] values();//  values()
 
   @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() Em valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)

@@ -6,5 +6,3 @@ class C {
         return "a"
     }
 }
-
-// FIR_COMPARISON

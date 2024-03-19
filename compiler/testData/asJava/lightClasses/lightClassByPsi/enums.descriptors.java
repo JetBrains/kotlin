@@ -16,7 +16,7 @@ public enum Color /* Color*/ {
   private final int rgb;
 
   @org.jetbrains.annotations.NotNull()
-  public static @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Color[] values();//  values()
+  public static @org.jetbrains.annotations.NotNull() Color @org.jetbrains.annotations.NotNull() [] values();//  values()
 
   @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() Color valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
@@ -38,7 +38,7 @@ public enum Direction /* Direction*/ {
   EAST;
 
   @org.jetbrains.annotations.NotNull()
-  public static @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Direction[] values();//  values()
+  public static @org.jetbrains.annotations.NotNull() Direction @org.jetbrains.annotations.NotNull() [] values();//  values()
 
   @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() Direction valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
@@ -64,7 +64,7 @@ public abstract enum IntArithmetics /* IntArithmetics*/ implements java.util.fun
   };
 
   @org.jetbrains.annotations.NotNull()
-  public static @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() IntArithmetics[] values();//  values()
+  public static @org.jetbrains.annotations.NotNull() IntArithmetics @org.jetbrains.annotations.NotNull() [] values();//  values()
 
   @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() IntArithmetics valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
@@ -106,7 +106,7 @@ public abstract enum ProtocolState /* ProtocolState*/ {
   public abstract ProtocolState signal();//  signal()
 
   @org.jetbrains.annotations.NotNull()
-  public static @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() ProtocolState[] values();//  values()
+  public static @org.jetbrains.annotations.NotNull() ProtocolState @org.jetbrains.annotations.NotNull() [] values();//  values()
 
   @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() ProtocolState valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)

@@ -7,5 +7,3 @@ interface Base {
 class C : Base {
     override fun foo(): Unit {}
 }
-
-// FIR_COMPARISON
