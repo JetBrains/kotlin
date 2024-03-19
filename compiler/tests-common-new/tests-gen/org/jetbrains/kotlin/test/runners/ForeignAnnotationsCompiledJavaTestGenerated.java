@@ -917,9 +917,15 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         }
 
         @Test
-        @TestMetadata("wrongNullabilityForOverrides.kt")
-        public void testWrongNullabilityForOverrides() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/wrongNullabilityForOverrides.kt");
+        @TestMetadata("wrongNullabilityForOverridesCommon.kt")
+        public void testWrongNullabilityForOverridesCommon() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/wrongNullabilityForOverridesCommon.kt");
+        }
+
+        @Test
+        @TestMetadata("wrongNullabilityForOverridesPlatform.kt")
+        public void testWrongNullabilityForOverridesPlatform() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/wrongNullabilityForOverridesPlatform.kt");
         }
       }
     }
