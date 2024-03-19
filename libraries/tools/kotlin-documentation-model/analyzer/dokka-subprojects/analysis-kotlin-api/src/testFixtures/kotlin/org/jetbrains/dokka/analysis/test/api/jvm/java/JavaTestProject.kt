@@ -5,26 +5,25 @@
 package org.jetbrains.dokka.analysis.test.api.jvm.java
 
 import org.jetbrains.dokka.DokkaSourceSetID
-import org.jetbrains.dokka.analysis.test.api.TestData
-import org.jetbrains.dokka.analysis.test.api.TestDataFile
-import org.jetbrains.dokka.analysis.test.api.TestProject
+import org.jetbrains.dokka.analysis.test.api.*
 import org.jetbrains.dokka.analysis.test.api.configuration.TestDokkaConfiguration
-import org.jetbrains.dokka.analysis.test.api.javaTestProject
 import org.jetbrains.dokka.analysis.test.api.markdown.MarkdownTestData
 import org.jetbrains.dokka.analysis.test.api.markdown.MarkdownTestDataFile
 import org.jetbrains.dokka.analysis.test.api.markdown.MdFileCreator
 import org.jetbrains.dokka.analysis.test.api.util.AnalysisTestDslMarker
 import org.jetbrains.dokka.analysis.test.api.util.flatListOf
+import org.jetbrains.dokka.plugability.DokkaPlugin
 
 /**
  * @see javaTestProject for an explanation and a convenient way to construct this project
  */
-class JavaTestProject : TestProject, JavaFileCreator, MdFileCreator {
+class JavaTestProject : TestProject, JavaFileCreator, MdFileCreator, Pluggable {
 
     private val projectConfigurationBuilder = JavaTestConfigurationBuilder()
 
     private val javaSourceSet = JavaTestData(pathToJavaSources = DEFAULT_SOURCE_ROOT)
     private val markdownTestData = MarkdownTestData()
+    private val pluginsList = mutableListOf<DokkaPlugin>()
 
     @AnalysisTestDslMarker
     fun dokkaConfiguration(fillConfiguration: JavaTestConfigurationBuilder.() -> Unit) {
@@ -41,12 +40,21 @@ class JavaTestProject : TestProject, JavaFileCreator, MdFileCreator {
         markdownTestData.mdFile(pathFromProjectRoot, fillFile)
     }
 
+    @AnalysisTestDslMarker
+    override fun plugin(instance: DokkaPlugin) {
+        pluginsList.add(instance)
+    }
+
     override fun verify() {
         projectConfigurationBuilder.verify()
     }
 
     override fun getConfiguration(): TestDokkaConfiguration {
         return projectConfigurationBuilder.build()
+    }
+
+    override fun getPluginList(): List<DokkaPlugin> {
+        return pluginsList
     }
 
     override fun getTestData(): TestData {

@@ -2,10 +2,13 @@
  * Copyright 2014-2024 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
  */
 
+@file:OptIn(InternalDokkaApi::class)
+
 package org.jetbrains.dokka.analysis.test.api.analysis
 
 import org.jetbrains.dokka.CoreExtensions
 import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.InternalDokkaApi
 import org.jetbrains.dokka.analysis.kotlin.KotlinAnalysisPlugin
 import org.jetbrains.dokka.analysis.kotlin.internal.InternalKotlinAnalysisPlugin
 import org.jetbrains.dokka.analysis.test.api.TestDataFile
@@ -16,6 +19,7 @@ import org.jetbrains.dokka.analysis.test.api.useServices
 import org.jetbrains.dokka.analysis.test.api.util.withTempDirectory
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.plugability.DokkaContext
+import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.plugability.plugin
 import org.jetbrains.dokka.plugability.querySingle
 import org.jetbrains.dokka.transformers.documentation.DefaultDocumentableMerger
@@ -112,7 +116,7 @@ internal object TestProjectAnalyzer {
         val dokkaConfiguration = testDokkaConfiguration.toDokkaConfiguration(projectDir = outputDirectory).also {
             it.verify()
         }
-        return dokkaConfiguration to createContext(dokkaConfiguration, logger)
+        return dokkaConfiguration to createContext(dokkaConfiguration, logger, getPluginList())
     }
 
     /**
@@ -166,12 +170,16 @@ internal object TestProjectAnalyzer {
         }
     }
 
-    private fun createContext(dokkaConfiguration: DokkaConfiguration, logger: DokkaLogger): DokkaContext {
+    private fun createContext(
+        dokkaConfiguration: DokkaConfiguration,
+        logger: DokkaLogger,
+        pluginOverrides: List<DokkaPlugin>
+    ): DokkaContext {
         logger.progress("Creating DokkaContext from test configuration")
         return DokkaContext.create(
             configuration = dokkaConfiguration,
             logger = logger,
-            pluginOverrides = listOf()
+            pluginOverrides = pluginOverrides
         )
     }
 
