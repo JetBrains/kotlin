@@ -20,6 +20,16 @@ class A<T> : ArrayList<T>() {
     override fun reversed(): List<T> = super.reversed()
 }
 
+abstract class B<T>: List<T> {
+    override fun getFirst(): T {
+        return super.getFirst()
+    }
+
+    override fun getLast(): T{
+        return super.getLast()
+    }
+}
+
 fun foo(x: MutableList<String>, y: ArrayList<String>, z: A<String>) {
     x.addFirst("")
     x.addLast("")

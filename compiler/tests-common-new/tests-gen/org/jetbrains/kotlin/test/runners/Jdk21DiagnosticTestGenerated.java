@@ -31,6 +31,12 @@ public class Jdk21DiagnosticTestGenerated extends AbstractJdk21DiagnosticTest {
     }
 
     @Test
+    @TestMetadata("hiddenInDeclaringMethods.kt")
+    public void testHiddenInDeclaringMethods() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJdk21/hiddenInDeclaringMethods.kt");
+    }
+
+    @Test
     @TestMetadata("implementationsForSequencedCollection.kt")
     public void testImplementationsForSequencedCollection() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJdk21/implementationsForSequencedCollection.kt");
