@@ -1,7 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-58845
-// IGNORE_DIAGNOSTIC_API
-// IGNORE_REVERSED_RESOLVE
 
 // MODULE: common
 // FILE: common.kt

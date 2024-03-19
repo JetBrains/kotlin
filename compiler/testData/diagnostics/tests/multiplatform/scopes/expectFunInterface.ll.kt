@@ -13,9 +13,9 @@ expect fun interface F3 {
     fun foo()
 }
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect fun interface F4 {
-    <!NO_ACTUAL_FOR_EXPECT{JVM}!>fun foo()<!>
-}<!>
+expect fun interface F4 {
+    fun foo()
+}
 
 expect <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface F5
 

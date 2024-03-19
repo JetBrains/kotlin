@@ -9,9 +9,9 @@ expect interface I2
 
 expect interface I3
 
-<!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS{METADATA}!>fun<!> interface F1 : I1, I2 {}
+<!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface F1 : I1, I2 {}
 
-<!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS, FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS{METADATA}!>fun<!> interface F2 : I1, I3 {}
+<!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface F2 : I1, I3 {}
 
 // MODULE: jvm()()(common)
 // FILE: main.kt

@@ -2193,12 +2193,6 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Test
-    @TestMetadata("expectFunInterfaceDiagnostics.kt")
-    public void testExpectFunInterfaceDiagnostics() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/expectFunInterfaceDiagnostics.kt");
-    }
-
-    @Test
     @TestMetadata("expectFunInterfaceIsHeirOfExpect.kt")
     public void testExpectFunInterfaceIsHeirOfExpect() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/expectFunInterfaceIsHeirOfExpect.kt");
