@@ -8,8 +8,23 @@ package org.jetbrains.kotlin.konan.target
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import java.lang.Exception
 
+@Suppress("DEPRECATION") // Uses deprecated SubTargetProvider in other deprecated APIs
 open class HostManager() {
     fun targetManager(userRequest: String? = null): TargetManager = TargetManagerImpl(userRequest, this)
+
+    @Suppress("UNUSED_PARAMETER")
+    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Kept for binary compatibility of Gradle plugins")
+    constructor(
+        subTargetProvider: SubTargetProvider = SubTargetProvider.NoSubTargets,
+        experimental: Boolean = false
+    ) : this()
+
+    @Suppress("UNUSED_PARAMETER")
+    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Kept for binary compatibility of Gradle plugins")
+    constructor(
+        distribution: Distribution,
+        experimental: Boolean = false
+    ) : this()
 
     val targetValues: List<KonanTarget> by lazy { KonanTarget.predefinedTargets.values.toList() }
 

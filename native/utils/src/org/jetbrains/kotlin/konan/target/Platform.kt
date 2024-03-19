@@ -34,12 +34,12 @@ class Platform(val configurables: Configurables) : Configurables by configurable
 class PlatformManager private constructor(private val serialized: Serialized) :
     HostManager(), java.io.Serializable {
 
-    // TODO(KT-66500): remove after the bootstrap
+    // TODO(KT-66500): elevate to an error after the bootstrap
     @Suppress("UNUSED_PARAMETER")
     @Deprecated("Kept temporary, should be removed after the bootstrap")
     constructor(konanHome: String, experimental: Boolean = false, konanDataDir: String? = null) : this(Distribution(konanHome, konanDataDir = konanDataDir))
 
-    // TODO(KT-66500): remove after the bootstrap
+    // TODO(KT-66500): elevate to an error after the bootstrap
     @Suppress("UNUSED_PARAMETER")
     @Deprecated("Kept temporary, should be removed after the bootstrap")
     constructor(distribution: Distribution, experimental: Boolean = false) : this(Serialized(distribution))
