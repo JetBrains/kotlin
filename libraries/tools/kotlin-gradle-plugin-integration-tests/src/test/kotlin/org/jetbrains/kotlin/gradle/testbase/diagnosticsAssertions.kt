@@ -162,6 +162,7 @@ private fun filterKgpUtilityPropertiesFromDiagnostic(diagnosticLines: List<Strin
 private val utilityInternalProperties = listOf(
     KOTLIN_INTERNAL_DIAGNOSTICS_USE_PARSABLE_FORMATTING,
     KOTLIN_INTERNAL_DIAGNOSTICS_SHOW_STACKTRACE,
+    KOTLIN_INTERNAL_DIAGNOSTICS_COMPILER_ARGUMENTS_LOG_LEVEL
 )
 
 /*
