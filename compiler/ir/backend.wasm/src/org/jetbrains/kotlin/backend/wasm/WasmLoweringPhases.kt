@@ -503,7 +503,7 @@ private val objectDeclarationLoweringPhase = makeIrModulePhase(
 
 private val invokeStaticInitializersPhase = makeIrModulePhase(
     ::InvokeStaticInitializersLowering,
-    name = "IntroduceStaticInitializersLowering",
+    name = "InvokeStaticInitializersLowering",
     description = "Invoke companion object's initializers from companion object in object constructor",
     prerequisite = setOf(objectDeclarationLoweringPhase)
 )
