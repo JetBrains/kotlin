@@ -11699,6 +11699,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("javaDeprecatedHidden.kt")
+      public void testJavaDeprecatedHidden() {
+        runTest("compiler/testData/diagnostics/tests/deprecated/javaDeprecatedHidden.kt");
+      }
+
+      @Test
       @TestMetadata("javaDeprecatedInheritance.kt")
       public void testJavaDeprecatedInheritance() {
         runTest("compiler/testData/diagnostics/tests/deprecated/javaDeprecatedInheritance.kt");
