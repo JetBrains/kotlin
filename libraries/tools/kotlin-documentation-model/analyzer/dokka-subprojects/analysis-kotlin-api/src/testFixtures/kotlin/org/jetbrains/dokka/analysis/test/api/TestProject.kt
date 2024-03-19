@@ -14,7 +14,21 @@ import org.jetbrains.dokka.analysis.test.api.configuration.TestDokkaConfiguratio
 import org.jetbrains.dokka.analysis.test.api.util.CollectingDokkaConsoleLogger
 import org.jetbrains.dokka.analysis.test.api.util.withTempDirectory
 import org.jetbrains.dokka.model.DModule
+import org.jetbrains.dokka.plugability.DokkaContext
+import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.utilities.DokkaLogger
+
+/**
+ * Declares a capability that a project can have plugins
+ */
+interface Pluggable {
+    /**
+     * Add a plugin instance to a project
+     */
+    fun plugin(
+        instance: DokkaPlugin
+    )
+}
 
 /**
  * Represents a virtual test project (as if it's user-defined) that will be used to run Dokka.
@@ -47,6 +61,13 @@ interface TestProject {
      * This is typically constructed using [BaseTestDokkaConfigurationBuilder].
      */
     fun getConfiguration(): TestDokkaConfiguration
+
+    /**
+     * Returns the list of plugins, which will then be directly passed to [DokkaContext].
+     *
+     * Unlike [DokkaConfiguration.pluginsClasspath], it does not require a JAR file with a configuration of [java.util.ServiceLoader]
+     */
+    fun getPluginList(): List<DokkaPlugin>
 
     /**
      * Returns this project's test data - a collection of source code files, markdown files

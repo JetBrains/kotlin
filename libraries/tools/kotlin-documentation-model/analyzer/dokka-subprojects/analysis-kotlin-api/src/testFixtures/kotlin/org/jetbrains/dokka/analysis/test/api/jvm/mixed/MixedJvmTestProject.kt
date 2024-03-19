@@ -4,9 +4,7 @@
 
 package org.jetbrains.dokka.analysis.test.api.jvm.mixed
 
-import org.jetbrains.dokka.analysis.test.api.TestData
-import org.jetbrains.dokka.analysis.test.api.TestDataFile
-import org.jetbrains.dokka.analysis.test.api.TestProject
+import org.jetbrains.dokka.analysis.test.api.*
 import org.jetbrains.dokka.analysis.test.api.configuration.TestDokkaConfiguration
 import org.jetbrains.dokka.analysis.test.api.jvm.java.JavaTestProject
 import org.jetbrains.dokka.analysis.test.api.jvm.kotlin.KotlinJvmTestProject
@@ -16,14 +14,14 @@ import org.jetbrains.dokka.analysis.test.api.kotlin.sample.KotlinSampleTestDataF
 import org.jetbrains.dokka.analysis.test.api.markdown.MarkdownTestData
 import org.jetbrains.dokka.analysis.test.api.markdown.MarkdownTestDataFile
 import org.jetbrains.dokka.analysis.test.api.markdown.MdFileCreator
-import org.jetbrains.dokka.analysis.test.api.mixedJvmTestProject
 import org.jetbrains.dokka.analysis.test.api.util.AnalysisTestDslMarker
 import org.jetbrains.dokka.analysis.test.api.util.flatListOf
+import org.jetbrains.dokka.plugability.DokkaPlugin
 
 /**
  * @see mixedJvmTestProject for an explanation and a convenient way to construct this project
  */
-class MixedJvmTestProject : TestProject, MdFileCreator, KotlinSampleFileCreator {
+class MixedJvmTestProject : TestProject, MdFileCreator, KotlinSampleFileCreator, Pluggable {
 
     private val projectConfigurationBuilder = MixedJvmTestConfigurationBuilder()
 
@@ -31,6 +29,7 @@ class MixedJvmTestProject : TestProject, MdFileCreator, KotlinSampleFileCreator 
     private val javaSourceDirectory = MixedJvmTestData(pathToSources = JavaTestProject.DEFAULT_SOURCE_ROOT)
     private val markdownTestData = MarkdownTestData()
     private val kotlinSampleTestData = KotlinSampleTestData()
+    private val pluginsList = mutableListOf<DokkaPlugin>()
 
     @AnalysisTestDslMarker
     fun dokkaConfiguration(fillConfiguration: MixedJvmTestConfigurationBuilder.() -> Unit) {
@@ -61,12 +60,21 @@ class MixedJvmTestProject : TestProject, MdFileCreator, KotlinSampleFileCreator 
         kotlinSampleTestData.sampleFile(pathFromProjectRoot, fqPackageName, fillFile)
     }
 
+    @AnalysisTestDslMarker
+    override fun plugin(instance: DokkaPlugin) {
+        pluginsList.add(instance)
+    }
+
     override fun verify() {
         projectConfigurationBuilder.verify()
     }
 
     override fun getConfiguration(): TestDokkaConfiguration {
         return projectConfigurationBuilder.build()
+    }
+
+    override fun getPluginList(): List<DokkaPlugin> {
+        return pluginsList
     }
 
     override fun getTestData(): TestData {

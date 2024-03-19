@@ -7,6 +7,7 @@ package org.jetbrains.dokka.analysis.kotlin
 import org.jetbrains.dokka.analysis.kotlin.documentable.ExternalDocumentableProvider
 import org.jetbrains.dokka.analysis.kotlin.sample.SampleAnalysisEnvironmentCreator
 import org.jetbrains.dokka.analysis.kotlin.sample.SampleAnalysisEnvironment
+import org.jetbrains.dokka.analysis.kotlin.sample.SampleRewriter
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.plugability.DokkaPluginApiPreview
 import org.jetbrains.dokka.plugability.ExtensionPoint
@@ -28,6 +29,16 @@ public class KotlinAnalysisPlugin : DokkaPlugin() {
      * @see ExternalDocumentableProvider for more details
      */
     public val externalDocumentableProvider: ExtensionPoint<ExternalDocumentableProvider> by extensionPoint()
+
+    /**
+     * An extensions can rewrite Kotlin sample functions that come from the `@sample` KDoc tag.
+     * For example, it could be convenient to transform unit tests to samples.
+     * Dokka supports no more than one rewriter. By default, Dokka provides no rewriter.
+     *
+     * @see SampleRewriter for more details
+     * @see sampleAnalysisEnvironmentCreator
+     */
+    public val sampleRewriter: ExtensionPoint<SampleRewriter> by extensionPoint()
 
     @OptIn(DokkaPluginApiPreview::class)
     override fun pluginApiPreviewAcknowledgement(): PluginApiPreviewAcknowledgement = PluginApiPreviewAcknowledgement
