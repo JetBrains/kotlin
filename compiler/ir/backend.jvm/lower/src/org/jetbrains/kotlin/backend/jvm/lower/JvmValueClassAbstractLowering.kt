@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -20,7 +23,7 @@ internal abstract class JvmValueClassAbstractLowering(
 ) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     abstract val replacements: MemoizedValueClassAbstractReplacements
 
-    final override fun lower(irFile: IrFile) = withinScope(irFile) {
+    override fun lower(irFile: IrFile) = withinScope(irFile) {
         irFile.transformChildrenVoid()
     }
 

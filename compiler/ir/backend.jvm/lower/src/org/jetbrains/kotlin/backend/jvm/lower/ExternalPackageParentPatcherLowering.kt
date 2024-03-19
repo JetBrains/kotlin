@@ -18,18 +18,17 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 
-internal val externalPackageParentPatcherPhase = makeIrModulePhase<JvmBackendContext>(
-    { context ->
-        if (context.config.useFir) ExternalPackageParentPatcherLowering(context)
-        else FileLoweringPass.Empty
-    },
+internal val externalPackageParentPatcherPhase = makeIrModulePhase(
+    ::ExternalPackageParentPatcherLowering,
     name = "ExternalPackageParentPatcherLowering",
     description = "Replace parent from package fragment to FileKt class for top-level callables (K2 only)"
 )
 
 class ExternalPackageParentPatcherLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(Visitor())
+        if (context.config.useFir) {
+            irFile.acceptVoid(Visitor())
+        }
     }
 
     private inner class Visitor : IrElementVisitorVoid {
