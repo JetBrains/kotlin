@@ -470,7 +470,7 @@ class IrSourcePrinterVisitor(
 
         expression.printExplicitReceiver(".")
 
-        val prop = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
+        val prop = function.correspondingPropertySymbol?.owner
 
         if (prop != null && !function.hasComposableAnnotation()) {
             val propName = prop.name.asString()

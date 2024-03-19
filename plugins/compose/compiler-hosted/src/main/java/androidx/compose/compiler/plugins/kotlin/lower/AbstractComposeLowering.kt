@@ -986,8 +986,7 @@ abstract class AbstractComposeLowering(
             origin.isGetProperty() -> {
                 // If we are in a GET_PROPERTY call, then this should usually resolve to
                 // non-null, but in case it doesn't, just return false
-                val prop = (function as? IrSimpleFunction)
-                    ?.correspondingPropertySymbol?.owner ?: return false
+                val prop = function.correspondingPropertySymbol?.owner ?: return false
 
                 // if the property is a top level constant, then it is static.
                 if (prop.isConst) return true
