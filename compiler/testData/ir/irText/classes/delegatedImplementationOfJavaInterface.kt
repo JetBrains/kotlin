@@ -1,8 +1,5 @@
 // TARGET_BACKEND: JVM
 
-// SEPARATE_SIGNATURE_DUMP_FOR_K2
-// ^ Fake overrides have divirging @EnhancedNullability in K1 and K2
-
 // FILE: delegatedImplementationOfJavaInterface.kt
 
 class Test(private val j: J) : J by j

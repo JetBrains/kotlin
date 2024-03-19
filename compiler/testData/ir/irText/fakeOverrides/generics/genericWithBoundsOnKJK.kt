@@ -1,6 +1,4 @@
 // TARGET_BACKEND: JVM
-// SEPARATE_SIGNATURE_DUMP_FOR_K2
-// ^ ISSUE: KT-59138, KT-66048, KT-66158
 
 // FILE: Java1.java
 public class Java1 extends KotlinClass { }

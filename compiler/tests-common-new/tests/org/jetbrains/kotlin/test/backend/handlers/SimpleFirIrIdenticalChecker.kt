@@ -29,7 +29,10 @@ import java.io.File
  * For example, [IrMangledNameAndSignatureDumpHandler.IdenticalChecker] uses lack of `SEPARATE_SIGNATURE_DUMP_FOR_K2` directive
  *   for this purpose
  */
-abstract class SimpleFirIrIdenticalChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+abstract class SimpleFirIrIdenticalChecker(
+    testServices: TestServices,
+    private val trimLines: Boolean = false
+) : AfterAnalysisChecker(testServices) {
     protected abstract val dumpExtension: String
 
     override val directiveContainers: List<DirectivesContainer>
@@ -57,7 +60,7 @@ abstract class SimpleFirIrIdenticalChecker(testServices: TestServices) : AfterAn
             simpleChecker.deleteFirFile(testDataFile)
             return
         }
-        if (simpleChecker.firAndClassicContentsAreEquals(testDataFile)) {
+        if (simpleChecker.firAndClassicContentsAreEquals(testDataFile, trimLines)) {
             simpleChecker.deleteFirFile(testDataFile)
             processClassicFileIfContentIsIdentical(testDataFile)
         }
