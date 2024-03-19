@@ -240,9 +240,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         if (testPrefix != null) {
             val expectedFileWithoutPrefix = getTestDataFileSiblingPath(extension, testPrefix = null)
             if (expectedFile != expectedFileWithoutPrefix) {
-                try {
-                    assertEqualsToFile(expectedFileWithoutPrefix, actual)
-                } catch (_: ComparisonFailure) {
+                if (!doesEqualToFile(expectedFileWithoutPrefix.toFile(), actual)) {
                     return
                 }
 
