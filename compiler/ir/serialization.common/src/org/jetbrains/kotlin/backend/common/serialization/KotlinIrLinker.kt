@@ -32,7 +32,7 @@ abstract class KotlinIrLinker(
     private val exportedDependencies: List<ModuleDescriptor>,
     val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
 ) : IrDeserializer, FileLocalAwareLinker {
-    val internationService = IrInterningService()
+    val irInterner = IrInterningService()
 
     // Kotlin-MPP related data. Consider some refactoring
     val expectIdSignatureToActualIdSignature = linkedMapOf<IdSignature, IdSignature>()
@@ -209,7 +209,7 @@ abstract class KotlinIrLinker(
     }
 
     fun clear() {
-        internationService.clear()
+        irInterner.reset()
     }
 
     override fun postProcess(inOrAfterLinkageStep: Boolean) {

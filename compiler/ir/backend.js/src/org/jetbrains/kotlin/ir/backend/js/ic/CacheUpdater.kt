@@ -89,7 +89,7 @@ class CacheUpdater(
 
     private val icHasher = ICHasher()
 
-    private val internationService = IrInterningService()
+    private val irInterner = IrInterningService()
 
     private val cacheRootDir = run {
         val configHash = icHasher.calculateConfigHash(compilerConfiguration)
@@ -151,7 +151,7 @@ class CacheUpdater(
             val file = File(libFile.path)
             val pathHash = file.absolutePath.cityHash64String()
             val libraryCacheDir = File(cacheRootDir, "${file.name}.$pathHash")
-            libFile to IncrementalCache(KotlinLoadedLibraryHeader(lib, internationService), libraryCacheDir)
+            libFile to IncrementalCache(KotlinLoadedLibraryHeader(lib, irInterner), libraryCacheDir)
         }
 
         private val removedIncrementalCaches = buildList {
@@ -819,7 +819,7 @@ fun rebuildCacheForDirtyFiles(
     exportedDeclarations: Set<FqName>,
     mainArguments: List<String>?,
 ): Pair<IrModuleFragment, List<Pair<IrFile, JsIrProgramFragments>>> {
-    val internationService = IrInterningService()
+    val irInterner = IrInterningService()
     val emptyMetadata = object : KotlinSourceFileExports() {
         override val inverseDependencies = KotlinSourceFileMap<Set<IdSignature>>(emptyMap())
     }
@@ -827,7 +827,7 @@ fun rebuildCacheForDirtyFiles(
     val libFile = KotlinLibraryFile(library)
     val dirtySrcFiles = dirtyFiles?.let {
         KotlinSourceFile.fromSources(it.toList())
-    } ?: KotlinLoadedLibraryHeader(library, internationService).sourceFileFingerprints.keys
+    } ?: KotlinLoadedLibraryHeader(library, irInterner).sourceFileFingerprints.keys
 
     val modifiedFiles = mapOf(libFile to dirtySrcFiles.associateWith { emptyMetadata })
 
@@ -851,7 +851,7 @@ fun rebuildCacheForDirtyFiles(
 
     // Load declarations referenced during `context` initialization
     loadedIr.loadUnboundSymbols()
-    internationService.clear()
+    irInterner.reset()
 
     val fragments = compilerWithIC.compile(loadedIr.loadedFragments.values, dirtyIrFiles).memoryOptimizedMap { it() }
 

@@ -29,7 +29,11 @@ class IrInterningService {
         return names.addOrGet(name)
     }
 
-    fun clear() {
+    /**
+     * Clean up internal interner caches. After calling this function the interner will 'forget' all previously
+     * seen instances and will start the deduplication from scratch.
+     */
+    fun reset() {
         strings.clear()
         names.clear()
     }

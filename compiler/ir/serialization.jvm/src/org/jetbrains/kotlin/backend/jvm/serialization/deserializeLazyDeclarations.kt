@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.serialization
 
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
-import org.jetbrains.kotlin.backend.common.overrides.DefaultFakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideDeclarationTable
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
@@ -46,7 +45,7 @@ fun deserializeFromByteArray(
     toplevelParent: IrClass,
     typeSystemContext: IrTypeSystemContext,
 ) {
-    val internationService = IrInterningService()
+    val irInterner = IrInterningService()
     val irProto = JvmIr.ClassOrFile.parseFrom(byteArray.codedInputStream)
     val irLibraryFile = IrLibraryFileFromAnnotation(
         irProto.typeList,
@@ -68,7 +67,7 @@ fun deserializeFromByteArray(
         fileSignature = dummyFileSignature,
         enqueueLocalTopLevelDeclaration = {}, // just link to it in symbolTable
         handleExpectActualMapping = { _, symbol -> symbol }, // no expect declarations
-        internationService = internationService
+        irInterner = irInterner
     ) { idSignature, symbolKind ->
         referencePublicSymbol(symbolTable, idSignature, symbolKind)
     }
@@ -86,7 +85,7 @@ fun deserializeFromByteArray(
         onDeserializedClass = { _, _ -> },
         needToConstructFakeOverrides = { true },
         partialLinkageEnabled = false,
-        internationService = internationService
+        irInterner = irInterner
     )
     for (declarationProto in irProto.declarationList) {
         deserializer.deserializeDeclaration(declarationProto, setParent = false)

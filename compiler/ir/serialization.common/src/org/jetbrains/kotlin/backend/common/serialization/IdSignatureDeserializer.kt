@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature as
 class IdSignatureDeserializer(
     private val libraryFile: IrLibraryFile,
     private val fileSignature: FileSignature?,
-    private val internationService: IrInterningService
+    private val irInterner: IrInterningService
 ) {
 
     private fun loadSignatureProto(index: Int): ProtoIdSignature {
@@ -36,10 +36,10 @@ class IdSignatureDeserializer(
     }
 
     private fun deserializePublicIdSignature(proto: ProtoCommonIdSignature): IdSignature.CommonSignature {
-        val pkg = internationService.string(libraryFile.deserializeFqName(proto.packageFqNameList))
-        val cls = internationService.string(libraryFile.deserializeFqName(proto.declarationFqNameList))
+        val pkg = irInterner.string(libraryFile.deserializeFqName(proto.packageFqNameList))
+        val cls = irInterner.string(libraryFile.deserializeFqName(proto.declarationFqNameList))
         val memberId = if (proto.hasMemberUniqId()) proto.memberUniqId else null
-        val description = if (proto.hasDebugInfo()) libraryFile.debugInfo(proto.debugInfo)?.let(internationService::string) else null
+        val description = if (proto.hasDebugInfo()) libraryFile.debugInfo(proto.debugInfo)?.let(irInterner::string) else null
 
         return IdSignature.CommonSignature(
             packageFqName = pkg,
@@ -56,9 +56,9 @@ class IdSignatureDeserializer(
         val name = libraryFile.string(proto.name)
         val hash = proto.accessorHashId
         val mask = proto.flags
-        val description = if (proto.hasDebugInfo()) libraryFile.debugInfo(proto.debugInfo)?.let(internationService::string) else null
+        val description = if (proto.hasDebugInfo()) libraryFile.debugInfo(proto.debugInfo)?.let(irInterner::string) else null
 
-        val declarationFqName = internationService.string("${propertySignature.declarationFqName}.$name")
+        val declarationFqName = irInterner.string("${propertySignature.declarationFqName}.$name")
         val accessorSignature =
             IdSignature.CommonSignature(
                 packageFqName = propertySignature.packageFqName,
@@ -86,7 +86,7 @@ class IdSignatureDeserializer(
     }
 
     private fun deserializeLocalIdSignature(proto: ProtoLocalSignature): IdSignature.LocalSignature {
-        val localFqn = internationService.string(libraryFile.deserializeFqName(proto.localFqNameList))
+        val localFqn = irInterner.string(libraryFile.deserializeFqName(proto.localFqNameList))
         val localHash = if (proto.hasLocalHash()) proto.localHash else null
         val description = if (proto.hasDebugInfo()) libraryFile.debugInfo(proto.debugInfo) else null
         return IdSignature.LocalSignature(localFqn, localHash, description)
