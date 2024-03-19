@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.klib.reader.tests
 
-import org.jetbrains.kotlin.analysis.api.klib.reader.readKlibDeclarationAddresses
+import org.jetbrains.kotlin.native.analysis.api.readKlibDeclarationAddresses
 import org.jetbrains.kotlin.analysis.api.klib.reader.testUtils.providedTestProjectKlib
 import org.jetbrains.kotlin.analysis.api.klib.reader.testUtils.render
 import org.jetbrains.kotlin.analysis.api.klib.reader.testUtils.testDataDir

@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.objcexport
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.klib.reader.*
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.native.analysis.api.*
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getAllClassOrObjectSymbols
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.tooling.core.withClosure
