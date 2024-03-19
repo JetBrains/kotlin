@@ -209,6 +209,7 @@ internal inline fun <reified T : IrElement> T.copyWithNewTypeParams(
     source: IrFunction,
     target: IrFunction
 ): T {
+    @Suppress("DEPRECATION")
     return deepCopyWithSymbols(target) { symbolRemapper, typeRemapper ->
         val typeParamRemapper = object : TypeRemapper by typeRemapper {
             override fun remapType(type: IrType): IrType {
