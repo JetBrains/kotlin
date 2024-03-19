@@ -30,9 +30,8 @@ dependencies {
 optInToUnsafeDuringIrConstructionAPI()
 optInToObsoleteDescriptorBasedAPI()
 
-kotlin.jvmToolchain(8)
-
 kotlin {
+    jvmToolchain(11)
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_1_8)
         freeCompilerArgs.addAll(
@@ -41,6 +40,11 @@ kotlin {
         )
         allWarningsAsErrors.set(false)
     }
+}
+
+java {
+    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_1_8
 }
 
 tasks.withType<Test> {
