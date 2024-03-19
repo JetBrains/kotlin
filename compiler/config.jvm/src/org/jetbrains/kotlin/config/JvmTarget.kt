@@ -38,6 +38,7 @@ enum class JvmTarget(
     JVM_19("19", Opcodes.V16 + 3),
     JVM_20("20", Opcodes.V16 + 4),
     JVM_21("21", Opcodes.V16 + 5),
+    JVM_22("22", Opcodes.V16 + 6),
     ;
 
     override fun toString() = description
@@ -63,7 +64,7 @@ enum class JvmTarget(
             entries - JVM_1_6
 
         const val SUPPORTED_VERSIONS_DESCRIPTION =
-            "1.8, 9, 10, ..., 21"
+            "1.8, 9, 10, ..., 22"
 
         init {
             check(SUPPORTED_VERSIONS_DESCRIPTION == "1.8, 9, 10, ..., ${entries.last().description}") {

@@ -26,7 +26,7 @@ fun box(): String {
     // Java interface with nested classes
     assertEquals(listOf("Entry"), nestedNames(java.util.Map::class))
     // Java class with nested classes
-    assertEquals(listOf("SimpleEntry", "SimpleImmutableEntry"), nestedNames(java.util.AbstractMap::class) - "ViewCollection")
+    assertEquals(listOf("SimpleEntry", "SimpleImmutableEntry"), nestedNames(java.util.AbstractMap::class) - "ViewCollection" - "KeyIterator" - "ValueIterator")
 
     // Built-ins
     assertEquals(emptyList<String>(), nestedNames(Array<Any>::class))
