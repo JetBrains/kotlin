@@ -247,7 +247,9 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
                     *expectedMetrics,
                     "CONFIGURATION_IMPLEMENTATION_COUNT=1",
                     "NUMBER_OF_SUBPROJECTS=1",
-                    "COMPILATIONS_COUNT=1"
+                    "COMPILATIONS_COUNT=1",
+                    "GRADLE_CONFIGURATION_CACHE_ENABLED=true",
+                    "GRADLE_PROJECT_ISOLATION_ENABLED=$isProjectIsolationEnabled",
                 )
             }
 
