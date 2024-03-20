@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
-import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheRequested
+import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
 import java.lang.management.ManagementFactory
 
 internal interface UsesBuildMetricsService : Task {
@@ -273,7 +273,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         private fun setupTags(project: Project): ArrayList<StatTag> {
             val gradle = project.gradle
             val additionalTags = ArrayList<StatTag>()
-            if (project.isConfigurationCacheRequested) {
+            if (project.isConfigurationCacheEnabled) {
                 additionalTags.add(StatTag.CONFIGURATION_CACHE)
             }
             if (gradle.startParameter.isBuildCacheEnabled) {

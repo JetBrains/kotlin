@@ -13,9 +13,11 @@ internal class ConfigurationCacheStartParameterAccessorG74(
     private val gradle: Gradle,
 ) : ConfigurationCacheStartParameterAccessor {
     @Suppress("DEPRECATION")
-    override val isConfigurationCacheRequested by lazy {
+    override val isConfigurationCacheEnabled by lazy {
         (gradle.startParameter as StartParameterInternal).isConfigurationCache
     }
+    override val isConfigurationCacheRequested: Boolean
+        get() = isConfigurationCacheEnabled
 
     internal class Factory : ConfigurationCacheStartParameterAccessor.Factory {
         override fun getInstance(project: Project) = ConfigurationCacheStartParameterAccessorG74(project.gradle)

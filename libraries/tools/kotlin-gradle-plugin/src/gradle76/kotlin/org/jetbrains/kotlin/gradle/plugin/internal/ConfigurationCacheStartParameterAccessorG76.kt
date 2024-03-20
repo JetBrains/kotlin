@@ -11,9 +11,11 @@ import org.gradle.api.invocation.Gradle
 internal class ConfigurationCacheStartParameterAccessorG76(
     private val gradle: Gradle,
 ) : ConfigurationCacheStartParameterAccessor {
-    override val isConfigurationCacheRequested: Boolean by lazy {
+    override val isConfigurationCacheEnabled: Boolean by lazy {
         gradle.startParameter.isConfigurationCacheRequested
     }
+    override val isConfigurationCacheRequested: Boolean
+        get() = isConfigurationCacheEnabled
 
     internal class Factory : ConfigurationCacheStartParameterAccessor.Factory {
         override fun getInstance(project: Project) = ConfigurationCacheStartParameterAccessorG76(project.gradle)
