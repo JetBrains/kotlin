@@ -24487,6 +24487,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("InaccessibleGenericTypeVariousCases.kt")
+      public void testInaccessibleGenericTypeVariousCases() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/InaccessibleGenericTypeVariousCases.kt");
+      }
+
+      @Test
       @TestMetadata("internal.kt")
       public void testInternal() {
         runTest("compiler/testData/diagnostics/tests/multimodule/internal.kt");

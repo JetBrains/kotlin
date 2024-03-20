@@ -15,3 +15,8 @@ fun consumeBoxedInaccessibleType(arg: Box<InaccessibleType<Any?>>) {}
 fun test() {
     consumeBoxedInaccessibleType(produceBoxedInaccessibleType())
 }
+
+fun test2() {
+    val a = produceBoxedInaccessibleType()
+    consumeBoxedInaccessibleType(a)
+}

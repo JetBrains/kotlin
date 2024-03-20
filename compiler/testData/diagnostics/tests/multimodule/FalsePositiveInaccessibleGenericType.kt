@@ -22,3 +22,8 @@ fun register(owner: Owner<*>) {}
 fun test(some: Some<String>) {
     register(some.g)
 }
+
+fun test2(some: Some<String>) {
+    val a = some.g
+    register(a)
+}

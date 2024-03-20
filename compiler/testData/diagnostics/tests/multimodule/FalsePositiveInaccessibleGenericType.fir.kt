@@ -22,3 +22,8 @@ fun register(owner: Owner<*>) {}
 fun test(some: Some<String>) {
     register(some.<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>g<!>)
 }
+
+fun test2(some: Some<String>) {
+    val a = some.<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>g<!>
+    register(<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>a<!>)
+}
