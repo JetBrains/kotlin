@@ -631,8 +631,7 @@ internal class AdapterGenerator(
             startOffset = startOffset,
             endOffset = endOffset,
             origin = IrDeclarationOrigin.ADAPTER_FOR_SUSPEND_CONVERSION,
-            // TODO: need a better way to avoid name clash
-            name = Name.identifier("suspendConversion"),
+            name = Name.identifier(conversionScope.scope().inventNameForTemporary("suspendConversion")),
             visibility = DescriptorVisibilities.LOCAL,
             isInline = false,
             isExpect = false,

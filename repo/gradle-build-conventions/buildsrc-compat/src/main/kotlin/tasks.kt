@@ -203,6 +203,13 @@ fun Project.projectTest(
             dependsOn(":test-instrumenter:jar")
         }
 
+        // The glibc default number of memory pools on 64bit systems is 8 times the number of CPU cores
+        // Choosing a value MALLOC_ARENA_MAX is generally a tradeoff between performance and memory consumption.
+        // Not setting MALLOC_ARENA_MAX gives the best performance, but may mean higher memory use.
+        // Setting MALLOC_ARENA_MAX to “2” or “1” makes glibc use fewer memory pools and potentially less memory,
+        // but this may reduce performance.
+        environment("MALLOC_ARENA_MAX", "2")
+
         jvmArgs(
             "-ea",
             "-XX:+HeapDumpOnOutOfMemoryError",

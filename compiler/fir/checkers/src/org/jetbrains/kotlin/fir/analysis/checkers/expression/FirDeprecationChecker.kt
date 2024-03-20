@@ -86,9 +86,10 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
         }
     }
 
-    internal val DeprecatedOverrideOfHiddenReplacements = mapOf(
+    internal val DeprecatedOverrideOfHiddenReplacements: Map<String, String?> = mapOf(
         "getFirst" to "first()",
         "getLast" to "last()",
+        "toArray" to null,
     )
 
     internal fun getDeprecatedOverrideOfHiddenMessage(callableName: String?): String {

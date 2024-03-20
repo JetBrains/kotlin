@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // DUMP_IR
 
 fun <T> select(a: T, b: T) : T = a

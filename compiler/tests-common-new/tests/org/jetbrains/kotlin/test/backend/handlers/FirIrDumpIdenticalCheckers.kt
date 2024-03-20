@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_KT_DUMP
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_IDENTICAL
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -48,16 +50,18 @@ class FirIrDumpIdenticalChecker(testServices: TestServices) : AfterAnalysisCheck
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         if (testServices.defaultsProvider.defaultFrontend != FrontendKinds.FIR)
             return
-        if (DUMP_IR !in testServices.moduleStructure.allDirectives)
+        val allDirectives = testServices.moduleStructure.allDirectives
+        if (DUMP_IR !in allDirectives)
             return
-        if (FIR_IDENTICAL in testServices.moduleStructure.allDirectives) {
+        if (FIR_IDENTICAL in allDirectives) {
             simpleDumpChecker.deleteFirFile(testDataFile)
             prettyDumpChecker.deleteFirFile(testDataFile)
             return
         }
+        val isPrettyDumpEnabled = DUMP_KT_IR in allDirectives && SKIP_KT_DUMP !in allDirectives
         if (
             simpleDumpChecker.firAndClassicContentsAreEquals(testDataFile) &&
-            prettyDumpChecker.firAndClassicContentsAreEquals(testDataFile, trimLines = true)
+            (!isPrettyDumpEnabled || prettyDumpChecker.firAndClassicContentsAreEquals(testDataFile, trimLines = true))
         ) {
             simpleDumpChecker.deleteFirFile(testDataFile)
             prettyDumpChecker.deleteFirFile(testDataFile)

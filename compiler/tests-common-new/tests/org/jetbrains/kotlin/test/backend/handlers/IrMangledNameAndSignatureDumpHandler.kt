@@ -114,7 +114,7 @@ class IrMangledNameAndSignatureDumpHandler(
     override val additionalAfterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>
         get() = listOf(::IdenticalChecker)
 
-    class IdenticalChecker(testServices: TestServices) : SimpleFirIrIdenticalChecker(testServices) {
+    class IdenticalChecker(testServices: TestServices) : SimpleFirIrIdenticalChecker(testServices, trimLines = true) {
         override val dumpExtension: String
             get() = DUMP_EXTENSION
 

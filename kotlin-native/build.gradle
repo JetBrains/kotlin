@@ -689,12 +689,10 @@ KotlinBuildPublishingPluginKt.configureDefaultPublishing(
 
 tasks.named("clean", Delete) {
     dependsOn subprojects.collect { it.tasks.matching { it.name == "clean" } }
-    doFirst {
-        delete distDir
-        delete layout.buildDirectory
-        delete bundle.outputs.files
-        delete "${projectDir}/compile_commands.json"
-    }
+    it.delete(distDir)
+    it.delete(layout.buildDirectory)
+    it.delete(bundle.outputs.files)
+    it.delete("${projectDir}/compile_commands.json")
 }
 
 publishing {

@@ -552,10 +552,8 @@ val hostAssemble by tasks.registering {
     dependsOn("${PlatformInfo.hostName}Runtime")
 }
 
-tasks.named("clean") {
-    doLast {
-        delete(layout.buildDirectory)
-    }
+tasks.named("clean", Delete::class) {
+    this.delete(layout.buildDirectory)
 }
 
 // region: Stdlib

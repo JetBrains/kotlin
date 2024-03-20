@@ -54,3 +54,11 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         this.module.generatedSourceDirs.add(generationRoot)
     }
 }
+
+if (kotlinBuildProperties.isSwiftExportPluginPublishingEnabled) {
+    publish()
+}
+
+runtimeJar()
+sourcesJar()
+javadocJar()

@@ -20,6 +20,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
+import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.toolchain.JavaLanguageVersion
@@ -33,8 +34,6 @@ import org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin.Companion.COMPILE_AL
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.buildDistribution
-import org.jetbrains.kotlin.konan.target.customerDistribution
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import java.io.File
@@ -294,10 +293,6 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         internal val REQUIRED_GRADLE_VERSION = GradleVersion.version("6.7")
     }
 
-    private fun Project.cleanKonan() = project.tasks.withType(KonanBuildingTask::class.java).forEach {
-        project.delete(it.artifact)
-    }
-
     private fun checkGradleVersion() =  GradleVersion.current().let { current ->
         check(current >= REQUIRED_GRADLE_VERSION) {
             "Kotlin/Native Gradle plugin is incompatible with this version of Gradle.\n" +
@@ -356,8 +351,10 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         project.tasks.named("build").configure {
             dependsOn(compileKonanTask)
         }
-        project.tasks.named("clean").configure {
-            doLast { project.cleanKonan() }
+        project.tasks.named("clean", Delete::class.java).configure {
+            delete(project.tasks.withType(KonanBuildingTask::class.java).map {
+                it.artifact
+            })
         }
 
         project.afterEvaluate {

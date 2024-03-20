@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -48,4 +50,16 @@ val test by nativeTest("test", null) {
     useJUnitPlatform { }
 }
 
+if (kotlinBuildProperties.isSwiftExportPluginPublishingEnabled) {
+    publish()
+}
+
+runtimeJar()
+sourcesJar()
+javadocJar()
+
 testsJar()
+
+tasks.withType<KotlinJvmCompile> {
+    compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
+}

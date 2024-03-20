@@ -195,9 +195,7 @@ void konanc(String[] args) {
 }
 
 tasks.named("clean", Delete.class) {
-    doLast {
-        delete(project(":kotlin-native").file(testOutputRoot))
-    }
+    delete(testOutputRoot)
 }
 
 tasks.named("run") {

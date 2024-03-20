@@ -9,51 +9,6 @@ public enum namespace {
             }
         }
         public class Foo {
-            public init() {
-                fatalError()
-            }
-            public class INSIDE_CLASS {
-                public init() {
-                    fatalError()
-                }
-                public class DEEPER_INSIDE_CLASS {
-                    public init() {
-                        fatalError()
-                    }
-                    public func foo() -> Swift.Bool {
-                        fatalError()
-                    }
-                    public var my_value: Swift.UInt32 {
-                        get {
-                            fatalError()
-                        }
-                    }
-                    public var my_variable: Swift.Int64 {
-                        get {
-                            fatalError()
-                        }
-                        set {
-                            fatalError()
-                        }
-                    }
-                }
-                public func foo() -> Swift.Bool {
-                    fatalError()
-                }
-                public var my_value: Swift.UInt32 {
-                    get {
-                        fatalError()
-                    }
-                }
-                public var my_variable: Swift.Int64 {
-                    get {
-                        fatalError()
-                    }
-                    set {
-                        fatalError()
-                    }
-                }
-            }
             public func foo() -> Swift.Bool {
                 fatalError()
             }
@@ -70,6 +25,51 @@ public enum namespace {
                     fatalError()
                 }
             }
+            public class INSIDE_CLASS {
+                public func foo() -> Swift.Bool {
+                    fatalError()
+                }
+                public var my_value: Swift.UInt32 {
+                    get {
+                        fatalError()
+                    }
+                }
+                public var my_variable: Swift.Int64 {
+                    get {
+                        fatalError()
+                    }
+                    set {
+                        fatalError()
+                    }
+                }
+                public class DEEPER_INSIDE_CLASS {
+                    public func foo() -> Swift.Bool {
+                        fatalError()
+                    }
+                    public var my_value: Swift.UInt32 {
+                        get {
+                            fatalError()
+                        }
+                    }
+                    public var my_variable: Swift.Int64 {
+                        get {
+                            fatalError()
+                        }
+                        set {
+                            fatalError()
+                        }
+                    }
+                    public init() {
+                        fatalError()
+                    }
+                }
+                public init() {
+                    fatalError()
+                }
+            }
+            public init() {
+                fatalError()
+            }
         }
     }
     /**
@@ -77,22 +77,15 @@ public enum namespace {
     *  NAMESPACED_CLASS
     */
     public class NAMESPACED_CLASS {
+        /**
+        *  demo comment for
+        *  NAMESPACED_CLASS
+        */
         public init() {
             fatalError()
         }
     }
     public class Foo {
-        public init() {
-            fatalError()
-        }
-        /**
-        * this is a sample comment for INSIDE_CLASS with package
-        */
-        public class INSIDE_CLASS {
-            public init() {
-                fatalError()
-            }
-        }
         /**
         * this is a sample comment for func on class with package
         */
@@ -118,6 +111,20 @@ public enum namespace {
                 fatalError()
             }
         }
+        /**
+        * this is a sample comment for INSIDE_CLASS with package
+        */
+        public class INSIDE_CLASS {
+            /**
+            * this is a sample comment for INSIDE_CLASS with package
+            */
+            public init() {
+                fatalError()
+            }
+        }
+        public init() {
+            fatalError()
+        }
     }
 }
 
@@ -125,6 +132,11 @@ public enum namespace {
 * this is a sample comment for class without public constructor
 */
 public class ClassWithNonPublicConstructor {
+    public var a: Swift.Int32 {
+        get {
+            fatalError()
+        }
+    }
 }
 
 /**
@@ -133,26 +145,35 @@ public class ClassWithNonPublicConstructor {
 * https://kotlinlang.org/docs/kotlin-doc.html#constructor
 */
 public class Foo {
-    public init(
-        a: Swift.Int32
-    ) {
+    /**
+    * this is a sample comment for func on class without package
+    */
+    public func foo() -> Swift.Bool {
         fatalError()
     }
     /**
-    * this is a sample comment for secondary constructor
+    * this is a sample comment for val on class without package
     */
-    public init(
-        f: Swift.Float
-    ) {
-        fatalError()
+    public var my_value: Swift.UInt32 {
+        get {
+            fatalError()
+        }
+    }
+    /**
+    * this is a sample comment for var on class without package
+    */
+    public var my_variable: Swift.Int64 {
+        get {
+            fatalError()
+        }
+        set {
+            fatalError()
+        }
     }
     /**
     * this is a sample comment for INSIDE_CLASS without package
     */
     public class INSIDE_CLASS {
-        public init() {
-            fatalError()
-        }
         /**
         * this is a sample comment for func on INSIDE_CLASS without package
         */
@@ -178,30 +199,24 @@ public class Foo {
                 fatalError()
             }
         }
+        /**
+        * this is a sample comment for INSIDE_CLASS without package
+        */
+        public init() {
+            fatalError()
+        }
     }
-    /**
-    * this is a sample comment for func on class without package
-    */
-    public func foo() -> Swift.Bool {
+    public init(
+        a: Swift.Int32
+    ) {
         fatalError()
     }
     /**
-    * this is a sample comment for val on class without package
+    * this is a sample comment for secondary constructor
     */
-    public var my_value: Swift.UInt32 {
-        get {
-            fatalError()
-        }
-    }
-    /**
-    * this is a sample comment for var on class without package
-    */
-    public var my_variable: Swift.Int64 {
-        get {
-            fatalError()
-        }
-        set {
-            fatalError()
-        }
+    public init(
+        f: Swift.Float
+    ) {
+        fatalError()
     }
 }
