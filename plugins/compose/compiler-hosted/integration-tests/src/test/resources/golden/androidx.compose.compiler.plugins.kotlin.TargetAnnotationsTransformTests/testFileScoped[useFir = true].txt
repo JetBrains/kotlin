@@ -1,0 +1,60 @@
+//
+// Source
+// ------------------------------------------
+
+@file:NComposable
+
+import androidx.compose.runtime.*
+
+@Composable
+fun NFromFile() {
+    Open()
+}
+
+@Composable
+fun NFromInference() {
+    N()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun NFromFile(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(NFromFile)<Open()>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    Open(%composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    NFromFile(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun NFromInference(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(NFromInference)<N()>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    N(%composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    NFromInference(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

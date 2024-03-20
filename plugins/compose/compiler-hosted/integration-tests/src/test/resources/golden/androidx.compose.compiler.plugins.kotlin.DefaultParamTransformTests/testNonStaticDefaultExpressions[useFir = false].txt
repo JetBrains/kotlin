@@ -1,0 +1,53 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@Composable
+fun Test(x: Int = makeInt()) {
+    used(x)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(x: Int, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%default and 0b0001 == 0 && %composer.changed(x)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    %composer.startDefaults()
+    if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
+      if (%default and 0b0001 != 0) {
+        x = makeInt()
+        %dirty = %dirty and 0b1110.inv()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+      if (%default and 0b0001 != 0) {
+        %dirty = %dirty and 0b1110.inv()
+      }
+    }
+    %composer.endDefaults()
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(x)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(x, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

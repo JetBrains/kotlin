@@ -1,0 +1,70 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+fun Test(condition: Boolean) {
+    val value = remember { mutableStateOf(false) }
+    if (!value.value && !condition) return
+    val value2 = remember { mutableStateOf(false) }
+    Text("Text ${value.value}, ${value2.value}")
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<rememb...>,<rememb...>,<Text("...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b1110 == 0) {
+    %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    val value = <block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(false) {
+        mutableStateOf(
+          value = false
+        )
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
+    }
+    if (!value.value && !condition) {
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+      %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+        Test(condition, %composer, updateChangedFlags(%changed or 0b0001))
+      }
+      return
+    }
+    val value2 = <block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp1_group = %composer.cache(false) {
+        mutableStateOf(
+          value = false
+        )
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp1_group
+    }
+    Text("Text %{value.value}, %{value2.value}", %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(condition, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

@@ -1,0 +1,85 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+@Composable fun Example() {
+    @Composable fun A() { }
+    @Composable fun B(content: @Composable () -> Unit) { content() }
+    @Composable fun C() {
+        B { A() }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Example(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Example):Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    @Composable
+    fun A(%composer: Composer?, %changed: Int) {
+      sourceInformationMarkerStart(%composer, <>, "C(A):Test.kt")
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+      sourceInformationMarkerEnd(%composer)
+    }
+    @Composable
+    @ComposableInferredTarget(scheme = "[0[0]]")
+    fun B(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+      sourceInformationMarkerStart(%composer, <>, "C(B)<conten...>:Test.kt")
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      content(%composer, 0b1110 and %changed)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+      sourceInformationMarkerEnd(%composer)
+    }
+    @Composable
+    fun C(%composer: Composer?, %changed: Int) {
+      sourceInformationMarkerStart(%composer, <>, "C(C)<{>,<B>:Test.kt")
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      B(rememberComposableLambda(<>, false, { %composer: Composer?, %changed: Int ->
+        sourceInformation(%composer, "C<A()>:Test.kt")
+        if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
+          if (isTraceInProgress()) {
+            traceEventStart(<>, %changed, -1, <>)
+          }
+          A(%composer, 0)
+          if (isTraceInProgress()) {
+            traceEventEnd()
+          }
+        } else {
+          %composer.skipToGroupEnd()
+        }
+      }, %composer, 0b00110110), %composer, 0b0110)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+      sourceInformationMarkerEnd(%composer)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Example(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

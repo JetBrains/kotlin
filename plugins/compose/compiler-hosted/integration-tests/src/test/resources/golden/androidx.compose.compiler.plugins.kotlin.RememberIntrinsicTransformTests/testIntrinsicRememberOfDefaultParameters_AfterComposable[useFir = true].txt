@@ -1,0 +1,87 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+
+
+@Composable
+fun Test(a: Int = remember { 0 }, b: Int = SomeComposable(), c: Int = remember { 0 }) {
+    used(a)
+    used(b)
+    used(c)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(a: Int, b: Int, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<rememb...>,<SomeCo...>,<rememb...>:Test.kt")
+  val %dirty = %changed
+  if (%default and 0b0001 != 0) {
+    %dirty = %dirty or 0b0110
+  } else if (%changed and 0b1110 == 0) {
+    %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b01110000 == 0) {
+    %dirty = %dirty or if (%default and 0b0010 == 0 && %composer.changed(b)) 0b00100000 else 0b00010000
+  }
+  if (%default and 0b0100 != 0) {
+    %dirty = %dirty or 0b000110000000
+  } else if (%changed and 0b001110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(c)) 0b000100000000 else 0b10000000
+  }
+  if (%dirty and 0b001011011011 != 0b10010010 || !%composer.skipping) {
+    %composer.startDefaults()
+    if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
+      if (%default and 0b0001 != 0) {
+        a = <block>{
+          sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+          val tmp0_group = %composer.cache(false) {
+            0
+          }
+          sourceInformationMarkerEnd(%composer)
+          tmp0_group
+        }
+      }
+      if (%default and 0b0010 != 0) {
+        b = SomeComposable(%composer, 0)
+        %dirty = %dirty and 0b01110000.inv()
+      }
+      if (%default and 0b0100 != 0) {
+        c = <block>{
+          sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+          val tmp1_group = %composer.cache(false) {
+            0
+          }
+          sourceInformationMarkerEnd(%composer)
+          tmp1_group
+        }
+      }
+    } else {
+      %composer.skipToGroupEnd()
+      if (%default and 0b0010 != 0) {
+        %dirty = %dirty and 0b01110000.inv()
+      }
+    }
+    %composer.endDefaults()
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(a)
+    used(b)
+    used(c)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(a, b, c, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

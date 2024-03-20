@@ -1,0 +1,63 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@Composable
+fun A(a: Int = 0, b: Int = a + 1) {
+    print(a)
+    print(b)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun A(a: Int, b: Int, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(A):Test.kt")
+  val %dirty = %changed
+  if (%default and 0b0001 != 0) {
+    %dirty = %dirty or 0b0110
+  } else if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%default and 0b0010 == 0 && %composer.changed(b)) 0b00100000 else 0b00010000
+  }
+  if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+    %composer.startDefaults()
+    if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
+      if (%default and 0b0001 != 0) {
+        a = 0
+      }
+      if (%default and 0b0010 != 0) {
+        b = a + 1
+        %dirty = %dirty and 0b01110000.inv()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+      if (%default and 0b0010 != 0) {
+        %dirty = %dirty and 0b01110000.inv()
+      }
+    }
+    %composer.endDefaults()
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    print(a)
+    print(b)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    A(a, b, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

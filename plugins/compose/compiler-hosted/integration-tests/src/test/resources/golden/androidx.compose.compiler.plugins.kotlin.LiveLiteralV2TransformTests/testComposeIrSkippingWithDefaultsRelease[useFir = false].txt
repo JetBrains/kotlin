@@ -1,0 +1,172 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+
+object Ui {}
+
+@Composable
+fun Ui.UiTextField(
+    isError: Boolean = false,
+    keyboardActions2: Boolean = false,
+) {
+    println("t41 insideFunction $isError")
+    println("t41 insideFunction $keyboardActions2")
+    Column {
+        Text("$isError")
+        Text("$keyboardActions2")
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+object Ui {
+  static val %stable: Int = LiveLiterals%TestKt.Int%class-Ui()
+}
+@Composable
+@ComposableTarget(applier = "androidx.compose.ui.UiComposable")
+fun Ui.UiTextField(isError: Boolean, keyboardActions2: Boolean, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  val %dirty = %changed
+  if (%changed and 0b01110000 == 0) {
+    %dirty = %dirty or if (%default and 0b0001 == 0 && %composer.changed(isError)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b001110000000 == 0) {
+    %dirty = %dirty or if (%default and 0b0010 == 0 && %composer.changed(keyboardActions2)) 0b000100000000 else 0b10000000
+  }
+  if (%dirty and 0b001011010001 != 0b10010000 || !%composer.skipping) {
+    %composer.startDefaults()
+    if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
+      if (%default and 0b0001 != 0) {
+        isError = LiveLiterals%TestKt.Boolean%param-isError%fun-UiTextField()
+        %dirty = %dirty and 0b01110000.inv()
+      }
+      if (%default and 0b0010 != 0) {
+        keyboardActions2 = LiveLiterals%TestKt.Boolean%param-keyboardActions2%fun-UiTextField()
+        %dirty = %dirty and 0b001110000000.inv()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+      if (%default and 0b0001 != 0) {
+        %dirty = %dirty and 0b01110000.inv()
+      }
+      if (%default and 0b0010 != 0) {
+        %dirty = %dirty and 0b001110000000.inv()
+      }
+    }
+    %composer.endDefaults()
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    println("%{LiveLiterals%TestKt.String%0%str%arg-0%call-println%fun-UiTextField()}%isError")
+    println("%{LiveLiterals%TestKt.String%0%str%arg-0%call-println-1%fun-UiTextField()}%keyboardActions2")
+    Column(null, null, null, { %composer: Composer?, %changed: Int ->
+      Text("%isError", false, 0, 0, %composer, 0, 0b1110)
+      Text("%keyboardActions2", false, 0, 0, %composer, 0, 0b1110)
+    }, %composer, 0, 0b0111)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    UiTextField(isError, keyboardActions2, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}
+@LiveLiteralFileInfo(file = "/Test.kt")
+internal object LiveLiterals%TestKt {
+  val enabled: Boolean = false
+  val Int%class-Ui: Int = 0
+  var State%Int%class-Ui: State<Int>?
+  @LiveLiteralInfo(key = "Int%class-Ui", offset = -1)
+  fun Int%class-Ui(): Int {
+    if (!enabled) {
+      return Int%class-Ui
+    }
+    val tmp0 = State%Int%class-Ui
+    return if (tmp0 == null) {
+      val tmp1 = liveLiteral("Int%class-Ui", Int%class-Ui)
+      State%Int%class-Ui = tmp1
+      tmp1
+    } else {
+      tmp0
+    }
+    .value
+  }
+  val Boolean%param-isError%fun-UiTextField: Boolean = false
+  var State%Boolean%param-isError%fun-UiTextField: State<Boolean>?
+  @LiveLiteralInfo(key = "Boolean%param-isError%fun-UiTextField", offset = 257)
+  fun Boolean%param-isError%fun-UiTextField(): Boolean {
+    if (!enabled) {
+      return Boolean%param-isError%fun-UiTextField
+    }
+    val tmp0 = State%Boolean%param-isError%fun-UiTextField
+    return if (tmp0 == null) {
+      val tmp1 = liveLiteral("Boolean%param-isError%fun-UiTextField", Boolean%param-isError%fun-UiTextField)
+      State%Boolean%param-isError%fun-UiTextField = tmp1
+      tmp1
+    } else {
+      tmp0
+    }
+    .value
+  }
+  val Boolean%param-keyboardActions2%fun-UiTextField: Boolean = false
+  var State%Boolean%param-keyboardActions2%fun-UiTextField: State<Boolean>?
+  @LiveLiteralInfo(key = "Boolean%param-keyboardActions2%fun-UiTextField", offset = 296)
+  fun Boolean%param-keyboardActions2%fun-UiTextField(): Boolean {
+    if (!enabled) {
+      return Boolean%param-keyboardActions2%fun-UiTextField
+    }
+    val tmp0 = State%Boolean%param-keyboardActions2%fun-UiTextField
+    return if (tmp0 == null) {
+      val tmp1 = liveLiteral("Boolean%param-keyboardActions2%fun-UiTextField", Boolean%param-keyboardActions2%fun-UiTextField)
+      State%Boolean%param-keyboardActions2%fun-UiTextField = tmp1
+      tmp1
+    } else {
+      tmp0
+    }
+    .value
+  }
+  val String%0%str%arg-0%call-println%fun-UiTextField: String = "t41 insideFunction "
+  var State%String%0%str%arg-0%call-println%fun-UiTextField: State<String>?
+  @LiveLiteralInfo(key = "String%0%str%arg-0%call-println%fun-UiTextField", offset = 320)
+  fun String%0%str%arg-0%call-println%fun-UiTextField(): String {
+    if (!enabled) {
+      return String%0%str%arg-0%call-println%fun-UiTextField
+    }
+    val tmp0 = State%String%0%str%arg-0%call-println%fun-UiTextField
+    return if (tmp0 == null) {
+      val tmp1 = liveLiteral("String%0%str%arg-0%call-println%fun-UiTextField", String%0%str%arg-0%call-println%fun-UiTextField)
+      State%String%0%str%arg-0%call-println%fun-UiTextField = tmp1
+      tmp1
+    } else {
+      tmp0
+    }
+    .value
+  }
+  val String%0%str%arg-0%call-println-1%fun-UiTextField: String = "t41 insideFunction "
+  var State%String%0%str%arg-0%call-println-1%fun-UiTextField: State<String>?
+  @LiveLiteralInfo(key = "String%0%str%arg-0%call-println-1%fun-UiTextField", offset = 363)
+  fun String%0%str%arg-0%call-println-1%fun-UiTextField(): String {
+    if (!enabled) {
+      return String%0%str%arg-0%call-println-1%fun-UiTextField
+    }
+    val tmp0 = State%String%0%str%arg-0%call-println-1%fun-UiTextField
+    return if (tmp0 == null) {
+      val tmp1 = liveLiteral("String%0%str%arg-0%call-println-1%fun-UiTextField", String%0%str%arg-0%call-println-1%fun-UiTextField)
+      State%String%0%str%arg-0%call-println-1%fun-UiTextField = tmp1
+      tmp1
+    } else {
+      tmp0
+    }
+    .value
+  }
+}

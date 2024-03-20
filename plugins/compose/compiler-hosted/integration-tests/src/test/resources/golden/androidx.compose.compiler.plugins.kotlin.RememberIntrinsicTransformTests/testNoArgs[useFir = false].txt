@@ -1,0 +1,63 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+
+
+@Composable
+fun Test() {
+    val foo = remember { Foo() }
+    val bar = remember { Foo() }
+    A()
+    val bam = remember { Foo() }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<rememb...>,<rememb...>,<A()>,<rememb...>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val foo = <block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(false) {
+        Foo()
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
+    }
+    val bar = <block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp1_group = %composer.cache(false) {
+        Foo()
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp1_group
+    }
+    A(%composer, 0)
+    val bam = <block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp2_group = %composer.cache(false) {
+        Foo()
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp2_group
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

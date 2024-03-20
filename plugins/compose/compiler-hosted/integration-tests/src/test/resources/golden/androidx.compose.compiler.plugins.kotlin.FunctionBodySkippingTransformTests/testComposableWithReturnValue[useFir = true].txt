@@ -1,0 +1,39 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable
+fun Test(x: Int = 0, y: Int = 0): Int {
+    A(x, y)
+    return x + y
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "C(Test)<A(x,>:Test.kt")
+  if (%default and 0b0001 != 0) {
+    x = 0
+  }
+  if (%default and 0b0010 != 0) {
+    y = 0
+  }
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  A(x, y, %composer, 0b1110 and %changed or 0b01110000 and %changed, 0)
+  val tmp0 = x + y
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}

@@ -1,0 +1,64 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@NonRestartableComposable @Composable
+fun Example(x: Int) {
+    // no need for a group around the when expression overall, but since the result
+    // of the expression is now being used, we need to generate temporary variables to
+    // capture the result but still do the execution of the expression inside of groups.
+    val y = when (x) {
+        0 -> R(a)
+        1 -> R(b)
+        else -> R(c)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@NonRestartableComposable
+@Composable
+fun Example(x: Int, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val y = <block>{
+    val tmp0_subject = x
+    when {
+      tmp0_subject == 0 -> {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<R(a)>")
+        val tmp0_group = R(a, %composer, 0)
+        %composer.endReplaceGroup()
+        tmp0_group
+      }
+      tmp0_subject == 0b0001 -> {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<R(b)>")
+        val tmp1_group = R(b, %composer, 0)
+        %composer.endReplaceGroup()
+        tmp1_group
+      }
+      else -> {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<R(c)>")
+        val tmp2_group = R(c, %composer, 0)
+        %composer.endReplaceGroup()
+        tmp2_group
+      }
+    }
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

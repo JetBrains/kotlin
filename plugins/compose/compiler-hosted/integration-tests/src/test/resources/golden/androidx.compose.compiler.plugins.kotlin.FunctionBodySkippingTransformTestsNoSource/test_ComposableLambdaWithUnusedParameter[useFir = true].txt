@@ -1,0 +1,24 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+val layoutLambda = @Composable { _: Int ->
+    Layout()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+val layoutLambda: Function3<Int, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
+internal object ComposableSingletons%TestKt {
+  val lambda-1: Function3<Int, Composer, Int, Unit> = composableLambdaInstance(<>, false) { <unused var>: Int, %composer: Composer?, %changed: Int ->
+    if (%changed and 0b01010001 != 0b00010000 || !%composer.skipping) {
+      Layout(%composer, 0)
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+}

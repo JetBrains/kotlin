@@ -1,0 +1,47 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+private fun Test() {
+    Bug(listOf(1, 2, 3)) {
+        Text(it.toString())
+    }
+}
+
+@Composable
+private inline fun <T> Bug(items: List<T>, content: @Composable (item: T) -> Unit) {
+    for (item in items) content(item)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+private fun Test(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  if (%changed != 0 || !%composer.skipping) {
+    Bug(listOf(1, 2, 3), { it: @[ParameterName(name = 'item')] Int, %composer: Composer?, %changed: Int ->
+      Text(it.toString(), %composer, 0)
+    }, %composer, 0b0110)
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+private fun <T> Bug(items: List<T>, content: Function3<@[ParameterName(name = 'item')] T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  %composer.startReplaceGroup(<>)
+  val <iterator> = items.iterator()
+  while (<iterator>.hasNext()) {
+    val item = <iterator>.next()
+    content(item, %composer, 0b01110000 and %changed)
+  }
+  %composer.endReplaceGroup()
+}

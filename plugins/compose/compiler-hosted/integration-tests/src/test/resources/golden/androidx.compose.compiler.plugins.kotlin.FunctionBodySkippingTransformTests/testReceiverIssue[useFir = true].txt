@@ -1,0 +1,57 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+import androidx.compose.runtime.ExplicitGroupsComposable
+
+@Composable
+@ExplicitGroupsComposable
+fun A(foo: Foo) {
+    foo.b()
+}
+
+@Composable
+@ExplicitGroupsComposable
+inline fun Foo.b(label: String = "") {
+    c(this, label)
+}
+
+@Composable
+@ExplicitGroupsComposable
+inline fun c(foo: Foo, label: String) {
+    print(label)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@ExplicitGroupsComposable
+fun A(foo: Foo, %composer: Composer?, %changed: Int) {
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  foo.b(null, %composer, 0b1110 and %changed, 0b0001)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+}
+@Composable
+@ExplicitGroupsComposable
+fun Foo.b(label: String?, %composer: Composer?, %changed: Int, %default: Int) {
+  if (%default and 0b0001 != 0) {
+    label = ""
+  }
+  c(<this>, label, %composer, 0b1110 and %changed or 0b01110000 and %changed)
+}
+@Composable
+@ExplicitGroupsComposable
+fun c(foo: Foo, label: String, %composer: Composer?, %changed: Int) {
+  print(label)
+}

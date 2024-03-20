@@ -1,0 +1,65 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+fun Test(start: Int, end: Int) {
+    val a = remember { A() }
+    for (i in start until end) {
+        val b = a.get(bKey)
+        if (i == 2) {
+            a.get(cKey)
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(start: Int, end: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)P(1)<rememb...>,*<get(bK...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(start)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(end)) 0b00100000 else 0b00010000
+  }
+  if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    val a = <block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(false) {
+        A()
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
+    }
+    val <iterator> = start until end.iterator()
+    while (<iterator>.hasNext()) {
+      val i = <iterator>.next()
+      val b = a.get(bKey, %composer, 0b00110110)
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "<get(cK...>")
+      if (i == 0b0010) {
+        a.get(cKey, %composer, 0b00110110)
+      }
+      %composer.endReplaceGroup()
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(start, end, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

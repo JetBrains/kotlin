@@ -1,0 +1,56 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+
+
+@Composable
+fun Test(a: Int, b: Int, c: Bar, d: Boolean) {
+    val foo = remember(a, b, c, d) { Foo() }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(a: Int, b: Int, c: Bar, d: Boolean, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<rememb...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b1110 == 0) {
+    %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b01110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(b)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b001110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(c)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b0001110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(d)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    val foo = <block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 or %dirty and 0b01110000 == 0b00100000 or %dirty and 0b001110000000 == 0b000100000000 or %dirty and 0b0001110000000000 == 0b100000000000) {
+        Foo()
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(a, b, c, d, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
