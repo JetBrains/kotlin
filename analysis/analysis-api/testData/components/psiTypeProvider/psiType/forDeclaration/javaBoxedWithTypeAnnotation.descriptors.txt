@@ -1,2 +1,0 @@
-KtType: @MyAnno(value = "java text") kotlin.Int!
-PsiType: java.lang.Integer

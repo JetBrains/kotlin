@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiTypeElement
+import com.intellij.psi.SyntheticElement
 import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10JvmTypeMapperCo
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
+import org.jetbrains.kotlin.asJava.classes.annotateByKotlinType
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.getOptimalModeForReturnType
@@ -47,7 +49,7 @@ internal class KtFe10PsiTypeProvider(
         mode: KtTypeMappingMode,
         isAnnotationMethod: Boolean,
         suppressWildcards: Boolean?,
-        preserveAnnotations: Boolean
+        preserveAnnotations: Boolean,
     ): PsiType? {
         val kotlinType = (type as KtFe10Type).fe10Type
 
@@ -65,7 +67,10 @@ internal class KtFe10PsiTypeProvider(
             mode.toTypeMappingMode(type, isAnnotationMethod, suppressWildcards),
         )
 
-        return typeElement?.type
+        val psiType = typeElement?.type ?: return null
+        if (!preserveAnnotations) return psiType
+
+        return annotateByKotlinType(psiType, kotlinType, typeElement)
     }
 
     private fun KtTypeMappingMode.toTypeMappingMode(
@@ -129,7 +134,7 @@ internal class KtFe10PsiTypeProvider(
         val typeInfo = TypeInfo.fromString(javaType, false)
         val typeText = TypeInfo.createTypeText(typeInfo) ?: return null
 
-        return ClsTypeElementImpl(useSitePosition, typeText, '\u0000')
+        return SyntheticTypeElement(useSitePosition, typeText)
     }
 
     override fun asKtType(
@@ -139,3 +144,5 @@ internal class KtFe10PsiTypeProvider(
         throw UnsupportedOperationException("Conversion to KtType is not supported in K1 implementation")
     }
 }
+
+private class SyntheticTypeElement(parent: PsiElement, typeText: String) : ClsTypeElementImpl(parent, typeText, '\u0000'), SyntheticElement
