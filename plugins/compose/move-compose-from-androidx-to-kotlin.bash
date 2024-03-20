@@ -44,7 +44,38 @@ git-filter-repo \
   --path compose/compose-compiler-hosted/ --path-rename compose/compose-compiler-hosted/:compose-compiler-hosted/ \
   --path compose/compiler/ --path-rename compose/compiler/:${destinationDir} \
   --preserve-commit-hashes \
-  --commit-callback 'commit.message += b"\n[androidx-to-kotlin-move] Original commit: https://github.com/androidx/androidx/commit/%s" % commit.original_id' \
+  --commit-callback '
+
+  def replace_bug_pattern(prefix, input_bytes):
+      import re
+      input_string = input_bytes.decode('\''utf-8'\'')
+      pattern = f'\''{prefix}(\d+)'\''
+      def replacement(match):
+          return match.group(0) + " ( https://issuetracker.google.com/issues/" + match.group(1) + " )"
+      return re.sub(pattern, replacement, input_string).encode('\''utf-8'\'')
+
+  def replace_changeid_pattern(input_bytes):
+      import re
+      input_string = input_bytes.decode('\''utf-8'\'')
+      pattern = r'\''I[a-fA-F0-9]{40}'\''
+      def replacement(match):
+          return match.group(0) + '\'' ( https://android-review.git.corp.google.com/q/'\'' + match.group(0) + '\'' )'\''
+      replaced_text = re.sub(pattern, replacement, input_string)
+      return replaced_text.encode('\''utf-8'\'')
+
+  commit.message = replace_bug_pattern("Bug: ", commit.message)
+  commit.message = replace_bug_pattern("Fixes: ", commit.message)
+  commit.message = replace_bug_pattern("Issue: ", commit.message)
+  commit.message = replace_bug_pattern("bug: ", commit.message)
+  commit.message = replace_bug_pattern("fixes: ", commit.message)
+  commit.message = replace_bug_pattern("issue: ", commit.message)
+  commit.message = replace_bug_pattern("b/", commit.message)
+  commit.message = replace_changeid_pattern(commit.message)
+
+  if (not "Change-Id" in commit.message.decode('\''utf-8'\'')):
+      commit.message += b"\n[androidx-to-kotlin-move] Original commit: https://github.com/androidx/androidx/commit/%s" % commit.original_id
+
+    ' \
   --force
 
 echo "--- Second phase. Merge everything to the destination repository"
