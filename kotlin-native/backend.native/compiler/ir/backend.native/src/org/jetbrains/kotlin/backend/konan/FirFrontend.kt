@@ -80,8 +80,8 @@ internal inline fun <F> PhaseContext.firFrontend(
 
     outputs.runPlatformCheckers(diagnosticsReporter)
 
+    FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
     return if (syntaxErrors || diagnosticsReporter.hasErrors) {
-        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
         throw KonanCompilationException("Compilation failed: there were frontend errors")
     } else {
         FirOutput.Full(FirResult(outputs))
