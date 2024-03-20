@@ -30,8 +30,8 @@ class PublishJvmEnvironmentAttributeTest {
         val kotlin = multiplatformExtension
         kotlin.jvm()
         configurationResult.await()
-        assertFalse(kotlinPropertiesProvider.publishJvmEnvironmentAttribute)
-        assertNoJvmEnvironmentAttribute(kotlin.jvm())
+        assertTrue(kotlinPropertiesProvider.publishJvmEnvironmentAttribute)
+        assertJvmEnvironmentAttributeEquals(kotlin.jvm(), STANDARD_JVM)
     }
 
     @Test
@@ -55,7 +55,7 @@ class PublishJvmEnvironmentAttributeTest {
 
         configurationResult.await()
         assertTrue(kotlinPropertiesProvider.publishJvmEnvironmentAttribute)
-        assertJvmEnvironmentAttributeEquals(kotlin.jvm(), project.objects.named<TargetJvmEnvironment>(STANDARD_JVM))
+        assertJvmEnvironmentAttributeEquals(kotlin.jvm(), STANDARD_JVM)
     }
 
     private fun assertNoJvmEnvironmentAttribute(target: KotlinTarget) {
@@ -75,6 +75,13 @@ class PublishJvmEnvironmentAttributeTest {
                 value, usage.attributes.getAttribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE),
             )
         }
+    }
+
+    private fun assertJvmEnvironmentAttributeEquals(target: KotlinTarget, value: String) {
+        assertJvmEnvironmentAttributeEquals(
+            target,
+            target.project.objects.named<TargetJvmEnvironment>(value)
+        )
     }
 
     private fun KotlinTarget.forEachUsage(action: (usage: KotlinUsageContext) -> Unit) {

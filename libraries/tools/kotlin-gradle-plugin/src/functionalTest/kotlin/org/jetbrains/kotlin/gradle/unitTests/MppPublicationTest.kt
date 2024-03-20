@@ -20,8 +20,6 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.gradle.util.addBuildEventsListenerRegistryMock
-import org.jetbrains.kotlin.gradle.util.disableLegacyWarning
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import kotlin.test.*
 
@@ -95,7 +93,8 @@ class MppPublicationTest {
 
         val extraExpectedAttributes = mapOf(               // target disambiguation attribute
             "org.jetbrains.kotlin.platform.type" to "jvm", // is set by default by kgp, when it sets usage as `java-runtime-jars`
-            "org.gradle.libraryelements" to "jar"          // see [KotlinUsages.producerApiUsage]
+            "org.gradle.libraryelements" to "jar",         // see [KotlinUsages.producerApiUsage]
+            "org.gradle.jvm.environment" to "standard-jvm"
         )
 
         val expectedAttributes = javaSourcesElementsAttributes.toMapOfStrings() + extraExpectedAttributes

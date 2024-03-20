@@ -137,6 +137,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             "org.gradle.dependency.bundling" to "external",
             "org.gradle.docstype" to "sources",
             "org.gradle.libraryelements" to "jar",
+            "org.gradle.jvm.environment" to "android",
             "org.gradle.usage" to "java-runtime",
             "org.jetbrains.kotlin.platform.type" to "androidJvm",
 
