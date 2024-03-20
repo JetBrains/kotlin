@@ -67,7 +67,7 @@ internal fun <K, V> build(builder: MutableMap<K, V>): Map<K, V> {
  * This method guarantees not to put the value into the map if the key is already there,
  * but the [defaultValue] function may be invoked even if the key is already in the map.
  */
-public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
+public inline fun <K : Any, V : Any> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
     // Do not use computeIfAbsent on JVM8 as it would change locking behavior
     return this.get(key)
             ?: defaultValue().let { default -> this.putIfAbsent(key, default) ?: default }
