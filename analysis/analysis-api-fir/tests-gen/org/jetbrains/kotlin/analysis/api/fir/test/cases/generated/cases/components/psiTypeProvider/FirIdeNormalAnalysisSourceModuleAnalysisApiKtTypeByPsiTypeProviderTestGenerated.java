@@ -134,4 +134,28 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiKtTypeByPsiTypeProviderT
   public void testTypeParameters2() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeParameters2.kt");
   }
+
+  @Test
+  @TestMetadata("varargParameter.kt")
+  public void testVarargParameter() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/varargParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("varargParameterComplexType.kt")
+  public void testVarargParameterComplexType() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/varargParameterComplexType.kt");
+  }
+
+  @Test
+  @TestMetadata("varargParameterComplexTypeAndTypeAnnotations.kt")
+  public void testVarargParameterComplexTypeAndTypeAnnotations() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/varargParameterComplexTypeAndTypeAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("varargParameterWithTypeAnnotations.kt")
+  public void testVarargParameterWithTypeAnnotations() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/varargParameterWithTypeAnnotations.kt");
+  }
 }
