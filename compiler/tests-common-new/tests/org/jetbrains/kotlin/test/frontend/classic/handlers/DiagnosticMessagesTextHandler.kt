@@ -38,7 +38,7 @@ class DiagnosticMessagesTextHandler(
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val resultDump = dumper.generateResultingDump()
-        val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
+        val testDataFile = testServices.moduleStructure.originalTestDataFiles.firstOrNull() ?: return
         val expectedFile = testDataFile.withExtension(".diag.txt")
 
         if (dumper.isEmpty()) {

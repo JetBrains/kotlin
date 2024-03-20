@@ -156,7 +156,7 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val expectedFile = testServices.moduleStructure.originalTestDataFiles.first().withExtension(".overrides.txt")
+        val expectedFile = testServices.moduleStructure.originalTestDataFiles.firstOrNull()?.withExtension(".overrides.txt") ?: return
         val actualDump = dumper.generateResultingDump()
         if (dumper.isEmpty()) {
             assertions.assertFileDoesntExist(expectedFile, SCOPE_DUMP)

@@ -36,7 +36,7 @@ class FirCfgDumpHandler(testServices: TestServices) : FirAnalysisHandler(testSer
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
+        val testDataFile = testServices.moduleStructure.originalTestDataFiles.firstOrNull() ?: return
         val expectedFile = testDataFile.parentFile.resolve("${testDataFile.nameWithoutFirExtension}.dot")
 
         if (!alreadyDumped) {

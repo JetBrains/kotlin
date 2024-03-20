@@ -64,7 +64,7 @@ class FirDumpHandler(
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         // TODO: change according to multiple testdata files
-        val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
+        val testDataFile = testServices.moduleStructure.originalTestDataFiles.firstOrNull() ?: return
         val extension = if (byteCodeListingEnabled) ".fir2.txt" else ".fir.txt"
         val expectedFile = testDataFile.parentFile.resolve("${testDataFile.nameWithoutFirExtension}$extension")
 
