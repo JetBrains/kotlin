@@ -1403,14 +1403,14 @@ public inline fun CharSequence.splitToSequence(regex: Regex, limit: Int = 0): Se
  *
  * The lines returned do not include terminating line separators.
  */
-public fun CharSequence.lineSequence(): Sequence<String> = splitToSequence("\r\n", "\n", "\r")
+public fun CharSequence.lineSequence(): Sequence<String> = toString().replace("\r\n", "\n").splitToSequence('\r', '\n')
 
 /**
  * Splits this char sequence to a list of lines delimited by any of the following character sequences: CRLF, LF or CR.
  *
  * The lines returned do not include terminating line separators.
  */
-public fun CharSequence.lines(): List<String> = lineSequence().toList()
+public fun CharSequence.lines(): List<String> = toString().replace("\r\n", "\n").split('\r', '\n')
 
 /**
  * Returns `true` if the contents of this char sequence are equal to the contents of the specified [other],
