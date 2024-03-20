@@ -27,6 +27,7 @@ internal fun collectGeneralConfigurationTimeMetrics(
     useClasspathSnapshot: Boolean,
     pluginVersion: String,
     isProjectIsolationEnabled: Boolean,
+    isConfigurationCacheRequested: Boolean
 ): MetricContainer {
     val configurationTimeMetrics = MetricContainer()
 
@@ -53,6 +54,9 @@ internal fun collectGeneralConfigurationTimeMetrics(
                 configurationTimeMetrics.put(BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"))
             }
         }
+
+        configurationTimeMetrics.put(BooleanMetrics.GRADLE_CONFIGURATION_CACHE_ENABLED, isConfigurationCacheRequested)
+        configurationTimeMetrics.put(BooleanMetrics.GRADLE_PROJECT_ISOLATION_ENABLED, isProjectIsolationEnabled)
     }
     configurationTimeMetrics.put(NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD, statisticOverhead)
 
