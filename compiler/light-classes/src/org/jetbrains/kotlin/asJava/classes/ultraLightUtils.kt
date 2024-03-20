@@ -168,7 +168,7 @@ internal fun KotlinType.asPsiType(
     typeMapper.mapType(this, signatureWriter, mode)
 }
 
-private fun annotateByKotlinType(
+fun annotateByKotlinType(
     psiType: PsiType,
     kotlinType: KotlinType,
     psiContext: PsiTypeElement,
