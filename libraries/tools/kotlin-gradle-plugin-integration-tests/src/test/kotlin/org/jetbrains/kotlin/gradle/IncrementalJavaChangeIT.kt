@@ -103,21 +103,25 @@ class IncrementalK2JavaChangeDefaultIT : IncrementalJavaChangeDefaultIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion) {
         super.testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion)
     }
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion) {
         super.testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion)
     }
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testAbiChangeInLib_changeMethodSignature(gradleVersion: GradleVersion) {
         super.testAbiChangeInLib_changeMethodSignature(gradleVersion)
     }
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
         super.testNonAbiChangeInLib_changeMethodBody(gradleVersion)
     }
@@ -128,21 +132,25 @@ class IncrementalK2JavaChangeBuildToolsApiDaemonIT : IncrementalJavaChangeDefaul
     override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON)
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion) {
         super.testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion)
     }
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion) {
         super.testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion)
     }
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testAbiChangeInLib_changeMethodSignature(gradleVersion: GradleVersion) {
         super.testAbiChangeInLib_changeMethodSignature(gradleVersion)
     }
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
         super.testNonAbiChangeInLib_changeMethodBody(gradleVersion)
     }
@@ -153,21 +161,25 @@ class IncrementalK2JavaChangeBuildToolsApiInProcessIT : IncrementalJavaChangeDef
     override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS)
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion) {
         super.testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion)
     }
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion) {
         super.testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion)
     }
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testAbiChangeInLib_changeMethodSignature(gradleVersion: GradleVersion) {
         super.testAbiChangeInLib_changeMethodSignature(gradleVersion)
     }
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
         super.testNonAbiChangeInLib_changeMethodBody(gradleVersion)
     }
@@ -188,21 +200,25 @@ class IncrementalK2JavaChangeWithoutPreciseCompilationBackupIT : IncrementalJava
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion) {
         super.testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion)
     }
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion) {
         super.testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion)
     }
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testAbiChangeInLib_changeMethodSignature(gradleVersion: GradleVersion) {
         super.testAbiChangeInLib_changeMethodSignature(gradleVersion)
     }
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
         super.testNonAbiChangeInLib_changeMethodBody(gradleVersion)
     }
@@ -275,21 +291,25 @@ class IncrementalK2JavaChangeOldICIT : IncrementalJavaChangeOldICIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion) {
         super.testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion)
     }
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion) {
         super.testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion)
     }
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testAbiChangeInLib_changeMethodSignature(gradleVersion: GradleVersion) {
         super.testAbiChangeInLib_changeMethodSignature(gradleVersion)
     }
 
     @Disabled("KT-57147")
+    @GradleTest
     override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
         super.testNonAbiChangeInLib_changeMethodBody(gradleVersion)
     }

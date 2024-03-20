@@ -78,6 +78,7 @@ class CompilerPluginsK2IncrementalIT : CompilerPluginsIncrementalIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     @Disabled("KT-61171")
+    @GradleTest
     override fun afterChangeInPluginBuildDoesIncrementalProcessing(gradleVersion: GradleVersion) {
         super.afterChangeInPluginBuildDoesIncrementalProcessing(gradleVersion)
     }
@@ -97,6 +98,7 @@ class CompilerPluginsK2IncrementalWithoutPreciseBackupIT : CompilerPluginsIncrem
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     @Disabled("KT-61171")
+    @GradleTest
     override fun afterChangeInPluginBuildDoesIncrementalProcessing(gradleVersion: GradleVersion) {
         super.afterChangeInPluginBuildDoesIncrementalProcessing(gradleVersion)
     }

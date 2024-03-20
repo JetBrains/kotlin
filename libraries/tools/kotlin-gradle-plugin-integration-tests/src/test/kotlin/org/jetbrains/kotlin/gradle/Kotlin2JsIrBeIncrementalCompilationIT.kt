@@ -32,6 +32,7 @@ class Kotlin2JsK2IrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompilat
         get() = super.defaultBuildOptions.copyEnsuringK2()
 
     @Disabled("Not found way to fail BE compilation with successful FE 2.0 compilation")
+    @GradleTest
     override fun testRebuildAfterError(gradleVersion: GradleVersion) {
         super.testRebuildAfterError(gradleVersion)
     }

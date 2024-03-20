@@ -41,6 +41,7 @@ abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilati
         get() = "caches-js"
 
     @Disabled("compileKotlinJs's modification does not work")
+    @GradleTest
     override fun testFailureHandling_ToolError(gradleVersion: GradleVersion) {}
 
     @Disabled("In JS IR all dependencies effectively api, not implementation")
@@ -164,6 +165,7 @@ class IncrementalCompilationK2JsMultiProject : IncrementalCompilationJsMultiProj
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     @Disabled("KT-61153")
+    @GradleTest
     override fun testRemoveLibFromClasspath(gradleVersion: GradleVersion) {
         super.testRemoveLibFromClasspath(gradleVersion)
     }
@@ -351,6 +353,7 @@ class IncrementalCompilationK2JvmMultiProjectBuildToolsApiDaemonIT : Incremental
     override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON)
 
     @Disabled("Doesn't make sense since Build Tools API supports incremental compilation for the in-process mode")
+    @GradleTest
     override fun testMissingIncrementalState(gradleVersion: GradleVersion) {
     }
 }
@@ -359,6 +362,7 @@ class IncrementalCompilationK2JvmMultiProjectBuildToolsApiInProcessIT : Incremen
     override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS)
 
     @Disabled("Doesn't make sense since Build Tools API supports incremental compilation for the in-process mode")
+    @GradleTest
     override fun testMissingIncrementalState(gradleVersion: GradleVersion) {
     }
 }
