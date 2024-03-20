@@ -28,6 +28,8 @@ plugins {
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
 
 // modules
+include ":kanalyze"
+
 include ":benchmarks",
         ":compiler",
         ":compiler:util",
