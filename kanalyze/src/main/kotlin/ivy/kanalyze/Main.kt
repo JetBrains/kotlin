@@ -4,6 +4,29 @@
  */
 package ivy.kanalyze
 
+import com.intellij.lang.Language
+import com.intellij.psi.PsiFileFactory
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CompilerConfiguration
+
 fun main() {
     println("Hello")
+    val environment = KotlinCoreEnvironment.createForProduction(
+        { },
+        CompilerConfiguration(),
+        EnvironmentConfigFiles.JVM_CONFIG_FILES,
+    )
+    val code = """
+            package ivy
+            
+            fun main() {
+              println("Hello, world!")
+            }
+        """.trimIndent()
+    val file = PsiFileFactory.getInstance(environment.project).createFileFromText(Language.ANY, code)
+
+    file.children.forEach {
+        println(it.text)
+    }
 }
