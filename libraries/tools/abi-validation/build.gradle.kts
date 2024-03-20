@@ -3,8 +3,11 @@ import kotlinx.validation.build.mavenCentralMetadata
 import kotlinx.validation.build.mavenRepositoryPublishing
 import kotlinx.validation.build.signPublicationIfKeyPresent
 import org.gradle.api.attributes.TestSuiteType.FUNCTIONAL_TEST
+import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import java.net.URL
 
 plugins {
     kotlin("jvm")
@@ -16,6 +19,7 @@ plugins {
     `jvm-test-suite`
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
     alias(libs.plugins.kover)
+    alias(libs.plugins.dokka)
 }
 
 group = "org.jetbrains.kotlinx"
@@ -221,5 +225,19 @@ kover {
     // will disable configuration cache).
     if (!project.findProperty("kover.enabled")?.toString().toBoolean()) {
         disable()
+    }
+}
+
+
+tasks.withType<DokkaTask>().configureEach {
+    dokkaSourceSets.configureEach {
+        includes.from("Module.md")
+
+        sourceLink {
+            localDirectory.set(rootDir)
+            remoteUrl.set(URL("https://github.com/Kotlin/binary-compatibility-validator/tree/master"))
+            remoteLineSuffix.set("#L")
+        }
+        samples.from("src/test/kotlin/samples/KlibDumpSamples.kt")
     }
 }
