@@ -33,7 +33,10 @@ dependencies {
     api(project(":compiler:fir:fir-serialization"))
     api(project(":kotlin-util-io"))
 
-    compileOnly(toolsJarApi())
-    compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    implementation(commonDependency("org.codehaus.woodstox:stax2-api"))
+    implementation(commonDependency("com.fasterxml:aalto-xml"))
+    implementation(toolsJarApi())
+    implementation(intellijCore())
+    implementation(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
