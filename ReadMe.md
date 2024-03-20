@@ -61,7 +61,7 @@ For local development, if you're not working on the standard library, it's OK to
 Add `kotlin.build.isObsoleteJdkOverrideEnabled=true` to the `local.properties` file, so build will only use JDK 1.8+. Note, that in this
 case, build will have Gradle remote build cache misses for some tasks. 
 
-Note: The JDK 6 for MacOS is not available on Oracle's site. You can install it by
+Note: The JDK 6 for MacOS is not available on Oracle's site. You can install it by:
 
 ```bash
 $ brew tap homebrew/cask-versions
@@ -83,7 +83,7 @@ or the following command on Windows:
 
     gradlew <tasks-and-options>
 
-On the first project configuration gradle will download and setup the dependencies on
+On the first project configuration gradle will download and setup the dependencies on:
 
 * `intellij-core` is a part of command line compiler and contains only necessary APIs.
 * `idea-full` is a full blown IntelliJ IDEA Community Edition to be used in the plugin module.
@@ -118,7 +118,7 @@ It is recommended to use the latest released version of Intellij IDEA (Community
 After cloning the project, import the project in IntelliJ by choosing the project directory in the Open project dialog.
 
 For handy work with compiler tests it's recommended to use [
-Kotlin Compiler Test Helper](https://github.com/demiurg906/test-data-helper-plugin)
+Kotlin Compiler Test Helper](https://github.com/demiurg906/test-data-helper-plugin).
 
 ### Dependency verification
 
