@@ -2,7 +2,7 @@
 set -e
 
 # "brew install coreutils" for grealpath.
-KONAN_TOOLCHAIN_VERSION=xcode_14_1_rc2
+KONAN_TOOLCHAIN_VERSION=xcode_15.1_15C65
 SDKS="macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator"
 TARBALL_macosx=target-sysroot-$KONAN_TOOLCHAIN_VERSION-macosx
 TARBALL_iphoneos=target-sysroot-$KONAN_TOOLCHAIN_VERSION-iphoneos
