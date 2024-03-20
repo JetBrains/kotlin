@@ -15,7 +15,6 @@ dependencies {
     api(project(":analysis:decompiled:light-classes-for-decompiled"))
     api(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
     implementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
-    testImplementation(project(":native:analysis-api-klib-reader"))
     testImplementation(projectTests(":analysis:analysis-api-fir"))
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
     testImplementation(projectTests(":analysis:analysis-test-framework"))

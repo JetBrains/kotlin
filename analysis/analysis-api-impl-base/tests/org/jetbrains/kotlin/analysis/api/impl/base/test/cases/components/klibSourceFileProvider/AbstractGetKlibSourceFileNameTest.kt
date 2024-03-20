@@ -15,9 +15,21 @@ import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.mainModules
+import org.jetbrains.kotlin.konan.file.File as KonanFile
+import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.library.metadata.parseModuleHeader
+import org.jetbrains.kotlin.library.metadata.parsePackageFragment
+import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.util.DummyLogger
 import kotlin.test.fail
 
 /**
@@ -35,16 +47,41 @@ abstract class AbstractGetKlibSourceFileNameTest : AbstractAnalysisApiBasedTest(
         actual.appendLine("klib declarations:")
 
         analyze(libraryModule) {
-            val klibAddresses = libraryModule.readKlibDeclarationAddresses() ?: fail("Failed reading 'klib addresses' from $libraryModule")
-            klibAddresses.forEach { klibDeclarationAddress ->
-                klibDeclarationAddress.getSymbols().filterIsInstance<KtDeclarationSymbol>().forEach { symbol ->
-                    val sourceFile = symbol.getKlibSourceFileName()
-                    if (symbol is KtCallableSymbol) {
-                        actual.appendLine("Callable: ${symbol.callableIdIfNonLocal}; klibSourceFile: $sourceFile")
-                    }
+            val binaryRoot = libraryModule.getBinaryRoots().singleOrNull() ?: fail("Expected single binary root")
+            val library = ToolingSingleFileKlibResolveStrategy.tryResolve(KonanFile(binaryRoot), DummyLogger) ?: fail("Failed loading klib")
+            val headerProto = parseModuleHeader(library.moduleHeaderData)
 
-                    if (symbol is KtClassOrObjectSymbol) {
-                        actual.appendLine("Classifier: ${symbol.classIdIfNonLocal}; klibSourceFile: $sourceFile")
+            val packageMetadataSequence = headerProto.packageFragmentNameList.asSequence().flatMap { packageFragmentName ->
+                library.packageMetadataParts(packageFragmentName).asSequence().map { packageMetadataPart ->
+                    library.packageMetadata(packageFragmentName, packageMetadataPart)
+                }
+            }
+
+            packageMetadataSequence.forEach { packageMetadata ->
+                val packageFragmentProto = parsePackageFragment(packageMetadata)
+                val nameResolver = NameResolverImpl(packageFragmentProto.strings, packageFragmentProto.qualifiedNames)
+                val packageFqName = packageFragmentProto.`package`.getExtensionOrNull(KlibMetadataProtoBuf.packageFqName)
+                    ?.let { packageFqNameStringIndex -> nameResolver.getPackageFqName(packageFqNameStringIndex) }
+                    ?.let { fqNameString -> FqName(fqNameString) }
+                    ?: fail("Missing packageFqName")
+
+
+                packageFragmentProto.class_List.forEach { classProto ->
+                    val classId = ClassId.fromString(nameResolver.getQualifiedClassName(classProto.fqName))
+                    val classSymbol = getClassOrObjectSymbolByClassId(classId) ?: fail("Failed to find symbol '$classId'")
+                    actual.appendLine("Classifier: ${classSymbol.classIdIfNonLocal}; klibSourceFile: ${classSymbol.getKlibSourceFileName()}")
+                }
+
+                val propertyNames = packageFragmentProto.`package`.propertyList
+                    .map { propertyProto -> nameResolver.getName(propertyProto.name) }
+
+                val functionNames = packageFragmentProto.`package`.functionList
+                    .map { functionProto -> nameResolver.getName(functionProto.name) }
+
+                val callableNames = (propertyNames + functionNames).distinct()
+                callableNames.forEach { callableName ->
+                    getTopLevelCallableSymbols(packageFqName, callableName).forEach { symbol ->
+                        actual.appendLine("Callable: ${symbol.callableIdIfNonLocal}; klibSourceFile: ${symbol.getKlibSourceFileName()}")
                     }
                 }
             }
