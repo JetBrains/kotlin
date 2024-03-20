@@ -36689,6 +36689,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("globalExtensionForHiddenInDeclaringMethod.kt")
+      public void testGlobalExtensionForHiddenInDeclaringMethod() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/globalExtensionForHiddenInDeclaringMethod.kt");
+      }
+
+      @Test
       @TestMetadata("hiddenInDeclaringMethods.kt")
       public void testHiddenInDeclaringMethods() {
         runTest("compiler/testData/diagnostics/tests/testsWithJava21/hiddenInDeclaringMethods.kt");
@@ -36698,6 +36704,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("implementationsForSequencedCollection.kt")
       public void testImplementationsForSequencedCollection() {
         runTest("compiler/testData/diagnostics/tests/testsWithJava21/implementationsForSequencedCollection.kt");
+      }
+
+      @Test
+      @TestMetadata("memberExtensionForHiddenInDeclaringMethod.kt")
+      public void testMemberExtensionForHiddenInDeclaringMethod() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/memberExtensionForHiddenInDeclaringMethod.kt");
       }
 
       @Test
