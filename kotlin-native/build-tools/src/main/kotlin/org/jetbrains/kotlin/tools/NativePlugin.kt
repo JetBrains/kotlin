@@ -210,9 +210,7 @@ open class NativeToolsExtension(val project: Project) {
 
     fun target(name: String, vararg objSet: SourceSet, configuration: ToolPatternConfiguration) {
         project.tasks.named(LifecycleBasePlugin.CLEAN_TASK_NAME, Delete::class.java).configure {
-            doLast {
-                delete(*this@NativeToolsExtension.cleanupFiles.toTypedArray())
-            }
+            delete(*this@NativeToolsExtension.cleanupFiles.toTypedArray())
         }
 
         sourceSets.project.tasks.create(name, ToolExecutionTask::class.java) {
