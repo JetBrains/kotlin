@@ -5,7 +5,7 @@ plugins {
     id("jps-compatible")
 }
 
-group = "org.jetbrains.kotlin.experimental.compose"
+group = "org.jetbrains.kotlin.compose"
 description = "Contains the Kotlin compiler plugin for Compose used in Android Studio and IDEA"
 
 dependencies {

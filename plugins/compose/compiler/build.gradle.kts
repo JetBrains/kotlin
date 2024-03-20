@@ -9,7 +9,7 @@ dependencies {
 }
 
 description = "Compiler plugin that enables Compose"
-group = "org.jetbrains.kotlin.experimental.compose"
+group = "org.jetbrains.kotlin.compose"
 
 publish {
     pom {
