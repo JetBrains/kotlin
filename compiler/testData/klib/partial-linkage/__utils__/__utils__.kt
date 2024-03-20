@@ -178,8 +178,7 @@ private class CustomThrowableFailure(private val checker: (Throwable) -> Boolean
             TestFailedWithException(t) // Unexpected type of exception.
 }
 
-@Suppress("PrivatePropertyName", "INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-private val NoWhenBranchFailure = CustomThrowableFailure { it is NoWhenBranchMatchedException }
+private val NoWhenBranchFailure = CustomThrowableFailure { it.isNoWhenBranchMatchedException }
 
 private sealed class Test {
     val sourceLocation: String? = computeSourceLocation()
@@ -204,6 +203,9 @@ private class TestMismatchedExpectation(expectedOutcome: Any, actualOutcome: Any
 
 private val Throwable.isLinkageError: Boolean
     get() = this::class.simpleName == "IrLinkageError"
+
+private val Throwable.isNoWhenBranchMatchedException: Boolean
+    get() = this::class.simpleName == "NoWhenBranchMatchedException"
 
 fun computeSourceLocation(): String? {
     fun extractSourceLocation(stackTraceLine: String): String? {
