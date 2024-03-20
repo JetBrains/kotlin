@@ -6,184 +6,91 @@
 package org.jetbrains.sir.passes.builder
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.isPublic
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.*
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 
-public fun KtAnalysisSession.buildSirDeclarationList(from: KtElement): List<SirDeclaration> {
-    val res = mutableListOf<SirDeclaration>()
-    from.accept(
-        PsiToSirTranslationCollector(
-            res,
-            PsiToSirTranslatableChecker(this),
-            PsiToSirElementTranslation(this),
-        )
-    )
-    return res.toList()
-}
+context(KtAnalysisSession)
+public fun KtFileSymbol.buildSirDeclarationList(): List<SirDeclaration> = getFileScope()
+    .buildSirDeclarationList()
+    .toList()
 
-private abstract class PsiToSirTranslation<T>(
-    val analysisSession: KtAnalysisSession,
-) : KtVisitor<T, Unit?>() {
-    abstract override fun visitClassOrObject(classOrObject: KtClassOrObject, data: Unit?): T
-    abstract override fun visitNamedFunction(function: KtNamedFunction, data: Unit?): T
-    abstract override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: Unit?): T
-    abstract override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: Unit?): T
-    abstract override fun visitProperty(property: KtProperty, data: Unit?): T
-}
+context(KtAnalysisSession)
+private fun KtScope.buildSirDeclarationList() = getAllSymbols()
+    .filter { it.isConsumableBySir() }
+    .mapNotNull { it.toSirDeclaration() }
 
-private class PsiToSirTranslationCollector(
-    private val res: MutableList<SirDeclaration>,
-    private val checker: PsiToSirTranslation<Boolean>,
-    private val translator: PsiToSirTranslation<SirDeclaration>,
-) : KtTreeVisitorVoid() {
-
-    override fun visitClassOrObject(classOrObject: KtClassOrObject) {
-        classOrObject.checkAndTranslate(null)
-    }
-
-    override fun visitNamedFunction(function: KtNamedFunction) {
-        function.checkAndTranslate(null)
-    }
-
-    override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor) {
-        constructor.checkAndTranslate(null)
-    }
-
-    override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor) {
-        constructor.checkAndTranslate(null)
-    }
-
-    override fun visitProperty(property: KtProperty) {
-        property.checkAndTranslate(null)
-    }
-
-    private fun KtElement.checkAndTranslate(data: Unit?) = takeIf { it.accept(checker, data) }
-        ?.let { res.add(it.accept(translator, data)) }
-}
-
-private class PsiToSirTranslatableChecker(
-    analysisSession: KtAnalysisSession,
-) : PsiToSirTranslation<Boolean>(analysisSession) {
-
-    override fun visitClassOrObject(classOrObject: KtClassOrObject, data: Unit?): Boolean = with(analysisSession) {
-        return classOrObject.isPublic
-                && classOrObject.getNamedClassOrObjectSymbol()?.isConsumableBySirBuilder() ?: false
-    }
-
-    override fun visitNamedFunction(function: KtNamedFunction, data: Unit?): Boolean = with(analysisSession) {
-        val functionIsPublicAndTopLevel = function.isPublic
-                && !function.isAnonymous
-        val functionSymbolIsTranslatable = (function.getFunctionLikeSymbol() as? KtFunctionSymbol)
-            ?.let { symbol ->
-                !symbol.isSuspend
-                        && !symbol.isInline
-                        && !symbol.isExtension
-                        && !symbol.isOperator
-            }
-            ?: true
-        return functionIsPublicAndTopLevel && functionSymbolIsTranslatable
-    }
-
-    override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: Unit?): Boolean {
-        return constructor.isConsumable()
-    }
-
-    override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: Unit?): Boolean {
-        return constructor.isConsumable()
-    }
-
-    override fun visitProperty(property: KtProperty, data: Unit?): Boolean {
-        return property.isPublic
-    }
-
-    private fun KtConstructor<*>.isConsumable(): Boolean {
-        return isPublic
+context(KtAnalysisSession)
+private fun KtSymbol.isConsumableBySir(): Boolean {
+    return isPublic() && when (this) {
+        is KtNamedClassOrObjectSymbol -> {
+            isConsumableBySirBuilder()
+        }
+        is KtConstructorSymbol -> {
+            true
+        }
+        is KtFunctionSymbol -> {
+            SUPPORTED_SYMBOL_ORIGINS.contains(origin)
+                    && !isSuspend
+                    && !isInline
+                    && !isExtension
+                    && !isOperator
+        }
+        is KtVariableSymbol -> {
+            true
+        }
+        else -> false
     }
 }
 
-private class PsiToSirElementTranslation(
-    analysisSession: KtAnalysisSession,
-) : PsiToSirTranslation<SirDeclaration>(analysisSession) {
+private val SUPPORTED_SYMBOL_ORIGINS = setOf(KtSymbolOrigin.SOURCE, KtSymbolOrigin.LIBRARY)
 
-    override fun visitClassOrObject(classOrObject: KtClassOrObject, data: Unit?): SirDeclaration = with(analysisSession) {
-        buildSirClassFromPsi(classOrObject)
-    }
-
-    override fun visitNamedFunction(function: KtNamedFunction, data: Unit?): SirDeclaration = with(analysisSession) {
-        buildSirFunctionFromPsi(function)
-    }
-
-    override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: Unit?): SirDeclaration = with(analysisSession) {
-        buildSirConstructorFromPsi(constructor)
-    }
-
-    override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: Unit?): SirDeclaration = with(analysisSession) {
-        buildSirConstructorFromPsi(constructor)
-    }
-
-    override fun visitProperty(property: KtProperty, data: Unit?): SirDeclaration = with(analysisSession) {
-        buildSirVariableFromPsi(property)
+context(KtAnalysisSession)
+private fun KtSymbol.toSirDeclaration(): SirDeclaration? {
+    return when (this) {
+        is KtNamedClassOrObjectSymbol -> {
+            sirClass()
+        }
+        is KtConstructorSymbol -> {
+            sirInit()
+        }
+        is KtFunctionLikeSymbol -> {
+            sirFunction()
+        }
+        is KtVariableSymbol -> {
+            sirVariable()
+        }
+        else -> null
     }
 }
 
 context(KtAnalysisSession)
-internal fun buildSirClassFromPsi(classOrObject: KtClassOrObject): SirNamedDeclaration {
-    val symbol = classOrObject.getNamedClassOrObjectSymbol()!!
+internal fun KtNamedClassOrObjectSymbol.sirClass(): SirNamedDeclaration {
     return buildClass {
-        name = classOrObject.name ?: "UNKNOWN_CLASS" // todo: error handling strategy: KT-65980
+        val symbol = this@sirClass
+        name = symbol.name.asString()
         origin = KotlinSource(symbol)
 
-        classOrObject.acceptChildren(
-            PsiToSirTranslationCollector(
-                declarations,
-                PsiToSirTranslatableChecker(analysisSession),
-                PsiToSirElementTranslation(analysisSession),
-            )
-        )
+        declarations += symbol.getCombinedDeclaredMemberScope().buildSirDeclarationList()
 
-        documentation = classOrObject.docComment?.text
+        documentation = symbol.documentation()
 
-        // HACK to support default constructors.
-        // todo: We should rework builder from PSI to AnalysisApi during KT-66310
-        val constructors = symbol.getMemberScope().getConstructors()
-        if (constructors.count() == 1 && constructors.first().psi == classOrObject) {
-            declarations.add(
-                0,
-                buildInit {
-                    val constructorSymbol = constructors.first()
-                    origin = KotlinSource(constructorSymbol)
-
-                    kind = constructorSymbol.sirCallableKind
-                    isFailable = false
-                    initKind = SirInitializerKind.ORDINARY
-
-                    constructorSymbol.valueParameters.mapTo(parameters) {
-                        SirParameter(
-                            argumentName = it.name.asString(),
-                            type = buildSirNominalType(it.returnType)
-                        )
-                    }
-
-                    documentation = null
-                }
-            )
-        }
     }.also { resultedClass ->
         resultedClass.declarations.forEach { decl -> decl.parent = resultedClass }
     }
 }
 
 context(KtAnalysisSession)
-internal fun buildSirFunctionFromPsi(function: KtNamedFunction): SirFunction = buildFunction {
-    val symbol = function.getFunctionLikeSymbol()
+internal fun KtFunctionLikeSymbol.sirFunction(): SirFunction = buildFunction {
+    val symbol = this@sirFunction
     val callableId = symbol.callableIdIfNonLocal
     origin = KotlinSource(symbol)
 
@@ -198,12 +105,12 @@ internal fun buildSirFunctionFromPsi(function: KtNamedFunction): SirFunction = b
         )
     }
     returnType = buildSirNominalType(symbol.returnType)
-    documentation = function.docComment?.text
+    documentation = symbol.documentation()
 }
 
 context(KtAnalysisSession)
-internal fun buildSirConstructorFromPsi(function: KtConstructor<*>): SirInit = buildInit {
-    val symbol = function.getConstructorSymbol()
+internal fun KtConstructorSymbol.sirInit(): SirInit = buildInit {
+    val symbol = this@sirInit
     origin = KotlinSource(symbol)
 
     kind = symbol.sirCallableKind
@@ -217,12 +124,12 @@ internal fun buildSirConstructorFromPsi(function: KtConstructor<*>): SirInit = b
         )
     }
 
-    documentation = function.docComment?.text
+    documentation = symbol.documentation()
 }
 
 context(KtAnalysisSession)
-internal fun buildSirVariableFromPsi(variable: KtProperty): SirVariable = buildVariable {
-    val symbol = variable.getVariableSymbol()
+internal fun KtVariableSymbol.sirVariable(): SirVariable = buildVariable {
+    val symbol = this@sirVariable
     val callableId = symbol.callableIdIfNonLocal
     origin = KotlinSource(symbol)
 
@@ -235,11 +142,11 @@ internal fun buildSirVariableFromPsi(variable: KtProperty): SirVariable = buildV
     getter = buildGetter {
         kind = accessorKind
     }
-    setter = if (variable.isVar) buildSetter {
+    setter = if (!symbol.isVal) buildSetter {
         kind = accessorKind
     } else null
 
-    documentation = variable.docComment?.text
+    documentation = symbol.documentation()
 }.also {
     it.getter.parent = it
     it.setter?.parent = it
@@ -298,3 +205,7 @@ private val KtCallableSymbol.sirCallableKind: SirCallableKind
         KtSymbolKind.SAM_CONSTRUCTOR
         -> TODO("encountered callable kind($symbolKind) that is not translatable currently. Fix this crash during KT-65980.")
     }
+
+private fun KtSymbol.isPublic(): Boolean = (this as? KtSymbolWithVisibility)?.visibility?.isPublicAPI == true
+
+private fun KtSymbol.documentation(): String? = this.psiSafe<KtDeclaration>()?.docComment?.text

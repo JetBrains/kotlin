@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sir.SirModule
-import org.jetbrains.kotlin.sir.builder.SirImportBuilder
 import org.jetbrains.kotlin.sir.builder.buildImport
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportInput
@@ -72,9 +71,11 @@ internal fun buildSwiftModule(
             declarations += buildImport {
                 moduleName = KOTLIN_RUNTIME_MODULE_NAME
             }
-            ktFiles.forEach { file ->
-                declarations += buildSirDeclarationList(file)
-            }
+            ktFiles
+                .map { it.getFileSymbol() }
+                .forEach {
+                    declarations += it.buildSirDeclarationList()
+                }
         }.apply {
             declarations.forEach { it.parent = this }
         }

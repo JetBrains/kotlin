@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -57,3 +59,7 @@ sourcesJar()
 javadocJar()
 
 testsJar()
+
+tasks.withType<KotlinJvmCompile> {
+    compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
+}
