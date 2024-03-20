@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.psi.PsiModifierListOwner
 import com.intellij.psi.PsiPrimitiveType
+import com.intellij.psi.PsiType
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -21,19 +24,24 @@ interface KtUltraLightElementWithNullabilityAnnotationDescriptorBased<T : KtDecl
     KtUltraLightElementWithNullabilityAnnotation<T, D> {
 
     fun computeQualifiedNameForNullabilityAnnotation(kotlinType: KotlinType?): String? {
-        val notErrorKotlinType = kotlinType?.takeUnless(KotlinType::isError) ?: return null
-        val psiType = psiTypeForNullabilityAnnotation ?: return null
-        if (psiType is PsiPrimitiveType) return null
+        return computeNullabilityQualifier(kotlinType, psiTypeForNullabilityAnnotation)
+    }
+}
 
-        if (notErrorKotlinType.isTypeParameter()) {
-            if (!TypeUtils.hasNullableSuperType(notErrorKotlinType)) return NotNull::class.java.name
-            if (!notErrorKotlinType.isMarkedNullable) return null
-        }
+fun computeNullabilityQualifier(kotlinType: KotlinType?, psiType: PsiType?): String? {
+    if (psiType == null || psiType is PsiPrimitiveType) return null
 
-        return when (notErrorKotlinType.nullability()) {
-            TypeNullability.NOT_NULL -> NotNull::class.java.name
-            TypeNullability.NULLABLE -> Nullable::class.java.name
-            TypeNullability.FLEXIBLE -> null
-        }
+    val notErrorKotlinType = kotlinType?.takeUnless(KotlinType::isError) ?: return null
+    if (KotlinBuiltIns.isPrimitiveType(kotlinType)) return null
+
+    if (notErrorKotlinType.isTypeParameter()) {
+        if (!TypeUtils.hasNullableSuperType(notErrorKotlinType)) return JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.asString()
+        if (!notErrorKotlinType.isMarkedNullable) return null
+    }
+
+    return when (notErrorKotlinType.nullability()) {
+        TypeNullability.NOT_NULL -> JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.asString()
+        TypeNullability.NULLABLE -> JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION.asString()
+        TypeNullability.FLEXIBLE -> null
     }
 }

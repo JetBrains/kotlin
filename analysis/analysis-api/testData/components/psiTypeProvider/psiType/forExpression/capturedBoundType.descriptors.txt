@@ -1,97 +1,97 @@
 KtType: kotlin.Unit
 asPsiType(allowErrorTypes=false, mode=DEFAULT, isAnnotationMethod=false):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=false, mode=DEFAULT, isAnnotationMethod=true):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=false, mode=DEFAULT_UAST, isAnnotationMethod=false):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=false, mode=DEFAULT_UAST, isAnnotationMethod=true):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=false, mode=GENERIC_ARGUMENT, isAnnotationMethod=false):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=false, mode=GENERIC_ARGUMENT, isAnnotationMethod=true):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=false, mode=SUPER_TYPE, isAnnotationMethod=false):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=false, mode=SUPER_TYPE, isAnnotationMethod=true):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=false, mode=SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS, isAnnotationMethod=false):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=false, mode=SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS, isAnnotationMethod=true):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=false, mode=RETURN_TYPE_BOXED, isAnnotationMethod=false):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=false, mode=RETURN_TYPE_BOXED, isAnnotationMethod=true):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=false, mode=RETURN_TYPE, isAnnotationMethod=false):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=false, mode=RETURN_TYPE, isAnnotationMethod=true):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=false, mode=VALUE_PARAMETER, isAnnotationMethod=false):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=false, mode=VALUE_PARAMETER, isAnnotationMethod=true):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=true, mode=DEFAULT, isAnnotationMethod=false):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=true, mode=DEFAULT, isAnnotationMethod=true):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=true, mode=DEFAULT_UAST, isAnnotationMethod=false):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=true, mode=DEFAULT_UAST, isAnnotationMethod=true):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=true, mode=GENERIC_ARGUMENT, isAnnotationMethod=false):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=true, mode=GENERIC_ARGUMENT, isAnnotationMethod=true):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=true, mode=SUPER_TYPE, isAnnotationMethod=false):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=true, mode=SUPER_TYPE, isAnnotationMethod=true):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=true, mode=SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS, isAnnotationMethod=false):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=true, mode=SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS, isAnnotationMethod=true):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=true, mode=RETURN_TYPE_BOXED, isAnnotationMethod=false):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=true, mode=RETURN_TYPE_BOXED, isAnnotationMethod=true):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=true, mode=RETURN_TYPE, isAnnotationMethod=false):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=true, mode=RETURN_TYPE, isAnnotationMethod=true):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=true, mode=VALUE_PARAMETER, isAnnotationMethod=false):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=true, mode=VALUE_PARAMETER, isAnnotationMethod=true):
-  PsiType: kotlin.Unit
+  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
