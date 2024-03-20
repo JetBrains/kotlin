@@ -10,7 +10,6 @@ javadocJar()
 configureKotlinCompileTasksGradleCompatibility()
 
 dependencies {
-    api(platform(project(":kotlin-gradle-plugins-bom")))
     compileOnly(kotlinStdlib())
     testImplementation(kotlinTest("junit"))
 }

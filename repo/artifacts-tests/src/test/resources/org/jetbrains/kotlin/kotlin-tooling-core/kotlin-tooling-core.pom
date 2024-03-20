@@ -25,15 +25,4 @@
     <developerConnection>scm:git:https://github.com/JetBrains/kotlin.git</developerConnection>
     <url>https://github.com/JetBrains/kotlin</url>
   </scm>
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.jetbrains.kotlin</groupId>
-        <artifactId>kotlin-gradle-plugins-bom</artifactId>
-        <version>ArtifactsTest.version</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 </project>
