@@ -88,7 +88,7 @@ object FirExpressionEvaluator {
 
         if (expectedType != null && !resolvedType.isSubtypeOf(expectedType, session)) return false
 
-        return canBeEvaluatedAtCompileTime(this, session, allowErrors = false)
+        return canBeEvaluatedAtCompileTime(this, session, allowErrors = false, calledOnCheckerStage = false)
     }
 
     private fun FirExpression.evaluate(session: FirSession): FirEvaluatorResult {

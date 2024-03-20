@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConstantArgumentKind
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
-import org.jetbrains.kotlin.fir.resolve.diagnostics.checkConstantArguments
+import org.jetbrains.kotlin.fir.resolve.diagnostics.computeConstantExpressionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FIR_NON_SUPPRESSIBLE_ERROR_NAMES
@@ -101,7 +101,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
                 }
             }
             else -> {
-                return when (checkConstantArguments(expression, session)) {
+                return when (computeConstantExpressionKind(expression, session, calledOnCheckerStage = true)) {
                     ConstantArgumentKind.NOT_CONST -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST
                     ConstantArgumentKind.ENUM_NOT_CONST -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST
                     ConstantArgumentKind.NOT_KCLASS_LITERAL -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL

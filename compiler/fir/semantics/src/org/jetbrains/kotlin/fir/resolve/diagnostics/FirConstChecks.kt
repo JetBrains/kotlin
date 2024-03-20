@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -25,9 +24,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -37,17 +34,37 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun ConeKotlinType.canBeUsedForConstVal(): Boolean = with(lowerBoundIfFlexible()) { isPrimitive || isString || isUnsignedType }
 
-fun canBeEvaluatedAtCompileTime(expression: FirExpression?, session: FirSession, allowErrors: Boolean): Boolean {
-    val result = checkConstantArguments(expression, session)
+/**
+ * See the documentation to [computeConstantExpressionKind] function below
+ */
+fun canBeEvaluatedAtCompileTime(
+    expression: FirExpression?,
+    session: FirSession,
+    allowErrors: Boolean,
+    calledOnCheckerStage: Boolean,
+): Boolean {
+    val result = computeConstantExpressionKind(expression, session, calledOnCheckerStage)
     return result == ConstantArgumentKind.VALID_CONST || allowErrors && result == ConstantArgumentKind.RESOLUTION_ERROR
 }
 
-fun checkConstantArguments(
+/**
+ * This function computes if given [expression] can be counted as a constant expression or not
+ * It returns a [ConstantArgumentKind], which can be used to understand why exactly the expression is not constant
+ *
+ * Precise computation of this [ConstantArgumentKind] may require resolution of initializer of non-const properties, which is allowed
+ *   to do only on BODY_RESOLVE phase and checkers phase. Without it, the result may be less precise but still correct (it may return
+ *   the general [ConstantArgumentKind.NOT_CONST] instead more specific [ConstantArgumentKind.NOT_KCLASS_LITERAL] for example)
+ *
+ * So, to allow using this function not only from checkers there is a @param [calledOnCheckerStage], which should be set to [true] ONLY
+ *   if this method is called from checkers
+ */
+fun computeConstantExpressionKind(
     expression: FirExpression?,
     session: FirSession,
+    calledOnCheckerStage: Boolean
 ): ConstantArgumentKind {
     if (expression == null) return ConstantArgumentKind.RESOLUTION_ERROR
-    return expression.accept(FirConstCheckVisitor(session), null)
+    return expression.accept(FirConstCheckVisitor(session, calledOnCheckerStage), null)
 }
 
 enum class ConstantArgumentKind {
@@ -66,7 +83,10 @@ enum class ConstantArgumentKind {
     }
 }
 
-private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor<ConstantArgumentKind, Nothing?>() {
+private class FirConstCheckVisitor(
+    private val session: FirSession,
+    val calledOnCheckerStage: Boolean,
+) : FirVisitor<ConstantArgumentKind, Nothing?>() {
     companion object {
         /**
          * During constant evaluation, we can go from kotlin world to java world and back (see the example)
@@ -289,20 +309,26 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
                 // OK, because:
                 // 1. if const property => we should've resolved its initializer at this point;
                 // 2. if not const => we are going to look only at the structure, not resolution-dependent properties.
-                propertySymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-                @OptIn(SymbolInternals::class)
-                val initializer = propertySymbol.fir.initializer
 
-                if (propertySymbol.isConst) {
-                    return propertySymbol.visit { initializer?.accept(this, data) } ?: ConstantArgumentKind.RESOLUTION_ERROR
-                }
+                return when {
+                    propertySymbol.isConst -> {
+                        // even if called on CONSTANT_EVALUATION, it's safe to call resolvedInitializer, as intializers of const vals
+                        // are resolved at previous IMPLICIT_TYPES_BODY_RESOLVE phase
+                        val initializer = propertySymbol.resolvedInitializer
+                        propertySymbol.visit { initializer?.accept(this, data) } ?: ConstantArgumentKind.RESOLUTION_ERROR
+                    }
 
-                return when (initializer) {
-                    is FirLiteralExpression<*> -> when {
-                        propertySymbol.isVal -> ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION
+                    // if it called at checkers stage it's safe to call resolvedInitializer
+                    // even if it will trigger BODY_RESOLVE phase, we don't violate phase contracts
+                    calledOnCheckerStage -> when (propertySymbol.resolvedInitializer) {
+                        is FirLiteralExpression<*> -> when {
+                            propertySymbol.isVal -> ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION
+                            else -> ConstantArgumentKind.NOT_CONST
+                        }
+                        is FirGetClassCall -> ConstantArgumentKind.NOT_KCLASS_LITERAL
                         else -> ConstantArgumentKind.NOT_CONST
                     }
-                    is FirGetClassCall -> ConstantArgumentKind.NOT_KCLASS_LITERAL
+
                     else -> ConstantArgumentKind.NOT_CONST
                 }
             }

@@ -45,7 +45,7 @@ object FirJsCodeConstantArgumentChecker : FirFunctionCallChecker(MppCheckerKind.
                 val lastReported = lastReportedElement
                 element.acceptChildren(this)
                 if (lastReported == lastReportedElement) {
-                    if (!canBeEvaluatedAtCompileTime(element as? FirExpression, context.session, allowErrors = true)) {
+                    if (!canBeEvaluatedAtCompileTime(element as? FirExpression, context.session, allowErrors = true, calledOnCheckerStage = true)) {
                         lastReportedElement = element
                         val source = element.source ?: jsCodeExpression.source
                         reporter.reportOn(source, FirWebCommonErrors.JSCODE_ARGUMENT_NON_CONST_EXPRESSION, context)
