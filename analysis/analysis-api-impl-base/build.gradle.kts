@@ -35,7 +35,6 @@ dependencies {
     testImplementation(project(":analysis:decompiled:decompiler-native"))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testImplementation(project(":native:analysis-api-klib-reader"))
     testImplementation(toolsJar())
 }
 
