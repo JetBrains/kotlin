@@ -114,6 +114,7 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
             return gradle.sharedServices.registerIfAbsent(serviceName, BuildFusService::class.java) { spec ->
                 spec.parameters.configurationMetrics.add(project.provider {
                     collectGeneralConfigurationTimeMetrics(
+                        project,
                         gradle,
                         buildReportOutputs,
                         useClasspathSnapshot,

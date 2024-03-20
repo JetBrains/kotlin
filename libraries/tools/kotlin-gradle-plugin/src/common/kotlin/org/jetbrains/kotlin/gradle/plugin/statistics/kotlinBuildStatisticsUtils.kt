@@ -21,6 +21,7 @@ import kotlin.system.measureTimeMillis
  * Collect general configuration metrics
  **/
 internal fun collectGeneralConfigurationTimeMetrics(
+    project: Project,
     gradle: Gradle,
     buildReportOutputs: List<BuildReportType>,
     useClasspathSnapshot: Boolean,
@@ -42,7 +43,7 @@ internal fun collectGeneralConfigurationTimeMetrics(
                 BuildReportType.JSON -> configurationTimeMetrics.put(BooleanMetrics.JSON_BUILD_REPORT, true)
             }
         }
-        configurationTimeMetrics.put(StringMetrics.PROJECT_PATH, gradle.rootProject.projectDir.absolutePath)
+        configurationTimeMetrics.put(StringMetrics.PROJECT_PATH,  project.rootDir.absolutePath)
         configurationTimeMetrics.put(StringMetrics.GRADLE_VERSION, gradle.gradleVersion)
 
         //will be updated with KT-58266
