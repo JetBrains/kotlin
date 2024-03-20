@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.FactoryOTALogger
+
+modules = FactoryOTALogger
+compilerOpts = -framework FactoryOTALogger
+linkerOpts = -framework FactoryOTALogger
+#Disabled: Unavailable

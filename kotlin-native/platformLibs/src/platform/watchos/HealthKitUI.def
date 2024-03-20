@@ -1,0 +1,7 @@
+depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreText Foundation HealthKit Security UIKit UniformTypeIdentifiers darwin posix
+language = Objective-C
+package = platform.HealthKitUI
+
+modules = HealthKitUI
+compilerOpts = -framework HealthKitUI
+linkerOpts = -framework HealthKitUI
