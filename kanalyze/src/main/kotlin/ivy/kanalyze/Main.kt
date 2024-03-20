@@ -4,11 +4,11 @@
  */
 package ivy.kanalyze
 
-import com.intellij.lang.Language
 import com.intellij.psi.PsiFileFactory
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.idea.KotlinLanguage
 
 fun main() {
     println("Hello")
@@ -24,7 +24,8 @@ fun main() {
               println("Hello, world!")
             }
         """.trimIndent()
-    val file = PsiFileFactory.getInstance(environment.project).createFileFromText(Language.ANY, code)
+    val file = PsiFileFactory.getInstance(environment.project)
+        .createFileFromText("MyFile.kt", KotlinLanguage.INSTANCE, code)
 
     file.children.forEach {
         println(it.text)
