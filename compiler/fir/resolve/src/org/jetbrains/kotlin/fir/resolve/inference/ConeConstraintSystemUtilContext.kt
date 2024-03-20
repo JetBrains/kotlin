@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.fir.resolve.inference
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemUtilContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver
@@ -21,12 +22,9 @@ import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
     override fun TypeVariableMarker.shouldBeFlexible(): Boolean {
-        if (this !is ConeTypeVariable) return false
-        val typeParameter =
-            (this.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol?.fir ?: return false
-
-        // TODO: Take a look at org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstitutor.shouldBeFlexible
-        return typeParameter.bounds.any { it.coneType is ConeFlexibleType }
+        // In FIR, there's no need in hack with shouldTryUseDifferentFlexibilityForUpperType
+        // See org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext.useRefinedBoundsForTypeVariableInFlexiblePosition
+        return false
     }
 
     override fun TypeVariableMarker.hasOnlyInputTypesAttribute(): Boolean {

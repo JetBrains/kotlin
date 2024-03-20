@@ -45,10 +45,10 @@ FILE fqName:<root> fileName:/constructorWithOwnTypeParametersCall.kt
       RETURN type=kotlin.Nothing from='public final fun testJava (): <root>.J1.J2<kotlin.Double, kotlin.Int> declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> <Y2> () declared in <root>.J1.J2' type=<root>.J1.J2<kotlin.Double, kotlin.Int> origin=null
           <class: X2>: kotlin.Double
-          <Y2>: @[FlexibleNullability] kotlin.CharSequence?
+          <Y2>: kotlin.CharSequence
           $outer: CONSTRUCTOR_CALL 'public constructor <init> <Y1> () declared in <root>.J1' type=<root>.J1<kotlin.Int> origin=null
             <class: X1>: kotlin.Int
-            <Y1>: @[FlexibleNullability] kotlin.String?
+            <Y1>: kotlin.String
   FUN name:testKotlin visibility:public modality:FINAL <> () returnType:<root>.K1.K2<kotlin.String, kotlin.Int>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testKotlin (): <root>.K1.K2<kotlin.String, kotlin.Int> declared in <root>'

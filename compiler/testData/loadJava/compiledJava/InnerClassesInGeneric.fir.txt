@@ -5,8 +5,8 @@ public open class InnerClassesInGeneric<P : R|kotlin/Any!|, Q : R|kotlin/Any!|> 
         public test/InnerClassesInGeneric<P, Q>.constructor(): R|test/InnerClassesInGeneric.Inner<P, Q>|
 
     }
-    public open inner class Inner2<Outer(P) : R|kotlin/Any!|, Outer(Q) : R|kotlin/Any!|> : R|test/InnerClassesInGeneric.Inner<P!, Q!>| {
-        public open operator fun iterator(): R|ft<kotlin/collections/MutableIterator<P!>, kotlin/collections/Iterator<P!>?>|
+    public open inner class Inner2<Outer(P) : R|kotlin/Any!|, Outer(Q) : R|kotlin/Any!|> : R|test/InnerClassesInGeneric.Inner<ft<P & Any, P?>, ft<Q & Any, Q?>>| {
+        public open operator fun iterator(): R|ft<kotlin/collections/MutableIterator<ft<P & Any, P?>>, kotlin/collections/Iterator<ft<P & Any, P?>>?>|
 
         public test/InnerClassesInGeneric<P, Q>.constructor(): R|test/InnerClassesInGeneric.Inner2<P, Q>|
 

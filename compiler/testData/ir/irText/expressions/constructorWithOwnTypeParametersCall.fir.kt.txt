@@ -17,7 +17,7 @@ class K1<T1 : Number> {
 }
 
 fun testJava(): J2<Double, Int> {
-  return J1<Int, @FlexibleNullability String?>().J2<Double, @FlexibleNullability CharSequence?>()
+  return J1<Int, String>().J2<Double, CharSequence>()
 }
 
 fun testKotlin(): K2<String, Int> {

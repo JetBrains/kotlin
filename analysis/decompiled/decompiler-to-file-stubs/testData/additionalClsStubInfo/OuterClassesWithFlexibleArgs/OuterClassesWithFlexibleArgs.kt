@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 /* Java interop */
 // KNM_K2_IGNORE
 

@@ -39,7 +39,7 @@ KtConstructorSymbol:
       receiverParameter: null
       returnType: KtFlexibleType:
         annotationsList: []
-        type: ft<kotlin/collections/MutableCollection<out E!>, kotlin/collections/Collection<out E!>?>
+        type: ft<kotlin/collections/MutableCollection<out ft<E & Any, E?>>, kotlin/collections/Collection<out ft<E & Any, E?>>?>
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null

@@ -8,7 +8,7 @@ override operator fun iterator(): kotlin.collections.MutableIterator<test.SomeCl
 
 fun toArray(): kotlin.Array<kotlin.Any!>!
 
-fun <T : kotlin.Any!> toArray(p0: kotlin.Array<T!>!): kotlin.Array<T!>!
+fun <T : kotlin.Any!> toArray(p0: kotlin.Array<(T & kotlin.Any..T?)>!): kotlin.Array<(T & kotlin.Any..T?)>!
 
 override fun add(p0: test.SomeClass!): kotlin.Boolean
 

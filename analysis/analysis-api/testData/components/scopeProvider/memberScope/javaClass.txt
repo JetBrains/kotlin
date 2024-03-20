@@ -82,7 +82,7 @@ KtFunctionSymbol:
       receiverParameter: null
       returnType: KtFlexibleType:
         annotationsList: []
-        type: ft<java/lang/Class<out T!>, java/lang/Class<out T!>?>
+        type: ft<java/lang/Class<out ft<T & Any, T?>>, java/lang/Class<out ft<T & Any, T?>>?>
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null

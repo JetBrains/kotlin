@@ -11,8 +11,8 @@ public open class RawSuperTypeWithRecursiveBoundMultipleParameters : R|kotlin/An
         public test/RawSuperTypeWithRecursiveBoundMultipleParameters.constructor(): R|test/RawSuperTypeWithRecursiveBoundMultipleParameters.Derived|
 
     }
-    public abstract interface Super<R : R|kotlin/Any!|, T : R|ft<test/RawSuperTypeWithRecursiveBoundMultipleParameters.Super<R!, T!>, test/RawSuperTypeWithRecursiveBoundMultipleParameters.Super<R!, T!>?>|> : R|kotlin/Any| {
-        public abstract fun foo(r: R|R!|, t: R|T!|): R|kotlin/Unit|
+    public abstract interface Super<R : R|kotlin/Any!|, T : R|ft<test/RawSuperTypeWithRecursiveBoundMultipleParameters.Super<ft<R & Any, R?>, ft<T & Any, T?>>, test/RawSuperTypeWithRecursiveBoundMultipleParameters.Super<ft<R & Any, R?>, ft<T & Any, T?>>?>|> : R|kotlin/Any| {
+        public abstract fun foo(r: R|ft<R & Any, R?>|, t: R|ft<T & Any, T?>|): R|kotlin/Unit|
 
         public abstract fun dummy(): R|kotlin/Unit|
 

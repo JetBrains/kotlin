@@ -43,7 +43,7 @@ fun <K : Builder<K>> testTypeParam(builder: Builder<K>) {
 }
 
 fun testStarJava(builder: JavaBuilder<*>) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)..CapturedType(*)?!")!>builder.test()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)!!..CapturedType(*)?!")!>builder.test()<!>
 
     builder
         .test()

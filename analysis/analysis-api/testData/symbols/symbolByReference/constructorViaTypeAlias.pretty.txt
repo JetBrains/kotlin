@@ -1,1 +1,1 @@
-constructor(c: kotlin.collections.(Mutable)Collection<out E!>!)
+constructor(c: kotlin.collections.(Mutable)Collection<out (E & kotlin.Any..E?)>!)

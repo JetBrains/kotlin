@@ -21,7 +21,7 @@ class ResolvedCall<C : Any?> {
 }
 
 private fun <A : Any?> allCandidatesResult(allCandidates: Collection<MyCandidate>): @FlexibleNullability OverloadResolutionResultsImpl<@FlexibleNullability A?>? {
-  return nameNotFound<@FlexibleNullability A?>().apply<@FlexibleNullability OverloadResolutionResultsImpl<@FlexibleNullability A?>?>(block = local fun @FlexibleNullability OverloadResolutionResultsImpl<@FlexibleNullability A?>?.<anonymous>() {
+  return nameNotFound<A>().apply<@FlexibleNullability OverloadResolutionResultsImpl<@FlexibleNullability A?>?>(block = local fun @FlexibleNullability OverloadResolutionResultsImpl<@FlexibleNullability A?>?.<anonymous>() {
     $this$apply.setAllCandidates(allCandidates = allCandidates.map<MyCandidate, ResolvedCall<A>>(transform = local fun <anonymous>(it: MyCandidate): ResolvedCall<A> {
       return it.<get-resolvedCall>() as ResolvedCall<A>
     }

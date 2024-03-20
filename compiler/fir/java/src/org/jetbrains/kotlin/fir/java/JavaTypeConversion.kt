@@ -1,18 +1,15 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.java
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -113,10 +110,8 @@ private fun JavaType?.toConeTypeProjection(
             }
             val upperBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, lowerBound)
 
-            val finalLowerBound = when {
-                !session.languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN) ->
-                    lowerBound
-                lowerBound is ConeTypeParameterType ->
+            val finalLowerBound = when (lowerBound) {
+                is ConeTypeParameterType ->
                     ConeDefinitelyNotNullType.create(
                         lowerBound, session.typeContext,
                         // Upper bounds might be not initialized properly yet, so we force creating DefinitelyNotNullType
@@ -231,11 +226,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
 
         is JavaTypeParameter -> {
             val symbol = javaTypeParameterStack[classifier]
-            if (symbol != null) {
-                ConeTypeParameterTypeImpl(symbol.toLookupTag(), isNullable = lowerBound != null, attributes)
-            } else {
-                ConeErrorType(ConeUnresolvedNameError(classifier.name))
-            }
+            ConeTypeParameterTypeImpl(symbol.toLookupTag(), isNullable = lowerBound != null, attributes)
         }
 
         null -> {

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !LANGUAGE: +DefinitelyNonNullableTypes +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 
 // FILE: A.java

@@ -1,6 +1,6 @@
 open fun hello()
 
-open fun <T : kotlin.Any!> method(vararg classes: java.lang.Class<out T!>!)
+open fun <T : kotlin.Any!> method(vararg classes: java.lang.Class<out (T & kotlin.Any..T?)>!)
 
 @java.lang.Override
 open fun getActualRandomNumber(): kotlin.Int

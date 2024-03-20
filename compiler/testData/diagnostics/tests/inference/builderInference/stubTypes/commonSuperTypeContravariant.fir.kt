@@ -73,14 +73,14 @@ fun test() {
     }
     val ret2 = build {
         emit(if (true) "" else null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select2(get(), getIn())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select2(get(), Test.foo(getIn()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select2(Test.foo(get()), Test.foo(getIn()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select2(Test.foo(get()), getIn())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select3(get(), getIn())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select3(get(), Test.foo(getIn()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select3(Test.foo(get()), Test.foo(getIn()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select3(Test.foo(get()), getIn())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String..kotlin.String?!")!>select2(get(), getIn())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String..kotlin.String?!")!>select2(get(), Test.foo(getIn()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String..kotlin.String?!")!>select2(Test.foo(get()), Test.foo(getIn()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String..kotlin.String?!")!>select2(Test.foo(get()), getIn())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String..kotlin.String?!")!>select3(get(), getIn())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String..kotlin.String?!")!>select3(get(), Test.foo(getIn()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String..kotlin.String?!")!>select3(Test.foo(get()), Test.foo(getIn()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String..kotlin.String?!")!>select3(Test.foo(get()), getIn())<!>
         ""
     }
 }

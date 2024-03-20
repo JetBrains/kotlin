@@ -23,7 +23,7 @@ fun <V> SLRUMap<V>.getOrPut(value: V, l: List<V>) {
 
     takeE(<!ARGUMENT_TYPE_MISMATCH!>value<!>)
     takeEList(<!ARGUMENT_TYPE_MISMATCH!>l<!>)
-    takeE(<!ARGUMENT_TYPE_MISMATCH!>id(value)<!>)
+    takeE(id(value))
 
     if (value != null) {
         takeV(value)
