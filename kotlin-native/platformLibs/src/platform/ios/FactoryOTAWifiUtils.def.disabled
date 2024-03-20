@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.FactoryOTAWifiUtils
+
+modules = FactoryOTAWifiUtils
+compilerOpts = -framework FactoryOTAWifiUtils
+linkerOpts = -framework FactoryOTAWifiUtils
+#Disabled: Unavailable
