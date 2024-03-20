@@ -1,8 +1,5 @@
 // ISSUE: KT-61310
 
-// IGNORE_LIGHT_ANALYSIS
-// REASON: red code (see corresponding diagnostic test)
-
 fun box(): String {
     build {
         if (true) {

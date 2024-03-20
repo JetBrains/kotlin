@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
-// IGNORE_LIGHT_ANALYSIS
 // FILE: box.kt
 class E : D()
 
