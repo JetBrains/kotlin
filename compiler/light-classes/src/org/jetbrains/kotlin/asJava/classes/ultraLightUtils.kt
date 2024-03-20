@@ -172,11 +172,26 @@ fun annotateByKotlinType(
     psiType: PsiType,
     kotlinType: KotlinType,
     psiContext: PsiTypeElement,
+    inferNullability: Boolean,
 ): PsiType {
-
     fun KotlinType.getAnnotationsSequence(): Sequence<List<PsiAnnotation>> =
         sequence {
-            yield(annotations.mapNotNull { it.toLightAnnotation(psiContext) })
+            val annotationsToDeclare = buildList<PsiAnnotation> {
+                // Explicitly declared annotations
+                annotations.mapNotNullTo(this) { it.toLightAnnotation(psiContext) }
+
+                if (inferNullability) {
+                    val nullabilityAnnotationQualifier = computeNullabilityQualifier(this@getAnnotationsSequence, psiType)
+                    val nullabilityAnnotation = nullabilityAnnotationQualifier?.let {
+                        KtUltraLightSimpleAnnotation(it, emptyList(), psiContext)
+                    }
+
+                    nullabilityAnnotation?.let(this::add)
+                }
+            }
+
+            yield(annotationsToDeclare)
+
             for (argument in arguments) {
                 yieldAll(argument.type.getAnnotationsSequence())
             }
@@ -207,7 +222,10 @@ private fun createTypeFromCanonicalText(
     val typeText = TypeInfo.createTypeText(typeInfo) ?: return PsiType.NULL
 
     val typeElement = ClsTypeElementImpl(psiContext, typeText, '\u0000')
-    val type = if (kotlinType != null) annotateByKotlinType(typeElement.type, kotlinType, typeElement) else typeElement.type
+    val type = if (kotlinType != null)
+        annotateByKotlinType(typeElement.type, kotlinType, typeElement, inferNullability = false)
+    else
+        typeElement.type
 
     if (type is PsiArrayType && psiContext is KtUltraLightParameter && psiContext.isVarArgs) {
         return PsiEllipsisType(type.componentType, type.annotationProvider)

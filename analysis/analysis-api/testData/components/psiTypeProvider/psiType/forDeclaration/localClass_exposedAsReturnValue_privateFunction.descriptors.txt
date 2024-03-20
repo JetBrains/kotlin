@@ -1,2 +1,0 @@
-KtType: kotlin.Unit
-PsiType: kotlin.Unit

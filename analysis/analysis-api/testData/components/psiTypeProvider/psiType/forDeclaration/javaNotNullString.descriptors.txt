@@ -1,2 +1,0 @@
-KtType: kotlin.String
-PsiType: java.lang.String

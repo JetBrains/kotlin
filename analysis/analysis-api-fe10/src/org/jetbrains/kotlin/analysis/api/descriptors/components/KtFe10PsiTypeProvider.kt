@@ -70,7 +70,7 @@ internal class KtFe10PsiTypeProvider(
         val psiType = typeElement?.type ?: return null
         if (!preserveAnnotations) return psiType
 
-        return annotateByKotlinType(psiType, kotlinType, typeElement)
+        return annotateByKotlinType(psiType, kotlinType, typeElement, inferNullability = true)
     }
 
     private fun KtTypeMappingMode.toTypeMappingMode(

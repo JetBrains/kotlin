@@ -1,2 +1,0 @@
-KtType: kotlin.collections.(Mutable)List<kotlin.String!>
-PsiType: java.util.List<? extends java.lang.String>
