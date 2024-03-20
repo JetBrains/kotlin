@@ -7,6 +7,7 @@ junit = "5.9.2"
 kotest = "5.5.5"
 kotlinx-bcv = "0.13.1"
 ow2Asm = "9.6"
+dokka = "1.9.20"
 
 gradlePluginPublishPlugin = "1.1.0"
 androidGradlePlugin = "7.2.2"
@@ -44,3 +45,4 @@ gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref 
 [plugins]
 
 kover = { id = "org.jetbrains.kotlinx.kover", version = "0.7.5" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }

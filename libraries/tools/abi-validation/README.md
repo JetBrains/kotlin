@@ -2,6 +2,7 @@
 [![JetBrains official project](https://jb.gg/badges/official.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
 [![Maven Central](https://img.shields.io/maven-central/v/org.jetbrains.kotlinx/binary-compatibility-validator)](https://central.sonatype.com/search?q=org.jetbrains.kotlinx.binary-compatibility-validator)
 [![License](https://img.shields.io/github/license/Kotlin/binary-compatibility-validator)](LICENSE.TXT)
+[![KDoc link](https://img.shields.io/badge/API_reference-KDoc-blue)](https://kotlin.github.io/binary-compatibility-validator/)
 
 # Binary compatibility validator
 
