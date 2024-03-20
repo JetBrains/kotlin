@@ -83,6 +83,7 @@ object FirSessionFactoryHelper {
             lookupTracker,
             enumWhenTracker,
             importTracker,
+            javaClassesTracker = null,
             predefinedJavaComponents = null,
             needRegisterJavaElementFinder,
             registerExtraComponents = {},

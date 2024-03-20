@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.config;
 
+import org.jetbrains.kotlin.incremental.components.ModuleJavaClassesTracker;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.modules.Module;
 
@@ -168,4 +169,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> USE_INLINE_SCOPES_NUMBERS =
             CompilerConfigurationKey.create("Use inline scopes numbers for inline marker variables");
+
+    public static final CompilerConfigurationKey<ModuleJavaClassesTracker> JAVA_CLASSES_TRACKER =
+            CompilerConfigurationKey.create("java classes tracker");
 }

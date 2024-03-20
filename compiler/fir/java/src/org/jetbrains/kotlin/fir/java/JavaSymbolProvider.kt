@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.fir.java
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProviderWithoutCallables
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -43,7 +46,9 @@ open class JavaSymbolProvider(
             },
             postCompute = { _, classSymbol, (javaClass, parentClassSymbol) ->
                 if (classSymbol != null && javaClass != null) {
-                    javaFacade.convertJavaClassToFir(classSymbol, parentClassSymbol, javaClass)
+                    javaFacade.convertJavaClassToFir(classSymbol, parentClassSymbol, javaClass).also {
+                        session.javaClassesTracker?.report(it, session.firProvider.getContainingFile(classSymbol))
+                    }
                 }
             }
         )

@@ -81,6 +81,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             null,
             null,
             null,
+            null,
             init,
             registerExtraComponents = {
                 it.registerDefaultComponents()

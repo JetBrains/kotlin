@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchSco
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.ModuleJavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 
@@ -94,6 +95,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         lookupTracker: LookupTracker?,
         enumWhenTracker: EnumWhenTracker?,
         importTracker: ImportTracker?,
+        javaClassesTracker: ModuleJavaClassesTracker?,
         predefinedJavaComponents: FirSharableJavaComponents?,
         needRegisterJavaElementFinder: Boolean,
         registerExtraComponents: ((FirSession) -> Unit),
@@ -107,6 +109,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
             lookupTracker,
             enumWhenTracker,
             importTracker,
+            javaClassesTracker,
             init,
             registerExtraComponents = {
                 it.registerDefaultComponents()

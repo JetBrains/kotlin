@@ -42,6 +42,7 @@ object FirWasmSessionFactory : FirAbstractSessionFactory() {
             lookupTracker,
             null,
             null,
+            null,
             init,
             registerExtraComponents = {
                 it.registerDefaultComponents()

@@ -50,6 +50,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
             lookupTracker,
             null,
             null,
+            null,
             init,
             registerExtraComponents = {
                 it.registerDefaultComponents()

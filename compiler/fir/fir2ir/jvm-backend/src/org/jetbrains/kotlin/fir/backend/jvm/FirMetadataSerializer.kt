@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.java.javaClassesTracker
+import org.jetbrains.kotlin.fir.java.javaSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
@@ -24,6 +26,7 @@ import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.TypeApproximatorForMetadataSerializer
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.incremental.components.SerializationAwareModuleJavaClassesTracker
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
@@ -116,6 +119,26 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
         ),
         actualizedExpectDeclarations
     )
+}
+
+fun serializeTrackedJavaClasses(
+    session: FirSession,
+    scopeSession: ScopeSession,
+    targetId: TargetId,
+    configuration: CompilerConfiguration,
+) {
+    val globalSerializationBindings = JvmSerializationBindings()
+    (session.javaClassesTracker as? SerializationAwareModuleJavaClassesTracker)?.serializeJavaClasses {
+        session.javaSymbolProvider?.getClassLikeSymbolByClassId(it)?.let { classSymbol ->
+            val metadata = FirMetadataSource.Class(classSymbol.fir)
+            val serializer =
+                makeLocalFirMetadataSerializerForMetadataSource(
+                    metadata, session, scopeSession, globalSerializationBindings,
+                    parent = null, targetId, configuration, actualizedExpectDeclarations = null
+                )
+            serializer.serialize(metadata)
+        }
+    }
 }
 
 class FirMetadataSerializer(

@@ -68,7 +68,7 @@ fun makeJvmIncrementally(
                     cachesDir,
                     buildReporter,
                     // Use precise setting in case of non-Gradle build
-                    usePreciseJavaTracking = !useK2, // TODO by @Ilya.Chernikov: add fir-based java classes tracker when available and set this to true
+                    usePreciseJavaTracking = true, //!useK2, // TODO by @Ilya.Chernikov: add fir-based java classes tracker when available and set this to true
                     buildHistoryFile = buildHistoryFile,
                     outputDirs = null,
                     modulesApiHistory = EmptyModulesApiHistory,

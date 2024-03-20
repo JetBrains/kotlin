@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationExtension
 import org.jetbrains.kotlin.fir.extensions.*
+import org.jetbrains.kotlin.fir.java.FirJavaClassesTrackerComponent
 import org.jetbrains.kotlin.fir.java.FirJavaVisibilityChecker
 import org.jetbrains.kotlin.fir.java.FirJvmDefaultModeComponent
 import org.jetbrains.kotlin.fir.java.FirSyntheticPropertiesStorage
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.ModuleJavaClassesTracker
 import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
@@ -172,7 +174,12 @@ fun FirSession.registerJavaComponents(
  * Resolve components which are same on all platforms
  */
 @OptIn(SessionConfiguration::class)
-fun FirSession.registerResolveComponents(lookupTracker: LookupTracker? = null, enumWhenTracker: EnumWhenTracker? = null, importTracker: ImportTracker? = null) {
+fun FirSession.registerResolveComponents(
+    lookupTracker: LookupTracker? = null,
+    enumWhenTracker: EnumWhenTracker? = null,
+    importTracker: ImportTracker? = null,
+    javaClassesTracker: ModuleJavaClassesTracker? = null,
+) {
     register(FirQualifierResolver::class, FirQualifierResolverImpl(this))
     register(FirTypeResolver::class, FirTypeResolverImpl(this))
     register(CheckersComponent::class, CheckersComponent())
@@ -198,6 +205,12 @@ fun FirSession.registerResolveComponents(lookupTracker: LookupTracker? = null, e
         register(
             FirImportTrackerComponent::class,
             IncrementalPassThroughImportTrackerComponent(importTracker)
+        )
+    }
+    if (javaClassesTracker != null) {
+        register(
+            FirJavaClassesTrackerComponent::class,
+            FirJavaClassesTrackerComponentImpl(javaClassesTracker)
         )
     }
     register(FirExpectActualMatchingContextFactory::class, FirExpectActualMatchingContextImpl.Factory)

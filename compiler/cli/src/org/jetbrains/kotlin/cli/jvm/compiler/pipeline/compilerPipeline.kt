@@ -135,6 +135,15 @@ fun compileModulesUsingFrontendIrAndLightTree(
     val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
     val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment)
 
+    analysisResults.outputs.forEach {
+        serializeTrackedJavaClasses(
+            it.session,
+            it.scopeSession,
+            compilerInput.targetId,
+            compilerInput.configuration
+        )
+    }
+
     val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)
 
     diagnosticsReporter.reportToMessageCollector(

@@ -119,6 +119,7 @@ fun <F> prepareJvmSessions(
             configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
             configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
             configuration.get(CommonConfigurationKeys.IMPORT_TRACKER),
+            configuration.get(JVMConfigurationKeys.JAVA_CLASSES_TRACKER),
             predefinedJavaComponents = predefinedJavaComponents,
             needRegisterJavaElementFinder = true,
             registerExtraComponents = {},

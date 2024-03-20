@@ -10,6 +10,7 @@ import com.intellij.util.io.DataExternalizer
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.incremental.components.SerializationAwareModuleJavaClassesTracker
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
@@ -17,8 +18,10 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.java.JavaClassProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
@@ -37,13 +40,41 @@ class JavaClassesTrackerImpl(
         private val cache: IncrementalJvmCache,
         private val untrackedJavaClasses: Set<ClassId>,
         private val languageVersionSettings: LanguageVersionSettings,
-) : JavaClassesTracker {
+) : JavaClassesTracker, SerializationAwareModuleJavaClassesTracker {
     private val classToSourceSerialized: MutableMap<ClassId, SerializedJavaClassWithSource> = hashMapOf()
+
+    private val javaClassesFromNewTracker: MutableMap<ClassId, File> = HashMap()
 
     val javaClassesUpdates: Collection<SerializedJavaClassWithSource>
         get() = classToSourceSerialized.values
 
     private val classDescriptors: MutableList<JavaClassDescriptor> = mutableListOf()
+
+    override fun report(classId: ClassId, file: File?) {
+        if (!cache.isJavaClassToTrack(classId) || file == null) return
+        javaClassesFromNewTracker[classId] = file
+    }
+
+    override fun serializeJavaClasses(serializer: (ClassId) ->  Pair<MessageLite, JvmStringTable>?) {
+        val extension = JavaClassesSerializerExtension()
+        for ((classId, file) in javaClassesFromNewTracker) {
+            if (cache.isJavaClassAlreadyInCache(classId) || classId in untrackedJavaClasses) {
+                assert(classId !in classToSourceSerialized) {
+                    "Duplicated JavaClassDescriptor $classId reported to IC"
+                }
+                CONVERTING_JAVA_CLASSES_TO_PROTO.time {
+                    val serialized = serializer(classId)
+                    if (serialized == null) null
+                    else {
+                        val (stringTable, qualifiedNameTable) = extension.stringTable.buildProto()
+                        SerializedJavaClassWithSource(file, SerializedJavaClass(serialized.first as ProtoBuf.Class, stringTable, qualifiedNameTable))
+                    }
+                }?.let {
+                    classToSourceSerialized[classId] = it
+                }
+            }
+        }
+    }
 
     override fun reportClass(classDescriptor: JavaClassDescriptor) {
         val classId = classDescriptor.classId!!
@@ -76,6 +107,7 @@ class JavaClassesTrackerImpl(
     override fun clear() {
         classToSourceSerialized.clear()
         classDescriptors.clear()
+        javaClassesFromNewTracker.clear()
     }
 
     private fun JavaClassDescriptor.wasContentRequested() =

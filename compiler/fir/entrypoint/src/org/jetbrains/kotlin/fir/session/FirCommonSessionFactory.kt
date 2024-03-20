@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchSco
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.ModuleJavaClassesTracker
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
@@ -99,6 +100,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
             lookupTracker,
             enumWhenTracker,
             importTracker,
+            null,
             init,
             registerExtraComponents = {
                 it.registerDefaultComponents()

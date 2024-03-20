@@ -94,7 +94,7 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
                         cachesDir,
                         buildReporter,
                         // Use precise setting in case of non-Gradle build
-                        usePreciseJavaTracking = !k2Mode, // TODO by @Ilya.Chernikov: add fir-based java classes tracker when available and set this to true
+                        usePreciseJavaTracking = true,//!k2Mode, // TODO by @Ilya.Chernikov: add fir-based java classes tracker when available and set this to true
                         buildHistoryFile = buildHistoryFile,
                         outputDirs = null,
                         modulesApiHistory = EmptyModulesApiHistory,
