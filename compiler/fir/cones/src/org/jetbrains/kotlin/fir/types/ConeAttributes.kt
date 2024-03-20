@@ -23,8 +23,6 @@ abstract class ConeAttribute<out T : ConeAttribute<T>> : AnnotationMarker {
      * typealias C = @SomeAttribute(2) B
      *
      * For determining attribute value of expanded type of C we should add @SomeAttribute(2) to @SomeAttribute(1)
-     *
-     * This function must be symmetrical: a.add(b) == b.add(a)
      */
     abstract fun add(other: @UnsafeVariance T?): T?
     abstract fun isSubtypeOf(other: @UnsafeVariance T?): Boolean
