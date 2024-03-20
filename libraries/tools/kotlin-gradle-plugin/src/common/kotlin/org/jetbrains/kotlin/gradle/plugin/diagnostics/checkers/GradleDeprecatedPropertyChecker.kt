@@ -15,7 +15,6 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
     private val deprecatedProperties: List<String> = listOf(
         "kotlin.useK2",
         "kotlin.experimental.tryK2",
-        "kapt.use.k2",
         "kotlin.internal.single.build.metrics.file",
         "kotlin.build.report.dir"
     )
