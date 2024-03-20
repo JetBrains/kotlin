@@ -56,6 +56,7 @@ internal fun Project.locateOrRegisterCheckKotlinGradlePluginErrorsTask(): TaskPr
                     .filter { it.severity == ToolingDiagnostic.Severity.ERROR }
             }
         )
+        task.usesService(kotlinToolingDiagnosticsCollectorProvider)
         task.renderingOptions.set(ToolingDiagnosticRenderingOptions.forProject(this))
         task.description = DESCRIPTION
         task.group = LifecycleBasePlugin.VERIFICATION_GROUP

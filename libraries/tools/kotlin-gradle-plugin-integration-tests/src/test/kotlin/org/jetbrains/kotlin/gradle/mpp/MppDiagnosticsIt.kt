@@ -9,7 +9,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.appendText
@@ -206,7 +205,6 @@ class MppDiagnosticsIt : KGPBaseTest() {
 
     @DisplayName("checkKotlinGradlePluginConfigurationErrors does not cause a false positive configuration cache warning")
     @GradleTest
-    @Disabled
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_5) // STABLE_CONFIGURATION_CACHE was introduced in 7.5
     fun testKt63165(gradleVersion: GradleVersion) {
         // the false positive warning is https://github.com/gradle/gradle/issues/22481
