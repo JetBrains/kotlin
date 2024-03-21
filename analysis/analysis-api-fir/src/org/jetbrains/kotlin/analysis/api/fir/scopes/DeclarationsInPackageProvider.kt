@@ -10,12 +10,14 @@ import com.intellij.psi.impl.file.PsiPackageImpl
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.providers.impl.forEachNonKotlinPsiElementFinder
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
 
+@OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
 internal object DeclarationsInPackageProvider {
     internal fun getTopLevelClassifierNamesInPackageProvider(packageFqName: FqName, analysisSession: KtFirAnalysisSession): Set<Name> {
         return buildSet {

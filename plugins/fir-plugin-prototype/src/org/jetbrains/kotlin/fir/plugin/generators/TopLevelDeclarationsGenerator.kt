@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.plugin.generators
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.name.Name
 /*
  * Generates `dummyClassName(value: ClassName): String` function for each class annotated with @DummyFunction
  */
+@OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
 class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
         private val PREDICATE = LookupPredicate.create { annotated("DummyFunction".fqn()) }

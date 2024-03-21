@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.plugin.generators
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.name.Name
  * Generates `private suspend fun testFun_generated() {}` function
  * for each package containing function annotated with `org.jetbrains.kotlin.fir.plugin.TestTopLevelPrivateSuspendFun`.
  */
+@OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
 internal class TopLevelPrivateSuspendFunctionGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     private companion object {
         private val PREDICATE = LookupPredicate.create { annotated("TestTopLevelPrivateSuspendFun".fqn()) }

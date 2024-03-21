@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -174,6 +175,7 @@ public fun FirExtension.createMemberProperty(
  * If you create top-level extension property don't forget to set [hasBackingField] to false,
  *   since such properties never have backing fields
  */
+@ExperimentalTopLevelDeclarationsGenerationApi
 public fun FirExtension.createTopLevelProperty(
     key: GeneratedDeclarationKey,
     callableId: CallableId,
@@ -193,6 +195,7 @@ public fun FirExtension.createTopLevelProperty(
  *
  * Use this overload when those types use type parameters of constructed property
  */
+@ExperimentalTopLevelDeclarationsGenerationApi
 public fun FirExtension.createTopLevelProperty(
     key: GeneratedDeclarationKey,
     callableId: CallableId,
