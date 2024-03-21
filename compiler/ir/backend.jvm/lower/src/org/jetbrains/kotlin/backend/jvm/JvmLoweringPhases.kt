@@ -13,11 +13,7 @@ import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.util.isExpect
-
-internal fun JvmBackendContext.irInlinerIsEnabled(): Boolean =
-    config.enableIrInliner
 
 private val validateIrBeforeLowering = makeIrModulePhase(
     ::JvmIrValidationBeforeLoweringPhase,
@@ -183,37 +179,21 @@ private val kotlinNothingValueExceptionPhase = makeIrFilePhase(
 )
 
 internal val functionInliningPhase = makeIrModulePhase(
-    { context ->
-        if (!context.irInlinerIsEnabled()) return@makeIrModulePhase FileLoweringPass.Empty
-
-        FunctionInlining(
-            context,
-            innerClassesSupport = context.innerClassesSupport,
-            regenerateInlinedAnonymousObjects = true
-        )
-    },
+    ::JvmIrInliner,
     name = "FunctionInliningPhase",
     description = "Perform function inlining",
-    prerequisite = setOf(
-        expectDeclarationsRemovingPhase,
-    )
+    prerequisite = setOf(expectDeclarationsRemovingPhase)
 )
 
 private val apiVersionIsAtLeastEvaluationPhase = makeIrModulePhase(
-    { context ->
-        if (!context.irInlinerIsEnabled()) return@makeIrModulePhase FileLoweringPass.Empty
-        ApiVersionIsAtLeastEvaluationLowering(context)
-    },
+    ::ApiVersionIsAtLeastEvaluationLowering,
     name = "ApiVersionIsAtLeastEvaluationLowering",
     description = "Evaluate inlined invocations of `apiVersionIsAtLeast`",
     prerequisite = setOf(functionInliningPhase)
 )
 
 private val inlinedClassReferencesBoxingPhase = makeIrModulePhase(
-    { context ->
-        if (!context.irInlinerIsEnabled()) return@makeIrModulePhase FileLoweringPass.Empty
-        InlinedClassReferencesBoxingLowering(context)
-    },
+    ::InlinedClassReferencesBoxingLowering,
     name = "InlinedClassReferencesBoxingLowering",
     description = "Replace inlined primitive types in class references with boxed versions",
     prerequisite = setOf(functionInliningPhase, markNecessaryInlinedClassesAsRegenerated)
