@@ -48,16 +48,14 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         topLevelAtoms: List<FirStatement>,
         candidateReturnType: ConeKotlinType,
         context: ResolutionContext,
-        collectVariablesFromContext: Boolean = false,
         analyzer: PostponedAtomAnalyzer,
-    ) = c.runCompletion(completionMode, topLevelAtoms, candidateReturnType, context, collectVariablesFromContext, analyzer)
+    ) = c.runCompletion(completionMode, topLevelAtoms, candidateReturnType, context, analyzer)
 
     private fun ConstraintSystemCompletionContext.runCompletion(
         completionMode: ConstraintSystemCompletionMode,
         topLevelAtoms: List<FirStatement>,
         topLevelType: ConeKotlinType,
         context: ResolutionContext,
-        collectVariablesFromContext: Boolean = false,
         analyzer: PostponedAtomAnalyzer,
     ) {
         val topLevelTypeVariables = topLevelType.extractTypeVariables()
@@ -83,7 +81,6 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             ) continue
 
             val isThereAnyReadyForFixationVariable = findFirstVariableForFixation(
-                collectVariablesFromContext,
                 topLevelAtoms,
                 postponedArguments,
                 completionMode,
@@ -151,7 +148,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             ) continue
 
             // Stage 6: fix next ready type variable with proper constraints
-            if (fixNextReadyVariable(completionMode, topLevelAtoms, topLevelType, collectVariablesFromContext, postponedArguments))
+            if (fixNextReadyVariable(completionMode, topLevelAtoms, topLevelType, postponedArguments))
                 continue
 
             // Stage 7: try to complete call with the builder inference if there are uninferred type variables
@@ -216,7 +213,6 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
     }
 
     private fun ConstraintSystemCompletionContext.findFirstVariableForFixation(
-        collectVariablesFromContext: Boolean,
         topLevelAtoms: List<FirStatement>,
         postponedArguments: List<PostponedResolvedAtom>,
         completionMode: ConstraintSystemCompletionMode,
@@ -225,7 +221,6 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         return variableFixationFinder.findFirstVariableForFixation(
             this,
             getOrderedAllTypeVariables(
-                collectVariablesFromContext,
                 topLevelAtoms
             ),
             postponedArguments,
@@ -289,11 +284,10 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         completionMode: ConstraintSystemCompletionMode,
         topLevelAtoms: List<FirStatement>,
         topLevelType: ConeKotlinType,
-        collectVariablesFromContext: Boolean,
         postponedArguments: List<PostponedResolvedAtom>,
     ): Boolean {
         val variableForFixation = findFirstVariableForFixation(
-            collectVariablesFromContext, topLevelAtoms, postponedArguments, completionMode, topLevelType
+            topLevelAtoms, postponedArguments, completionMode, topLevelType
         ) ?: return false
 
         val variableWithConstraints = notFixedTypeVariables.getValue(variableForFixation.variable)
@@ -312,7 +306,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
     ) {
         while (true) {
             val variableForFixation =
-                findFirstVariableForFixation(false, topLevelAtoms, postponedArguments, completionMode, topLevelType)
+                findFirstVariableForFixation(topLevelAtoms, postponedArguments, completionMode, topLevelType)
                     ?: break
             assert(!variableForFixation.isReady) {
                 "At this stage there should be no remaining variables with proper constraints"
@@ -355,12 +349,8 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
     }
 
     private fun ConstraintSystemCompletionContext.getOrderedAllTypeVariables(
-        collectVariablesFromContext: Boolean,
         topLevelAtoms: List<FirStatement>,
     ): List<TypeConstructorMarker> {
-        if (collectVariablesFromContext) {
-            return notFixedTypeVariables.keys.toList()
-        }
         val result = LinkedHashSet<TypeConstructorMarker>(notFixedTypeVariables.size)
         fun ConeTypeVariable?.toTypeConstructor(): TypeConstructorMarker? =
             this?.typeConstructor?.takeIf { it in notFixedTypeVariables.keys }
