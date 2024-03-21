@@ -159,3 +159,8 @@ internal fun wasmMemorySize(): Int =
 @WasmOp(WasmOp.MEMORY_GROW)
 internal fun wasmMemoryGrow(delta: Int): Int =
     implementedAsIntrinsic
+
+@Suppress("UNUSED_PARAMETER")
+@WasmOp(WasmOp.MEMORY_COPY)
+internal fun wasmMemoryCopy(dst: Int, src: Int, size: Int): Unit =
+    implementedAsIntrinsic

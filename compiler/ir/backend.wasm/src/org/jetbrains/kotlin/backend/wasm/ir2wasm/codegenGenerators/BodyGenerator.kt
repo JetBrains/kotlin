@@ -1594,8 +1594,14 @@ class BodyGenerator(
 
                     body.buildInstr(op, location, immediate)
                 }
+                2 -> {
+                    if (op.immediates.all { it == WasmImmediateKind.MEMORY_IDX })
+                        body.buildInstr(op, location, WasmImmediate.MemoryIdx(0), WasmImmediate.MemoryIdx(0))
+                    else
+                        error("Op $opString immediates ${op.immediates} are not supported")
+                }
                 else ->
-                    error("Op $opString is unsupported")
+                    error("Op $opString is unsupported. Immediates: ${op.immediates}")
             }
             return true
         }
@@ -1613,7 +1619,7 @@ class BodyGenerator(
         locationProvider.nextLocation(this, functionContext.currentFunctionSymbol, functionContext.currentFileEntry)
 
     companion object {
-        const val WASM_ABI_VERSION = 1
+        const val WASM_ABI_VERSION = 2
         const val ANY_VTABLE_FIELD_ID = 0
         const val ANY_ITABLE_FIELD_ID = 1
         const val ANY_RTTI_FIELD_ID = 2
