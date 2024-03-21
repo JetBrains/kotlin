@@ -46,7 +46,7 @@ internal val KotlinMetadataArtifact = KotlinTargetArtifact { target, apiElements
         /* Filter 'host specific' source sets (aka source sets that require a certain host to compile metadata) */
         if (compilation.defaultSourceSet in hostSpecificSourceSets) return@all
 
-        metadataJarTask.configure { it.from(compilation.output.allOutputs) { spec -> spec.into(compilation.defaultSourceSet.name) } }
+        metadataJarTask.configure { it.from(compilation.output.classesDirs) { spec -> spec.into(compilation.defaultSourceSet.name) } }
         if (compilation is KotlinSharedNativeCompilation) {
             target.project.includeCommonizedCInteropMetadata(metadataJarTask, compilation)
         }

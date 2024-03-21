@@ -64,10 +64,9 @@ internal val KotlinNativeHostSpecificMetadataArtifact = KotlinTargetArtifact { t
             }
 
             metadataCompilations.forEach { compilation ->
-                metadataJar.from(compilation.output.allOutputs) { spec ->
+                metadataJar.from(compilation.output.classesDirs) { spec ->
                     spec.into(compilation.name)
                 }
-                metadataJar.dependsOn(compilation.output.classesDirs)
 
                 if (compilation is KotlinSharedNativeCompilation) {
                     project.includeCommonizedCInteropMetadata(metadataJar, compilation)
