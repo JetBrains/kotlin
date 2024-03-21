@@ -56,9 +56,13 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
         if (function !is FirContractDescriptionOwner) return
         val contractDescription = function.contractDescription ?: return
         val effects = contractDescription.effects ?: return
-        val dataFlowInfo = function.controlFlowGraphReference?.dataFlowInfo ?: return
 
-        val argumentIdentifiers = Array(function.valueParameters.size + 1) { i ->
+        // Creating variables can be needed in two cases:
+        //   1. trivial contracts: `returns() implies (x is T)` when `x`'s original type is `T`
+        //   2. tautological contracts: `returnsNotNull() implies (x != null)` with a `return x`
+        // In both cases `x` must not have been used in data flow analysis in any way, otherwise it would already have a variable.
+        val variableStorage = function.controlFlowGraphReference?.dataFlowInfo?.variableStorage as? VariableStorageImpl ?: return
+        val argumentVariables = Array(function.valueParameters.size + 1) { i ->
             val parameterSymbol = if (i > 0) {
                 function.valueParameters[i - 1].symbol
             } else {
@@ -68,14 +72,16 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
                     null
                 } ?: function.symbol
             }
-            Identifier(parameterSymbol, i == 0, null, null)
+            parameterSymbol.correspondingParameterType?.let {
+                variableStorage.getOrCreateLocalVariable(parameterSymbol, it, isReceiver = i == 0)
+            }
         }
 
         for (firEffect in effects) {
             val coneEffect = firEffect.effect as? ConeConditionalEffectDeclaration ?: continue
             val returnValue = coneEffect.effect as? ConeReturnsEffectDeclaration ?: continue
             val wrongCondition = graph.exitNode.previousCfgNodes.any {
-                isWrongConditionOnNode(it, coneEffect, returnValue, function, logicSystem, dataFlowInfo, argumentIdentifiers, context)
+                isWrongConditionOnNode(it, coneEffect, returnValue, function, logicSystem, variableStorage, argumentVariables, context)
             }
             if (wrongCondition) {
                 reporter.reportOn(firEffect.source, FirErrors.WRONG_IMPLIES_CONDITION, context)
@@ -89,8 +95,8 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
         effect: ConeReturnsEffectDeclaration,
         function: FirFunction,
         logicSystem: LogicSystem,
-        dataFlowInfo: DataFlowInfo,
-        argumentIdentifiers: Array<Identifier>,
+        variableStorage: VariableStorageImpl,
+        argumentVariables: Array<RealVariable?>,
         context: CheckerContext
     ): Boolean {
         val builtinTypes = context.session.builtinTypes
@@ -105,7 +111,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
 
         if (isReturn && resultExpression is FirWhenExpression) {
             return node.collectBranchExits().any {
-                isWrongConditionOnNode(it, effectDeclaration, effect, function, logicSystem, dataFlowInfo, argumentIdentifiers, context)
+                isWrongConditionOnNode(it, effectDeclaration, effect, function, logicSystem, variableStorage, argumentVariables, context)
             }
         }
 
@@ -116,8 +122,6 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
                 if (!operation.isTrueFor(resultExpression.value)) return false
             } else {
                 if (expressionType != null && !operation.canBeTrueFor(context.session, expressionType)) return false
-                // TODO: avoid modifying the storage
-                val variableStorage = dataFlowInfo.variableStorage as VariableStorageImpl
                 val resultVar =
                     variableStorage.getOrCreateIfReal(resultExpression, unwrapAlias = { variable, _ -> flow.unwrapVariable(variable) })
                 if (resultVar != null) {
@@ -127,16 +131,6 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
                     }
                 }
             }
-        }
-
-        // TODO, KT-59814: if this is not a top-level function, `FirDataFlowAnalyzer` has erased its value parameters
-        //  from `dataFlowInfo.variableStorage` for some reason, so its `getLocalVariable` doesn't work.
-        val knownVariables = flow.knownVariables.associateBy { it.identifier }
-        val argumentVariables = Array(argumentIdentifiers.size) { i ->
-            val identifier = argumentIdentifiers[i]
-            // Might be unknown if there are no statements made about that parameter, but it's still possible that trivial
-            // contracts are valid. E.g. `returns() implies (x is String)` when `x`'s *original type* is already `String`.
-            knownVariables[identifier] ?: RealVariable(identifier, identifier.symbol.correspondingParameterType, i)
         }
 
         val conditionStatements = logicSystem.approveContractStatement(

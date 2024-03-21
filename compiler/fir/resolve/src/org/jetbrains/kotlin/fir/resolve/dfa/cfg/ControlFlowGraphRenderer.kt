@@ -201,8 +201,8 @@ private class ControlFlowGraphRenderer(
             if (variable is RealVariable && callableId != null) {
                 append(" = ")
                 val receivers = listOfNotNull(
-                    variable.identifier.dispatchReceiver?.callableId?.toHtmlLikeString(),
-                    variable.identifier.extensionReceiver?.callableId?.toHtmlLikeString(),
+                    variable.dispatchReceiver?.callableId?.toHtmlLikeString(),
+                    variable.extensionReceiver?.callableId?.toHtmlLikeString(),
                 )
                 when (receivers.size) {
                     2 -> append(receivers.joinToString(prefix = "(", postfix = ")."))
@@ -219,7 +219,7 @@ private class ControlFlowGraphRenderer(
     }
 
     private val DataFlowVariable.callableId: CallableId?
-        get() = ((this as? RealVariable)?.identifier?.symbol as? FirCallableSymbol<*>)?.callableId
+        get() = ((this as? RealVariable)?.symbol as? FirCallableSymbol<*>)?.callableId
 
     /**
      * Sanitize string for rendering with HTML-like syntax.

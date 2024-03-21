@@ -15,21 +15,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.SmartcastStability
-
-data class Identifier(
-    val symbol: FirBasedSymbol<*>,
-    val isReceiver: Boolean,
-    val dispatchReceiver: RealVariable?,
-    val extensionReceiver: RealVariable?
-) {
-    override fun toString(): String {
-        val callableId = (symbol as? FirCallableSymbol<*>)?.callableId
-        return "[$callableId, dispatchReceiver = $dispatchReceiver, extensionReceiver = $extensionReceiver]"
-    }
-}
+import java.util.*
 
 sealed class DataFlowVariable(private val variableIndexForDebug: Int) : Comparable<DataFlowVariable> {
     final override fun toString(): String {
@@ -65,33 +53,34 @@ private enum class PropertyStability(
 }
 
 class RealVariable(
-    val identifier: Identifier,
+    val symbol: FirBasedSymbol<*>,
+    val isReceiver: Boolean,
+    val dispatchReceiver: RealVariable?,
+    val extensionReceiver: RealVariable?,
     val originalType: ConeKotlinType?,
     variableIndexForDebug: Int,
 ) : DataFlowVariable(variableIndexForDebug) {
     val dependentVariables: MutableSet<RealVariable> = mutableSetOf()
 
-    override fun equals(other: Any?): Boolean {
-        return other is RealVariable && identifier == other.identifier
-    }
+    override fun equals(other: Any?): Boolean =
+        other is RealVariable && symbol == other.symbol && isReceiver == other.isReceiver &&
+                dispatchReceiver == other.dispatchReceiver && extensionReceiver == other.extensionReceiver
 
-    override fun hashCode(): Int {
-        return identifier.hashCode()
-    }
+    override fun hashCode(): Int =
+        Objects.hash(symbol, isReceiver, dispatchReceiver, extensionReceiver)
 
     fun getStability(flow: Flow, session: FirSession): SmartcastStability {
-        if (!identifier.isReceiver) {
+        if (!isReceiver) {
             val stability = propertyStability
 
             val isUnstableSmartcastOnDelegatedProperties =
                 session.languageVersionSettings.supportsFeature(LanguageFeature.UnstableSmartcastOnDelegatedProperties)
-            if (isUnstableSmartcastOnDelegatedProperties && (identifier.symbol.fir as? FirProperty)?.isDelegated == true) return SmartcastStability.DELEGATED_PROPERTY
+            if (isUnstableSmartcastOnDelegatedProperties && (symbol.fir as? FirProperty)?.isDelegated == true) return SmartcastStability.DELEGATED_PROPERTY
 
             stability.inherentInstability?.let { return it }
-            val dispatchReceiver = identifier.dispatchReceiver
             if (stability.checkReceiver && dispatchReceiver?.hasFinalType(flow, session) == false)
                 return SmartcastStability.PROPERTY_WITH_GETTER
-            if (stability.checkModule && !(identifier.symbol.fir as FirVariable).isInCurrentOrFriendModule(session))
+            if (stability.checkModule && !(symbol.fir as FirVariable).isInCurrentOrFriendModule(session))
                 return SmartcastStability.ALIEN_PUBLIC_PROPERTY
             // Members of unstable values should always be unstable, as the receiver could've changed.
             dispatchReceiver?.getStability(flow, session)?.takeIf { it != SmartcastStability.STABLE_VALUE }?.let { return it }
@@ -104,7 +93,7 @@ class RealVariable(
         originalType?.isFinal(session) == true || flow.getTypeStatement(this)?.exactType?.any { it.isFinal(session) } == true
 
     private val propertyStability: PropertyStability by lazy {
-        when (val fir = identifier.symbol.fir) {
+        when (val fir = symbol.fir) {
             !is FirVariable -> PropertyStability.PRIVATE_OR_CONST_VAL // named object or containing class for a static field reference
             is FirEnumEntry -> PropertyStability.PRIVATE_OR_CONST_VAL
             is FirErrorProperty -> PropertyStability.PRIVATE_OR_CONST_VAL

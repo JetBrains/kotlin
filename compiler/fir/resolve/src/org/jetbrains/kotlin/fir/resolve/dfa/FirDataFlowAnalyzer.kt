@@ -733,7 +733,7 @@ abstract class FirDataFlowAnalyzer(
         reassigned: Set<FirPropertySymbol>,
     ) {
         if (reassigned.isEmpty()) return
-        val possiblyChangedVariables = variableStorage.getAllLocalVariables().filter { it.identifier.symbol in reassigned }
+        val possiblyChangedVariables = variableStorage.getAllLocalVariables().filter { it.symbol in reassigned }
         if (possiblyChangedVariables.isEmpty()) return
         // While analyzing the loop we might have added some backwards jumps to `conditionEnterNode` which weren't
         // there at the time its flow was computed - which is why we erased all information about `possiblyChangedVariables`
@@ -768,7 +768,7 @@ abstract class FirDataFlowAnalyzer(
 
     private fun enterRepeatableStatement(flow: MutableFlow, reassigned: Set<FirPropertySymbol>) {
         if (reassigned.isEmpty()) return
-        val possiblyChangedVariables = variableStorage.getAllLocalVariables().filter { it.identifier.symbol in reassigned }
+        val possiblyChangedVariables = variableStorage.getAllLocalVariables().filter { it.symbol in reassigned }
         for (variable in possiblyChangedVariables) {
             logicSystem.recordNewAssignment(flow, variable, context.newAssignmentIndex())
         }
@@ -1521,7 +1521,7 @@ abstract class FirDataFlowAnalyzer(
         val previous = currentSmartCastPosition
         if (previous == flow) return
         receiverStack.forEach {
-            variableStorage.getLocalVariable(it.boundSymbol, isReceiver = true)?.let { variable ->
+            variableStorage.getLocalVariable(it.boundSymbol, it.originalType, isReceiver = true)?.let { variable ->
                 val newStatement = flow?.getTypeStatement(variable)
                 if (newStatement != previous?.getTypeStatement(variable)) {
                     receiverUpdated(it.boundSymbol, newStatement)
@@ -1542,8 +1542,8 @@ abstract class FirDataFlowAnalyzer(
 
     private fun MutableFlow.addTypeStatement(info: TypeStatement) {
         val newStatement = logicSystem.addTypeStatement(this, info) ?: return
-        if (newStatement.variable.identifier.isReceiver && this === currentSmartCastPosition) {
-            receiverUpdated(newStatement.variable.identifier.symbol, newStatement)
+        if (newStatement.variable.isReceiver && this === currentSmartCastPosition) {
+            receiverUpdated(newStatement.variable.symbol, newStatement)
         }
     }
 
