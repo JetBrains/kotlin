@@ -382,6 +382,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("duplicateParameterNameMinimized.kt")
+    public void testDuplicateParameterNameMinimized() {
+      runTest("compiler/testData/diagnostics/tests/duplicateParameterNameMinimized.kt");
+    }
+
+    @Test
     @TestMetadata("duplicateParameterNameSimplified.kt")
     public void testDuplicateParameterNameSimplified() {
       runTest("compiler/testData/diagnostics/tests/duplicateParameterNameSimplified.kt");

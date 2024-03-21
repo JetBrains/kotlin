@@ -11,7 +11,7 @@ fun interface FlowCollector<in T> {
     suspend fun emit(value: T)
 }
 
-inline fun <T, R> Flow<T>.flatMapLatest(crossinline transform: suspend (value: T) -> Flow<R>) = Flow { collector ->
+inline fun <T, R> Flow<T>.flatMapLatest(crossinline transform: suspend (anotherValue: T) -> Flow<R>) = Flow { collector ->
     collect { it1 -> transform(it1).collect { it2 -> collector.emit(it2) } }
 }
 
