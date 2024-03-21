@@ -27,14 +27,14 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 private fun List<CompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>.toCompilerPhase() =
     reduce { acc, lowering -> acc.then(lowering) }
 
-private val validateIrBeforeLowering = makeCustomPhase<JsIrBackendContext>(
-    { context, module -> validationCallback(context, module) },
+private val validateIrBeforeLowering = makeIrModulePhase(
+    ::IrValidationPhase,
     name = "ValidateIrBeforeLowering",
     description = "Validate IR before lowering"
 )
 
-private val validateIrAfterLowering = makeCustomPhase<JsIrBackendContext>(
-    { context, module -> validationCallback(context, module) },
+private val validateIrAfterLowering = makeIrModulePhase(
+    ::IrValidationPhase,
     name = "ValidateIrAfterLowering",
     description = "Validate IR after lowering"
 )

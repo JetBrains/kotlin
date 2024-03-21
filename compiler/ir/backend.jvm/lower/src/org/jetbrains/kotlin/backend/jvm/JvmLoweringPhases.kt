@@ -67,22 +67,16 @@ private class CheckDeclarationParents : FileLoweringPass {
     }
 }
 
-private val validateIrBeforeLowering = makeCustomPhase(
-    ::validateIr,
+private val validateIrBeforeLowering = makeIrModulePhase(
+    ::JvmIrValidationBeforeLoweringPhase,
     name = "ValidateIrBeforeLowering",
     description = "Validate IR before lowering"
 )
 
-private val validateIrAfterLowering = makeCustomPhase(
-    ::validateIr,
+private val validateIrAfterLowering = makeIrModulePhase(
+    ::JvmIrValidationAfterLoweringPhase,
     name = "ValidateIrAfterLowering",
     description = "Validate IR after lowering"
-)
-
-private val validateJvmIrAfterLowering = makeCustomPhase<JvmBackendContext>(
-    { context, module -> validateJvmIr(context, module) },
-    name = "ValidateJvmIrAfterLowering",
-    description = "Validate that IR after lowering is correctly structured by Kotlin JVM rules"
 )
 
 // TODO make all lambda-related stuff work with IrFunctionExpression and drop this phase
@@ -481,8 +475,7 @@ private fun buildJvmLoweringPhases(
                 buildLoweringsPhase(phases) then
                 generateMultifileFacadesPhase then
                 resolveInlineCallsPhase then
-                validateIrAfterLowering then
-                validateJvmIrAfterLowering
+                validateIrAfterLowering
     )
 }
 

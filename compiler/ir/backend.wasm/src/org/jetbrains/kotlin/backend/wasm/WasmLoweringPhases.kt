@@ -29,14 +29,14 @@ import org.jetbrains.kotlin.platform.toTargetPlatform
 private fun List<CompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>>.toCompilerPhase() =
     reduce { acc, lowering -> acc.then(lowering) }
 
-private val validateIrBeforeLowering = makeCustomPhase<WasmBackendContext>(
-    { context, module -> validationCallback(context, module) },
+private val validateIrBeforeLowering = makeIrModulePhase(
+    ::IrValidationPhase,
     name = "ValidateIrBeforeLowering",
     description = "Validate IR before lowering"
 )
 
-private val validateIrAfterLowering = makeCustomPhase<WasmBackendContext>(
-    { context, module -> validationCallback(context, module) },
+private val validateIrAfterLowering = makeIrModulePhase(
+    ::IrValidationPhase,
     name = "ValidateIrAfterLowering",
     description = "Validate IR after lowering"
 )
