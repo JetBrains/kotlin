@@ -30,6 +30,8 @@ import java.util.concurrent.ConcurrentHashMap
 import plugins.KotlinBuildPublishingPluginKt
 import java.security.MessageDigest
 
+import static BuildPropertiesKt.getKotlinBuildProperties
+
 buildscript {
     apply from: "gradle/kotlinGradlePlugin.gradle"
 
@@ -620,9 +622,7 @@ targetList.each { targetName ->
         dependsOn "${targetName}PlatformLibs"
 
         libraries = new CompareDistributionSignatures.Libraries.Platform(targetName)
-        if (project.hasProperty("anotherDistro")) {
-            oldDistribution = project.findProperty("anotherDistro")
-        }
+        oldDistribution = getKotlinBuildProperties(project).getOrNull("anotherDistro")
         onMismatchMode = CompareDistributionSignatures.OnMismatchMode.FAIL
     }
 }
@@ -631,9 +631,7 @@ tasks.register("checkStdlibAbiCompatibility", CompareDistributionSignatures) {
     dependsOn "distRuntime"
 
     libraries = CompareDistributionSignatures.Libraries.Standard.INSTANCE
-    if (project.hasProperty("anotherDistro")) {
-        oldDistribution = project.findProperty("anotherDistro")
-    }
+    oldDistribution = getKotlinBuildProperties(project).getOrNull("anotherDistro")
     onMismatchMode = CompareDistributionSignatures.OnMismatchMode.FAIL
 }
 // FIXME: should be a part of Host/TargetManager
