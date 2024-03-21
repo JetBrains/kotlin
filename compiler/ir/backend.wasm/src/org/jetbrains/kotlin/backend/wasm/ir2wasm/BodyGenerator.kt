@@ -1160,8 +1160,14 @@ class BodyGenerator(
                     )
                     body.buildInstr(op, location, *immediates)
                 }
+                2 -> {
+                    if (op.immediates.all { it == WasmImmediateKind.MEMORY_IDX })
+                        body.buildInstr(op, location, WasmImmediate.MemoryIdx(0), WasmImmediate.MemoryIdx(0))
+                    else
+                        error("Op $opString immediates ${op.immediates} are not supported")
+                }
                 else ->
-                    error("Op $opString is unsupported")
+                    error("Op $opString is unsupported. Immediates: ${op.immediates}")
             }
             return true
         }
