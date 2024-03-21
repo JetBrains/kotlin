@@ -22,29 +22,30 @@ fun <T : IrElement> T.patchDeclarationParents(initialParent: IrDeclarationParent
     accept(PatchDeclarationParentsVisitor, initialParent)
 }
 
+@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 abstract class DeclarationParentsVisitor : IrElementVisitor<Unit, IrDeclarationParent?> {
-    override fun visitElement(element: IrElement, data: IrDeclarationParent?) {
-        element.acceptChildren(this, data)
+    override fun visitElement(element: IrElement, actualParent: IrDeclarationParent?) {
+        element.acceptChildren(this, actualParent)
     }
 
-    override fun visitPackageFragment(declaration: IrPackageFragment, data: IrDeclarationParent?) {
+    override fun visitPackageFragment(declaration: IrPackageFragment, actualParent: IrDeclarationParent?) {
         declaration.acceptChildren(this, declaration)
     }
 
-    override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) {
-        if (data != null) {
-            handleParent(declaration, data)
+    override fun visitDeclaration(declaration: IrDeclarationBase, actualParent: IrDeclarationParent?) {
+        if (actualParent != null) {
+            handleParent(declaration, actualParent)
         }
 
-        val downParent = declaration as? IrDeclarationParent ?: data
+        val downParent = declaration as? IrDeclarationParent ?: actualParent
         declaration.acceptChildren(this, downParent)
     }
 
-    protected abstract fun handleParent(declaration: IrDeclaration, parent: IrDeclarationParent)
+    protected abstract fun handleParent(declaration: IrDeclaration, actualParent: IrDeclarationParent)
 }
 
 private object PatchDeclarationParentsVisitor : DeclarationParentsVisitor() {
-    override fun handleParent(declaration: IrDeclaration, parent: IrDeclarationParent) {
-        declaration.parent = parent
+    override fun handleParent(declaration: IrDeclaration, actualParent: IrDeclarationParent) {
+        declaration.parent = actualParent
     }
 }

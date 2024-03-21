@@ -131,14 +131,14 @@ class CheckDeclarationParentsVisitor : DeclarationParentsVisitor() {
 
     val errors = ArrayList<Error>()
 
-    override fun handleParent(declaration: IrDeclaration, parent: IrDeclarationParent) {
+    override fun handleParent(declaration: IrDeclaration, actualParent: IrDeclarationParent) {
         try {
-            val actualParent = declaration.parent
-            if (actualParent != parent) {
-                errors.add(Error(declaration, parent, actualParent))
+            val assignedParent = declaration.parent
+            if (assignedParent != actualParent) {
+                errors.add(Error(declaration, assignedParent, actualParent))
             }
         } catch (e: Exception) {
-            errors.add(Error(declaration, parent, null))
+            errors.add(Error(declaration, actualParent, null))
         }
     }
 }
