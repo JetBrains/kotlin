@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,16 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-fun <T : IrElement> T.patchDeclarationParents(initialParent: IrDeclarationParent? = null) = apply {
+/**
+ * For each [IrDeclaration] in the IR subtree with the root in `this`, sets its [IrDeclaration.parent]
+ * property to its _actual_ parent in the subtree.
+ *
+ * @param initialParent If this parameter is not `null`, assign topmost [IrDeclaration]s'
+ * parents to that value (starting with `this`, if it is an [IrDeclaration]).
+ * If null, skip those topmost [IrDeclaration]s' and start assigning parents one level below
+ * (this is, once an [IrDeclarationParent] is found).
+ */
+fun <T : IrElement> T.patchDeclarationParents(initialParent: IrDeclarationParent? = null): T = apply {
     accept(PatchDeclarationParentsVisitor, initialParent)
 }
 
