@@ -10,6 +10,7 @@ import org.jetbrains.dokka.base.transformers.documentables.InheritorsInfo
 import org.jetbrains.dokka.links.*
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.Param
+import org.jetbrains.dokka.model.doc.See
 import org.jetbrains.dokka.model.doc.Text
 import utils.AbstractModelTest
 import utils.assertContains
@@ -488,4 +489,25 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
         }
     }
 
+    @Test
+    fun `should have a link to a package in see doctag`() {
+        inlineModelTest(
+            """
+            |/**
+            | * @see java
+            | */
+            |public class Foo {
+            |}
+            """, configuration = configuration
+        ) {
+            with((this / "java" / "Foo").cast<DClass>()) {
+                val doc = this.documentation.values.single()
+                val expectedDRI = DRI(
+                    packageName = "java", classNames = null,
+                    target = PointingToDeclaration,
+                )
+                assertEquals(expectedDRI, (doc.dfs { it is See } as See).address)
+            }
+        }
+    }
 }
