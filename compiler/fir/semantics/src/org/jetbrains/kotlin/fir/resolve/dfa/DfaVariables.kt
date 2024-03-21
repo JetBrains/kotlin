@@ -7,20 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.types.SmartcastStability
-
-data class Identifier constructor(
-    val symbol: FirBasedSymbol<*>,
-    val isReceiver: Boolean,
-    val dispatchReceiver: RealVariable?,
-    val extensionReceiver: RealVariable?
-) {
-    override fun toString(): String {
-        val callableId = (symbol as? FirCallableSymbol<*>)?.callableId
-        return "[$callableId, dispatchReceiver = $dispatchReceiver, extensionReceiver = $extensionReceiver]"
-    }
-}
+import java.util.*
 
 sealed class DataFlowVariable(private val variableIndexForDebug: Int) : Comparable<DataFlowVariable> {
     final override fun toString(): String {
@@ -70,19 +58,21 @@ enum class PropertyStability(val impliedSmartcastStability: SmartcastStability?)
 }
 
 class RealVariable(
-    val identifier: Identifier,
+    val symbol: FirBasedSymbol<*>,
+    val isReceiver: Boolean,
+    val dispatchReceiver: RealVariable?,
+    val extensionReceiver: RealVariable?,
     val stability: PropertyStability,
     variableIndexForDebug: Int,
 ) : DataFlowVariable(variableIndexForDebug) {
     val dependentVariables = mutableSetOf<RealVariable>()
 
-    override fun equals(other: Any?): Boolean {
-        return other is RealVariable && identifier == other.identifier
-    }
+    override fun equals(other: Any?): Boolean =
+        other is RealVariable && symbol == other.symbol &&
+                dispatchReceiver == other.dispatchReceiver && extensionReceiver == other.extensionReceiver
 
-    override fun hashCode(): Int {
-        return identifier.hashCode()
-    }
+    override fun hashCode(): Int =
+        Objects.hash(symbol, dispatchReceiver, extensionReceiver)
 }
 
 class SyntheticVariable(val fir: FirElement, variableIndexForDebug: Int) : DataFlowVariable(variableIndexForDebug) {
