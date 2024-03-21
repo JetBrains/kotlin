@@ -609,7 +609,6 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols("#3455 - KDoc links to a package are unresolved ")
     fun `fully qualified link should lead to package`() {
         // for the test case, there is the only one link candidate in K1 and K2
         val configuration = dokkaConfiguration {
@@ -752,7 +751,6 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols("#3455 - KDoc links to a package are unresolved ")
     fun `short link should lead to package rather than function`() {
         val configuration = dokkaConfiguration {
             sourceSets {

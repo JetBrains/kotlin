@@ -18,6 +18,11 @@ internal val PsiElement.parentsWithSelf: Sequence<PsiElement>
 
 @InternalDokkaApi
 public fun DRI.Companion.from(psi: PsiElement): DRI = psi.parentsWithSelf.run {
+    if (psi is PsiPackage) {
+        return@run DRI(
+            packageName = psi.qualifiedName,
+        )
+    }
     val psiMethod = firstIsInstanceOrNull<PsiMethod>()
     val psiField = firstIsInstanceOrNull<PsiField>()
     val classes = filterIsInstance<PsiClass>().filterNot { it is PsiTypeParameter }
