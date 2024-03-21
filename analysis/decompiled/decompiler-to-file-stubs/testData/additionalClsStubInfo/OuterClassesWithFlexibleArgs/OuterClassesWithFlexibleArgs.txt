@@ -22,7 +22,7 @@ KotlinStub$CLASS[classId=test/OuterClassesWithFlexibleArgs, fqName=test.OuterCla
     KotlinStub$PROPERTY[fqName=test.OuterClassesWithFlexibleArgs.baz, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=baz]
       KotlinStub$MODIFIER_LIST[public final]
       KotlinStub$TYPE_REFERENCE
-        KotlinStub$USER_TYPE    ft: d.JavaClass.InnerClass<L .. L?>?
+        KotlinStub$USER_TYPE    upperBound: d.JavaClass.InnerClass<L .. L?>?
           KotlinStub$USER_TYPE
             KotlinStub$USER_TYPE
               KotlinStub$REFERENCE_EXPRESSION[referencedName=d]
@@ -30,11 +30,11 @@ KotlinStub$CLASS[classId=test/OuterClassesWithFlexibleArgs, fqName=test.OuterCla
             KotlinStub$TYPE_ARGUMENT_LIST
               KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
                 KotlinStub$TYPE_REFERENCE
-                  KotlinStub$USER_TYPE    ft: K?
+                  KotlinStub$USER_TYPE    upperBound: K?
                     KotlinStub$REFERENCE_EXPRESSION[referencedName=K]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=InnerClass]
           KotlinStub$TYPE_ARGUMENT_LIST
             KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
               KotlinStub$TYPE_REFERENCE
-                KotlinStub$USER_TYPE    ft: L?
+                KotlinStub$USER_TYPE    upperBound: L?
                   KotlinStub$REFERENCE_EXPRESSION[referencedName=L]
