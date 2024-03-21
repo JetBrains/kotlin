@@ -472,10 +472,13 @@ internal class SwiftCompilation<T: TestCompilationArtifact>(
     override val result: TestCompilationResult<out T> by lazy {
         val configs = testRunSettings.configurables as AppleConfigurables
         val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()
-        val args = swiftExtraOpts + sources.map { it.absolutePath } + listOf(
+
+        val optimizationModeFlags = swiftcOptimizationModeFlags(testRunSettings.get<OptimizationMode>())
+
+        val args = swiftExtraOpts + optimizationModeFlags + sources.map { it.absolutePath } + listOf(
             "-sdk", configs.absoluteTargetSysRoot, "-target", swiftTarget,
             "-o", outputFile(expectedArtifact).absolutePath,
-            "-g", // TODO https://youtrack.jetbrains.com/issue/KT-65436/K-N-ObjCExport-tests-use-various-optimization-flags-for-swiftc
+            "-g", // Xcode seems to pass -g even for optimized builds by default.
             "-Xcc", "-Werror", // To fail compilation on warnings in framework header.
         )
 
@@ -507,6 +510,22 @@ internal class SwiftCompilation<T: TestCompilationArtifact>(
         }
         expectedArtifact.logFile.writeText(loggedCall.toString())
         immediateResult
+    }
+
+    // This function tries to mimic Xcode default behavior,
+    // so that we test the same Kotlin+Swift flags combination as used in production.
+    private fun swiftcOptimizationModeFlags(optimizationMode: OptimizationMode): List<String> {
+        return when (optimizationMode) {
+            OptimizationMode.DEBUG -> listOf(
+                "-Xcc", "-DDEBUG=1", // -DDEBUG=1 for Clang, e.g. for C and Objective-C code
+                "-D", "DEBUG", // for Swift
+                "-Onone", // Optimization level
+            )
+            OptimizationMode.OPT -> listOf("-enable-default-cmo", "-O")
+            OptimizationMode.NO -> emptyList()
+        }
+        // TODO: swiftc has more variants of optimization flags, see
+        //   https://youtrack.jetbrains.com/issue/KT-65436/K-N-ObjCExport-tests-use-various-optimization-flags-for-swiftc
     }
 }
 
