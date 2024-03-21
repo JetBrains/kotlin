@@ -13,6 +13,7 @@ dependencies {
     embedded(project(":native:swift:sir-compiler-bridge")) { isTransitive = false }
     embedded(project(":native:swift:sir-passes")) { isTransitive = false }
     embedded(project(":native:swift:sir-printer")) { isTransitive = false }
+    embedded(project(":native:swift:sir-providers")) { isTransitive = false }
     embedded(project(":native:swift:swift-export-standalone")) { isTransitive = false }
 
     embedded(project(":analysis:analysis-api-standalone")) { isTransitive = false }
