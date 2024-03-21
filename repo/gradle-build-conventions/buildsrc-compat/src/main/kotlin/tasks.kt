@@ -33,6 +33,7 @@ private const val SWIFT_EXPORT_EMBEDDABLE = ":native:swift:swift-export-embeddab
 
 val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-assignment",
+    ":compose-compiler-gradle-plugin",
     ":kotlin-allopen",
     ":kotlin-noarg",
     ":kotlin-power-assert",
