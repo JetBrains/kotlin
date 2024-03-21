@@ -105,6 +105,10 @@ the Kotlin IntelliJ IDEA plugin:
       - License: Apache 2 ([license/third_party/power_assert_license.txt][power-assert])
       - Origin: Copyright (C) 2020-2023 Brian Norman
 
+ - Path: plugins/compose
+      - License: Apache 2 ([license/third_party/compose_license.txt][compose])
+      - Origin: Copyright 2019-2024 The Android Open Source Project
+
  - Path: plugins/lint/android-annotations
       - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
       - Origin: Copyright (C) 2011-15 The Android Open Source Project
@@ -124,7 +128,7 @@ the Kotlin IntelliJ IDEA plugin:
  - Path: plugins/power-assert
       - License: Apache 2 ([license/third_party/power_assert_license.txt][power-assert])
       - Origin: Copyright (C) 2020-2023 Brian Norman
-          
+
  - Path: wasm/ir/src/org/jetbrains/kotlin/wasm/ir/convertors
       - License: MIT ([license/third_party/asmble_license.txt][asmble])
       - Origin: Copyright (C) 2018 Chad Retz
@@ -292,6 +296,7 @@ any distributions of the compiler, libraries or plugin:
 [assemblyscript]: third_party/assemblyscript_license.txt
 [boost]: third_party/boost_LICENSE.txt
 [closure-compiler]: third_party/closure-compiler_LICENSE.txt
+[compose]: third_party/compose_license.txt
 [dagger]: third_party/testdata/dagger_license.txt
 [dart]: third_party/dart_LICENSE.txt
 [eclipse]: third_party/testdata/eclipse_license.txt
