@@ -470,9 +470,15 @@ class MppCompositeBuildIT : KGPBaseTest() {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
 
             build(":consumerA:assemble") {
+                // Check that producer has resources in its metadata
+                val allMetadataJar = producer.projectPath.resolve("producerA/build/libs/producerA-metadata-1.0.0-SNAPSHOT.jar")
+                allMetadataJar.assertZipFileContains(listOf("commonMain/toot-toot.txt", "nativeMain/toot-toot.txt"))
                 assertTasksExecuted(":consumerA:compileCommonMainKotlinMetadata")
                 assertTasksExecuted(":consumerA:compileNativeMainKotlinMetadata")
                 if (OperatingSystem.current().isMacOsX) {
+                    // Check that producer has resources in its metadata
+                    val hostSpecificMetadataJar = producer.projectPath.resolve("producerA/build/libs/producerA-iosx64-1.0.0-SNAPSHOT-metadata.jar")
+                    hostSpecificMetadataJar.assertZipFileContains(listOf("appleMain/toot-toot.txt"))
                     assertTasksExecuted(":consumerA:compileAppleMainKotlinMetadata")
                 }
             }

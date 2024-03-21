@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform")
+    kotlin("multiplatform") version "1.9.23" // In this version resources were published inside metadata klibs
     `maven-publish`
 }
 

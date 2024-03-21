@@ -482,9 +482,12 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
                 "commonMain/default/manifest",
                 "commonMain/default/linkdata/package_com.example.bar/",
+                "commonMain/commonMainResource.txt",
 
                 "jvmAndJsMain/default/manifest",
                 "jvmAndJsMain/default/linkdata/package_com.example.bar/",
+                "jvmAndJsMain/jvmAndJsMainResource.txt",
+                "jvmAndJsMain/commonMainResource.txt",
 
                 "linuxAndJsMain/default/manifest",
                 "linuxAndJsMain/default/linkdata/package_com.example.bar/"
