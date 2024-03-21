@@ -56,7 +56,7 @@ FILE: [ResolvedTo(RAW_FIR)] component1TypeCollisionAndAnnotationsScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop1: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop1|, [ResolvedTo(RAW_FIR)] prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop2|): R|one/two/MyDataClass|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop1: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop1|, [ResolvedTo(RAW_FIR)] prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop2|): R|one/two/MyDataClass|
 
         }
 
@@ -119,7 +119,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionAndAnnotationsScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop1: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop1|, [ResolvedTo(RAW_FIR)] prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop2|): R|one/two/MyDataClass|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop1: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop1|, [ResolvedTo(RAW_FIR)] prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop2|): R|one/two/MyDataClass|
 
         }
 
@@ -182,7 +182,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionAndAnnotationsScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop1: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop1|, [ResolvedTo(RAW_FIR)] prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop2|): R|one/two/MyDataClass|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop1: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop1|, [ResolvedTo(RAW_FIR)] prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop2|): R|one/two/MyDataClass|
 
         }
 
@@ -245,7 +245,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionAndAnnotationsScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop1: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop1|, [ResolvedTo(RAW_FIR)] prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop2|): R|one/two/MyDataClass|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop1: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop1|, [ResolvedTo(RAW_FIR)] prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop2|): R|one/two/MyDataClass|
 
         }
 
@@ -308,7 +308,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionAndAnnotationsScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop1: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop1|, [ResolvedTo(RAW_FIR)] prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop2|): R|one/two/MyDataClass|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop1: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop1|, [ResolvedTo(RAW_FIR)] prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop2|): R|one/two/MyDataClass|
 
         }
 
@@ -371,7 +371,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionAndAnnotationsScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @R|one/two/Anno|[Unresolved](IntegerLiteral(3).plus#(constant#)) MyClass<R|@R|one/two/Anno|(IntegerLiteral(4).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(5).plus#(constant#))  kotlin/Int>|>
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop1: @R|one/two/Anno|[Unresolved](IntegerLiteral(0).plus#(constant#)) MyClass<R|@R|one/two/Anno|(IntegerLiteral(1).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>|> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop1|, [ResolvedTo(RAW_FIR)] prop2: @R|one/two/Anno|[Unresolved](IntegerLiteral(3).plus#(constant#)) MyClass<R|@R|one/two/Anno|(IntegerLiteral(4).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(5).plus#(constant#))  kotlin/Int>|> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop2|): R|one/two/MyDataClass|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop1: @R|one/two/Anno|[Unresolved](IntegerLiteral(0).plus#(constant#)) MyClass<R|@R|one/two/Anno|(IntegerLiteral(1).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>|> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop1|, [ResolvedTo(RAW_FIR)] prop2: @R|one/two/Anno|[Unresolved](IntegerLiteral(3).plus#(constant#)) MyClass<R|@R|one/two/Anno|(IntegerLiteral(4).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(5).plus#(constant#))  kotlin/Int>|> = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop2|): R|one/two/MyDataClass|
 
         }
 

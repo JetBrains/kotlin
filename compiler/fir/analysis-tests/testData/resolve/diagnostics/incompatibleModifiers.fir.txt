@@ -60,7 +60,7 @@ FILE: incompatibleModifiers.kt
 
         public final operator fun component1(): R|kotlin/Int|
 
-        public final fun copy(i: R|kotlin/Int| = this@R|/I|.R|/I.i|): R|I|
+        protected final fun copy(i: R|kotlin/Int| = this@R|/I|.R|/I.i|): R|I|
 
     }
     public final data inline class J : R|kotlin/Any| {

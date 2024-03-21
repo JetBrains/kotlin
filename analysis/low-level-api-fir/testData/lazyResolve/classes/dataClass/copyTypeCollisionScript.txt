@@ -28,7 +28,7 @@ FILE: [ResolvedTo(RAW_FIR)] copyTypeCollisionScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component1(): MyClass
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
         }
 
@@ -63,7 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component1(): MyClass
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
         }
 
@@ -98,7 +98,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component1(): MyClass
 
-            public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun copy([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+            public? final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun copy([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
         }
 
@@ -133,7 +133,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component1(): MyClass
 
-            public final [ResolvedTo(COMPANION_GENERATION)] fun copy([ResolvedTo(COMPANION_GENERATION)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+            public? final [ResolvedTo(COMPANION_GENERATION)] fun copy([ResolvedTo(COMPANION_GENERATION)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
         }
 
@@ -168,7 +168,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component1(): MyClass
 
-            public final [ResolvedTo(SUPER_TYPES)] fun copy([ResolvedTo(SUPER_TYPES)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+            public? final [ResolvedTo(SUPER_TYPES)] fun copy([ResolvedTo(SUPER_TYPES)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
         }
 
@@ -203,7 +203,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component1(): MyClass
 
-            public final [ResolvedTo(TYPES)] fun copy([ResolvedTo(TYPES)] prop: R|one/two/MyDataClass.MyClass| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+            public? final [ResolvedTo(TYPES)] fun copy([ResolvedTo(TYPES)] prop: R|one/two/MyDataClass.MyClass| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
         }
 

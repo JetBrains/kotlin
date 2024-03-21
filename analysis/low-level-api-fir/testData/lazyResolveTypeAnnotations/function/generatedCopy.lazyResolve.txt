@@ -26,7 +26,7 @@ FILE: [ResolvedTo(RAW_FIR)] generatedCopy.kt
 
         public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] property1: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|properties/MyClass|.R|properties/MyClass.property1|, [ResolvedTo(RAW_FIR)] property2: @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>> = this@R|properties/MyClass|.R|properties/MyClass.property2|): R|properties/MyClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] property1: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|properties/MyClass|.R|properties/MyClass.property1|, [ResolvedTo(RAW_FIR)] property2: @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>> = this@R|properties/MyClass|.R|properties/MyClass.property2|): R|properties/MyClass|
 
     }
 
@@ -58,7 +58,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopy.kt
 
         public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] property1: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|properties/MyClass|.R|properties/MyClass.property1|, [ResolvedTo(RAW_FIR)] property2: @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>> = this@R|properties/MyClass|.R|properties/MyClass.property2|): R|properties/MyClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] property1: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|properties/MyClass|.R|properties/MyClass.property1|, [ResolvedTo(RAW_FIR)] property2: @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>> = this@R|properties/MyClass|.R|properties/MyClass.property2|): R|properties/MyClass|
 
     }
 
@@ -90,7 +90,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopy.kt
 
         public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>
 
-        public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun copy([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] property1: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|properties/MyClass|.R|properties/MyClass.property1|, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] property2: @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>> = this@R|properties/MyClass|.R|properties/MyClass.property2|): R|properties/MyClass|
+        public? final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun copy([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] property1: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|properties/MyClass|.R|properties/MyClass.property1|, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] property2: @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>> = this@R|properties/MyClass|.R|properties/MyClass.property2|): R|properties/MyClass|
 
     }
 
@@ -122,7 +122,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopy.kt
 
         public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>
 
-        public final [ResolvedTo(COMPANION_GENERATION)] fun copy([ResolvedTo(COMPANION_GENERATION)] property1: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|properties/MyClass|.R|properties/MyClass.property1|, [ResolvedTo(COMPANION_GENERATION)] property2: @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>> = this@R|properties/MyClass|.R|properties/MyClass.property2|): R|properties/MyClass|
+        public? final [ResolvedTo(COMPANION_GENERATION)] fun copy([ResolvedTo(COMPANION_GENERATION)] property1: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|properties/MyClass|.R|properties/MyClass.property1|, [ResolvedTo(COMPANION_GENERATION)] property2: @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>> = this@R|properties/MyClass|.R|properties/MyClass.property2|): R|properties/MyClass|
 
     }
 
@@ -154,7 +154,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopy.kt
 
         public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>
 
-        public final [ResolvedTo(SUPER_TYPES)] fun copy([ResolvedTo(SUPER_TYPES)] property1: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|properties/MyClass|.R|properties/MyClass.property1|, [ResolvedTo(SUPER_TYPES)] property2: @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>> = this@R|properties/MyClass|.R|properties/MyClass.property2|): R|properties/MyClass|
+        public? final [ResolvedTo(SUPER_TYPES)] fun copy([ResolvedTo(SUPER_TYPES)] property1: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|properties/MyClass|.R|properties/MyClass.property1|, [ResolvedTo(SUPER_TYPES)] property2: @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>> = this@R|properties/MyClass|.R|properties/MyClass.property2|): R|properties/MyClass|
 
     }
 
@@ -186,7 +186,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopy.kt
 
         public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @R|properties/Anno|[Unresolved](<strcat>(String(parameter2 type: ), constant#)) Collection<R|@R|properties/Anno|(<strcat>(String(nested parameter2 type: ), constant#))  kotlin/collections/Collection<@R|properties/Anno|(<strcat>(String(nested nested parameter2 type: ), constant#))  kotlin/String>|>
 
-        public final [ResolvedTo(TYPES)] fun copy([ResolvedTo(TYPES)] property1: R|@R|properties/Anno|(<strcat>(String(parameter1 type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested parameter1 type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter1 type: ), constant#))  kotlin/Int>>| = this@R|properties/MyClass|.R|properties/MyClass.property1|, [ResolvedTo(TYPES)] property2: R|@R|properties/Anno|(<strcat>(String(parameter2 type: ), constant#))  kotlin/collections/Collection<@R|properties/Anno|(<strcat>(String(nested parameter2 type: ), constant#))  kotlin/collections/Collection<@R|properties/Anno|(<strcat>(String(nested nested parameter2 type: ), constant#))  kotlin/String>>| = this@R|properties/MyClass|.R|properties/MyClass.property2|): R|properties/MyClass|
+        public? final [ResolvedTo(TYPES)] fun copy([ResolvedTo(TYPES)] property1: R|@R|properties/Anno|(<strcat>(String(parameter1 type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested parameter1 type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter1 type: ), constant#))  kotlin/Int>>| = this@R|properties/MyClass|.R|properties/MyClass.property1|, [ResolvedTo(TYPES)] property2: R|@R|properties/Anno|(<strcat>(String(parameter2 type: ), constant#))  kotlin/collections/Collection<@R|properties/Anno|(<strcat>(String(nested parameter2 type: ), constant#))  kotlin/collections/Collection<@R|properties/Anno|(<strcat>(String(nested nested parameter2 type: ), constant#))  kotlin/String>>| = this@R|properties/MyClass|.R|properties/MyClass.property2|): R|properties/MyClass|
 
     }
 

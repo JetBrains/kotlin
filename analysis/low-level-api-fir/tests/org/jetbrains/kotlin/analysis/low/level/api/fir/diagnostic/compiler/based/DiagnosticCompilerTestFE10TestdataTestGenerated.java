@@ -9405,6 +9405,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("deprecationPhase2_protectedConstructor.kt")
+      public void testDeprecationPhase2_protectedConstructor() {
+        runTest("compiler/testData/diagnostics/tests/dataClassPrivateConstructor/deprecationPhase2_protectedConstructor.kt");
+      }
+
+      @Test
       @TestMetadata("deprecationPhase3_redundantConsistentDataCopyAnnotation.kt")
       public void testDeprecationPhase3_redundantConsistentDataCopyAnnotation() {
         runTest("compiler/testData/diagnostics/tests/dataClassPrivateConstructor/deprecationPhase3_redundantConsistentDataCopyAnnotation.kt");

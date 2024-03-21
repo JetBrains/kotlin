@@ -203,7 +203,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
   ]
-  visibility: Unknown
+  visibility: Public
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Pair.equals

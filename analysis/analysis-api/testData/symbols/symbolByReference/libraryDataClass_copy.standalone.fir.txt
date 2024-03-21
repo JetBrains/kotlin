@@ -51,7 +51,7 @@ KtFunctionSymbol:
       getContainingModule: KtLibraryModule "Library lib"
       deprecationStatus: null
   ]
-  visibility: Unknown
+  visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
     ownTypeArguments: []

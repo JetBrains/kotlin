@@ -38,7 +38,6 @@ FILE: [ResolvedTo(IMPORTS)] generatedComponentNScript.kts
 
             public? final operator [ResolvedTo(TYPES)] fun component1(): R|@R|properties/Anno|(<strcat>(String(parameter type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested parameter type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter type: ), constant#))  kotlin/Int>>|
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] property: @R|properties/Anno|[Unresolved](<strcat>(String(parameter type: ), constant#)) List<R|@R|properties/Anno|(<strcat>(String(nested parameter type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter type: ), constant#))  kotlin/Int>|> = this@R|properties/MyClass|.R|properties/MyClass.property|): R|properties/MyClass|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] property: @R|properties/Anno|[Unresolved](<strcat>(String(parameter type: ), constant#)) List<R|@R|properties/Anno|(<strcat>(String(nested parameter type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter type: ), constant#))  kotlin/Int>|> = this@R|properties/MyClass|.R|properties/MyClass.property|): R|properties/MyClass|
 
         }
-

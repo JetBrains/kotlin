@@ -23,7 +23,7 @@ FILE: [ResolvedTo(RAW_FIR)] component1TypeCollision.kt
 
         public? final operator [ResolvedTo(RAW_FIR)] fun component1(): MyClass
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
     }
 
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollision.kt
 
         public? final operator [ResolvedTo(RAW_FIR)] fun component1(): MyClass
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
     }
 
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollision.kt
 
         public? final operator [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun component1(): MyClass
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
     }
 
@@ -110,7 +110,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollision.kt
 
         public? final operator [ResolvedTo(COMPANION_GENERATION)] fun component1(): MyClass
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
     }
 
@@ -139,7 +139,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollision.kt
 
         public? final operator [ResolvedTo(SUPER_TYPES)] fun component1(): MyClass
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
     }
 
@@ -168,7 +168,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollision.kt
 
         public? final operator [ResolvedTo(TYPES)] fun component1(): R|one/two/MyDataClass.MyClass|
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
     }
 

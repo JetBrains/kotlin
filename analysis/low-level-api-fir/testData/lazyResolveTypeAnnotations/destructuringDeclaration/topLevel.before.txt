@@ -23,7 +23,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
 
         public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
 
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION

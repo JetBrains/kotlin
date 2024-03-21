@@ -28,7 +28,7 @@ FILE: [ResolvedTo(RAW_FIR)] parameterTypeCollisionScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component1(): MyClass
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
         }
 
@@ -63,7 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterTypeCollisionScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component1(): MyClass
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
         }
 
@@ -98,7 +98,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterTypeCollisionScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component1(): MyClass
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
         }
 
@@ -133,7 +133,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterTypeCollisionScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component1(): MyClass
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
         }
 
@@ -168,7 +168,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterTypeCollisionScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component1(): MyClass
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
         }
 
@@ -203,7 +203,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterTypeCollisionScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component1(): MyClass
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
         }
 
