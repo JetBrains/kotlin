@@ -34,5 +34,6 @@ fun FirElement.unwrapElement(): FirElement = when (this) {
     is FirCheckedSafeCallSubject -> originalReceiverRef.value.unwrapElement()
     is FirCheckNotNullCall -> argument.unwrapElement()
     is FirDesugaredAssignmentValueReferenceExpression -> expressionRef.value.unwrapElement()
+    is FirVariableAssignment -> lValue.unwrapElement()
     else -> this
 }

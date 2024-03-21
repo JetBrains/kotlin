@@ -168,6 +168,7 @@ abstract class FirDataFlowAnalyzer(
      */
     open fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<SmartcastStability, MutableList<ConeKotlinType>>? {
         val flow = currentSmartCastPosition ?: return null
+        // Can have an unstable alias to a stable variable, so don't resolve aliases here.
         val variable = getRealVariableWithoutUnwrappingAlias(flow, expression) ?: return null
         val types = flow.getTypeStatement(variable)?.exactType?.ifEmpty { null } ?: return null
         return variable.getStability(flow, expression, types) to types.toMutableList()
@@ -221,11 +222,6 @@ abstract class FirDataFlowAnalyzer(
         val (node, graph) = graphBuilder.exitFunction(function)
         node.mergeIncomingFlow()
         graph.completePostponedNodes()
-        if (!graphBuilder.isTopLevel) {
-            for (valueParameter in function.valueParameters) {
-                variableStorage.removeRealVariable(valueParameter.symbol)
-            }
-        }
         val info = DataFlowInfo(variableStorage)
         resetSmartCastPosition()
         return FirControlFlowGraphReferenceImpl(graph, info)
@@ -737,7 +733,7 @@ abstract class FirDataFlowAnalyzer(
         reassigned: Set<FirPropertySymbol>,
     ) {
         if (reassigned.isEmpty()) return
-        val possiblyChangedVariables = variableStorage.realVariables.values.filter { it.identifier.symbol in reassigned }
+        val possiblyChangedVariables = variableStorage.getAllLocalVariables().filter { it.identifier.symbol in reassigned }
         if (possiblyChangedVariables.isEmpty()) return
         // While analyzing the loop we might have added some backwards jumps to `conditionEnterNode` which weren't
         // there at the time its flow was computed - which is why we erased all information about `possiblyChangedVariables`
@@ -772,7 +768,7 @@ abstract class FirDataFlowAnalyzer(
 
     private fun enterRepeatableStatement(flow: MutableFlow, reassigned: Set<FirPropertySymbol>) {
         if (reassigned.isEmpty()) return
-        val possiblyChangedVariables = variableStorage.realVariables.values.filter { it.identifier.symbol in reassigned }
+        val possiblyChangedVariables = variableStorage.getAllLocalVariables().filter { it.identifier.symbol in reassigned }
         for (variable in possiblyChangedVariables) {
             logicSystem.recordNewAssignment(flow, variable, context.newAssignmentIndex())
         }
@@ -1102,8 +1098,8 @@ abstract class FirDataFlowAnalyzer(
         assignmentLhs: FirExpression?,
         hasExplicitType: Boolean,
     ) {
-        val propertyVariable = getOrCreateRealVariableWithoutUnwrappingAliasForPropertyInitialization(
-            flow, property.symbol, assignmentLhs ?: property
+        val propertyVariable = getOrCreateRealVariableWithoutUnwrappingAlias(
+            flow, assignmentLhs ?: property
         ) ?: return
         val isAssignment = assignmentLhs != null
         if (isAssignment) {
@@ -1525,7 +1521,7 @@ abstract class FirDataFlowAnalyzer(
         val previous = currentSmartCastPosition
         if (previous == flow) return
         receiverStack.forEach {
-            variableStorage.getLocalVariable(it.boundSymbol)?.let { variable ->
+            variableStorage.getLocalVariable(it.boundSymbol, isReceiver = true)?.let { variable ->
                 val newStatement = flow?.getTypeStatement(variable)
                 if (newStatement != previous?.getTypeStatement(variable)) {
                     receiverUpdated(it.boundSymbol, newStatement)
@@ -1546,7 +1542,7 @@ abstract class FirDataFlowAnalyzer(
 
     private fun MutableFlow.addTypeStatement(info: TypeStatement) {
         val newStatement = logicSystem.addTypeStatement(this, info) ?: return
-        if (newStatement.variable.isThisReference && this === currentSmartCastPosition) {
+        if (newStatement.variable.identifier.isReceiver && this === currentSmartCastPosition) {
             receiverUpdated(newStatement.variable.identifier.symbol, newStatement)
         }
     }
@@ -1579,7 +1575,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     private fun getVariableIfStable(flow: Flow, fir: FirElement): DataFlowVariable? {
-        return variableStorage.get(fir, unwrapAlias = { variable, element -> variable.unwrapIfStable(flow, element) })
+        return variableStorage.getIfUsed(fir, unwrapAlias = { variable, element -> variable.unwrapIfStable(flow, element) })
     }
 
     private fun getOrCreateVariableIfRealAndStable(flow: Flow, fir: FirElement): DataFlowVariable? {
@@ -1604,13 +1600,12 @@ abstract class FirDataFlowAnalyzer(
         })
     }
 
-    private fun getOrCreateRealVariableWithoutUnwrappingAliasForPropertyInitialization(
+    private fun getOrCreateRealVariableWithoutUnwrappingAlias(
         flow: Flow,
-        symbol: FirBasedSymbol<*>,
         fir: FirElement,
     ): RealVariable? {
-        return variableStorage.getOrCreateRealVariableWithoutUnwrappingAliasForPropertyInitialization(
-            symbol, fir, unwrap = { variable, element -> variable.unwrapIfStable(flow, element) }
+        return variableStorage.getOrCreateRealVariableWithoutUnwrappingAlias(
+            fir, unwrapAlias = { variable, element -> variable.unwrapIfStable(flow, element) }
         )
     }
 

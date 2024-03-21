@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.types.SmartcastStability
 
 data class Identifier(
     val symbol: FirBasedSymbol<*>,
+    val isReceiver: Boolean,
     val dispatchReceiver: RealVariable?,
     val extensionReceiver: RealVariable?
 ) {
@@ -66,15 +67,9 @@ private enum class PropertyStability(
 class RealVariable(
     val identifier: Identifier,
     val originalType: ConeKotlinType?,
-    val isThisReference: Boolean,
     variableIndexForDebug: Int,
 ) : DataFlowVariable(variableIndexForDebug) {
     val dependentVariables: MutableSet<RealVariable> = mutableSetOf()
-
-    init {
-        identifier.dispatchReceiver?.dependentVariables?.add(this)
-        identifier.extensionReceiver?.dependentVariables?.add(this)
-    }
 
     override fun equals(other: Any?): Boolean {
         return other is RealVariable && identifier == other.identifier
@@ -85,7 +80,7 @@ class RealVariable(
     }
 
     fun getStability(flow: Flow, session: FirSession): SmartcastStability {
-        if (!isThisReference) {
+        if (!identifier.isReceiver) {
             val stability = propertyStability
 
             val isUnstableSmartcastOnDelegatedProperties =
