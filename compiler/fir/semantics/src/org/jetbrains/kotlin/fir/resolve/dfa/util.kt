@@ -43,6 +43,7 @@ val FirElement.symbol: FirBasedSymbol<*>?
         is FirSafeCallExpression -> selector.symbol
         is FirSmartCastExpression -> originalExpression.symbol
         is FirDesugaredAssignmentValueReferenceExpression -> expressionRef.value.symbol
+        is FirResolvedQualifier -> symbol
         else -> null
     }?.takeIf {
         (this as? FirExpression)?.unwrapSmartcastExpression() is FirThisReceiverExpression ||

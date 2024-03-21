@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.types.SmartcastStability
 
 data class Identifier(
     val symbol: FirBasedSymbol<*>,
-    val dispatchReceiver: DataFlowVariable?,
-    val extensionReceiver: DataFlowVariable?
+    val dispatchReceiver: RealVariable?,
+    val extensionReceiver: RealVariable?
 ) {
     override fun toString(): String {
         val callableId = (symbol as? FirCallableSymbol<*>)?.callableId
@@ -72,56 +71,33 @@ enum class PropertyStability(val impliedSmartcastStability: SmartcastStability?)
 class RealVariable(
     val identifier: Identifier,
     val isThisReference: Boolean,
-    val explicitReceiverVariable: DataFlowVariable?,
     variableIndexForDebug: Int,
     stability: PropertyStability,
 ) : DataFlowVariable(variableIndexForDebug) {
     val dependentVariables = mutableSetOf<RealVariable>()
 
-    val stability: PropertyStability = stability.combineWithReceiverStability((explicitReceiverVariable as? RealVariable)?.stability)
+    val stability: PropertyStability = stability
+        .combineWithReceiverStability(identifier.dispatchReceiver?.stability)
+        .combineWithReceiverStability(identifier.extensionReceiver?.stability)
 
-    override fun equals(other: Any?): Boolean {
-        return this === other
+    init {
+        identifier.dispatchReceiver?.dependentVariables?.add(this)
+        identifier.extensionReceiver?.dependentVariables?.add(this)
     }
 
-    private val _hashCode by lazy {
-        31 * identifier.hashCode() + (explicitReceiverVariable?.hashCode() ?: 0)
+    override fun equals(other: Any?): Boolean {
+        return other is RealVariable && identifier == other.identifier
     }
 
     override fun hashCode(): Int {
-        return _hashCode
-    }
-
-    init {
-        if (explicitReceiverVariable is RealVariable) {
-            explicitReceiverVariable.dependentVariables.add(this)
-        }
+        return identifier.hashCode()
     }
 }
 
 class SyntheticVariable(val fir: FirElement, variableIndexForDebug: Int) : DataFlowVariable(variableIndexForDebug) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+    override fun equals(other: Any?): Boolean =
+        other is SyntheticVariable && fir == other.fir
 
-        other as SyntheticVariable
-
-        return fir isEqualsTo other.fir
-    }
-
-    override fun hashCode(): Int {
-        // hack for enums
-        return if (fir is FirResolvedQualifier) {
-            31 * fir.packageFqName.hashCode() + fir.classId.hashCode()
-        } else {
-            fir.hashCode()
-        }
-    }
-}
-
-private infix fun FirElement.isEqualsTo(other: FirElement): Boolean {
-    if (this !is FirResolvedQualifier || other !is FirResolvedQualifier) return this == other
-    if (packageFqName != other.packageFqName) return false
-    if (classId != other.classId) return false
-    return true
+    override fun hashCode(): Int =
+        fir.hashCode()
 }
