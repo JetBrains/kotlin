@@ -50,7 +50,7 @@ interface FieldContainer<out Field : AbstractField<*>> {
         get() = allFields
             .filter {
                 it.containsElement && it.isChild
-                        && (it.implementationDefaultStrategy as? AbstractField.ImplementationDefaultStrategy.DefaultValue)?.withGetter != true
+                        && it.implementationDefaultStrategy?.withGetter != true
             }
             .reorderFieldsIfNecessary(childrenOrderOverride)
 

@@ -112,11 +112,16 @@ abstract class AbstractField<Field : AbstractField<Field>> {
     }
 
     sealed interface ImplementationDefaultStrategy {
+        open val defaultValue: String?
+            get() = null
+        open val withGetter: Boolean
+            get() = false
+
         data object Required : ImplementationDefaultStrategy
         data object Lateinit : ImplementationDefaultStrategy
         data class DefaultValue(
-            val value: String,
-            val withGetter: Boolean,
+            override val defaultValue: String,
+            override val withGetter: Boolean,
         ) : ImplementationDefaultStrategy
     }
 }
