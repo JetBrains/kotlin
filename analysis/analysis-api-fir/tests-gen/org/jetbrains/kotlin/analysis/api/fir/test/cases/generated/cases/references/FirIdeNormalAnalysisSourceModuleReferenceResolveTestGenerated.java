@@ -671,6 +671,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
   }
 
   @Test
+  @TestMetadata("UnresolvedCallArgument.kt")
+  public void testUnresolvedCallArgument() {
+    runTest("analysis/analysis-api/testData/referenceResolve/UnresolvedCallArgument.kt");
+  }
+
+  @Test
   @TestMetadata("ValueParameter.kt")
   public void testValueParameter() {
     runTest("analysis/analysis-api/testData/referenceResolve/ValueParameter.kt");

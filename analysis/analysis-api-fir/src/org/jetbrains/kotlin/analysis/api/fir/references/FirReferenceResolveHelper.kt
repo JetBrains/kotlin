@@ -381,7 +381,7 @@ internal object FirReferenceResolveHelper {
     }
 
     private fun FirCall.findCorrespondingParameter(name: Name): FirValueParameter? {
-        return resolvedArgumentMapping?.values?.first { it.name == name }
+        return resolvedArgumentMapping?.values?.firstOrNull { it.name == name }
     }
 
     private fun handleUnknownFirElement(
