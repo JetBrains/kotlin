@@ -64,6 +64,7 @@ abstract class SwiftTypeCheckBaseTest : AbstractNativeSimpleTest() {
             "-typecheck", swiftFile.absolutePath,
             "-Xcc", "-fmodule-map-file=${bridgeModuleFile.absolutePath}",
             "-Xcc", "-fmodule-map-file=${kotlinRuntimeModuleMapFile}",
+            "-module-name=main",
             "-sdk", configs.absoluteTargetSysRoot, "-target", swiftTarget
         )
 

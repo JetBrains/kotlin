@@ -46,6 +46,14 @@ abstract class SirVisitorVoid : SirVisitor<Unit, Nothing?>() {
         visitElement(declaration)
     }
 
+    final override fun visitExtension(extension: SirExtension, data: Nothing?) {
+        visitExtension(extension)
+    }
+
+    open fun visitExtension(extension: SirExtension) {
+        visitDeclaration(extension)
+    }
+
     final override fun visitNamedDeclaration(declaration: SirNamedDeclaration, data: Nothing?) {
         visitNamedDeclaration(declaration)
     }

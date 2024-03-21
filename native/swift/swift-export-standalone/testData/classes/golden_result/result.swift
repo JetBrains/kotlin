@@ -1,14 +1,30 @@
 import KotlinBridges
 import KotlinRuntime
 
-public enum namespace {
-    public enum deeper {
-        public class NAMESPACED_CLASS {
-            public init() {
+public extension main.namespace.deeper {
+    public class NAMESPACED_CLASS {
+        public init() {
+            fatalError()
+        }
+    }
+    public class Foo {
+        public func foo() -> Swift.Bool {
+            fatalError()
+        }
+        public var my_value: Swift.UInt32 {
+            get {
                 fatalError()
             }
         }
-        public class Foo {
+        public var my_variable: Swift.Int64 {
+            get {
+                fatalError()
+            }
+            set {
+                fatalError()
+            }
+        }
+        public class INSIDE_CLASS {
             public func foo() -> Swift.Bool {
                 fatalError()
             }
@@ -25,7 +41,7 @@ public enum namespace {
                     fatalError()
                 }
             }
-            public class INSIDE_CLASS {
+            public class DEEPER_INSIDE_CLASS {
                 public func foo() -> Swift.Bool {
                     fatalError()
                 }
@@ -42,27 +58,6 @@ public enum namespace {
                         fatalError()
                     }
                 }
-                public class DEEPER_INSIDE_CLASS {
-                    public func foo() -> Swift.Bool {
-                        fatalError()
-                    }
-                    public var my_value: Swift.UInt32 {
-                        get {
-                            fatalError()
-                        }
-                    }
-                    public var my_variable: Swift.Int64 {
-                        get {
-                            fatalError()
-                        }
-                        set {
-                            fatalError()
-                        }
-                    }
-                    public init() {
-                        fatalError()
-                    }
-                }
                 public init() {
                     fatalError()
                 }
@@ -71,7 +66,13 @@ public enum namespace {
                 fatalError()
             }
         }
+        public init() {
+            fatalError()
+        }
     }
+}
+
+public extension main.namespace {
     /**
     *  demo comment for
     *  NAMESPACED_CLASS
@@ -125,6 +126,11 @@ public enum namespace {
         public init() {
             fatalError()
         }
+    }
+}
+
+public enum namespace {
+    public enum deeper {
     }
 }
 

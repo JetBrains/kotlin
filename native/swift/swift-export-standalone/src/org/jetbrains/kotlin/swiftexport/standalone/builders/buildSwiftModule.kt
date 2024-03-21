@@ -68,7 +68,7 @@ private fun extractModuleWithFiles(
                 buildKtSourceModule {
                     addSourceRoot(input.sourceRoot)
                     platform = NativePlatforms.unspecifiedNativePlatform
-                    moduleName = "main"
+                    moduleName = input.moduleName
                     addRegularDependency(stdlib)
                 }
             )

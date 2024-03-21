@@ -46,6 +46,14 @@ abstract class SirTransformer<in D> : SirVisitor<SirElement, D>() {
         return transformDeclaration(declaration, data)
     }
 
+    open fun transformExtension(extension: SirExtension, data: D): SirDeclaration {
+        return transformDeclaration(extension, data)
+    }
+
+    final override fun visitExtension(extension: SirExtension, data: D): SirDeclaration {
+        return transformExtension(extension, data)
+    }
+
 
     open fun transformNamedDeclaration(declaration: SirNamedDeclaration, data: D): SirDeclaration {
         return transformDeclaration(declaration, data)

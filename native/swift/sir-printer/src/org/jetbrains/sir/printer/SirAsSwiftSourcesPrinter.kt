@@ -41,6 +41,20 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
         println("import ${import.moduleName}")
     }
 
+    override fun visitExtension(extension: SirExtension): Unit = with(printer) {
+        printDocumentation(extension)
+        printVisibility(extension)
+        println(
+            "extension ",
+            extension.extendedType.swift,
+            " {"
+        )
+        withIndent {
+            extension.acceptChildren(this@SirAsSwiftSourcesPrinter)
+        }
+        println("}")
+    }
+
     override fun visitClass(klass: SirClass): Unit = with(printer) {
         printDocumentation(klass)
         printVisibility(klass)

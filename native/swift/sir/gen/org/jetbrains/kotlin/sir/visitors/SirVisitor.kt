@@ -26,6 +26,9 @@ abstract class SirVisitor<out R, in D> {
     open fun visitDeclaration(declaration: SirDeclaration, data: D): R =
         visitElement(declaration, data)
 
+    open fun visitExtension(extension: SirExtension, data: D): R =
+        visitDeclaration(extension, data)
+
     open fun visitNamedDeclaration(declaration: SirNamedDeclaration, data: D): R =
         visitDeclaration(declaration, data)
 

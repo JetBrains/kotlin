@@ -43,6 +43,14 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         }
     }
 
+    val extension: Element by element {
+        customParentInVisitor = declaration
+        parent(declaration)
+        parent(declarationContainer)
+
+        +field("extendedType", typeType)
+    }
+
     val named by sealedElement {
         +field("name", string)
     }

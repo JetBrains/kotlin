@@ -38,6 +38,7 @@ public data class SwiftExportConfig(
 }
 
 public data class SwiftExportInput(
+    val moduleName: String = "main",
     val sourceRoot: Path, // todo: we do not support multi-modules currently. see KT-65220
     val libraries: List<Path> = emptyList(), // todo: not supported currently. see KT-65221
 )

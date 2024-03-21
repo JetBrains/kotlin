@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildEnum
+import org.jetbrains.kotlin.sir.builder.buildExtension
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.visitors.SirTransformer
@@ -65,12 +66,23 @@ public class SirInflatePackagesPass : SirModulePass {
             }
 
             val additions = data.root.reduce { path, declarations, children ->
-                buildEnum {
+                val enum = buildEnum {
                     origin = SirOrigin.Namespace(path.drop(1))
                     name = path.last()
+
                     this.declarations += children
-                    this.declarations += declarations
+                    if (path.singleOrNull() == "") {
+                        this.declarations += declarations
+                    }
                 }
+                if (declarations.isNotEmpty() && path.singleOrNull() != "") {
+                    this.declarations += buildExtension {
+                        extendedType = SirNominalType(enum)
+                        this.declarations += declarations
+                    }
+                }
+
+                enum
             }
 
             declarations += additions.declarations

@@ -44,9 +44,12 @@ abstract class AbstractNativeSwiftExportTest() : AbstractNativeSimpleTest() {
     protected fun runTest(@TestDataFile testDir: String) {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
         val testPathFull = getAbsoluteFile(testDir)
-        val swiftExportOutput = runSwiftExport(testPathFull)
 
         val testName = testPathFull.name
+        val swiftModuleName = testName.capitalizeAsciiOnly()
+
+        val swiftExportOutput = runSwiftExport(swiftModuleName, testPathFull)
+
         val kotlinFiles = testPathFull.walk().filter { it.extension == "kt" }.map { testPathFull.resolve(it) }.toList()
         val testCase = generateSwiftExportTestCase(testName, kotlinFiles + swiftExportOutput.kotlinBridges.toFile())
         val kotlinBinaryLibrary = testCompilationFactory.testCaseToBinaryLibrary(
@@ -55,17 +58,25 @@ abstract class AbstractNativeSwiftExportTest() : AbstractNativeSimpleTest() {
         ).result.assertSuccess().resultingArtifact
 
         val bridgeModuleFile = createModuleMap(buildDir, swiftExportOutput.cHeaderBridges.toFile())
-        val swiftModuleName = testName.capitalizeAsciiOnly()
-        val swiftModule = compileSwiftModule(swiftModuleName, listOf(swiftExportOutput.swiftApi.toFile()), bridgeModuleFile, kotlinBinaryLibrary)
+        val swiftModule = compileSwiftModule(
+            swiftModuleName,
+            listOf(swiftExportOutput.swiftApi.toFile()),
+            bridgeModuleFile,
+            kotlinBinaryLibrary
+        )
 
         val swiftTestFiles = testPathFull.walk().filter { it.extension == "swift" }.map { testPathFull.resolve(it) }.toList()
         val testExecutable = compileTestExecutable(testName, swiftTestFiles, swiftModule.rootDir, swiftModuleName, bridgeModuleFile)
         runExecutableAndVerify(testCase, testExecutable)
     }
 
-    private fun runSwiftExport(testPathFull: File): SwiftExportOutput {
+    private fun runSwiftExport(
+        moduleName: String,
+        testPathFull: File
+    ): SwiftExportOutput {
         val swiftExportInput = SwiftExportInput(
-            testPathFull.toPath(),
+            moduleName = moduleName,
+            sourceRoot = testPathFull.toPath(),
             libraries = emptyList()
         )
         val exportResultsPath = buildDir.toPath().resolve("swift_export_results")
