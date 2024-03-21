@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 internal class InlinedClassReferencesBoxingLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementVisitorVoid {
     override fun lower(irFile: IrFile) {
-        irFile.acceptChildrenVoid(this)
+        if (context.config.enableIrInliner) {
+            irFile.acceptChildrenVoid(this)
+        }
     }
 
     override fun visitElement(element: IrElement) {
@@ -49,5 +51,4 @@ internal class InlinedClassReferencesBoxingLowering(val context: JvmBackendConte
             }
         }
     }
-
 }

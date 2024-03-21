@@ -75,7 +75,7 @@ open class InlineFunctionResolverReplacingCoroutineIntrinsics(open val context: 
     }
 }
 
-class FunctionInlining(
+open class FunctionInlining(
     val context: CommonBackendContext,
     private val inlineFunctionResolver: InlineFunctionResolver = InlineFunctionResolver.TRIVIAL,
     private val innerClassesSupport: InnerClassesSupport? = null,
