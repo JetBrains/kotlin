@@ -370,6 +370,7 @@
 /plugins/android-extensions/ "Kotlin Compiler Core"
 /plugins/assign-plugin/ "Kotlin Compiler Core"
 /plugins/atomicfu/ "Kotlin Libraries"
+/plugins/compose/ Simon.Ogorodnik
 /plugins/fir-plugin-prototype/ "Kotlin Compiler Core"
 /plugins/imports-dumper/ "Kotlin Compiler Core"
 /plugins/jvm-abi-gen/ "Kotlin JVM"
@@ -388,6 +389,7 @@
 /plugins/power-assert/ Brian.Norman "Kotlin Common Backend"
 /plugins/sam-with-receiver/ "Kotlin Compiler Core"
 /plugins/scripting/ "Kotlin Compiler Core"
+
 
 /prepare/ "Kotlin Build Infrastructure"
 
