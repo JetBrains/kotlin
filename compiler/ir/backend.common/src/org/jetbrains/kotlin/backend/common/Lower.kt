@@ -29,8 +29,27 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
-interface FileLoweringPass {
+interface ModuleLoweringPass {
+    fun lower(irModule: IrModuleFragment)
+}
+
+interface FileLoweringPass : ModuleLoweringPass {
     fun lower(irFile: IrFile)
+
+    override fun lower(irModule: IrModuleFragment) {
+        for (file in irModule.files) {
+            try {
+                lower(file)
+            } catch (e: CompilationException) {
+                e.initializeFileDetails(file)
+                throw e
+            } catch (e: KotlinExceptionWithAttachments) {
+                throw e
+            } catch (e: Throwable) {
+                throw e.wrapWithCompilationException("Internal error in file lowering", file, null)
+            }
+        }
+    }
 
     object Empty : FileLoweringPass {
         override fun lower(irFile: IrFile) {
@@ -67,25 +86,6 @@ interface BodyAndScriptBodyLoweringPass : BodyLoweringPass {
     fun lowerScriptBody(irDeclarationContainer: IrDeclarationContainer, container: IrDeclaration)
 
     override fun lower(irFile: IrFile) = runOnFilePostfix(irFile)
-}
-
-fun FileLoweringPass.lower(
-    moduleFragment: IrModuleFragment
-) = moduleFragment.files.forEach {
-    try {
-        lower(it)
-    } catch (e: CompilationException) {
-        e.initializeFileDetails(it)
-        throw e
-    } catch (e: KotlinExceptionWithAttachments) {
-        throw e
-    } catch (e: Throwable) {
-        throw e.wrapWithCompilationException(
-            "Internal error in file lowering",
-            it,
-            null
-        )
-    }
 }
 
 fun ClassLoweringPass.runOnFilePostfix(irFile: IrFile) {

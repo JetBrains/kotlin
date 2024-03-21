@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.backend.common.phaser
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.lower
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
@@ -139,7 +138,7 @@ fun <Context : CommonBackendContext> makeIrFilePhase(
     )
 
 fun <Context : CommonBackendContext> makeIrModulePhase(
-    lowering: (Context) -> FileLoweringPass,
+    lowering: (Context) -> ModuleLoweringPass,
     name: String,
     description: String,
     prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet(),
