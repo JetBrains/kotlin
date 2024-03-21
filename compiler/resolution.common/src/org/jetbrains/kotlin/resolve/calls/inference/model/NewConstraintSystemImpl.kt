@@ -582,7 +582,14 @@ class NewConstraintSystemImpl(
         checkMissedConstraints()
 
         val freshTypeConstructor = variable.freshTypeConstructor()
-        val variableWithConstraints = notFixedTypeVariables.remove(freshTypeConstructor)
+        val variableWithConstraints =
+            notFixedTypeVariables.remove(freshTypeConstructor) ?: error("Seems that $variable is being fixed second time")
+
+        outerTypeVariables?.let { outerVariables ->
+            require(freshTypeConstructor !in outerVariables) {
+                "Outer type variables are not assumed to be fixed during nested calls analysis, but $variable is being fixed"
+            }
+        }
 
         for (otherVariableWithConstraints in notFixedTypeVariables.values) {
             otherVariableWithConstraints.removeConstrains { containsTypeVariable(it.type, freshTypeConstructor) }

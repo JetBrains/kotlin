@@ -103,7 +103,11 @@ class FirCallCompleter(
         return when (completionMode) {
             ConstraintSystemCompletionMode.FULL -> {
                 runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
-                val finalSubstitutor = candidate.system.asReadOnlyStorage()
+
+                val readOnlyConstraintStorage = candidate.system.asReadOnlyStorage()
+                checkStorageConstraintsAfterFullCompletion(readOnlyConstraintStorage)
+
+                val finalSubstitutor = readOnlyConstraintStorage
                     .buildAbstractResultingSubstitutor(session.typeContext) as ConeSubstitutor
                 call.transformSingle(
                     FirCallCompletionResultsWriterTransformer(
@@ -128,6 +132,21 @@ class FirCallCompleter(
             }
 
             ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA -> throw IllegalStateException()
+        }
+    }
+
+    private fun checkStorageConstraintsAfterFullCompletion(storage: ConstraintStorage) {
+        // Fast path for sake of optimization
+        if (storage.notFixedTypeVariables.isEmpty()) return
+
+        val notFixedTypeVariablesBasedOnTypeParameters = storage.notFixedTypeVariables.filter {
+            it.value.typeVariable is ConeTypeParameterBasedTypeVariable
+        }
+
+        // TODO: Turn it into `require(storage.notFixedTypeVariables.isEmpty())` (KT-66759)
+        require(notFixedTypeVariablesBasedOnTypeParameters.isEmpty()) {
+            "All variables should be fixed to something, " +
+                    "but {${notFixedTypeVariablesBasedOnTypeParameters.keys.joinToString(", ")}} are found"
         }
     }
 
