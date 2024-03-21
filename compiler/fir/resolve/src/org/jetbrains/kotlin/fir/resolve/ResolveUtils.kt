@@ -148,7 +148,11 @@ fun FirAnonymousFunction.addReturnToLastStatementIfNeeded(session: FirSession) {
 
     val returnTarget = FirFunctionTarget(null, isLambda = isLambda).also { it.bind(this) }
     val returnExpression = buildReturnExpression {
-        source = lastStatement.source?.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromLastStatement)
+        // Always set the source to something because ControlFlowGraphBuilder#returnExpressionsOfAnonymousFunction may query
+        // the source kind for distinguishing an implicit return from the last statement.
+        source = (lastStatement.source ?: body.source ?: this@addReturnToLastStatementIfNeeded.source)
+            ?.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromLastStatement)
+
         result = lastStatement
         target = returnTarget
     }
