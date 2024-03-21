@@ -118,11 +118,14 @@ internal class DescriptorRendererImpl(
         if (abbreviated != null) {
             if (renderTypeExpansions) {
                 renderNormalizedTypeAsIs(abbreviated.expandedType)
+                if (renderAbbreviatedTypeComments) {
+                    renderAbbreviatedTypeComment(abbreviated)
+                }
             } else {
                 // TODO nullability is lost for abbreviated type?
                 renderNormalizedTypeAsIs(abbreviated.abbreviation)
                 if (renderUnabbreviatedType) {
-                    renderAbbreviatedTypeExpansion(abbreviated)
+                    renderExpandedTypeComment(abbreviated)
                 }
             }
             return
@@ -131,12 +134,26 @@ internal class DescriptorRendererImpl(
         renderNormalizedTypeAsIs(type)
     }
 
-    private fun StringBuilder.renderAbbreviatedTypeExpansion(abbreviated: AbbreviatedType) {
+    private fun StringBuilder.renderAbbreviatedTypeComment(abbreviated: AbbreviatedType) {
+        renderInBlockComment {
+            append("from: ")
+            renderNormalizedTypeAsIs(abbreviated.abbreviation)
+        }
+    }
+
+    private fun StringBuilder.renderExpandedTypeComment(abbreviated: AbbreviatedType) {
+        renderInBlockComment {
+            append("= ")
+            renderNormalizedTypeAsIs(abbreviated.expandedType)
+        }
+    }
+
+    private inline fun StringBuilder.renderInBlockComment(renderBody: () -> Unit) {
         if (textFormat == RenderingFormat.HTML) {
             append("<font color=\"808080\"><i>")
         }
-        append(" /* = ")
-        renderNormalizedTypeAsIs(abbreviated.expandedType)
+        append(" /* ")
+        renderBody()
         append(" */")
         if (textFormat == RenderingFormat.HTML) {
             append("</i></font>")

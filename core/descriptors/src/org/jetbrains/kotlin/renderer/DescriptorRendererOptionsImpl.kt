@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.renderer
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -120,6 +119,8 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var renderUnabbreviatedType: Boolean by property(true)
 
     override var renderTypeExpansions: Boolean by property(false)
+
+    override var renderAbbreviatedTypeComments: Boolean by property(false)
 
     override var includeAdditionalModifiers: Boolean by property(true)
 
