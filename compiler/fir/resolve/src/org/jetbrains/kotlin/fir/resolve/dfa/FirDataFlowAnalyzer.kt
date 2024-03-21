@@ -164,6 +164,8 @@ abstract class FirDataFlowAnalyzer(
      */
     open fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<PropertyStability, MutableList<ConeKotlinType>>? {
         val flow = currentSmartCastPosition ?: return null
+        // Can have an unstable alias to a stable variable, so don't resolve aliases here.
+        // TODO: that should never actually happen - aliasing information in that case could be outdated.
         val variable = variableStorage.getRealVariableWithoutUnwrappingAlias(flow, expression) ?: return null
         val types = flow.getTypeStatement(variable)?.exactType?.ifEmpty { null } ?: return null
         return variable.stability to types.toMutableList()
@@ -220,11 +222,6 @@ abstract class FirDataFlowAnalyzer(
         val (node, graph) = graphBuilder.exitFunction(function)
         node.mergeIncomingFlow()
         graph.completePostponedNodes()
-        if (!graphBuilder.isTopLevel) {
-            for (valueParameter in function.valueParameters) {
-                variableStorage.removeRealVariable(valueParameter.symbol)
-            }
-        }
         val info = DataFlowInfo(variableStorage)
         resetSmartCastPosition()
         return FirControlFlowGraphReferenceImpl(graph, info)
@@ -762,12 +759,9 @@ abstract class FirDataFlowAnalyzer(
         val reassignedNames = context.preliminaryLoopVisitor.enterCapturingStatement(statement)
         if (reassignedNames.isEmpty()) return
         // TODO: only choose the innermost variable for each name, KT-59688
-        val possiblyChangedVariables = variableStorage.realVariables.values.filter {
-            val identifier = it.identifier
-            val symbol = identifier.symbol
-            // Non-local vars can never produce stable smart casts anyway.
-            identifier.dispatchReceiver == null && identifier.extensionReceiver == null &&
-                    symbol is FirPropertySymbol && symbol.isVar && symbol.name in reassignedNames
+        val possiblyChangedVariables = variableStorage.getAllLocalVariables().filter {
+            val symbol = it.identifier.symbol
+            symbol is FirPropertySymbol && symbol.isVar && symbol.name in reassignedNames
         }
         for (variable in possiblyChangedVariables) {
             logicSystem.recordNewAssignment(flow, variable, context.newAssignmentIndex())
@@ -1096,9 +1090,8 @@ abstract class FirDataFlowAnalyzer(
         assignmentLhs: FirExpression?,
         hasExplicitType: Boolean,
     ) {
-        val propertyVariable = variableStorage.getOrCreateRealVariableWithoutUnwrappingAliasForPropertyInitialization(
-            flow, property.symbol, assignmentLhs ?: property
-        ) ?: return
+        val propertyVariable =
+            variableStorage.getOrCreateRealVariableWithoutUnwrappingAlias(flow, assignmentLhs ?: property) ?: return
         val isAssignment = assignmentLhs != null
         if (isAssignment) {
             logicSystem.recordNewAssignment(flow, propertyVariable, context.newAssignmentIndex())
@@ -1504,7 +1497,7 @@ abstract class FirDataFlowAnalyzer(
         val previous = currentSmartCastPosition
         if (previous == flow) return
         receiverStack.forEach {
-            variableStorage.getLocalVariable(it.boundSymbol)?.let { variable ->
+            variableStorage.getLocalVariable(it.boundSymbol, isReceiver = true)?.let { variable ->
                 val newStatement = flow?.getTypeStatement(variable)
                 if (newStatement != previous?.getTypeStatement(variable)) {
                     receiverUpdated(it.boundSymbol, newStatement)
@@ -1525,7 +1518,7 @@ abstract class FirDataFlowAnalyzer(
 
     private fun MutableFlow.addTypeStatement(info: TypeStatement) {
         val newStatement = logicSystem.addTypeStatement(this, info) ?: return
-        if (newStatement.variable.isThisReference && this === currentSmartCastPosition) {
+        if (newStatement.variable.identifier.isReceiver && this === currentSmartCastPosition) {
             receiverUpdated(newStatement.variable.identifier.symbol, newStatement)
         }
     }

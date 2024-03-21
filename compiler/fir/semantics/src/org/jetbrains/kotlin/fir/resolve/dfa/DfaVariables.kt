@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.types.SmartcastStability
 
-data class Identifier(
+data class Identifier constructor(
     val symbol: FirBasedSymbol<*>,
+    val isReceiver: Boolean,
     val dispatchReceiver: RealVariable?,
     val extensionReceiver: RealVariable?
 ) {
@@ -70,20 +71,10 @@ enum class PropertyStability(val impliedSmartcastStability: SmartcastStability?)
 
 class RealVariable(
     val identifier: Identifier,
-    val isThisReference: Boolean,
+    val stability: PropertyStability,
     variableIndexForDebug: Int,
-    stability: PropertyStability,
 ) : DataFlowVariable(variableIndexForDebug) {
     val dependentVariables = mutableSetOf<RealVariable>()
-
-    val stability: PropertyStability = stability
-        .combineWithReceiverStability(identifier.dispatchReceiver?.stability)
-        .combineWithReceiverStability(identifier.extensionReceiver?.stability)
-
-    init {
-        identifier.dispatchReceiver?.dependentVariables?.add(this)
-        identifier.extensionReceiver?.dependentVariables?.add(this)
-    }
 
     override fun equals(other: Any?): Boolean {
         return other is RealVariable && identifier == other.identifier

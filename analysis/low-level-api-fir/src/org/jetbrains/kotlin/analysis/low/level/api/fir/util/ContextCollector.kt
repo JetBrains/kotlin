@@ -274,18 +274,18 @@ private class ContextCollectorVisitor(
             val flow = cfgNode.flow
 
             for (realVariable in flow.knownVariables) {
-                val typeStatement = flow.getTypeStatement(realVariable) ?: continue
                 if (realVariable.stability != PropertyStability.STABLE_VALUE && realVariable.stability != PropertyStability.LOCAL_VAR) {
                     continue
                 }
 
+                val typeStatement = flow.getTypeStatement(realVariable) ?: continue
+                val identifier = typeStatement.variable.identifier
                 smartCasts[typeStatement.variable] = typeStatement.exactType
 
                 // The compiler pushes smart-cast types for implicit receivers to ease later lookups.
                 // Here we emulate such behavior. Unlike the compiler, though, modified types are only reflected in the created snapshot.
                 // See other usages of 'replaceReceiverType()' for more information.
-                if (realVariable.isThisReference) {
-                    val identifier = typeStatement.variable.identifier
+                if (identifier.isReceiver) {
                     val receiverIndex = implicitReceiverStack.getReceiverIndex(identifier.symbol)
                     if (receiverIndex != null) {
                         oldReceiverTypes.add(receiverIndex to implicitReceiverStack.getType(receiverIndex))
