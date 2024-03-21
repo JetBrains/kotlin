@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -38,7 +36,7 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
     ): RealVariable? {
         val realFir = fir.unwrapElement()
         val identifier = getIdentifierBySymbol(symbol, realFir, unwrap) ?: return null
-        return _realVariables[identifier] ?: createReal(identifier, realFir, unwrap)
+        return _realVariables[identifier] ?: createReal(identifier, realFir)
     }
 
     override fun getRealVariableWithoutUnwrappingAlias(
@@ -105,20 +103,16 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         unwrapAlias: (RealVariable, FirElement) -> RealVariable?,
     ): DataFlowVariable? {
         val symbol = realFir.extractSymbol()
-        if (symbol == null) {
-            val syntheticVariable = syntheticVariables[realFir]
-            return when {
-                syntheticVariable != null -> syntheticVariable
-                createSynthetic -> createSynthetic(realFir)
-                else -> null
-            }
+        val identifier = if (symbol != null) getIdentifierBySymbol(symbol, realFir, unwrapAlias) else null
+        if (identifier == null) {
+            return if (createSynthetic) syntheticVariables.getOrPut(realFir) { SyntheticVariable(realFir, counter++) }
+            else syntheticVariables[realFir]
         }
 
-        val identifier = getIdentifierBySymbol(symbol, realFir, unwrapAlias) ?: return null
         val realVariable = _realVariables[identifier]
         return when {
             realVariable != null -> unwrapAlias(realVariable, realFir)
-            createReal -> createReal(identifier, realFir, unwrapAlias)
+            createReal -> createReal(identifier, realFir)
             else -> null
         }
     }
@@ -133,29 +127,27 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         unwrapAlias: (RealVariable, FirElement) -> RealVariable?,
     ): Identifier? {
         val expression = fir as? FirQualifiedAccessExpression ?: (fir as? FirVariableAssignment)?.lValue as? FirQualifiedAccessExpression
-
-        // TODO: don't create receiver variables if not going to create the composed variable either?
-        val dispatchReceiver = expression?.dispatchReceiver?.let { getOrCreate(it, unwrapAlias) ?: return null }
-        val extensionReceiver = expression?.extensionReceiver?.let { getOrCreate(it, unwrapAlias) ?: return null }
-        return Identifier(symbol, dispatchReceiver, extensionReceiver)
+        val dispatchReceiverVariable = expression?.dispatchReceiver?.let {
+            getOrCreateIfReal(it, unwrapAlias) as? RealVariable ?: return null
+        }
+        val extensionReceiverVariable = expression?.extensionReceiver?.let {
+            getOrCreateIfReal(it, unwrapAlias) as? RealVariable ?: return null
+        }
+        return Identifier(symbol, dispatchReceiverVariable, extensionReceiverVariable)
     }
 
     private fun createReal(
         identifier: Identifier,
         originalFir: FirElement,
-        unwrapAlias: (RealVariable, FirElement) -> RealVariable?,
-    ): RealVariable? {
+    ): RealVariable {
         val expression = when (originalFir) {
             is FirExpression -> originalFir
             is FirVariableAssignment -> originalFir.unwrapLValue()
             else -> null
         }
 
-        val isThisReference = expression is FirThisReceiverExpression
         val originalType = expression?.resolvedType ?: (originalFir as? FirProperty)?.returnTypeRef?.coneType
-        val receiver = (expression as? FirQualifiedAccessExpression)?.explicitReceiver
-        val receiverVariable = receiver?.let { getOrCreate(it, unwrapAlias) ?: return null }
-        return RealVariable(identifier, originalType, isThisReference, receiverVariable, counter++).also {
+        return RealVariable(identifier, originalType, expression is FirThisReceiverExpression, counter++).also {
             _realVariables[identifier] = it
         }
     }
@@ -167,18 +159,20 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
                 extensionReceiver = if (extensionReceiver == from) to else extensionReceiver,
             )
         }
-        return getOrPut(newIdentifier) {
-            with(variable) {
-                RealVariable(
-                    newIdentifier, originalType, isThisReference, if (explicitReceiverVariable == from) to else explicitReceiverVariable,
-                    counter++
-                )
-            }
+        return _realVariables.getOrPut(newIdentifier) {
+            RealVariable(newIdentifier, variable.originalType, variable.isThisReference, counter++)
         }
     }
 
-    fun getOrPut(identifier: Identifier, factory: () -> RealVariable): RealVariable {
-        return _realVariables.getOrPut(identifier, factory)
+    fun getOrPut(variable: RealVariable): RealVariable {
+        val newIdentifier = with(variable.identifier) {
+            Identifier(symbol, dispatchReceiver?.let(::getOrPut), extensionReceiver?.let(::getOrPut))
+        }
+        return _realVariables.getOrPut(newIdentifier) {
+            if (newIdentifier != variable.identifier) {
+                RealVariable(newIdentifier, variable.originalType, variable.isThisReference, counter++)
+            } else variable
+        }
     }
 
     private fun FirElement.extractSymbol(): FirBasedSymbol<*>? = when (this) {
@@ -189,17 +183,7 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         is FirSafeCallExpression -> selector.extractSymbol()
         is FirSmartCastExpression -> originalExpression.extractSymbol()
         is FirDesugaredAssignmentValueReferenceExpression -> expressionRef.value.extractSymbol()
-        is FirResolvedQualifier -> {
-            fun symbolIfObject(symbol: FirClassifierSymbol<*>?): FirClassifierSymbol<*>? {
-                return when (symbol) {
-                    is FirRegularClassSymbol -> symbol.takeIf { it.classKind == ClassKind.OBJECT }
-                    is FirTypeAliasSymbol -> symbolIfObject(symbol.fullyExpandedClass(session))
-                    else -> null
-                }
-            }
-
-            symbolIfObject(symbol)
-        }
+        is FirResolvedQualifier -> symbol?.fullyExpandedClass(session)
         else -> null
     }?.takeIf {
         this is FirThisReceiverExpression || it is FirClassSymbol || (it is FirVariableSymbol && it !is FirSyntheticPropertySymbol)

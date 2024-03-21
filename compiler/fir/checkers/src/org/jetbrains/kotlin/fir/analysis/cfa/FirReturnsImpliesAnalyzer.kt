@@ -137,7 +137,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
             // Might be unknown if there are no statements made about that parameter, but it's still possible that trivial
             // contracts are valid. E.g. `returns() implies (x is String)` when `x`'s *original type* is already `String`.
             knownVariables[identifier]
-                ?: RealVariable(identifier, identifier.symbol.correspondingParameterType, i == 0, null, i)
+                ?: RealVariable(identifier, identifier.symbol.correspondingParameterType, i == 0, i)
         }
 
         val conditionStatements = logicSystem.approveContractStatement(
