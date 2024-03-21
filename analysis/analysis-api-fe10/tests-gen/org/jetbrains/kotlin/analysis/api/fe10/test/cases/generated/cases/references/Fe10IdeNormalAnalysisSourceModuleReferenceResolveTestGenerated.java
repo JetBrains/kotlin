@@ -659,24 +659,6 @@ public class Fe10IdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exte
   }
 
   @Test
-  @TestMetadata("TypeAlias.kt")
-  public void testTypeAlias() {
-    runTest("analysis/analysis-api/testData/referenceResolve/TypeAlias.kt");
-  }
-
-  @Test
-  @TestMetadata("TypeAliasAsSupertypeConstructor.kt")
-  public void testTypeAliasAsSupertypeConstructor() {
-    runTest("analysis/analysis-api/testData/referenceResolve/TypeAliasAsSupertypeConstructor.kt");
-  }
-
-  @Test
-  @TestMetadata("TypeAliasRHS.kt")
-  public void testTypeAliasRHS() {
-    runTest("analysis/analysis-api/testData/referenceResolve/TypeAliasRHS.kt");
-  }
-
-  @Test
   @TestMetadata("UnresolvedCallArgument.kt")
   public void testUnresolvedCallArgument() {
     runTest("analysis/analysis-api/testData/referenceResolve/UnresolvedCallArgument.kt");
@@ -2743,6 +2725,34 @@ public class Fe10IdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exte
     @TestMetadata("ResolvePackageOfFullyQualifiedReference.kt")
     public void testResolvePackageOfFullyQualifiedReference() {
       runTest("analysis/analysis-api/testData/referenceResolve/qualifiedAccess/ResolvePackageOfFullyQualifiedReference.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeAlias")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeAlias {
+    @Test
+    public void testAllFilesPresentInTypeAlias() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeAlias"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("TypeAlias.kt")
+    public void testTypeAlias() {
+      runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/TypeAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("TypeAliasAsSupertypeConstructor.kt")
+    public void testTypeAliasAsSupertypeConstructor() {
+      runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/TypeAliasAsSupertypeConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("TypeAliasRHS.kt")
+    public void testTypeAliasRHS() {
+      runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/TypeAliasRHS.kt");
     }
   }
 

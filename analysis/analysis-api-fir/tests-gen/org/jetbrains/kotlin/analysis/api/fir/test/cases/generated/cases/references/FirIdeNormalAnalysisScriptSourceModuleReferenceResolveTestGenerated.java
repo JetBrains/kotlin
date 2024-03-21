@@ -509,6 +509,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceResolveTestGenerated
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeAlias")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeAlias {
+    @Test
+    public void testAllFilesPresentInTypeAlias() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeAlias"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument")
   @TestDataPath("$PROJECT_ROOT")
   public class TypeArgument {
