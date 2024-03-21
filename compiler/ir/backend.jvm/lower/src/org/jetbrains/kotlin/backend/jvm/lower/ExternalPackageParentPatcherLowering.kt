@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmFileFacadeClass
 import org.jetbrains.kotlin.ir.IrElement
@@ -18,13 +18,11 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 
-internal val externalPackageParentPatcherPhase = makeIrModulePhase(
-    ::ExternalPackageParentPatcherLowering,
+@PhaseDescription(
     name = "ExternalPackageParentPatcherLowering",
     description = "Replace parent from package fragment to FileKt class for top-level callables (K2 only)"
 )
-
-class ExternalPackageParentPatcherLowering(val context: JvmBackendContext) : FileLoweringPass {
+internal class ExternalPackageParentPatcherLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         if (context.config.useFir) {
             irFile.acceptVoid(Visitor())

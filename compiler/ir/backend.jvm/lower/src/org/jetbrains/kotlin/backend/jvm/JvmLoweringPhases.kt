@@ -5,55 +5,12 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.lower.*
-
-private val validateIrBeforeLowering = makeIrModulePhase(
-    ::JvmIrValidationBeforeLoweringPhase,
-    name = "ValidateIrBeforeLowering",
-    description = "Validate IR before lowering"
-)
-
-private val validateIrAfterLowering = makeIrModulePhase(
-    ::JvmIrValidationAfterLoweringPhase,
-    name = "ValidateIrAfterLowering",
-    description = "Validate IR after lowering"
-)
-
-internal val expectDeclarationsRemovingPhase = makeIrModulePhase(
-    ::JvmExpectDeclarationRemover,
-    name = "ExpectDeclarationsRemoving",
-    description = "Remove expect declaration from module fragment"
-)
-
-internal val functionInliningPhase = makeIrModulePhase(
-    ::JvmIrInliner,
-    name = "FunctionInliningPhase",
-    description = "Perform function inlining",
-    prerequisite = setOf(expectDeclarationsRemovingPhase)
-)
-
-private val apiVersionIsAtLeastEvaluationPhase = makeIrModulePhase(
-    ::ApiVersionIsAtLeastEvaluationLowering,
-    name = "ApiVersionIsAtLeastEvaluationLowering",
-    description = "Evaluate inlined invocations of `apiVersionIsAtLeast`",
-    prerequisite = setOf(functionInliningPhase)
-)
-
-private val inlinedClassReferencesBoxingPhase = makeIrModulePhase(
-    ::InlinedClassReferencesBoxingLowering,
-    name = "InlinedClassReferencesBoxingLowering",
-    description = "Replace inlined primitive types in class references with boxed versions",
-    prerequisite = setOf(functionInliningPhase, markNecessaryInlinedClassesAsRegenerated)
-)
-
-private val constEvaluationPhase = makeIrModulePhase<JvmBackendContext>(
-    ::ConstEvaluationLowering,
-    name = "ConstEvaluationLowering",
-    description = "Evaluate functions that are marked as `IntrinsicConstEvaluation`"
-)
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::TypeAliasAnnotationMethodsLowering,
@@ -173,27 +130,34 @@ val jvmLoweringPhases = SameTypeNamedCompilerPhase(
     description = "IR lowering",
     nlevels = 1,
     actions = setOf(defaultDumper, validationAction),
-    lower = externalPackageParentPatcherPhase then
-            fragmentSharedVariablesLowering then
-            validateIrBeforeLowering then
-            processOptionalAnnotationsPhase then
-            expectDeclarationsRemovingPhase then
-            constEvaluationPhase then
-            serializeIrPhase then
-            scriptsToClassesPhase then
-            fileClassPhase then
-            jvmStaticInObjectPhase then
-            repeatedAnnotationPhase then
+    lower = buildModuleLoweringsPhase(
+        ::ExternalPackageParentPatcherLowering,
+        ::FragmentSharedVariablesLowering,
+        ::JvmIrValidationBeforeLoweringPhase,
+        ::ProcessOptionalAnnotations,
+        ::JvmExpectDeclarationRemover,
+        ::ConstEvaluationLowering,
+        ::SerializeIrPhase,
+        ::ScriptsToClassesLowering,
+        ::FileClassLowering,
+        ::JvmStaticInObjectLowering,
+        ::RepeatedAnnotationLowering,
 
-            functionInliningPhase then
-            apiVersionIsAtLeastEvaluationPhase then
-            createSeparateCallForInlinedLambdas then
-            markNecessaryInlinedClassesAsRegenerated then
-            inlinedClassReferencesBoxingPhase then
-
-            performByIrFile("PerformByIrFile", lower = jvmFilePhases) then
-
-            generateMultifileFacadesPhase then
-            resolveInlineCallsPhase then
-            validateIrAfterLowering
+        ::JvmIrInliner,
+        ::ApiVersionIsAtLeastEvaluationLowering,
+        ::CreateSeparateCallForInlinedLambdasLowering,
+        ::MarkNecessaryInlinedClassesAsRegeneratedLowering,
+        ::InlinedClassReferencesBoxingLowering,
+    ).then(
+        performByIrFile("PerformByIrFile", lower = jvmFilePhases)
+    ) then buildModuleLoweringsPhase(
+        ::GenerateMultifileFacades,
+        ::ResolveInlineCalls,
+        ::JvmIrValidationAfterLoweringPhase
+    )
 )
+
+private typealias JvmPhase = CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment>
+
+private fun buildModuleLoweringsPhase(vararg phases: (JvmBackendContext) -> ModuleLoweringPass): JvmPhase =
+    createModulePhases(*phases).reduce(JvmPhase::then)

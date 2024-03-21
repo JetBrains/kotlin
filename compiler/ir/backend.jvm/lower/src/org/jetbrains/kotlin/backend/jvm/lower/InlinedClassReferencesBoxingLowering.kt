@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.getAttributeOwnerBeforeInline
 import org.jetbrains.kotlin.ir.IrElement
@@ -18,6 +19,11 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
+@PhaseDescription(
+    name = "InlinedClassReferencesBoxingLowering",
+    description = "Replace inlined primitive types in class references with boxed versions",
+    prerequisite = [JvmIrInliner::class, MarkNecessaryInlinedClassesAsRegeneratedLowering::class]
+)
 internal class InlinedClassReferencesBoxingLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementVisitorVoid {
     override fun lower(irFile: IrFile) {
         if (context.config.enableIrInliner) {
