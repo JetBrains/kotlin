@@ -18,11 +18,12 @@ package androidx.compose.compiler.plugins.kotlin.k2
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCallableReferenceAccessChecker
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.functionTypeKind
+import org.jetbrains.kotlin.fir.types.resolvedType
 
 /**
  * Report an error on composable function references.
@@ -32,7 +33,7 @@ import org.jetbrains.kotlin.fir.types.functionTypeKind
  * function types. Since there are no reflective composable function types we cannot support
  * composable function references yet.
  */
-object ComposableCallableReferenceChecker : FirCallableReferenceAccessChecker() {
+object ComposableCallableReferenceChecker : FirCallableReferenceAccessChecker(MppCheckerKind.Common) {
     override fun check(
         expression: FirCallableReferenceAccess,
         context: CheckerContext,
@@ -41,7 +42,7 @@ object ComposableCallableReferenceChecker : FirCallableReferenceAccessChecker() 
         // The type of a function reference depends on the context where it is used.
         // We could allow non-reflective composable function references, but this would be fragile
         // and depend on details of the frontend resolution.
-        val kind = expression.typeRef.coneType.functionTypeKind(context.session)
+        val kind = expression.resolvedType.functionTypeKind(context.session)
         if (kind == ComposableFunction || kind == KComposableFunction) {
             reporter.reportOn(
                 expression.source,

@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.fir.types.isArrayType
 import org.jetbrains.kotlin.fir.types.isString
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.type
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 fun FirAnnotationContainer.hasComposableAnnotation(session: FirSession): Boolean =
     hasAnnotation(ComposeClassIds.Composable, session)
@@ -165,7 +165,7 @@ fun FirFunctionSymbol<*>.isMain(session: FirSession): Boolean {
 }
 
 private fun FirNamedFunctionSymbol.jvmNameAsString(session: FirSession): String =
-    getAnnotationStringParameter(StandardClassIds.Annotations.JvmName, session)
+    getAnnotationStringParameter(JvmStandardClassIds.Annotations.JvmName, session)
         ?: name.asString()
 
 private val FirFunctionSymbol<*>.explicitParameterTypes: List<ConeKotlinType>

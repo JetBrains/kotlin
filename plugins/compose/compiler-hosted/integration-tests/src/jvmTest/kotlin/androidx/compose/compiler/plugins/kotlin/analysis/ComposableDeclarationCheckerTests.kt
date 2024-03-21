@@ -64,7 +64,7 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
             fun doSomething(fn: () -> Unit) { print(fn) }
             @Composable fun B(content: @Composable () -> Unit) {
                 content()
-                doSomething(::<!UNRESOLVED_REFERENCE!>A<!>)
+                doSomething(::<!INAPPLICABLE_CANDIDATE!>A<!>)
                 B(<!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>)
             }
         """
@@ -175,7 +175,7 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
                 acceptSuspend @Composable <!ARGUMENT_TYPE_MISMATCH!>{}<!>
                 acceptComposableSuspend @Composable <!ARGUMENT_TYPE_MISMATCH!>{}<!>
                 acceptComposableSuspend(<!ARGUMENT_TYPE_MISMATCH!>composableLambda<!>)
-                acceptSuspend(<!COMPOSABLE_SUSPEND_FUN!><!ARGUMENT_TYPE_MISMATCH!>@Composable suspend fun()<!> { }<!>)
+                acceptSuspend(<!COMPOSABLE_SUSPEND_FUN!><!ARGUMENT_TYPE_MISMATCH!>@Composable <!ANONYMOUS_SUSPEND_FUNCTION!>suspend<!> fun()<!> { }<!>)
             }
         """
         })
@@ -366,8 +366,8 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
                     fun compose(content: () -> Unit)
                 }
 
-                <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Impl<!> : Base {
-                    <!NOTHING_TO_OVERRIDE!>override<!> fun compose(content: @Composable () -> Unit) {}
+                class Impl : Base {
+                    override fun compose(content: @Composable () -> Unit) {}
                 }
             """
         })

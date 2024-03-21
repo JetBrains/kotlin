@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.platform.jvm.isJvm
 
 class VersionChecker(val context: IrPluginContext) {
@@ -152,6 +153,7 @@ class VersionChecker(val context: IrPluginContext) {
             get() = runtimeVersionToMavenVersionTable[minimumRuntimeVersionInt] ?: "unknown"
     }
 
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     fun check() {
         // version checker accesses bodies of the functions that are not deserialized in KLIB
         if (!context.platform.isJvm()) return

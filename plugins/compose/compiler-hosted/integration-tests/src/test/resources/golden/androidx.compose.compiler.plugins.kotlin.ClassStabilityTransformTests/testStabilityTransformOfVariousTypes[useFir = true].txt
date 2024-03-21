@@ -124,7 +124,7 @@ class StableDelegateProp {
       return <this>.p1%delegate.getValue(<this>, ::p1)
     }
     set(value) {
-      <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
+      return <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
     }
   static val %stable: Int = 0
 }
@@ -135,7 +135,7 @@ class UnstableDelegateProp {
       return <this>.p1%delegate.getValue(<this>, ::p1)
     }
     set(value) {
-      <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
+      return <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
     }
   static val %stable: Int = 8
 }

@@ -33,13 +33,12 @@ import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.BinaryModuleData
@@ -47,7 +46,7 @@ import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirModuleDataImpl
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
+import org.jetbrains.kotlin.fir.backend.extractFirDeclarations
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
@@ -56,7 +55,6 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
-import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
@@ -105,7 +103,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
                 )
             ),
             projectEnvironment,
-            null,
+            { null },
             FirExtensionRegistrar.getInstances(project),
             configuration.languageVersionSettings,
             configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
@@ -210,15 +208,8 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
 
         val fir2IrResult = analysisResult.firResult.convertToIrAndActualizeForJvm(
             fir2IrExtensions,
-            Fir2IrConfiguration(
-                configuration.languageVersionSettings,
-                analysisResult.reporter,
-                configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES),
-                EvaluatedConstTracker.create(),
-                configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
-                configuration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
-                allowNonCachedDeclarations = false
-            ),
+            configuration,
+            analysisResult.reporter,
             IrGenerationExtension.getInstances(project),
         )
 
@@ -256,7 +247,14 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         codegenFactory.generateModuleInFrontendIRMode(
             generationState, irModuleFragment, components.symbolTable, components.irProviders,
             frontendResult.generatorExtensions,
-            FirJvmBackendExtension(components, frontendResult.firResult.irActualizedResult),
+            FirJvmBackendExtension(
+                components,
+                frontendResult
+                    .firResult
+                    .irActualizedResult
+                    ?.actualizedExpectDeclarations
+                    ?.extractFirDeclarations()
+            ),
             frontendResult.firResult.pluginContext
         ) {}
         generationState.factory.done()

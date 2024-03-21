@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessExpressionChecker
@@ -53,7 +54,7 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 
-object ComposablePropertyAccessExpressionChecker : FirPropertyAccessExpressionChecker() {
+object ComposablePropertyAccessExpressionChecker : FirPropertyAccessExpressionChecker(MppCheckerKind.Common) {
     override fun check(
         expression: FirPropertyAccessExpression,
         context: CheckerContext,
@@ -67,7 +68,7 @@ object ComposablePropertyAccessExpressionChecker : FirPropertyAccessExpressionCh
     }
 }
 
-object ComposableFunctionCallChecker : FirFunctionCallChecker() {
+object ComposableFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     override fun check(
         expression: FirFunctionCall,
         context: CheckerContext,
