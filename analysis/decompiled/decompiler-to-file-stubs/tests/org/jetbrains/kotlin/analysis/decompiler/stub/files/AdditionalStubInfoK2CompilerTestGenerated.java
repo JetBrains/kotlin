@@ -60,6 +60,12 @@ public class AdditionalStubInfoK2CompilerTestGenerated extends AbstractAdditiona
   }
 
   @Test
+  @TestMetadata("TypeAliasExpansion")
+  public void testTypeAliasExpansion() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/TypeAliasExpansion/");
+  }
+
+  @Test
   @TestMetadata("TypeParametersInFlexibleTypes")
   public void testTypeParametersInFlexibleTypes() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/TypeParametersInFlexibleTypes/");
