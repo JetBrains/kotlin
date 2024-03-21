@@ -41,10 +41,4 @@ powerAssert {
         "sample.assert",
         "sample.dbg"
     )
-    excludedSourceSets.addAll(
-        "commonMain",
-        "jvmMain",
-        "jsMain",
-        "linuxX64Main"
-    )
 }
