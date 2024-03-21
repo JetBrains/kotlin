@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeCustomPhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmInnerClassesSupport
 import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
@@ -21,10 +22,14 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
+import org.jetbrains.kotlin.ir.declarations.impl.SCRIPT_K2_ORIGIN
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
@@ -33,7 +38,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -47,20 +51,20 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.topologicalSort
 
-internal val scriptsToClassesPhase = makeCustomPhase<JvmBackendContext>(
-    op = { context, irModule -> ScriptsToClassesLowering(context, context.innerClassesSupport).lower(irModule) },
+internal val scriptsToClassesPhase = makeIrModulePhase(
+    { context: JvmBackendContext -> ScriptsToClassesLowering(context, context.innerClassesSupport) },
     name = "ScriptsToClasses",
     description = "Put script declarations into classes",
 )
 
-
-private class ScriptsToClassesLowering(val context: JvmBackendContext, val innerClassesSupport: JvmInnerClassesSupport) {
-
-    fun lower(module: IrModuleFragment) {
+private class ScriptsToClassesLowering(
+    val context: JvmBackendContext, val innerClassesSupport: JvmInnerClassesSupport,
+) : ModuleLoweringPass {
+    override fun lower(irModule: IrModuleFragment) {
         val scripts = mutableListOf<IrScript>()
         val scriptDependencies = mutableMapOf<IrScript, List<IrScript>>()
 
-        for (irFile in module.files) {
+        for (irFile in irModule.files) {
             val iterator = irFile.declarations.listIterator()
             while (iterator.hasNext()) {
                 val declaration = iterator.next()

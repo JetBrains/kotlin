@@ -95,27 +95,6 @@ fun <Context : LoggingContext, Input> createSimpleNamedCompilerPhase(
 
 private val defaultConditions = setOf(defaultDumper, validationAction)
 
-fun <Context : CommonBackendContext> makeCustomPhase(
-    op: (Context, IrModuleFragment) -> Unit,
-    name: String,
-    description: String,
-    prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet(),
-    preconditions: Set<Action<IrModuleFragment, Context>> = emptySet(),
-    postconditions: Set<Action<IrModuleFragment, Context>> = emptySet(),
-): SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment> =
-    createSimpleNamedCompilerPhase(
-        name = name,
-        description = description,
-        preactions = defaultConditions + preconditions,
-        postactions = defaultConditions + postconditions,
-        prerequisite = prerequisite,
-        outputIfNotEnabled = { _, _, _, irModule -> irModule },
-        op = { context, irModule ->
-            op(context, irModule)
-            irModule
-        },
-    )
-
 fun <Context : CommonBackendContext> makeIrFilePhase(
     lowering: (Context) -> FileLoweringPass,
     name: String,
