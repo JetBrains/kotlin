@@ -198,7 +198,6 @@ abstract class LlvmOptimizationPipeline(
     private val targetMachine: LLVMTargetMachineRef by targetMachineDelegate
 
     fun execute(llvmModule: LLVMModuleRef) {
-        if (passes.isEmpty()) return
         var options: LLVMPassBuilderOptionsRef? = null
         try {
             initLLVMOnce()
@@ -210,6 +209,7 @@ abstract class LlvmOptimizationPipeline(
                 LLVMSetTimePasses(1)
             }
             executeCustomPreprocessing(config, llvmModule)
+            if (passes.isEmpty()) return
             val passDescription = passes.joinToString(",")
             logger?.log {
                 """
