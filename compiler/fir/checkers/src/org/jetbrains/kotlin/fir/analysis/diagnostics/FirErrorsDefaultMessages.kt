@@ -801,7 +801,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE,
-            "Cannot access class ''{0}'' in the expression type. While it may work, this case is dangerous and may be forbidden soon. Consider adding a necessary dependency to your module classpath.",
+            "Cannot access class ''{0}'' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.",
             RENDER_TYPE,
         )
         map.put(
@@ -812,7 +812,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER,
-            "Class ''{0}'' of the lambda parameter is inaccessible. While it may work, this case is dangerous and may be forbidden soon. Consider adding a necessary dependency to your module classpath.",
+            "Class ''{0}'' of the lambda parameter is inaccessible. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.",
             RENDER_TYPE,
         )
 
