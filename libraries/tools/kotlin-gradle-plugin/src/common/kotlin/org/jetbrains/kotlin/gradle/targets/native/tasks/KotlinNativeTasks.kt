@@ -301,9 +301,6 @@ internal constructor(
         else "${project.name}_${compilation.compilationName}"
     }
 
-    // Store as an explicit provider in order to allow Gradle Instant Execution to capture the state
-//    private val allSourceProvider = compilation.map { project.files(it.allSources).asFileTree }
-
     @Deprecated(
         message = "Please use 'compilerOptions.moduleName' to configure",
         replaceWith = ReplaceWith("compilerOptions.moduleName.get()")
@@ -326,15 +323,13 @@ internal constructor(
     }
 
     @Deprecated(
-        message = "This property as a konanHome will be squashed into one in future releases.",
-        replaceWith = ReplaceWith("kotlinNativeProvider.konanDataDir")
+        message = "This property will be removed in future releases. Don't use it in your code.",
     )
     @get:Internal
     val konanDataDir: Provider<String?> = kotlinNativeProvider.flatMap { it.konanDataDir }
 
     @Deprecated(
-        message = "This property as a konanDataDir will be squashed into one in future releases.",
-        replaceWith = ReplaceWith("kotlinNativeProvider.compilerDirectory")
+        message = "This property will be removed in future releases. Don't use it in your code.",
     )
     @get:Internal
     val konanHome: Provider<String> = kotlinNativeProvider.map { it.bundleDirectory.get().asFile.absolutePath }
@@ -1081,15 +1076,13 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     }
 
     @Deprecated(
-        message = "This property as a konanHome will be squashed into one in future releases.",
-        replaceWith = ReplaceWith("kotlinNativeProvider.konanDataDir")
+        message = "This property will be removed in future releases. Don't use it in your code.",
     )
     @get:Internal
     val konanDataDir: Provider<String?> = kotlinNativeProvider.flatMap { it.konanDataDir }
 
     @Deprecated(
-        message = "This property as a konanDataDir will be squashed into one in future releases.",
-        replaceWith = ReplaceWith("kotlinNativeProvider.compilerDirectory")
+        message = "This property will be removed in future releases. Don't use it in your code.",
     )
     @get:Internal
     val konanHome: Provider<String> = kotlinNativeProvider.map { it.bundleDirectory.get().asFile.absolutePath }
