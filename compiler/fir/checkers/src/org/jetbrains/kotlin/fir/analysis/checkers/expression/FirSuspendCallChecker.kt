@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
@@ -178,6 +179,10 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
         calledDeclarationSymbol: FirCallableSymbol<*>,
         context: CheckerContext
     ): Boolean {
+        if (expression is FirFunctionCall && isCaseMissedByK1(expression)) {
+            return true
+        }
+
         val session = context.session
 
         val enclosingSuspendFunctionDispatchReceiverOwnerSymbol =
@@ -209,6 +214,49 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
             }
         }
         return false
+    }
+
+    /**
+     * This function exists because of KT-65272:
+     *
+     * ```
+     * @RestrictsSuspension
+     * object TestScope
+     *
+     * val testLambda: suspend TestScope.() -> Unit
+     *     get() = TODO()
+     *
+     * suspend fun test() {
+     *     TestScope.testLambda()        // ❌️K1 ❌️K2
+     *     testLambda(TestScope)         // ✅️K1 ❌️K2  <-- Working K1 code now fails to compile
+     *     testLambda.invoke(TestScope)  // ✅️K1 ✅️K2
+     * }
+     * ```
+     *
+     * It was decided to replicate K1 behavior for now, so function
+     * returns `true` when given an expression like `testLambda(TestScope)`:
+     * an implicit invoke call on a receiver of an extension function type
+     * such that the receiver argument is passed as a value argument.
+     */
+    private fun isCaseMissedByK1(expression: FirFunctionCall): Boolean {
+        val isInvokeFromExtensionFunctionType = expression is FirImplicitInvokeCall
+                && expression.explicitReceiver?.resolvedType?.isExtensionFunctionType == true
+
+        if (!isInvokeFromExtensionFunctionType) {
+            return false
+        }
+
+        val source = expression.source
+            ?: return false
+
+        val visualValueArgumentsCount = source
+            .getChild(KtNodeTypes.VALUE_ARGUMENT_LIST, depth = 1)
+            ?.lighterASTNode?.getChildren(source.treeStructure)
+            ?.filter { it.tokenType == KtNodeTypes.VALUE_ARGUMENT }
+            ?.size
+            ?: return false
+
+        return visualValueArgumentsCount != expression.arguments.count() - 1
     }
 
     private fun ConeKotlinType.isRestrictSuspensionReceiver(session: FirSession): Boolean {
