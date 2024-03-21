@@ -114,7 +114,7 @@ object KotlinToJVMBytecodeCompiler {
             runFrontendAndGenerateIrForMultiModuleChunkUsingFrontendIR(environment, projectEnvironment, compilerConfiguration, chunk)
         } else {
             runFrontendAndGenerateIrUsingClassicFrontend(environment, compilerConfiguration, chunk)
-        } ?: return false
+        } ?: return true
         // K1/K2 common multi-chunk part
         val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
