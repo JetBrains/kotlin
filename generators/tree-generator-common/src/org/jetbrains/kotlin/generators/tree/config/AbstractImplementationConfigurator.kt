@@ -100,8 +100,8 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
                                 .mapNotNull { it.element.getOrNull(field.name) }
                                 .mapNotNull { it.implementationDefaultStrategy }
                             if (inheritedDefaults.isNotEmpty()) {
-                                check(inheritedDefaults.size < 2) { "Field $field has ambitious default value, please specify it explicitly for the ${element.name} element" }
-                                field.implementationDefaultStrategy = inheritedDefaults.single()
+                                field.implementationDefaultStrategy = inheritedDefaults.singleOrNull()
+                                    ?: error("Field $field has ambitious default value, please specify it explicitly for the ${element.name} element")
                                 break
                             }
                         }
