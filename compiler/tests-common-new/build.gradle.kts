@@ -64,6 +64,9 @@ projectTest(
     dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 testsJar()
