@@ -66,6 +66,9 @@ public inline fun <T> withScopedMemoryAllocator(
 @PublishedApi
 @UnsafeWasmMemoryApi
 internal fun createAllocatorInTheNewScope(): ScopedMemoryAllocator {
+    check(reallocAllocator == null) {
+        "Can't create new allocators while realloc-allocated memory is not freed"
+    }
     val allocator = currentAllocator?.createChild() ?:
         ScopedMemoryAllocator(unsafeGetScratchRawMemory(), parent = null)
     currentAllocator = allocator
@@ -158,3 +161,63 @@ internal fun wasmMemorySize(): Int =
 @WasmOp(WasmOp.MEMORY_GROW)
 internal fun wasmMemoryGrow(delta: Int): Int =
     implementedAsIntrinsic
+
+@Suppress("UNUSED_PARAMETER")
+@WasmOp(WasmOp.MEMORY_COPY)
+internal fun wasmMemoryCopy(dst: Int, src: Int, size: Int): Unit =
+    implementedAsIntrinsic
+
+@UnsafeWasmMemoryApi
+private var reallocAllocator: ScopedMemoryAllocator? = null
+
+private var lastReallocAllocatedAddress: Int? = null
+
+// WebAssembly Component Model Canonical ABI realloc implementation.
+// This function is intended to be exported to a Component Model and must not be called directly.
+// Memory allocated by this function must be freed
+// by calling [freeAllComponentModelReallocAllocatedMemory] before calling any [withScopedMemoryAllocator].
+@UnsafeWasmMemoryApi
+public fun componentModelRealloc(
+    originalPtr: Int,
+    originalSize: Int,
+    newSize: Int
+): Int {
+    // The first call to realloc creates a new allocator.
+    // Later calls to realloc reuse the previous allocator until freeAllReallocAllocatedMemory is called.
+    if (reallocAllocator == null) {
+        reallocAllocator = createAllocatorInTheNewScope()
+    }
+    val allocator = reallocAllocator!!
+
+    val result = when {
+        // Common case of allocating fresh memory when the original size is zero.
+        originalSize == 0 -> {
+            allocator.allocate(newSize).address.toInt()
+        }
+        // Growing allocation on top of the bump allocator stack by allocating the size difference and returning the original address.
+        lastReallocAllocatedAddress == originalPtr -> {
+            allocator.allocate(newSize - originalSize)
+            originalPtr
+        }
+        // Allocation "in the middle" of bump allocator can't be grown in size in place.
+        // Allocating fresh memory and copying the data.
+        else -> {
+            val newPtr = allocator.allocate(newSize).address.toInt()
+            wasmMemoryCopy(newPtr, originalPtr, originalSize)
+            newPtr
+        }
+    }
+    lastReallocAllocatedAddress = result
+    return result
+}
+
+// Free memory allocated by all previous calls to componentModelRealloc.
+@UnsafeWasmMemoryApi
+public fun freeAllComponentModelReallocAllocatedMemory() {
+    if (reallocAllocator != null) {
+        reallocAllocator!!.destroy()
+        currentAllocator = reallocAllocator!!.parent
+        reallocAllocator = null
+        lastReallocAllocatedAddress = null
+    }
+}
