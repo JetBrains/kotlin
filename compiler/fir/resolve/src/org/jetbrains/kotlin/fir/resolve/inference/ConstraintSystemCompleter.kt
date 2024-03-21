@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 
 class ConstraintSystemCompleter(components: BodyResolveComponents) {
     private val inferenceComponents = components.session.inferenceComponents
-    val variableFixationFinder = inferenceComponents.variableFixationFinder
+    private val variableFixationFinder = inferenceComponents.variableFixationFinder
     private val postponedArgumentsInputTypesResolver = inferenceComponents.postponedArgumentInputTypesResolver
     private val languageVersionSettings = components.session.languageVersionSettings
 
@@ -539,7 +539,7 @@ fun FirStatement.processAllContainingCallCandidates(processBlocks: Boolean, proc
         is FirWrappedArgumentExpression -> this.expression.processAllContainingCallCandidates(processBlocks, processor)
         is FirBlock -> {
             if (processBlocks) {
-                this.returnExpressions().forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
+                this.returnExpressions().forEach { it.processAllContainingCallCandidates(processBlocks = true, processor) }
             }
         }
 
