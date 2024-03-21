@@ -104,7 +104,7 @@ class KlibAssignableParamTransformer(
         }
 
         declaration.body = declaration.body?.let { body ->
-            IrBlockBodyImpl(
+            context.irFactory.createBlockBody(
                 body.startOffset,
                 body.endOffset
             ).apply {

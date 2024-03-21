@@ -197,7 +197,7 @@ class ClassStabilityTransformer(
     private fun IrClass.addStabilityMarkerField(stabilityExpression: IrExpression) {
         val stabilityField = makeStabilityField().apply {
             parent = this@addStabilityMarkerField
-            initializer = IrExpressionBodyImpl(
+            initializer = context.irFactory.createExpressionBody(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
                 stabilityExpression

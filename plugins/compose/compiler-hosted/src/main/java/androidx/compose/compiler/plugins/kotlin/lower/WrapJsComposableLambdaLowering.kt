@@ -35,12 +35,11 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
@@ -255,7 +254,7 @@ class WrapJsComposableLambdaLowering(
             endOffset = SYNTHETIC_OFFSET,
             type = context.irBuiltIns.functionN(0).typeWith(returnType),
             origin = IrStatementOrigin.LAMBDA,
-            function = IrFunctionImpl(
+            function = context.irFactory.createSimpleFunction(
                 startOffset = SYNTHETIC_OFFSET,
                 endOffset = SYNTHETIC_OFFSET,
                 origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
@@ -272,7 +271,9 @@ class WrapJsComposableLambdaLowering(
                 isInfix = false,
                 isExpect = false
             ).apply {
-                body = IrBlockBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, statements)
+                body = context.irFactory.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).apply {
+                    this.statements.addAll(statements)
+                }
             }
         )
     }
