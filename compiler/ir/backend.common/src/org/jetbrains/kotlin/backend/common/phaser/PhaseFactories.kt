@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.backend.common.phaser
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import java.lang.reflect.ParameterizedType
 import kotlin.reflect.KClass
 
@@ -40,6 +42,17 @@ fun <Context : CommonBackendContext> createFilePhases(
     }
 }
 
+fun <Context : CommonBackendContext> createModulePhases(
+    vararg phases: (Context) -> ModuleLoweringPass
+): List<SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment>> {
+    val createdPhases = hashSetOf<Class<out ModuleLoweringPass>>()
+    return phases.map { phase ->
+        val loweringClass = phase.extractReturnTypeArgument()
+        createdPhases.add(loweringClass)
+        createModulePhase(loweringClass, createdPhases, phase)
+    }
+}
+
 private inline fun <ReturnType, reified FunctionType : Function<ReturnType>>
         FunctionType.extractReturnTypeArgument(): Class<out ReturnType> {
     val functionType = javaClass.genericInterfaces.singleOrNull {
@@ -58,6 +71,16 @@ private fun <Context : CommonBackendContext> createFilePhase(
     val annotation = loadAnnotationAndCheckPrerequisites(loweringClass, previouslyCreatedPhases)
 
     return makeIrFilePhase(createLoweringPass, annotation.name, annotation.description)
+}
+
+private fun <Context : CommonBackendContext> createModulePhase(
+    loweringClass: Class<*>,
+    previouslyCreatedPhases: Set<Class<out ModuleLoweringPass>>,
+    createLoweringPass: (Context) -> ModuleLoweringPass,
+): SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment> {
+    val annotation = loadAnnotationAndCheckPrerequisites(loweringClass, previouslyCreatedPhases)
+
+    return makeIrModulePhase(createLoweringPass, annotation.name, annotation.description)
 }
 
 private fun loadAnnotationAndCheckPrerequisites(

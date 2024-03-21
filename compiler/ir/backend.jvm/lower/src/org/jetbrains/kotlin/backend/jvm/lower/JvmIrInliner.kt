@@ -6,11 +6,17 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.phaser.LoweringPhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 
-class JvmIrInliner(private val context: JvmBackendContext) : FileLoweringPass {
+@LoweringPhase(
+    name = "FunctionInliningPhase",
+    description = "Perform function inlining",
+    prerequisite = [JvmExpectDeclarationRemover::class]
+)
+internal class JvmIrInliner(private val context: JvmBackendContext) : FileLoweringPass {
     private val inliner = FunctionInlining(
         context,
         innerClassesSupport = context.innerClassesSupport,

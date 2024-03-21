@@ -6,11 +6,16 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.lower.ExpectDeclarationRemover
+import org.jetbrains.kotlin.backend.common.phaser.LoweringPhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.isExpect
 
-class JvmExpectDeclarationRemover(private val context: JvmBackendContext) : ExpectDeclarationRemover(context) {
+@LoweringPhase(
+    name = "ExpectDeclarationsRemoving",
+    description = "Remove expect declaration from module fragment"
+)
+internal class JvmExpectDeclarationRemover(private val context: JvmBackendContext) : ExpectDeclarationRemover(context) {
     override fun lower(irFile: IrFile) {
         if (context.config.useFir) {
             irFile.declarations.removeIf { it.isExpect }
