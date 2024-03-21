@@ -777,9 +777,14 @@ private fun TestProject.agreeToBuildScanService() {
 private fun BuildResult.printBuildScanUrl() {
     val buildScanUrl = output
         .lineSequence()
-        .first { it.contains("https://gradle.com/s/") }
-        .replaceBefore("https://gradle", "")
-    println("Build scan url: $buildScanUrl")
+        .firstOrNull { it.contains("https://gradle.com/s/") }
+        ?.replaceBefore("https://gradle", "")
+    if (buildScanUrl != null) {
+        println("Build scan url: $buildScanUrl")
+    } else {
+        printBuildOutput()
+        throw IllegalStateException("Build scan was not published")
+    }
 }
 
 private fun TestProject.setupNonDefaultJdk(pathToJdk: File) {
