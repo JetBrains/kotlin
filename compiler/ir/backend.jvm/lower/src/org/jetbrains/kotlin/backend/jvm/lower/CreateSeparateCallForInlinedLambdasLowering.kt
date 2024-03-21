@@ -7,26 +7,22 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.getAdditionalStatementsFromInlinedBlock
-import org.jetbrains.kotlin.ir.util.isFunctionInlining
 import org.jetbrains.kotlin.backend.common.ir.putStatementBeforeActualInline
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.functionInliningPhase
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
-import org.jetbrains.kotlin.backend.jvm.irInlinerIsEnabled
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
+import org.jetbrains.kotlin.ir.util.isFunctionInlining
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 internal val createSeparateCallForInlinedLambdas = makeIrModulePhase(
-    { context ->
-        if (!context.irInlinerIsEnabled()) return@makeIrModulePhase FileLoweringPass.Empty
-        CreateSeparateCallForInlinedLambdasLowering(context)
-    },
+    ::CreateSeparateCallForInlinedLambdasLowering,
     name = "CreateSeparateCallForInlinedLambdasLowering",
     description = "This lowering will create separate call `singleArgumentInlineFunction` with previously inlined lambda as argument",
     prerequisite = setOf(functionInliningPhase)
@@ -34,7 +30,9 @@ internal val createSeparateCallForInlinedLambdas = makeIrModulePhase(
 
 class CreateSeparateCallForInlinedLambdasLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid()
+        if (context.config.enableIrInliner) {
+            irFile.transformChildrenVoid()
+        }
     }
 
     override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
