@@ -3556,6 +3556,12 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       }
 
       @Test
+      @TestMetadata("postfixPrefixIncrementDecrement.kt")
+      public void testPostfixPrefixIncrementDecrement() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inference/postfixPrefixIncrementDecrement.kt");
+      }
+
+      @Test
       @TestMetadata("receiverWithCapturedType.kt")
       public void testReceiverWithCapturedType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/receiverWithCapturedType.kt");
