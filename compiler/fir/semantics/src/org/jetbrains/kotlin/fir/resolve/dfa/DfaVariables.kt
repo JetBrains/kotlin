@@ -18,51 +18,12 @@ sealed class DataFlowVariable(private val variableIndexForDebug: Int) : Comparab
     override fun compareTo(other: DataFlowVariable): Int = variableIndexForDebug.compareTo(other.variableIndexForDebug)
 }
 
-enum class PropertyStability(val impliedSmartcastStability: SmartcastStability?) {
-    // Immutable and no custom getter or local.
-    // Smartcast is definitely safe regardless of usage.
-    STABLE_VALUE(SmartcastStability.STABLE_VALUE),
-
-    // Smartcast may or may not be safe, depending on whether there are concurrent writes to this local variable.
-    LOCAL_VAR(null),
-
-    // Smartcast is always unsafe regardless of usage.
-    EXPECT_PROPERTY(SmartcastStability.EXPECT_PROPERTY),
-
-    // Open or custom getter.
-    // Smartcast is always unsafe regardless of usage.
-    PROPERTY_WITH_GETTER(SmartcastStability.PROPERTY_WITH_GETTER),
-
-    // Protected / public member value from another module.
-    // Smartcast is always unsafe regardless of usage.
-    ALIEN_PUBLIC_PROPERTY(SmartcastStability.ALIEN_PUBLIC_PROPERTY),
-
-    // Mutable member property of a class or object.
-    // Smartcast is always unsafe regardless of usage.
-    MUTABLE_PROPERTY(SmartcastStability.MUTABLE_PROPERTY),
-
-    // Delegated property of a class or object.
-    // Smartcast is always unsafe regardless of usage.
-    DELEGATED_PROPERTY(SmartcastStability.DELEGATED_PROPERTY);
-
-    fun combineWithReceiverStability(receiverStability: PropertyStability?): PropertyStability {
-        if (receiverStability == null) return this
-        if (this == LOCAL_VAR) {
-            require(receiverStability == STABLE_VALUE || receiverStability == LOCAL_VAR) {
-                "LOCAL_VAR can have only stable or local receiver, but got $receiverStability"
-            }
-            return this
-        }
-        return maxOf(this, receiverStability)
-    }
-}
-
 class RealVariable(
     val symbol: FirBasedSymbol<*>,
     val isReceiver: Boolean,
     val dispatchReceiver: RealVariable?,
     val extensionReceiver: RealVariable?,
-    val stability: PropertyStability,
+    val stability: SmartcastStability,
     variableIndexForDebug: Int,
 ) : DataFlowVariable(variableIndexForDebug) {
     val dependentVariables = mutableSetOf<RealVariable>()
