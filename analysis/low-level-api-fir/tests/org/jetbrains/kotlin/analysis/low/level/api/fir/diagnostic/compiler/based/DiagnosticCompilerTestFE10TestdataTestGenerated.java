@@ -11885,6 +11885,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       public void testDelegationInDestructuring() {
         runTest("compiler/testData/diagnostics/tests/destructuring/delegationInDestructuring.kt");
       }
+
+      @Test
+      @TestMetadata("destructuringInInitializer.kt")
+      public void testDestructuringInInitializer() {
+        runTest("compiler/testData/diagnostics/tests/destructuring/destructuringInInitializer.kt");
+      }
     }
 
     @Nested

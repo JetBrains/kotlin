@@ -11885,6 +11885,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public void testDelegationInDestructuring() {
         runTest("compiler/testData/diagnostics/tests/destructuring/delegationInDestructuring.kt");
       }
+
+      @Test
+      @TestMetadata("destructuringInInitializer.kt")
+      public void testDestructuringInInitializer() {
+        runTest("compiler/testData/diagnostics/tests/destructuring/destructuringInInitializer.kt");
+      }
     }
 
     @Nested
