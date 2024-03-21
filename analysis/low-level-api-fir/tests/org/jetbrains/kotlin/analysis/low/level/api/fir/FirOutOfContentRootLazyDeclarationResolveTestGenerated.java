@@ -778,6 +778,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("classpathSubstitution.kt")
+    public void testClasspathSubstitution() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/classpathSubstitution.kt");
+    }
+
+    @Test
     @TestMetadata("compilerRequiredAnnotationConflict.kt")
     public void testCompilerRequiredAnnotationConflict() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/compilerRequiredAnnotationConflict.kt");
@@ -946,6 +952,30 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("classpathSubstitution.kt")
+    public void testClasspathSubstitution() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/classpathSubstitution.kt");
+    }
+
+    @Test
+    @TestMetadata("classpathSubstitution2.kt")
+    public void testClasspathSubstitution2() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/classpathSubstitution2.kt");
+    }
+
+    @Test
+    @TestMetadata("classpathSubstitutionWithLibraryClass.kt")
+    public void testClasspathSubstitutionWithLibraryClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/classpathSubstitutionWithLibraryClass.kt");
+    }
+
+    @Test
+    @TestMetadata("classpathSubstitutionWithPreresolvedClass.kt")
+    public void testClasspathSubstitutionWithPreresolvedClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/classpathSubstitutionWithPreresolvedClass.kt");
+    }
+
+    @Test
     @TestMetadata("contract.kt")
     public void testContract() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/contract.kt");
@@ -1021,6 +1051,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("javaAnnotationWithDefaultValueForenumArray.kt")
     public void testJavaAnnotationWithDefaultValueForenumArray() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/javaAnnotationWithDefaultValueForenumArray.kt");
+    }
+
+    @Test
+    @TestMetadata("overrideWithTransitiveClass.kt")
+    public void testOverrideWithTransitiveClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/overrideWithTransitiveClass.kt");
+    }
+
+    @Test
+    @TestMetadata("overrideWithTransitiveClassWithPreresolvedClass.kt")
+    public void testOverrideWithTransitiveClassWithPreresolvedClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/overrideWithTransitiveClassWithPreresolvedClass.kt");
     }
 
     @Test

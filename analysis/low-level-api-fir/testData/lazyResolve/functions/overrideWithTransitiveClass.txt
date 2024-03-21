@@ -1,0 +1,523 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] top.kt
+    public final [ResolvedTo(RAW_FIR)] typealias CompletionHandler = ( (cause: Throwable?) -> Unit )
+    public abstract [ResolvedTo(RAW_FIR)] class JobNode : CompletionHandlerBase {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
+            LAZY_super<CompletionHandlerBase>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] get(): <implicit>
+
+    }
+    public abstract expect [ResolvedTo(RAW_FIR)] class CompletionHandlerBase : R|kotlin/Any| {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
+
+        public? abstract expect [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] middle.kt
+    public abstract actual [ResolvedTo(RAW_FIR)] class CompletionHandlerBase : CompletionHandler {
+        public? actual [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
+            LAZY_super<<implicit>>
+        }
+
+        public? abstract actual override [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] bottom.kt
+    public final? [ResolvedTo(RAW_FIR)] class CancelFutureOnCompletion : JobNode {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
+            LAZY_super<JobNode>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(RAW_FIR)] top.kt
+    public final [ResolvedTo(RAW_FIR)] typealias CompletionHandler = ( (cause: Throwable?) -> Unit )
+    public abstract [ResolvedTo(RAW_FIR)] class JobNode : CompletionHandlerBase {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
+            LAZY_super<CompletionHandlerBase>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] get(): <implicit>
+
+    }
+    public abstract expect [ResolvedTo(RAW_FIR)] class CompletionHandlerBase : R|kotlin/Any| {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
+
+        public? abstract expect [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] middle.kt
+    public abstract actual [ResolvedTo(RAW_FIR)] class CompletionHandlerBase : CompletionHandler {
+        public? actual [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
+            LAZY_super<<implicit>>
+        }
+
+        public? abstract actual override [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public final? [ResolvedTo(RAW_FIR)] class CancelFutureOnCompletion : JobNode {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
+            LAZY_super<JobNode>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(RAW_FIR)] top.kt
+    public final [ResolvedTo(RAW_FIR)] typealias CompletionHandler = ( (cause: Throwable?) -> Unit )
+    public abstract [ResolvedTo(RAW_FIR)] class JobNode : CompletionHandlerBase {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
+            LAZY_super<CompletionHandlerBase>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] get(): <implicit>
+
+    }
+    public abstract expect [ResolvedTo(RAW_FIR)] class CompletionHandlerBase : R|kotlin/Any| {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
+
+        public? abstract expect [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] middle.kt
+    public abstract actual [ResolvedTo(RAW_FIR)] class CompletionHandlerBase : CompletionHandler {
+        public? actual [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
+            LAZY_super<<implicit>>
+        }
+
+        public? abstract actual override [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public final? [ResolvedTo(RAW_FIR)] class CancelFutureOnCompletion : JobNode {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
+            LAZY_super<JobNode>
+        }
+
+        public? open? override [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun invoke([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] cause: Throwable?): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(RAW_FIR)] top.kt
+    public final [ResolvedTo(RAW_FIR)] typealias CompletionHandler = ( (cause: Throwable?) -> Unit )
+    public abstract [ResolvedTo(RAW_FIR)] class JobNode : CompletionHandlerBase {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
+            LAZY_super<CompletionHandlerBase>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] get(): <implicit>
+
+    }
+    public abstract expect [ResolvedTo(RAW_FIR)] class CompletionHandlerBase : R|kotlin/Any| {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
+
+        public? abstract expect [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] middle.kt
+    public abstract actual [ResolvedTo(RAW_FIR)] class CompletionHandlerBase : CompletionHandler {
+        public? actual [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
+            LAZY_super<<implicit>>
+        }
+
+        public? abstract actual override [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public final? [ResolvedTo(RAW_FIR)] class CancelFutureOnCompletion : JobNode {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
+            LAZY_super<JobNode>
+        }
+
+        public? open? override [ResolvedTo(COMPANION_GENERATION)] fun invoke([ResolvedTo(COMPANION_GENERATION)] cause: Throwable?): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] top.kt
+    public final [ResolvedTo(SUPER_TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
+    public abstract [ResolvedTo(SUPER_TYPES)] class JobNode : R|CompletionHandlerBase| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
+            LAZY_super<CompletionHandlerBase>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] get(): <implicit>
+
+    }
+    public abstract expect [ResolvedTo(SUPER_TYPES)] class CompletionHandlerBase : R|kotlin/Any| {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
+
+        public? abstract expect [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] middle.kt
+    public abstract actual [ResolvedTo(SUPER_TYPES)] class CompletionHandlerBase : R|CompletionHandler| {
+        public? actual [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
+            LAZY_super<<implicit>>
+        }
+
+        public? abstract actual override [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public final? [ResolvedTo(SUPER_TYPES)] class CancelFutureOnCompletion : R|JobNode| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
+            LAZY_super<JobNode>
+        }
+
+        public? open? override [ResolvedTo(SUPER_TYPES)] fun invoke([ResolvedTo(SUPER_TYPES)] cause: Throwable?): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] top.kt
+    public final [ResolvedTo(SUPER_TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
+    public abstract [ResolvedTo(SUPER_TYPES)] class JobNode : R|CompletionHandlerBase| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
+            LAZY_super<CompletionHandlerBase>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] get(): <implicit>
+
+    }
+    public abstract expect [ResolvedTo(SUPER_TYPES)] class CompletionHandlerBase : R|kotlin/Any| {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
+
+        public? abstract expect [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] middle.kt
+    public abstract actual [ResolvedTo(SUPER_TYPES)] class CompletionHandlerBase : R|CompletionHandler| {
+        public? actual [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
+            LAZY_super<<implicit>>
+        }
+
+        public? abstract actual override [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public final? [ResolvedTo(TYPES)] class CancelFutureOnCompletion : R|JobNode| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
+            LAZY_super<JobNode>
+        }
+
+        public? open? override [ResolvedTo(TYPES)] fun invoke([ResolvedTo(TYPES)] cause: R|kotlin/Throwable?|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] top.kt
+    public final [ResolvedTo(TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
+    public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
+            LAZY_super<R|CompletionHandlerBase|>
+        }
+
+        public final [ResolvedTo(STATUS)] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] get(): <implicit>
+
+    }
+    public abstract expect [ResolvedTo(STATUS)] class CompletionHandlerBase : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
+
+        public abstract expect [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] middle.kt
+    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|CompletionHandler| {
+        public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
+            LAZY_super<<implicit>>
+        }
+
+        public abstract actual override operator [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public final [ResolvedTo(STATUS)] class CancelFutureOnCompletion : R|JobNode| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
+            LAZY_super<R|JobNode|>
+        }
+
+        public open override operator [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] top.kt
+    public final [ResolvedTo(TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
+    public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
+            LAZY_super<R|CompletionHandlerBase|>
+        }
+
+        public final [ResolvedTo(STATUS)] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] get(): <implicit>
+
+    }
+    public abstract expect [ResolvedTo(STATUS)] class CompletionHandlerBase : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
+
+        public abstract expect [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] middle.kt
+    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|CompletionHandler| {
+        public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
+            LAZY_super<<implicit>>
+        }
+
+        public abstract actual override operator [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public final [ResolvedTo(STATUS)] class CancelFutureOnCompletion : R|JobNode| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
+            LAZY_super<R|JobNode|>
+        }
+
+        public open override operator [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun invoke([ResolvedTo(EXPECT_ACTUAL_MATCHING)] cause: R|kotlin/Throwable?|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] top.kt
+    public final [ResolvedTo(TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
+    public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
+            LAZY_super<R|CompletionHandlerBase|>
+        }
+
+        public final [ResolvedTo(STATUS)] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] get(): <implicit>
+
+    }
+    public abstract expect [ResolvedTo(STATUS)] class CompletionHandlerBase : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
+
+        public abstract expect [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] middle.kt
+    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|CompletionHandler| {
+        public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
+            LAZY_super<<implicit>>
+        }
+
+        public abstract actual override operator [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public final [ResolvedTo(STATUS)] class CancelFutureOnCompletion : R|JobNode| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
+            LAZY_super<R|JobNode|>
+        }
+
+        public open override operator [ResolvedTo(CONTRACTS)] fun invoke([ResolvedTo(CONTRACTS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit| {
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] top.kt
+    public final [ResolvedTo(TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
+    public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
+            LAZY_super<R|CompletionHandlerBase|>
+        }
+
+        public final [ResolvedTo(STATUS)] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] get(): <implicit>
+
+    }
+    public abstract expect [ResolvedTo(STATUS)] class CompletionHandlerBase : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
+
+        public abstract expect [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] middle.kt
+    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|CompletionHandler| {
+        public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
+            LAZY_super<<implicit>>
+        }
+
+        public abstract actual override operator [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public final [ResolvedTo(STATUS)] class CancelFutureOnCompletion : R|JobNode| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
+            LAZY_super<R|JobNode|>
+        }
+
+        public open override operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun invoke([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] cause: R|kotlin/Throwable?|): R|kotlin/Unit| {
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] top.kt
+    public final [ResolvedTo(TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
+    public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
+            LAZY_super<R|CompletionHandlerBase|>
+        }
+
+        public final [ResolvedTo(STATUS)] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] get(): <implicit>
+
+    }
+    public abstract expect [ResolvedTo(STATUS)] class CompletionHandlerBase : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
+
+        public abstract expect [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] middle.kt
+    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|CompletionHandler| {
+        public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
+            LAZY_super<<implicit>>
+        }
+
+        public abstract actual override operator [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public final [ResolvedTo(STATUS)] class CancelFutureOnCompletion : R|JobNode| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
+            LAZY_super<R|JobNode|>
+        }
+
+        public open override operator [ResolvedTo(CONSTANT_EVALUATION)] fun invoke([ResolvedTo(CONSTANT_EVALUATION)] cause: R|kotlin/Throwable?|): R|kotlin/Unit| {
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] top.kt
+    public final [ResolvedTo(TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
+    public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
+            LAZY_super<R|CompletionHandlerBase|>
+        }
+
+        public final [ResolvedTo(STATUS)] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] get(): <implicit>
+
+    }
+    public abstract expect [ResolvedTo(STATUS)] class CompletionHandlerBase : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
+
+        public abstract expect [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] middle.kt
+    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|CompletionHandler| {
+        public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
+            LAZY_super<<implicit>>
+        }
+
+        public abstract actual override operator [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public final [ResolvedTo(STATUS)] class CancelFutureOnCompletion : R|JobNode| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
+            LAZY_super<R|JobNode|>
+        }
+
+        public open override operator [ResolvedTo(ANNOTATION_ARGUMENTS)] fun invoke([ResolvedTo(ANNOTATION_ARGUMENTS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit| {
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] top.kt
+    public final [ResolvedTo(TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
+    public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
+            LAZY_super<R|CompletionHandlerBase|>
+        }
+
+        public final [ResolvedTo(STATUS)] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] get(): <implicit>
+
+    }
+    public abstract expect [ResolvedTo(STATUS)] class CompletionHandlerBase : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
+
+        public abstract expect [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] middle.kt
+    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|CompletionHandler| {
+        public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
+            LAZY_super<<implicit>>
+        }
+
+        public abstract actual override operator [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public final [ResolvedTo(STATUS)] class CancelFutureOnCompletion : R|JobNode| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
+            LAZY_super<R|JobNode|>
+        }
+
+        public open override operator [ResolvedTo(BODY_RESOLVE)] fun invoke([ResolvedTo(BODY_RESOLVE)] cause: R|kotlin/Throwable?|): R|kotlin/Unit| {
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] bottom.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class CancelFutureOnCompletion : R|JobNode| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
+            super<R|JobNode|>()
+        }
+
+        public open override operator [ResolvedTo(BODY_RESOLVE)] fun invoke([ResolvedTo(BODY_RESOLVE)] cause: R|kotlin/Throwable?|): R|kotlin/Unit| {
+        }
+
+    }
