@@ -2598,6 +2598,106 @@ public class FirIdeNormalAnalysisLibrarySourceModuleReferenceResolveTestGenerate
     public void testTypeAliasRHS() {
       runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/TypeAliasRHS.kt");
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency")
+    @TestDataPath("$PROJECT_ROOT")
+    public class MissingDependency {
+      @Test
+      public void testAllFilesPresentInMissingDependency() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
+      }
+
+      @Test
+      @TestMetadata("ListAliasUnresolvedListAlias.kt")
+      public void testListAliasUnresolvedListAlias() {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency/ListAliasUnresolvedListAlias.kt");
+      }
+
+      @Test
+      @TestMetadata("ListAliasUnresolvedStringAlias.kt")
+      public void testListAliasUnresolvedStringAlias() {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency/ListAliasUnresolvedStringAlias.kt");
+      }
+
+      @Test
+      @TestMetadata("MyString.kt")
+      public void testMyString() {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency/MyString.kt");
+      }
+
+      @Test
+      @TestMetadata("NestedAsymmetricAliasOnlyResolveAsymmetricAlias.kt")
+      public void testNestedAsymmetricAliasOnlyResolveAsymmetricAlias() {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency/NestedAsymmetricAliasOnlyResolveAsymmetricAlias.kt");
+      }
+
+      @Test
+      @TestMetadata("NestedAsymmetricAliasOnlyResolveAsymmetricAlias2.kt")
+      public void testNestedAsymmetricAliasOnlyResolveAsymmetricAlias2() {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency/NestedAsymmetricAliasOnlyResolveAsymmetricAlias2.kt");
+      }
+
+      @Test
+      @TestMetadata("NestedAsymmetricAliasOnlyResolveBaseAliases.kt")
+      public void testNestedAsymmetricAliasOnlyResolveBaseAliases() {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency/NestedAsymmetricAliasOnlyResolveBaseAliases.kt");
+      }
+
+      @Test
+      @TestMetadata("NestedAsymmetricAliasUnresolvedAsymmetricAlias.kt")
+      public void testNestedAsymmetricAliasUnresolvedAsymmetricAlias() {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency/NestedAsymmetricAliasUnresolvedAsymmetricAlias.kt");
+      }
+
+      @Test
+      @TestMetadata("NestedAsymmetricAliasUnresolvedAsymmetricAlias2.kt")
+      public void testNestedAsymmetricAliasUnresolvedAsymmetricAlias2() {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency/NestedAsymmetricAliasUnresolvedAsymmetricAlias2.kt");
+      }
+
+      @Test
+      @TestMetadata("NestedAsymmetricAliasUnresolvedBaseAliases.kt")
+      public void testNestedAsymmetricAliasUnresolvedBaseAliases() {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency/NestedAsymmetricAliasUnresolvedBaseAliases.kt");
+      }
+
+      @Test
+      @TestMetadata("NestedCollectionAliasesOnlyResolveListAlias.kt")
+      public void testNestedCollectionAliasesOnlyResolveListAlias() {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency/NestedCollectionAliasesOnlyResolveListAlias.kt");
+      }
+
+      @Test
+      @TestMetadata("NestedCollectionAliasesOnlyResolveSetAlias.kt")
+      public void testNestedCollectionAliasesOnlyResolveSetAlias() {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency/NestedCollectionAliasesOnlyResolveSetAlias.kt");
+      }
+
+      @Test
+      @TestMetadata("NestedCollectionAliasesOnlyResolveStringAlias.kt")
+      public void testNestedCollectionAliasesOnlyResolveStringAlias() {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency/NestedCollectionAliasesOnlyResolveStringAlias.kt");
+      }
+
+      @Test
+      @TestMetadata("NestedCollectionAliasesUnresolvedListAlias.kt")
+      public void testNestedCollectionAliasesUnresolvedListAlias() {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency/NestedCollectionAliasesUnresolvedListAlias.kt");
+      }
+
+      @Test
+      @TestMetadata("NestedCollectionAliasesUnresolvedSetAlias.kt")
+      public void testNestedCollectionAliasesUnresolvedSetAlias() {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency/NestedCollectionAliasesUnresolvedSetAlias.kt");
+      }
+
+      @Test
+      @TestMetadata("NestedCollectionAliasesUnresolvedStringAlias.kt")
+      public void testNestedCollectionAliasesUnresolvedStringAlias() {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency/NestedCollectionAliasesUnresolvedStringAlias.kt");
+      }
+    }
   }
 
   @Nested

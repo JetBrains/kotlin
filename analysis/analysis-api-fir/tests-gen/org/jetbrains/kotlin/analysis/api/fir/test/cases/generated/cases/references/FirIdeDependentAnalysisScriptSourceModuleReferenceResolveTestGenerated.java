@@ -516,6 +516,16 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     public void testAllFilesPresentInTypeAlias() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeAlias"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency")
+    @TestDataPath("$PROJECT_ROOT")
+    public class MissingDependency {
+      @Test
+      public void testAllFilesPresentInMissingDependency() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
   }
 
   @Nested
