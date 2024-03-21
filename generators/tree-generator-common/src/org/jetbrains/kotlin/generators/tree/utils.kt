@@ -26,13 +26,6 @@ fun <Element : AbstractElement<Element, *, *>> Element.elementAncestorsAndSelfDe
     sequenceOf(this) + elementAncestorsDepthFirst()
 
 /**
- * Returns a bottom-up hierarchy of inheritance, from this element's parents, to its top-most base elements, recursively,
- * in a breadth first manner.
- */
-fun <Element : AbstractElement<Element, *, *>> Element.elementAncestorsBreadthFirst(): Sequence<Element> =
-    elementAncestorsAndSelfBreadthFirst().drop(1)
-
-/**
  * Returns a bottom-up hierarchy of inheritance, from this element, to its top-most base elements, recursively,
  * in a breadth first manner.
  */
