@@ -67,7 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: List<List<Int>> = this@R|util/MyPair|.R|util/MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/MyPair|.R|util/MyPair.b|): R|util/MyPair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: List<List<Int>> = this@R|util/MyPair|.R|util/MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/MyPair|.R|util/MyPair.b|): R|util/MyPair|
 
         }
 
@@ -83,3 +83,4 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirPropertySymbol util/left]] val property: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>| = R|util/left|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>|
+

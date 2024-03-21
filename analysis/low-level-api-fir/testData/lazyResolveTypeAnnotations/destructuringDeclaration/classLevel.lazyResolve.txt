@@ -29,7 +29,7 @@ FILE: [ResolvedTo(RAW_FIR)] classLevel.kt
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
 
         }
 
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
 
         }
 
@@ -127,7 +127,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
 
         }
 
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
 
         }
 
@@ -225,7 +225,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
 
         }
 
@@ -274,7 +274,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
 
         }
 
@@ -323,7 +323,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
 
         }
 
@@ -372,7 +372,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
 
         }
 
@@ -421,7 +421,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
 
         }
 
@@ -470,7 +470,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
 
         }
 
@@ -519,7 +519,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
 
         }
 
@@ -568,7 +568,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
 
         }
 
@@ -617,7 +617,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
 
         }
 

@@ -1,6 +1,7 @@
 // FIR_IDENTICAL
 // ISSUE: KT-45043, KT-51229
 // DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +DataClassCopyRespectsConstructorVisibility
 
 private class Bar
 

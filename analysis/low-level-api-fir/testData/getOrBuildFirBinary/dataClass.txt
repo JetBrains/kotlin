@@ -30,7 +30,7 @@ public final data [ResolvedTo(BODY_RESOLVE)] class MyDependency : R|kotlin/Any| 
 
     public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|one/D|
 
-    public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] b: R|one/B| = this@R|one/MyDependency|.R|one/MyDependency.b|, [ResolvedTo(BODY_RESOLVE)] d: R|one/D| = this@R|one/MyDependency|.R|one/MyDependency.d|): R|one/MyDependency|
+    public? final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] b: R|one/B| = this@R|one/MyDependency|.R|one/MyDependency.b|, [ResolvedTo(BODY_RESOLVE)] d: R|one/D| = this@R|one/MyDependency|.R|one/MyDependency.d|): R|one/MyDependency|
 
     public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 

@@ -67,7 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: List<List<Int>> = this@R|util/MyPair|.R|util/MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/MyPair|.R|util/MyPair.b|): R|util/MyPair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: List<List<Int>> = this@R|util/MyPair|.R|util/MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/MyPair|.R|util/MyPair.b|): R|util/MyPair|
 
         }
 

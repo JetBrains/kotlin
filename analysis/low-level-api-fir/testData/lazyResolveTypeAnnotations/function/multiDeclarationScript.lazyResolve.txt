@@ -32,7 +32,7 @@ FILE: [ResolvedTo(RAW_FIR)] multiDeclarationScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>? = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>? = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
 
         }
 
@@ -77,7 +77,7 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>? = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>? = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
 
         }
 
@@ -122,7 +122,7 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>? = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>? = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
 
         }
 
@@ -167,7 +167,7 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>? = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>? = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
 
         }
 
@@ -212,7 +212,7 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>? = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>? = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
 
         }
 
@@ -257,7 +257,7 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>? = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>? = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
 
         }
 
@@ -302,7 +302,7 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>? = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>? = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
 
         }
 
@@ -347,7 +347,7 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>? = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>? = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
 
         }
 
@@ -392,7 +392,7 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component2(): @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>? = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>? = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
 
         }
 
