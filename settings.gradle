@@ -231,6 +231,7 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":libraries:tools:gradle:fus-statistics-gradle-plugin",
         ":kotlin-tooling-metadata",
         ":kotlin-tooling-core",
+        ":compose-compiler-gradle-plugin",
         ":kotlin-allopen",
         ":kotlin-noarg",
         ":kotlin-power-assert",
@@ -796,6 +797,7 @@ project(":gradle:regression-benchmark-templates").projectDir = "$rootDir/librari
 project(":gradle:regression-benchmarks").projectDir = "$rootDir/libraries/tools/gradle/regression-benchmarks" as File
 project(':kotlin-tooling-metadata').projectDir = "$rootDir/libraries/tools/kotlin-tooling-metadata" as File
 project(':kotlin-tooling-core').projectDir = "$rootDir/libraries/tools/kotlin-tooling-core" as File
+project(':compose-compiler-gradle-plugin').projectDir = "$rootDir/libraries/tools/kotlin-compose-compiler" as File
 project(':kotlin-allopen').projectDir = "$rootDir/libraries/tools/kotlin-allopen" as File
 project(':kotlin-noarg').projectDir = "$rootDir/libraries/tools/kotlin-noarg" as File
 project(':kotlin-power-assert').projectDir = "$rootDir/libraries/tools/kotlin-power-assert" as File
@@ -903,3 +905,4 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':native:kotlin-test-native-xctest'
     include ':native:cli-native'
 }
+
