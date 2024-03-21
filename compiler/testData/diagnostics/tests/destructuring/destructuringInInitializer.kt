@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 
 class A {
     operator fun component1() = "O"
@@ -11,4 +12,9 @@ class Foo {
             val (o, k) = A()
             o + k
         }
+
+    init {
+        val (o, k) = A()
+        val r = o + k
+    }
 }

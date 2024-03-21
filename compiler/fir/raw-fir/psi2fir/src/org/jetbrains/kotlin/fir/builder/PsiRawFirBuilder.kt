@@ -2038,7 +2038,9 @@ open class PsiRawFirBuilder(
                 this@PsiRawFirBuilder.context.calleeNamesForLambda += null
 
                 val expression = buildOrLazyExpression(null) {
-                    initializer.toFirExpression("Should have initializer")
+                    withForcedLocalContext {
+                        initializer.toFirExpression("Should have initializer")
+                    }
                 }
 
                 this@PsiRawFirBuilder.context.calleeNamesForLambda.removeLast()

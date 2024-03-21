@@ -1304,7 +1304,9 @@ class LightTreeRawFirDeclarationBuilder(
                     BACKING_FIELD -> fieldDeclaration = it
                     else -> if (it.isExpression()) {
                         context.calleeNamesForLambda += null
-                        propertyInitializer = expressionConverter.getAsFirExpression(it, "Should have initializer")
+                        propertyInitializer = withForcedLocalContext {
+                            expressionConverter.getAsFirExpression(it, "Should have initializer")
+                        }
                         context.calleeNamesForLambda.removeLast()
                     }
                 }
