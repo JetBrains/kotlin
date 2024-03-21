@@ -1306,6 +1306,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("restrictsSuspensionDifference.kt")
+    public void testRestrictsSuspensionDifference() {
+      runTest("compiler/testData/diagnostics/tests/restrictsSuspensionDifference.kt");
+    }
+
+    @Test
     @TestMetadata("Return.kt")
     public void testReturn() {
       runTest("compiler/testData/diagnostics/tests/Return.kt");
