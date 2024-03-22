@@ -406,7 +406,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         val entryBySerialName = mutableMapOf<String, FirEnumEntrySymbol>()
         for (enumEntrySymbol in classSymbol.collectEnumEntries()) {
             val serialNameAnnotation = enumEntrySymbol.getSerialNameAnnotation(session)
-            val serialName = serialNameAnnotation?.getStringArgument(AnnotationParameterNames.VALUE) ?: enumEntrySymbol.name.asString()
+            val serialName = enumEntrySymbol.getSerialNameValue(session) ?: enumEntrySymbol.name.asString()
             val firstEntry = entryBySerialName[serialName]
             if (firstEntry != null) {
                 reporter.reportOn(

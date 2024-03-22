@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.serialization.compiler.fir
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.transformers.FirExpressionEvaluator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -60,11 +62,19 @@ val FirBasedSymbol<*>.isSerialInfoAnnotation: Boolean
 fun FirBasedSymbol<*>.isInheritableSerialInfoAnnotation(session: FirSession): Boolean =
     hasAnnotation(inheritableSerialInfoClassId, session)
 
-fun FirBasedSymbol<*>.getSerialNameAnnotation(session: FirSession): FirAnnotation? =
-    resolvedAnnotationsWithArguments.getAnnotationByClassId(serialNameAnnotationClassId, session)
+fun FirBasedSymbol<*>.getSerialNameAnnotation(session: FirSession): FirAnnotationCall? =
+    resolvedAnnotationsWithArguments.getAnnotationByClassId(serialNameAnnotationClassId, session) as? FirAnnotationCall
 
-fun FirBasedSymbol<*>.getSerialNameValue(session: FirSession): String? =
-    getSerialNameAnnotation(session)?.getStringArgument(AnnotationParameterNames.VALUE)
+fun FirBasedSymbol<*>.getSerialNameValue(session: FirSession): String? {
+    val serialNameAnnotation = getSerialNameAnnotation(session) ?: return null
+    val args = FirExpressionEvaluator.evaluateAnnotationArguments(serialNameAnnotation, session) ?: return null
+    return args[AnnotationParameterNames.VALUE]?.asString()
+}
+
+private fun FirEvaluatorResult.asString(): String? = when (this) {
+    is FirEvaluatorResult.Evaluated -> (result as? FirLiteralExpression<*>)?.value as? String
+    else -> null
+}
 
 fun FirBasedSymbol<*>.getSerialRequired(session: FirSession): Boolean =
     hasAnnotation(SerializationAnnotations.requiredAnnotationClassId, session)
