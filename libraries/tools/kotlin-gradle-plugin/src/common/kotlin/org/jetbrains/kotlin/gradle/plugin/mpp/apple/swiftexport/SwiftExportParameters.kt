@@ -18,6 +18,9 @@ internal interface SwiftExportParameters : WorkParameters {
     val bridgeModuleName: Property<String>
 
     @get:Input
+    val swiftApiModuleName: Property<String>
+
+    @get:Input
     val debugMode: Property<Boolean>
 
     @get:Input

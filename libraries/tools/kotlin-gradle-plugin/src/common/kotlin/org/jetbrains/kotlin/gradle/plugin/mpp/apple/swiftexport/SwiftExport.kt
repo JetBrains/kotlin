@@ -113,6 +113,7 @@ private fun Project.registerSwiftExportRun(
         // Input
         task.swiftExportClasspath.from(maybeCreateSwiftExportClasspathResolvableConfiguration())
         task.parameters.sourceRoot.convention(commonMainProvider.map { objects.directoryProperty(it) }.getOrThrow())
+        task.parameters.swiftApiModuleName.convention(swiftApiModuleName)
         task.parameters.bridgeModuleName.convention(swiftApiModuleName.map { "${it}Bridge" })
         task.parameters.debugMode.convention(true)
         task.parameters.konanDistribution.convention(Distribution(konanDistribution.root.absolutePath))
