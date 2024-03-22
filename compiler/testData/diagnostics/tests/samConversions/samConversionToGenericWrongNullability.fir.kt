@@ -21,14 +21,14 @@ inline fun run(fn: () -> Unit) = fn()
 
 fun main() {
     Supplier<String> {
-        foo()
+        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!>
     }
 
     Supplier<String> {
-        if (true) return@Supplier foo()
-        run { return@Supplier foo() }
+        if (true) return@Supplier <!RETURN_TYPE_MISMATCH, TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!>
+        run { return@Supplier <!RETURN_TYPE_MISMATCH, TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!> }
         try {
-            if (true) return@Supplier foo()
+            if (true) return@Supplier <!RETURN_TYPE_MISMATCH, TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!>
             2
         } finally {
             Unit

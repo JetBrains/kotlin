@@ -4409,6 +4409,13 @@ internal class NullabilityMismatchBasedOnJavaAnnotationsImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.NullabilityMismatchBasedOnJavaAnnotations
 
+internal class TypeMismatchWhenFlexibilityChangesImpl(
+    override val expectedType: KtType,
+    override val actualType: KtType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.TypeMismatchWhenFlexibilityChanges
+
 internal class UpperBoundCannotBeArrayImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
