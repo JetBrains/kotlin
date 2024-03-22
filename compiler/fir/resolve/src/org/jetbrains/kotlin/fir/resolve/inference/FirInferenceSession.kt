@@ -46,6 +46,8 @@ abstract class FirInferenceSession {
      * By semi-fixation we mean that only the relevant EQUALITY constraint is added,
      * [org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext.fixVariable] is not expected to be called.
      *
+     * See `getAndSemiFixCurrentResultIfTypeVariable` chapter at [docs/fir/pcla.md]
+     *
      * NB: The callee must pay attention that exactly current common CS will be modified.
      */
     open fun getAndSemiFixCurrentResultIfTypeVariable(type: ConeKotlinType): ConeKotlinType? = null

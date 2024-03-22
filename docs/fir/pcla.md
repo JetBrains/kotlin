@@ -465,7 +465,7 @@ buildList {
 }
 ```
 
-See the implementations details at `FirPCLAInferenceSession.fixVariablesForMemberScope`.
+See the implementation details at `FirPCLAInferenceSession.fixCurrentResultIfTypeVariableAndReturnBinding`.
 
 ## CST computation
 
