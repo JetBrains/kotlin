@@ -18,6 +18,7 @@ dependencies {
 
     compileOnly(intellijCore())
 
+    testCompileOnly(project(":compiler:ir.tree"))
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit4)
     testRuntimeOnly(libs.junit.vintage.engine)
