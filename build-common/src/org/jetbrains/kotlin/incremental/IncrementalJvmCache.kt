@@ -20,6 +20,7 @@ import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.util.io.BooleanDataDescriptor
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.build.GeneratedJvmClass
+import org.jetbrains.kotlin.incremental.components.SerializationAwareModuleJavaClassesTracker
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.inline.InlineFunction
 import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import java.io.File
 import java.security.MessageDigest
 
@@ -57,6 +59,7 @@ open class IncrementalJvmCache(
         private const val INLINE_FUNCTIONS = "inline-functions"
         private const val INTERNAL_NAME_TO_SOURCE = "internal-name-to-source"
         private const val JAVA_SOURCES_PROTO_MAP = "java-sources-proto-map"
+        private const val K2_JAVA_SOURCES_PROTO_MAP = "k2-java-sources-proto-map"
 
         private const val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
@@ -77,6 +80,7 @@ open class IncrementalJvmCache(
 
     // gradle only
     private val javaSourcesProtoMap = registerMap(JavaSourcesProtoMap(JAVA_SOURCES_PROTO_MAP.storageFile, icContext))
+    private val k2JavaSourcesProtoMap = registerMap(ProtoMap(K2_JAVA_SOURCES_PROTO_MAP.storageFile, icContext))
 
     private val outputDir by lazy(LazyThreadSafetyMode.NONE) { requireNotNull(targetOutputDir) { "Target is expected to have output directory" } }
 
@@ -258,21 +262,51 @@ open class IncrementalJvmCache(
         dirtyOutputClassesMap.notDirty(jvmClassName)
     }
 
+    fun saveK2JavaClassProto(
+        source: File?, serializedJavaClass: SerializationAwareModuleJavaClassesTracker.SerializedJavaClass, collector: ChangesCollector
+    ) {
+        val jvmClassName = JvmClassName.byClassId(serializedJavaClass.classId)
+
+        val newProtoData = ClassProtoData(serializedJavaClass.proto, serializedJavaClass.stringTable.toNameResolver())
+
+        if (!icContext.useCompilerMapsOnly) {
+            k2JavaSourcesProtoMap.putAndCollect1(
+                jvmClassName,
+                ProtoMapValue(
+                    false,
+                    JvmProtoBufUtil.writeDataBytes(serializedJavaClass.stringTable, serializedJavaClass.proto),
+                    serializedJavaClass.stringTable.strings.toTypedArray()
+                ),
+                newProtoData,
+                collector
+            )
+        }
+
+        source?.let { sourceToClassesMap.append(source, jvmClassName) }
+        if (!icContext.useCompilerMapsOnly) {
+            addToClassStorage(newProtoData, source)
+        }
+        dirtyOutputClassesMap.notDirty(jvmClassName)
+    }
+
     fun getObsoleteJavaClasses(): Collection<ClassId> =
         dirtyOutputClassesMap.getDirtyOutputClasses()
             .mapNotNull {
                 javaSourcesProtoMap[it]?.classId
+                    ?: (k2JavaSourcesProtoMap[it]?.toProtoData(it.packageFqName) as? ClassProtoData)?.let {
+                        it.nameResolver.getClassId(it.proto.fqName)
+                    }
             }
 
     fun isJavaClassToTrack(classId: ClassId): Boolean {
         val jvmClassName = JvmClassName.byClassId(classId)
         return dirtyOutputClassesMap.isDirty(jvmClassName) ||
-                jvmClassName !in javaSourcesProtoMap
+                (jvmClassName !in javaSourcesProtoMap && jvmClassName !in k2JavaSourcesProtoMap)
     }
 
     fun isJavaClassAlreadyInCache(classId: ClassId): Boolean {
         val jvmClassName = JvmClassName.byClassId(classId)
-        return jvmClassName in javaSourcesProtoMap
+        return jvmClassName in javaSourcesProtoMap || jvmClassName in k2JavaSourcesProtoMap
     }
 
     override fun clearCacheForRemovedClasses(changesCollector: ChangesCollector) {
@@ -308,6 +342,7 @@ open class IncrementalJvmCache(
                 inlineFunctionsMap.remove(it)
                 internalNameToSource.remove(it.internalName)
                 javaSourcesProtoMap.remove(it, changesCollector)
+                k2JavaSourcesProtoMap.remove(it, changesCollector)
             }
         }
 
@@ -388,6 +423,20 @@ open class IncrementalJvmCache(
             storage[key] = newMapValue
 
             changesCollector.collectProtoChanges(oldMapValue?.toProtoData(className.packageFqName), newProtoData, packageProtoKey = key)
+        }
+
+        @Synchronized
+        fun putAndCollect1(
+            className: JvmClassName,
+            newMapValue: ProtoMapValue,
+            newProtoData: ProtoData,
+            changesCollector: ChangesCollector,
+        ) {
+            val key = className.internalName
+            val oldMapValue = storage[key]
+            storage[key] = newMapValue
+
+            changesCollector.collectProtoChanges(oldMapValue?.toProtoData(className.packageFqName), newProtoData, collectAllMembersForNewClass = true, packageProtoKey = key)
         }
 
         fun check(

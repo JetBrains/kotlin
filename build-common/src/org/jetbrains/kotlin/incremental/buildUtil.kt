@@ -119,6 +119,10 @@ fun updateIncrementalCache(
         cache.saveJavaClassProto(source, serializedJavaClass, changesCollector)
     }
 
+    javaChangesTracker?.k2JavaClassesUpdates?.forEach { (source, serializedJavaClass) ->
+        cache.saveK2JavaClassProto(source, serializedJavaClass, changesCollector)
+    }
+
     cache.clearCacheForRemovedClasses(changesCollector)
 }
 

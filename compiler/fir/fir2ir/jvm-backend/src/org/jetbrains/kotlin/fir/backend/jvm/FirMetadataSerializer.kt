@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.incremental.components.SerializationAwareModuleJavaC
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.ClassId
@@ -127,16 +128,28 @@ fun serializeTrackedJavaClasses(
     targetId: TargetId,
     configuration: CompilerConfiguration,
 ) {
+    val javaSymbolProvider = session.javaSymbolProvider ?: return
     val globalSerializationBindings = JvmSerializationBindings()
-    (session.javaClassesTracker as? SerializationAwareModuleJavaClassesTracker)?.serializeJavaClasses {
-        session.javaSymbolProvider?.getClassLikeSymbolByClassId(it)?.let { classSymbol ->
-            val metadata = FirMetadataSource.Class(classSymbol.fir)
-            val serializer =
-                makeLocalFirMetadataSerializerForMetadataSource(
-                    metadata, session, scopeSession, globalSerializationBindings,
-                    parent = null, targetId, configuration, actualizedExpectDeclarations = null
-                )
-            serializer.serialize(metadata)
+    (session.javaClassesTracker?.tracker as? SerializationAwareModuleJavaClassesTracker)?.let { tracker ->
+        tracker.getAdditionalClassIdsToReport().forEach {
+            javaSymbolProvider.getClassLikeSymbolByClassId(it)
+        }
+        tracker.serializeJavaClasses {
+            session.javaSymbolProvider?.getClassLikeSymbolByClassId(it)?.let { classSymbol ->
+                val metadata = FirMetadataSource.Class(classSymbol.fir)
+                val serializer =
+                    makeLocalFirMetadataSerializerForMetadataSource(
+                        metadata, session, scopeSession, globalSerializationBindings,
+                        parent = null, targetId, configuration, actualizedExpectDeclarations = null
+                    )
+
+                serializer.serialize(metadata)?.let {
+                    SerializationAwareModuleJavaClassesTracker.SerializedJavaClass(
+                        it.first as ProtoBuf.Class,
+                        it.second
+                    )
+                }
+            }
         }
     }
 }

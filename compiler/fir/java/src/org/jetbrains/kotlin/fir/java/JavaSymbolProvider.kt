@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.java
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
-import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProviderWithoutCallables
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -22,7 +21,9 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
+import java.io.File
 
 // This symbol provider only loads JVM classes *not* annotated with Kotlin `@Metadata` annotation.
 // Use it in application sessions for loading classes from Java files listed on the command line.
@@ -47,7 +48,11 @@ open class JavaSymbolProvider(
             postCompute = { _, classSymbol, (javaClass, parentClassSymbol) ->
                 if (classSymbol != null && javaClass != null) {
                     javaFacade.convertJavaClassToFir(classSymbol, parentClassSymbol, javaClass).also {
-                        session.javaClassesTracker?.report(it, session.firProvider.getContainingFile(classSymbol))
+                        session.javaClassesTracker?.report(
+                            it,
+                            (session.firProvider.getContainingFile(classSymbol)?.sourceFile?.path
+                                ?: it.source?.psi?.containingFile?.virtualFile?.path)?.let(::File)
+                        )
                     }
                 }
             }

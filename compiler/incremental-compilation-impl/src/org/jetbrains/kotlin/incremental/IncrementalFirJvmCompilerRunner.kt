@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchSco
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.ModuleJavaClassesTracker
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -125,6 +126,7 @@ open class IncrementalFirJvmCompilerRunner(
                     )
 
                     putIfNotNull(ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER, services[JavaClassesTracker::class.java])
+                    putIfNotNull(JVMConfigurationKeys.JAVA_CLASSES_TRACKER, services[JavaClassesTracker::class.java] as? ModuleJavaClassesTracker)
                 }
 
                 setupJvmSpecificArguments(args)

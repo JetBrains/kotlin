@@ -5,11 +5,18 @@
 
 package org.jetbrains.kotlin.incremental.components
 
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.protobuf.MessageLite
 
 interface SerializationAwareModuleJavaClassesTracker : ModuleJavaClassesTracker {
 
-    fun serializeJavaClasses(serializer: (ClassId) ->  Pair<MessageLite, JvmStringTable>?)
+    data class SerializedJavaClass(
+        val proto: ProtoBuf.Class,
+        val stringTable: JvmStringTable,
+    )
+
+    fun serializeJavaClasses(serializer: (ClassId) ->  SerializedJavaClass?)
+
+    fun getAdditionalClassIdsToReport(): Iterable<ClassId>
 }

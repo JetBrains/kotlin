@@ -238,6 +238,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 )
 
                 putIfNotNull(ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER, services[JavaClassesTracker::class.java])
+                putIfNotNull(JVMConfigurationKeys.JAVA_CLASSES_TRACKER, services[JavaClassesTracker::class.java] as? ModuleJavaClassesTracker)
             }
             setupJvmSpecificArguments(arguments)
         }
