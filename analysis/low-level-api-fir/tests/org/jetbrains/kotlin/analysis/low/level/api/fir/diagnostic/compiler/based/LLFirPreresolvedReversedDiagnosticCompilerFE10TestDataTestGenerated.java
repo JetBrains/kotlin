@@ -646,6 +646,30 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("intersectedVisibilitiesAccessorDifferences_Huge.kt")
+    public void testIntersectedVisibilitiesAccessorDifferences_Huge() {
+      runTest("compiler/testData/diagnostics/tests/intersectedVisibilitiesAccessorDifferences_Huge.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectedVisibilitiesAccessorDifferences_Small.kt")
+    public void testIntersectedVisibilitiesAccessorDifferences_Small() {
+      runTest("compiler/testData/diagnostics/tests/intersectedVisibilitiesAccessorDifferences_Small.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectedVisibilitiesAccessorDifferences_Useful1.kt")
+    public void testIntersectedVisibilitiesAccessorDifferences_Useful1() {
+      runTest("compiler/testData/diagnostics/tests/intersectedVisibilitiesAccessorDifferences_Useful1.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectedVisibilitiesAccessorDifferences_Useful2.kt")
+    public void testIntersectedVisibilitiesAccessorDifferences_Useful2() {
+      runTest("compiler/testData/diagnostics/tests/intersectedVisibilitiesAccessorDifferences_Useful2.kt");
+    }
+
+    @Test
     @TestMetadata("intersectedVisibilitiesForAbstractPropertyAccessors.kt")
     public void testIntersectedVisibilitiesForAbstractPropertyAccessors() {
       runTest("compiler/testData/diagnostics/tests/intersectedVisibilitiesForAbstractPropertyAccessors.kt");
