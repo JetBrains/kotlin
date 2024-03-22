@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.Printer
 import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -41,7 +42,7 @@ class NewTestGeneratorImpl(
     }
 
     private fun Printer.generateTestAnnotation() {
-        println("@Test")
+        println("@RepeatedTest(value = 3)")
     }
 
     private fun Printer.generateNestedAnnotation(isNested: Boolean) {
@@ -152,7 +153,7 @@ class NewTestGeneratorImpl(
                 p.println("import ${Nested::class.java.canonicalName};")
             }
 
-            p.println("import ${Test::class.java.canonicalName};")
+            p.println("import ${RepeatedTest::class.java.canonicalName};")
             if (testClassModels.any { it.containsTags() }) {
                 p.println("import ${Tag::class.java.canonicalName};")
             }
