@@ -82,6 +82,24 @@ object FirExpressionEvaluator {
         return argumentList.mapping.map { (expression, parameter) -> parameter.name to expression.evaluate(session) }.toMap()
     }
 
+    fun evaluateAnnotationArguments(annotation: FirAnnotation, session: FirSession): Map<Name, FirEvaluatorResult>? {
+        if (annotation is FirAnnotationCall) {
+            return evaluateAnnotationArguments(annotation, session)
+        }
+
+        if (annotation.annotationTypeRef is FirErrorTypeRef) {
+            return null
+        }
+
+        val argumentMapping = annotation.argumentMapping.mapping
+
+        if (argumentMapping.values.any { expr -> !expr.canBeEvaluated(session) }) {
+            return null
+        }
+
+        return argumentMapping.mapValues { (_, expression) -> expression.evaluate(session) }
+    }
+
     private fun FirExpression?.canBeEvaluated(session: FirSession, expectedType: ConeKotlinType? = null): Boolean {
         val intrinsicConstEvaluation = session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
         if (this == null || intrinsicConstEvaluation || this is FirLazyExpression || !isResolved) return false
@@ -191,7 +209,7 @@ object FirExpressionEvaluator {
         }
 
         override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: Nothing?): FirEvaluatorResult {
-            val propertySymbol = propertyAccessExpression.toReference(session)?.toResolvedCallableSymbol(discardErrorReference = true)
+            val propertySymbol = propertyAccessExpression.toReference(session)?.toResolvedCallableSymbol()
                 ?: return NotEvaluated
 
             if (propertySymbol.wasVisited()) {
@@ -349,6 +367,20 @@ object FirExpressionEvaluator {
                 return result.wrap()
             }
             return typeOperatorCall.wrap()
+        }
+
+        override fun visitEnumEntryDeserializedAccessExpression(
+            enumEntryDeserializedAccessExpression: FirEnumEntryDeserializedAccessExpression,
+            data: Nothing?,
+        ): FirEvaluatorResult {
+            return enumEntryDeserializedAccessExpression.wrap()
+        }
+
+        override fun visitClassReferenceExpression(
+            classReferenceExpression: FirClassReferenceExpression,
+            data: Nothing?,
+        ): FirEvaluatorResult {
+            return classReferenceExpression.wrap()
         }
     }
 }
