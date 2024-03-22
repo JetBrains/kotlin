@@ -540,7 +540,7 @@ internal class KtFirCompilerFacility(
 
         return JvmIrCodegenFactory(
             configuration,
-            PhaseConfig(jvmLoweringPhases),
+            PhaseConfig(jvmPhases),
             jvmGeneratorExtensions = jvmGeneratorExtensions,
             evaluatorFragmentInfoForPsi2Ir = evaluatorFragmentInfoForPsi2Ir,
             ideCodegenSettings = ideCodegenSettings,
