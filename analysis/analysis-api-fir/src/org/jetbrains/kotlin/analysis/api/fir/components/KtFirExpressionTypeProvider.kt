@@ -167,7 +167,7 @@ internal class KtFirExpressionTypeProvider(
         substituteWithErrorTypes: Boolean = true,
     ): LinkedHashMap<FirExpression, SubstitutedValueParameter>? {
         val substitutor = (this as? FirQualifiedAccessExpression)
-            ?.createConeSubstitutorFromTypeArguments(discardErrorTypes = !substituteWithErrorTypes)
+            ?.createConeSubstitutorFromTypeArguments(rootModuleSession, discardErrorTypes = !substituteWithErrorTypes)
             ?: ConeSubstitutor.Empty
 
         return resolvedArgumentMapping?.mapValuesTo(LinkedHashMap()) { (_, parameter) ->
@@ -227,7 +227,7 @@ internal class KtFirExpressionTypeProvider(
         val callee = (firCall.toReference(firResolveSession.useSiteFirSession) as? FirResolvedNamedReference)?.resolvedSymbol
         if (callee?.fir?.origin == FirDeclarationOrigin.SamConstructor) {
             val substitutor = (firCall as? FirQualifiedAccessExpression)
-                ?.createConeSubstitutorFromTypeArguments(discardErrorTypes = true)
+                ?.createConeSubstitutorFromTypeArguments(rootModuleSession, discardErrorTypes = true)
                 ?: ConeSubstitutor.Empty
             return substitutor.substituteOrSelf((callee.fir as FirSimpleFunction).returnTypeRef.coneType).asKtType()
         }
