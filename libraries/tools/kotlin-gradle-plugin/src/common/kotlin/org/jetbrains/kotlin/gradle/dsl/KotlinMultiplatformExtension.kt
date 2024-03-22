@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinal
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.redundantDependsOnEdgesTracker
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.android.internal.internal
@@ -69,7 +70,7 @@ abstract class KotlinMultiplatformExtension
         configure(presetExtension)
     }
 
-    internal val hierarchy by lazy { KotlinHierarchyDslImpl(targets, sourceSets) }
+    internal val hierarchy by lazy { KotlinHierarchyDslImpl(targets, sourceSets, redundantDependsOnEdgesTracker) }
 
     /**
      * Sets up a 'natural'/'default' hierarchy withing [KotlinTarget]'s in the project.

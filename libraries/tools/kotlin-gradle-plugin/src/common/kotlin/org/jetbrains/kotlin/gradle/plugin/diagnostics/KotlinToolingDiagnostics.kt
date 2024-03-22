@@ -884,6 +884,17 @@ object KotlinToolingDiagnostics {
             build("New 'wasm' target is Work-in-Progress and is subject to change without notice. " +
                         "Please report encountered issues to https://kotl.in/issue")
     }
+
+    object RedundantDependsOnEdgesFound : ToolingDiagnosticFactory(WARNING) {
+        data class RedundantEdge(val from: String, val to: String)
+
+        operator fun invoke(redundantEdges: List<RedundantEdge>): ToolingDiagnostic = build {
+            appendLine("Redundant dependsOn edges between Kotlin Source Sets found.")
+            appendLine("Please remove the following dependsOn invocations from your build scripts:")
+            redundantEdges.forEach { edge -> appendLine(" * ${edge.from}.dependsOn(${edge.to})") }
+            appendLine("They are already added from Kotlin Target Hierarchy template https://kotl.in/hierarchy-template")
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
