@@ -28,7 +28,6 @@ class FirAnnotationSerializer(
     private val constValueProvider: ConstValueProvider?
 ) {
     fun serializeAnnotation(annotation: FirAnnotation): ProtoBuf.Annotation {
-        // TODO this logic can be significantly simplified if we will find the way to convert `IrAnnotation` to `AnnotationValue`
         val annotationValue = annotation.toConstantValue<AnnotationValue>(session, constValueProvider)
             ?: error("Cannot serialize annotation ${annotation.render()}")
         return serializeAnnotation(annotationValue)

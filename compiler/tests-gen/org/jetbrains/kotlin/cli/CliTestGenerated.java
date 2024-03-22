@@ -1614,6 +1614,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/metadata/anonymousObjectType.args");
     }
 
+    @TestMetadata("complexAnnotationArgument.args")
+    public void testComplexAnnotationArgument() {
+      runTest("compiler/testData/cli/metadata/complexAnnotationArgument.args");
+    }
+
     @TestMetadata("getOrDefault.args")
     public void testGetOrDefault() {
       runTest("compiler/testData/cli/metadata/getOrDefault.args");

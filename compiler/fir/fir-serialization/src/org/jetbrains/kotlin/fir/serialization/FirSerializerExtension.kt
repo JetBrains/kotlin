@@ -26,7 +26,7 @@ abstract class FirSerializerExtension {
 
     val annotationSerializer by lazy { FirAnnotationSerializer(session, stringTable, constValueProvider) }
 
-    protected abstract val constValueProvider: ConstValueProvider?
+    abstract val constValueProvider: ConstValueProvider?
     protected abstract val additionalMetadataProvider: FirAdditionalMetadataProvider?
 
     @OptIn(ConstValueProviderInternals::class)

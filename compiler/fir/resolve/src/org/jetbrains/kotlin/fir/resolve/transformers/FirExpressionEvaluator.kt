@@ -68,21 +68,7 @@ object FirExpressionEvaluator {
         return defaultValueToEvaluate.evaluate(session)
     }
 
-    fun evaluateAnnotationArguments(annotationCall: FirAnnotationCall, session: FirSession): Map<Name, FirEvaluatorResult>? {
-        val argumentList = annotationCall.argumentList as? FirResolvedArgumentList ?: return null
-
-        if (argumentList.mapping.any { (expr, _) -> !expr.canBeEvaluated(session) }) {
-            return null
-        }
-
-        return argumentList.mapping.map { (expression, parameter) -> parameter.name to expression.evaluate(session) }.toMap()
-    }
-
     fun evaluateAnnotationArguments(annotation: FirAnnotation, session: FirSession): Map<Name, FirEvaluatorResult>? {
-        if (annotation is FirAnnotationCall) {
-            return evaluateAnnotationArguments(annotation, session)
-        }
-
         val argumentMapping = annotation.argumentMapping.mapping
 
         if (argumentMapping.values.any { expr -> !expr.canBeEvaluated(session) }) {
