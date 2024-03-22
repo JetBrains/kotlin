@@ -316,6 +316,9 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
 
     if (arguments.manifestNativeTargets != null)
         putIfNotNull(MANIFEST_NATIVE_TARGETS, parseManifestNativeTargets(arguments.manifestNativeTargets!!))
+
+    putIfNotNull(LLVM_MODULE_PASSES, arguments.llvmModulePasses)
+    putIfNotNull(LLVM_LTO_PASSES, arguments.llvmLTOPasses)
 }
 
 private fun String.absoluteNormalizedFile() = java.io.File(this).absoluteFile.normalize()

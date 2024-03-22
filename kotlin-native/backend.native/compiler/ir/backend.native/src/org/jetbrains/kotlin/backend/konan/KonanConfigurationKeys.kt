@@ -155,5 +155,7 @@ class KonanConfigKeys {
         val SAVE_LLVM_IR_DIRECTORY: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("directory to store LLVM IR from phases")
         val KONAN_DATA_DIR: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("directory for storing konan dependencies, cache and prebuilds")
         val MANIFEST_NATIVE_TARGETS: CompilerConfigurationKey<Collection<KonanTarget>?> = CompilerConfigurationKey.create("value of native_targets property to write in manifest")
+        val LLVM_MODULE_PASSES: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("llvm passes to run instead of module optimization pipeline")
+        val LLVM_LTO_PASSES: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("llvm passes to run instead of LTO optimization pipeline")
     }
 }
