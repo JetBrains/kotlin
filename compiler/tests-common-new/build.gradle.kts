@@ -56,6 +56,7 @@ sourceSets {
 
 projectTest(
     jUnitMode = JUnitMode.JUnit5,
+    maxHeapSizeMb = 6000,
     defineJDKEnvVariables = listOf(
         JdkMajorVersion.JDK_11_0, // e.g. org.jetbrains.kotlin.test.runners.ForeignAnnotationsCompiledJavaTestGenerated.Java11Tests
         JdkMajorVersion.JDK_21_0, // e.g. org.jetbrains.kotlin.test.runners.codegen.FirLightTreeBlackBoxModernJdkCodegenTestGenerated.TestsWithJava21
