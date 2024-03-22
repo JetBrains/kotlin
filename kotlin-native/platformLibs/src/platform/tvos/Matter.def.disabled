@@ -1,9 +1,0 @@
-language = Objective-C
-package = platform.Matter
-
-modules.tvos_arm64 = Matter
-compilerOpts.tvos_arm64 = -framework Matter
-linkerOpts.tvos_arm64 = -framework Matter
-# Former CHIP.
-# https://github.com/project-chip/connectedhomeip
-# Not officially available.
