@@ -1,0 +1,72 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+import androidx.compose.runtime.currentComposer
+
+object obj {
+    val condition = false
+}
+
+@Composable
+@ReadOnlyComposable
+fun Calculate(condition: Boolean): Boolean {
+    if (condition) return false
+
+    with (obj) {
+        if (condition) return false
+        return currentComposer.inserting
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+object obj {
+  val condition: Boolean = false
+  static val %stable: Int = 0
+}
+@Composable
+@ReadOnlyComposable
+fun Calculate(condition: Boolean, %composer: Composer?, %changed: Int): Boolean {
+  sourceInformationMarkerStart(%composer, <>, "C(Calculate):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  if (condition) {
+    val tmp0_return = false
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    sourceInformationMarkerEnd(%composer)
+    return tmp0_return
+  }
+  with(obj) {
+    if (condition) {
+      val tmp0_return = false
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+      sourceInformationMarkerEnd(%composer)
+      return tmp0_return
+    }
+    val tmp1_return = %composer.inserting
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    sourceInformationMarkerEnd(%composer)
+    return tmp1_return
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

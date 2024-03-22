@@ -1,0 +1,32 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+val foo = @Composable { x: Int, y: Foo ->
+    A(x)
+    B(y)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+val foo: Function4<Int, Foo, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
+internal object ComposableSingletons%TestKt {
+  val lambda-1: Function4<Int, Foo, Composer, Int, Unit> = composableLambdaInstance(<>, false) { x: Int, y: Foo, %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C<A(x)>,<B(y)>:Test.kt")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    A(x, %composer, 0b1110 and %changed)
+    B(y, %composer, 0b1110 and %changed shr 0b0011)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  }
+}

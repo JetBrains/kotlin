@@ -1,0 +1,47 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+interface Foo { fun bar(): Int }
+fun a(): Foo {
+    return object : Foo {
+        override fun bar(): Int { return 1 }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+interface Foo {
+  abstract fun bar(): Int
+}
+fun a(): Foo {
+  return object : Foo {
+    override fun bar(): Int {
+      return LiveLiterals%TestKt.Int%fun-bar%class-%no-name-provided%%fun-a()
+    }
+  }
+}
+@LiveLiteralFileInfo(file = "/Test.kt")
+internal object LiveLiterals%TestKt {
+  val Int%fun-bar%class-%no-name-provided%%fun-a: Int = 1
+  var State%Int%fun-bar%class-%no-name-provided%%fun-a: State<Int>?
+  @LiveLiteralInfo(key = "Int%fun-bar%class-%no-name-provided%%fun-a", offset = 159)
+  fun Int%fun-bar%class-%no-name-provided%%fun-a(): Int {
+    if (!isLiveLiteralsEnabled) {
+      return Int%fun-bar%class-%no-name-provided%%fun-a
+    }
+    val tmp0 = State%Int%fun-bar%class-%no-name-provided%%fun-a
+    return if (tmp0 == null) {
+      val tmp1 = liveLiteral("Int%fun-bar%class-%no-name-provided%%fun-a", Int%fun-bar%class-%no-name-provided%%fun-a)
+      State%Int%fun-bar%class-%no-name-provided%%fun-a = tmp1
+      tmp1
+    } else {
+      tmp0
+    }
+    .value
+  }
+}

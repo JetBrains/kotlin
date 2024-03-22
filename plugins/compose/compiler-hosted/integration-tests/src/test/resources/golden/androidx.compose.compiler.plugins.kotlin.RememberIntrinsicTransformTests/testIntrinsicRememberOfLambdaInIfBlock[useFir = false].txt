@@ -1,0 +1,80 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+    import androidx.compose.runtime.remember
+
+    
+@Composable
+fun Test(a: Boolean, visible: Boolean, onDismiss: () -> Unit) {
+    if (a) {
+        val a = someComposableValue()
+        used(a)
+        val m = Modifier()
+        val dismissModifier = if (visible) {
+            m.pointerInput(Unit) { detectTapGestures { onDismiss() } }
+        } else {
+            m
+        }
+        used(dismissModifier)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(a: Boolean, visible: Boolean, onDismiss: Function0<Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)P(!1,2)<someCo...>,<{>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b1110 == 0) {
+    %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b01110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(visible)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b001110000000 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(onDismiss)) 0b000100000000 else 0b10000000
+  }
+  if (%dirty and 0b001011011011 != 0b10010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    if (a) {
+      val a = someComposableValue(%composer, 0)
+      used(a)
+      val m = Modifier()
+      val dismissModifier = <block>{
+        val tmp1_group = if (visible) {
+          m.pointerInput(Unit, <block>{
+            sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+            val tmp0_group = %composer.cache(%dirty and 0b001110000000 == 0b000100000000) {
+              {
+                detectTapGestures {
+                  onDismiss()
+                }
+              }
+            }
+            sourceInformationMarkerEnd(%composer)
+            tmp0_group
+          })
+        } else {
+          m
+        }
+        tmp1_group
+      }
+      used(dismissModifier)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(a, visible, onDismiss, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

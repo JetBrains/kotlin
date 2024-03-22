@@ -1,0 +1,81 @@
+//
+// Source
+// ------------------------------------------
+
+@file:OptIn(
+  InternalComposeApi::class,
+)
+package test
+
+import androidx.compose.runtime.InternalComposeApi
+import androidx.compose.runtime.ComposeCompilerApi
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+
+
+    import kotlin.reflect.KProperty
+
+    class Foo {
+        var unstableField: Int = 0
+    }
+
+    @Composable
+    inline operator fun Foo.getValue(thisObj: Any?, property: KProperty<*>): Foo = this
+
+    @Composable
+    fun test() {
+        val foo by Foo()
+        println(foo)
+    }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 0)
+class Foo {
+  var unstableField: Int = 0
+  static val %stable: Int = 8
+}
+@Composable
+fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %changed: Int): Foo {
+  sourceInformationMarkerStart(%composer, <>, "CC(getValue)P(1):Test.kt#2487m")
+  val tmp0 = <this>
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
+@Composable
+fun test(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(test)*<foo>:Test.kt#2487m")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val foo by {
+      val foo%delegate = Foo()
+      @Composable
+      get(%composer: Composer?, %changed: Int) {
+        sourceInformationMarkerStart(%composer, <>, "C<Foo()>:Test.kt#2487m")
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %changed, -1, <>)
+        }
+        val tmp0 = foo%delegate.getValue(null, ::foo%delegate, %composer, 0b00110000)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+        sourceInformationMarkerEnd(%composer)
+        return tmp0
+      }
+    }
+    println(<get-foo>(%composer, 0))
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    test(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

@@ -1,0 +1,55 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+@Composable
+fun Something(param: String, rcvr: Int) {
+    fun Int.method() {
+        println(param)
+    }
+    val x = rcvr::method
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Something(param: String, rcvr: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Something)<rcvr::...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b1110 == 0) {
+    %dirty = %dirty or if (%composer.changed(param)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b01110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(rcvr)) 0b00100000 else 0b00010000
+  }
+  if (%dirty and 0b01011011 != 0b00010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    fun Int.method() {
+      println(param)
+    }
+    val x = <block>{
+      val tmp0 = rcvr
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 or %dirty and 0b01110000 == 0b00100000) {
+        tmp0::method
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Something(param, rcvr, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

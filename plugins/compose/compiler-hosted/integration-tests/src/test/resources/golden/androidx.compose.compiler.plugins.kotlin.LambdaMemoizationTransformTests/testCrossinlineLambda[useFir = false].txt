@@ -1,0 +1,64 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+@Composable
+fun Test() {
+  var lambda: (@Composable () -> Unit)? = null
+  f { s -> lambda = { Text(s) } }
+  lambda?.let { it() }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)*<it()>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    var lambda = null
+    f { s: String ->
+      lambda = composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
+        sourceInformation(%composer, "C<Text(s...>:Test.kt")
+        if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
+          if (isTraceInProgress()) {
+            traceEventStart(<>, %changed, -1, <>)
+          }
+          Text(s, %composer, 0)
+          if (isTraceInProgress()) {
+            traceEventEnd()
+          }
+        } else {
+          %composer.skipToGroupEnd()
+        }
+      }
+    }
+    val tmp0_safe_receiver = lambda
+    val tmp0_group = when {
+      tmp0_safe_receiver == null -> {
+        null
+      }
+      else -> {
+        tmp0_safe_receiver.let { it: Function2<Composer, Int, Unit> ->
+          it(%composer, 0)
+        }
+      }
+    }
+    tmp0_group
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

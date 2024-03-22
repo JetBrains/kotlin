@@ -1,0 +1,83 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable
+fun A(x: Int) {
+    Provide { y ->
+        Provide { z ->
+            B(x, y, z)
+        }
+        B(x, y)
+    }
+    B(x)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun A(x: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(A)<{>,<Provid...>,<B(x)>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    Provide(rememberComposableLambda(<>, true, { y: Int, %composer: Composer?, %changed: Int ->
+      sourceInformation(%composer, "C<{>,<Provid...>,<B(x,>:Test.kt")
+      val %dirty = %changed
+      if (%changed and 0b0110 == 0) {
+        %dirty = %dirty or if (%composer.changed(y)) 0b0100 else 0b0010
+      }
+      if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %dirty, -1, <>)
+        }
+        Provide(rememberComposableLambda(<>, true, { z: Int, %composer: Composer?, %changed: Int ->
+          sourceInformation(%composer, "C<B(x,>:Test.kt")
+          val %dirty = %changed
+          if (%changed and 0b0110 == 0) {
+            %dirty = %dirty or if (%composer.changed(z)) 0b0100 else 0b0010
+          }
+          if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %dirty, -1, <>)
+            }
+            B(x, y, z, %composer, 0b001110000000 and %dirty shl 0b0110, 0)
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
+          }
+        }, %composer, 0b00110110), %composer, 0b0110)
+        B(x, y, 0, %composer, 0b01110000 and %dirty shl 0b0011, 0b0100)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+    }, %composer, 0b00110110), %composer, 0b0110)
+    B(x, 0, 0, %composer, 0b1110 and %dirty, 0b0110)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    A(x, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

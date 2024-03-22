@@ -1,0 +1,55 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+    fun A() {
+        print(3 + 4)
+    }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+fun A() {
+  print(LiveLiterals%TestKt.Int%%this%call-plus%arg-0%call-print%fun-A() + LiveLiterals%TestKt.Int%arg-0%call-plus%arg-0%call-print%fun-A())
+}
+@LiveLiteralFileInfo(file = "/Test.kt")
+internal object LiveLiterals%TestKt {
+  val enabled: Boolean = false
+  val Int%%this%call-plus%arg-0%call-print%fun-A: Int = 3
+  var State%Int%%this%call-plus%arg-0%call-print%fun-A: State<Int>?
+  @LiveLiteralInfo(key = "Int%%this%call-plus%arg-0%call-print%fun-A", offset = 72)
+  fun Int%%this%call-plus%arg-0%call-print%fun-A(): Int {
+    if (!enabled) {
+      return Int%%this%call-plus%arg-0%call-print%fun-A
+    }
+    val tmp0 = State%Int%%this%call-plus%arg-0%call-print%fun-A
+    return if (tmp0 == null) {
+      val tmp1 = liveLiteral("Int%%this%call-plus%arg-0%call-print%fun-A", Int%%this%call-plus%arg-0%call-print%fun-A)
+      State%Int%%this%call-plus%arg-0%call-print%fun-A = tmp1
+      tmp1
+    } else {
+      tmp0
+    }
+    .value
+  }
+  val Int%arg-0%call-plus%arg-0%call-print%fun-A: Int = 4
+  var State%Int%arg-0%call-plus%arg-0%call-print%fun-A: State<Int>?
+  @LiveLiteralInfo(key = "Int%arg-0%call-plus%arg-0%call-print%fun-A", offset = 76)
+  fun Int%arg-0%call-plus%arg-0%call-print%fun-A(): Int {
+    if (!enabled) {
+      return Int%arg-0%call-plus%arg-0%call-print%fun-A
+    }
+    val tmp0 = State%Int%arg-0%call-plus%arg-0%call-print%fun-A
+    return if (tmp0 == null) {
+      val tmp1 = liveLiteral("Int%arg-0%call-plus%arg-0%call-print%fun-A", Int%arg-0%call-plus%arg-0%call-print%fun-A)
+      State%Int%arg-0%call-plus%arg-0%call-print%fun-A = tmp1
+      tmp1
+    } else {
+      tmp0
+    }
+    .value
+  }
+}

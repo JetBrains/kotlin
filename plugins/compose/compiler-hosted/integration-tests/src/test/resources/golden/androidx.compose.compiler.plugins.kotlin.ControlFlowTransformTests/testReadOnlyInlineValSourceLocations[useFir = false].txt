@@ -1,0 +1,114 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+
+class CurrentHolder {
+    inline val current: Int
+        @ReadOnlyComposable
+        @Composable
+        get() = 0
+}
+
+class HolderHolder {
+    private val _currentHolder = CurrentHolder()
+    val current: Int
+        @ReadOnlyComposable
+        @Composable
+        get() = _currentHolder.current
+}
+
+val holderHolder = HolderHolder()
+
+@Composable
+@ReadOnlyComposable
+fun calculateSomething(): Int {
+    return 0;
+}
+
+@Composable
+fun Test() {
+    val c = holderHolder.current
+    val cl = calculateSomething()
+    Layout {
+        Text("$c $cl")
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+class CurrentHolder {
+  val current: Int
+    @ReadOnlyComposable @Composable @JvmName(name = "getCurrent")
+    get() {
+      sourceInformationMarkerStart(%composer, <>, "CC:Test.kt")
+      val tmp0 = 0
+      sourceInformationMarkerEnd(%composer)
+      return tmp0
+    }
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 1)
+class HolderHolder {
+  val _currentHolder: CurrentHolder = CurrentHolder()
+  val current: Int
+    @ReadOnlyComposable @Composable @JvmName(name = "getCurrent")
+    get() {
+      sourceInformationMarkerStart(%composer, <>, "C<curren...>:Test.kt")
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, "HolderHolder.<get-current> (Test.kt:16)")
+      }
+      val tmp0 = _currentHolder.<get-current>(%composer, 0)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+      sourceInformationMarkerEnd(%composer)
+      return tmp0
+    }
+  static val %stable: Int = 0
+}
+val holderHolder: HolderHolder = HolderHolder()
+@Composable
+@ReadOnlyComposable
+fun calculateSomething(%composer: Composer?, %changed: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "C(calculateSomething):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, "calculateSomething (Test.kt:23)")
+  }
+  val tmp0 = 0
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
+@Composable
+fun Test(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<curren...>,<calcul...>,<Layout>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, "Test (Test.kt:28)")
+    }
+    val c = holderHolder.<get-current>(%composer, 0b0110)
+    val cl = calculateSomething(%composer, 0)
+    Layout({ %composer: Composer?, %changed: Int ->
+      sourceInformationMarkerStart(%composer, <>, "C<Text("...>:Test.kt")
+      Text("%c %cl", %composer, 0)
+      sourceInformationMarkerEnd(%composer)
+    }, %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

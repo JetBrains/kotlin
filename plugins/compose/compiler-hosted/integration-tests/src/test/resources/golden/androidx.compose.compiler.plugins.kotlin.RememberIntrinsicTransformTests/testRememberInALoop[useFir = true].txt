@@ -1,0 +1,52 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+val content: @Composable (a: SomeUnstableClass) -> Unit = {
+    for (index in 0 until count) {
+        val i = remember { index }
+    }
+    val a = remember { 1 }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+val content: Function3<@[ParameterName(name = 'a')] SomeUnstableClass, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
+internal object ComposableSingletons%TestKt {
+  val lambda-1: Function3<@[ParameterName(name = 'a')] SomeUnstableClass, Composer, Int, Unit> = composableLambdaInstance(<>, false) { it: @[ParameterName(name = 'a')] SomeUnstableClass, %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C<rememb...>:Test.kt")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "*<rememb...>")
+    val <iterator> = 0 until count.iterator()
+    while (<iterator>.hasNext()) {
+      val index = <iterator>.next()
+      val i = <block>{
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          index
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp0_group
+      }
+    }
+    %composer.endReplaceGroup()
+    val a = <block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp1_group = %composer.cache(false) {
+        1
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp1_group
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  }
+}

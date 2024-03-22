@@ -1,0 +1,59 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+fun Test() {
+    Bug(listOf(1, 2, 3)) {
+        Text(it.toString())
+    }
+}
+
+@Composable
+inline fun <T> Bug(items: List<T>, content: @Composable (item: T) -> Unit) {
+    for (item in items) content(item)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<Bug(li...>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    Bug(listOf(1, 2, 3), { it: @[ParameterName(name = 'item')] Int, %composer: Composer?, %changed: Int ->
+      sourceInformationMarkerStart(%composer, <>, "C<Text(i...>:Test.kt")
+      Text(it.toString(), %composer, 0)
+      sourceInformationMarkerEnd(%composer)
+    }, %composer, 0b0110)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun <T> Bug(items: List<T>, content: Function3<@[ParameterName(name = 'item')] T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(Bug)P(1):Test.kt")
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "*<conten...>")
+  val <iterator> = items.iterator()
+  while (<iterator>.hasNext()) {
+    val item = <iterator>.next()
+    content(item, %composer, 0b01110000 and %changed)
+  }
+  %composer.endReplaceGroup()
+  sourceInformationMarkerEnd(%composer)
+}

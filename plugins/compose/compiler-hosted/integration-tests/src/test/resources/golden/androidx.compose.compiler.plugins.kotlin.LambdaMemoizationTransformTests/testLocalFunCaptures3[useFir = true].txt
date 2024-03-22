@@ -1,0 +1,58 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+@Composable
+fun SimpleAnimatedContentSample() {
+    @Composable fun Foo() {}
+
+    AnimatedContent(1f) {
+        Foo()
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun SimpleAnimatedContentSample(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(SimpleAnimatedContentSample)<{>,<Animat...>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    @Composable
+    fun Foo(%composer: Composer?, %changed: Int) {
+      sourceInformationMarkerStart(%composer, <>, "C(Foo):Test.kt")
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+      sourceInformationMarkerEnd(%composer)
+    }
+    AnimatedContent(1.0f, rememberComposableLambda(<>, false, { it: @[ParameterName(name = 'targetState')] Float, %composer: Composer?, %changed: Int ->
+      sourceInformation(%composer, "C<Foo()>:Test.kt")
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      Foo(%composer, 0)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    }, %composer, 0b00110110), %composer, 0b00110110)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    SimpleAnimatedContentSample(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

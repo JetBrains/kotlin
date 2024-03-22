@@ -1,0 +1,57 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+
+
+open class Foo {
+    @NonRestartableComposable @Composable fun foo(x: Int = 0) {}
+}
+class Bar: Foo() {
+    @NonRestartableComposable @Composable fun Example() {
+        foo()
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+open class Foo {
+  @NonRestartableComposable
+  @Composable
+  fun foo(x: Int, %composer: Composer?, %changed: Int, %default: Int) {
+    sourceInformationMarkerStart(%composer, <>, "C(foo):Test.kt")
+    if (%default and 0b0001 != 0) {
+      x = 0
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    sourceInformationMarkerEnd(%composer)
+  }
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 1)
+class Bar : Foo {
+  @NonRestartableComposable
+  @Composable
+  fun Example(%composer: Composer?, %changed: Int) {
+    sourceInformationMarkerStart(%composer, <>, "C(Example)<foo()>:Test.kt")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    foo(0, %composer, 0b01110000 and %changed shl 0b0011, 0b0001)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    sourceInformationMarkerEnd(%composer)
+  }
+  static val %stable: Int = 0
+}

@@ -1,0 +1,34 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+
+
+@Composable
+fun Test(items: Array<Bar>) {
+    val foo = remember(*items) { Foo() }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(items: Array<Bar>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<rememb...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val foo = remember(*items, {
+    Foo()
+  }, %composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(items, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
