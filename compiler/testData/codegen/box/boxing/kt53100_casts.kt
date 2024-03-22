@@ -4,8 +4,6 @@
  */
 // KT-54635: expected:<[OK]> but was:<[FAIL 1: 0]>
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// KT-66099: CompileError: WebAssembly.Module(): Compiling function #3415:"box" failed: Invalid types for ref.cast null: local.get of type f64 has to be in the same reference type hierarchy as (ref 686) @+237036
-// IGNORE_BACKEND: WASM
 // WITH_STDLIB
 
 import kotlin.test.*
