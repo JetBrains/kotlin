@@ -38,6 +38,8 @@ data class LlvmPipelineConfig(
         val objCPasses: Boolean,
         val inlineThreshold: Int?,
         val timePasses: Boolean = false,
+        val modulePasses: String? = null,
+        val ltoPasses: String? = null,
 )
 
 private fun getCpuModel(context: PhaseContext): String {
@@ -87,6 +89,8 @@ internal fun createLTOPipelineConfigForRuntime(generationState: NativeGeneration
             objCPasses = configurables is AppleConfigurables,
             makeDeclarationsHidden = false,
             inlineThreshold = tryGetInlineThreshold(generationState),
+            modulePasses = config.llvmModulePasses,
+            ltoPasses = config.llvmLTOPasses,
     )
 }
 
@@ -163,6 +167,8 @@ internal fun createLTOFinalPipelineConfig(
             objcPasses,
             inlineThreshold,
             timePasses = timePasses,
+            modulePasses = config.llvmModulePasses,
+            ltoPasses = config.llvmLTOPasses,
     )
 }
 
@@ -222,6 +228,7 @@ abstract class LlvmOptimizationPipeline(
                     passes: ${passDescription}
                 """.trimIndent()
             }
+            println("Running passes: $passDescription")
             val errorCode = LLVMRunPasses(llvmModule, passDescription, targetMachine, options)
             require(errorCode == null) {
                 LLVMGetErrorMessage(errorCode)!!.toKString()
@@ -285,24 +292,26 @@ class MandatoryOptimizationPipeline(config: LlvmPipelineConfig, logger: LoggingC
 class ModuleOptimizationPipeline(config: LlvmPipelineConfig, logger: LoggingContext? = null) :
         LlvmOptimizationPipeline(config, logger) {
     override val pipelineName = "New PM Module LLVM optimizations"
-    override val passes = listOf("default<$optimizationFlag>")
+    override val passes = listOf(config.modulePasses ?: "default<$optimizationFlag>")
 }
 
 class LTOOptimizationPipeline(config: LlvmPipelineConfig, logger: LoggingContext? = null) :
         LlvmOptimizationPipeline(config, logger) {
     override val pipelineName = "New PM LTO LLVM optimizations"
-    override val passes = buildList {
-        if (config.internalize) {
-            add("internalize")
-        }
+    override val passes =
+            if (config.ltoPasses != null) listOf(config.ltoPasses)
+            else buildList {
+                if (config.internalize) {
+                    add("internalize")
+                }
 
-        if (config.globalDce) {
-            add("globaldce")
-        }
+                if (config.globalDce) {
+                    add("globaldce")
+                }
 
-        // Pipeline that is similar to `llvm-lto`.
-        add("lto<$optimizationFlag>")
-    }
+                // Pipeline that is similar to `llvm-lto`.
+                add("lto<$optimizationFlag>")
+            }
 }
 
 class ThreadSanitizerPipeline(config: LlvmPipelineConfig, logger: LoggingContext? = null) :
