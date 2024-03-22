@@ -42,7 +42,7 @@ class NewTestGeneratorImpl(
     }
 
     private fun Printer.generateTestAnnotation() {
-        println("@RepeatedTest(value = 3)")
+        println("@RepeatedTest(value = 5)")
     }
 
     private fun Printer.generateNestedAnnotation(isNested: Boolean) {
