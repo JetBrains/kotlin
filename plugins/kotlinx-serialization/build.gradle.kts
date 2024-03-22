@@ -109,22 +109,138 @@ artifacts {
     }
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
+projectTest(
+    parallel = true,
+    jUnitMode = JUnitMode.JUnit5,
+    defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
+) {
     workingDir = rootDir
     useJUnitPlatform()
     setUpJsIrBoxTests()
+    setupCompilerTests()
 }
 
 val generateTests by generator("org.jetbrains.kotlinx.serialization.TestGeneratorKt")
 
+abstract class LocalJsCoreArgumentProvider : CommandLineArgumentProvider {
+    @get:InputFiles
+    @get:Classpath
+    abstract val localJsCoreRuntimeForTests: ConfigurableFileCollection
+
+    @get:InputFiles
+    @get:Classpath
+    abstract val localJsJsonRuntimeForTests: ConfigurableFileCollection
+
+    override fun asArguments(): Iterable<String> {
+        println(listOf("CRISTIAN",
+                       "-Dserialization.core.path=${localJsCoreRuntimeForTests.asPath}",
+                       "-Dserialization.json.path=${localJsJsonRuntimeForTests.asPath}",
+        ))
+        return listOf(
+            "-Dserialization.core.path=${localJsCoreRuntimeForTests.asPath}",
+            "-Dserialization.json.path=${localJsJsonRuntimeForTests.asPath}",
+        )
+    }
+}
+
+abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider {
+    @get:InputFiles
+    @get:Classpath
+    abstract val stdlibRuntimeForTests: ConfigurableFileCollection
+
+    @get:InputFiles
+    @get:Classpath
+    abstract val stdlibMinimalRuntimeForTests: ConfigurableFileCollection
+
+    @get:InputFiles
+    @get:Classpath
+    abstract val stdlibCommonRuntimeForTests: ConfigurableFileCollection
+
+    @get:InputFiles
+    @get:Classpath
+    abstract val scriptRuntimeForTests: ConfigurableFileCollection
+
+    @get:InputFiles
+    @get:Classpath
+    abstract val kotlinTestJarForTests: ConfigurableFileCollection
+
+    @get:InputFiles
+    @get:Classpath
+    abstract val kotlinReflectJarForTests: ConfigurableFileCollection
+
+    override fun asArguments(): Iterable<String> {
+        println(
+            listOf(
+                "CRISTIAN",
+                "-Dkotlin.full.stdlib.path=${stdlibRuntimeForTests.asPath}",
+                "-Dkotlin.minimal.stdlib.path=${stdlibMinimalRuntimeForTests.asPath}",
+                "-Dkotlin.common.stdlib.path=${stdlibCommonRuntimeForTests.asPath}",
+                "-Dkotlin.script.runtime.path=${scriptRuntimeForTests.asPath}",
+                "-Dkotlin.test.jar.path=${kotlinTestJarForTests.asPath}",
+                "-Dkotlin.reflect.jar.path=${kotlinReflectJarForTests.asPath}",
+            )
+        )
+        return listOf(
+            "-Dkotlin.full.stdlib.path=${stdlibRuntimeForTests.asPath}",
+            "-Dkotlin.minimal.stdlib.path=${stdlibMinimalRuntimeForTests.asPath}",
+            "-Dkotlin.common.stdlib.path=${stdlibCommonRuntimeForTests.asPath}",
+            "-Dkotlin.script.runtime.path=${scriptRuntimeForTests.asPath}",
+            "-Dkotlin.test.jar.path=${kotlinTestJarForTests.asPath}",
+            "-Dkotlin.reflect.jar.path=${kotlinReflectJarForTests.asPath}",
+        )
+    }
+}
+
+val stdlibRuntimeForTests: Configuration by configurations.creating {
+    isTransitive = false
+    attributes {
+        //attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+        //attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
+    }
+}
+val stdlibMinimalRuntimeForTests: Configuration by configurations.creating {
+    isTransitive = false
+}
+val stdlibCommonRuntimeForTests: Configuration by configurations.creating {
+    isTransitive = false
+}
+val scriptRuntimeForTests: Configuration by configurations.creating {
+    isTransitive = false
+}
+val kotlinTestJarForTests: Configuration by configurations.creating {
+    isTransitive = false
+}
+val kotlinReflectJarForTests: Configuration by configurations.creating {
+    isTransitive = false
+}
+dependencies {
+    stdlibRuntimeForTests(project(":kotlin-stdlib"))
+    stdlibMinimalRuntimeForTests(project(":kotlin-stdlib-jvm-minimal-for-test"))
+    stdlibCommonRuntimeForTests(project(":kotlin-stdlib-common"))
+    scriptRuntimeForTests(project(":kotlin-script-runtime"))
+    kotlinTestJarForTests(kotlinTest())
+    kotlinReflectJarForTests(project(":kotlin-reflect"))
+}
+fun Test.setupCompilerTests() {
+    jvmArgumentProviders.add(
+        objects.newInstance(TestCompilerRuntimeArgumentProvider::class.java).apply {
+            stdlibRuntimeForTests.from(configurations.named("stdlibRuntimeForTests"))
+            stdlibMinimalRuntimeForTests.from(configurations.named("stdlibMinimalRuntimeForTests"))
+            stdlibCommonRuntimeForTests.from(configurations.named("stdlibCommonRuntimeForTests"))
+            scriptRuntimeForTests.from(configurations.named("scriptRuntimeForTests"))
+            kotlinTestJarForTests.from(configurations.named("kotlinTestJarForTests"))
+            kotlinReflectJarForTests.from(configurations.named("kotlinReflectJarForTests"))
+        }
+    )
+}
+
 fun Test.setUpJsIrBoxTests() {
     useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 
-    val localJsCoreRuntimeForTests: FileCollection = coreJsIrRuntimeForTests
-    val localJsJsonRuntimeForTests: FileCollection = jsonJsIrRuntimeForTests
-
-    doFirst {
-        systemProperty("serialization.core.path", localJsCoreRuntimeForTests.asPath)
-        systemProperty("serialization.json.path", localJsJsonRuntimeForTests.asPath)
-    }
+    jvmArgumentProviders.add(
+        objects.newInstance(LocalJsCoreArgumentProvider::class.java).apply {
+            localJsCoreRuntimeForTests.from(coreJsIrRuntimeForTests)
+            localJsJsonRuntimeForTests.from(jsonJsIrRuntimeForTests)
+        }
+    )
 }

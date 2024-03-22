@@ -16,13 +16,15 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.System.*;
+
 public class ForTestCompileRuntime {
     private static volatile SoftReference<ClassLoader> reflectJarClassLoader = new SoftReference<>(null);
     private static volatile SoftReference<ClassLoader> runtimeJarClassLoader = new SoftReference<>(null);
 
     @NotNull
     public static File runtimeJarForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-stdlib.jar"));
+        return envOrDist("kotlin.full.stdlib.path", "dist/kotlinc/lib/kotlin-stdlib.jar");
     }
 
     @NotNull
@@ -37,22 +39,12 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File kotlinTestJarForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-test.jar"));
-    }
-
-    @NotNull
-    public static File kotlinTestJUnitJarForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-test-junit.jar"));
-    }
-
-    @NotNull
-    public static File kotlinTestJsJarForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-test-js.jar"));
+        return envOrDist("kotlin.test.jar.path", "dist/kotlinc/lib/kotlin-test.jar");
     }
 
     @NotNull
     public static File reflectJarForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-reflect.jar"));
+        return envOrDist("kotlin.reflect.jar.path", "dist/kotlinc/lib/kotlin-reflect.jar");
     }
 
     @NotNull
@@ -66,28 +58,15 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
-    public static File stdlibMavenSourcesJarForTests() {
-        return assertExists(new File("dist/maven/kotlin-stdlib-sources.jar"));
-    }
-
-    @NotNull
     public static File stdlibCommonForTests() {
-        return assertExists(new File("dist/common/kotlin-stdlib-common.jar"));
+        return envOrDist("kotlin.common.stdlib.path", "dist/common/kotlin-stdlib-common.jar");
     }
 
-    @NotNull
-    public static File stdlibCommonSourcesForTests() {
-        return assertExists(new File("dist/common/kotlin-stdlib-common-sources.jar"));
-    }
-
-    @NotNull
-    public static File stdlibJsForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-stdlib-js.klib"));
-    }
-
-    @NotNull
-    public static File jetbrainsAnnotationsForTests() {
-        return assertExists(new File("dist/kotlinc/lib/annotations-13.0.jar"));
+    private static File envOrDist(String property, String distPath) {
+        String path = getProperty(property, distPath);
+        File file = new File(path);
+        assert(file.exists()) : "CRISTIAN " + path + " doesn't exist";
+        return file;
     }
 
     @NotNull

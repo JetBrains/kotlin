@@ -115,14 +115,23 @@ abstract class KotlinStandardLibrariesPathProvider : TestService {
 }
 
 object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPathProvider() {
-    override fun runtimeJarForTests(): File = ForTestCompileRuntime.runtimeJarForTests()
+    override fun runtimeJarForTests(): File =
+        extractFromPropertyFirstFile("kotlin.full.stdlib.path") { ForTestCompileRuntime.runtimeJarForTests() }
+
     override fun runtimeJarForTestsWithJdk8(): File = ForTestCompileRuntime.runtimeJarForTestsWithJdk8()
-    override fun minimalRuntimeJarForTests(): File = ForTestCompileRuntime.minimalRuntimeJarForTests()
-    override fun reflectJarForTests(): File = ForTestCompileRuntime.reflectJarForTests()
-    override fun kotlinTestJarForTests(): File = ForTestCompileRuntime.kotlinTestJarForTests()
-    override fun scriptRuntimeJarForTests(): File = ForTestCompileRuntime.scriptRuntimeJarForTests()
+    override fun minimalRuntimeJarForTests(): File = extractFromPropertyFirstFile("kotlin.minimal.stdlib.path") { ForTestCompileRuntime.minimalRuntimeJarForTests() }
+    override fun reflectJarForTests(): File = extractFromPropertyFirstFile("kotlin.reflect.jar.path") { ForTestCompileRuntime.reflectJarForTests() }
+    override fun kotlinTestJarForTests(): File =
+        extractFromPropertyFirstFile("kotlin.test.jar.path") { ForTestCompileRuntime.kotlinTestJarForTests() }
+
+    override fun scriptRuntimeJarForTests(): File =
+        extractFromPropertyFirstFile("kotlin.script.runtime.path") { ForTestCompileRuntime.scriptRuntimeJarForTests() }
+
     override fun jvmAnnotationsForTests(): File = ForTestCompileRuntime.jvmAnnotationsForTests()
-    override fun getAnnotationsJar(): File = KtTestUtil.getAnnotationsJar()
+    override fun getAnnotationsJar(): File =
+        KtTestUtil.getAnnotationsJar().also {
+            assert(it.exists()) { "CRISTIAN $it does not exist" }
+        }
 
     override fun fullJsStdlib(): File = extractFromPropertyFirst("kotlin.js.full.stdlib.path") { "kotlin-stdlib-js.klib".dist() }
     override fun defaultJsStdlib(): File = extractFromPropertyFirst("kotlin.js.reduced.stdlib.path") { "kotlin-stdlib-js.klib".dist() }
@@ -130,7 +139,16 @@ object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPa
 
     private inline fun extractFromPropertyFirst(prop: String, onMissingProperty: () -> String): File {
         val path = System.getProperty(prop, null) ?: onMissingProperty()
+        assert(File(path).exists()) { "CRISTIAN: $path not found"}
         return File(path)
+    }
+
+    private inline fun extractFromPropertyFirstFile(prop: String, onMissingProperty: () -> File): File {
+        return System.getProperty(prop, null)?.let {
+            val f = File(it)
+            assert(f.exists()) { "CRISTIAN: $it not found"}
+            f
+        } ?: onMissingProperty()
     }
 
     private fun String.dist(): String {
