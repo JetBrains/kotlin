@@ -35,59 +35,5 @@
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>js.frontend</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>frontend</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>backend.jvm</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>cli-base</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>ir.serialization.js</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>backend.jvm.codegen</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>checkers</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>entrypoint</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>tree</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-    </dependency>
   </dependencies>
 </project>
