@@ -34938,6 +34938,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("reassignedCaptured.kt")
+        public void testReassignedCaptured() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/variables/reassignedCaptured.kt");
+        }
+
+        @Test
         @TestMetadata("reassignedDependency.kt")
         public void testReassignedDependency() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/variables/reassignedDependency.kt");

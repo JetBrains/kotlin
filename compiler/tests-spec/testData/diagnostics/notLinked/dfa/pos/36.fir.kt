@@ -41,7 +41,7 @@ fun case_3(x: Any?) {
         var y = x
         if (y == null) throw Exception()
         var z = y
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>y<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>z<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>y<!>.toByte()
@@ -55,7 +55,7 @@ fun case_4(x: Any?) {
         var y = x
         while (true && y != null) {
             var z = y
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number?")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>y<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>z<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>y<!>.toByte()
@@ -70,7 +70,7 @@ fun case_5(x: Any?) {
     while (false || y != null) {
         if (y is Number) {
             val z = select(y)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>y<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>z<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number")!>y<!>.toByte()

@@ -31,7 +31,7 @@ FILE: boundSmartcasts.kt
         lvar z: R|kotlin/Any| = R|<local>/x|
         when () {
             (R|<local>/x| is R|A|) ->  {
-                R|<local>/z|.R|/A.foo|()
+                R|<local>/z|.<Unresolved name: foo>#()
             }
         }
 
@@ -39,7 +39,7 @@ FILE: boundSmartcasts.kt
         when () {
             (R|<local>/y| is R|B|) ->  {
                 R|<local>/z|.<Unresolved name: foo>#()
-                R|<local>/z|.R|/B.bar|()
+                R|<local>/z|.<Unresolved name: bar>#()
             }
         }
 
@@ -52,7 +52,7 @@ FILE: boundSmartcasts.kt
         R|<local>/x|.<Unresolved name: inc>#()
         when () {
             (R|<local>/y| is R|A|) ->  {
-                R|<local>/x|.R|/A.foo|()
+                R|<local>/x|.<Unresolved name: foo>#()
                 R|<local>/y|.R|/A.foo|()
             }
         }

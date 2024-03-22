@@ -63,8 +63,8 @@ fun case_4() {
     var y: Int?
     y = x
     if (y != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!><!UNSAFE_CALL!>.<!>inv()
     }
 }
 

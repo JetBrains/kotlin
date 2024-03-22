@@ -168,10 +168,13 @@ abstract class FirDataFlowAnalyzer(
      */
     open fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<SmartcastStability, Set<ConeKotlinType>>? {
         val flow = currentSmartCastPosition ?: return null
-        // Can have an unstable alias to a stable variable, so don't resolve aliases here.
-        // TODO: that should never actually happen - aliasing information in that case could be outdated.
+        // Whether aliases are resolved or not shouldn't matter, as unstable variables shouldn't alias stable ones.
         val variable = variableStorage.getRealVariableWithoutUnwrappingAlias(flow, expression) ?: return null
-        val types = flow.getTypeStatement(variable)?.exactType?.ifEmpty { null } ?: return null
+        return flow.getTypeStatementAndStability(variable)
+    }
+
+    private fun Flow.getTypeStatementAndStability(variable: RealVariable): Pair<SmartcastStability, Set<ConeKotlinType>>? {
+        val types = getTypeStatement(variable)?.exactType?.ifEmpty { null } ?: return null
         return variable.stabilityInCurrentScope(types) to types
     }
 
@@ -1102,36 +1105,65 @@ abstract class FirDataFlowAnalyzer(
         }
 
         val initializerVariable = variableStorage.getOrCreateIfReal(flow, initializer)
-        if (initializerVariable is RealVariable) {
-            val isInitializerStable = initializerVariable.stabilityInCurrentScope(types = null) == SmartcastStability.STABLE_VALUE
-            if (!hasExplicitType && isInitializerStable && propertyVariable.stability == SmartcastStability.STABLE_VALUE) {
-                // val a = ...
-                // val b = a
-                // if (b != null) { /* a != null */ }
+        // When a variable's stability depends on scope, type statements have use-site checking, but aliases and implications don't.
+        //   val a = ...
+        //   var b = a
+        //   if (b is String) { /* a is String */ }
+        //   val lambda1 = { if (b is String) { /* can't say anything about a */ } }
+        //   val lambda2 = { b = "" }
+        //   if (b is String) { /* can't say anything about a */ }
+        // In theory, it's possible to improve DFA to account for that, and in fact, handling local functions and classes is simple:
+        // variables become unstable when reaching the declaration and then stay unstable forever, so we could just break aliasing
+        // and remove implications at that point. The complicated part is partially resolved calls, where variables can become
+        // *temporarily* unstable until the next completed call...
+        if (propertyVariable.stability == SmartcastStability.STABLE_VALUE && !(property.isLocal && property.isVar)) {
+            if (initializerVariable is RealVariable && !hasExplicitType &&
+                initializerVariable.stabilityInCurrentScope(types = null) == SmartcastStability.STABLE_VALUE
+            ) {
+                // Initializer is real and always stable:
+                //   val a = ...
+                //   val b = a
+                //   if (b != null) { /* a != null */ }
                 logicSystem.addLocalVariableAlias(flow, propertyVariable, initializerVariable)
-            } else {
-                // val a = ...
-                // val b = a?.x
-                // if (b != null) { /* a != null, but a.x could have changed */ }
-                logicSystem.translateVariableFromConditionInStatements(flow, initializerVariable, propertyVariable)
+            } else if (initializerVariable != null) {
+                // Initializer is real, but unstable:
+                //   val a = ...
+                //   val b = a?.x
+                //   if (b != null) { /* a != null, but a.x could have changed */ }
+                // Initializer is synthetic, the condition is on nullability:
+                //   val b = x?.foo() // `x?.foo()` is synthetic
+                //   if (b != null) { /* x != null */ }
+                // Initializer is synthetic, the condition is boolean:
+                //   val b = x is String
+                //   if (b) { /* x is String */ }
+                val addAllImplications = components.session.languageVersionSettings.supportsFeature(LanguageFeature.DfaBooleanVariables)
+                logicSystem.translateVariableFromConditionInStatements(flow, initializerVariable, propertyVariable) {
+                    if (addAllImplications) it else it.takeIf {
+                        it.condition.operation != Operation.EqTrue && it.condition.operation != Operation.EqFalse
+                    }
+                }
             }
-        } else if (initializerVariable != null && propertyVariable.stability == SmartcastStability.STABLE_VALUE &&
-            !(property.isLocal && property.isVar) &&
-            (components.session.languageVersionSettings.supportsFeature(LanguageFeature.DfaBooleanVariables) ||
-                    !initializer.resolvedType.isBoolean)
-        ) {
-            // val b = x is String
-            // if (b) { /* x is String */ }
-
-            // val b = x?.foo() // `x?.foo()` is synthetic
-            // if (b != null) { /* x != null */ }
-            logicSystem.translateVariableFromConditionInStatements(flow, initializerVariable, propertyVariable)
         }
 
         if (isAssignment) {
-            // `propertyVariable` can be an alias to `initializerVariable`, in which case this will add
-            // a redundant type statement which is fine...probably
+            // Initializer's type may not be equal to declared property type, so it should cause a smart cast:
+            //   val a: A
+            //   a = b /*: B */
+            //   /* a is B */
+            // This branch should execute even if `propertyVariable` is an alias to `initializerVariable` because
+            // flows don't store original types.
             flow.addTypeStatement(flow.unwrapVariable(propertyVariable) typeEq initializer.resolvedType)
+        } else if (!hasExplicitType && initializerVariable is RealVariable && flow.unwrapVariable(propertyVariable) == propertyVariable) {
+            // Inference does not use smart casts when determining property types, so copy the smart casts here instead:
+            //   val a: Any = ...
+            //   if (a is String) { var b /*: Any */ = a /* even though a is String */ }
+            // This branch does not execute if `propertyVariable` is an alias to `initializerVariable` since original types
+            // are already equal.
+            flow.getTypeStatementAndStability(initializerVariable)?.let { (stability, types) ->
+                if (stability == SmartcastStability.STABLE_VALUE) {
+                    flow.addTypeStatement(propertyVariable typeEq types)
+                }
+            }
         }
     }
 

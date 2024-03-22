@@ -128,17 +128,17 @@ fun test_8() {
     if (x != null) {
         x.length // OK
         y.length // OK
-        z.length // OK
+        z<!UNSAFE_CALL!>.<!>length // OK
     }
     if (y != null) {
         x.length // OK
         y.length // OK
-        z.length // OK
+        z<!UNSAFE_CALL!>.<!>length // OK
     }
 
     if (z != null) {
-        x.length // OK
-        y.length // OK
+        x<!UNSAFE_CALL!>.<!>length // OK
+        y<!UNSAFE_CALL!>.<!>length // OK
         z.length // OK
     }
 
@@ -147,7 +147,7 @@ fun test_8() {
     if (x != null) {
         x.length // OK
         y<!UNSAFE_CALL!>.<!>length // Bad
-        z.length // OK
+        z<!UNSAFE_CALL!>.<!>length // OK
     }
     if (<!SENSELESS_COMPARISON!>y != null<!>) {
         x<!UNSAFE_CALL!>.<!>length // Bad
@@ -156,7 +156,7 @@ fun test_8() {
     }
 
     if (z != null) {
-        x.length // OK
+        x<!UNSAFE_CALL!>.<!>length // OK
         y<!UNSAFE_CALL!>.<!>length // Bad
         z.length // OK
     }

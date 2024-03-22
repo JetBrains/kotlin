@@ -141,7 +141,7 @@ fun case_7() {
     e as ClassLevel2
     e = d
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2")!>e<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2")!>e<!>.test1()
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2")!>e<!>.test2()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel1")!>e<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel1")!>e<!>.test1()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel1")!>e<!>.<!UNRESOLVED_REFERENCE!>test2<!>()
 }

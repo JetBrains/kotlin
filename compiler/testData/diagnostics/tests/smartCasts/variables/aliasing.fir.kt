@@ -8,29 +8,29 @@ fun test() {
     // Now both `b` and `c` are aliases of `a`.
 
     if (a is String) {
-        b.length // OK
-        c.length // OK
+        b.<!UNRESOLVED_REFERENCE!>length<!> // OK
+        c.<!UNRESOLVED_REFERENCE!>length<!> // OK
     }
     if (b is String) {
-        a.length // OK
-        c.length // OK
+        a.<!UNRESOLVED_REFERENCE!>length<!> // OK
+        c.<!UNRESOLVED_REFERENCE!>length<!> // OK
     }
     if (c is String) {
-        a.length // OK
-        b.length // OK
+        a.<!UNRESOLVED_REFERENCE!>length<!> // OK
+        b.<!UNRESOLVED_REFERENCE!>length<!> // OK
     }
 
     b = 3 // break `b` -> `a`
     if (a is String) {
         b.<!UNRESOLVED_REFERENCE!>length<!> // error
-        c.length // OK, since `c` is aliased to `a`
+        c.<!UNRESOLVED_REFERENCE!>length<!> // OK, since `c` is aliased to `a`
     }
     if (<!USELESS_IS_CHECK!>b is String<!>) {
         a.<!UNRESOLVED_REFERENCE!>length<!> // error
         c.<!UNRESOLVED_REFERENCE!>length<!> // error
     }
     if (c is String) {
-        a.length // OK, since `c` is alised to `a`
+        a.<!UNRESOLVED_REFERENCE!>length<!> // OK, since `c` is alised to `a`
         b.<!UNRESOLVED_REFERENCE!>length<!> // error
     }
 

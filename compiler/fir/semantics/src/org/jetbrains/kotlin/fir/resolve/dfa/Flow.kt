@@ -90,7 +90,7 @@ class MutableFlow internal constructor(
     override fun unwrapVariable(variable: RealVariable): RealVariable =
         directAliasMap[variable] ?: variable
 
-    override fun getTypeStatement(variable: RealVariable): TypeStatement? =
+    override fun getTypeStatement(variable: RealVariable): PersistentTypeStatement? =
         approvedTypeStatements[unwrapVariable(variable)]?.copy(variable = variable)
 
     fun freeze(): PersistentFlow = PersistentFlow(

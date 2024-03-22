@@ -30,7 +30,7 @@ fun unoverriddenEquals(a: Any?) {
         a.<!UNRESOLVED_REFERENCE!>x<!> // bad (b#0 is C, b#1 = a)
         b.<!UNRESOLVED_REFERENCE!>x<!> // bad (b#0 is C, this is b#1)
         if (b is C) { // b#1
-            a.x // ok (b#1 = a)
+            a.<!UNRESOLVED_REFERENCE!>x<!> // ok (b#1 = a)
             b.x // ok
         }
     }

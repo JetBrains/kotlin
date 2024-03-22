@@ -26,12 +26,12 @@ fun test_2(x: Any) {
 fun test_3(x: Any, y: Any) {
     var z = x
     if (x is A) {
-        z.foo()
+        z.<!UNRESOLVED_REFERENCE!>foo<!>()
     }
     z = y
     if (y is B) {
         z.<!UNRESOLVED_REFERENCE!>foo<!>()
-        z.bar()
+        z.<!UNRESOLVED_REFERENCE!>bar<!>()
     }
 }
 
@@ -42,7 +42,7 @@ fun test_4(y: Any) {
     x = y
     x.<!UNRESOLVED_REFERENCE!>inc<!>()
     if (y is A) {
-        x.foo()
+        x.<!UNRESOLVED_REFERENCE!>foo<!>()
         y.foo()
     }
 }
