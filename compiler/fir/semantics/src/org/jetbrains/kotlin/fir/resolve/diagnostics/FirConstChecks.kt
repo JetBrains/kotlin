@@ -250,10 +250,12 @@ private class FirConstCheckVisitor(
         while (coneType.classId == StandardClassIds.Array)
             coneType = (coneType.lowerBoundIfFlexible().typeArguments.first() as? ConeKotlinTypeProjection)?.type ?: break
 
+        val argument = getClassCall.argument
         return when {
             coneType is ConeTypeParameterType -> ConstantArgumentKind.KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR
-            getClassCall.argument !is FirResolvedQualifier -> ConstantArgumentKind.NOT_KCLASS_LITERAL
-            else -> ConstantArgumentKind.VALID_CONST
+            argument is FirResolvedQualifier -> ConstantArgumentKind.VALID_CONST
+            argument is FirClassReferenceExpression -> ConstantArgumentKind.VALID_CONST
+            else -> ConstantArgumentKind.NOT_KCLASS_LITERAL
         }
     }
 
@@ -280,7 +282,7 @@ private class FirConstCheckVisitor(
     override fun visitPropertyAccessExpression(
         propertyAccessExpression: FirPropertyAccessExpression, data: Nothing?
     ): ConstantArgumentKind {
-        val propertySymbol = propertyAccessExpression.toReference(session)?.toResolvedCallableSymbol(discardErrorReference = true)
+        val propertySymbol = propertyAccessExpression.toReference(session)?.toResolvedCallableSymbol()
         if (propertySymbol in propertyStack.get()) return ConstantArgumentKind.NOT_CONST
         when (propertySymbol) {
             // Null symbol means some error occurred.
@@ -302,10 +304,6 @@ private class FirConstCheckVisitor(
                     propertySymbol.isLocal -> return ConstantArgumentKind.NOT_CONST
                     propertyAccessExpression.getExpandedType().classId == StandardClassIds.KClass -> return ConstantArgumentKind.NOT_KCLASS_LITERAL
                 }
-
-                // OK, because:
-                // 1. if const property => we should've resolved its initializer at this point;
-                // 2. if not const => we are going to look only at the structure, not resolution-dependent properties.
 
                 return when {
                     propertySymbol.isConst -> {
@@ -415,8 +413,26 @@ private class FirConstCheckVisitor(
         return ConstantArgumentKind.VALID_CONST
     }
 
+    override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: Nothing?): ConstantArgumentKind {
+        return ConstantArgumentKind.VALID_CONST
+    }
+
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: Nothing?): ConstantArgumentKind {
         return visitQualifiedAccessExpression(callableReferenceAccess, data)
+    }
+
+    override fun visitEnumEntryDeserializedAccessExpression(
+        enumEntryDeserializedAccessExpression: FirEnumEntryDeserializedAccessExpression,
+        data: Nothing?,
+    ): ConstantArgumentKind {
+        return ConstantArgumentKind.VALID_CONST
+    }
+
+    override fun visitClassReferenceExpression(
+        classReferenceExpression: FirClassReferenceExpression,
+        data: Nothing?,
+    ): ConstantArgumentKind {
+        return ConstantArgumentKind.VALID_CONST
     }
 
     // --- Utils ---
