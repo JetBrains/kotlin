@@ -5,6 +5,8 @@
 
 package test.text
 
+import test.TestPlatform
+import test.testExceptOn
 import kotlin.test.*
 
 class StringNumberConversionTest {
@@ -490,5 +492,31 @@ internal class ConversionWithRadixContext<T : Any>(
                                                { convertOrFail(input, radix) })
 
         assertNull(convertOrNull(input, radix), message = "On input \"$input\" with radix $radix")
+    }
+}
+
+class FpNumberToStringTest {
+    @Test fun doubleTest() {
+        assertEquals((0.5).toString(), "0.5")
+        assertEquals((-0.5).toString(), "-0.5")
+        testExceptOn(TestPlatform.Js) {
+            assertEquals((0.0).toString(), "0.0")
+            assertEquals((-0.0).toString(), "-0.0")
+        }
+        assertEquals(Double.NaN.toString(), "NaN")
+        assertEquals(Double.POSITIVE_INFINITY.toString(), "Infinity")
+        assertEquals(Double.NEGATIVE_INFINITY.toString(), "-Infinity")
+    }
+
+    @Test fun floatTest() {
+        assertEquals((0.5f).toString(), "0.5")
+        assertEquals((-0.5f).toString(), "-0.5")
+        testExceptOn(TestPlatform.Js) {
+            assertEquals((0.0f).toString(), "0.0")
+            assertEquals((-0.0f).toString(), "-0.0")
+        }
+        assertEquals(Float.NaN.toString(), "NaN")
+        assertEquals(Float.POSITIVE_INFINITY.toString(), "Infinity")
+        assertEquals(Float.NEGATIVE_INFINITY.toString(), "-Infinity")
     }
 }

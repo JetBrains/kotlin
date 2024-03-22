@@ -160,7 +160,10 @@ private fun decimalCount64High(value: ULong): Int {
 private const val MAX_DOUBLE_LENGTH = 28
 
 internal fun dtoa(value: Double): String {
-    if (value == 0.0) return "0.0"
+    if (value == 0.0) {
+        return if (value.toRawBits() == 0L) "0.0" else "-0.0"
+    }
+
     if (!value.isFinite()) {
         if (value.isNaN()) return "NaN"
         return if (value < 0) "-Infinity" else "Infinity"
