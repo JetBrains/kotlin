@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.FirEvaluatorResult.CompileTimeException
 import org.jetbrains.kotlin.fir.FirEvaluatorResult.Evaluated
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 
 sealed class FirEvaluatorResult {
@@ -23,7 +24,7 @@ sealed class FirEvaluatorResult {
 }
 
 
-inline fun <reified T> FirEvaluatorResult.unwrapOr(action: (CompileTimeException) -> Unit): T? {
+inline fun <reified T : FirElement> FirEvaluatorResult.unwrapOr(action: (CompileTimeException) -> Unit): T? {
     when (this) {
         is CompileTimeException -> action(this)
         is Evaluated -> return this.result as? T
