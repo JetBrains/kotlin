@@ -13,6 +13,7 @@ dependencies {
     compileOnly(kotlinStdlib())
 
     api(project(":native:swift:sir"))
+    api(project(":native:swift:sir-providers"))
 
     implementation(project(":core:util.runtime"))
 

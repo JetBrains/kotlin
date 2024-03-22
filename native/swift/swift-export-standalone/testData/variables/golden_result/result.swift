@@ -1,6 +1,13 @@
 import KotlinBridges
 import KotlinRuntime
 
+public enum namespace {
+    public enum main {
+    }
+}
+public func baz() -> Swift.Int32 {
+    return __root___baz()
+}
 public extension main.namespace.main {
     public static var foo: Swift.Int32 {
         get {
@@ -20,13 +27,4 @@ public extension main.namespace.main {
     ) -> Swift.Int32 {
         return namespace_main_foobar__TypesOfArguments__int32_t__(param)
     }
-}
-
-public enum namespace {
-    public enum main {
-    }
-}
-
-public func baz() -> Swift.Int32 {
-    return __root___baz()
 }
