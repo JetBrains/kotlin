@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnTypesTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,48 +40,48 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiAnnotationsOnTypesTestG
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInAnnotationsOnTypes() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/annotationsOnTypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotaionOnType.kt")
   public void testAnnotaionOnType() {
     runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionOnType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotaionOnTypeArgument.kt")
   public void testAnnotaionOnTypeArgument() {
     runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionOnTypeArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotaionOnTypeArgumentOfTypeArgument.kt")
   public void testAnnotaionOnTypeArgumentOfTypeArgument() {
     runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionOnTypeArgumentOfTypeArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotaionWithComplexArgumentOnType.kt")
   public void testAnnotaionWithComplexArgumentOnType() {
     runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionWithComplexArgumentOnType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotaionWithComplexArgumentOnTypeArgument.kt")
   public void testAnnotaionWithComplexArgumentOnTypeArgument() {
     runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionWithComplexArgumentOnTypeArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotaionWithLiteralArgumentOnType.kt")
   public void testAnnotaionWithLiteralArgumentOnType() {
     runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionWithLiteralArgumentOnType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotaionWithLiteralArgumentOnTypeArgument.kt")
   public void testAnnotaionWithLiteralArgumentOnTypeArgument() {
     runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionWithLiteralArgumentOnTypeArgument.kt");

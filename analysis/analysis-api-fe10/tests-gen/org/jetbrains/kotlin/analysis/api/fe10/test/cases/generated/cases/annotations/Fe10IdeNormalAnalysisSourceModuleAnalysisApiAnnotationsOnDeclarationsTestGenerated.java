@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnDeclarationsTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -41,12 +41,12 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiAnnotationsOnDeclaratio
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInAnnotationsOnDeclaration() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/annotationsOnDeclaration"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("deprecated.kt")
   public void testDeprecated() {
     runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/deprecated.kt");
@@ -56,84 +56,84 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiAnnotationsOnDeclaratio
   @TestMetadata("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct")
   @TestDataPath("$PROJECT_ROOT")
   public class Direct {
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("aliasedThrowsOnFunction.kt")
     public void testAliasedThrowsOnFunction() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/aliasedThrowsOnFunction.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInDirect() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("emptyJavaSpreadParameter.kt")
     public void testEmptyJavaSpreadParameter() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/emptyJavaSpreadParameter.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("onClass.kt")
     public void testOnClass() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("onFunction.kt")
     public void testOnFunction() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onFunction.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("onFunction_unresolvedClassReference.kt")
     public void testOnFunction_unresolvedClassReference() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onFunction_unresolvedClassReference.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("onProperty.kt")
     public void testOnProperty() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onProperty.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("onProperty_javaAnnotation_targets.kt")
     public void testOnProperty_javaAnnotation_targets() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onProperty_javaAnnotation_targets.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("onTypeAlias.kt")
     public void testOnTypeAlias() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onTypeAlias.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("unsignedParameter.kt")
     public void testUnsignedParameter() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/unsignedParameter.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("varargComplexParameter.kt")
     public void testVarargComplexParameter() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/varargComplexParameter.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("varargNamedParameter.kt")
     public void testVarargNamedParameter() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/varargNamedParameter.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("varargParameter.kt")
     public void testVarargParameter() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/varargParameter.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("varargSpreadParameter.kt")
     public void testVarargSpreadParameter() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/varargSpreadParameter.kt");
@@ -144,30 +144,30 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiAnnotationsOnDeclaratio
   @TestMetadata("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/useSite")
   @TestDataPath("$PROJECT_ROOT")
   public class UseSite {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInUseSite() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/useSite"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("onGetter.kt")
     public void testOnGetter() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/useSite/onGetter.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("onParam.kt")
     public void testOnParam() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/useSite/onParam.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("onProperty.kt")
     public void testOnProperty() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/useSite/onProperty.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("onSetter.kt")
     public void testOnSetter() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/useSite/onSetter.kt");

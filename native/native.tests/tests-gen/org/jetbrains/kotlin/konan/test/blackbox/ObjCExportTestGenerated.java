@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,12 +18,12 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/testData/ObjCExport")
 @TestDataPath("$PROJECT_ROOT")
 public class ObjCExportTestGenerated extends AbstractNativeObjCExportTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInObjCExport() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/ObjCExport"), Pattern.compile("^([^_](.+))$"), null, false);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kdocExport")
   public void testKdocExport() {
     runTest("native/native.tests/testData/ObjCExport/kdocExport/");

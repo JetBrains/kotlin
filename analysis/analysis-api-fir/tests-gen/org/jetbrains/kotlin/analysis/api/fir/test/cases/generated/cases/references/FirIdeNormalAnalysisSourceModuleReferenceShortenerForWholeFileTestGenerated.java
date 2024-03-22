@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerForWholeFileTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,18 +40,18 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerForWholeFileTestG
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInShortenWholeFile() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("fileWithKDoc.kt")
   public void testFileWithKDoc() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/fileWithKDoc.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("fileWithMultipleDeclarations.kt")
   public void testFileWithMultipleDeclarations() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/fileWithMultipleDeclarations.kt");

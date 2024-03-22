@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,30 +18,30 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors")
 @TestDataPath("$PROJECT_ROOT")
 public class ScriptNonLocalDeclarationAnchorTestGenerated extends AbstractScriptNonLocalDeclarationAnchorTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInNonLocalDeclarationAnchors() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classWithMembersScript.kts")
   public void testClassWithMembersScript() {
     runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/classWithMembersScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classWithMembersWithPackage.kts")
   public void testClassWithMembersWithPackage() {
     runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/classWithMembersWithPackage.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("statements.kts")
   public void testStatements() {
     runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/statements.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelFor.kts")
   public void testTopLevelFor() {
     runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/topLevelFor.kts");

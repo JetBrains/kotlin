@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,30 +19,30 @@ import java.util.regex.Pattern;
 @TestMetadata("js/js.translator/testData/sourcemap")
 @TestDataPath("$PROJECT_ROOT")
 public class FirSourceMapGenerationSmokeTestGenerated extends AbstractFirSourceMapGenerationSmokeTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInSourcemap() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/sourcemap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("binaryOperation.kt")
   public void testBinaryOperation() {
     runTest("js/js.translator/testData/sourcemap/binaryOperation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("emptyIfInsideInlineLambda.kt")
   public void testEmptyIfInsideInlineLambda() {
     runTest("js/js.translator/testData/sourcemap/emptyIfInsideInlineLambda.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("expressionBody.kt")
   public void testExpressionBody() {
     runTest("js/js.translator/testData/sourcemap/expressionBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("methodCallInMethod.kt")
   public void testMethodCallInMethod() {
     runTest("js/js.translator/testData/sourcemap/methodCallInMethod.kt");

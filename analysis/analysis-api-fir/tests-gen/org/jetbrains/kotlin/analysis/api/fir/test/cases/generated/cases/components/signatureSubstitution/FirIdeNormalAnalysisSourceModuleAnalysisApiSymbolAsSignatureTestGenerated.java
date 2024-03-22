@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSymbolAsSignatureTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,36 +40,36 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiSymbolAsSignatureTestGen
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInSymbolAsSignature() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("function.kt")
   public void testFunction() {
     runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/function.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyGetter.kt")
   public void testPropertyGetter() {
     runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/propertyGetter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyNoAccessors.kt")
   public void testPropertyNoAccessors() {
     runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/propertyNoAccessors.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertySetter.kt")
   public void testPropertySetter() {
     runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/propertySetter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyWithAccessors.kt")
   public void testPropertyWithAccessors() {
     runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/propertyWithAccessors.kt");

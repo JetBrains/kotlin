@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.decompiler.stub.files;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,48 +18,48 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo")
 @TestDataPath("$PROJECT_ROOT")
 public class AdditionalStubInfoK2CompilerTestGenerated extends AbstractAdditionalStubInfoK2CompilerTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInAdditionalClsStubInfo() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo"), Pattern.compile("^([^\\.]+)$"), null, false);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("AnnotatedFlexibleTypes")
   public void testAnnotatedFlexibleTypes() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/AnnotatedFlexibleTypes/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("AnnotationValues")
   public void testAnnotationValues() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/AnnotationValues/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("Contracts")
   public void testContracts() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/Contracts/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("OuterClassesWithFlexibleArgs")
   public void testOuterClassesWithFlexibleArgs() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/OuterClassesWithFlexibleArgs/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("ParameterName")
   public void testParameterName() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ParameterName/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("PropertyInitializer")
   public void testPropertyInitializer() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/PropertyInitializer/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("TypeParametersInFlexibleTypes")
   public void testTypeParametersInFlexibleTypes() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/TypeParametersInFlexibleTypes/");

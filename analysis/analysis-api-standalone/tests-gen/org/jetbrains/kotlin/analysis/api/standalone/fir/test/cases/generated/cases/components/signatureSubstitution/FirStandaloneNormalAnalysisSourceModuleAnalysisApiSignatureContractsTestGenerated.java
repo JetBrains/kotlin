@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureContractsTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,18 +40,18 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiSignatureContract
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInSignatureContracts() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/signatureSubstitution/signatureContracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("members.kt")
   public void testMembers() {
     runTest("analysis/analysis-api/testData/components/signatureSubstitution/signatureContracts/members.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevel.kt")
   public void testTopLevel() {
     runTest("analysis/analysis-api/testData/components/signatureSubstitution/signatureContracts/topLevel.kt");

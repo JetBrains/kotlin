@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveCandidatesTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -41,7 +41,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCandidatesTestGenerate
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInResolveCandidates() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCandidates"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
@@ -50,7 +50,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCandidatesTestGenerate
   @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates")
   @TestDataPath("$PROJECT_ROOT")
   public class MultipleCandidates {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInMultipleCandidates() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -60,7 +60,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCandidatesTestGenerate
   @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCandidates/noCandidates")
   @TestDataPath("$PROJECT_ROOT")
   public class NoCandidates {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInNoCandidates() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCandidates/noCandidates"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -70,7 +70,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCandidatesTestGenerate
   @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate")
   @TestDataPath("$PROJECT_ROOT")
   public class SingleCandidate {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInSingleCandidate() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractMultiModuleCompilerFacilityTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -41,36 +41,36 @@ public class FirIdeNormalAnalysisSourceModuleMultiModuleCompilerFacilityTestGene
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInCompilationMultiModule() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("commonUsage.kt")
   public void testCommonUsage() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/commonUsage.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("defaultParameterValue.kt")
   public void testDefaultParameterValue() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/defaultParameterValue.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("dependencyBetweenBinaryLibraries.kt")
   public void testDependencyBetweenBinaryLibraries() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/dependencyBetweenBinaryLibraries.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("internalUsage.kt")
   public void testInternalUsage() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/internalUsage.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaAnnotationWithVararg.kt")
   public void testJavaAnnotationWithVararg() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/javaAnnotationWithVararg.kt");
@@ -80,12 +80,12 @@ public class FirIdeNormalAnalysisSourceModuleMultiModuleCompilerFacilityTestGene
   @TestMetadata("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments")
   @TestDataPath("$PROJECT_ROOT")
   public class CodeFragments {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInCodeFragments() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("compilerPluginUsage.kt")
     public void testCompilerPluginUsage() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments/compilerPluginUsage.kt");

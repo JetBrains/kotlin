@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,396 +18,396 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/fileStructure")
 @TestDataPath("$PROJECT_ROOT")
 public class SourceFileStructureTestGenerated extends AbstractSourceFileStructureTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInFileStructure() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/fileStructure"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annonymousClass.kt")
   public void testAnnonymousClass() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/annonymousClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callInsideLambdaInsideSuperCallAndExplicitConstructor.kt")
   public void testCallInsideLambdaInsideSuperCallAndExplicitConstructor() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/callInsideLambdaInsideSuperCallAndExplicitConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callInsideLambdaInsideSuperCallAndImplicitConstructor.kt")
   public void testCallInsideLambdaInsideSuperCallAndImplicitConstructor() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/callInsideLambdaInsideSuperCallAndImplicitConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callInsideLambdaInsideSuperCallFromSecondaryConstructor.kt")
   public void testCallInsideLambdaInsideSuperCallFromSecondaryConstructor() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/callInsideLambdaInsideSuperCallFromSecondaryConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callInsideLambdaInsideSuperCallFromSingleSecondaryConstructor.kt")
   public void testCallInsideLambdaInsideSuperCallFromSingleSecondaryConstructor() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/callInsideLambdaInsideSuperCallFromSingleSecondaryConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("class.kt")
   public void testClass() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/class.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("class2.kt")
   public void testClass2() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/class2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classMemberProperty.kt")
   public void testClassMemberProperty() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/classMemberProperty.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorParameter.kt")
   public void testConstructorParameter() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/constructorParameter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorParameter2.kt")
   public void testConstructorParameter2() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/constructorParameter2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorParameterWithAnnotations.kt")
   public void testConstructorParameterWithAnnotations() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/constructorParameterWithAnnotations.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructors.kt")
   public void testConstructors() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/constructors.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("danglingAnnotationClassLevel.kt")
   public void testDanglingAnnotationClassLevel() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationClassLevel.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("danglingAnnotationInMiddle.kt")
   public void testDanglingAnnotationInMiddle() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationInMiddle.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("danglingAnnotationTopLevel.kt")
   public void testDanglingAnnotationTopLevel() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationTopLevel.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("declarationsInPropertyInit.kt")
   public void testDeclarationsInPropertyInit() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/declarationsInPropertyInit.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enum.kt")
   public void testEnum() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/enum.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumClass.kt")
   public void testEnumClass() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/enumClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumClassWithBody.kt")
   public void testEnumClassWithBody() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/enumClassWithBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("funWithoutTypes.kt")
   public void testFunWithoutTypes() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/funWithoutTypes.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionValueParameter.kt")
   public void testFunctionValueParameter() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/functionValueParameter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionWithImplicitType.kt")
   public void testFunctionWithImplicitType() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/functionWithImplicitType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionWithImplicitTypeAndFunctionInside.kt")
   public void testFunctionWithImplicitTypeAndFunctionInside() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/functionWithImplicitTypeAndFunctionInside.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionWithImplicitTypeAndFunctionInsideLocalClass.kt")
   public void testFunctionWithImplicitTypeAndFunctionInsideLocalClass() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/functionWithImplicitTypeAndFunctionInsideLocalClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionWithImplicitTypeAndPropertyInside.kt")
   public void testFunctionWithImplicitTypeAndPropertyInside() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/functionWithImplicitTypeAndPropertyInside.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionalType.kt")
   public void testFunctionalType() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/functionalType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("initBlock.kt")
   public void testInitBlock() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/initBlock.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lambda.kt")
   public void testLambda() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/lambda.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lambdaInImplicitFunBody.kt")
   public void testLambdaInImplicitFunBody() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/lambdaInImplicitFunBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lambdaInImplicitPropertyBody.kt")
   public void testLambdaInImplicitPropertyBody() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/lambdaInImplicitPropertyBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lambdasInWithBodyFunction.kt")
   public void testLambdasInWithBodyFunction() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/lambdasInWithBodyFunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localClass.kt")
   public void testLocalClass() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/localClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localClass2.kt")
   public void testLocalClass2() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/localClass2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localDeclarationsInAccessor.kt")
   public void testLocalDeclarationsInAccessor() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/localDeclarationsInAccessor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localFun.kt")
   public void testLocalFun() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/localFun.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localFunctionWithImplicitType.kt")
   public void testLocalFunctionWithImplicitType() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/localFunctionWithImplicitType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localProperty.kt")
   public void testLocalProperty() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/localProperty.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localUnitFunction.kt")
   public void testLocalUnitFunction() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/localUnitFunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberFunctions.kt")
   public void testMemberFunctions() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/memberFunctions.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberProperties.kt")
   public void testMemberProperties() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/memberProperties.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberTypeAlias.kt")
   public void testMemberTypeAlias() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/memberTypeAlias.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("multipleTopLevelClasses.kt")
   public void testMultipleTopLevelClasses() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/multipleTopLevelClasses.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("multipleTopLevelFunctionsWithImplicitTypes.kt")
   public void testMultipleTopLevelFunctionsWithImplicitTypes() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/multipleTopLevelFunctionsWithImplicitTypes.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("multipleTopLevelUnitFunctions.kt")
   public void testMultipleTopLevelUnitFunctions() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/multipleTopLevelUnitFunctions.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nestedClases.kt")
   public void testNestedClases() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/nestedClases.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nestedClasesWithFun.kt")
   public void testNestedClasesWithFun() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/nestedClasesWithFun.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nestedClasses.kt")
   public void testNestedClasses() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/nestedClasses.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyAccessors.kt")
   public void testPropertyAccessors() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/propertyAccessors.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyWithGetterAndSetter.kt")
   public void testPropertyWithGetterAndSetter() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/propertyWithGetterAndSetter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyWithImplicitTypeAndAnnotationsInsideLocalClass.kt")
   public void testPropertyWithImplicitTypeAndAnnotationsInsideLocalClass() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/propertyWithImplicitTypeAndAnnotationsInsideLocalClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyWithImplicitTypeAndFieldAnnotationsInsideLocalClass.kt")
   public void testPropertyWithImplicitTypeAndFieldAnnotationsInsideLocalClass() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/propertyWithImplicitTypeAndFieldAnnotationsInsideLocalClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyWithSetter.kt")
   public void testPropertyWithSetter() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/propertyWithSetter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("qualifiedCallInsideSuperCall.kt")
   public void testQualifiedCallInsideSuperCall() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/qualifiedCallInsideSuperCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("secondaryConstructor.kt")
   public void testSecondaryConstructor() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/secondaryConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("superCallAnnotation.kt")
   public void testSuperCallAnnotation() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/superCallAnnotation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("superCallAnnotation2.kt")
   public void testSuperCallAnnotation2() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/superCallAnnotation2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("superClassCall.kt")
   public void testSuperClassCall() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/superClassCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("superType.kt")
   public void testSuperType() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/superType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelExpressionBodyFunWithType.kt")
   public void testTopLevelExpressionBodyFunWithType() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/topLevelExpressionBodyFunWithType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelExpressionBodyFunWithoutType.kt")
   public void testTopLevelExpressionBodyFunWithoutType() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/topLevelExpressionBodyFunWithoutType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelFunWithType.kt")
   public void testTopLevelFunWithType() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/topLevelFunWithType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelProperty.kt")
   public void testTopLevelProperty() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/topLevelProperty.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelUnitFun.kt")
   public void testTopLevelUnitFun() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/topLevelUnitFun.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeAlias.kt")
   public void testTypeAlias() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/typeAlias.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("withoutName.kt")
   public void testWithoutName() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/withoutName.kt");

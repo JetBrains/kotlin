@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,186 +19,186 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/lombok/testData/box")
 @TestDataPath("$PROJECT_ROOT")
 public class IrBlackBoxCodegenTestForLombokGenerated extends AbstractIrBlackBoxCodegenTestForLombok {
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("accessorsStripPrefix.kt")
   public void testAccessorsStripPrefix() {
     runTest("plugins/lombok/testData/box/accessorsStripPrefix.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("accessorsStripPrefixConfig.kt")
   public void testAccessorsStripPrefixConfig() {
     runTest("plugins/lombok/testData/box/accessorsStripPrefixConfig.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("allArgsConstructor.kt")
   public void testAllArgsConstructor() {
     runTest("plugins/lombok/testData/box/allArgsConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("allArgsConstructorInference.kt")
   public void testAllArgsConstructorInference() {
     runTest("plugins/lombok/testData/box/allArgsConstructorInference.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("allArgsConstructorStatic.kt")
   public void testAllArgsConstructorStatic() {
     runTest("plugins/lombok/testData/box/allArgsConstructorStatic.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/lombok/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("builder.kt")
   public void testBuilder() {
     runTest("plugins/lombok/testData/box/builder.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("builderGuava.kt")
   public void testBuilderGuava() {
     runTest("plugins/lombok/testData/box/builderGuava.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("builderRawSingular.kt")
   public void testBuilderRawSingular() {
     runTest("plugins/lombok/testData/box/builderRawSingular.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("builderSingular.kt")
   public void testBuilderSingular() {
     runTest("plugins/lombok/testData/box/builderSingular.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("configAccessors.kt")
   public void testConfigAccessors() {
     runTest("plugins/lombok/testData/box/configAccessors.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("configAccessorsOverride.kt")
   public void testConfigAccessorsOverride() {
     runTest("plugins/lombok/testData/box/configAccessorsOverride.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("configCaseInsensitive.kt")
   public void testConfigCaseInsensitive() {
     runTest("plugins/lombok/testData/box/configCaseInsensitive.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("configSimple.kt")
   public void testConfigSimple() {
     runTest("plugins/lombok/testData/box/configSimple.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("data.kt")
   public void testData() {
     runTest("plugins/lombok/testData/box/data.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("genericsAccessors.kt")
   public void testGenericsAccessors() {
     runTest("plugins/lombok/testData/box/genericsAccessors.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("genericsConstructors.kt")
   public void testGenericsConstructors() {
     runTest("plugins/lombok/testData/box/genericsConstructors.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("genericsConstructorsStatic.kt")
   public void testGenericsConstructorsStatic() {
     runTest("plugins/lombok/testData/box/genericsConstructorsStatic.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("gettersFluent.kt")
   public void testGettersFluent() {
     runTest("plugins/lombok/testData/box/gettersFluent.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("noArgsConstructor.kt")
   public void testNoArgsConstructor() {
     runTest("plugins/lombok/testData/box/noArgsConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("noArgsConstructorStatic.kt")
   public void testNoArgsConstructorStatic() {
     runTest("plugins/lombok/testData/box/noArgsConstructorStatic.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nullability.kt")
   public void testNullability() {
     runTest("plugins/lombok/testData/box/nullability.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyFromSuper.kt")
   public void testPropertyFromSuper() {
     runTest("plugins/lombok/testData/box/propertyFromSuper.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("requiredArgsConstructor.kt")
   public void testRequiredArgsConstructor() {
     runTest("plugins/lombok/testData/box/requiredArgsConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("requiredArgsConstructorStatic.kt")
   public void testRequiredArgsConstructorStatic() {
     runTest("plugins/lombok/testData/box/requiredArgsConstructorStatic.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("settersVariations.kt")
   public void testSettersVariations() {
     runTest("plugins/lombok/testData/box/settersVariations.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simple.kt")
   public void testSimple() {
     runTest("plugins/lombok/testData/box/simple.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("value.kt")
   public void testValue() {
     runTest("plugins/lombok/testData/box/value.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("valueFieldAccess.kt")
   public void testValueFieldAccess() {
     runTest("plugins/lombok/testData/box/valueFieldAccess.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("with.kt")
   public void testWith() {
     runTest("plugins/lombok/testData/box/with.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("withBooleanField.kt")
   public void testWithBooleanField() {
     runTest("plugins/lombok/testData/box/withBooleanField.kt");

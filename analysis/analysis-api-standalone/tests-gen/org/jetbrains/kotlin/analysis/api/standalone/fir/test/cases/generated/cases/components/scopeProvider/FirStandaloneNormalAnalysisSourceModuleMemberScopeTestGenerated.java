@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.AbstractMemberScopeTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,114 +40,114 @@ public class FirStandaloneNormalAnalysisSourceModuleMemberScopeTestGenerated ext
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInMemberScope() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/memberScope"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("class.kt")
   public void testClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/memberScope/class.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("dataClass.kt")
   public void testDataClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/memberScope/dataClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumClass.kt")
   public void testEnumClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/memberScope/enumClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumClassWithAbstractMembers.kt")
   public void testEnumClassWithAbstractMembers() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/memberScope/enumClassWithAbstractMembers.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumClassWithFinalMembers.kt")
   public void testEnumClassWithFinalMembers() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/memberScope/enumClassWithFinalMembers.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumEntryInitializer.kt")
   public void testEnumEntryInitializer() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/memberScope/enumEntryInitializer.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumEntryInitializerWithFinalEnumMember.kt")
   public void testEnumEntryInitializerWithFinalEnumMember() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/memberScope/enumEntryInitializerWithFinalEnumMember.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumEntryInitializerWithOverriddenMember.kt")
   public void testEnumEntryInitializerWithOverriddenMember() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/memberScope/enumEntryInitializerWithOverriddenMember.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("innerClass.kt")
   public void testInnerClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/memberScope/innerClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("Int.kt")
   public void testInt() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/memberScope/Int.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaClass.kt")
   public void testJavaClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/memberScope/javaClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaField.kt")
   public void testJavaField() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/memberScope/javaField.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaFieldClash.kt")
   public void testJavaFieldClash() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/memberScope/javaFieldClash.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaMethods.kt")
   public void testJavaMethods() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/memberScope/javaMethods.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("java.lang.String.kt")
   public void testJava_lang_String() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/memberScope/java.lang.String.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kotlin.Function2.kt")
   public void testKotlin_Function2() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/memberScope/kotlin.Function2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("MutableList.kt")
   public void testMutableList() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/memberScope/MutableList.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("substitutionOverride.kt")
   public void testSubstitutionOverride() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/memberScope/substitutionOverride.kt");

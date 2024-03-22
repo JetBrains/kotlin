@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.AbstractFileImportingScopeContextTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,36 +40,36 @@ public class FirStandaloneNormalAnalysisSourceModuleFileImportingScopeContextTes
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInImportingScopeContext() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("errorImport.kt")
   public void testErrorImport() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/errorImport.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("importAlias.kt")
   public void testImportAlias() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/importAlias.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("noImports.kt")
   public void testNoImports() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/noImports.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simpleImport.kt")
   public void testSimpleImport() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/simpleImport.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("starImport.kt")
   public void testStarImport() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/starImport.kt");

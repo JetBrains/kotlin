@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByJavaPsiTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,30 +40,30 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByJavaPsiTestGenerated
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInSymbolByJavaPsi() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByJavaPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaField.kt")
   public void testJavaField() {
     runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaField.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaFieldFromSuperclass.kt")
   public void testJavaFieldFromSuperclass() {
     runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaFieldFromSuperclass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaStaticField.kt")
   public void testJavaStaticField() {
     runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaStaticField.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaStaticFieldFromSuperclass.kt")
   public void testJavaStaticFieldFromSuperclass() {
     runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaStaticFieldFromSuperclass.kt");

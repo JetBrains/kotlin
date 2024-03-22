@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,18 +19,18 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/sam-with-receiver/testData/codegen")
 @TestDataPath("$PROJECT_ROOT")
 public class FirLightTreeBlackBoxCodegenTestForSamWithReceiverGenerated extends AbstractFirLightTreeBlackBoxCodegenTestForSamWithReceiver {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInCodegen() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/sam-with-receiver/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("SamConstructor.kt")
   public void testSamConstructor() {
     runTest("plugins/sam-with-receiver/testData/codegen/SamConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("SamConversion.kt")
   public void testSamConversion() {
     runTest("plugins/sam-with-receiver/testData/codegen/SamConversion.kt");

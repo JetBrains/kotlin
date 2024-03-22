@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.readWriteAccess.AbstractReadWriteAccessTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,42 +40,42 @@ public class Fe10IdeNormalAnalysisSourceModuleReadWriteAccessTestGenerated exten
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInReadWriteAccess() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionInfoProvider/readWriteAccess"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("assignment.kt")
   public void testAssignment() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/readWriteAccess/assignment.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("assignmentPlusEq.kt")
   public void testAssignmentPlusEq() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/readWriteAccess/assignmentPlusEq.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("namedArguments.kt")
   public void testNamedArguments() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/readWriteAccess/namedArguments.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("readReference.kt")
   public void testReadReference() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/readWriteAccess/readReference.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("readReferenceInParenthesis.kt")
   public void testReadReferenceInParenthesis() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/readWriteAccess/readReferenceInParenthesis.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("unary.kt")
   public void testUnary() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/readWriteAccess/unary.kt");

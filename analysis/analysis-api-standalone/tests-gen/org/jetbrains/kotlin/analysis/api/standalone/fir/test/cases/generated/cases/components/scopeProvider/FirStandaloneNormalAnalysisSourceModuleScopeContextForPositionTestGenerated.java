@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.AbstractScopeContextForPositionTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,156 +40,156 @@ public class FirStandaloneNormalAnalysisSourceModuleScopeContextForPositionTestG
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInScopeContextForPosition() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotationWithoutDeclaration.kt")
   public void testAnnotationWithoutDeclaration() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/annotationWithoutDeclaration.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classPropertyDelegate.kt")
   public void testClassPropertyDelegate() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/classPropertyDelegate.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classPropertyInitializer.kt")
   public void testClassPropertyInitializer() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/classPropertyInitializer.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("contextReceiver.kt")
   public void testContextReceiver() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextReceiver.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("contextReceiverWithoutDeclaration.kt")
   public void testContextReceiverWithoutDeclaration() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextReceiverWithoutDeclaration.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("emptyContextForPositionInImportDirective.kt")
   public void testEmptyContextForPositionInImportDirective() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/emptyContextForPositionInImportDirective.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("emptyContextForPositionInPackageDirective.kt")
   public void testEmptyContextForPositionInPackageDirective() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/emptyContextForPositionInPackageDirective.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumEntry.kt")
   public void testEnumEntry() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/enumEntry.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("errorType.kt")
   public void testErrorType() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/errorType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("forLoopVariable.kt")
   public void testForLoopVariable() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/forLoopVariable.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kDocOnClass.kt")
   public void testKDocOnClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/kDocOnClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kDocOnFunction.kt")
   public void testKDocOnFunction() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/kDocOnFunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kDocWithoutDeclaration.kt")
   public void testKDocWithoutDeclaration() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/kDocWithoutDeclaration.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localTypeScope.kt")
   public void testLocalTypeScope() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/localTypeScope.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("notEnabledKotlinPackage.kt")
   public void testNotEnabledKotlinPackage() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/notEnabledKotlinPackage.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simpleScopeContextForPosition.kt")
   public void testSimpleScopeContextForPosition() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/simpleScopeContextForPosition.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("smartCastInAnonymousFunction.kt")
   public void testSmartCastInAnonymousFunction() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/smartCastInAnonymousFunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("smartCastInAnonymousFunctionInWhenEntry.kt")
   public void testSmartCastInAnonymousFunctionInWhenEntry() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/smartCastInAnonymousFunctionInWhenEntry.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("smartCastInWhenEntryCondition.kt")
   public void testSmartCastInWhenEntryCondition() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/smartCastInWhenEntryCondition.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("superTypeConstructor.kt")
   public void testSuperTypeConstructor() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/superTypeConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("superTypeConstructor_lambda.kt")
   public void testSuperTypeConstructor_lambda() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/superTypeConstructor_lambda.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("superTypeConstructor_nestedClasses.kt")
   public void testSuperTypeConstructor_nestedClasses() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/superTypeConstructor_nestedClasses.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("superTypeConstructor_nestedClasses_typeArgument.kt")
   public void testSuperTypeConstructor_nestedClasses_typeArgument() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/superTypeConstructor_nestedClasses_typeArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("superTypeDelegate.kt")
   public void testSuperTypeDelegate() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/superTypeDelegate.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("syntheticPropertiesScope.kt")
   public void testSyntheticPropertiesScope() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/syntheticPropertiesScope.kt");

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractMultiModuleResolveCallTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -41,18 +41,18 @@ public class FirIdeNormalAnalysisSourceModuleMultiModuleResolveCallTestGenerated
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInResolveCall() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("implicitTypeSubstituteOverrideFromOtherModule.kt")
   public void testImplicitTypeSubstituteOverrideFromOtherModule() {
     runTest("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/implicitTypeSubstituteOverrideFromOtherModule.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("unitTypeFromOtherModule.kt")
   public void testUnitTypeFromOtherModule() {
     runTest("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/unitTypeFromOtherModule.kt");
@@ -62,12 +62,12 @@ public class FirIdeNormalAnalysisSourceModuleMultiModuleResolveCallTestGenerated
   @TestMetadata("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/withTestCompilerPluginEnabled")
   @TestDataPath("$PROJECT_ROOT")
   public class WithTestCompilerPluginEnabled {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("annotationFromOtherModule.kt")
     public void testAnnotationFromOtherModule() {
       runTest("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/withTestCompilerPluginEnabled/annotationFromOtherModule.kt");

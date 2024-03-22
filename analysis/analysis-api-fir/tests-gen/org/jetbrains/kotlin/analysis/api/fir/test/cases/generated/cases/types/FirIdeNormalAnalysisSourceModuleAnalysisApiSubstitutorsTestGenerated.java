@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnalysisApiSubstitutorsTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,30 +40,30 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiSubstitutorsTestGenerate
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInTypeSubstitution() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/substitutors/typeSubstitution"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("directSubstitution.kt")
   public void testDirectSubstitution() {
     runTest("analysis/analysis-api/testData/substitutors/typeSubstitution/directSubstitution.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("emptySubstitution.kt")
   public void testEmptySubstitution() {
     runTest("analysis/analysis-api/testData/substitutors/typeSubstitution/emptySubstitution.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("notApplicableSubstitutor.kt")
   public void testNotApplicableSubstitutor() {
     runTest("analysis/analysis-api/testData/substitutors/typeSubstitution/notApplicableSubstitutor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("substitutionWithTypeParams.kt")
   public void testSubstitutionWithTypeParams() {
     runTest("analysis/analysis-api/testData/substitutors/typeSubstitution/substitutionWithTypeParams.kt");

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,186 +18,186 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/fileStructure")
 @TestDataPath("$PROJECT_ROOT")
 public class ScriptFileStructureTestGenerated extends AbstractScriptFileStructureTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInFileStructure() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/fileStructure"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classMemberPropertyScript.kts")
   public void testClassMemberPropertyScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/classMemberPropertyScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classScript.kts")
   public void testClassScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/classScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorsScript.kts")
   public void testConstructorsScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/constructorsScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("danglingAnnotationClassLevelScript.kts")
   public void testDanglingAnnotationClassLevelScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationClassLevelScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("declarationsInPropertyInitScript.kts")
   public void testDeclarationsInPropertyInitScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/declarationsInPropertyInitScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("destructuring.kts")
   public void testDestructuring() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/destructuring.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumClassScript.kts")
   public void testEnumClassScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/enumClassScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumClassWithBodyScript.kts")
   public void testEnumClassWithBodyScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/enumClassWithBodyScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionWithImplicitTypeAndFunctionInsideLocalClassScript.kts")
   public void testFunctionWithImplicitTypeAndFunctionInsideLocalClassScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/functionWithImplicitTypeAndFunctionInsideLocalClassScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionWithImplicitTypeAndFunctionInsideScript.kts")
   public void testFunctionWithImplicitTypeAndFunctionInsideScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/functionWithImplicitTypeAndFunctionInsideScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionWithImplicitTypeAndPropertyInsideScript.kts")
   public void testFunctionWithImplicitTypeAndPropertyInsideScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/functionWithImplicitTypeAndPropertyInsideScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("initBlockScript.kts")
   public void testInitBlockScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/initBlockScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localClassScript.kts")
   public void testLocalClassScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/localClassScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localFunScript.kts")
   public void testLocalFunScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/localFunScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localPropertyScript.kts")
   public void testLocalPropertyScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/localPropertyScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberTypeAliasScript.kts")
   public void testMemberTypeAliasScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/memberTypeAliasScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nestedClassesScript.kts")
   public void testNestedClassesScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/nestedClassesScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyAccessorsScript.kts")
   public void testPropertyAccessorsScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/propertyAccessorsScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyWithImplicitTypeAndAnnotationsInsideLocalClassScript.kts")
   public void testPropertyWithImplicitTypeAndAnnotationsInsideLocalClassScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/propertyWithImplicitTypeAndAnnotationsInsideLocalClassScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyWithImplicitTypeAndFieldAnnotationsInsideLocalClassScript.kts")
   public void testPropertyWithImplicitTypeAndFieldAnnotationsInsideLocalClassScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/propertyWithImplicitTypeAndFieldAnnotationsInsideLocalClassScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("script.kts")
   public void testScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/script.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("secondLevelFunction.kts")
   public void testSecondLevelFunction() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/secondLevelFunction.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("secondLevelFunction2.kts")
   public void testSecondLevelFunction2() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/secondLevelFunction2.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("superClassCallScript.kts")
   public void testSuperClassCallScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/superClassCallScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelExpressionBodyFunWithTypeScript.kts")
   public void testTopLevelExpressionBodyFunWithTypeScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/topLevelExpressionBodyFunWithTypeScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelExpressionBodyFunWithoutTypeScript.kts")
   public void testTopLevelExpressionBodyFunWithoutTypeScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/topLevelExpressionBodyFunWithoutTypeScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelFunWithTypeScript.kts")
   public void testTopLevelFunWithTypeScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/topLevelFunWithTypeScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelPropertyScript.kts")
   public void testTopLevelPropertyScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/topLevelPropertyScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelUnitFunScript.kts")
   public void testTopLevelUnitFunScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/topLevelUnitFunScript.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("withoutNameScript.kts")
   public void testWithoutNameScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/withoutNameScript.kts");

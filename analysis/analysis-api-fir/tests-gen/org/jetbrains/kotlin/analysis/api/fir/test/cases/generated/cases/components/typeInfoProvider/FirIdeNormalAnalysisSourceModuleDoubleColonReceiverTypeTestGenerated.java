@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInfoProvider.AbstractDoubleColonReceiverTypeTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,72 +40,72 @@ public class FirIdeNormalAnalysisSourceModuleDoubleColonReceiverTypeTestGenerate
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInDoubleColonReceiverType() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("getClass_primitive.kt")
   public void testGetClass_primitive() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/getClass_primitive.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("getClass_type.kt")
   public void testGetClass_type() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/getClass_type.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("getClass_variable.kt")
   public void testGetClass_variable() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/getClass_variable.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("methodReference_java.kt")
   public void testMethodReference_java() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/methodReference_java.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("methodReference_type.kt")
   public void testMethodReference_type() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/methodReference_type.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("methodReference_typeArgument.kt")
   public void testMethodReference_typeArgument() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/methodReference_typeArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("methodReference_typeArgument_startProjection.kt")
   public void testMethodReference_typeArgument_startProjection() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/methodReference_typeArgument_startProjection.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("methodReference_variable.kt")
   public void testMethodReference_variable() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/methodReference_variable.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nullableType.kt")
   public void testNullableType() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/nullableType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("outerThisReceiver.kt")
   public void testOuterThisReceiver() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/outerThisReceiver.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("thisReceiver.kt")
   public void testThisReceiver() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/thisReceiver.kt");

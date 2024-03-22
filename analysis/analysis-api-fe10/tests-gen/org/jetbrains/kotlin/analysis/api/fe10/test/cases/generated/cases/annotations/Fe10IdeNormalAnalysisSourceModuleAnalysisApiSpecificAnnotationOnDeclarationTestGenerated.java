@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiSpecificAnnotationOnDeclarationTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,66 +40,66 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiSpecificAnnotationOnDec
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInSpecificAnnotations() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/specificAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaTargetAnnotationWithEmptyArguments.kt")
   public void testJavaTargetAnnotationWithEmptyArguments() {
     runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithEmptyArguments.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaTargetAnnotationWithOneArgument.kt")
   public void testJavaTargetAnnotationWithOneArgument() {
     runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithOneArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaTargetAnnotationWithOneArgumentAsImport.kt")
   public void testJavaTargetAnnotationWithOneArgumentAsImport() {
     runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithOneArgumentAsImport.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaTargetAnnotationWithSeveralArguments.kt")
   public void testJavaTargetAnnotationWithSeveralArguments() {
     runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithSeveralArguments.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaTargetAnnotationWithoutArguments.kt")
   public void testJavaTargetAnnotationWithoutArguments() {
     runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithoutArguments.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("targetAnnotationWithEmptyArguments.kt")
   public void testTargetAnnotationWithEmptyArguments() {
     runTest("analysis/analysis-api/testData/annotations/specificAnnotations/targetAnnotationWithEmptyArguments.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("targetAnnotationWithOneArgument.kt")
   public void testTargetAnnotationWithOneArgument() {
     runTest("analysis/analysis-api/testData/annotations/specificAnnotations/targetAnnotationWithOneArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("targetAnnotationWithOneArgumentAsImport.kt")
   public void testTargetAnnotationWithOneArgumentAsImport() {
     runTest("analysis/analysis-api/testData/annotations/specificAnnotations/targetAnnotationWithOneArgumentAsImport.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("targetAnnotationWithSeveralArguments.kt")
   public void testTargetAnnotationWithSeveralArguments() {
     runTest("analysis/analysis-api/testData/annotations/specificAnnotations/targetAnnotationWithSeveralArguments.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("targetAnnotationWithoutArguments.kt")
   public void testTargetAnnotationWithoutArguments() {
     runTest("analysis/analysis-api/testData/annotations/specificAnnotations/targetAnnotationWithoutArguments.kt");

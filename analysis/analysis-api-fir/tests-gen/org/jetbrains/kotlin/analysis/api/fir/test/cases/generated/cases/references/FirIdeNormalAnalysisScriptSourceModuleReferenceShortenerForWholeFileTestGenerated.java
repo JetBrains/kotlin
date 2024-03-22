@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerForWholeFileTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,24 +40,24 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceShortenerForWholeFil
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInShortenWholeFile() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callInsideScriptExpression.kts")
   public void testCallInsideScriptExpression() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/callInsideScriptExpression.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("scriptFileWithImportStatement.kts")
   public void testScriptFileWithImportStatement() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/scriptFileWithImportStatement.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("scriptFileWithoutImportStatements.kts")
   public void testScriptFileWithoutImportStatements() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/scriptFileWithoutImportStatements.kts");

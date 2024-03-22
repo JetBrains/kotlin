@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -22,7 +22,7 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
   @TestMetadata("compiler/testData/loadJava/compiledKotlin")
   @TestDataPath("$PROJECT_ROOT")
   public class CompiledKotlin {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInCompiledKotlin() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
@@ -31,72 +31,72 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations")
     @TestDataPath("$PROJECT_ROOT")
     public class Annotations {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInAnnotations() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("AnnotatedAnnotation.kt")
       public void testAnnotatedAnnotation() {
         runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotatedAnnotation.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("AnnotatedMethod.kt")
       public void testAnnotatedMethod() {
         runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotatedMethod.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("AnnotationInArray.kt")
       public void testAnnotationInArray() {
         runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationInArray.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("AnnotationOnTypeParameter.kt")
       public void testAnnotationOnTypeParameter() {
         runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationOnTypeParameter.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("AnnotationWithVarargParam.kt")
       public void testAnnotationWithVarargParam() {
         runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationWithVarargParam.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassLiteralArguments.kt")
       public void testClassLiteralArguments() {
         runTest("compiler/testData/loadJava/compiledKotlin/annotations/ClassLiteralArguments.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("MultiDimensionalArrayMethod.kt")
       public void testMultiDimensionalArrayMethod() {
         runTest("compiler/testData/loadJava/compiledKotlin/annotations/MultiDimensionalArrayMethod.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("PrimitiveArrayArguments.kt")
       public void testPrimitiveArrayArguments() {
         runTest("compiler/testData/loadJava/compiledKotlin/annotations/PrimitiveArrayArguments.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("SelfReferentialAnnotation.kt")
       public void testSelfReferentialAnnotation() {
         runTest("compiler/testData/loadJava/compiledKotlin/annotations/SelfReferentialAnnotation.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("SimpleAnnotation.kt")
       public void testSimpleAnnotation() {
         runTest("compiler/testData/loadJava/compiledKotlin/annotations/SimpleAnnotation.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("TargetedAnnotation.kt")
       public void testTargetedAnnotation() {
         runTest("compiler/testData/loadJava/compiledKotlin/annotations/TargetedAnnotation.kt");
@@ -106,60 +106,60 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers")
       @TestDataPath("$PROJECT_ROOT")
       public class ClassMembers {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInClassMembers() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/classMembers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ClassObjectPropertyField.kt")
         public void testClassObjectPropertyField() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/ClassObjectPropertyField.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("Constructor.kt")
         public void testConstructor() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Constructor.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("DelegatedProperty.kt")
         public void testDelegatedProperty() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/DelegatedProperty.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("Function.kt")
         public void testFunction() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Function.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("Getter.kt")
         public void testGetter() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Getter.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("HiddenConstructorWithInlineClassParameters.kt")
         public void testHiddenConstructorWithInlineClassParameters() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/HiddenConstructorWithInlineClassParameters.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("PropertyField.kt")
         public void testPropertyField() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/PropertyField.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("PublishedApiAnnotationOnInlineClassCosntructor.kt")
         public void testPublishedApiAnnotationOnInlineClassCosntructor() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/PublishedApiAnnotationOnInlineClassCosntructor.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("Setter.kt")
         public void testSetter() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Setter.kt");
@@ -170,90 +170,90 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes")
       @TestDataPath("$PROJECT_ROOT")
       public class Classes {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInClasses() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/classes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("AnnotationInClassObject.kt")
         public void testAnnotationInClassObject() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/AnnotationInClassObject.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ClassInClassObject.kt")
         public void testClassInClassObject() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/ClassInClassObject.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ClassObject.kt")
         public void testClassObject() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/ClassObject.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ClassObjectInStaticNestedClass.kt")
         public void testClassObjectInStaticNestedClass() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/ClassObjectInStaticNestedClass.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("DataClass.kt")
         public void testDataClass() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/DataClass.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("Deprecated.kt")
         public void testDeprecated() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/Deprecated.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("DollarsInAnnotationName.kt")
         public void testDollarsInAnnotationName() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/DollarsInAnnotationName.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("MultipleAnnotations.kt")
         public void testMultipleAnnotations() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/MultipleAnnotations.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("NestedAnnotation.kt")
         public void testNestedAnnotation() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/NestedAnnotation.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("NestedClass.kt")
         public void testNestedClass() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/NestedClass.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("Retention.kt")
         public void testRetention() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/Retention.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("Simple.kt")
         public void testSimple() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/Simple.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("WithArgument.kt")
         public void testWithArgument() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/WithArgument.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("WithMultipleArguments.kt")
         public void testWithMultipleArguments() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/WithMultipleArguments.kt");
@@ -264,42 +264,42 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers")
       @TestDataPath("$PROJECT_ROOT")
       public class PackageMembers {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInPackageMembers() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("DelegatedProperty.kt")
         public void testDelegatedProperty() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/DelegatedProperty.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("Function.kt")
         public void testFunction() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/Function.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("Getter.kt")
         public void testGetter() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/Getter.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("PropertyField.kt")
         public void testPropertyField() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/PropertyField.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("Setter.kt")
         public void testSetter() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/Setter.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("StringArrayArgument.kt")
         public void testStringArrayArgument() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/StringArrayArgument.kt");
@@ -310,72 +310,72 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters")
       @TestDataPath("$PROJECT_ROOT")
       public class Parameters {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInParameters() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/parameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("Constructor.kt")
         public void testConstructor() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/Constructor.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ExtensionFunction.kt")
         public void testExtensionFunction() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/ExtensionFunction.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ExtensionFunctionInClass.kt")
         public void testExtensionFunctionInClass() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/ExtensionFunctionInClass.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ExtensionPropertySetter.kt")
         public void testExtensionPropertySetter() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/ExtensionPropertySetter.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("FunctionInClass.kt")
         public void testFunctionInClass() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/FunctionInClass.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("FunctionInTrait.kt")
         public void testFunctionInTrait() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/FunctionInTrait.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("InnerClassConstructor.kt")
         public void testInnerClassConstructor() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/InnerClassConstructor.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ManyAnnotations.kt")
         public void testManyAnnotations() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/ManyAnnotations.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("PropertySetterInClass.kt")
         public void testPropertySetterInClass() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/PropertySetterInClass.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("TopLevelFunction.kt")
         public void testTopLevelFunction() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/TopLevelFunction.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("TopLevelPropertySetter.kt")
         public void testTopLevelPropertySetter() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/TopLevelPropertySetter.kt");
@@ -386,54 +386,54 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields")
       @TestDataPath("$PROJECT_ROOT")
       public class PropertiesWithoutBackingFields {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInPropertiesWithoutBackingFields() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("Class.kt")
         public void testClass() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/Class.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ClassObject.kt")
         public void testClassObject() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/ClassObject.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ExtensionsWithSameNameClass.kt")
         public void testExtensionsWithSameNameClass() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/ExtensionsWithSameNameClass.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ExtensionsWithSameNamePackage.kt")
         public void testExtensionsWithSameNamePackage() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/ExtensionsWithSameNamePackage.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("NestedTrait.kt")
         public void testNestedTrait() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/NestedTrait.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("TopLevel.kt")
         public void testTopLevel() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/TopLevel.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("Trait.kt")
         public void testTrait() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/Trait.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("TraitClassObject.kt")
         public void testTraitClassObject() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/TraitClassObject.kt");
@@ -444,66 +444,66 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types")
       @TestDataPath("$PROJECT_ROOT")
       public class Types {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInTypes() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/types"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ClassLiteralArgument.kt")
         public void testClassLiteralArgument() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/ClassLiteralArgument.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("DefinitelyNotNull.kt")
         public void testDefinitelyNotNull() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/DefinitelyNotNull.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ReceiverParameter.kt")
         public void testReceiverParameter() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/ReceiverParameter.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("SimpleTypeAnnotation.kt")
         public void testSimpleTypeAnnotation() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/SimpleTypeAnnotation.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("SourceRetention.kt")
         public void testSourceRetention() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/SourceRetention.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("SupertypesAndBounds.kt")
         public void testSupertypesAndBounds() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/SupertypesAndBounds.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("TypeAnnotationWithArguments.kt")
         public void testTypeAnnotationWithArguments() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeAnnotationWithArguments.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("TypeArgument.kt")
         public void testTypeArgument() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeArgument.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("TypeParameterAnnotation.kt")
         public void testTypeParameterAnnotation() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeParameterAnnotation.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("TypeParameterAnnotationWithArguments.kt")
         public void testTypeParameterAnnotationWithArguments() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeParameterAnnotationWithArguments.kt");
@@ -514,30 +514,30 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget")
       @TestDataPath("$PROJECT_ROOT")
       public class WithUseSiteTarget {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInWithUseSiteTarget() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("DelegateTarget.kt")
         public void testDelegateTarget() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/DelegateTarget.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("FieldTarget.kt")
         public void testFieldTarget() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/FieldTarget.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("PropertyAndAccessor.kt")
         public void testPropertyAndAccessor() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/PropertyAndAccessor.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ReceiverTarget.kt")
         public void testReceiverTarget() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/ReceiverTarget.kt");
@@ -549,192 +549,192 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/class")
     @TestDataPath("$PROJECT_ROOT")
     public class Class {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInClass() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/class"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Class.kt")
       public void testClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/Class.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassInParam.kt")
       public void testClassInParam() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/ClassInParam.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassInnerClass.kt")
       public void testClassInnerClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/ClassInnerClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassMemberConflict.kt")
       public void testClassMemberConflict() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/ClassMemberConflict.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassOutParam.kt")
       public void testClassOutParam() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/ClassOutParam.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassParam.kt")
       public void testClassParam() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/ClassParam.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassParamReferencesParam.kt")
       public void testClassParamReferencesParam() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/ClassParamReferencesParam.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassParamReferencesParam2.kt")
       public void testClassParamReferencesParam2() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/ClassParamReferencesParam2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassParamReferencesSelf.kt")
       public void testClassParamReferencesSelf() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/ClassParamReferencesSelf.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassTwoParams.kt")
       public void testClassTwoParams() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/ClassTwoParams.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassTwoParams2.kt")
       public void testClassTwoParams2() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/ClassTwoParams2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("FunInterface.kt")
       public void testFunInterface() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/FunInterface.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("InheritClassSimple.kt")
       public void testInheritClassSimple() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/InheritClassSimple.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("InheritSubstitutedMethod.kt")
       public void testInheritSubstitutedMethod() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/InheritSubstitutedMethod.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("InheritTraitWithFunctionParam.kt")
       public void testInheritTraitWithFunctionParam() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/InheritTraitWithFunctionParam.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("InnerClassExtendInnerClass.kt")
       public void testInnerClassExtendInnerClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/InnerClassExtendInnerClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("InnerGenericClass.kt")
       public void testInnerGenericClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/InnerGenericClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("InnerTypes.kt")
       public void testInnerTypes() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/InnerTypes.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("NamedObject.kt")
       public void testNamedObject() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/NamedObject.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("NamedObjectInClass.kt")
       public void testNamedObjectInClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/NamedObjectInClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("NamedObjectInClassObject.kt")
       public void testNamedObjectInClassObject() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/NamedObjectInClassObject.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("NamedObjectInNamedObject.kt")
       public void testNamedObjectInNamedObject() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/NamedObjectInNamedObject.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("NamedObjectWithAnotherTopLevelProperty.kt")
       public void testNamedObjectWithAnotherTopLevelProperty() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/NamedObjectWithAnotherTopLevelProperty.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("NestedClass.kt")
       public void testNestedClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/NestedClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("NestedClassExtendNestedClass.kt")
       public void testNestedClassExtendNestedClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/NestedClassExtendNestedClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("NestedGenericClass.kt")
       public void testNestedGenericClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/NestedGenericClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("RecursiveGeneric.kt")
       public void testRecursiveGeneric() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/RecursiveGeneric.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("SealedClass.kt")
       public void testSealedClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/SealedClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("SealedInterface.kt")
       public void testSealedInterface() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/SealedInterface.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("SingleAbstractMethod.kt")
       public void testSingleAbstractMethod() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/SingleAbstractMethod.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Trait.kt")
       public void testTrait() {
         runTest("compiler/testData/loadJava/compiledKotlin/class/Trait.kt");
@@ -744,36 +744,36 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlin/class/javaBean")
       @TestDataPath("$PROJECT_ROOT")
       public class JavaBean {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInJavaBean() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/class/javaBean"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("DifferentGetterAndSetter.kt")
         public void testDifferentGetterAndSetter() {
           runTest("compiler/testData/loadJava/compiledKotlin/class/javaBean/DifferentGetterAndSetter.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("JavaBeanAbstractGetter.kt")
         public void testJavaBeanAbstractGetter() {
           runTest("compiler/testData/loadJava/compiledKotlin/class/javaBean/JavaBeanAbstractGetter.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("JavaBeanVal.kt")
         public void testJavaBeanVal() {
           runTest("compiler/testData/loadJava/compiledKotlin/class/javaBean/JavaBeanVal.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("JavaBeanVar.kt")
         public void testJavaBeanVar() {
           runTest("compiler/testData/loadJava/compiledKotlin/class/javaBean/JavaBeanVar.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("TwoSetters.kt")
         public void testTwoSetters() {
           runTest("compiler/testData/loadJava/compiledKotlin/class/javaBean/TwoSetters.kt");
@@ -785,36 +785,36 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/classFun")
     @TestDataPath("$PROJECT_ROOT")
     public class ClassFun {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInClassFun() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/classFun"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassInParamUsedInFun.kt")
       public void testClassInParamUsedInFun() {
         runTest("compiler/testData/loadJava/compiledKotlin/classFun/ClassInParamUsedInFun.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassParamUsedInFun.kt")
       public void testClassParamUsedInFun() {
         runTest("compiler/testData/loadJava/compiledKotlin/classFun/ClassParamUsedInFun.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("FunDelegationToTraitImpl.kt")
       public void testFunDelegationToTraitImpl() {
         runTest("compiler/testData/loadJava/compiledKotlin/classFun/FunDelegationToTraitImpl.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("FunInParamSuper.kt")
       public void testFunInParamSuper() {
         runTest("compiler/testData/loadJava/compiledKotlin/classFun/FunInParamSuper.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("TraitOpenFun.kt")
       public void testTraitOpenFun() {
         runTest("compiler/testData/loadJava/compiledKotlin/classFun/TraitOpenFun.kt");
@@ -825,84 +825,84 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/classObject")
     @TestDataPath("$PROJECT_ROOT")
     public class ClassObject {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInClassObject() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/classObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassObjectDeclaresVal.kt")
       public void testClassObjectDeclaresVal() {
         runTest("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectDeclaresVal.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassObjectDeclaresVar.kt")
       public void testClassObjectDeclaresVar() {
         runTest("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectDeclaresVar.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassObjectDefaultVisibility.kt")
       public void testClassObjectDefaultVisibility() {
         runTest("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectDefaultVisibility.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassObjectExplicitVisibility.kt")
       public void testClassObjectExplicitVisibility() {
         runTest("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectExplicitVisibility.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassObjectExtendsTrait.kt")
       public void testClassObjectExtendsTrait() {
         runTest("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectExtendsTrait.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassObjectExtendsTraitWithTP.kt")
       public void testClassObjectExtendsTraitWithTP() {
         runTest("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectExtendsTraitWithTP.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("classObjectInClassStaticFields.kt")
       public void testClassObjectInClassStaticFields() {
         runTest("compiler/testData/loadJava/compiledKotlin/classObject/classObjectInClassStaticFields.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("classObjectInTraitStaticFields.kt")
       public void testClassObjectInTraitStaticFields() {
         runTest("compiler/testData/loadJava/compiledKotlin/classObject/classObjectInTraitStaticFields.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassObjectPropertyInClass.kt")
       public void testClassObjectPropertyInClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectPropertyInClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Delegation.kt")
       public void testDelegation() {
         runTest("compiler/testData/loadJava/compiledKotlin/classObject/Delegation.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("InnerClassInClassObject.kt")
       public void testInnerClassInClassObject() {
         runTest("compiler/testData/loadJava/compiledKotlin/classObject/InnerClassInClassObject.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("NamedClassObject.kt")
       public void testNamedClassObject() {
         runTest("compiler/testData/loadJava/compiledKotlin/classObject/NamedClassObject.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("SimpleClassObject.kt")
       public void testSimpleClassObject() {
         runTest("compiler/testData/loadJava/compiledKotlin/classObject/SimpleClassObject.kt");
@@ -913,90 +913,90 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/constructor")
     @TestDataPath("$PROJECT_ROOT")
     public class Constructor {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInConstructor() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/constructor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Constructor0.kt")
       public void testConstructor0() {
         runTest("compiler/testData/loadJava/compiledKotlin/constructor/Constructor0.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Constructor1.kt")
       public void testConstructor1() {
         runTest("compiler/testData/loadJava/compiledKotlin/constructor/Constructor1.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Constructor1WithParamDefaultValue.kt")
       public void testConstructor1WithParamDefaultValue() {
         runTest("compiler/testData/loadJava/compiledKotlin/constructor/Constructor1WithParamDefaultValue.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Constructor2WithOneParamDefaultValue.kt")
       public void testConstructor2WithOneParamDefaultValue() {
         runTest("compiler/testData/loadJava/compiledKotlin/constructor/Constructor2WithOneParamDefaultValue.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ConstructorCollectionParameter.kt")
       public void testConstructorCollectionParameter() {
         runTest("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorCollectionParameter.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ConstructorGenericSimple.kt")
       public void testConstructorGenericSimple() {
         runTest("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorGenericSimple.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ConstructorWithTwoDefArgs.kt")
       public void testConstructorWithTwoDefArgs() {
         runTest("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorWithTwoDefArgs.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ConstructorWithTwoTypeParameters.kt")
       public void testConstructorWithTwoTypeParameters() {
         runTest("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorWithTwoTypeParameters.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ConstructorWithTwoTypeParametersAndOneIntValueParameter.kt")
       public void testConstructorWithTwoTypeParametersAndOneIntValueParameter() {
         runTest("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorWithTwoTypeParametersAndOneIntValueParameter.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ConstructorWithTwoTypeParametersAndOnePValueParameter.kt")
       public void testConstructorWithTwoTypeParametersAndOnePValueParameter() {
         runTest("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorWithTwoTypeParametersAndOnePValueParameter.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ConstructorWithTypeParameter.kt")
       public void testConstructorWithTypeParameter() {
         runTest("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorWithTypeParameter.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ConstructorWithTypeParametersEAndOnePValueParameter.kt")
       public void testConstructorWithTypeParametersEAndOnePValueParameter() {
         runTest("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorWithTypeParametersEAndOnePValueParameter.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("InnerClassConstructorWithDefArgs.kt")
       public void testInnerClassConstructorWithDefArgs() {
         runTest("compiler/testData/loadJava/compiledKotlin/constructor/InnerClassConstructorWithDefArgs.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("PrivateConstructor1WithParamDefaultValue.kt")
       public void testPrivateConstructor1WithParamDefaultValue() {
         runTest("compiler/testData/loadJava/compiledKotlin/constructor/PrivateConstructor1WithParamDefaultValue.kt");
@@ -1006,18 +1006,18 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlin/constructor/vararg")
       @TestDataPath("$PROJECT_ROOT")
       public class Vararg {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInVararg() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/constructor/vararg"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ConstructorNonLastVararg.kt")
         public void testConstructorNonLastVararg() {
           runTest("compiler/testData/loadJava/compiledKotlin/constructor/vararg/ConstructorNonLastVararg.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ConstructorVararg.kt")
         public void testConstructorVararg() {
           runTest("compiler/testData/loadJava/compiledKotlin/constructor/vararg/ConstructorVararg.kt");
@@ -1029,12 +1029,12 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/contextReceivers")
     @TestDataPath("$PROJECT_ROOT")
     public class ContextReceivers {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInContextReceivers() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("SimpleContextReceivers.kt")
       public void testSimpleContextReceivers() {
         runTest("compiler/testData/loadJava/compiledKotlin/contextReceivers/SimpleContextReceivers.kt");
@@ -1045,18 +1045,18 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/coroutines")
     @TestDataPath("$PROJECT_ROOT")
     public class Coroutines {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInCoroutines() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Basic.kt")
       public void testBasic() {
         runTest("compiler/testData/loadJava/compiledKotlin/coroutines/Basic.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("TypeAliasFTSuspendWithReceiver.kt")
       public void testTypeAliasFTSuspendWithReceiver() {
         runTest("compiler/testData/loadJava/compiledKotlin/coroutines/TypeAliasFTSuspendWithReceiver.kt");
@@ -1067,30 +1067,30 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/dataClass")
     @TestDataPath("$PROJECT_ROOT")
     public class DataClass {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInDataClass() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/dataClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("MixedComponents.kt")
       public void testMixedComponents() {
         runTest("compiler/testData/loadJava/compiledKotlin/dataClass/MixedComponents.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("OneVal.kt")
       public void testOneVal() {
         runTest("compiler/testData/loadJava/compiledKotlin/dataClass/OneVal.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("TwoVals.kt")
       public void testTwoVals() {
         runTest("compiler/testData/loadJava/compiledKotlin/dataClass/TwoVals.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("TwoVars.kt")
       public void testTwoVars() {
         runTest("compiler/testData/loadJava/compiledKotlin/dataClass/TwoVars.kt");
@@ -1101,180 +1101,180 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava")
     @TestDataPath("$PROJECT_ROOT")
     public class FromLoadJava {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInFromLoadJava() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ArrayTypeVariance.kt")
       public void testArrayTypeVariance() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ArrayTypeVariance.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassObject.kt")
       public void testClassObject() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassObject.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("classObjectAnnotation.kt")
       public void testClassObjectAnnotation() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/classObjectAnnotation.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassWithConstVal.kt")
       public void testClassWithConstVal() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithConstVal.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassWithTypeP.kt")
       public void testClassWithTypeP() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithTypeP.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassWithTypePExtendsIterableP.kt")
       public void testClassWithTypePExtendsIterableP() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithTypePExtendsIterableP.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassWithTypePP.kt")
       public void testClassWithTypePP() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithTypePP.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassWithTypePRefNext.kt")
       public void testClassWithTypePRefNext() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithTypePRefNext.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassWithTypePRefSelf.kt")
       public void testClassWithTypePRefSelf() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithTypePRefSelf.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassWithTypePRefSelfAndClass.kt")
       public void testClassWithTypePRefSelfAndClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithTypePRefSelfAndClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("FieldAsVar.kt")
       public void testFieldAsVar() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/FieldAsVar.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("FinalFieldAsVal.kt")
       public void testFinalFieldAsVal() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/FinalFieldAsVal.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("genericFunction.kt")
       public void testGenericFunction() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/genericFunction.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("InheritMethodsDifferentReturnTypes.kt")
       public void testInheritMethodsDifferentReturnTypes() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/InheritMethodsDifferentReturnTypes.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("InheritMethodsDifferentReturnTypesGeneric.kt")
       public void testInheritMethodsDifferentReturnTypesGeneric() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/InheritMethodsDifferentReturnTypesGeneric.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("InnerClass.kt")
       public void testInnerClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/InnerClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("MethodWithTypeP.kt")
       public void testMethodWithTypeP() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/MethodWithTypeP.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("MethodWithTypePP.kt")
       public void testMethodWithTypePP() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/MethodWithTypePP.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("MethodWithTypePRefClassP.kt")
       public void testMethodWithTypePRefClassP() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/MethodWithTypePRefClassP.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("MethosWithPRefTP.kt")
       public void testMethosWithPRefTP() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/MethosWithPRefTP.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("MyException.kt")
       public void testMyException() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/MyException.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("NestedClass.kt")
       public void testNestedClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/NestedClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("objectInClass.kt")
       public void testObjectInClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/objectInClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("objectMembers.kt")
       public void testObjectMembers() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/objectMembers.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("packageLevelObject.kt")
       public void testPackageLevelObject() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/packageLevelObject.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("RemoveRedundantProjectionKind.kt")
       public void testRemoveRedundantProjectionKind() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/RemoveRedundantProjectionKind.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Simple.kt")
       public void testSimple() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/Simple.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("TwoFields.kt")
       public void testTwoFields() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/TwoFields.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("UnboundWildcard.kt")
       public void testUnboundWildcard() {
         runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/UnboundWildcard.kt");
@@ -1284,84 +1284,84 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature")
       @TestDataPath("$PROJECT_ROOT")
       public class KotlinSignature {
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("AllBoundsInWhen.kt")
         public void testAllBoundsInWhen() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/AllBoundsInWhen.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInKotlinSignature() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ArrayType.kt")
         public void testArrayType() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/ArrayType.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ConstructorWithNewTypeParams.kt")
         public void testConstructorWithNewTypeParams() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/ConstructorWithNewTypeParams.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ConstructorWithParentTypeParams.kt")
         public void testConstructorWithParentTypeParams() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/ConstructorWithParentTypeParams.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ConstructorWithoutParams.kt")
         public void testConstructorWithoutParams() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/ConstructorWithoutParams.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("CustomProjectionKind.kt")
         public void testCustomProjectionKind() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/CustomProjectionKind.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("MethodWithFunctionTypes.kt")
         public void testMethodWithFunctionTypes() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/MethodWithFunctionTypes.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("MethodWithGenerics.kt")
         public void testMethodWithGenerics() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/MethodWithGenerics.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("MethodWithMappedClasses.kt")
         public void testMethodWithMappedClasses() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/MethodWithMappedClasses.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("MethodWithVararg.kt")
         public void testMethodWithVararg() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/MethodWithVararg.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("PropertyArrayTypes.kt")
         public void testPropertyArrayTypes() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/PropertyArrayTypes.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("PropertySimpleType.kt")
         public void testPropertySimpleType() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/PropertySimpleType.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("StarProjection.kt")
         public void testStarProjection() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/StarProjection.kt");
@@ -1371,144 +1371,144 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error")
         @TestDataPath("$PROJECT_ROOT")
         public class Error {
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("AddingNullability.kt")
           public void testAddingNullability() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/AddingNullability.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           public void testAllFilesPresentInError() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("ConflictingProjectionKind.kt")
           public void testConflictingProjectionKind() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/ConflictingProjectionKind.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("ExplicitFieldGettersAndSetters.kt")
           public void testExplicitFieldGettersAndSetters() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/ExplicitFieldGettersAndSetters.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("NoFieldTypeRef.kt")
           public void testNoFieldTypeRef() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/NoFieldTypeRef.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("NotVarargReplacedWithVararg.kt")
           public void testNotVarargReplacedWithVararg() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/NotVarargReplacedWithVararg.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("RedundantProjectionKind.kt")
           public void testRedundantProjectionKind() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/RedundantProjectionKind.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("ReturnTypeMissing.kt")
           public void testReturnTypeMissing() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/ReturnTypeMissing.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("SyntaxError.kt")
           public void testSyntaxError() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/SyntaxError.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("SyntaxErrorInFieldAnnotation.kt")
           public void testSyntaxErrorInFieldAnnotation() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/SyntaxErrorInFieldAnnotation.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("VarargReplacedWithNotVararg.kt")
           public void testVarargReplacedWithNotVararg() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/VarargReplacedWithNotVararg.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("WrongFieldInitializer.kt")
           public void testWrongFieldInitializer() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongFieldInitializer.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("WrongFieldMutability.kt")
           public void testWrongFieldMutability() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongFieldMutability.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("WrongFieldName.kt")
           public void testWrongFieldName() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongFieldName.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("WrongMethodName.kt")
           public void testWrongMethodName() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongMethodName.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("WrongProjectionKind.kt")
           public void testWrongProjectionKind() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongProjectionKind.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("WrongReturnTypeStructure.kt")
           public void testWrongReturnTypeStructure() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongReturnTypeStructure.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("WrongTypeName1.kt")
           public void testWrongTypeName1() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongTypeName1.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("WrongTypeName2.kt")
           public void testWrongTypeName2() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongTypeName2.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("WrongTypeName3.kt")
           public void testWrongTypeName3() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongTypeName3.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("WrongTypeParametersCount.kt")
           public void testWrongTypeParametersCount() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongTypeParametersCount.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("WrongValueParameterStructure1.kt")
           public void testWrongValueParameterStructure1() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongValueParameterStructure1.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("WrongValueParameterStructure2.kt")
           public void testWrongValueParameterStructure2() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongValueParameterStructure2.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("WrongValueParametersCount.kt")
           public void testWrongValueParametersCount() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongValueParametersCount.kt");
@@ -1519,12 +1519,12 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation")
         @TestDataPath("$PROJECT_ROOT")
         public class Propagation {
-          @Test
+          @RepeatedTest(value = 3)
           public void testAllFilesPresentInPropagation() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("PropagateTypeArgumentNullable.kt")
           public void testPropagateTypeArgumentNullable() {
             runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/PropagateTypeArgumentNullable.kt");
@@ -1534,162 +1534,162 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
           @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter")
           @TestDataPath("$PROJECT_ROOT")
           public class Parameter {
-            @Test
+            @RepeatedTest(value = 3)
             public void testAllFilesPresentInParameter() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("ChangeProjectionKind1.kt")
             public void testChangeProjectionKind1() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/ChangeProjectionKind1.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("ChangeProjectionKind2.kt")
             public void testChangeProjectionKind2() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/ChangeProjectionKind2.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("DeeplySubstitutedClassParameter.kt")
             public void testDeeplySubstitutedClassParameter() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/DeeplySubstitutedClassParameter.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("DeeplySubstitutedClassParameter2.kt")
             public void testDeeplySubstitutedClassParameter2() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/DeeplySubstitutedClassParameter2.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritMutability.kt")
             public void testInheritMutability() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritMutability.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritNotVararg.kt")
             public void testInheritNotVararg() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritNotVararg.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritNotVarargInteger.kt")
             public void testInheritNotVarargInteger() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritNotVarargInteger.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritNotVarargNotNull.kt")
             public void testInheritNotVarargNotNull() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritNotVarargNotNull.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritNotVarargPrimitive.kt")
             public void testInheritNotVarargPrimitive() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritNotVarargPrimitive.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritNullability.kt")
             public void testInheritNullability() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritNullability.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritProjectionKind.kt")
             public void testInheritProjectionKind() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritProjectionKind.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritReadOnliness.kt")
             public void testInheritReadOnliness() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritReadOnliness.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritVararg.kt")
             public void testInheritVararg() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritVararg.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritVarargInteger.kt")
             public void testInheritVarargInteger() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritVarargInteger.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritVarargNotNull.kt")
             public void testInheritVarargNotNull() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritVarargNotNull.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritVarargPrimitive.kt")
             public void testInheritVarargPrimitive() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritVarargPrimitive.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("Kt3302.kt")
             public void testKt3302() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/Kt3302.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("MutableToReadOnly.kt")
             public void testMutableToReadOnly() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/MutableToReadOnly.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("NotNullToNullable.kt")
             public void testNotNullToNullable() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/NotNullToNullable.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("NullableToNotNull.kt")
             public void testNullableToNotNull() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/NullableToNotNull.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("NullableToNotNullKotlinSignature.kt")
             public void testNullableToNotNullKotlinSignature() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/NullableToNotNullKotlinSignature.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("OverrideWithErasedParameter.kt")
             public void testOverrideWithErasedParameter() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/OverrideWithErasedParameter.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("ReadOnlyToMutable.kt")
             public void testReadOnlyToMutable() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/ReadOnlyToMutable.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("SubclassFromGenericAndNot.kt")
             public void testSubclassFromGenericAndNot() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/SubclassFromGenericAndNot.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("SubstitutedClassParameter.kt")
             public void testSubstitutedClassParameter() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/SubstitutedClassParameter.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("SubstitutedClassParameters.kt")
             public void testSubstitutedClassParameters() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/SubstitutedClassParameters.kt");
@@ -1700,210 +1700,210 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
           @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return")
           @TestDataPath("$PROJECT_ROOT")
           public class Return {
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("AddNotNullJavaSubtype.kt")
             public void testAddNotNullJavaSubtype() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/AddNotNullJavaSubtype.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("AddNotNullSameJavaType.kt")
             public void testAddNotNullSameJavaType() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/AddNotNullSameJavaType.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("AddNullabilityJavaSubtype.kt")
             public void testAddNullabilityJavaSubtype() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/AddNullabilityJavaSubtype.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("AddNullabilitySameGenericType1.kt")
             public void testAddNullabilitySameGenericType1() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/AddNullabilitySameGenericType1.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("AddNullabilitySameGenericType2.kt")
             public void testAddNullabilitySameGenericType2() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/AddNullabilitySameGenericType2.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("AddNullabilitySameJavaType.kt")
             public void testAddNullabilitySameJavaType() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/AddNullabilitySameJavaType.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             public void testAllFilesPresentInReturn() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("CantMakeImmutableInSubclass.kt")
             public void testCantMakeImmutableInSubclass() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/CantMakeImmutableInSubclass.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("DeeplySubstitutedClassParameter.kt")
             public void testDeeplySubstitutedClassParameter() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/DeeplySubstitutedClassParameter.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("DeeplySubstitutedClassParameter2.kt")
             public void testDeeplySubstitutedClassParameter2() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/DeeplySubstitutedClassParameter2.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("HalfSubstitutedTypeParameters.kt")
             public void testHalfSubstitutedTypeParameters() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/HalfSubstitutedTypeParameters.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritNullabilityGenericSubclassSimple.kt")
             public void testInheritNullabilityGenericSubclassSimple() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritNullabilityGenericSubclassSimple.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritNullabilityJavaSubtype.kt")
             public void testInheritNullabilityJavaSubtype() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritNullabilityJavaSubtype.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritNullabilitySameGenericType.kt")
             public void testInheritNullabilitySameGenericType() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritNullabilitySameGenericType.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritNullabilitySameJavaType.kt")
             public void testInheritNullabilitySameJavaType() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritNullabilitySameJavaType.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritProjectionKind.kt")
             public void testInheritProjectionKind() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritProjectionKind.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritReadOnlinessOfArgument.kt")
             public void testInheritReadOnlinessOfArgument() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritReadOnlinessOfArgument.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritReadOnlinessSameClass.kt")
             public void testInheritReadOnlinessSameClass() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritReadOnlinessSameClass.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritReadOnlinessSubclass.kt")
             public void testInheritReadOnlinessSubclass() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritReadOnlinessSubclass.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("SameProjectionKind.kt")
             public void testSameProjectionKind() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/SameProjectionKind.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("SubclassFromGenericAndNot.kt")
             public void testSubclassFromGenericAndNot() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/SubclassFromGenericAndNot.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("SubclassOfCollection.kt")
             public void testSubclassOfCollection() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/SubclassOfCollection.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("SubclassOfMapEntry.kt")
             public void testSubclassOfMapEntry() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/SubclassOfMapEntry.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("SubstitutedClassParameter.kt")
             public void testSubstitutedClassParameter() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/SubstitutedClassParameter.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("SubstitutedClassParameters.kt")
             public void testSubstitutedClassParameters() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/SubstitutedClassParameters.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("TwoSuperclassesConflictingProjectionKinds.kt")
             public void testTwoSuperclassesConflictingProjectionKinds() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesConflictingProjectionKinds.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("TwoSuperclassesInvariantAndCovariantInferMutability.kt")
             public void testTwoSuperclassesInvariantAndCovariantInferMutability() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesInvariantAndCovariantInferMutability.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("TwoSuperclassesInvariantAndCovariantInferNullability.kt")
             public void testTwoSuperclassesInvariantAndCovariantInferNullability() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesInvariantAndCovariantInferNullability.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("TwoSuperclassesMutableAndNot.kt")
             public void testTwoSuperclassesMutableAndNot() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesMutableAndNot.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("TwoSuperclassesReturnJavaSubtype.kt")
             public void testTwoSuperclassesReturnJavaSubtype() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesReturnJavaSubtype.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("TwoSuperclassesReturnSameJavaType.kt")
             public void testTwoSuperclassesReturnSameJavaType() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesReturnSameJavaType.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("TwoSuperclassesSupplementNotNull.kt")
             public void testTwoSuperclassesSupplementNotNull() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesSupplementNotNull.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("TypeParamOfClass.kt")
             public void testTypeParamOfClass() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TypeParamOfClass.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("TypeParamOfClassSubstituted.kt")
             public void testTypeParamOfClassSubstituted() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TypeParamOfClassSubstituted.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("TypeParamOfFun.kt")
             public void testTypeParamOfFun() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TypeParamOfFun.kt");
@@ -1914,48 +1914,48 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
           @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter")
           @TestDataPath("$PROJECT_ROOT")
           public class TypeParameter {
-            @Test
+            @RepeatedTest(value = 3)
             public void testAllFilesPresentInTypeParameter() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritMutability.kt")
             public void testInheritMutability() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/InheritMutability.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritNullability.kt")
             public void testInheritNullability() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/InheritNullability.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("InheritReadOnliness.kt")
             public void testInheritReadOnliness() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/InheritReadOnliness.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("TwoSuperclasses.kt")
             public void testTwoSuperclasses() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/TwoSuperclasses.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("UseParameterAsUpperBound.kt")
             public void testUseParameterAsUpperBound() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/UseParameterAsUpperBound.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("UseParameterInUpperBound.kt")
             public void testUseParameterInUpperBound() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/UseParameterInUpperBound.kt");
             }
 
-            @Test
+            @RepeatedTest(value = 3)
             @TestMetadata("UseParameterInUpperBoundWithKotlinSignature.kt")
             public void testUseParameterInUpperBoundWithKotlinSignature() {
               runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/UseParameterInUpperBoundWithKotlinSignature.kt");
@@ -1968,24 +1968,24 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library")
       @TestDataPath("$PROJECT_ROOT")
       public class Library {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInLibrary() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("LoadIterable.kt")
         public void testLoadIterable() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library/LoadIterable.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("LoadIterator.kt")
         public void testLoadIterator() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library/LoadIterator.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("Max.kt")
         public void testMax() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library/Max.kt");
@@ -1996,7 +1996,7 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/modality")
       @TestDataPath("$PROJECT_ROOT")
       public class Modality {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInModality() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/modality"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
@@ -2006,36 +2006,36 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull")
       @TestDataPath("$PROJECT_ROOT")
       public class NotNull {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInNotNull() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("NotNullField.kt")
         public void testNotNullField() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull/NotNullField.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("NotNullIntArray.kt")
         public void testNotNullIntArray() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull/NotNullIntArray.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("NotNullMethod.kt")
         public void testNotNullMethod() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull/NotNullMethod.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("NotNullObjectArray.kt")
         public void testNotNullObjectArray() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull/NotNullObjectArray.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("NotNullParameter.kt")
         public void testNotNullParameter() {
           runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull/NotNullParameter.kt");
@@ -2047,66 +2047,66 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/fun")
     @TestDataPath("$PROJECT_ROOT")
     public class Fun {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInFun() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Assert.kt")
       public void testAssert() {
         runTest("compiler/testData/loadJava/compiledKotlin/fun/Assert.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("DeclaredMemberOverridesDelegated.kt")
       public void testDeclaredMemberOverridesDelegated() {
         runTest("compiler/testData/loadJava/compiledKotlin/fun/DeclaredMemberOverridesDelegated.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("InfixKeyword.kt")
       public void testInfixKeyword() {
         runTest("compiler/testData/loadJava/compiledKotlin/fun/InfixKeyword.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("InheritMethodsDifferentReturnTypesAndVisibilities.kt")
       public void testInheritMethodsDifferentReturnTypesAndVisibilities() {
         runTest("compiler/testData/loadJava/compiledKotlin/fun/InheritMethodsDifferentReturnTypesAndVisibilities.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("InheritValAndVar.kt")
       public void testInheritValAndVar() {
         runTest("compiler/testData/loadJava/compiledKotlin/fun/InheritValAndVar.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("InheritValsDifferentTypes.kt")
       public void testInheritValsDifferentTypes() {
         runTest("compiler/testData/loadJava/compiledKotlin/fun/InheritValsDifferentTypes.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("NoSamConstructor.kt")
       public void testNoSamConstructor() {
         runTest("compiler/testData/loadJava/compiledKotlin/fun/NoSamConstructor.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("OperatorKeyword.kt")
       public void testOperatorKeyword() {
         runTest("compiler/testData/loadJava/compiledKotlin/fun/OperatorKeyword.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("PropagateDeepSubclass.kt")
       public void testPropagateDeepSubclass() {
         runTest("compiler/testData/loadJava/compiledKotlin/fun/PropagateDeepSubclass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("PropagateSubclassOfComparable.kt")
       public void testPropagateSubclassOfComparable() {
         runTest("compiler/testData/loadJava/compiledKotlin/fun/PropagateSubclassOfComparable.kt");
@@ -2116,48 +2116,48 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables")
       @TestDataPath("$PROJECT_ROOT")
       public class GenericWithTypeVariables {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInGenericWithTypeVariables() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("FunGenericParam.kt")
         public void testFunGenericParam() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunGenericParam.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("FunParamParam.kt")
         public void testFunParamParam() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamParam.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("FunParamParamErased.kt")
         public void testFunParamParamErased() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamParamErased.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("FunParamReferencesParam.kt")
         public void testFunParamReferencesParam() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamReferencesParam.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("FunParamTwoUpperBounds.kt")
         public void testFunParamTwoUpperBounds() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamTwoUpperBounds.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("FunParamVaragParam.kt")
         public void testFunParamVaragParam() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamVaragParam.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("FunTwoTypeParams.kt")
         public void testFunTwoTypeParams() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunTwoTypeParams.kt");
@@ -2168,30 +2168,30 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables")
       @TestDataPath("$PROJECT_ROOT")
       public class GenericWithoutTypeVariables {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInGenericWithoutTypeVariables() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("FunClassParamNotNull.kt")
         public void testFunClassParamNotNull() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables/FunClassParamNotNull.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("FunClassParamNullable.kt")
         public void testFunClassParamNullable() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables/FunClassParamNullable.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ReturnTypeClassParamNotNull.kt")
         public void testReturnTypeClassParamNotNull() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables/ReturnTypeClassParamNotNull.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ReturnTypeClassParamNullable.kt")
         public void testReturnTypeClassParamNullable() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables/ReturnTypeClassParamNullable.kt");
@@ -2202,78 +2202,78 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric")
       @TestDataPath("$PROJECT_ROOT")
       public class NonGeneric {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInNonGeneric() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ClassFun.kt")
         public void testClassFun() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ClassFun.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ClassFunGetFoo.kt")
         public void testClassFunGetFoo() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ClassFunGetFoo.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ClassFunGetFooSetFoo.kt")
         public void testClassFunGetFooSetFoo() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ClassFunGetFooSetFoo.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ClassFunSetFoo.kt")
         public void testClassFunSetFoo() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ClassFunSetFoo.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ExtFun.kt")
         public void testExtFun() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ExtFun.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ExtFunInClass.kt")
         public void testExtFunInClass() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ExtFunInClass.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("FunDefaultArg.kt")
         public void testFunDefaultArg() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/FunDefaultArg.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("FunVarargInt.kt")
         public void testFunVarargInt() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/FunVarargInt.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ModifierAbstract.kt")
         public void testModifierAbstract() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ModifierAbstract.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ModifierOpen.kt")
         public void testModifierOpen() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ModifierOpen.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("NsFun.kt")
         public void testNsFun() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/NsFun.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("NsFunGetFoo.kt")
         public void testNsFunGetFoo() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/NsFunGetFoo.kt");
@@ -2284,24 +2284,24 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlin/fun/vararg")
       @TestDataPath("$PROJECT_ROOT")
       public class Vararg {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInVararg() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/vararg"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("nonLastVararg.kt")
         public void testNonLastVararg() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/vararg/nonLastVararg.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("VarargInt.kt")
         public void testVarargInt() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/vararg/VarargInt.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("VarargString.kt")
         public void testVarargString() {
           runTest("compiler/testData/loadJava/compiledKotlin/fun/vararg/VarargString.kt");
@@ -2313,12 +2313,12 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/inline")
     @TestDataPath("$PROJECT_ROOT")
     public class Inline {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInInline() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/inline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineFunction.kt")
       public void testInlineFunction() {
         runTest("compiler/testData/loadJava/compiledKotlin/inline/inlineFunction.kt");
@@ -2329,36 +2329,36 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder")
     @TestDataPath("$PROJECT_ROOT")
     public class MemberOrder {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInMemberOrder() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/memberOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("callablesNameClash.kt")
       public void testCallablesNameClash() {
         runTest("compiler/testData/loadJava/compiledKotlin/memberOrder/callablesNameClash.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("extensionMembers.kt")
       public void testExtensionMembers() {
         runTest("compiler/testData/loadJava/compiledKotlin/memberOrder/extensionMembers.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("extensionPropertiesNameClash.kt")
       public void testExtensionPropertiesNameClash() {
         runTest("compiler/testData/loadJava/compiledKotlin/memberOrder/extensionPropertiesNameClash.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("innerClasses.kt")
       public void testInnerClasses() {
         runTest("compiler/testData/loadJava/compiledKotlin/memberOrder/innerClasses.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("topLevelCallables.kt")
       public void testTopLevelCallables() {
         runTest("compiler/testData/loadJava/compiledKotlin/memberOrder/topLevelCallables.kt");
@@ -2369,24 +2369,24 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/nestedClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class NestedClasses {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInNestedClasses() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/nestedClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("deepInnerGeneric.kt")
       public void testDeepInnerGeneric() {
         runTest("compiler/testData/loadJava/compiledKotlin/nestedClasses/deepInnerGeneric.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("innerClassReferencesOuterTP.kt")
       public void testInnerClassReferencesOuterTP() {
         runTest("compiler/testData/loadJava/compiledKotlin/nestedClasses/innerClassReferencesOuterTP.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("membersReferenceOuterTP.kt")
       public void testMembersReferenceOuterTP() {
         runTest("compiler/testData/loadJava/compiledKotlin/nestedClasses/membersReferenceOuterTP.kt");
@@ -2397,7 +2397,7 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/platformTypes")
     @TestDataPath("$PROJECT_ROOT")
     public class PlatformTypes {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInPlatformTypes() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/platformTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
@@ -2407,192 +2407,192 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/prop")
     @TestDataPath("$PROJECT_ROOT")
     public class Prop {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInProp() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/prop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassVal.kt")
       public void testClassVal() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/ClassVal.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassValAbstract.kt")
       public void testClassValAbstract() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/ClassValAbstract.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ClassVar.kt")
       public void testClassVar() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/ClassVar.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("CollectionSize.kt")
       public void testCollectionSize() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/CollectionSize.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Const.kt")
       public void testConst() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/Const.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Constants.kt")
       public void testConstants() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/Constants.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ExtValInClass.kt")
       public void testExtValInClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtValInClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ExtValInt.kt")
       public void testExtValInt() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtValInt.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ExtValIntCharSequence.kt")
       public void testExtValIntCharSequence() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtValIntCharSequence.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ExtValIntCharSequenceQ.kt")
       public void testExtValIntCharSequenceQ() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtValIntCharSequenceQ.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ExtValIntTInClass.kt")
       public void testExtValIntTInClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtValIntTInClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ExtValIntTQInClass.kt")
       public void testExtValIntTQInClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtValIntTQInClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ExtValTIntInClass.kt")
       public void testExtValTIntInClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtValTIntInClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ExtVarInClass.kt")
       public void testExtVarInClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtVarInClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ExtVarInt.kt")
       public void testExtVarInt() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtVarInt.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ExtVarIntTInClass.kt")
       public void testExtVarIntTInClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtVarIntTInClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ExtVarIntTQInClass.kt")
       public void testExtVarIntTQInClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtVarIntTQInClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ExtVarMapPQInt.kt")
       public void testExtVarMapPQInt() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtVarMapPQInt.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ExtVarTIntInClass.kt")
       public void testExtVarTIntInClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtVarTIntInClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ExtVarTQIntInClass.kt")
       public void testExtVarTQIntInClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtVarTQIntInClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ExtVarl.kt")
       public void testExtVarl() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtVarl.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("nonConstValWithConstantValueAttribute.kt")
       public void testNonConstValWithConstantValueAttribute() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/nonConstValWithConstantValueAttribute.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("NsVal.kt")
       public void testNsVal() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/NsVal.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("NsVar.kt")
       public void testNsVar() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/NsVar.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("OverrideClassVal.kt")
       public void testOverrideClassVal() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/OverrideClassVal.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("OverrideTraitVal.kt")
       public void testOverrideTraitVal() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/OverrideTraitVal.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("PropFromSuperclass.kt")
       public void testPropFromSuperclass() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/PropFromSuperclass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("TraitFinalVar.kt")
       public void testTraitFinalVar() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/TraitFinalVar.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("TraitOpenVal.kt")
       public void testTraitOpenVal() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/TraitOpenVal.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("VarDelegationToTraitImpl.kt")
       public void testVarDelegationToTraitImpl() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/VarDelegationToTraitImpl.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("VarWithDelegated.kt")
       public void testVarWithDelegated() {
         runTest("compiler/testData/loadJava/compiledKotlin/prop/VarWithDelegated.kt");
@@ -2602,7 +2602,7 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors")
       @TestDataPath("$PROJECT_ROOT")
       public class DefaultAccessors {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInDefaultAccessors() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
@@ -2613,126 +2613,126 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/type")
     @TestDataPath("$PROJECT_ROOT")
     public class Type {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInType() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/type"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Any.kt")
       public void testAny() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/Any.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("AnyQ.kt")
       public void testAnyQ() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/AnyQ.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ArrayOfInNumber.kt")
       public void testArrayOfInNumber() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/ArrayOfInNumber.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ArrayOfInt.kt")
       public void testArrayOfInt() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/ArrayOfInt.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ArrayOfOutNumber.kt")
       public void testArrayOfOutNumber() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/ArrayOfOutNumber.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ArrayOfOutT.kt")
       public void testArrayOfOutT() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/ArrayOfOutT.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ArrayOfString.kt")
       public void testArrayOfString() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/ArrayOfString.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Function1IntString.kt")
       public void testFunction1IntString() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/Function1IntString.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Int.kt")
       public void testInt() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/Int.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("IntArray.kt")
       public void testIntArray() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/IntArray.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("IntQ.kt")
       public void testIntQ() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/IntQ.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ListOfAny.kt")
       public void testListOfAny() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/ListOfAny.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ListOfAnyQ.kt")
       public void testListOfAnyQ() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/ListOfAnyQ.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ListOfStar.kt")
       public void testListOfStar() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/ListOfStar.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Nothing.kt")
       public void testNothing() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/Nothing.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("NothingQ.kt")
       public void testNothingQ() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/NothingQ.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("String.kt")
       public void testString() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/String.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("StringQ.kt")
       public void testStringQ() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/StringQ.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("SuspendFunction.kt")
       public void testSuspendFunction() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/SuspendFunction.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Unit.kt")
       public void testUnit() {
         runTest("compiler/testData/loadJava/compiledKotlin/type/Unit.kt");
@@ -2743,30 +2743,30 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/typealias")
     @TestDataPath("$PROJECT_ROOT")
     public class Typealias {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInTypealias() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/typealias"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Annotations.kt")
       public void testAnnotations() {
         runTest("compiler/testData/loadJava/compiledKotlin/typealias/Annotations.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Basic.kt")
       public void testBasic() {
         runTest("compiler/testData/loadJava/compiledKotlin/typealias/Basic.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("Generic.kt")
       public void testGeneric() {
         runTest("compiler/testData/loadJava/compiledKotlin/typealias/Generic.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("TypeAliasToExtension.kt")
       public void testTypeAliasToExtension() {
         runTest("compiler/testData/loadJava/compiledKotlin/typealias/TypeAliasToExtension.kt");
@@ -2777,78 +2777,78 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/visibility")
     @TestDataPath("$PROJECT_ROOT")
     public class Visibility {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInVisibility() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/visibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("InternalClass.kt")
       public void testInternalClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/visibility/InternalClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("InternalConstructor.kt")
       public void testInternalConstructor() {
         runTest("compiler/testData/loadJava/compiledKotlin/visibility/InternalConstructor.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("InternalTopLevelMembers.kt")
       public void testInternalTopLevelMembers() {
         runTest("compiler/testData/loadJava/compiledKotlin/visibility/InternalTopLevelMembers.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("PrivateClass.kt")
       public void testPrivateClass() {
         runTest("compiler/testData/loadJava/compiledKotlin/visibility/PrivateClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("PrivateClassMembers.kt")
       public void testPrivateClassMembers() {
         runTest("compiler/testData/loadJava/compiledKotlin/visibility/PrivateClassMembers.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("PrivateToThis.kt")
       public void testPrivateToThis() {
         runTest("compiler/testData/loadJava/compiledKotlin/visibility/PrivateToThis.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("PrivateTopLevelFun.kt")
       public void testPrivateTopLevelFun() {
         runTest("compiler/testData/loadJava/compiledKotlin/visibility/PrivateTopLevelFun.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("PrivateTopLevelVal.kt")
       public void testPrivateTopLevelVal() {
         runTest("compiler/testData/loadJava/compiledKotlin/visibility/PrivateTopLevelVal.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("PropertyInConstructor.kt")
       public void testPropertyInConstructor() {
         runTest("compiler/testData/loadJava/compiledKotlin/visibility/PropertyInConstructor.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("PropertyInConstructorExplicitVisibility.kt")
       public void testPropertyInConstructorExplicitVisibility() {
         runTest("compiler/testData/loadJava/compiledKotlin/visibility/PropertyInConstructorExplicitVisibility.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("PublishedApi.kt")
       public void testPublishedApi() {
         runTest("compiler/testData/loadJava/compiledKotlin/visibility/PublishedApi.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("TopLevelVarWithPrivateSetter.kt")
       public void testTopLevelVarWithPrivateSetter() {
         runTest("compiler/testData/loadJava/compiledKotlin/visibility/TopLevelVarWithPrivateSetter.kt");
@@ -2860,7 +2860,7 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
   @TestMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib")
   @TestDataPath("$PROJECT_ROOT")
   public class CompiledKotlinWithStdlib {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInCompiledKotlinWithStdlib() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
@@ -2869,36 +2869,36 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations")
     @TestDataPath("$PROJECT_ROOT")
     public class Annotations {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInAnnotations() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("AnnotationInAnnotationArguments.kt")
       public void testAnnotationInAnnotationArguments() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/AnnotationInAnnotationArguments.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("ConstValInMultifileClass.kt")
       public void testConstValInMultifileClass() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/ConstValInMultifileClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("EnumArgumentWithCustomToString.kt")
       public void testEnumArgumentWithCustomToString() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/EnumArgumentWithCustomToString.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("JvmFieldInInterfaceCompanion.kt")
       public void testJvmFieldInInterfaceCompanion() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/JvmFieldInInterfaceCompanion.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("WithUnsignedTypeParameters.kt")
       public void testWithUnsignedTypeParameters() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/WithUnsignedTypeParameters.kt");
@@ -2908,12 +2908,12 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/classMembers")
       @TestDataPath("$PROJECT_ROOT")
       public class ClassMembers {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInClassMembers() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/classMembers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("EnumEntry.kt")
         public void testEnumEntry() {
           runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/classMembers/EnumEntry.kt");
@@ -2924,12 +2924,12 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/parameters")
       @TestDataPath("$PROJECT_ROOT")
       public class Parameters {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInParameters() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/parameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("EnumConstructor.kt")
         public void testEnumConstructor() {
           runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/parameters/EnumConstructor.kt");
@@ -2941,18 +2941,18 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/class")
     @TestDataPath("$PROJECT_ROOT")
     public class Class {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInClass() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/class"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("EnumWithGenericConstructorParameter.kt")
       public void testEnumWithGenericConstructorParameter() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/class/EnumWithGenericConstructorParameter.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("EnumWithPrimitiveConstructorParameter.kt")
       public void testEnumWithPrimitiveConstructorParameter() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/class/EnumWithPrimitiveConstructorParameter.kt");
@@ -2963,78 +2963,78 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts")
     @TestDataPath("$PROJECT_ROOT")
     public class Contracts {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInContracts() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("callsEffect.kt")
       public void testCallsEffect() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/callsEffect.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("contractWithRefiedGeneric.kt")
       public void testContractWithRefiedGeneric() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/contractWithRefiedGeneric.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("contractsOnMembers.kt")
       public void testContractsOnMembers() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/contractsOnMembers.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("deeplyNestedExpression.kt")
       public void testDeeplyNestedExpression() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/deeplyNestedExpression.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("embedding.kt")
       public void testEmbedding() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/embedding.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("fromStandardKt.kt")
       public void testFromStandardKt() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/fromStandardKt.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("isInstancePredicate.kt")
       public void testIsInstancePredicate() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/isInstancePredicate.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("logicOperators.kt")
       public void testLogicOperators() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/logicOperators.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("multieffectContracts.kt")
       public void testMultieffectContracts() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/multieffectContracts.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("mutualRecursion.kt")
       public void testMutualRecursion() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/mutualRecursion.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("recursion.kt")
       public void testRecursion() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/recursion.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("withReceiver.kt")
       public void testWithReceiver() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts/withReceiver.kt");
@@ -3045,12 +3045,12 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/coroutines")
     @TestDataPath("$PROJECT_ROOT")
     public class Coroutines {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInCoroutines() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("annotatedSuspendFun.kt")
       public void testAnnotatedSuspendFun() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/coroutines/annotatedSuspendFun.kt");
@@ -3061,42 +3061,42 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/enum")
     @TestDataPath("$PROJECT_ROOT")
     public class Enum {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInEnum() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("enumVisibility.kt")
       public void testEnumVisibility() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/enum/enumVisibility.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("enumWithConstuctor.kt")
       public void testEnumWithConstuctor() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/enum/enumWithConstuctor.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("enumWithInnerClasses.kt")
       public void testEnumWithInnerClasses() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/enum/enumWithInnerClasses.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("innerEnum.kt")
       public void testInnerEnum() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/enum/innerEnum.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("innerEnumExistingClassObject.kt")
       public void testInnerEnumExistingClassObject() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/enum/innerEnumExistingClassObject.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simpleEnum.kt")
       public void testSimpleEnum() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/enum/simpleEnum.kt");
@@ -3107,12 +3107,12 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/fromLoadJava")
     @TestDataPath("$PROJECT_ROOT")
     public class FromLoadJava {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInFromLoadJava() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/fromLoadJava"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("enum.kt")
       public void testEnum() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/fromLoadJava/enum.kt");
@@ -3123,12 +3123,12 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/memberOrder")
     @TestDataPath("$PROJECT_ROOT")
     public class MemberOrder {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInMemberOrder() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/memberOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("enumEntries.kt")
       public void testEnumEntries() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/memberOrder/enumEntries.kt");
@@ -3139,30 +3139,30 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/mutability")
     @TestDataPath("$PROJECT_ROOT")
     public class Mutability {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInMutability() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/mutability"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("LoadIterable.kt")
       public void testLoadIterable() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/mutability/LoadIterable.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("LoadIterableWithConflict.kt")
       public void testLoadIterableWithConflict() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/mutability/LoadIterableWithConflict.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("LoadIterableWithNullability.kt")
       public void testLoadIterableWithNullability() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/mutability/LoadIterableWithNullability.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("LoadIterableWithPropagation.kt")
       public void testLoadIterableWithPropagation() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/mutability/LoadIterableWithPropagation.kt");
@@ -3173,12 +3173,12 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     @TestMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/platformNames")
     @TestDataPath("$PROJECT_ROOT")
     public class PlatformNames {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInPlatformNames() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/platformNames"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("functionName.kt")
       public void testFunctionName() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/platformNames/functionName.kt");

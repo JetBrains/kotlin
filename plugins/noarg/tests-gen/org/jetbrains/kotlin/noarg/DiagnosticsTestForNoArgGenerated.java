@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.noarg;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,18 +18,18 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/noarg/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class DiagnosticsTestForNoArgGenerated extends AbstractDiagnosticsTestForNoArg {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/noarg/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("innerClass.kt")
   public void testInnerClass() {
     runTest("plugins/noarg/testData/diagnostics/innerClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("noNoargCtorInSuperclass.kt")
   public void testNoNoargCtorInSuperclass() {
     runTest("plugins/noarg/testData/diagnostics/noNoargCtorInSuperclass.kt");

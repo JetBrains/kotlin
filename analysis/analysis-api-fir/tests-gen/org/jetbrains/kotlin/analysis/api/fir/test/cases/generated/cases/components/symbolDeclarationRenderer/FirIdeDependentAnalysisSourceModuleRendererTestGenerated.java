@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer.AbstractRendererTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -41,180 +41,180 @@ public class FirIdeDependentAnalysisSourceModuleRendererTestGenerated extends Ab
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInRenderDeclaration() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotation.kt")
   public void testAnnotation() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/annotation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("complexTypes.kt")
   public void testComplexTypes() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/complexTypes.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorInObject.kt")
   public void testConstructorInObject() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/constructorInObject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorOfAnonymousObject.kt")
   public void testConstructorOfAnonymousObject() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/constructorOfAnonymousObject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("contextReceiver.kt")
   public void testContextReceiver() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/contextReceiver.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("delegates.kt")
   public void testDelegates() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/delegates.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("derivedClass.kt")
   public void testDerivedClass() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/derivedClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("emptyAnonymousObject.kt")
   public void testEmptyAnonymousObject() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/emptyAnonymousObject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enums.kt")
   public void testEnums() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/enums.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enums2.kt")
   public void testEnums2() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/enums2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("expectActual.kt")
   public void testExpectActual() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/expectActual.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("F.kt")
   public void testF() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/F.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionTypes.kt")
   public void testFunctionTypes() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/functionTypes.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionalTypeAliases.kt")
   public void testFunctionalTypeAliases() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/functionalTypeAliases.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("genericFunctions.kt")
   public void testGenericFunctions() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/genericFunctions.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("genericProperty.kt")
   public void testGenericProperty() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/genericProperty.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("intersectionType.kt")
   public void testIntersectionType() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/intersectionType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nestedClass.kt")
   public void testNestedClass() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/nestedClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("NestedOfAliasedType.kt")
   public void testNestedOfAliasedType() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/NestedOfAliasedType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("NestedSuperType.kt")
   public void testNestedSuperType() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/NestedSuperType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("noPrimaryConstructor.kt")
   public void testNoPrimaryConstructor() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/noPrimaryConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simpleClass.kt")
   public void testSimpleClass() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/simpleClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simpleFun.kt")
   public void testSimpleFun() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/simpleFun.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simpleTypeAlias.kt")
   public void testSimpleTypeAlias() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/simpleTypeAlias.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeAliasWithGeneric.kt")
   public void testTypeAliasWithGeneric() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/typeAliasWithGeneric.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeParameterVsNested.kt")
   public void testTypeParameterVsNested() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/typeParameterVsNested.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeParameters.kt")
   public void testTypeParameters() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/typeParameters.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("vararg.kt")
   public void testVararg() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/vararg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("where.kt")
   public void testWhere() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/where.kt");
@@ -224,30 +224,30 @@ public class FirIdeDependentAnalysisSourceModuleRendererTestGenerated extends Ab
   @TestMetadata("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types")
   @TestDataPath("$PROJECT_ROOT")
   public class Types {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInTypes() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("annotationOnTypes.kt")
     public void testAnnotationOnTypes() {
       runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types/annotationOnTypes.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("annotationOnTypesWithComplexExpression.kt")
     public void testAnnotationOnTypesWithComplexExpression() {
       runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types/annotationOnTypesWithComplexExpression.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("contextFunctionTypes.kt")
     public void testContextFunctionTypes() {
       runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types/contextFunctionTypes.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("extraTypeArguments.kt")
     public void testExtraTypeArguments() {
       runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types/extraTypeArguments.kt");

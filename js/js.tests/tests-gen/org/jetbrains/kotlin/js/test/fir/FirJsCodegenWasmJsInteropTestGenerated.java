@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,90 +19,90 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/boxWasmJsInterop")
 @TestDataPath("$PROJECT_ROOT")
 public class FirJsCodegenWasmJsInteropTestGenerated extends AbstractFirJsCodegenWasmJsInteropTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInBoxWasmJsInterop() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("defaultValues.kt")
   public void testDefaultValues() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/defaultValues.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("externalTypeOperators.kt")
   public void testExternalTypeOperators() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/externalTypeOperators.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("externals.kt")
   public void testExternals() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/externals.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionTypes.kt")
   public void testFunctionTypes() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/functionTypes.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("jsCode.kt")
   public void testJsCode() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/jsCode.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("jsModule.kt")
   public void testJsModule() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/jsModule.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("jsModuleWithQualifier.kt")
   public void testJsModuleWithQualifier() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/jsModuleWithQualifier.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("jsQualifier.kt")
   public void testJsQualifier() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/jsQualifier.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("jsToKotlinAdapters.kt")
   public void testJsToKotlinAdapters() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/jsToKotlinAdapters.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kotlinToJsAdapters.kt")
   public void testKotlinToJsAdapters() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/kotlinToJsAdapters.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("longStrings.kt")
   public void testLongStrings() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/longStrings.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nameClash.kt")
   public void testNameClash() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/nameClash.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("types.kt")
   public void testTypes() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/types.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("vararg.kt")
   public void testVararg() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/vararg.kt");

@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,18 +19,18 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/boxWasmWasi")
 @TestDataPath("$PROJECT_ROOT")
 public class K1WasmWasiCodegenBoxTestGenerated extends AbstractK1WasmWasiCodegenBoxTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInBoxWasmWasi() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmWasi"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("onExportedFunctionExit.kt")
   public void testOnExportedFunctionExit() {
     runTest("compiler/testData/codegen/boxWasmWasi/onExportedFunctionExit.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simpleWasi.kt")
   public void testSimpleWasi() {
     runTest("compiler/testData/codegen/boxWasmWasi/simpleWasi.kt");

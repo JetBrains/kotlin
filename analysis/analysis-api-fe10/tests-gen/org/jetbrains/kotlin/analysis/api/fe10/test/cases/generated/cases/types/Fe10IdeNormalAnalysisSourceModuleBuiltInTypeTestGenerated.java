@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractBuiltInTypeTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,18 +40,18 @@ public class Fe10IdeNormalAnalysisSourceModuleBuiltInTypeTestGenerated extends A
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInBuiltins() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/builtins"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("any.kt")
   public void testAny() {
     runTest("analysis/analysis-api/testData/types/builtins/any.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("anyWithoutBuiltins.kt")
   public void testAnyWithoutBuiltins() {
     runTest("analysis/analysis-api/testData/types/builtins/anyWithoutBuiltins.kt");

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolRestoreFromDifferentModuleTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,18 +40,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolRestoreFromDifferentModuleTe
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInSymbolRestoreFromDifferentModule() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolRestoreFromDifferentModule"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("noDependency.kt")
   public void testNoDependency() {
     runTest("analysis/analysis-api/testData/symbols/symbolRestoreFromDifferentModule/noDependency.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("withDependency.kt")
   public void testWithDependency() {
     runTest("analysis/analysis-api/testData/symbols/symbolRestoreFromDifferentModule/withDependency.kt");

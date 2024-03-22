@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.referenceResolveProvider.AbstractIsImplicitCompanionReferenceTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,54 +40,54 @@ public class FirStandaloneNormalAnalysisSourceModuleIsImplicitCompanionReference
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInIsImplicitReferenceToCompanion() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classAccessWithExplicitReferenceToCompanion.kt")
   public void testClassAccessWithExplicitReferenceToCompanion() {
     runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/classAccessWithExplicitReferenceToCompanion.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classAccessWithExplicitReferenceToNamedCompanion.kt")
   public void testClassAccessWithExplicitReferenceToNamedCompanion() {
     runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/classAccessWithExplicitReferenceToNamedCompanion.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorCall.kt")
   public void testConstructorCall() {
     runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/constructorCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorCallWithInvokeInCompanion.kt")
   public void testConstructorCallWithInvokeInCompanion() {
     runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/constructorCallWithInvokeInCompanion.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("explicitReferenceToCompanion.kt")
   public void testExplicitReferenceToCompanion() {
     runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/explicitReferenceToCompanion.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("explicitReferenceToNamedCompanion.kt")
   public void testExplicitReferenceToNamedCompanion() {
     runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/explicitReferenceToNamedCompanion.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("impicitReferenceToCompanion.kt")
   public void testImpicitReferenceToCompanion() {
     runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/impicitReferenceToCompanion.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("qualifierReferenceToClassWithCompanion.kt")
   public void testQualifierReferenceToClassWithCompanion() {
     runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/qualifierReferenceToClassWithCompanion.kt");

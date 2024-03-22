@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,24 +18,24 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib")
 @TestDataPath("$PROJECT_ROOT")
 public class StdLibBasedGetOrBuildFirTestGenerated extends AbstractStdLibBasedGetOrBuildFirTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInGetOrBuildFirForStdLib() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("emptyArray.kt")
   public void testEmptyArray() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib/emptyArray.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("flattenArray.kt")
   public void testFlattenArray() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib/flattenArray.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("fromBits.kt")
   public void testFromBits() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib/fromBits.kt");

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiPsiTypeProviderTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,114 +40,114 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiPsiTypeProviderTestGene
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("actual_jvmInline_typealias.kt")
   public void testActual_jvmInline_typealias() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/actual_jvmInline_typealias.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("actual_typealias.kt")
   public void testActual_typealias() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/actual_typealias.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInForDeclaration() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("anonymousObject_exposedAsReturnValue.kt")
   public void testAnonymousObject_exposedAsReturnValue() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/anonymousObject_exposedAsReturnValue.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("duplicatedClass_functionParameter.kt")
   public void testDuplicatedClass_functionParameter() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/duplicatedClass_functionParameter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("errorTypeInNestedTypeArgument.kt")
   public void testErrorTypeInNestedTypeArgument() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/errorTypeInNestedTypeArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localClass_exposedAsMemberInAnonymousObject.kt")
   public void testLocalClass_exposedAsMemberInAnonymousObject() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_exposedAsMemberInAnonymousObject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localClass_exposedAsReturnValue.kt")
   public void testLocalClass_exposedAsReturnValue() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_exposedAsReturnValue.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localClass_exposedAsReturnValue_privateFunction.kt")
   public void testLocalClass_exposedAsReturnValue_privateFunction() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_exposedAsReturnValue_privateFunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localClass_localFunctionInSameScope.kt")
   public void testLocalClass_localFunctionInSameScope() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_localFunctionInSameScope.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localClass_localPropertyInSameScope.kt")
   public void testLocalClass_localPropertyInSameScope() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_localPropertyInSameScope.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localClass_localPropertyInSampeScope_functionalType.kt")
   public void testLocalClass_localPropertyInSampeScope_functionalType() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_localPropertyInSampeScope_functionalType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localClass_memberFunction.kt")
   public void testLocalClass_memberFunction() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_memberFunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nestedTypeAnnotation.kt")
   public void testNestedTypeAnnotation() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/nestedTypeAnnotation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("suspendFunctionValueParameterNoStdlib.kt")
   public void testSuspendFunctionValueParameterNoStdlib() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/suspendFunctionValueParameterNoStdlib.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("suspendFunctionValueParameterWithStdlib.kt")
   public void testSuspendFunctionValueParameterWithStdlib() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/suspendFunctionValueParameterWithStdlib.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeAnnotation.kt")
   public void testTypeAnnotation() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/typeAnnotation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("wildcardSuppression_false.kt")
   public void testWildcardSuppression_false() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/wildcardSuppression_false.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("wildcardSuppression_true.kt")
   public void testWildcardSuppression_true() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/wildcardSuppression_true.kt");

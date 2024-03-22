@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractTypeReferenceTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,120 +40,120 @@ public class FirIdeNormalAnalysisSourceModuleTypeReferenceTestGenerated extends 
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInTypeReference() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeProvider/typeReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotationEntry.kt")
   public void testAnnotationEntry() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationEntry.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotationEntryBackingField.kt")
   public void testAnnotationEntryBackingField() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationEntryBackingField.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotationEntryGetter.kt")
   public void testAnnotationEntryGetter() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationEntryGetter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotationEntryOnParameter.kt")
   public void testAnnotationEntryOnParameter() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationEntryOnParameter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotationEntrySetter.kt")
   public void testAnnotationEntrySetter() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationEntrySetter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotationOnFunction.kt")
   public void testAnnotationOnFunction() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationOnFunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotationParameterValue.kt")
   public void testAnnotationParameterValue() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationParameterValue.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotationParameterValueBackingField.kt")
   public void testAnnotationParameterValueBackingField() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationParameterValueBackingField.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionReceiver.kt")
   public void testFunctionReceiver() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/functionReceiver.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionReturn.kt")
   public void testFunctionReturn() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/functionReturn.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyReceiver.kt")
   public void testPropertyReceiver() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/propertyReceiver.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyReturn.kt")
   public void testPropertyReturn() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/propertyReturn.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("starProjection.kt")
   public void testStarProjection() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/starProjection.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("superTypeEntry.kt")
   public void testSuperTypeEntry() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/superTypeEntry.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("superTypeEntry_withTypeArgument.kt")
   public void testSuperTypeEntry_withTypeArgument() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/superTypeEntry_withTypeArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeArgument_functionCall.kt")
   public void testTypeArgument_functionCall() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/typeArgument_functionCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeArgument_superTypeEntry.kt")
   public void testTypeArgument_superTypeEntry() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/typeArgument_superTypeEntry.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("underscoreTypeArgument_inferred.kt")
   public void testUnderscoreTypeArgument_inferred() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/underscoreTypeArgument_inferred.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("underscoreTypeArgument_reified.kt")
   public void testUnderscoreTypeArgument_reified() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/underscoreTypeArgument_reified.kt");

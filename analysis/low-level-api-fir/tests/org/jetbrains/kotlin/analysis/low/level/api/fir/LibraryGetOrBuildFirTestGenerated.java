@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,78 +19,78 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary")
 @TestDataPath("$PROJECT_ROOT")
 public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuildFirTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInGetOrBuildFirBinary() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirBinary"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("dataClass.kt")
   public void testDataClass() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/dataClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("delegate.kt")
   public void testDelegate() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/delegate.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumEntry.kt")
   public void testEnumEntry() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/enumEntry.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionWithDefinitelyNotNullParameter.kt")
   public void testFunctionWithDefinitelyNotNullParameter() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/functionWithDefinitelyNotNullParameter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("parameter.kt")
   public void testParameter() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/parameter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("secondaryConstructor.kt")
   public void testSecondaryConstructor() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/secondaryConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simpleClass.kt")
   public void testSimpleClass() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/simpleClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simpleConstructor.kt")
   public void testSimpleConstructor() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/simpleConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simpleFunction.kt")
   public void testSimpleFunction() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/simpleFunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simpleProperty.kt")
   public void testSimpleProperty() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/simpleProperty.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelFunction.kt")
   public void testTopLevelFunction() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/topLevelFunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeParameter.kt")
   public void testTypeParameter() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/typeParameter.kt");
@@ -100,72 +100,72 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js")
   @TestDataPath("$PROJECT_ROOT")
   public class Js {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInJs() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classAnnotation.kt")
     public void testClassAnnotation() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/classAnnotation.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("constructorAnnotation.kt")
     public void testConstructorAnnotation() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/constructorAnnotation.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("dynamic.kt")
     public void testDynamic() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/dynamic.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("enumAnnotation.kt")
     public void testEnumAnnotation() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/enumAnnotation.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fileJsModule.kt")
     public void testFileJsModule() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/fileJsModule.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("functionAnnotation.kt")
     public void testFunctionAnnotation() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/functionAnnotation.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("jQueryExample.kt")
     public void testJQueryExample() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/jQueryExample.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("parameterAnnotation.kt")
     public void testParameterAnnotation() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/parameterAnnotation.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("propertyAnnotation.kt")
     public void testPropertyAnnotation() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/propertyAnnotation.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeAnnotation.kt")
     public void testTypeAnnotation() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/typeAnnotation.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeParameterAnnotation.kt")
     public void testTypeParameterAnnotation() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/typeParameterAnnotation.kt");
@@ -176,48 +176,48 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi")
   @TestDataPath("$PROJECT_ROOT")
   public class PublishedApi {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInPublishedApi() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("publishedApiClass.kt")
     public void testPublishedApiClass() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("publishedApiConstructor.kt")
     public void testPublishedApiConstructor() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiConstructor.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("publishedApiFunction.kt")
     public void testPublishedApiFunction() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiFunction.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("publishedApiPrimaryConstructor.kt")
     public void testPublishedApiPrimaryConstructor() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiPrimaryConstructor.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("publishedApiProperty.kt")
     public void testPublishedApiProperty() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiProperty.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("publishedApiPropertyGetter.kt")
     public void testPublishedApiPropertyGetter() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiPropertyGetter.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("publishedApiPropertySetter.kt")
     public void testPublishedApiPropertySetter() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi/publishedApiPropertySetter.kt");

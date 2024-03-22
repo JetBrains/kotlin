@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractTypeByDeclarationReturnTypeTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,30 +40,30 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeByDeclarationReturnTypeTestGen
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInByDeclarationReturnType() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/byDeclarationReturnType"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("anonymousFunction.kt")
   public void testAnonymousFunction() {
     runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/anonymousFunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localClassType.kt")
   public void testLocalClassType() {
     runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localClassType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localClassWithTypeArgumentsType.kt")
   public void testLocalClassWithTypeArgumentsType() {
     runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localClassWithTypeArgumentsType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localNestedClassType.kt")
   public void testLocalNestedClassType() {
     runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localNestedClassType.kt");

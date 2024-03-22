@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,60 +40,60 @@ public class FirStandaloneNormalAnalysisSourceModulePsiDeclarationProviderTestGe
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInSource() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/standalone/source"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("capitalize_default.kt")
   public void testCapitalize_default() {
     runTest("analysis/analysis-api/testData/standalone/source/capitalize_default.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("capitalize_locale.kt")
   public void testCapitalize_locale() {
     runTest("analysis/analysis-api/testData/standalone/source/capitalize_locale.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("listIterator.kt")
   public void testListIterator() {
     runTest("analysis/analysis-api/testData/standalone/source/listIterator.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("mapGetOrDefault.kt")
   public void testMapGetOrDefault() {
     runTest("analysis/analysis-api/testData/standalone/source/mapGetOrDefault.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("mapGetOrDefault_nullable.kt")
   public void testMapGetOrDefault_nullable() {
     runTest("analysis/analysis-api/testData/standalone/source/mapGetOrDefault_nullable.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("multipleFiles.kt")
   public void testMultipleFiles() {
     runTest("analysis/analysis-api/testData/standalone/source/multipleFiles.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("setOf_last_vararg.kt")
   public void testSetOf_last_vararg() {
     runTest("analysis/analysis-api/testData/standalone/source/setOf_last_vararg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("singleFile.kt")
   public void testSingleFile() {
     runTest("analysis/analysis-api/testData/standalone/source/singleFile.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("todo.kt")
   public void testTodo() {
     runTest("analysis/analysis-api/testData/standalone/source/todo.kt");

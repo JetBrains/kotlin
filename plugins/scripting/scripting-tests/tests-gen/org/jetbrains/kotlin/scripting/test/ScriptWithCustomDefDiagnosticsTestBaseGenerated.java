@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.scripting.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,36 +18,36 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/scripting/scripting-tests/testData/diagnostics/testScripts")
 @TestDataPath("$PROJECT_ROOT")
 public class ScriptWithCustomDefDiagnosticsTestBaseGenerated extends AbstractScriptWithCustomDefDiagnosticsTestBase {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInTestScripts() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/diagnostics/testScripts"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("conflictingImportsWithJava.test.kts")
   public void testConflictingImportsWithJava_test() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/conflictingImportsWithJava.test.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("invokeResolve.test.kts")
   public void testInvokeResolve_test() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/invokeResolve.test.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("providedPropertiesShadowing.test.kts")
   public void testProvidedPropertiesShadowing_test() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/providedPropertiesShadowing.test.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("providedProperties.test.kts")
   public void testProvidedProperties_test() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/providedProperties.test.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simple.test.kts")
   public void testSimple_test() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/simple.test.kts");

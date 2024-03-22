@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/contextCollector")
 @TestDataPath("$PROJECT_ROOT")
 public class ContextCollectorScriptTestGenerated extends AbstractContextCollectorScriptTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInContextCollector() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
   }
@@ -28,7 +28,7 @@ public class ContextCollectorScriptTestGenerated extends AbstractContextCollecto
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions")
   @TestDataPath("$PROJECT_ROOT")
   public class ClassHeaderPositions {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInClassHeaderPositions() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
@@ -38,7 +38,7 @@ public class ContextCollectorScriptTestGenerated extends AbstractContextCollecto
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/error")
   @TestDataPath("$PROJECT_ROOT")
   public class Error {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInError() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/error"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
@@ -48,48 +48,48 @@ public class ContextCollectorScriptTestGenerated extends AbstractContextCollecto
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/scripts")
   @TestDataPath("$PROJECT_ROOT")
   public class Scripts {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInScripts() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/scripts"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("insideClassBody.kts")
     public void testInsideClassBody() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/insideClassBody.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("insideClassMember.kts")
     public void testInsideClassMember() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/insideClassMember.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("insideTopLevelFunction.kts")
     public void testInsideTopLevelFunction() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/insideTopLevelFunction.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("lastStatement.kts")
     public void testLastStatement() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/lastStatement.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("scriptInsideLastStatement.kts")
     public void testScriptInsideLastStatement() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/scriptInsideLastStatement.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("statement.kts")
     public void testStatement() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/statement.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("topLevel.kts")
     public void testTopLevel() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/topLevel.kts");
@@ -100,7 +100,7 @@ public class ContextCollectorScriptTestGenerated extends AbstractContextCollecto
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/smartCasts")
   @TestDataPath("$PROJECT_ROOT")
   public class SmartCasts {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInSmartCasts() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/smartCasts"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
@@ -110,7 +110,7 @@ public class ContextCollectorScriptTestGenerated extends AbstractContextCollecto
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/typeParameters")
   @TestDataPath("$PROJECT_ROOT")
   public class TypeParameters {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInTypeParameters() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/typeParameters"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }

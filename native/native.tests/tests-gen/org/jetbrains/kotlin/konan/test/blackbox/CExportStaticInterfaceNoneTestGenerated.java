@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -22,24 +22,24 @@ import java.util.regex.Pattern;
 @EnforcedProperty(property = ClassLevelProperty.BINARY_LIBRARY_KIND, propertyValue = "STATIC")
 @EnforcedProperty(property = ClassLevelProperty.C_INTERFACE_MODE, propertyValue = "NONE")
 public class CExportStaticInterfaceNoneTestGenerated extends AbstractNativeCExportTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInInterfaceNone() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CExport/InterfaceNone"), Pattern.compile("^([^_](.+))$"), null, false);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nativeRefs")
   public void testNativeRefs() {
     runTest("native/native.tests/testData/CExport/InterfaceNone/nativeRefs/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("primitiveTypes")
   public void testPrimitiveTypes() {
     runTest("native/native.tests/testData/CExport/InterfaceNone/primitiveTypes/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("smoke0")
   public void testSmoke0() {
     runTest("native/native.tests/testData/CExport/InterfaceNone/smoke0/");

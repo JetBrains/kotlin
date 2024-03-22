@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,60 +18,60 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/testData/CInterop/experimental/cases")
 @TestDataPath("$PROJECT_ROOT")
 public class CInteropExperimentalTestGenerated extends AbstractNativeCInteropExperimentalTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInCases() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CInterop/experimental/cases"), Pattern.compile("^([^_](.+))$"), null, false);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enum")
   public void testEnum() {
     runTest("native/native.tests/testData/CInterop/experimental/cases/enum/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("function")
   public void testFunction() {
     runTest("native/native.tests/testData/CInterop/experimental/cases/function/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("global")
   public void testGlobal() {
     runTest("native/native.tests/testData/CInterop/experimental/cases/global/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objccategory")
   public void testObjccategory() {
     runTest("native/native.tests/testData/CInterop/experimental/cases/objccategory/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objcclass")
   public void testObjcclass() {
     runTest("native/native.tests/testData/CInterop/experimental/cases/objcclass/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objcprotocol")
   public void testObjcprotocol() {
     runTest("native/native.tests/testData/CInterop/experimental/cases/objcprotocol/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objctypedef")
   public void testObjctypedef() {
     runTest("native/native.tests/testData/CInterop/experimental/cases/objctypedef/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("struct")
   public void testStruct() {
     runTest("native/native.tests/testData/CInterop/experimental/cases/struct/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typedef")
   public void testTypedef() {
     runTest("native/native.tests/testData/CInterop/experimental/cases/typedef/");

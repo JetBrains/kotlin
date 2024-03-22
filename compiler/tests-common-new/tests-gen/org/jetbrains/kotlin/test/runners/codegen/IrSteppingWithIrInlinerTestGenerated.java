@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,696 +19,696 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/debug/stepping")
 @TestDataPath("$PROJECT_ROOT")
 public class IrSteppingWithIrInlinerTestGenerated extends AbstractIrSteppingWithIrInlinerTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInStepping() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/stepping"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("anonymousFunction.kt")
   public void testAnonymousFunction() {
     runTest("compiler/testData/debug/stepping/anonymousFunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("anonymousFunctionDirect.kt")
   public void testAnonymousFunctionDirect() {
     runTest("compiler/testData/debug/stepping/anonymousFunctionDirect.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("assertion.kt")
   public void testAssertion() {
     runTest("compiler/testData/debug/stepping/assertion.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("beforeGotoToWhileStart.kt")
   public void testBeforeGotoToWhileStart() {
     runTest("compiler/testData/debug/stepping/beforeGotoToWhileStart.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callWithCallInArguments.kt")
   public void testCallWithCallInArguments() {
     runTest("compiler/testData/debug/stepping/callWithCallInArguments.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callWithReceiver.kt")
   public void testCallWithReceiver() {
     runTest("compiler/testData/debug/stepping/callWithReceiver.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callableReference.kt")
   public void testCallableReference() {
     runTest("compiler/testData/debug/stepping/callableReference.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("chainCall.kt")
   public void testChainCall() {
     runTest("compiler/testData/debug/stepping/chainCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("class.kt")
   public void testClass() {
     runTest("compiler/testData/debug/stepping/class.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classObject.kt")
   public void testClassObject() {
     runTest("compiler/testData/debug/stepping/classObject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("closingBracketOfCrossinlineInsideCrossinline.kt")
   public void testClosingBracketOfCrossinlineInsideCrossinline() {
     runTest("compiler/testData/debug/stepping/closingBracketOfCrossinlineInsideCrossinline.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("closingBracketOfLambdaOfInlineOnlyFunction.kt")
   public void testClosingBracketOfLambdaOfInlineOnlyFunction() {
     runTest("compiler/testData/debug/stepping/closingBracketOfLambdaOfInlineOnlyFunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("closingBracketOfObjectInsideCrossinline.kt")
   public void testClosingBracketOfObjectInsideCrossinline() {
     runTest("compiler/testData/debug/stepping/closingBracketOfObjectInsideCrossinline.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("commentBeforeClass.kt")
   public void testCommentBeforeClass() {
     runTest("compiler/testData/debug/stepping/commentBeforeClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("commentBeforeCompanionProperty.kt")
   public void testCommentBeforeCompanionProperty() {
     runTest("compiler/testData/debug/stepping/commentBeforeCompanionProperty.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("commentBeforeFunctionWithDefault.kt")
   public void testCommentBeforeFunctionWithDefault() {
     runTest("compiler/testData/debug/stepping/commentBeforeFunctionWithDefault.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("comments.kt")
   public void testComments() {
     runTest("compiler/testData/debug/stepping/comments.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("compileTimeConstant.kt")
   public void testCompileTimeConstant() {
     runTest("compiler/testData/debug/stepping/compileTimeConstant.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("conjunction.kt")
   public void testConjunction() {
     runTest("compiler/testData/debug/stepping/conjunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constantConditions.kt")
   public void testConstantConditions() {
     runTest("compiler/testData/debug/stepping/constantConditions.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorCall.kt")
   public void testConstructorCall() {
     runTest("compiler/testData/debug/stepping/constructorCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructors.kt")
   public void testConstructors() {
     runTest("compiler/testData/debug/stepping/constructors.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("continue.kt")
   public void testContinue() {
     runTest("compiler/testData/debug/stepping/continue.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("dataClass.kt")
   public void testDataClass() {
     runTest("compiler/testData/debug/stepping/dataClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("defaultParameter.kt")
   public void testDefaultParameter() {
     runTest("compiler/testData/debug/stepping/defaultParameter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("delegation.kt")
   public void testDelegation() {
     runTest("compiler/testData/debug/stepping/delegation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enum.kt")
   public void testEnum() {
     runTest("compiler/testData/debug/stepping/enum.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("for.kt")
   public void testFor() {
     runTest("compiler/testData/debug/stepping/for.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionCallWithDefault.kt")
   public void testFunctionCallWithDefault() {
     runTest("compiler/testData/debug/stepping/functionCallWithDefault.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionCallWithInlinedLambdaParam.kt")
   public void testFunctionCallWithInlinedLambdaParam() {
     runTest("compiler/testData/debug/stepping/functionCallWithInlinedLambdaParam.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionCallWithLambdaParam.kt")
   public void testFunctionCallWithLambdaParam() {
     runTest("compiler/testData/debug/stepping/functionCallWithLambdaParam.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionInAnotherFile.kt")
   public void testFunctionInAnotherFile() {
     runTest("compiler/testData/debug/stepping/functionInAnotherFile.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("if.kt")
   public void testIf() {
     runTest("compiler/testData/debug/stepping/if.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("if2.kt")
   public void testIf2() {
     runTest("compiler/testData/debug/stepping/if2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("ifThen.kt")
   public void testIfThen() {
     runTest("compiler/testData/debug/stepping/ifThen.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("ifThenElse.kt")
   public void testIfThenElse() {
     runTest("compiler/testData/debug/stepping/ifThenElse.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("ifThenElseFalse.kt")
   public void testIfThenElseFalse() {
     runTest("compiler/testData/debug/stepping/ifThenElseFalse.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("IfTrueThenFalse.kt")
   public void testIfTrueThenFalse() {
     runTest("compiler/testData/debug/stepping/IfTrueThenFalse.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("ifWithInlineInCondition.kt")
   public void testIfWithInlineInCondition() {
     runTest("compiler/testData/debug/stepping/ifWithInlineInCondition.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("iincStepping.kt")
   public void testIincStepping() {
     runTest("compiler/testData/debug/stepping/iincStepping.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("implicitThis.kt")
   public void testImplicitThis() {
     runTest("compiler/testData/debug/stepping/implicitThis.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("implicitThisOnInvoke.kt")
   public void testImplicitThisOnInvoke() {
     runTest("compiler/testData/debug/stepping/implicitThisOnInvoke.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("inTheEndOfLambdaArgumentOfInlineCall.kt")
   public void testInTheEndOfLambdaArgumentOfInlineCall() {
     runTest("compiler/testData/debug/stepping/inTheEndOfLambdaArgumentOfInlineCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("initBlocks.kt")
   public void testInitBlocks() {
     runTest("compiler/testData/debug/stepping/initBlocks.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("initBlocksCompanion.kt")
   public void testInitBlocksCompanion() {
     runTest("compiler/testData/debug/stepping/initBlocksCompanion.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("inlineCallableReference.kt")
   public void testInlineCallableReference() {
     runTest("compiler/testData/debug/stepping/inlineCallableReference.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("inlineNamedCallableReference.kt")
   public void testInlineNamedCallableReference() {
     runTest("compiler/testData/debug/stepping/inlineNamedCallableReference.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("inlineSimpleCall.kt")
   public void testInlineSimpleCall() {
     runTest("compiler/testData/debug/stepping/inlineSimpleCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaSam.kt")
   public void testJavaSam() {
     runTest("compiler/testData/debug/stepping/javaSam.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kt15259.kt")
   public void testKt15259() {
     runTest("compiler/testData/debug/stepping/kt15259.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kt29179.kt")
   public void testKt29179() {
     runTest("compiler/testData/debug/stepping/kt29179.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kt42208.kt")
   public void testKt42208() {
     runTest("compiler/testData/debug/stepping/kt42208.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kt42208b.kt")
   public void testKt42208b() {
     runTest("compiler/testData/debug/stepping/kt42208b.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kt42208c.kt")
   public void testKt42208c() {
     runTest("compiler/testData/debug/stepping/kt42208c.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lambdaStepInline.kt")
   public void testLambdaStepInline() {
     runTest("compiler/testData/debug/stepping/lambdaStepInline.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lambdaStepInlineWithDefaults.kt")
   public void testLambdaStepInlineWithDefaults() {
     runTest("compiler/testData/debug/stepping/lambdaStepInlineWithDefaults.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lineNumberAfterInline.kt")
   public void testLineNumberAfterInline() {
     runTest("compiler/testData/debug/stepping/lineNumberAfterInline.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("linenumberForOneParametersArgumentCall.kt")
   public void testLinenumberForOneParametersArgumentCall() {
     runTest("compiler/testData/debug/stepping/linenumberForOneParametersArgumentCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localFunction.kt")
   public void testLocalFunction() {
     runTest("compiler/testData/debug/stepping/localFunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localFunctionWIthOnelineExpressionBody.kt")
   public void testLocalFunctionWIthOnelineExpressionBody() {
     runTest("compiler/testData/debug/stepping/localFunctionWIthOnelineExpressionBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localProperty.kt")
   public void testLocalProperty() {
     runTest("compiler/testData/debug/stepping/localProperty.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("multiModule.kt")
   public void testMultiModule() {
     runTest("compiler/testData/debug/stepping/multiModule.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("multilineExpression.kt")
   public void testMultilineExpression() {
     runTest("compiler/testData/debug/stepping/multilineExpression.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("multilineFunctionCall.kt")
   public void testMultilineFunctionCall() {
     runTest("compiler/testData/debug/stepping/multilineFunctionCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("multilineInfixCall.kt")
   public void testMultilineInfixCall() {
     runTest("compiler/testData/debug/stepping/multilineInfixCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("namedCallableReference.kt")
   public void testNamedCallableReference() {
     runTest("compiler/testData/debug/stepping/namedCallableReference.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nestedInline.kt")
   public void testNestedInline() {
     runTest("compiler/testData/debug/stepping/nestedInline.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("noLinenumberInInvokeOfSuspendLambda.kt")
   public void testNoLinenumberInInvokeOfSuspendLambda() {
     runTest("compiler/testData/debug/stepping/noLinenumberInInvokeOfSuspendLambda.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("noParametersArgumentCallInExpression.kt")
   public void testNoParametersArgumentCallInExpression() {
     runTest("compiler/testData/debug/stepping/noParametersArgumentCallInExpression.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nullcheck.kt")
   public void testNullcheck() {
     runTest("compiler/testData/debug/stepping/nullcheck.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("overridenGetterSetter.kt")
   public void testOverridenGetterSetter() {
     runTest("compiler/testData/debug/stepping/overridenGetterSetter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("primitiveNullChecks.kt")
   public void testPrimitiveNullChecks() {
     runTest("compiler/testData/debug/stepping/primitiveNullChecks.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyAccessor.kt")
   public void testPropertyAccessor() {
     runTest("compiler/testData/debug/stepping/propertyAccessor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("psvm.kt")
   public void testPsvm() {
     runTest("compiler/testData/debug/stepping/psvm.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("recursion.kt")
   public void testRecursion() {
     runTest("compiler/testData/debug/stepping/recursion.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simpleDefaultArg.kt")
   public void testSimpleDefaultArg() {
     runTest("compiler/testData/debug/stepping/simpleDefaultArg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simpleDefaultArgWithInline.kt")
   public void testSimpleDefaultArgWithInline() {
     runTest("compiler/testData/debug/stepping/simpleDefaultArgWithInline.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simpleInlineDefaultArg.kt")
   public void testSimpleInlineDefaultArg() {
     runTest("compiler/testData/debug/stepping/simpleInlineDefaultArg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simpleSmap.kt")
   public void testSimpleSmap() {
     runTest("compiler/testData/debug/stepping/simpleSmap.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("smapInlineAsArgument.kt")
   public void testSmapInlineAsArgument() {
     runTest("compiler/testData/debug/stepping/smapInlineAsArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("smapInlineAsInfixArgument.kt")
   public void testSmapInlineAsInfixArgument() {
     runTest("compiler/testData/debug/stepping/smapInlineAsInfixArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("smapInlineAsInlineArgument.kt")
   public void testSmapInlineAsInlineArgument() {
     runTest("compiler/testData/debug/stepping/smapInlineAsInlineArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("smapInlineInIntrinsicArgument.kt")
   public void testSmapInlineInIntrinsicArgument() {
     runTest("compiler/testData/debug/stepping/smapInlineInIntrinsicArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("stringSwitches.kt")
   public void testStringSwitches() {
     runTest("compiler/testData/debug/stepping/stringSwitches.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("stringSwitchesSmall.kt")
   public void testStringSwitchesSmall() {
     runTest("compiler/testData/debug/stepping/stringSwitchesSmall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("suspendFunWithLambdaParameter.kt")
   public void testSuspendFunWithLambdaParameter() {
     runTest("compiler/testData/debug/stepping/suspendFunWithLambdaParameter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("suspendFunWithSuspendLambdaParameter.kt")
   public void testSuspendFunWithSuspendLambdaParameter() {
     runTest("compiler/testData/debug/stepping/suspendFunWithSuspendLambdaParameter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("throwException.kt")
   public void testThrowException() {
     runTest("compiler/testData/debug/stepping/throwException.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevel.kt")
   public void testTopLevel() {
     runTest("compiler/testData/debug/stepping/topLevel.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("trait.kt")
   public void testTrait() {
     runTest("compiler/testData/debug/stepping/trait.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryCatch.kt")
   public void testTryCatch() {
     runTest("compiler/testData/debug/stepping/tryCatch.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryCatchExpression.kt")
   public void testTryCatchExpression() {
     runTest("compiler/testData/debug/stepping/tryCatchExpression.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryCatchFinally.kt")
   public void testTryCatchFinally() {
     runTest("compiler/testData/debug/stepping/tryCatchFinally.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryFinally.kt")
   public void testTryFinally() {
     runTest("compiler/testData/debug/stepping/tryFinally.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("variablesWithoutInitializer.kt")
   public void testVariablesWithoutInitializer() {
     runTest("compiler/testData/debug/stepping/variablesWithoutInitializer.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("voidLambdaStepInline.kt")
   public void testVoidLambdaStepInline() {
     runTest("compiler/testData/debug/stepping/voidLambdaStepInline.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("when.kt")
   public void testWhen() {
     runTest("compiler/testData/debug/stepping/when.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenComplicatedSubject.kt")
   public void testWhenComplicatedSubject() {
     runTest("compiler/testData/debug/stepping/whenComplicatedSubject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenConstant.kt")
   public void testWhenConstant() {
     runTest("compiler/testData/debug/stepping/whenConstant.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenExpr.kt")
   public void testWhenExpr() {
     runTest("compiler/testData/debug/stepping/whenExpr.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenInConjunction.kt")
   public void testWhenInConjunction() {
     runTest("compiler/testData/debug/stepping/whenInConjunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenInDisjunction.kt")
   public void testWhenInDisjunction() {
     runTest("compiler/testData/debug/stepping/whenInDisjunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenInGeneralObjectComparison.kt")
   public void testWhenInGeneralObjectComparison() {
     runTest("compiler/testData/debug/stepping/whenInGeneralObjectComparison.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenInNegation.kt")
   public void testWhenInNegation() {
     runTest("compiler/testData/debug/stepping/whenInNegation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenInNullComparison.kt")
   public void testWhenInNullComparison() {
     runTest("compiler/testData/debug/stepping/whenInNullComparison.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenInPrimitiveToObjectComparison.kt")
   public void testWhenInPrimitiveToObjectComparison() {
     runTest("compiler/testData/debug/stepping/whenInPrimitiveToObjectComparison.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenInZeroComparison.kt")
   public void testWhenInZeroComparison() {
     runTest("compiler/testData/debug/stepping/whenInZeroComparison.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenIsChecks.kt")
   public void testWhenIsChecks() {
     runTest("compiler/testData/debug/stepping/whenIsChecks.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenMultiLine.kt")
   public void testWhenMultiLine() {
     runTest("compiler/testData/debug/stepping/whenMultiLine.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenMultiLineSubject.kt")
   public void testWhenMultiLineSubject() {
     runTest("compiler/testData/debug/stepping/whenMultiLineSubject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenNullalbeSubject.kt")
   public void testWhenNullalbeSubject() {
     runTest("compiler/testData/debug/stepping/whenNullalbeSubject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenSubject.kt")
   public void testWhenSubject() {
     runTest("compiler/testData/debug/stepping/whenSubject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenSubject2.kt")
   public void testWhenSubject2() {
     runTest("compiler/testData/debug/stepping/whenSubject2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenWithInlineInCondition.kt")
   public void testWhenWithInlineInCondition() {
     runTest("compiler/testData/debug/stepping/whenWithInlineInCondition.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("while.kt")
   public void testWhile() {
     runTest("compiler/testData/debug/stepping/while.kt");

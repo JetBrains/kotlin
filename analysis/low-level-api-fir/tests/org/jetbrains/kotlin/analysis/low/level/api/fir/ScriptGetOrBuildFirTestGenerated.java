@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir")
 @TestDataPath("$PROJECT_ROOT")
 public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFirTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInGetOrBuildFir() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
   }
@@ -28,144 +28,144 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/annotations")
   @TestDataPath("$PROJECT_ROOT")
   public class Annotations {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInAnnotations() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/annotations"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("annotationApplicationArgumentOnStatement.kts")
     public void testAnnotationApplicationArgumentOnStatement() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationApplicationArgumentOnStatement.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("annotationApplicationArgumentScript.kts")
     public void testAnnotationApplicationArgumentScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationApplicationArgumentScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("annotationApplicationCallExpressionScript.kts")
     public void testAnnotationApplicationCallExpressionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationApplicationCallExpressionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("annotationOnReturnTypeScript.kts")
     public void testAnnotationOnReturnTypeScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationOnReturnTypeScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("destructuringAnnotation.kts")
     public void testDestructuringAnnotation() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/destructuringAnnotation.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("destructuringEntryAnnotation.kts")
     public void testDestructuringEntryAnnotation() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/destructuringEntryAnnotation.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fileAnnotation2Script.kts")
     public void testFileAnnotation2Script() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/fileAnnotation2Script.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fileAnnotationScript.kts")
     public void testFileAnnotationScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/fileAnnotationScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("retentionValueScript.kts")
     public void testRetentionValueScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/retentionValueScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("statementAnnotation.kts")
     public void testStatementAnnotation() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/statementAnnotation.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("superCallAnnotationScript.kts")
     public void testSuperCallAnnotationScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/superCallAnnotationScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeOnAnnotationOnConstructorParameterExpressionScript.kts")
     public void testTypeOnAnnotationOnConstructorParameterExpressionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnConstructorParameterExpressionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeOnAnnotationOnConstructorParameterScript.kts")
     public void testTypeOnAnnotationOnConstructorParameterScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnConstructorParameterScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeOnAnnotationOnConstructorPropertyScript.kts")
     public void testTypeOnAnnotationOnConstructorPropertyScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnConstructorPropertyScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeOnAnnotationOnConstructorPropertyWithArgumentsScript.kts")
     public void testTypeOnAnnotationOnConstructorPropertyWithArgumentsScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnConstructorPropertyWithArgumentsScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeOnAnnotationOnFunctionParameterScript.kts")
     public void testTypeOnAnnotationOnFunctionParameterScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnFunctionParameterScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeOnAnnotationOnFunctionParameterWithArgumentsScript.kts")
     public void testTypeOnAnnotationOnFunctionParameterWithArgumentsScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnFunctionParameterWithArgumentsScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeOnAnnotationOnReceiverFunctionScript.kts")
     public void testTypeOnAnnotationOnReceiverFunctionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnReceiverFunctionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeOnAnnotationOnReceiverParameterScript.kts")
     public void testTypeOnAnnotationOnReceiverParameterScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnReceiverParameterScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeOnAnnotationOnReceiverPropertyCallScript.kts")
     public void testTypeOnAnnotationOnReceiverPropertyCallScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnReceiverPropertyCallScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeOnAnnotationOnReceiverPropertyScript.kts")
     public void testTypeOnAnnotationOnReceiverPropertyScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnReceiverPropertyScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeOnAnnotationOnReturnFunctionScript.kts")
     public void testTypeOnAnnotationOnReturnFunctionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnReturnFunctionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeOnAnnotationOnReturnPropertyScript.kts")
     public void testTypeOnAnnotationOnReturnPropertyScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/typeOnAnnotationOnReturnPropertyScript.kts");
@@ -175,54 +175,54 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
     @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite")
     @TestDataPath("$PROJECT_ROOT")
     public class UseSite {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInUseSite() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("delegateScript.kts")
       public void testDelegateScript() {
         runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/delegateScript.kts");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("fieldScript.kts")
       public void testFieldScript() {
         runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/fieldScript.kts");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("fileScript.kts")
       public void testFileScript() {
         runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/fileScript.kts");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("getterScript.kts")
       public void testGetterScript() {
         runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/getterScript.kts");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("paramScript.kts")
       public void testParamScript() {
         runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/paramScript.kts");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("propertyScript.kts")
       public void testPropertyScript() {
         runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/propertyScript.kts");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("setParamScript.kts")
       public void testSetParamScript() {
         runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/setParamScript.kts");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("setterScript.kts")
       public void testSetterScript() {
         runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/useSite/setterScript.kts");
@@ -234,132 +234,132 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/calls")
   @TestDataPath("$PROJECT_ROOT")
   public class Calls {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInCalls() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/calls"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("argsFromFunction.kts")
     public void testArgsFromFunction() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/argsFromFunction.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("argsFromInit.kts")
     public void testArgsFromInit() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/argsFromInit.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("argsFromMemberFunction.kts")
     public void testArgsFromMemberFunction() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/argsFromMemberFunction.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("argsFromMemberProperty.kts")
     public void testArgsFromMemberProperty() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/argsFromMemberProperty.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("argsFromProperty.kts")
     public void testArgsFromProperty() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/argsFromProperty.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("argsFromStatement.kts")
     public void testArgsFromStatement() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/argsFromStatement.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("callArgumentScript.kts")
     public void testCallArgumentScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/callArgumentScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("callInsideLambdaInsideSuperCallAndExplicitConstructorScript.kts")
     public void testCallInsideLambdaInsideSuperCallAndExplicitConstructorScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/callInsideLambdaInsideSuperCallAndExplicitConstructorScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("callOnePropertyFromAnother.kts")
     public void testCallOnePropertyFromAnother() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/callOnePropertyFromAnother.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("calllTypeArgumentsScript.kts")
     public void testCalllTypeArgumentsScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/calllTypeArgumentsScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("compoundAssignOnVarScript.kts")
     public void testCompoundAssignOnVarScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/compoundAssignOnVarScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("compoundAssignWithArrayAccessConventionScript.kts")
     public void testCompoundAssignWithArrayAccessConventionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/compoundAssignWithArrayAccessConventionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("compoundAssignWithArrayGetConventionScript.kts")
     public void testCompoundAssignWithArrayGetConventionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/compoundAssignWithArrayGetConventionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("constructorDelegationSuperCallScript.kts")
     public void testConstructorDelegationSuperCallScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/constructorDelegationSuperCallScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("functionCallArgumentListScript.kts")
     public void testFunctionCallArgumentListScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/functionCallArgumentListScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("invokeCallArgumentListScript.kts")
     public void testInvokeCallArgumentListScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/invokeCallArgumentListScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("qualifiedCallInsideSuperCallScript.kts")
     public void testQualifiedCallInsideSuperCallScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/qualifiedCallInsideSuperCallScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("setOperatorScript.kts")
     public void testSetOperatorScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/setOperatorScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("superTypeScript.kts")
     public void testSuperTypeScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/superTypeScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("syntheticResultDeclaration.kts")
     public void testSyntheticResultDeclaration() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/syntheticResultDeclaration.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("syntheticResultDeclarationInitializer.kts")
     public void testSyntheticResultDeclarationInitializer() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/syntheticResultDeclarationInitializer.kts");
@@ -370,66 +370,66 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/declarations")
   @TestDataPath("$PROJECT_ROOT")
   public class Declarations {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInDeclarations() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/declarations"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("constructorParameterScript.kts")
     public void testConstructorParameterScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/declarations/constructorParameterScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("constructorPropertyScript.kts")
     public void testConstructorPropertyScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/declarations/constructorPropertyScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("destructionWithNoRValueScript.kts")
     public void testDestructionWithNoRValueScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/declarations/destructionWithNoRValueScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("destructuringEntryScript.kts")
     public void testDestructuringEntryScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/declarations/destructuringEntryScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("destructuringScript.kts")
     public void testDestructuringScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/declarations/destructuringScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("objectLiteralExpressionScript.kts")
     public void testObjectLiteralExpressionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/declarations/objectLiteralExpressionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("objectLiteralScript.kts")
     public void testObjectLiteralScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/declarations/objectLiteralScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("propertyDelegateScript.kts")
     public void testPropertyDelegateScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/declarations/propertyDelegateScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("whereClause1Script.kts")
     public void testWhereClause1Script() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/declarations/whereClause1Script.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("whereClause2Script.kts")
     public void testWhereClause2Script() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/declarations/whereClause2Script.kts");
@@ -440,7 +440,7 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/deserialized")
   @TestDataPath("$PROJECT_ROOT")
   public class Deserialized {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInDeserialized() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/deserialized"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
@@ -450,7 +450,7 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/destructuring")
   @TestDataPath("$PROJECT_ROOT")
   public class Destructuring {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInDestructuring() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/destructuring"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
@@ -460,186 +460,186 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/expressions")
   @TestDataPath("$PROJECT_ROOT")
   public class Expressions {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInExpressions() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/expressions"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("arrayAccessExpressionScript.kts")
     public void testArrayAccessExpressionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/arrayAccessExpressionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("arrayIndexExpressionWithIncScript.kts")
     public void testArrayIndexExpressionWithIncScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/arrayIndexExpressionWithIncScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("assignment.kts")
     public void testAssignment() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/assignment.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("binaryExpressionOperatorScript.kts")
     public void testBinaryExpressionOperatorScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/binaryExpressionOperatorScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("binaryExpressionScript.kts")
     public void testBinaryExpressionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/binaryExpressionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("blockExpressionScript.kts")
     public void testBlockExpressionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/blockExpressionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("boolLiteralScript.kts")
     public void testBoolLiteralScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/boolLiteralScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("callInsideFunction.kts")
     public void testCallInsideFunction() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/callInsideFunction.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("callInsideStatement.kts")
     public void testCallInsideStatement() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/callInsideStatement.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("firstStatement.kts")
     public void testFirstStatement() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/firstStatement.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("firstStatementCall.kts")
     public void testFirstStatementCall() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/firstStatementCall.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("forExpressionRangeScript.kts")
     public void testForExpressionRangeScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/forExpressionRangeScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("forExpressionScript.kts")
     public void testForExpressionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/forExpressionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("forExpressionVariableScript.kts")
     public void testForExpressionVariableScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/forExpressionVariableScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ifExpressionScript.kts")
     public void testIfExpressionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/ifExpressionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("incExpressionScript.kts")
     public void testIncExpressionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/incExpressionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("insidePlusAssignTargetScript.kts")
     public void testInsidePlusAssignTargetScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/insidePlusAssignTargetScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("intLiteralScript.kts")
     public void testIntLiteralScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/intLiteralScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("isExpressionScript.kts")
     public void testIsExpressionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/isExpressionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("objectLiteralExpressionScript.kts")
     public void testObjectLiteralExpressionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/objectLiteralExpressionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("parenthesizedExpressionScript.kts")
     public void testParenthesizedExpressionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/parenthesizedExpressionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("secondStatement.kts")
     public void testSecondStatement() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/secondStatement.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("secondStatementCall.kts")
     public void testSecondStatementCall() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/secondStatementCall.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("stringLiteralScript.kts")
     public void testStringLiteralScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/stringLiteralScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("stringTemplateExpressionEntryScript.kts")
     public void testStringTemplateExpressionEntryScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/stringTemplateExpressionEntryScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("throwExpressionScript.kts")
     public void testThrowExpressionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/throwExpressionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("tryExpressionScript.kts")
     public void testTryExpressionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/tryExpressionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("whenExpressionScript.kts")
     public void testWhenExpressionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/whenExpressionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("whileExpressionScript.kts")
     public void testWhileExpressionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/whileExpressionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("wholeStringTemplateScript.kts")
     public void testWholeStringTemplateScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/wholeStringTemplateScript.kts");
@@ -650,42 +650,42 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/inImport")
   @TestDataPath("$PROJECT_ROOT")
   public class InImport {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInInImport() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/inImport"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("firstImportNamePartScript.kts")
     public void testFirstImportNamePartScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/inImport/firstImportNamePartScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("importListScript.kts")
     public void testImportListScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/inImport/importListScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("middleImportNamePartScript.kts")
     public void testMiddleImportNamePartScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/inImport/middleImportNamePartScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("qualifiedImportNamePartScript.kts")
     public void testQualifiedImportNamePartScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/inImport/qualifiedImportNamePartScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("wholeImportDirectiveScript.kts")
     public void testWholeImportDirectiveScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/inImport/wholeImportDirectiveScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("wholeImportNameScript.kts")
     public void testWholeImportNameScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/inImport/wholeImportNameScript.kts");
@@ -696,36 +696,36 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/inPackage")
   @TestDataPath("$PROJECT_ROOT")
   public class InPackage {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInInPackage() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/inPackage"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("firstPackageNamePartScript.kts")
     public void testFirstPackageNamePartScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/inPackage/firstPackageNamePartScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("middlePackageNamePartScript.kts")
     public void testMiddlePackageNamePartScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/inPackage/middlePackageNamePartScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("qualifiedPackageNamePartScript.kts")
     public void testQualifiedPackageNamePartScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/inPackage/qualifiedPackageNamePartScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("wholePackageDirectiveScript.kts")
     public void testWholePackageDirectiveScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/inPackage/wholePackageDirectiveScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("wholePackageNameScript.kts")
     public void testWholePackageNameScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/inPackage/wholePackageNameScript.kts");
@@ -736,7 +736,7 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode")
   @TestDataPath("$PROJECT_ROOT")
   public class InvalidCode {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInInvalidCode() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
@@ -746,18 +746,18 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/qualifiedExpressions")
   @TestDataPath("$PROJECT_ROOT")
   public class QualifiedExpressions {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInQualifiedExpressions() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/qualifiedExpressions"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("firstPartOfQualifiedCallWithNestedClassesScript.kts")
     public void testFirstPartOfQualifiedCallWithNestedClassesScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/qualifiedExpressions/firstPartOfQualifiedCallWithNestedClassesScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("qualifiedPartOfQualifiedCallUnresolvedScript.kts")
     public void testQualifiedPartOfQualifiedCallUnresolvedScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/qualifiedExpressions/qualifiedPartOfQualifiedCallUnresolvedScript.kts");
@@ -768,36 +768,36 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/types")
   @TestDataPath("$PROJECT_ROOT")
   public class Types {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInTypes() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/types"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("functionalTypeScript.kts")
     public void testFunctionalTypeScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/functionalTypeScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nestedClassTypeScript.kts")
     public void testNestedClassTypeScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/nestedClassTypeScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nullableTypeScript.kts")
     public void testNullableTypeScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/nullableTypeScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("receiverTypeScript.kts")
     public void testReceiverTypeScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/receiverTypeScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("wholeTypeScript.kts")
     public void testWholeTypeScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/wholeTypeScript.kts");
@@ -808,138 +808,138 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration")
   @TestDataPath("$PROJECT_ROOT")
   public class WholeDeclaration {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInWholeDeclaration() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("assignmentStatement.kts")
     public void testAssignmentStatement() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/assignmentStatement.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("class.kts")
     public void testClass() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/class.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classTypeParemeterScript.kts")
     public void testClassTypeParemeterScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/classTypeParemeterScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("enumEntryScript.kts")
     public void testEnumEntryScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/enumEntryScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fileAnnotationListScript.kts")
     public void testFileAnnotationListScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/fileAnnotationListScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fileAnnotationScript.kts")
     public void testFileAnnotationScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/fileAnnotationScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("function.kts")
     public void testFunction() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/function.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("getterScript.kts")
     public void testGetterScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/getterScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("localClassScript.kts")
     public void testLocalClassScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/localClassScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("localFunctionScript.kts")
     public void testLocalFunctionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/localFunctionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("localPropertyScript.kts")
     public void testLocalPropertyScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/localPropertyScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("memberFunctionScript.kts")
     public void testMemberFunctionScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/memberFunctionScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("memberPropertyScript.kts")
     public void testMemberPropertyScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/memberPropertyScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("memberTypeAliasScript.kts")
     public void testMemberTypeAliasScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/memberTypeAliasScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nestedClassScript.kts")
     public void testNestedClassScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/nestedClassScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("primaryConstructorValueParameterScript.kts")
     public void testPrimaryConstructorValueParameterScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/primaryConstructorValueParameterScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("scriptInitializer.kts")
     public void testScriptInitializer() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/scriptInitializer.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("secondaryConstructorValueParameterScript.kts")
     public void testSecondaryConstructorValueParameterScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/secondaryConstructorValueParameterScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("setterScript.kts")
     public void testSetterScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/setterScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("statement.kts")
     public void testStatement() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/statement.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("topLevelPropertyScript.kts")
     public void testTopLevelPropertyScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/topLevelPropertyScript.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("topLevelTypelTypeAliasScript.kts")
     public void testTopLevelTypelTypeAliasScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/topLevelTypelTypeAliasScript.kts");

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractHLExpressionTypeTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -41,240 +41,240 @@ public class FirIdeDependentAnalysisSourceModuleHLExpressionTypeTestGenerated ex
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInExpressionType() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("anonymousFunction.kt")
   public void testAnonymousFunction() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/anonymousFunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("arrayElement_arrayOfNulls.kt")
   public void testArrayElement_arrayOfNulls() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/arrayElement_arrayOfNulls.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("array_arrayOfNulls.kt")
   public void testArray_arrayOfNulls() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/array_arrayOfNulls.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("assignmentExpressionTarget.kt")
   public void testAssignmentExpressionTarget() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignmentExpressionTarget.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("binaryExpression.kt")
   public void testBinaryExpression() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/binaryExpression.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("breakExpression.kt")
   public void testBreakExpression() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/breakExpression.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("forExpression.kt")
   public void testForExpression() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/forExpression.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionCall.kt")
   public void testFunctionCall() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/functionCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("inParens.kt")
   public void testInParens() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/inParens.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("incompleteGet.kt")
   public void testIncompleteGet() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/incompleteGet.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("insideStringTemplate.kt")
   public void testInsideStringTemplate() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/insideStringTemplate.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("insideStringTemplateWithBinrary.kt")
   public void testInsideStringTemplateWithBinrary() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/insideStringTemplateWithBinrary.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("intLiteral.kt")
   public void testIntLiteral() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/intLiteral.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaEnhancedType.kt")
   public void testJavaEnhancedType() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/javaEnhancedType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaEnhancedTypeExternalAnnotation.kt")
   public void testJavaEnhancedTypeExternalAnnotation() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/javaEnhancedTypeExternalAnnotation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("listElement_listOf.kt")
   public void testListElement_listOf() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/listElement_listOf.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("listElement_mutableListOf.kt")
   public void testListElement_mutableListOf() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/listElement_mutableListOf.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("list_listOf.kt")
   public void testList_listOf() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/list_listOf.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("list_mutableListOf.kt")
   public void testList_mutableListOf() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/list_mutableListOf.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nameReference.kt")
   public void testNameReference() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nonExpression.kt")
   public void testNonExpression() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nonExpression.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("platformType.kt")
   public void testPlatformType() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/platformType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("plusAssign.kt")
   public void testPlusAssign() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/plusAssign.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("postfixDec.kt")
   public void testPostfixDec() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/postfixDec.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("prefixInc.kt")
   public void testPrefixInc() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/prefixInc.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("property.kt")
   public void testProperty() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/property.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("resolvedSuper.kt")
   public void testResolvedSuper() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/resolvedSuper.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("returnExpression.kt")
   public void testReturnExpression() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/returnExpression.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("singleExpressionLambdaBody.kt")
   public void testSingleExpressionLambdaBody() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/singleExpressionLambdaBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("smartcast_asCallArg.kt")
   public void testSmartcast_asCallArg() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/smartcast_asCallArg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("smartcast_asReceiver.kt")
   public void testSmartcast_asReceiver() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/smartcast_asReceiver.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("smartcast_multi.kt")
   public void testSmartcast_multi() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/smartcast_multi.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("smartcast_unused.kt")
   public void testSmartcast_unused() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/smartcast_unused.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("stringLiteral.kt")
   public void testStringLiteral() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/stringLiteral.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("underscoreTypeArgument.kt")
   public void testUnderscoreTypeArgument() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/underscoreTypeArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("unresolvedSuper_multipleSuperTypes.kt")
   public void testUnresolvedSuper_multipleSuperTypes() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/unresolvedSuper_multipleSuperTypes.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("unresolvedSuper_noSuperType.kt")
   public void testUnresolvedSuper_noSuperType() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/unresolvedSuper_noSuperType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("unresolvedSuper_singleSuperType.kt")
   public void testUnresolvedSuper_singleSuperType() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/unresolvedSuper_singleSuperType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whileExpression.kt")
   public void testWhileExpression() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/whileExpression.kt");
@@ -284,42 +284,42 @@ public class FirIdeDependentAnalysisSourceModuleHLExpressionTypeTestGenerated ex
   @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment")
   @TestDataPath("$PROJECT_ROOT")
   public class Assignment {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInAssignment() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("arrayAssignementTarget.kt")
     public void testArrayAssignementTarget() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment/arrayAssignementTarget.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("arrayAssignmentTargetUnresovledSet.kt")
     public void testArrayAssignmentTargetUnresovledSet() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment/arrayAssignmentTargetUnresovledSet.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("arrayAssignmentTargetWithTypeParameters.kt")
     public void testArrayAssignmentTargetWithTypeParameters() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment/arrayAssignmentTargetWithTypeParameters.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("arrayCompoundAssignementTarget.kt")
     public void testArrayCompoundAssignementTarget() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment/arrayCompoundAssignementTarget.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("augmentedArrayAssigment.kt")
     public void testAugmentedArrayAssigment() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment/augmentedArrayAssigment.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("readArrayElement.kt")
     public void testReadArrayElement() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment/readArrayElement.kt");
@@ -330,138 +330,138 @@ public class FirIdeDependentAnalysisSourceModuleHLExpressionTypeTestGenerated ex
   @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference")
   @TestDataPath("$PROJECT_ROOT")
   public class NameReference {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInNameReference() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("assignment.kt")
     public void testAssignment() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/assignment.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("assignment_qualified.kt")
     public void testAssignment_qualified() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/assignment_qualified.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("callableReference.kt")
     public void testCallableReference() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/callableReference.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("capturedBoundType.kt")
     public void testCapturedBoundType() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/capturedBoundType.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("functionCall.kt")
     public void testFunctionCall() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/functionCall.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("functionCall_invalid.kt")
     public void testFunctionCall_invalid() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/functionCall_invalid.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("functionCall_safeAccess.kt")
     public void testFunctionCall_safeAccess() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/functionCall_safeAccess.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("functionalType.kt")
     public void testFunctionalType() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/functionalType.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("functionalType_parens_1.kt")
     public void testFunctionalType_parens_1() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/functionalType_parens_1.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("functionalType_parens_2.kt")
     public void testFunctionalType_parens_2() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/functionalType_parens_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("functionalType_withReceiver.kt")
     public void testFunctionalType_withReceiver() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/functionalType_withReceiver.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("innerType_constructor.kt")
     public void testInnerType_constructor() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/innerType_constructor.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("innerType_constructor_invalid.kt")
     public void testInnerType_constructor_invalid() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/innerType_constructor_invalid.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("invokeCallOnObject1.kt")
     public void testInvokeCallOnObject1() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/invokeCallOnObject1.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("invokeCallOnObject2.kt")
     public void testInvokeCallOnObject2() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/invokeCallOnObject2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nestedType_constructor.kt")
     public void testNestedType_constructor() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/nestedType_constructor.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nestedType_constructor_invalid.kt")
     public void testNestedType_constructor_invalid() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/nestedType_constructor_invalid.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nestedType_object.kt")
     public void testNestedType_object() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/nestedType_object.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nestedType_object_extensionInvoke.kt")
     public void testNestedType_object_extensionInvoke() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/nestedType_object_extensionInvoke.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("propertyCall.kt")
     public void testPropertyCall() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/propertyCall.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("propertyCall_genericExtension.kt")
     public void testPropertyCall_genericExtension() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/propertyCall_genericExtension.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("propertyCall_safeAccess.kt")
     public void testPropertyCall_safeAccess() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference/propertyCall_safeAccess.kt");

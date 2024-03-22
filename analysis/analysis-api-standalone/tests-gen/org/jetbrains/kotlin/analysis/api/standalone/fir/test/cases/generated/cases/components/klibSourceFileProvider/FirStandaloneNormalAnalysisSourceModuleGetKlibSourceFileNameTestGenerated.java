@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.klibSourceFileProvider.AbstractGetKlibSourceFileNameTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,24 +40,24 @@ public class FirStandaloneNormalAnalysisSourceModuleGetKlibSourceFileNameTestGen
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInGetKlibSourceFileName() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/klibSourceFileNameProvider/getKlibSourceFileName"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("class.kt")
   public void testClass() {
     runTest("analysis/analysis-api/testData/components/klibSourceFileNameProvider/getKlibSourceFileName/class.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelFunction.kt")
   public void testTopLevelFunction() {
     runTest("analysis/analysis-api/testData/components/klibSourceFileNameProvider/getKlibSourceFileName/topLevelFunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelProperty.kt")
   public void testTopLevelProperty() {
     runTest("analysis/analysis-api/testData/components/klibSourceFileNameProvider/getKlibSourceFileName/topLevelProperty.kt");

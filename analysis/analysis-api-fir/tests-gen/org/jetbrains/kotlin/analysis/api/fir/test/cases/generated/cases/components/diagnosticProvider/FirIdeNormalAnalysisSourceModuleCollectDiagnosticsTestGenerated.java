@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractCollectDiagnosticsTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -41,198 +41,198 @@ public class FirIdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ext
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotationWithEnumFromDuplicatedLibrary.kt")
   public void testAnnotationWithEnumFromDuplicatedLibrary() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/annotationWithEnumFromDuplicatedLibrary.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("danglingAnnotationInMiddle.kt")
   public void testDanglingAnnotationInMiddle() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/danglingAnnotationInMiddle.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("danglingAnnotationInMiddleWithComment.kt")
   public void testDanglingAnnotationInMiddleWithComment() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/danglingAnnotationInMiddleWithComment.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("declarationErrors.kt")
   public void testDeclarationErrors() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/declarationErrors.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("delegationToLibraryInterface.kt")
   public void testDelegationToLibraryInterface() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/delegationToLibraryInterface.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("deprecationFromLibrary.kt")
   public void testDeprecationFromLibrary() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/deprecationFromLibrary.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("duplicatedCallableWithImplicitType.kt")
   public void testDuplicatedCallableWithImplicitType() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/duplicatedCallableWithImplicitType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("errorsInFunctionalInterfacesInstances.kt")
   public void testErrorsInFunctionalInterfacesInstances() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/errorsInFunctionalInterfacesInstances.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("incompleteDelegation.kt")
   public void testIncompleteDelegation() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/incompleteDelegation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("incompleteFor.kt")
   public void testIncompleteFor() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/incompleteFor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("inferTypeFromGetValueDelegate.kt")
   public void testInferTypeFromGetValueDelegate() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/inferTypeFromGetValueDelegate.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("inferTypeFromGetValueDelegateLibrary.kt")
   public void testInferTypeFromGetValueDelegateLibrary() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/inferTypeFromGetValueDelegateLibrary.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaInnerClass.kt")
   public void testJavaInnerClass() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/javaInnerClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaInnerClassFromAnotherModule.kt")
   public void testJavaInnerClassFromAnotherModule() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/javaInnerClassFromAnotherModule.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaInnerClassFromLibrary.kt")
   public void testJavaInnerClassFromLibrary() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/javaInnerClassFromLibrary.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaNestedClass.kt")
   public void testJavaNestedClass() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/javaNestedClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaNestedClassFromAnotherModule.kt")
   public void testJavaNestedClassFromAnotherModule() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/javaNestedClassFromAnotherModule.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaNestedClassFromLibrary.kt")
   public void testJavaNestedClassFromLibrary() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/javaNestedClassFromLibrary.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("libraryDataClassCopy.kt")
   public void testLibraryDataClassCopy() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/libraryDataClassCopy.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("libraryDataClassCopyReversedOrder.kt")
   public void testLibraryDataClassCopyReversedOrder() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/libraryDataClassCopyReversedOrder.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("overrideProtectedClassReturnFromLibrary.kt")
   public void testOverrideProtectedClassReturnFromLibrary() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/overrideProtectedClassReturnFromLibrary.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("resolutionErrors.kt")
   public void testResolutionErrors() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/resolutionErrors.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeMismatches.kt")
   public void testTypeMismatches() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/typeMismatches.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("unresolved.kt")
   public void testUnresolved() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolved.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("unresolvedAnnotationsOnPropertyFromParameter.kt")
   public void testUnresolvedAnnotationsOnPropertyFromParameter() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolvedAnnotationsOnPropertyFromParameter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("unresolvedReferenceInsideSuperConstructorCall.kt")
   public void testUnresolvedReferenceInsideSuperConstructorCall() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolvedReferenceInsideSuperConstructorCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("unresolvedReferenceInsideSuperConstructorCallWithLocalFunction.kt")
   public void testUnresolvedReferenceInsideSuperConstructorCallWithLocalFunction() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolvedReferenceInsideSuperConstructorCallWithLocalFunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("unresolvedReferenceInsideSuperConstructorCallWithPrimaryConstructor.kt")
   public void testUnresolvedReferenceInsideSuperConstructorCallWithPrimaryConstructor() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolvedReferenceInsideSuperConstructorCallWithPrimaryConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("unresolvedReferenceInsideSuperConstructorCallWithSecondaryConstructor.kt")
   public void testUnresolvedReferenceInsideSuperConstructorCallWithSecondaryConstructor() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolvedReferenceInsideSuperConstructorCallWithSecondaryConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("unresolvedReferenceInsideSuperPrimaryConstructorCallWithLocalFunction.kt")
   public void testUnresolvedReferenceInsideSuperPrimaryConstructorCallWithLocalFunction() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolvedReferenceInsideSuperPrimaryConstructorCallWithLocalFunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("unresolvedSuperConstructorCall.kt")
   public void testUnresolvedSuperConstructorCall() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolvedSuperConstructorCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("unusedDestructuring.kt")
   public void testUnusedDestructuring() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unusedDestructuring.kt");
@@ -242,42 +242,42 @@ public class FirIdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ext
   @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression")
   @TestDataPath("$PROJECT_ROOT")
   public class Suppression {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInSuppression() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("conflictingOverloadsAtTopLevel.kt")
     public void testConflictingOverloadsAtTopLevel() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/conflictingOverloadsAtTopLevel.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("conflictingOverloadsAtTopLevel2.kt")
     public void testConflictingOverloadsAtTopLevel2() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/conflictingOverloadsAtTopLevel2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("conflictingOverloadsAtTopLevelWithFileSuppression.kt")
     public void testConflictingOverloadsAtTopLevelWithFileSuppression() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/conflictingOverloadsAtTopLevelWithFileSuppression.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("conflictingOverloadsInClass.kt")
     public void testConflictingOverloadsInClass() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/conflictingOverloadsInClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("conflictingOverloadsInNestedClass.kt")
     public void testConflictingOverloadsInNestedClass() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/conflictingOverloadsInNestedClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("deprecationAtTopLevel.kt")
     public void testDeprecationAtTopLevel() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/deprecationAtTopLevel.kt");
@@ -288,78 +288,78 @@ public class FirIdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ext
   @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when")
   @TestDataPath("$PROJECT_ROOT")
   public class When {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInWhen() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("sealedClassFromDependencyExhaustive.kt")
     public void testSealedClassFromDependencyExhaustive() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedClassFromDependencyExhaustive.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("sealedClassFromDependencyMissingCase.kt")
     public void testSealedClassFromDependencyMissingCase() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedClassFromDependencyMissingCase.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("sealedClassFromLibraryExhaustive.kt")
     public void testSealedClassFromLibraryExhaustive() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedClassFromLibraryExhaustive.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("sealedClassFromLibraryMissingCase.kt")
     public void testSealedClassFromLibraryMissingCase() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedClassFromLibraryMissingCase.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("sealedClassSameModuleExhaustive.kt")
     public void testSealedClassSameModuleExhaustive() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedClassSameModuleExhaustive.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("sealedClassSameModuleMissingCase.kt")
     public void testSealedClassSameModuleMissingCase() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedClassSameModuleMissingCase.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("sealedInterfaceFromDependencyExhaustive.kt")
     public void testSealedInterfaceFromDependencyExhaustive() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedInterfaceFromDependencyExhaustive.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("sealedInterfaceFromDependencyMissingCase.kt")
     public void testSealedInterfaceFromDependencyMissingCase() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedInterfaceFromDependencyMissingCase.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("sealedInterfaceFromLibraryExhaustive.kt")
     public void testSealedInterfaceFromLibraryExhaustive() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedInterfaceFromLibraryExhaustive.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("sealedInterfaceFromLibraryMissingCase.kt")
     public void testSealedInterfaceFromLibraryMissingCase() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedInterfaceFromLibraryMissingCase.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("sealedInterfaceSameModuleExhaustive.kt")
     public void testSealedInterfaceSameModuleExhaustive() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedInterfaceSameModuleExhaustive.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("sealedInterfaceSameModuleMissingCase.kt")
     public void testSealedInterfaceSameModuleMissingCase() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedInterfaceSameModuleMissingCase.kt");

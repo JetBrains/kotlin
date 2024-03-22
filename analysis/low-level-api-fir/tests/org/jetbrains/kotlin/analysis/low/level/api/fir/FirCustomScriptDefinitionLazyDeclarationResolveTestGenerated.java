@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,42 +18,42 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition")
 @TestDataPath("$PROJECT_ROOT")
 public class FirCustomScriptDefinitionLazyDeclarationResolveTestGenerated extends AbstractFirCustomScriptDefinitionLazyDeclarationResolveTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInLazyResolveCustomScriptDefinition() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("initWithProvidedProperties.test.kts")
   public void testInitWithProvidedProperties_test() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition/initWithProvidedProperties.test.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("providedPropertyWithDefaultImport.test.kts")
   public void testProvidedPropertyWithDefaultImport_test() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition/providedPropertyWithDefaultImport.test.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("providedPropertyWithoutDefaultImport.test.kts")
   public void testProvidedPropertyWithoutDefaultImport_test() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition/providedPropertyWithoutDefaultImport.test.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("providedProperty.test.kts")
   public void testProvidedProperty_test() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition/providedProperty.test.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("resultWithProvidedProperties.test.kts")
   public void testResultWithProvidedProperties_test() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition/resultWithProvidedProperties.test.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("scriptWithProvidedProperties.test.kts")
   public void testScriptWithProvidedProperties_test() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveCustomScriptDefinition/scriptWithProvidedProperties.test.kts");

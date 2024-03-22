@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,18 +19,18 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/diagnostics/irInterpreter")
 @TestDataPath("$PROJECT_ROOT")
 public class FirPsiWithInterpreterDiagnosticsTestGenerated extends AbstractFirPsiWithInterpreterDiagnosticsTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInIrInterpreter() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInterpreter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("exceptionFromInterpreter.kt")
   public void testExceptionFromInterpreter() {
     runTest("compiler/testData/diagnostics/irInterpreter/exceptionFromInterpreter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("recursionAccess.kt")
   public void testRecursionAccess() {
     runTest("compiler/testData/diagnostics/irInterpreter/recursionAccess.kt");

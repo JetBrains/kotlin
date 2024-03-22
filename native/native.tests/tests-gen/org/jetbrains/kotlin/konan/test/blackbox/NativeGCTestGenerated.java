@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -22,114 +22,114 @@ import java.util.regex.Pattern;
 @Tag("gc")
 @UseStandardTestCaseGroupProvider()
 public class NativeGCTestGenerated extends AbstractNativeBlackBoxTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInGc() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/gc"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("basic0.kt")
   public void testBasic0() {
     runTest("native/native.tests/testData/gc/basic0.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("cleaner_basic.kt")
   public void testCleaner_basic() {
     runTest("native/native.tests/testData/gc/cleaner_basic.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("cleaner_in_tls_worker.kt")
   public void testCleaner_in_tls_worker() {
     runTest("native/native.tests/testData/gc/cleaner_in_tls_worker.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("cleaner_workers.kt")
   public void testCleaner_workers() {
     runTest("native/native.tests/testData/gc/cleaner_workers.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("collect.kt")
   public void testCollect() {
     runTest("native/native.tests/testData/gc/collect.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("cycles0.kt")
   public void testCycles0() {
     runTest("native/native.tests/testData/gc/cycles0.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("cycles1.kt")
   public void testCycles1() {
     runTest("native/native.tests/testData/gc/cycles1.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("escape0.kt")
   public void testEscape0() {
     runTest("native/native.tests/testData/gc/escape0.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("escape1.kt")
   public void testEscape1() {
     runTest("native/native.tests/testData/gc/escape1.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("escape2.kt")
   public void testEscape2() {
     runTest("native/native.tests/testData/gc/escape2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("gcStats.kt")
   public void testGcStats() {
     runTest("native/native.tests/testData/gc/gcStats.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lazy2.kt")
   public void testLazy2() {
     runTest("native/native.tests/testData/gc/lazy2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lazy3.kt")
   public void testLazy3() {
     runTest("native/native.tests/testData/gc/lazy3.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("throwable.kt")
   public void testThrowable() {
     runTest("native/native.tests/testData/gc/throwable.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("weak0.kt")
   public void testWeak0() {
     runTest("native/native.tests/testData/gc/weak0.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("weak1.kt")
   public void testWeak1() {
     runTest("native/native.tests/testData/gc/weak1.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("worker10.kt")
   public void testWorker10() {
     runTest("native/native.tests/testData/gc/worker10.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("worker_bound_reference0.kt")
   public void testWorker_bound_reference0() {
     runTest("native/native.tests/testData/gc/worker_bound_reference0.kt");

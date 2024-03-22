@@ -8,7 +8,7 @@ package org.jetbrains.kotlinx.jspo.runners;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,24 +18,24 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/js-plain-objects/compiler-plugin/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class FirJsPlainObjectsPluginDiagnosticTestGenerated extends AbstractFirJsPlainObjectsPluginDiagnosticTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/js-plain-objects/compiler-plugin/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("inheritance.kt")
   public void testInheritance() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/diagnostics/inheritance.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("only-properties.kt")
   public void testOnly_properties() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/diagnostics/only-properties.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("wrongAnnotationTarget.kt")
   public void testWrongAnnotationTarget() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/diagnostics/wrongAnnotationTarget.kt");

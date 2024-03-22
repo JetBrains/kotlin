@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder")
 @TestDataPath("$PROJECT_ROOT")
 public class FirScriptLazyBodiesCalculatorTestGenerated extends AbstractFirScriptLazyBodiesCalculatorTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInRawBuilder() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
   }
@@ -28,30 +28,30 @@ public class FirScriptLazyBodiesCalculatorTestGenerated extends AbstractFirScrip
   @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations")
   @TestDataPath("$PROJECT_ROOT")
   public class Declarations {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInDeclarations() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("script.kts")
     public void testScript() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/script.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("scriptLevelDestructuringWithAnnotation.kts")
     public void testScriptLevelDestructuringWithAnnotation() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/scriptLevelDestructuringWithAnnotation.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("scriptStatementLevelDestructuringWithAnnotation.kts")
     public void testScriptStatementLevelDestructuringWithAnnotation() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/scriptStatementLevelDestructuringWithAnnotation.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts")
     public void testScriptStatementLevelDestructuringWithAnnotationAsLastStatement() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts");
@@ -61,7 +61,7 @@ public class FirScriptLazyBodiesCalculatorTestGenerated extends AbstractFirScrip
     @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts")
     @TestDataPath("$PROJECT_ROOT")
     public class Contracts {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInContracts() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
       }
@@ -70,7 +70,7 @@ public class FirScriptLazyBodiesCalculatorTestGenerated extends AbstractFirScrip
       @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax")
       @TestDataPath("$PROJECT_ROOT")
       public class NewSyntax {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInNewSyntax() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
         }
@@ -80,7 +80,7 @@ public class FirScriptLazyBodiesCalculatorTestGenerated extends AbstractFirScrip
       @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax")
       @TestDataPath("$PROJECT_ROOT")
       public class OldSyntax {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInOldSyntax() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
         }
@@ -91,7 +91,7 @@ public class FirScriptLazyBodiesCalculatorTestGenerated extends AbstractFirScrip
     @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType")
     @TestDataPath("$PROJECT_ROOT")
     public class NoParameterType {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInNoParameterType() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
       }
@@ -102,7 +102,7 @@ public class FirScriptLazyBodiesCalculatorTestGenerated extends AbstractFirScrip
   @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions")
   @TestDataPath("$PROJECT_ROOT")
   public class Expressions {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInExpressions() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }

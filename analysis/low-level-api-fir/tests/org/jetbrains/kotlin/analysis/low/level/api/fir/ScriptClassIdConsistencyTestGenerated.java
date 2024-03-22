@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,42 +18,42 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/classId")
 @TestDataPath("$PROJECT_ROOT")
 public class ScriptClassIdConsistencyTestGenerated extends AbstractScriptClassIdConsistencyTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInClassId() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/classId"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classWithMembers.kts")
   public void testClassWithMembers() {
     runTest("analysis/low-level-api-fir/testData/classId/classWithMembers.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classWithMembersWithPackage.kts")
   public void testClassWithMembersWithPackage() {
     runTest("analysis/low-level-api-fir/testData/classId/classWithMembersWithPackage.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enum.kts")
   public void testEnum() {
     runTest("analysis/low-level-api-fir/testData/classId/enum.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumEntry.kts")
   public void testEnumEntry() {
     runTest("analysis/low-level-api-fir/testData/classId/enumEntry.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("namelessClasses.kts")
   public void testNamelessClasses() {
     runTest("analysis/low-level-api-fir/testData/classId/namelessClasses.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("namelessInsideNamelessClasses.kts")
   public void testNamelessInsideNamelessClasses() {
     runTest("analysis/low-level-api-fir/testData/classId/namelessInsideNamelessClasses.kts");

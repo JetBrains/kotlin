@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.kapt3.test.runners;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,42 +18,42 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kapt3/kapt3-compiler/testData/kotlinRunner")
 @TestDataPath("$PROJECT_ROOT")
 public class IrKotlinKaptContextTestGenerated extends AbstractIrKotlinKaptContextTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInKotlinRunner() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-compiler/testData/kotlinRunner"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("DefaultParameterValues.kt")
   public void testDefaultParameterValues() {
     runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/DefaultParameterValues.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("ErrorLocationMapping.kt")
   public void testErrorLocationMapping() {
     runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/ErrorLocationMapping.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("Log.kt")
   public void testLog() {
     runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/Log.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("NestedClasses.kt")
   public void testNestedClasses() {
     runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/NestedClasses.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("Overloads.kt")
   public void testOverloads() {
     runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/Overloads.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("Simple.kt")
   public void testSimple() {
     runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/Simple.kt");

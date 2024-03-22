@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inheritorsProvider.AbstractSealedInheritorsTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,90 +40,90 @@ public class FirStandaloneNormalAnalysisSourceModuleSealedInheritorsTestGenerate
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInSealedInheritors() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("sealedClassFromDependency.kt")
   public void testSealedClassFromDependency() {
     runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedClassFromDependency.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("sealedClassFromLibrary.kt")
   public void testSealedClassFromLibrary() {
     runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedClassFromLibrary.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("sealedClassSameModule.kt")
   public void testSealedClassSameModule() {
     runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedClassSameModule.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("sealedClassTypeAliasedFromDependency.kt")
   public void testSealedClassTypeAliasedFromDependency() {
     runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedClassTypeAliasedFromDependency.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("sealedClassTypeAliasedFromLibrary.kt")
   public void testSealedClassTypeAliasedFromLibrary() {
     runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedClassTypeAliasedFromLibrary.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("sealedClassTypeAliasedSameModule.kt")
   public void testSealedClassTypeAliasedSameModule() {
     runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedClassTypeAliasedSameModule.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("sealedInheritorWrongPackageFromDependency.kt")
   public void testSealedInheritorWrongPackageFromDependency() {
     runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedInheritorWrongPackageFromDependency.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("sealedInheritorWrongPackageSameModule.kt")
   public void testSealedInheritorWrongPackageSameModule() {
     runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedInheritorWrongPackageSameModule.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("sealedInterfaceFromDependency.kt")
   public void testSealedInterfaceFromDependency() {
     runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedInterfaceFromDependency.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("sealedInterfaceFromLibrary.kt")
   public void testSealedInterfaceFromLibrary() {
     runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedInterfaceFromLibrary.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("sealedInterfaceSameModule.kt")
   public void testSealedInterfaceSameModule() {
     runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedInterfaceSameModule.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("sealedInterfaceTypeAliasedFromDependency.kt")
   public void testSealedInterfaceTypeAliasedFromDependency() {
     runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedInterfaceTypeAliasedFromDependency.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("sealedInterfaceTypeAliasedFromLibrary.kt")
   public void testSealedInterfaceTypeAliasedFromLibrary() {
     runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedInterfaceTypeAliasedFromLibrary.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("sealedInterfaceTypeAliasedSameModule.kt")
   public void testSealedInterfaceTypeAliasedSameModule() {
     runTest("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors/sealedInterfaceTypeAliasedSameModule.kt");

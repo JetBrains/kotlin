@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiExpressionPsiTypeProviderTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,60 +40,60 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiExpressionPsiTypeProvide
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInForExpression() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("capturedBoundType.kt")
   public void testCapturedBoundType() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/capturedBoundType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("class_object_call.kt")
   public void testClass_object_call() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/class_object_call.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("class_object_constructor.kt")
   public void testClass_object_constructor() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/class_object_constructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("errorType.kt")
   public void testErrorType() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/errorType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("KTIJ25461.kt")
   public void testKTIJ25461() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/KTIJ25461.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localClassWithUnresolvedSuperType.kt")
   public void testLocalClassWithUnresolvedSuperType() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/localClassWithUnresolvedSuperType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("recursiveTypeParameter_localSimple.kt")
   public void testRecursiveTypeParameter_localSimple() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/recursiveTypeParameter_localSimple.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("recursiveTypeParameter_localWithTypeParameter.kt")
   public void testRecursiveTypeParameter_localWithTypeParameter() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/recursiveTypeParameter_localWithTypeParameter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeParamFlexibleUpperBound.kt")
   public void testTypeParamFlexibleUpperBound() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/typeParamFlexibleUpperBound.kt");

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/boxError")
 @TestDataPath("$PROJECT_ROOT")
 public class FirJsCodegenBoxErrorTestGenerated extends AbstractFirJsCodegenBoxErrorTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInBoxError() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxError"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true, "compileKotlinAgainstKotlin");
   }
@@ -29,66 +29,66 @@ public class FirJsCodegenBoxErrorTestGenerated extends AbstractFirJsCodegenBoxEr
   @TestMetadata("compiler/testData/codegen/boxError/semantic")
   @TestDataPath("$PROJECT_ROOT")
   public class Semantic {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInSemantic() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxError/semantic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("castToErrorType.kt")
     public void testCastToErrorType() {
       runTest("compiler/testData/codegen/boxError/semantic/castToErrorType.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("catchErrorType.kt")
     public void testCatchErrorType() {
       runTest("compiler/testData/codegen/boxError/semantic/catchErrorType.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("evaluationOrder.kt")
     public void testEvaluationOrder() {
       runTest("compiler/testData/codegen/boxError/semantic/evaluationOrder.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("mismatchTypeParameters.kt")
     public void testMismatchTypeParameters() {
       runTest("compiler/testData/codegen/boxError/semantic/mismatchTypeParameters.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("missedBody.kt")
     public void testMissedBody() {
       runTest("compiler/testData/codegen/boxError/semantic/missedBody.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("reifiedNonInline.kt")
     public void testReifiedNonInline() {
       runTest("compiler/testData/codegen/boxError/semantic/reifiedNonInline.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("reifiedWithWrongArguments.kt")
     public void testReifiedWithWrongArguments() {
       runTest("compiler/testData/codegen/boxError/semantic/reifiedWithWrongArguments.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeMismatch.kt")
     public void testTypeMismatch() {
       runTest("compiler/testData/codegen/boxError/semantic/typeMismatch.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("unmatchedArguments.kt")
     public void testUnmatchedArguments() {
       runTest("compiler/testData/codegen/boxError/semantic/unmatchedArguments.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("unresolvedFunctionReferece.kt")
     public void testUnresolvedFunctionReferece() {
       runTest("compiler/testData/codegen/boxError/semantic/unresolvedFunctionReferece.kt");
@@ -99,30 +99,30 @@ public class FirJsCodegenBoxErrorTestGenerated extends AbstractFirJsCodegenBoxEr
   @TestMetadata("compiler/testData/codegen/boxError/syntax")
   @TestDataPath("$PROJECT_ROOT")
   public class Syntax {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInSyntax() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxError/syntax"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("arrowReference.kt")
     public void testArrowReference() {
       runTest("compiler/testData/codegen/boxError/syntax/arrowReference.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("evaluationOrder.kt")
     public void testEvaluationOrder() {
       runTest("compiler/testData/codegen/boxError/syntax/evaluationOrder.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("incorectLexicalName.kt")
     public void testIncorectLexicalName() {
       runTest("compiler/testData/codegen/boxError/syntax/incorectLexicalName.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("missedArgument.kt")
     public void testMissedArgument() {
       runTest("compiler/testData/codegen/boxError/syntax/missedArgument.kt");

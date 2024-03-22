@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractAnnotationApplicableTargetsTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,36 +40,36 @@ public class FirStandaloneNormalAnalysisSourceModuleAnnotationApplicableTargetsT
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInAnnotationApplicableTargets() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("defaultTargets.kt")
   public void testDefaultTargets() {
     runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/defaultTargets.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("emptyTargets.kt")
   public void testEmptyTargets() {
     runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/emptyTargets.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaAnnotation.kt")
   public void testJavaAnnotation() {
     runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/javaAnnotation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("listedTargets.kt")
   public void testListedTargets() {
     runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/listedTargets.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nonAnnotationClass.kt")
   public void testNonAnnotationClass() {
     runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/nonAnnotationClass.kt");

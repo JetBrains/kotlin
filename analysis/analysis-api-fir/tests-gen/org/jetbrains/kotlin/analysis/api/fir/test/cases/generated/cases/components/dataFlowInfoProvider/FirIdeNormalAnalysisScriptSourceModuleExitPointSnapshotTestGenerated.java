@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.dataFlowInfoProvider.AbstractExitPointSnapshotTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -41,7 +41,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleExitPointSnapshotTestGenerate
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInExitPointSnapshot() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
@@ -50,7 +50,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleExitPointSnapshotTestGenerate
   @TestMetadata("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow")
   @TestDataPath("$PROJECT_ROOT")
   public class ControlFlow {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInControlFlow() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -59,7 +59,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleExitPointSnapshotTestGenerate
     @TestMetadata("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/conditionalJumps")
     @TestDataPath("$PROJECT_ROOT")
     public class ConditionalJumps {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInConditionalJumps() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/conditionalJumps"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -69,7 +69,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleExitPointSnapshotTestGenerate
     @TestMetadata("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/definiteJumps")
     @TestDataPath("$PROJECT_ROOT")
     public class DefiniteJumps {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInDefiniteJumps() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/definiteJumps"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -79,7 +79,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleExitPointSnapshotTestGenerate
     @TestMetadata("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/differentTargets")
     @TestDataPath("$PROJECT_ROOT")
     public class DifferentTargets {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInDifferentTargets() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/differentTargets"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -89,7 +89,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleExitPointSnapshotTestGenerate
     @TestMetadata("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/exitPointEquivalence")
     @TestDataPath("$PROJECT_ROOT")
     public class ExitPointEquivalence {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInExitPointEquivalence() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/exitPointEquivalence"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -99,7 +99,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleExitPointSnapshotTestGenerate
     @TestMetadata("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/unconditionalJumps")
     @TestDataPath("$PROJECT_ROOT")
     public class UnconditionalJumps {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInUnconditionalJumps() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/unconditionalJumps"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -110,7 +110,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleExitPointSnapshotTestGenerate
   @TestMetadata("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues")
   @TestDataPath("$PROJECT_ROOT")
   public class DefaultValues {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInDefaultValues() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -120,7 +120,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleExitPointSnapshotTestGenerate
   @TestMetadata("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/languageConstructs")
   @TestDataPath("$PROJECT_ROOT")
   public class LanguageConstructs {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInLanguageConstructs() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/languageConstructs"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -130,7 +130,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleExitPointSnapshotTestGenerate
   @TestMetadata("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables")
   @TestDataPath("$PROJECT_ROOT")
   public class Variables {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInVariables() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }

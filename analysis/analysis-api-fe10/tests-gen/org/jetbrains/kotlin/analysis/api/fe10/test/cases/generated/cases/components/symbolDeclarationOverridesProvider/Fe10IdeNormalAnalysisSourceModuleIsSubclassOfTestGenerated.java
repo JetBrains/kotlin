@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractIsSubclassOfTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,42 +40,42 @@ public class Fe10IdeNormalAnalysisSourceModuleIsSubclassOfTestGenerated extends 
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInIsSubclassOf() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("childClass.kt")
   public void testChildClass() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf/childClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("grandParentClass.kt")
   public void testGrandParentClass() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf/grandParentClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localClasses.kt")
   public void testLocalClasses() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf/localClasses.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("parentClass.kt")
   public void testParentClass() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf/parentClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("sameClass.kt")
   public void testSameClass() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf/sameClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("unrelatedClass.kt")
   public void testUnrelatedClass() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf/unrelatedClass.kt");

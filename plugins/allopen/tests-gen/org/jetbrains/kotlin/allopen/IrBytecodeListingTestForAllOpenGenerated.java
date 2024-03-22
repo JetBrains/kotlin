@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,102 +19,102 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/allopen/testData/bytecodeListing")
 @TestDataPath("$PROJECT_ROOT")
 public class IrBytecodeListingTestForAllOpenGenerated extends AbstractIrBytecodeListingTestForAllOpen {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInBytecodeListing() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/allopen/testData/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("allOpenOnNotClasses.kt")
   public void testAllOpenOnNotClasses() {
     runTest("plugins/allopen/testData/bytecodeListing/allOpenOnNotClasses.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("alreadyOpen.kt")
   public void testAlreadyOpen() {
     runTest("plugins/allopen/testData/bytecodeListing/alreadyOpen.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotationMembers.kt")
   public void testAnnotationMembers() {
     runTest("plugins/allopen/testData/bytecodeListing/annotationMembers.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("anonymousObject.kt")
   public void testAnonymousObject() {
     runTest("plugins/allopen/testData/bytecodeListing/anonymousObject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("explicitFinal.kt")
   public void testExplicitFinal() {
     runTest("plugins/allopen/testData/bytecodeListing/explicitFinal.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("metaAnnotation_differentModules.kt")
   public void testMetaAnnotation_differentModules() {
     runTest("plugins/allopen/testData/bytecodeListing/metaAnnotation_differentModules.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("metaAnnotation_sameModule.kt")
   public void testMetaAnnotation_sameModule() {
     runTest("plugins/allopen/testData/bytecodeListing/metaAnnotation_sameModule.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nestedClass.kt")
   public void testNestedClass() {
     runTest("plugins/allopen/testData/bytecodeListing/nestedClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nestedInner.kt")
   public void testNestedInner() {
     runTest("plugins/allopen/testData/bytecodeListing/nestedInner.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("noAllOpen.kt")
   public void testNoAllOpen() {
     runTest("plugins/allopen/testData/bytecodeListing/noAllOpen.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("privateMembers.kt")
   public void testPrivateMembers() {
     runTest("plugins/allopen/testData/bytecodeListing/privateMembers.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("sealed.kt")
   public void testSealed() {
     runTest("plugins/allopen/testData/bytecodeListing/sealed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("severalAllOpen.kt")
   public void testSeveralAllOpen() {
     runTest("plugins/allopen/testData/bytecodeListing/severalAllOpen.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simple.kt")
   public void testSimple() {
     runTest("plugins/allopen/testData/bytecodeListing/simple.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("springAnnotations.kt")
   public void testSpringAnnotations() {
     runTest("plugins/allopen/testData/bytecodeListing/springAnnotations.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("superClassAnnotation.kt")
   public void testSuperClassAnnotation() {
     runTest("plugins/allopen/testData/bytecodeListing/superClassAnnotation.kt");

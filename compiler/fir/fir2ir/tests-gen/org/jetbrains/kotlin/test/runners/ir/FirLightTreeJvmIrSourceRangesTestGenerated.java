@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -20,84 +20,84 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/ir/sourceRanges")
 @TestDataPath("$PROJECT_ROOT")
 public class FirLightTreeJvmIrSourceRangesTestGenerated extends AbstractFirLightTreeJvmIrSourceRangesTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInSourceRanges() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/sourceRanges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotations.kt")
   public void testAnnotations() {
     runTest("compiler/testData/ir/sourceRanges/annotations.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("augmentedAssignmentWithExpression.kt")
   public void testAugmentedAssignmentWithExpression() {
     runTest("compiler/testData/ir/sourceRanges/augmentedAssignmentWithExpression.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("comments.kt")
   public void testComments() {
     runTest("compiler/testData/ir/sourceRanges/comments.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("elvis.kt")
   public void testElvis() {
     runTest("compiler/testData/ir/sourceRanges/elvis.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("extensionLambdaCall.kt")
   public void testExtensionLambdaCall() {
     runTest("compiler/testData/ir/sourceRanges/extensionLambdaCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kt17108.kt")
   public void testKt17108() {
     runTest("compiler/testData/ir/sourceRanges/kt17108.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kt24258.kt")
   public void testKt24258() {
     runTest("compiler/testData/ir/sourceRanges/kt24258.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kt63779.kt")
   public void testKt63779() {
     runTest("compiler/testData/ir/sourceRanges/kt63779.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kt63779_2.kt")
   public void testKt63779_2() {
     runTest("compiler/testData/ir/sourceRanges/kt63779_2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("multiLineCall.kt")
   public void testMultiLineCall() {
     runTest("compiler/testData/ir/sourceRanges/multiLineCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("operators.kt")
   public void testOperators() {
     runTest("compiler/testData/ir/sourceRanges/operators.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("postfixIncrementDecrement.kt")
   public void testPostfixIncrementDecrement() {
     runTest("compiler/testData/ir/sourceRanges/postfixIncrementDecrement.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("this.kt")
   public void testThis() {
     runTest("compiler/testData/ir/sourceRanges/this.kt");
@@ -107,78 +107,78 @@ public class FirLightTreeJvmIrSourceRangesTestGenerated extends AbstractFirLight
   @TestMetadata("compiler/testData/ir/sourceRanges/declarations")
   @TestDataPath("$PROJECT_ROOT")
   public class Declarations {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInDeclarations() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/sourceRanges/declarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classFuns.kt")
     public void testClassFuns() {
       runTest("compiler/testData/ir/sourceRanges/declarations/classFuns.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classProperties.kt")
     public void testClassProperties() {
       runTest("compiler/testData/ir/sourceRanges/declarations/classProperties.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classes.kt")
     public void testClasses() {
       runTest("compiler/testData/ir/sourceRanges/declarations/classes.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("delegatedProperties.kt")
     public void testDelegatedProperties() {
       runTest("compiler/testData/ir/sourceRanges/declarations/delegatedProperties.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fakeOverrides.kt")
     public void testFakeOverrides() {
       runTest("compiler/testData/ir/sourceRanges/declarations/fakeOverrides.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fakeOverrides2.kt")
     public void testFakeOverrides2() {
       runTest("compiler/testData/ir/sourceRanges/declarations/fakeOverrides2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt29862.kt")
     public void testKt29862() {
       runTest("compiler/testData/ir/sourceRanges/declarations/kt29862.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("primaryConstructors.kt")
     public void testPrimaryConstructors() {
       runTest("compiler/testData/ir/sourceRanges/declarations/primaryConstructors.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("secondaryConstructors.kt")
     public void testSecondaryConstructors() {
       runTest("compiler/testData/ir/sourceRanges/declarations/secondaryConstructors.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("synthesizedDataClassMembers.kt")
     public void testSynthesizedDataClassMembers() {
       runTest("compiler/testData/ir/sourceRanges/declarations/synthesizedDataClassMembers.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("topLevelFuns.kt")
     public void testTopLevelFuns() {
       runTest("compiler/testData/ir/sourceRanges/declarations/topLevelFuns.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("topLevelProperties.kt")
     public void testTopLevelProperties() {
       runTest("compiler/testData/ir/sourceRanges/declarations/topLevelProperties.kt");

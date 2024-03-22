@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,30 +19,30 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/scripting/scripting-tests/testData/codegen/testScripts")
 @TestDataPath("$PROJECT_ROOT")
 public class ScriptWithCustomDefBlackBoxCodegenTestGenerated extends AbstractScriptWithCustomDefBlackBoxCodegenTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInTestScripts() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/codegen/testScripts"), Pattern.compile("^(.+)\\.kts$"), null, TargetBackend.JVM_IR, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("declarationsOrder1.test.kts")
   public void testDeclarationsOrder1_test() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/declarationsOrder1.test.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("declarationsOrder2.test.kts")
   public void testDeclarationsOrder2_test() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/declarationsOrder2.test.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("params.test.kts")
   public void testParams_test() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/params.test.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simple.test.kts")
   public void testSimple_test() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/simple.test.kts");

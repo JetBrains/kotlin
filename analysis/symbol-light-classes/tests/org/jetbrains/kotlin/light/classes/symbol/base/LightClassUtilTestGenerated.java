@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.base;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,60 +18,60 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/symbol-light-classes/testData/lightElements")
 @TestDataPath("$PROJECT_ROOT")
 public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInLightElements() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/symbol-light-classes/testData/lightElements"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("mangledName.kt")
   public void testMangledName() {
     runTest("analysis/symbol-light-classes/testData/lightElements/mangledName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("mangledNameWithAnnotations.kt")
   public void testMangledNameWithAnnotations() {
     runTest("analysis/symbol-light-classes/testData/lightElements/mangledNameWithAnnotations.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyAccessor.kt")
   public void testPropertyAccessor() {
     runTest("analysis/symbol-light-classes/testData/lightElements/propertyAccessor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyAccessorWithAnnotation.kt")
   public void testPropertyAccessorWithAnnotation() {
     runTest("analysis/symbol-light-classes/testData/lightElements/propertyAccessorWithAnnotation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyAccessorWithImplicitAnnotation.kt")
   public void testPropertyAccessorWithImplicitAnnotation() {
     runTest("analysis/symbol-light-classes/testData/lightElements/propertyAccessorWithImplicitAnnotation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyWithExplicitAccessors.kt")
   public void testPropertyWithExplicitAccessors() {
     runTest("analysis/symbol-light-classes/testData/lightElements/propertyWithExplicitAccessors.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyWithExplicitAccessorsAndAnnotation.kt")
   public void testPropertyWithExplicitAccessorsAndAnnotation() {
     runTest("analysis/symbol-light-classes/testData/lightElements/propertyWithExplicitAccessorsAndAnnotation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyWithExplicitAccessorsAndAnnotationOnThem.kt")
   public void testPropertyWithExplicitAccessorsAndAnnotationOnThem() {
     runTest("analysis/symbol-light-classes/testData/lightElements/propertyWithExplicitAccessorsAndAnnotationOnThem.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyWithImplicitAccessors.kt")
   public void testPropertyWithImplicitAccessors() {
     runTest("analysis/symbol-light-classes/testData/lightElements/propertyWithImplicitAccessors.kt");

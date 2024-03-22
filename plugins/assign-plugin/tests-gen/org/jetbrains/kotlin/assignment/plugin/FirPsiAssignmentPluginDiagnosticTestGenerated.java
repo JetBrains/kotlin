@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.assignment.plugin;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,42 +18,42 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/assign-plugin/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class FirPsiAssignmentPluginDiagnosticTestGenerated extends AbstractFirPsiAssignmentPluginDiagnosticTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/assign-plugin/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("incorrectUsage.kt")
   public void testIncorrectUsage() {
     runTest("plugins/assign-plugin/testData/diagnostics/incorrectUsage.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localVariables.kt")
   public void testLocalVariables() {
     runTest("plugins/assign-plugin/testData/diagnostics/localVariables.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("methodDeclaration.kt")
   public void testMethodDeclaration() {
     runTest("plugins/assign-plugin/testData/diagnostics/methodDeclaration.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("noAnnotation.kt")
   public void testNoAnnotation() {
     runTest("plugins/assign-plugin/testData/diagnostics/noAnnotation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("otherOperators.kt")
   public void testOtherOperators() {
     runTest("plugins/assign-plugin/testData/diagnostics/otherOperators.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("plusAssignPrecedence.kt")
   public void testPlusAssignPrecedence() {
     runTest("plugins/assign-plugin/testData/diagnostics/plusAssignPrecedence.kt");

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,24 +18,24 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/testData/CInterop/KT-39120/defs")
 @TestDataPath("$PROJECT_ROOT")
 public class CInteropKT39120TestGenerated extends AbstractNativeCInteropKT39120Test {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInDefs() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CInterop/KT-39120/defs"), Pattern.compile("^([^_](.+))$"), null, false);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("ForwardEnum")
   public void testForwardEnum() {
     runTest("native/native.tests/testData/CInterop/KT-39120/defs/ForwardEnum/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("interModuleImport")
   public void testInterModuleImport() {
     runTest("native/native.tests/testData/CInterop/KT-39120/defs/interModuleImport/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("KT-39120")
   public void testKT_39120() {
     runTest("native/native.tests/testData/CInterop/KT-39120/defs/KT-39120/");

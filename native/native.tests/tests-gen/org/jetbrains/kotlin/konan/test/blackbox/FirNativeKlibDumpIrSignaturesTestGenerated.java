@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -22,36 +22,36 @@ import java.util.regex.Pattern;
 @Tag("frontend-fir")
 @FirPipeline()
 public class FirNativeKlibDumpIrSignaturesTestGenerated extends AbstractNativeKlibDumpIrSignaturesTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInDump_signatures() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/dump-signatures"), Pattern.compile("^([^_](.+)).kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callables.kt")
   public void testCallables() {
     runTest("native/native.tests/testData/klib/dump-signatures/callables.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("imported_declarations.kt")
   public void testImported_declarations() {
     runTest("native/native.tests/testData/klib/dump-signatures/imported_declarations.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("imported_from_cinterop.kt")
   public void testImported_from_cinterop() {
     runTest("native/native.tests/testData/klib/dump-signatures/imported_from_cinterop.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("type_parameters.kt")
   public void testType_parameters() {
     runTest("native/native.tests/testData/klib/dump-signatures/type_parameters.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("visibility.kt")
   public void testVisibility() {
     runTest("native/native.tests/testData/klib/dump-signatures/visibility.kt");

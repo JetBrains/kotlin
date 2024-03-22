@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.allopen;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,30 +18,30 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/allopen/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class FirLightTreeDiagnosticTestForAllOpenGenerated extends AbstractFirLightTreeDiagnosticTestForAllOpen {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/allopen/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("allOpenOnAnnotation.kt")
   public void testAllOpenOnAnnotation() {
     runTest("plugins/allopen/testData/diagnostics/allOpenOnAnnotation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kt54260.kt")
   public void testKt54260() {
     runTest("plugins/allopen/testData/diagnostics/kt54260.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kt60448.kt")
   public void testKt60448() {
     runTest("plugins/allopen/testData/diagnostics/kt60448.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("smartcast.kt")
   public void testSmartcast() {
     runTest("plugins/allopen/testData/diagnostics/smartcast.kt");

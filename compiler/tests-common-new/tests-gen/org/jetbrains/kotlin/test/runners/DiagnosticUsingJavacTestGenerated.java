@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,30 +19,30 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/diagnostics/tests/javac")
 @TestDataPath("$PROJECT_ROOT")
 public class DiagnosticUsingJavacTestGenerated extends AbstractDiagnosticUsingJavacTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInJavac() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("Annotations.kt")
   public void testAnnotations() {
     runTest("compiler/testData/diagnostics/tests/javac/Annotations.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("Lambda.kt")
   public void testLambda() {
     runTest("compiler/testData/diagnostics/tests/javac/Lambda.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("LambdaNonGeneric.kt")
   public void testLambdaNonGeneric() {
     runTest("compiler/testData/diagnostics/tests/javac/LambdaNonGeneric.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("LambdaNonGenericForbidden.kt")
   public void testLambdaNonGenericForbidden() {
     runTest("compiler/testData/diagnostics/tests/javac/LambdaNonGenericForbidden.kt");
@@ -52,78 +52,78 @@ public class DiagnosticUsingJavacTestGenerated extends AbstractDiagnosticUsingJa
   @TestMetadata("compiler/testData/diagnostics/tests/javac/fieldsResolution")
   @TestDataPath("$PROJECT_ROOT")
   public class FieldsResolution {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInFieldsResolution() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/fieldsResolution"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("AsteriskStaticImportsAmbiguity.kt")
     public void testAsteriskStaticImportsAmbiguity() {
       runTest("compiler/testData/diagnostics/tests/javac/fieldsResolution/AsteriskStaticImportsAmbiguity.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("BinaryInitializers.kt")
     public void testBinaryInitializers() {
       runTest("compiler/testData/diagnostics/tests/javac/fieldsResolution/BinaryInitializers.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ConstantByFqName.kt")
     public void testConstantByFqName() {
       runTest("compiler/testData/diagnostics/tests/javac/fieldsResolution/ConstantByFqName.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ConstantValues.kt")
     public void testConstantValues() {
       runTest("compiler/testData/diagnostics/tests/javac/fieldsResolution/ConstantValues.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ConstantValuesFromKtFile.kt")
     public void testConstantValuesFromKtFile() {
       runTest("compiler/testData/diagnostics/tests/javac/fieldsResolution/ConstantValuesFromKtFile.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("FieldFromOuterClass.kt")
     public void testFieldFromOuterClass() {
       runTest("compiler/testData/diagnostics/tests/javac/fieldsResolution/FieldFromOuterClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("InheritedField.kt")
     public void testInheritedField() {
       runTest("compiler/testData/diagnostics/tests/javac/fieldsResolution/InheritedField.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("MultipleOuters.kt")
     public void testMultipleOuters() {
       runTest("compiler/testData/diagnostics/tests/javac/fieldsResolution/MultipleOuters.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ResolutionPriority.kt")
     public void testResolutionPriority() {
       runTest("compiler/testData/diagnostics/tests/javac/fieldsResolution/ResolutionPriority.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("SameFieldInSupertypes.kt")
     public void testSameFieldInSupertypes() {
       runTest("compiler/testData/diagnostics/tests/javac/fieldsResolution/SameFieldInSupertypes.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("StaticImport.kt")
     public void testStaticImport() {
       runTest("compiler/testData/diagnostics/tests/javac/fieldsResolution/StaticImport.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("StaticImportsAmbiguity.kt")
     public void testStaticImportsAmbiguity() {
       runTest("compiler/testData/diagnostics/tests/javac/fieldsResolution/StaticImportsAmbiguity.kt");
@@ -134,108 +134,108 @@ public class DiagnosticUsingJavacTestGenerated extends AbstractDiagnosticUsingJa
   @TestMetadata("compiler/testData/diagnostics/tests/javac/imports")
   @TestDataPath("$PROJECT_ROOT")
   public class Imports {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInImports() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/imports"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("AllUnderImportsAmbiguity.kt")
     public void testAllUnderImportsAmbiguity() {
       runTest("compiler/testData/diagnostics/tests/javac/imports/AllUnderImportsAmbiguity.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("AllUnderImportsLessPriority.kt")
     public void testAllUnderImportsLessPriority() {
       runTest("compiler/testData/diagnostics/tests/javac/imports/AllUnderImportsLessPriority.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ClassImportsConflicting.kt")
     public void testClassImportsConflicting() {
       runTest("compiler/testData/diagnostics/tests/javac/imports/ClassImportsConflicting.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("CurrentPackageAndAllUnderImport.kt")
     public void testCurrentPackageAndAllUnderImport() {
       runTest("compiler/testData/diagnostics/tests/javac/imports/CurrentPackageAndAllUnderImport.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("CurrentPackageAndExplicitImport.kt")
     public void testCurrentPackageAndExplicitImport() {
       runTest("compiler/testData/diagnostics/tests/javac/imports/CurrentPackageAndExplicitImport.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("CurrentPackageAndExplicitNestedImport.kt")
     public void testCurrentPackageAndExplicitNestedImport() {
       runTest("compiler/testData/diagnostics/tests/javac/imports/CurrentPackageAndExplicitNestedImport.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("CurrentPackageAndNestedAsteriskImport.kt")
     public void testCurrentPackageAndNestedAsteriskImport() {
       runTest("compiler/testData/diagnostics/tests/javac/imports/CurrentPackageAndNestedAsteriskImport.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ImportGenericVsPackage.kt")
     public void testImportGenericVsPackage() {
       runTest("compiler/testData/diagnostics/tests/javac/imports/ImportGenericVsPackage.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ImportProtectedClass.kt")
     public void testImportProtectedClass() {
       runTest("compiler/testData/diagnostics/tests/javac/imports/ImportProtectedClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ImportTwoTimes.kt")
     public void testImportTwoTimes() {
       runTest("compiler/testData/diagnostics/tests/javac/imports/ImportTwoTimes.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ImportTwoTimesStar.kt")
     public void testImportTwoTimesStar() {
       runTest("compiler/testData/diagnostics/tests/javac/imports/ImportTwoTimesStar.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("NestedAndTopLevelClassClash.kt")
     public void testNestedAndTopLevelClassClash() {
       runTest("compiler/testData/diagnostics/tests/javac/imports/NestedAndTopLevelClassClash.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("NestedClassClash.kt")
     public void testNestedClassClash() {
       runTest("compiler/testData/diagnostics/tests/javac/imports/NestedClassClash.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("PackageExplicitAndStartImport.kt")
     public void testPackageExplicitAndStartImport() {
       runTest("compiler/testData/diagnostics/tests/javac/imports/PackageExplicitAndStartImport.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("PackagePrivateAndPublicNested.kt")
     public void testPackagePrivateAndPublicNested() {
       runTest("compiler/testData/diagnostics/tests/javac/imports/PackagePrivateAndPublicNested.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("TopLevelClassVsPackage.kt")
     public void testTopLevelClassVsPackage() {
       runTest("compiler/testData/diagnostics/tests/javac/imports/TopLevelClassVsPackage.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("TopLevelClassVsPackage2.kt")
     public void testTopLevelClassVsPackage2() {
       runTest("compiler/testData/diagnostics/tests/javac/imports/TopLevelClassVsPackage2.kt");
@@ -246,108 +246,108 @@ public class DiagnosticUsingJavacTestGenerated extends AbstractDiagnosticUsingJa
   @TestMetadata("compiler/testData/diagnostics/tests/javac/inheritance")
   @TestDataPath("$PROJECT_ROOT")
   public class Inheritance {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInInheritance() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/inheritance"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("IheritanceOfInner.kt")
     public void testIheritanceOfInner() {
       runTest("compiler/testData/diagnostics/tests/javac/inheritance/IheritanceOfInner.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("InheritanceAmbiguity.kt")
     public void testInheritanceAmbiguity() {
       runTest("compiler/testData/diagnostics/tests/javac/inheritance/InheritanceAmbiguity.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("InheritanceAmbiguity2.kt")
     public void testInheritanceAmbiguity2() {
       runTest("compiler/testData/diagnostics/tests/javac/inheritance/InheritanceAmbiguity2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("InheritanceAmbiguity3.kt")
     public void testInheritanceAmbiguity3() {
       runTest("compiler/testData/diagnostics/tests/javac/inheritance/InheritanceAmbiguity3.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("InheritanceAmbiguity4.kt")
     public void testInheritanceAmbiguity4() {
       runTest("compiler/testData/diagnostics/tests/javac/inheritance/InheritanceAmbiguity4.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("InheritanceWithKotlin.kt")
     public void testInheritanceWithKotlin() {
       runTest("compiler/testData/diagnostics/tests/javac/inheritance/InheritanceWithKotlin.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("InheritanceWithKotlinClasses.kt")
     public void testInheritanceWithKotlinClasses() {
       runTest("compiler/testData/diagnostics/tests/javac/inheritance/InheritanceWithKotlinClasses.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("InheritedInner.kt")
     public void testInheritedInner() {
       runTest("compiler/testData/diagnostics/tests/javac/inheritance/InheritedInner.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("InheritedInner2.kt")
     public void testInheritedInner2() {
       runTest("compiler/testData/diagnostics/tests/javac/inheritance/InheritedInner2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("InheritedInnerAndSupertypeWithSameName.kt")
     public void testInheritedInnerAndSupertypeWithSameName() {
       runTest("compiler/testData/diagnostics/tests/javac/inheritance/InheritedInnerAndSupertypeWithSameName.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("InheritedInnerUsageInInner.kt")
     public void testInheritedInnerUsageInInner() {
       runTest("compiler/testData/diagnostics/tests/javac/inheritance/InheritedInnerUsageInInner.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("InheritedKotlinInner.kt")
     public void testInheritedKotlinInner() {
       runTest("compiler/testData/diagnostics/tests/javac/inheritance/InheritedKotlinInner.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("InnerAndInheritedInner.kt")
     public void testInnerAndInheritedInner() {
       runTest("compiler/testData/diagnostics/tests/javac/inheritance/InnerAndInheritedInner.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ManyInheritedClasses.kt")
     public void testManyInheritedClasses() {
       runTest("compiler/testData/diagnostics/tests/javac/inheritance/ManyInheritedClasses.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("SameInnersInSupertypeAndSupertypesSupertype.kt")
     public void testSameInnersInSupertypeAndSupertypesSupertype() {
       runTest("compiler/testData/diagnostics/tests/javac/inheritance/SameInnersInSupertypeAndSupertypesSupertype.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("SuperTypeWithSameInner.kt")
     public void testSuperTypeWithSameInner() {
       runTest("compiler/testData/diagnostics/tests/javac/inheritance/SuperTypeWithSameInner.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("SupertypeInnerAndTypeParameterWithSameNames.kt")
     public void testSupertypeInnerAndTypeParameterWithSameNames() {
       runTest("compiler/testData/diagnostics/tests/javac/inheritance/SupertypeInnerAndTypeParameterWithSameNames.kt");
@@ -358,48 +358,48 @@ public class DiagnosticUsingJavacTestGenerated extends AbstractDiagnosticUsingJa
   @TestMetadata("compiler/testData/diagnostics/tests/javac/inners")
   @TestDataPath("$PROJECT_ROOT")
   public class Inners {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInInners() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/inners"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ComplexCase.kt")
     public void testComplexCase() {
       runTest("compiler/testData/diagnostics/tests/javac/inners/ComplexCase.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ComplexCase2.kt")
     public void testComplexCase2() {
       runTest("compiler/testData/diagnostics/tests/javac/inners/ComplexCase2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("CurrentPackageAndInner.kt")
     public void testCurrentPackageAndInner() {
       runTest("compiler/testData/diagnostics/tests/javac/inners/CurrentPackageAndInner.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ImportThriceNestedClass.kt")
     public void testImportThriceNestedClass() {
       runTest("compiler/testData/diagnostics/tests/javac/inners/ImportThriceNestedClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("InnerInInner.kt")
     public void testInnerInInner() {
       runTest("compiler/testData/diagnostics/tests/javac/inners/InnerInInner.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("Nested.kt")
     public void testNested() {
       runTest("compiler/testData/diagnostics/tests/javac/inners/Nested.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ThriceNestedClass.kt")
     public void testThriceNestedClass() {
       runTest("compiler/testData/diagnostics/tests/javac/inners/ThriceNestedClass.kt");
@@ -410,36 +410,36 @@ public class DiagnosticUsingJavacTestGenerated extends AbstractDiagnosticUsingJa
   @TestMetadata("compiler/testData/diagnostics/tests/javac/qualifiedExpression")
   @TestDataPath("$PROJECT_ROOT")
   public class QualifiedExpression {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInQualifiedExpression() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/qualifiedExpression"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("GenericClassVsPackage.kt")
     public void testGenericClassVsPackage() {
       runTest("compiler/testData/diagnostics/tests/javac/qualifiedExpression/GenericClassVsPackage.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("PackageVsClass.kt")
     public void testPackageVsClass() {
       runTest("compiler/testData/diagnostics/tests/javac/qualifiedExpression/PackageVsClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("PackageVsClass2.kt")
     public void testPackageVsClass2() {
       runTest("compiler/testData/diagnostics/tests/javac/qualifiedExpression/PackageVsClass2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("PackageVsRootClass.kt")
     public void testPackageVsRootClass() {
       runTest("compiler/testData/diagnostics/tests/javac/qualifiedExpression/PackageVsRootClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("visibleClassVsQualifiedClass.kt")
     public void testVisibleClassVsQualifiedClass() {
       runTest("compiler/testData/diagnostics/tests/javac/qualifiedExpression/visibleClassVsQualifiedClass.kt");
@@ -450,48 +450,48 @@ public class DiagnosticUsingJavacTestGenerated extends AbstractDiagnosticUsingJa
   @TestMetadata("compiler/testData/diagnostics/tests/javac/typeParameters")
   @TestDataPath("$PROJECT_ROOT")
   public class TypeParameters {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInTypeParameters() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/typeParameters"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("Clash.kt")
     public void testClash() {
       runTest("compiler/testData/diagnostics/tests/javac/typeParameters/Clash.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ComplexCase.kt")
     public void testComplexCase() {
       runTest("compiler/testData/diagnostics/tests/javac/typeParameters/ComplexCase.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("InheritedInnerAndTypeParameterWithSameNames.kt")
     public void testInheritedInnerAndTypeParameterWithSameNames() {
       runTest("compiler/testData/diagnostics/tests/javac/typeParameters/InheritedInnerAndTypeParameterWithSameNames.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("InnerWithTypeParameter.kt")
     public void testInnerWithTypeParameter() {
       runTest("compiler/testData/diagnostics/tests/javac/typeParameters/InnerWithTypeParameter.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("NestedWithInner.kt")
     public void testNestedWithInner() {
       runTest("compiler/testData/diagnostics/tests/javac/typeParameters/NestedWithInner.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("SeveralInnersWithTypeParameters.kt")
     public void testSeveralInnersWithTypeParameters() {
       runTest("compiler/testData/diagnostics/tests/javac/typeParameters/SeveralInnersWithTypeParameters.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("TypeParametersInInnerAndOuterWithSameNames.kt")
     public void testTypeParametersInInnerAndOuterWithSameNames() {
       runTest("compiler/testData/diagnostics/tests/javac/typeParameters/TypeParametersInInnerAndOuterWithSameNames.kt");

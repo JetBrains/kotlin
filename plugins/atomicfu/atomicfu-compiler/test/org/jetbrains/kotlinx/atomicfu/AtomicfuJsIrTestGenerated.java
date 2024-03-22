@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box")
 @TestDataPath("$PROJECT_ROOT")
 public class AtomicfuJsIrTestGenerated extends AbstractAtomicfuJsIrTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
   }
@@ -29,66 +29,66 @@ public class AtomicfuJsIrTestGenerated extends AbstractAtomicfuJsIrTest {
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions")
   @TestDataPath("$PROJECT_ROOT")
   public class Atomic_extensions {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInAtomic_extensions() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ArrayInlineExtensionTest.kt")
     public void testArrayInlineExtensionTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/ArrayInlineExtensionTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ArrayLoopTest.kt")
     public void testArrayLoopTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/ArrayLoopTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ComplexLoopTest.kt")
     public void testComplexLoopTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/ComplexLoopTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ExtensionLoopTest.kt")
     public void testExtensionLoopTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/ExtensionLoopTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ExtensionsTest.kt")
     public void testExtensionsTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/ExtensionsTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("InlineExtensionWithTypeParameterTest.kt")
     public void testInlineExtensionWithTypeParameterTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/InlineExtensionWithTypeParameterTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("LambdaTest.kt")
     public void testLambdaTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/LambdaTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("LockFreeIntBitsTest.kt")
     public void testLockFreeIntBitsTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/LockFreeIntBitsTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("LockTest.kt")
     public void testLockTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/LockTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ParameterizedInlineFunExtensionTest.kt")
     public void testParameterizedInlineFunExtensionTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/ParameterizedInlineFunExtensionTest.kt");
@@ -99,84 +99,84 @@ public class AtomicfuJsIrTestGenerated extends AbstractAtomicfuJsIrTest {
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic")
   @TestDataPath("$PROJECT_ROOT")
   public class Atomics_basic {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInAtomics_basic() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ArithmeticTest.kt")
     public void testArithmeticTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/ArithmeticTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("AtomicArrayTest.kt")
     public void testAtomicArrayTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/AtomicArrayTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("IndexArrayElementGetterTest.kt")
     public void testIndexArrayElementGetterTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/IndexArrayElementGetterTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("InitializationOrderTest.kt")
     public void testInitializationOrderTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/InitializationOrderTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("LateinitPropertiesTest.kt")
     public void testLateinitPropertiesTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/LateinitPropertiesTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("LockFreeLongCounterTest.kt")
     public void testLockFreeLongCounterTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/LockFreeLongCounterTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("LockFreeQueueTest.kt")
     public void testLockFreeQueueTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/LockFreeQueueTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("LockFreeStackTest.kt")
     public void testLockFreeStackTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/LockFreeStackTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("LoopTest.kt")
     public void testLoopTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/LoopTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("MultiInitTest.kt")
     public void testMultiInitTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/MultiInitTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ScopeTest.kt")
     public void testScopeTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/ScopeTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("SimpleLockTest.kt")
     public void testSimpleLockTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/SimpleLockTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("UncheckedCastTest.kt")
     public void testUncheckedCastTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/UncheckedCastTest.kt");
@@ -187,12 +187,12 @@ public class AtomicfuJsIrTestGenerated extends AbstractAtomicfuJsIrTest {
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/delegated")
   @TestDataPath("$PROJECT_ROOT")
   public class Delegated {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInDelegated() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/delegated"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("DelegatedPropertiesTest.kt")
     public void testDelegatedPropertiesTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/delegated/DelegatedPropertiesTest.kt");
@@ -203,18 +203,18 @@ public class AtomicfuJsIrTestGenerated extends AbstractAtomicfuJsIrTest {
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/locks")
   @TestDataPath("$PROJECT_ROOT")
   public class Locks {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInLocks() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/locks"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ReentrantLockTest.kt")
     public void testReentrantLockTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/locks/ReentrantLockTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("SynchronizedObjectTest.kt")
     public void testSynchronizedObjectTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/locks/SynchronizedObjectTest.kt");
@@ -225,18 +225,18 @@ public class AtomicfuJsIrTestGenerated extends AbstractAtomicfuJsIrTest {
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/top-level")
   @TestDataPath("$PROJECT_ROOT")
   public class Top_level {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInTop_level() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/top-level"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("FieldInObjectTest.kt")
     public void testFieldInObjectTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/top-level/FieldInObjectTest.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("TopLevelTest.kt")
     public void testTopLevelTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/top-level/TopLevelTest.kt");
@@ -247,12 +247,12 @@ public class AtomicfuJsIrTestGenerated extends AbstractAtomicfuJsIrTest {
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/trace")
   @TestDataPath("$PROJECT_ROOT")
   public class Trace {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInTrace() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/trace"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("TraceTest.kt")
     public void testTraceTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/trace/TraceTest.kt");

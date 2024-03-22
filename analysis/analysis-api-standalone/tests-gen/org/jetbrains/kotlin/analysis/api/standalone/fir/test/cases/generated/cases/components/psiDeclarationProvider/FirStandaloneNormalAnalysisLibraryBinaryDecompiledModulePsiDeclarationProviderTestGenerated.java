@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,84 +40,84 @@ public class FirStandaloneNormalAnalysisLibraryBinaryDecompiledModulePsiDeclarat
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInBinary() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/standalone/binary"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("multifileFacade.kt")
   public void testMultifileFacade() {
     runTest("analysis/analysis-api/testData/standalone/binary/multifileFacade.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertiesInCompanionObject.kt")
   public void testPropertiesInCompanionObject() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInCompanionObject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertiesInCompanionObject_JvmField.kt")
   public void testPropertiesInCompanionObject_JvmField() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInCompanionObject_JvmField.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertiesInCompanionObject_JvmStatic.kt")
   public void testPropertiesInCompanionObject_JvmStatic() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInCompanionObject_JvmStatic.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertiesInInnerClass.kt")
   public void testPropertiesInInnerClass() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInInnerClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertiesInNamedCompanionObject.kt")
   public void testPropertiesInNamedCompanionObject() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInNamedCompanionObject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertiesInNamedCompanionObject_JvmField.kt")
   public void testPropertiesInNamedCompanionObject_JvmField() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInNamedCompanionObject_JvmField.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertiesInNamedCompanionObject_JvmStatic.kt")
   public void testPropertiesInNamedCompanionObject_JvmStatic() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInNamedCompanionObject_JvmStatic.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertiesInNestedObject.kt")
   public void testPropertiesInNestedObject() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInNestedObject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertiesInObject.kt")
   public void testPropertiesInObject() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInObject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertiesInOuterClass.kt")
   public void testPropertiesInOuterClass() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInOuterClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyWithValueClass.kt")
   public void testPropertyWithValueClass() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertyWithValueClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelFunctionWithValueClass.kt")
   public void testTopLevelFunctionWithValueClass() {
     runTest("analysis/analysis-api/testData/standalone/binary/topLevelFunctionWithValueClass.kt");

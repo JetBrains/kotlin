@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,72 +18,72 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/classId")
 @TestDataPath("$PROJECT_ROOT")
 public class SourceClassIdTestGenerated extends AbstractSourceClassIdTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInClassId() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/classId"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classWithMembers.kt")
   public void testClassWithMembers() {
     runTest("analysis/low-level-api-fir/testData/classId/classWithMembers.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enum.kt")
   public void testEnum() {
     runTest("analysis/low-level-api-fir/testData/classId/enum.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumEntry.kt")
   public void testEnumEntry() {
     runTest("analysis/low-level-api-fir/testData/classId/enumEntry.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("invalidForJvmClassName.kt")
   public void testInvalidForJvmClassName() {
     runTest("analysis/low-level-api-fir/testData/classId/invalidForJvmClassName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localClassInsideAnnotationArgument.kt")
   public void testLocalClassInsideAnnotationArgument() {
     runTest("analysis/low-level-api-fir/testData/classId/localClassInsideAnnotationArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localClassInsideFunctionLiteral.kt")
   public void testLocalClassInsideFunctionLiteral() {
     runTest("analysis/low-level-api-fir/testData/classId/localClassInsideFunctionLiteral.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localClassInsideLambdaCallInsideStringTemplate.kt")
   public void testLocalClassInsideLambdaCallInsideStringTemplate() {
     runTest("analysis/low-level-api-fir/testData/classId/localClassInsideLambdaCallInsideStringTemplate.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localClassInsideSuperEntryCall.kt")
   public void testLocalClassInsideSuperEntryCall() {
     runTest("analysis/low-level-api-fir/testData/classId/localClassInsideSuperEntryCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localClassInsideUnclosedAnnotation.kt")
   public void testLocalClassInsideUnclosedAnnotation() {
     runTest("analysis/low-level-api-fir/testData/classId/localClassInsideUnclosedAnnotation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("namelessClasses.kt")
   public void testNamelessClasses() {
     runTest("analysis/low-level-api-fir/testData/classId/namelessClasses.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("namelessInsideNamelessClasses.kt")
   public void testNamelessInsideNamelessClasses() {
     runTest("analysis/low-level-api-fir/testData/classId/namelessInsideNamelessClasses.kt");

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiKtTypeByPsiTypeProviderTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,96 +40,96 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiKtTypeByPsiTypeProviderT
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInAsKtType() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("anonym.kt")
   public void testAnonym() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/anonym.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("extends.kt")
   public void testExtends() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/extends.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("methodTypeParameterWithKotlinUseSite.kt")
   public void testMethodTypeParameterWithKotlinUseSite() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/methodTypeParameterWithKotlinUseSite.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("methodTypeParameterWithMethodUseSite.kt")
   public void testMethodTypeParameterWithMethodUseSite() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/methodTypeParameterWithMethodUseSite.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("methodTypeParameterWithTypeParameterUseSite.kt")
   public void testMethodTypeParameterWithTypeParameterUseSite() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/methodTypeParameterWithTypeParameterUseSite.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("methodTypeParameters.kt")
   public void testMethodTypeParameters() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/methodTypeParameters.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nestedGenerics.kt")
   public void testNestedGenerics() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/nestedGenerics.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nullableString.kt")
   public void testNullableString() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/nullableString.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("primitive.kt")
   public void testPrimitive() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/primitive.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeAnnotation.kt")
   public void testTypeAnnotation() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeAnnotation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeAnnotationOnString.kt")
   public void testTypeAnnotationOnString() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeAnnotationOnString.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeParameterWithKotlinUseSite.kt")
   public void testTypeParameterWithKotlinUseSite() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeParameterWithKotlinUseSite.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeParameterWithMethodUseSite.kt")
   public void testTypeParameterWithMethodUseSite() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeParameterWithMethodUseSite.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeParameters.kt")
   public void testTypeParameters() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeParameters.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeParameters2.kt")
   public void testTypeParameters2() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeParameters2.kt");

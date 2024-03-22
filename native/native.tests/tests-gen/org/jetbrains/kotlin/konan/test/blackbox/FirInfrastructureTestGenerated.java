@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -28,216 +28,216 @@ public class FirInfrastructureTestGenerated extends AbstractNativeBlackBoxTest {
   @FirPipeline()
   @UseStandardTestCaseGroupProvider()
   public class Samples {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInSamples() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/samples"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("regular_custom_args.kt")
     public void testRegular_custom_args() {
       runTest("native/native.tests/testData/samples/regular_custom_args.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("regular_multifile.kt")
     public void testRegular_multifile() {
       runTest("native/native.tests/testData/samples/regular_multifile.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("regular_multifile_with_explicit_packages.kt")
     public void testRegular_multifile_with_explicit_packages() {
       runTest("native/native.tests/testData/samples/regular_multifile_with_explicit_packages.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("regular_multimodule.kt")
     public void testRegular_multimodule() {
       runTest("native/native.tests/testData/samples/regular_multimodule.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("regular_multimodule_implicit_first_module.kt")
     public void testRegular_multimodule_implicit_first_module() {
       runTest("native/native.tests/testData/samples/regular_multimodule_implicit_first_module.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("regular_multimodule_implicit_first_module_with_header_comment.kt")
     public void testRegular_multimodule_implicit_first_module_with_header_comment() {
       runTest("native/native.tests/testData/samples/regular_multimodule_implicit_first_module_with_header_comment.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("regular_multimodule_implicit_first_module_with_header_statement.kt")
     public void testRegular_multimodule_implicit_first_module_with_header_statement() {
       runTest("native/native.tests/testData/samples/regular_multimodule_implicit_first_module_with_header_statement.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("regular_multimodule_with_header_comment.kt")
     public void testRegular_multimodule_with_header_comment() {
       runTest("native/native.tests/testData/samples/regular_multimodule_with_header_comment.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("regular_multimodule_with_header_statement.kt")
     public void testRegular_multimodule_with_header_statement() {
       runTest("native/native.tests/testData/samples/regular_multimodule_with_header_statement.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("regular_simple.kt")
     public void testRegular_simple() {
       runTest("native/native.tests/testData/samples/regular_simple.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("regular_simple_default_tr.kt")
     public void testRegular_simple_default_tr() {
       runTest("native/native.tests/testData/samples/regular_simple_default_tr.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("regular_simple_explicit_kind.kt")
     public void testRegular_simple_explicit_kind() {
       runTest("native/native.tests/testData/samples/regular_simple_explicit_kind.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("regular_simple_noexit_tr.kt")
     public void testRegular_simple_noexit_tr() {
       runTest("native/native.tests/testData/samples/regular_simple_noexit_tr.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("regular_simple_with_output.kt")
     public void testRegular_simple_with_output() {
       runTest("native/native.tests/testData/samples/regular_simple_with_output.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("regular_simple_worker_tr.kt")
     public void testRegular_simple_worker_tr() {
       runTest("native/native.tests/testData/samples/regular_simple_worker_tr.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_lldb_stepping.kt")
     public void testStandalone_lldb_stepping() {
       runTest("native/native.tests/testData/samples/standalone_lldb_stepping.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_multifile.kt")
     public void testStandalone_multifile() {
       runTest("native/native.tests/testData/samples/standalone_multifile.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_notr_long_running.kt")
     public void testStandalone_notr_long_running() {
       runTest("native/native.tests/testData/samples/standalone_notr_long_running.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_notr_long_running_and_verbose.kt")
     public void testStandalone_notr_long_running_and_verbose() {
       runTest("native/native.tests/testData/samples/standalone_notr_long_running_and_verbose.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_notr_multifile_entry_point.kt")
     public void testStandalone_notr_multifile_entry_point() {
       runTest("native/native.tests/testData/samples/standalone_notr_multifile_entry_point.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_notr_nonzero_exit_code.kt")
     public void testStandalone_notr_nonzero_exit_code() {
       runTest("native/native.tests/testData/samples/standalone_notr_nonzero_exit_code.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_notr_nonzero_exit_code2.kt")
     public void testStandalone_notr_nonzero_exit_code2() {
       runTest("native/native.tests/testData/samples/standalone_notr_nonzero_exit_code2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_notr_simple.kt")
     public void testStandalone_notr_simple() {
       runTest("native/native.tests/testData/samples/standalone_notr_simple.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_notr_simple2.kt")
     public void testStandalone_notr_simple2() {
       runTest("native/native.tests/testData/samples/standalone_notr_simple2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_notr_simple_entry_point.kt")
     public void testStandalone_notr_simple_entry_point() {
       runTest("native/native.tests/testData/samples/standalone_notr_simple_entry_point.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_notr_simple_entry_point2.kt")
     public void testStandalone_notr_simple_entry_point2() {
       runTest("native/native.tests/testData/samples/standalone_notr_simple_entry_point2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_notr_simple_with_input_and_output.kt")
     public void testStandalone_notr_simple_with_input_and_output() {
       runTest("native/native.tests/testData/samples/standalone_notr_simple_with_input_and_output.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_notr_simple_with_output.kt")
     public void testStandalone_notr_simple_with_output() {
       runTest("native/native.tests/testData/samples/standalone_notr_simple_with_output.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_notr_too_verbose.kt")
     public void testStandalone_notr_too_verbose() {
       runTest("native/native.tests/testData/samples/standalone_notr_too_verbose.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_notr_zero_exit_code.kt")
     public void testStandalone_notr_zero_exit_code() {
       runTest("native/native.tests/testData/samples/standalone_notr_zero_exit_code.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_simple.kt")
     public void testStandalone_simple() {
       runTest("native/native.tests/testData/samples/standalone_simple.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_simple_default_tr.kt")
     public void testStandalone_simple_default_tr() {
       runTest("native/native.tests/testData/samples/standalone_simple_default_tr.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_simple_noexit_tr.kt")
     public void testStandalone_simple_noexit_tr() {
       runTest("native/native.tests/testData/samples/standalone_simple_noexit_tr.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_simple_with_output.kt")
     public void testStandalone_simple_with_output() {
       runTest("native/native.tests/testData/samples/standalone_simple_with_output.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("standalone_simple_worker_tr.kt")
     public void testStandalone_simple_worker_tr() {
       runTest("native/native.tests/testData/samples/standalone_simple_worker_tr.kt");
@@ -251,12 +251,12 @@ public class FirInfrastructureTestGenerated extends AbstractNativeBlackBoxTest {
     @FirPipeline()
     @UseStandardTestCaseGroupProvider()
     public class Inner {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInInner() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/samples/inner"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("regular_simple.kt")
       public void testRegular_simple() {
         runTest("native/native.tests/testData/samples/inner/regular_simple.kt");
@@ -272,12 +272,12 @@ public class FirInfrastructureTestGenerated extends AbstractNativeBlackBoxTest {
   @FirPipeline()
   @UseStandardTestCaseGroupProvider()
   public class Samples2 {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInSamples2() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/samples2"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("regular_simple.kt")
     public void testRegular_simple() {
       runTest("native/native.tests/testData/samples2/regular_simple.kt");

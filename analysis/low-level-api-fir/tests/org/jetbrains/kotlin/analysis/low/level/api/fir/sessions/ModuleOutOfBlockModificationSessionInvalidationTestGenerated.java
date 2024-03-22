@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,90 +18,90 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/sessionInvalidation")
 @TestDataPath("$PROJECT_ROOT")
 public class ModuleOutOfBlockModificationSessionInvalidationTestGenerated extends AbstractModuleOutOfBlockModificationSessionInvalidationTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInSessionInvalidation() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/sessionInvalidation"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("binaryTreeAdditionalEdge.kt")
   public void testBinaryTreeAdditionalEdge() {
     runTest("analysis/low-level-api-fir/testData/sessionInvalidation/binaryTreeAdditionalEdge.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("binaryTreeInvalidateA.kt")
   public void testBinaryTreeInvalidateA() {
     runTest("analysis/low-level-api-fir/testData/sessionInvalidation/binaryTreeInvalidateA.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("binaryTreeInvalidateCD.kt")
   public void testBinaryTreeInvalidateCD() {
     runTest("analysis/low-level-api-fir/testData/sessionInvalidation/binaryTreeInvalidateCD.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("binaryTreeInvalidateF.kt")
   public void testBinaryTreeInvalidateF() {
     runTest("analysis/low-level-api-fir/testData/sessionInvalidation/binaryTreeInvalidateF.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("binaryTreeInvalidateL1.kt")
   public void testBinaryTreeInvalidateL1() {
     runTest("analysis/low-level-api-fir/testData/sessionInvalidation/binaryTreeInvalidateL1.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("binaryTreeInvalidateL2.kt")
   public void testBinaryTreeInvalidateL2() {
     runTest("analysis/low-level-api-fir/testData/sessionInvalidation/binaryTreeInvalidateL2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("binaryTreeInvalidateNone.kt")
   public void testBinaryTreeInvalidateNone() {
     runTest("analysis/low-level-api-fir/testData/sessionInvalidation/binaryTreeInvalidateNone.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("linearInvalidateC.kt")
   public void testLinearInvalidateC() {
     runTest("analysis/low-level-api-fir/testData/sessionInvalidation/linearInvalidateC.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("linearInvalidateL1.kt")
   public void testLinearInvalidateL1() {
     runTest("analysis/low-level-api-fir/testData/sessionInvalidation/linearInvalidateL1.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("rhombusInvalidateBC.kt")
   public void testRhombusInvalidateBC() {
     runTest("analysis/low-level-api-fir/testData/sessionInvalidation/rhombusInvalidateBC.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("rhombusInvalidateCD.kt")
   public void testRhombusInvalidateCD() {
     runTest("analysis/low-level-api-fir/testData/sessionInvalidation/rhombusInvalidateCD.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("rhombusInvalidateD.kt")
   public void testRhombusInvalidateD() {
     runTest("analysis/low-level-api-fir/testData/sessionInvalidation/rhombusInvalidateD.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("rhombusInvalidateL1.kt")
   public void testRhombusInvalidateL1() {
     runTest("analysis/low-level-api-fir/testData/sessionInvalidation/rhombusInvalidateL1.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("rhombusInvalidateL2.kt")
   public void testRhombusInvalidateL2() {
     runTest("analysis/low-level-api-fir/testData/sessionInvalidation/rhombusInvalidateL2.kt");

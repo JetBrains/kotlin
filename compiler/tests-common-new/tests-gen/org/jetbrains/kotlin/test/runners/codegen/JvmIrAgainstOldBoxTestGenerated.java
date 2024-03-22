@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -20,462 +20,462 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin")
 @TestDataPath("$PROJECT_ROOT")
 public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxTest {
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("adaptedSuspendFunctionReference.kt")
   public void testAdaptedSuspendFunctionReference() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/adaptedSuspendFunctionReference.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInCompileKotlinAgainstKotlin() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotationInInterface.kt")
   public void testAnnotationInInterface() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/annotationInInterface.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotationOnTypeUseInTypeAlias.kt")
   public void testAnnotationOnTypeUseInTypeAlias() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/annotationOnTypeUseInTypeAlias.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotationsOnTypeAliases.kt")
   public void testAnnotationsOnTypeAliases() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/annotationsOnTypeAliases.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callsToMultifileClassFromOtherPackage.kt")
   public void testCallsToMultifileClassFromOtherPackage() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/callsToMultifileClassFromOtherPackage.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("clashingFakeOverrideSignatures.kt")
   public void testClashingFakeOverrideSignatures() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/clashingFakeOverrideSignatures.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classInObject.kt")
   public void testClassInObject() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/classInObject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("companionObjectInEnum.kt")
   public void testCompanionObjectInEnum() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/companionObjectInEnum.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("companionObjectMember.kt")
   public void testCompanionObjectMember() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/companionObjectMember.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constPropertyReferenceFromMultifileClass.kt")
   public void testConstPropertyReferenceFromMultifileClass() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/constPropertyReferenceFromMultifileClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorVararg.kt")
   public void testConstructorVararg() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/constructorVararg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("copySamOnInline.kt")
   public void testCopySamOnInline() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/copySamOnInline.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("copySamOnInline2.kt")
   public void testCopySamOnInline2() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/copySamOnInline2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("coroutinesBinary.kt")
   public void testCoroutinesBinary() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/coroutinesBinary.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("defaultConstructor.kt")
   public void testDefaultConstructor() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/defaultConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("defaultLambdaRegeneration.kt")
   public void testDefaultLambdaRegeneration() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/defaultLambdaRegeneration.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("defaultLambdaRegeneration2.kt")
   public void testDefaultLambdaRegeneration2() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/defaultLambdaRegeneration2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("delegatedDefault.kt")
   public void testDelegatedDefault() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/delegatedDefault.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("delegationAndAnnotations.kt")
   public void testDelegationAndAnnotations() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/delegationAndAnnotations.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("doublyNestedClass.kt")
   public void testDoublyNestedClass() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/doublyNestedClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enum.kt")
   public void testEnum() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/enum.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("fakeOverridesForIntersectionTypes.kt")
   public void testFakeOverridesForIntersectionTypes() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fakeOverridesForIntersectionTypes.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("genericSetter.kt")
   public void testGenericSetter() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/genericSetter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("importCompanion.kt")
   public void testImportCompanion() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/importCompanion.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("inlinedConstants.kt")
   public void testInlinedConstants() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlinedConstants.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("innerClassConstructor.kt")
   public void testInnerClassConstructor() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/innerClassConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("interfaceDelegationAndBridgesProcessing.kt")
   public void testInterfaceDelegationAndBridgesProcessing() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/interfaceDelegationAndBridgesProcessing.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("internalLeakBug.kt")
   public void testInternalLeakBug() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalLeakBug.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("internalSetterOverridden.kt")
   public void testInternalSetterOverridden() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalSetterOverridden.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("internalWithDefaultArgs.kt")
   public void testInternalWithDefaultArgs() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalWithDefaultArgs.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("internalWithOtherModuleName.kt")
   public void testInternalWithOtherModuleName() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalWithOtherModuleName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("intersectionOverrideProperies.kt")
   public void testIntersectionOverrideProperies() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/intersectionOverrideProperies.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("jvmField.kt")
   public void testJvmField() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmField.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("jvmFieldInAnnotationCompanion.kt")
   public void testJvmFieldInAnnotationCompanion() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmFieldInAnnotationCompanion.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("jvmFieldInConstructor.kt")
   public void testJvmFieldInConstructor() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmFieldInConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("jvmFieldInConstructor2.kt")
   public void testJvmFieldInConstructor2() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmFieldInConstructor2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("jvmFieldInInterfaceCompanion.kt")
   public void testJvmFieldInInterfaceCompanion() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmFieldInInterfaceCompanion.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("jvmNames.kt")
   public void testJvmNames() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmNames.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("jvmPackageName.kt")
   public void testJvmPackageName() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmPackageName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("jvmPackageNameInRootPackage.kt")
   public void testJvmPackageNameInRootPackage() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmPackageNameInRootPackage.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("jvmPackageNameMultifileClass.kt")
   public void testJvmPackageNameMultifileClass() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmPackageNameMultifileClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("jvmPackageNameWithJvmName.kt")
   public void testJvmPackageNameWithJvmName() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmPackageNameWithJvmName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("jvmStaticInObject.kt")
   public void testJvmStaticInObject() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmStaticInObject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("jvmStaticInObjectPropertyReference.kt")
   public void testJvmStaticInObjectPropertyReference() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmStaticInObjectPropertyReference.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kotlinPropertyAsAnnotationParameter.kt")
   public void testKotlinPropertyAsAnnotationParameter() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/kotlinPropertyAsAnnotationParameter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kt14012.kt")
   public void testKt14012() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/kt14012.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kt14012_multi.kt")
   public void testKt14012_multi() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/kt14012_multi.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kt21775.kt")
   public void testKt21775() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/kt21775.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("metadataForMembersInLocalClassInInitializer.kt")
   public void testMetadataForMembersInLocalClassInInitializer() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/metadataForMembersInLocalClassInInitializer.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("multifileClassInlineFunctionAccessingProperty.kt")
   public void testMultifileClassInlineFunctionAccessingProperty() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/multifileClassInlineFunctionAccessingProperty.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("multifileClassWithTypealias.kt")
   public void testMultifileClassWithTypealias() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/multifileClassWithTypealias.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nestedClass.kt")
   public void testNestedClass() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nestedClassAsBound.kt")
   public void testNestedClassAsBound() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedClassAsBound.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nestedClassInAnnotationArgument.kt")
   public void testNestedClassInAnnotationArgument() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedClassInAnnotationArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nestedEnum.kt")
   public void testNestedEnum() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedEnum.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nestedFunctionTypeAliasExpansion.kt")
   public void testNestedFunctionTypeAliasExpansion() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedFunctionTypeAliasExpansion.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nestedObject.kt")
   public void testNestedObject() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedObject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nestedTypeAliasExpansion.kt")
   public void testNestedTypeAliasExpansion() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedTypeAliasExpansion.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("noExplicitOverrideForDelegatedFromSupertype.kt")
   public void testNoExplicitOverrideForDelegatedFromSupertype() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/noExplicitOverrideForDelegatedFromSupertype.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("optionalAnnotation.kt")
   public void testOptionalAnnotation() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/optionalAnnotation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("platformTypes.kt")
   public void testPlatformTypes() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/platformTypes.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("privateSuperType.kt")
   public void testPrivateSuperType() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/privateSuperType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyReference.kt")
   public void testPropertyReference() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/propertyReference.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("recursiveGeneric.kt")
   public void testRecursiveGeneric() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/recursiveGeneric.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("reflectTopLevelFunctionOtherFile.kt")
   public void testReflectTopLevelFunctionOtherFile() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/reflectTopLevelFunctionOtherFile.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("repeatableAnnotation.kt")
   public void testRepeatableAnnotation() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/repeatableAnnotation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("sealedClass.kt")
   public void testSealedClass() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/sealedClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("secondaryConstructors.kt")
   public void testSecondaryConstructors() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/secondaryConstructors.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simple.kt")
   public void testSimple() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/simple.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simpleValAnonymousObject.kt")
   public void testSimpleValAnonymousObject() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/simpleValAnonymousObject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("specialBridgesInDependencies.kt")
   public void testSpecialBridgesInDependencies() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/specialBridgesInDependencies.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("starImportEnum.kt")
   public void testStarImportEnum() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/starImportEnum.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("targetedJvmName.kt")
   public void testTargetedJvmName() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/targetedJvmName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeAliasesKt13181.kt")
   public void testTypeAliasesKt13181() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAliasesKt13181.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("unsignedTypesInAnnotations.kt")
   public void testUnsignedTypesInAnnotations() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/unsignedTypesInAnnotations.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("useDeserializedFunInterface.kt")
   public void testUseDeserializedFunInterface() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/useDeserializedFunInterface.kt");
@@ -485,42 +485,42 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
   @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir")
   @TestDataPath("$PROJECT_ROOT")
   public class Fir {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInFir() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("AnonymousObjectInProperty.kt")
     public void testAnonymousObjectInProperty() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/AnonymousObjectInProperty.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ExistingSymbolInFakeOverride.kt")
     public void testExistingSymbolInFakeOverride() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/ExistingSymbolInFakeOverride.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("IncrementalCompilerRunner.kt")
     public void testIncrementalCompilerRunner() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/IncrementalCompilerRunner.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("IrConstAcceptMultiModule.kt")
     public void testIrConstAcceptMultiModule() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/IrConstAcceptMultiModule.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("javaTypeParameterBy.kt")
     public void testJavaTypeParameterBy() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/javaTypeParameterBy.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("LibraryProperty.kt")
     public void testLibraryProperty() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/LibraryProperty.kt");
@@ -531,102 +531,102 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
   @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses")
   @TestDataPath("$PROJECT_ROOT")
   public class InlineClasses {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInInlineClasses() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("callDeserializedPropertyOnInlineClassType.kt")
     public void testCallDeserializedPropertyOnInlineClassType() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/callDeserializedPropertyOnInlineClassType.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("constructorWithInlineClassParametersInBinaryDependencies.kt")
     public void testConstructorWithInlineClassParametersInBinaryDependencies() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/constructorWithInlineClassParametersInBinaryDependencies.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("defaultWithInlineClassAndReceivers.kt")
     public void testDefaultWithInlineClassAndReceivers() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/defaultWithInlineClassAndReceivers.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("extensionPropertyWithSameName.kt")
     public void testExtensionPropertyWithSameName() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/extensionPropertyWithSameName.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("funInterface.kt")
     public void testFunInterface() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/funInterface.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineClassFakeOverrideMangling.kt")
     public void testInlineClassFakeOverrideMangling() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/inlineClassFakeOverrideMangling.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineClassFromBinaryDependencies.kt")
     public void testInlineClassFromBinaryDependencies() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/inlineClassFromBinaryDependencies.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineClassInlineFunctionCall.kt")
     public void testInlineClassInlineFunctionCall() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/inlineClassInlineFunctionCall.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineClassInlineProperty.kt")
     public void testInlineClassInlineProperty() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/inlineClassInlineProperty.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("internalWithInlineClass.kt")
     public void testInternalWithInlineClass() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/internalWithInlineClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("privateCompanionObjectValInDifferentModule.kt")
     public void testPrivateCompanionObjectValInDifferentModule() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateCompanionObjectValInDifferentModule.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("privateConstructor.kt")
     public void testPrivateConstructor() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateConstructor.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("privateConstructorWithPrivateField.kt")
     public void testPrivateConstructorWithPrivateField() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateConstructorWithPrivateField.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("privateConstructorWithPrivateFieldUsingTypeTable.kt")
     public void testPrivateConstructorWithPrivateFieldUsingTypeTable() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateConstructorWithPrivateFieldUsingTypeTable.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("privateTopLevelValInDifferentModule.kt")
     public void testPrivateTopLevelValInDifferentModule() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateTopLevelValInDifferentModule.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("suspendFunWithDefaultMangling.kt")
     public void testSuspendFunWithDefaultMangling() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/suspendFunWithDefaultMangling.kt");
@@ -636,90 +636,90 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
     @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling")
     @TestDataPath("$PROJECT_ROOT")
     public class OldMangling {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInOldMangling() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("callDeserializedPropertyOnInlineClassType.kt")
       public void testCallDeserializedPropertyOnInlineClassType() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/callDeserializedPropertyOnInlineClassType.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("constructorWithInlineClassParametersInBinaryDependencies.kt")
       public void testConstructorWithInlineClassParametersInBinaryDependencies() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/constructorWithInlineClassParametersInBinaryDependencies.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("defaultWithInlineClassAndReceivers.kt")
       public void testDefaultWithInlineClassAndReceivers() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/defaultWithInlineClassAndReceivers.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("extensionPropertyWithSameName.kt")
       public void testExtensionPropertyWithSameName() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/extensionPropertyWithSameName.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineClassFakeOverrideMangling.kt")
       public void testInlineClassFakeOverrideMangling() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/inlineClassFakeOverrideMangling.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineClassFromBinaryDependencies.kt")
       public void testInlineClassFromBinaryDependencies() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/inlineClassFromBinaryDependencies.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineClassInlineFunctionCall.kt")
       public void testInlineClassInlineFunctionCall() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/inlineClassInlineFunctionCall.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineClassInlineProperty.kt")
       public void testInlineClassInlineProperty() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/inlineClassInlineProperty.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("privateCompanionObjectValInDifferentModule.kt")
       public void testPrivateCompanionObjectValInDifferentModule() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/privateCompanionObjectValInDifferentModule.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("privateConstructor.kt")
       public void testPrivateConstructor() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/privateConstructor.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("privateConstructorWithPrivateField.kt")
       public void testPrivateConstructorWithPrivateField() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/privateConstructorWithPrivateField.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("privateTopLevelValInDifferentModule.kt")
       public void testPrivateTopLevelValInDifferentModule() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/privateTopLevelValInDifferentModule.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("suspendFunWithDefaultOldMangling.kt")
       public void testSuspendFunWithDefaultOldMangling() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/suspendFunWithDefaultOldMangling.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("useOldMangling.kt")
       public void testUseOldMangling() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/useOldMangling.kt");
@@ -731,7 +731,7 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
   @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8")
   @TestDataPath("$PROJECT_ROOT")
   public class Jvm8 {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInJvm8() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
     }
@@ -740,36 +740,36 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
     @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults")
     @TestDataPath("$PROJECT_ROOT")
     public class Defaults {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInDefaults() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("callStackTrace.kt")
       public void testCallStackTrace() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/callStackTrace.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("superCall.kt")
       public void testSuperCall() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superCall.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("superCallFromInterface.kt")
       public void testSuperCallFromInterface() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superCallFromInterface.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("superPropAccess.kt")
       public void testSuperPropAccess() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccess.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("superPropAccessFromInterface.kt")
       public void testSuperPropAccessFromInterface() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccessFromInterface.kt");
@@ -779,48 +779,48 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
       @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility")
       @TestDataPath("$PROJECT_ROOT")
       public class AllCompatibility {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInAllCompatibility() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("callStackTrace.kt")
         public void testCallStackTrace() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/callStackTrace.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("superCall.kt")
         public void testSuperCall() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCall.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("superCallFromInterface.kt")
         public void testSuperCallFromInterface() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallFromInterface.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("superCallFromInterface2.kt")
         public void testSuperCallFromInterface2() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallFromInterface2.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("superPropAccess.kt")
         public void testSuperPropAccess() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccess.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("superPropAccessFromInterface.kt")
         public void testSuperPropAccessFromInterface() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccessFromInterface.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("superPropAccessFromInterface2.kt")
         public void testSuperPropAccessFromInterface2() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccessFromInterface2.kt");
@@ -830,18 +830,18 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
         @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy")
         @TestDataPath("$PROJECT_ROOT")
         public class DelegationBy {
-          @Test
+          @RepeatedTest(value = 3)
           public void testAllFilesPresentInDelegationBy() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("simple.kt")
           public void testSimple() {
             runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy/simple.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("simpleProperty.kt")
           public void testSimpleProperty() {
             runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy/simpleProperty.kt");
@@ -853,54 +853,54 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
       @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop")
       @TestDataPath("$PROJECT_ROOT")
       public class Interop {
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("allAgainsAllCompatibility.kt")
         public void testAllAgainsAllCompatibility() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allAgainsAllCompatibility.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("allCompatibilityAgainsAll.kt")
         public void testAllCompatibilityAgainsAll() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allCompatibilityAgainsAll.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInInterop() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("likeMemberClash.kt")
         public void testLikeMemberClash() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/likeMemberClash.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("likeSpecialization.kt")
         public void testLikeSpecialization() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/likeSpecialization.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("newAndOldSchemes.kt")
         public void testNewAndOldSchemes() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("newAndOldSchemes2.kt")
         public void testNewAndOldSchemes2() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes2.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("newAndOldSchemes2Compatibility.kt")
         public void testNewAndOldSchemes2Compatibility() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes2Compatibility.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("newAndOldSchemes3.kt")
         public void testNewAndOldSchemes3() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes3.kt");
@@ -912,42 +912,42 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
     @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6")
     @TestDataPath("$PROJECT_ROOT")
     public class Jvm8against6 {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInJvm8against6() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("jdk8Against6.kt")
       public void testJdk8Against6() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/jdk8Against6.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simpleCall.kt")
       public void testSimpleCall() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/simpleCall.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simpleCallWithBigHierarchy.kt")
       public void testSimpleCallWithBigHierarchy() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/simpleCallWithBigHierarchy.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simpleCallWithHierarchy.kt")
       public void testSimpleCallWithHierarchy() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/simpleCallWithHierarchy.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simpleProp.kt")
       public void testSimpleProp() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/simpleProp.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simplePropWithHierarchy.kt")
       public void testSimplePropWithHierarchy() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/simplePropWithHierarchy.kt");
@@ -957,24 +957,24 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
       @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation")
       @TestDataPath("$PROJECT_ROOT")
       public class Delegation {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInDelegation() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("diamond.kt")
         public void testDiamond() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation/diamond.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("diamond2.kt")
         public void testDiamond2() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation/diamond2.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("diamond3.kt")
         public void testDiamond3() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation/diamond3.kt");
@@ -987,12 +987,12 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
   @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAnnotations")
   @TestDataPath("$PROJECT_ROOT")
   public class TypeAnnotations {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInTypeAnnotations() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("implicitReturn.kt")
     public void testImplicitReturn() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAnnotations/implicitReturn.kt");

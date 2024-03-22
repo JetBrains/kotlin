@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.AbstractTypeScopeTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,54 +40,54 @@ public class FirIdeDependentAnalysisSourceModuleTypeScopeTestGenerated extends A
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInTypeScope() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/typeScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("errorType.kt")
   public void testErrorType() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/errorType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("innerClassTypeParamsSubstitution.kt")
   public void testInnerClassTypeParamsSubstitution() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/innerClassTypeParamsSubstitution.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("intList.kt")
   public void testIntList() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/intList.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("outerClassTypeParamsSubstitution.kt")
   public void testOuterClassTypeParamsSubstitution() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/outerClassTypeParamsSubstitution.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("outerTypeParamsSubstitution.kt")
   public void testOuterTypeParamsSubstitution() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/outerTypeParamsSubstitution.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("substitutedTypeFromLib.kt")
   public void testSubstitutedTypeFromLib() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/substitutedTypeFromLib.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeParamList.kt")
   public void testTypeParamList() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/typeParamList.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeWithSyntheticProperties.kt")
   public void testTypeWithSyntheticProperties() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/typeWithSyntheticProperties.kt");

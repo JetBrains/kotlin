@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.AbstractDelegateMemberScopeTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,36 +40,36 @@ public class Fe10IdeNormalAnalysisSourceModuleDelegateMemberScopeTestGenerated e
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInDelegatedMemberScope() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyWithGetter.kt")
   public void testPropertyWithGetter() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/propertyWithGetter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simple.kt")
   public void testSimple() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/simple.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simpleLibrary.kt")
   public void testSimpleLibrary() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/simpleLibrary.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("withImplicitType.kt")
   public void testWithImplicitType() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/withImplicitType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("withOverridden.kt")
   public void testWithOverridden() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/withOverridden.kt");

@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,108 +19,108 @@ import java.util.regex.Pattern;
 @TestMetadata("js/js.translator/testData/webDemoExamples")
 @TestDataPath("$PROJECT_ROOT")
 public class WebDemoExamplesTestGenerated extends AbstractWebDemoExamplesTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInWebDemoExamples() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/webDemoExamples"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("bottles.kt")
   public void testBottles() {
     runTest("js/js.translator/testData/webDemoExamples/bottles.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("builder.kt")
   public void testBuilder() {
     runTest("js/js.translator/testData/webDemoExamples/builder.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("forLoop1.kt")
   public void testForLoop1() {
     runTest("js/js.translator/testData/webDemoExamples/forLoop1.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("forLoop2.kt")
   public void testForLoop2() {
     runTest("js/js.translator/testData/webDemoExamples/forLoop2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("ifAsExpression.kt")
   public void testIfAsExpression() {
     runTest("js/js.translator/testData/webDemoExamples/ifAsExpression.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("isCheck.kt")
   public void testIsCheck() {
     runTest("js/js.translator/testData/webDemoExamples/isCheck.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("life.kt")
   public void testLife() {
     runTest("js/js.translator/testData/webDemoExamples/life.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("maze.kt")
   public void testMaze() {
     runTest("js/js.translator/testData/webDemoExamples/maze.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("multiLanguageHello.kt")
   public void testMultiLanguageHello() {
     runTest("js/js.translator/testData/webDemoExamples/multiLanguageHello.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nullChecks1.kt")
   public void testNullChecks1() {
     runTest("js/js.translator/testData/webDemoExamples/nullChecks1.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nullChecks2.kt")
   public void testNullChecks2() {
     runTest("js/js.translator/testData/webDemoExamples/nullChecks2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objectOrientedHello.kt")
   public void testObjectOrientedHello() {
     runTest("js/js.translator/testData/webDemoExamples/objectOrientedHello.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("patternMatching.kt")
   public void testPatternMatching() {
     runTest("js/js.translator/testData/webDemoExamples/patternMatching.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("printArg.kt")
   public void testPrintArg() {
     runTest("js/js.translator/testData/webDemoExamples/printArg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("ranges1.kt")
   public void testRanges1() {
     runTest("js/js.translator/testData/webDemoExamples/ranges1.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("ranges2.kt")
   public void testRanges2() {
     runTest("js/js.translator/testData/webDemoExamples/ranges2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whileLoop.kt")
   public void testWhileLoop() {
     runTest("js/js.translator/testData/webDemoExamples/whileLoop.kt");

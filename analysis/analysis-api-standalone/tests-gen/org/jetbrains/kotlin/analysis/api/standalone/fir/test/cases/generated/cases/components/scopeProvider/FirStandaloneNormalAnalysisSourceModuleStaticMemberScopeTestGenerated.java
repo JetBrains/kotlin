@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.AbstractStaticMemberScopeTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,36 +40,36 @@ public class FirStandaloneNormalAnalysisSourceModuleStaticMemberScopeTestGenerat
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInStaticMemberScope() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/staticMemberScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("class.kt")
   public void testClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/staticMemberScope/class.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classWithJavaSuperclass.kt")
   public void testClassWithJavaSuperclass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/staticMemberScope/classWithJavaSuperclass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumClass.kt")
   public void testEnumClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/staticMemberScope/enumClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("innerClass.kt")
   public void testInnerClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/staticMemberScope/innerClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaClass.kt")
   public void testJavaClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/staticMemberScope/javaClass.kt");

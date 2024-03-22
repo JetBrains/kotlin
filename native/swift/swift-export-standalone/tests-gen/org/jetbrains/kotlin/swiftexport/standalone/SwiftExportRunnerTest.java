@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.swiftexport.standalone;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,36 +18,36 @@ import java.util.regex.Pattern;
 @TestMetadata("native/swift/swift-export-standalone/testData")
 @TestDataPath("$PROJECT_ROOT")
 public class SwiftExportRunnerTest extends AbstractSwiftRunnerTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInTestData() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData"), Pattern.compile("^([^\\.]+)$"), null, false);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classes")
   public void testClasses() {
     runTest("native/swift/swift-export-standalone/testData/classes/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("documentation")
   public void testDocumentation() {
     runTest("native/swift/swift-export-standalone/testData/documentation/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functions")
   public void testFunctions() {
     runTest("native/swift/swift-export-standalone/testData/functions/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("no_package")
   public void testNo_package() {
     runTest("native/swift/swift-export-standalone/testData/no_package/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("variables")
   public void testVariables() {
     runTest("native/swift/swift-export-standalone/testData/variables/");

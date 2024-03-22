@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.AbstractCombinedDeclaredMemberScopeTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,90 +40,90 @@ public class FirIdeNormalAnalysisSourceModuleCombinedDeclaredMemberScopeTestGene
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInCombinedDeclaredMemberScope() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("class.kt")
   public void testClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/class.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classWithJavaSuperclass.kt")
   public void testClassWithJavaSuperclass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/classWithJavaSuperclass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumClass.kt")
   public void testEnumClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumClassWithAbstractMembers.kt")
   public void testEnumClassWithAbstractMembers() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumClassWithAbstractMembers.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumClassWithFinalMembers.kt")
   public void testEnumClassWithFinalMembers() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumClassWithFinalMembers.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumEntryInitializer.kt")
   public void testEnumEntryInitializer() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumEntryInitializer.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumEntryInitializerWithEmptyBody.kt")
   public void testEnumEntryInitializerWithEmptyBody() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumEntryInitializerWithEmptyBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumEntryInitializerWithFinalEnumMember.kt")
   public void testEnumEntryInitializerWithFinalEnumMember() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumEntryInitializerWithFinalEnumMember.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumEntryInitializerWithOverriddenMember.kt")
   public void testEnumEntryInitializerWithOverriddenMember() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/enumEntryInitializerWithOverriddenMember.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("innerClass.kt")
   public void testInnerClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/innerClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaClass.kt")
   public void testJavaClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/javaClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaDeclaredEnhancementScope.kt")
   public void testJavaDeclaredEnhancementScope() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/javaDeclaredEnhancementScope.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaDeclaredInheritList.kt")
   public void testJavaDeclaredInheritList() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/javaDeclaredInheritList.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("javaInnerClassConstructor.kt")
   public void testJavaInnerClassConstructor() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/combinedDeclaredMemberScope/javaInnerClassConstructor.kt");

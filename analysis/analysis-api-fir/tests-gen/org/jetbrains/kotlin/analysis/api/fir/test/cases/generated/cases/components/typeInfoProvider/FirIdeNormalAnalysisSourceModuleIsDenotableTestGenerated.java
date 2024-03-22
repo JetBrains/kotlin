@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInfoProvider.AbstractIsDenotableTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,30 +40,30 @@ public class FirIdeNormalAnalysisSourceModuleIsDenotableTestGenerated extends Ab
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInIsDenotable() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile(".*\\.descriptors\\.kt$"), true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localTypes.kt")
   public void testLocalTypes() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable/localTypes.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simpleTypes.kt")
   public void testSimpleTypes() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable/simpleTypes.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("smartcast.kt")
   public void testSmartcast() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable/smartcast.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeParameter.kt")
   public void testTypeParameter() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable/typeParameter.kt");

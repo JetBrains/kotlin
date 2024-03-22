@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,37 +18,37 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/resolveExtensionDisposal")
 @TestDataPath("$PROJECT_ROOT")
 public class ResolveExtensionDisposalAfterModificationEventTestGenerated extends AbstractResolveExtensionDisposalAfterModificationEventTest {
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("afterGlobalModuleStateModification.kt")
   public void testAfterGlobalModuleStateModification() {
     runTest("analysis/low-level-api-fir/testData/resolveExtensionDisposal/afterGlobalModuleStateModification.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("afterGlobalSourceModuleStateModification.kt")
   public void testAfterGlobalSourceModuleStateModification() {
     runTest("analysis/low-level-api-fir/testData/resolveExtensionDisposal/afterGlobalSourceModuleStateModification.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("afterGlobalSourceOutOfBlockModification.kt")
   public void testAfterGlobalSourceOutOfBlockModification() {
     runTest("analysis/low-level-api-fir/testData/resolveExtensionDisposal/afterGlobalSourceOutOfBlockModification.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("afterModuleOutOfBlockModification.kt")
   public void testAfterModuleOutOfBlockModification() {
     runTest("analysis/low-level-api-fir/testData/resolveExtensionDisposal/afterModuleOutOfBlockModification.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("afterModuleStateModification.kt")
   public void testAfterModuleStateModification() {
     runTest("analysis/low-level-api-fir/testData/resolveExtensionDisposal/afterModuleStateModification.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInResolveExtensionDisposal() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/resolveExtensionDisposal"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }

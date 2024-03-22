@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -20,204 +20,204 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/script")
 @TestDataPath("$PROJECT_ROOT")
 public class FirScriptCodegenTestGenerated extends AbstractFirScriptCodegenTest {
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("adder.kts")
   public void testAdder() {
     runTest("compiler/testData/codegen/script/adder.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInScript() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classLiteralInsideFunction.kts")
   public void testClassLiteralInsideFunction() {
     runTest("compiler/testData/codegen/script/classLiteralInsideFunction.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("destructuringDeclaration.kts")
   public void testDestructuringDeclaration() {
     runTest("compiler/testData/codegen/script/destructuringDeclaration.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("destructuringDeclarationUnderscore.kts")
   public void testDestructuringDeclarationUnderscore() {
     runTest("compiler/testData/codegen/script/destructuringDeclarationUnderscore.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("empty.kts")
   public void testEmpty() {
     runTest("compiler/testData/codegen/script/empty.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("helloWorld.kts")
   public void testHelloWorld() {
     runTest("compiler/testData/codegen/script/helloWorld.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("inline.kts")
   public void testInline() {
     runTest("compiler/testData/codegen/script/inline.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("innerClass.kts")
   public void testInnerClass() {
     runTest("compiler/testData/codegen/script/innerClass.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kt20707.kts")
   public void testKt20707() {
     runTest("compiler/testData/codegen/script/kt20707.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kt22029.kts")
   public void testKt22029() {
     runTest("compiler/testData/codegen/script/kt22029.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kt48025.kts")
   public void testKt48025() {
     runTest("compiler/testData/codegen/script/kt48025.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localDelegatedProperty.kts")
   public void testLocalDelegatedProperty() {
     runTest("compiler/testData/codegen/script/localDelegatedProperty.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localDelegatedPropertyInLambda.kts")
   public void testLocalDelegatedPropertyInLambda() {
     runTest("compiler/testData/codegen/script/localDelegatedPropertyInLambda.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localDelegatedPropertyNoExplicitType.kts")
   public void testLocalDelegatedPropertyNoExplicitType() {
     runTest("compiler/testData/codegen/script/localDelegatedPropertyNoExplicitType.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localFunction.kts")
   public void testLocalFunction() {
     runTest("compiler/testData/codegen/script/localFunction.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("outerCapture.kts")
   public void testOuterCapture() {
     runTest("compiler/testData/codegen/script/outerCapture.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("parameter.kts")
   public void testParameter() {
     runTest("compiler/testData/codegen/script/parameter.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("parameterArray.kts")
   public void testParameterArray() {
     runTest("compiler/testData/codegen/script/parameterArray.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("parameterClosure.kts")
   public void testParameterClosure() {
     runTest("compiler/testData/codegen/script/parameterClosure.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("parameterLong.kts")
   public void testParameterLong() {
     runTest("compiler/testData/codegen/script/parameterLong.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("secondLevelFunction.kts")
   public void testSecondLevelFunction() {
     runTest("compiler/testData/codegen/script/secondLevelFunction.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("secondLevelFunctionClosure.kts")
   public void testSecondLevelFunctionClosure() {
     runTest("compiler/testData/codegen/script/secondLevelFunctionClosure.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("secondLevelVal.kts")
   public void testSecondLevelVal() {
     runTest("compiler/testData/codegen/script/secondLevelVal.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simpleClass.kts")
   public void testSimpleClass() {
     runTest("compiler/testData/codegen/script/simpleClass.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("string.kts")
   public void testString() {
     runTest("compiler/testData/codegen/script/string.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelFunction.kts")
   public void testTopLevelFunction() {
     runTest("compiler/testData/codegen/script/topLevelFunction.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelFunctionClosure.kts")
   public void testTopLevelFunctionClosure() {
     runTest("compiler/testData/codegen/script/topLevelFunctionClosure.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelLocalDelegatedProperty.kts")
   public void testTopLevelLocalDelegatedProperty() {
     runTest("compiler/testData/codegen/script/topLevelLocalDelegatedProperty.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelPropertiesWithGetSet.kts")
   public void testTopLevelPropertiesWithGetSet() {
     runTest("compiler/testData/codegen/script/topLevelPropertiesWithGetSet.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelProperty.kts")
   public void testTopLevelProperty() {
     runTest("compiler/testData/codegen/script/topLevelProperty.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelPropertyWithProvideDelegate.kts")
   public void testTopLevelPropertyWithProvideDelegate() {
     runTest("compiler/testData/codegen/script/topLevelPropertyWithProvideDelegate.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelTypealias.kts")
   public void testTopLevelTypealias() {
     runTest("compiler/testData/codegen/script/topLevelTypealias.kts");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("twoDestructuringDeclarations.kts")
   public void testTwoDestructuringDeclarations() {
     runTest("compiler/testData/codegen/script/twoDestructuringDeclarations.kts");
@@ -227,126 +227,126 @@ public class FirScriptCodegenTestGenerated extends AbstractFirScriptCodegenTest 
   @TestMetadata("compiler/testData/codegen/script/scriptInstanceCapturing")
   @TestDataPath("$PROJECT_ROOT")
   public class ScriptInstanceCapturing {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInScriptInstanceCapturing() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script/scriptInstanceCapturing"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("anonymousObjectCapturesProperty.kts")
     public void testAnonymousObjectCapturesProperty() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/anonymousObjectCapturesProperty.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classCapturesExtensionIndirect.kts")
     public void testClassCapturesExtensionIndirect() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/classCapturesExtensionIndirect.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classCapturesExtensionIndirect2x.kts")
     public void testClassCapturesExtensionIndirect2x() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/classCapturesExtensionIndirect2x.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classCapturesFunction.kts")
     public void testClassCapturesFunction() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/classCapturesFunction.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classCapturesProperty.kts")
     public void testClassCapturesProperty() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/classCapturesProperty.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classCapturesPropertyInStringTemplate.kts")
     public void testClassCapturesPropertyInStringTemplate() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/classCapturesPropertyInStringTemplate.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classCapturesPropertyIndirect.kts")
     public void testClassCapturesPropertyIndirect() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/classCapturesPropertyIndirect.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classCapturesPropertyIndirect2x.kts")
     public void testClassCapturesPropertyIndirect2x() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/classCapturesPropertyIndirect2x.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("companionCapturesProperty.kts")
     public void testCompanionCapturesProperty() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/companionCapturesProperty.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("enumCapturesProperty.kts")
     public void testEnumCapturesProperty() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/enumCapturesProperty.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("enumEntryCapturesProperty.kts")
     public void testEnumEntryCapturesProperty() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/enumEntryCapturesProperty.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("innerClassesHierarchyCaptureProperty.kts")
     public void testInnerClassesHierarchyCaptureProperty() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/innerClassesHierarchyCaptureProperty.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("interfaceCapturesProperty.kts")
     public void testInterfaceCapturesProperty() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/interfaceCapturesProperty.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nestedAndOuterClassesCaptureProperty.kts")
     public void testNestedAndOuterClassesCaptureProperty() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/nestedAndOuterClassesCaptureProperty.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nestedClassCapturesProperty.kts")
     public void testNestedClassCapturesProperty() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/nestedClassCapturesProperty.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nestedInnerClassCapturesProperty.kts")
     public void testNestedInnerClassCapturesProperty() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/nestedInnerClassCapturesProperty.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nestedToObjectClassCapturesProperty.kts")
     public void testNestedToObjectClassCapturesProperty() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/nestedToObjectClassCapturesProperty.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("objectCapturesProperty.kts")
     public void testObjectCapturesProperty() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/objectCapturesProperty.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("objectCapturesPropertyIndirect.kts")
     public void testObjectCapturesPropertyIndirect() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/objectCapturesPropertyIndirect.kts");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("objectCapturesPropertyViaExtension.kts")
     public void testObjectCapturesPropertyViaExtension() {
       runTest("compiler/testData/codegen/script/scriptInstanceCapturing/objectCapturesPropertyViaExtension.kts");

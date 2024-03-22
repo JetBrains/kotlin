@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,30 +19,30 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/diagnostics/klibSerializationTests")
 @TestDataPath("$PROJECT_ROOT")
 public class FirPsiJsKlibDiagnosticsTestGenerated extends AbstractFirPsiJsDiagnosticWithBackendTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInKlibSerializationTests() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/klibSerializationTests"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("signatureClashClasses.kt")
   public void testSignatureClashClasses() {
     runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClashClasses.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("signatureClashFunctions.kt")
   public void testSignatureClashFunctions() {
     runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClashFunctions.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("signatureClashVariables.kt")
   public void testSignatureClashVariables() {
     runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClashVariables.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("signatureClash_MPP.kt")
   public void testSignatureClash_MPP() {
     runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClash_MPP.kt");

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,144 +18,144 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/klib/partial-linkage")
 @TestDataPath("$PROJECT_ROOT")
 public class NativePartialLinkageTestGenerated extends AbstractNativePartialLinkageTest {
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("addEnumEntry")
   public void testAddEnumEntry() {
     runTest("compiler/testData/klib/partial-linkage/addEnumEntry/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("addSealedSubclass")
   public void testAddSealedSubclass() {
     runTest("compiler/testData/klib/partial-linkage/addSealedSubclass/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInPartial_linkage() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/partial-linkage"), Pattern.compile("^([^_](.+))$"), null, false);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("changeClassVisibility")
   public void testChangeClassVisibility() {
     runTest("compiler/testData/klib/partial-linkage/changeClassVisibility/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("changeFunctionVisibility")
   public void testChangeFunctionVisibility() {
     runTest("compiler/testData/klib/partial-linkage/changeFunctionVisibility/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("changePropertyVisibility")
   public void testChangePropertyVisibility() {
     runTest("compiler/testData/klib/partial-linkage/changePropertyVisibility/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classTransformations")
   public void testClassTransformations() {
     runTest("compiler/testData/klib/partial-linkage/classTransformations/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("externalDeclarations")
   public void testExternalDeclarations() {
     runTest("compiler/testData/klib/partial-linkage/externalDeclarations/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("externalDeclarationsKJS")
   public void testExternalDeclarationsKJS() {
     runTest("compiler/testData/klib/partial-linkage/externalDeclarationsKJS/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionTransformations")
   public void testFunctionTransformations() {
     runTest("compiler/testData/klib/partial-linkage/functionTransformations/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("inheritanceIssues")
   public void testInheritanceIssues() {
     runTest("compiler/testData/klib/partial-linkage/inheritanceIssues/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("noNonImplementedCallableFalsePositives")
   public void testNoNonImplementedCallableFalsePositives() {
     runTest("compiler/testData/klib/partial-linkage/noNonImplementedCallableFalsePositives/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nonAbstractCallableBecomesAbstract")
   public void testNonAbstractCallableBecomesAbstract() {
     runTest("compiler/testData/klib/partial-linkage/nonAbstractCallableBecomesAbstract/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nonExhaustivenessOfWhenClause")
   public void testNonExhaustivenessOfWhenClause() {
     runTest("compiler/testData/klib/partial-linkage/nonExhaustivenessOfWhenClause/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyTransformations")
   public void testPropertyTransformations() {
     runTest("compiler/testData/klib/partial-linkage/propertyTransformations/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("referencingUnusableDeclarations")
   public void testReferencingUnusableDeclarations() {
     runTest("compiler/testData/klib/partial-linkage/referencingUnusableDeclarations/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("removeAbstractCallableFromAbstractClassOrInterface")
   public void testRemoveAbstractCallableFromAbstractClassOrInterface() {
     runTest("compiler/testData/klib/partial-linkage/removeAbstractCallableFromAbstractClassOrInterface/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("removeCallable")
   public void testRemoveCallable() {
     runTest("compiler/testData/klib/partial-linkage/removeCallable/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("removeClass")
   public void testRemoveClass() {
     runTest("compiler/testData/klib/partial-linkage/removeClass/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("removeEnumEntry")
   public void testRemoveEnumEntry() {
     runTest("compiler/testData/klib/partial-linkage/removeEnumEntry/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("removeSealedSubclass")
   public void testRemoveSealedSubclass() {
     runTest("compiler/testData/klib/partial-linkage/removeSealedSubclass/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("replaceCallableReturnType")
   public void testReplaceCallableReturnType() {
     runTest("compiler/testData/klib/partial-linkage/replaceCallableReturnType/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("severalInheritedImplementations")
   public void testSeveralInheritedImplementations() {
     runTest("compiler/testData/klib/partial-linkage/severalInheritedImplementations/");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeAliasChanges")
   public void testTypeAliasChanges() {
     runTest("compiler/testData/klib/partial-linkage/typeAliasChanges/");

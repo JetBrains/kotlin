@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -20,306 +20,306 @@ import java.util.regex.Pattern;
 @TestMetadata("js/js.translator/testData/lineNumbers")
 @TestDataPath("$PROJECT_ROOT")
 public class JsIrLineNumberTestGenerated extends AbstractJsIrLineNumberTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInLineNumbers() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/lineNumbers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("andAndWithSideEffect.kt")
   public void testAndAndWithSideEffect() {
     runTest("js/js.translator/testData/lineNumbers/andAndWithSideEffect.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("backingField.kt")
   public void testBackingField() {
     runTest("js/js.translator/testData/lineNumbers/backingField.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("catch.kt")
   public void testCatch() {
     runTest("js/js.translator/testData/lineNumbers/catch.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("chainedCall.kt")
   public void testChainedCall() {
     runTest("js/js.translator/testData/lineNumbers/chainedCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classCapturingLocals.kt")
   public void testClassCapturingLocals() {
     runTest("js/js.translator/testData/lineNumbers/classCapturingLocals.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("closure.kt")
   public void testClosure() {
     runTest("js/js.translator/testData/lineNumbers/closure.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("complexExpressionAsDefaultArgument.kt")
   public void testComplexExpressionAsDefaultArgument() {
     runTest("js/js.translator/testData/lineNumbers/complexExpressionAsDefaultArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("conditionalDecomposed.kt")
   public void testConditionalDecomposed() {
     runTest("js/js.translator/testData/lineNumbers/conditionalDecomposed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("coroutine.kt")
   public void testCoroutine() {
     runTest("js/js.translator/testData/lineNumbers/coroutine.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("coroutineNullAssertion.kt")
   public void testCoroutineNullAssertion() {
     runTest("js/js.translator/testData/lineNumbers/coroutineNullAssertion.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("dataClass.kt")
   public void testDataClass() {
     runTest("js/js.translator/testData/lineNumbers/dataClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("delegateMemberVal.kt")
   public void testDelegateMemberVal() {
     runTest("js/js.translator/testData/lineNumbers/delegateMemberVal.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("delegatedProperty.kt")
   public void testDelegatedProperty() {
     runTest("js/js.translator/testData/lineNumbers/delegatedProperty.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("delegation.kt")
   public void testDelegation() {
     runTest("js/js.translator/testData/lineNumbers/delegation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("destructuring.kt")
   public void testDestructuring() {
     runTest("js/js.translator/testData/lineNumbers/destructuring.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("destructuringInline.kt")
   public void testDestructuringInline() {
     runTest("js/js.translator/testData/lineNumbers/destructuringInline.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("doWhileWithComplexCondition.kt")
   public void testDoWhileWithComplexCondition() {
     runTest("js/js.translator/testData/lineNumbers/doWhileWithComplexCondition.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("elvis.kt")
   public void testElvis() {
     runTest("js/js.translator/testData/lineNumbers/elvis.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumCompanionObject.kt")
   public void testEnumCompanionObject() {
     runTest("js/js.translator/testData/lineNumbers/enumCompanionObject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumObject.kt")
   public void testEnumObject() {
     runTest("js/js.translator/testData/lineNumbers/enumObject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("expressionAsFunctionBody.kt")
   public void testExpressionAsFunctionBody() {
     runTest("js/js.translator/testData/lineNumbers/expressionAsFunctionBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("for.kt")
   public void testFor() {
     runTest("js/js.translator/testData/lineNumbers/for.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("increment.kt")
   public void testIncrement() {
     runTest("js/js.translator/testData/lineNumbers/increment.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("inlineArguments.kt")
   public void testInlineArguments() {
     runTest("js/js.translator/testData/lineNumbers/inlineArguments.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("inlineLocalVarsRef.kt")
   public void testInlineLocalVarsRef() {
     runTest("js/js.translator/testData/lineNumbers/inlineLocalVarsRef.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("inlineReturn.kt")
   public void testInlineReturn() {
     runTest("js/js.translator/testData/lineNumbers/inlineReturn.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("inlining.kt")
   public void testInlining() {
     runTest("js/js.translator/testData/lineNumbers/inlining.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("inliningWithLambda.kt")
   public void testInliningWithLambda() {
     runTest("js/js.translator/testData/lineNumbers/inliningWithLambda.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("innerClass.kt")
   public void testInnerClass() {
     runTest("js/js.translator/testData/lineNumbers/innerClass.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("isOperator.kt")
   public void testIsOperator() {
     runTest("js/js.translator/testData/lineNumbers/isOperator.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("jsCode.kt")
   public void testJsCode() {
     runTest("js/js.translator/testData/lineNumbers/jsCode.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lambdaWithClosure.kt")
   public void testLambdaWithClosure() {
     runTest("js/js.translator/testData/lineNumbers/lambdaWithClosure.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lastExpressionInInlineLambda.kt")
   public void testLastExpressionInInlineLambda() {
     runTest("js/js.translator/testData/lineNumbers/lastExpressionInInlineLambda.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("literals.kt")
   public void testLiterals() {
     runTest("js/js.translator/testData/lineNumbers/literals.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("longLiteral.kt")
   public void testLongLiteral() {
     runTest("js/js.translator/testData/lineNumbers/longLiteral.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberFunWithDefaultParam.kt")
   public void testMemberFunWithDefaultParam() {
     runTest("js/js.translator/testData/lineNumbers/memberFunWithDefaultParam.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("multipleReferences.kt")
   public void testMultipleReferences() {
     runTest("js/js.translator/testData/lineNumbers/multipleReferences.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objectInstanceFunction.kt")
   public void testObjectInstanceFunction() {
     runTest("js/js.translator/testData/lineNumbers/objectInstanceFunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("optionalArgs.kt")
   public void testOptionalArgs() {
     runTest("js/js.translator/testData/lineNumbers/optionalArgs.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyWithoutInitializer.kt")
   public void testPropertyWithoutInitializer() {
     runTest("js/js.translator/testData/lineNumbers/propertyWithoutInitializer.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("simple.kt")
   public void testSimple() {
     runTest("js/js.translator/testData/lineNumbers/simple.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("stringLiteral.kt")
   public void testStringLiteral() {
     runTest("js/js.translator/testData/lineNumbers/stringLiteral.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("syntheticCodeInConstructors.kt")
   public void testSyntheticCodeInConstructors() {
     runTest("js/js.translator/testData/lineNumbers/syntheticCodeInConstructors.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("syntheticCodeInEnums.kt")
   public void testSyntheticCodeInEnums() {
     runTest("js/js.translator/testData/lineNumbers/syntheticCodeInEnums.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("valParameter.kt")
   public void testValParameter() {
     runTest("js/js.translator/testData/lineNumbers/valParameter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenEntryWithMultipleConditions.kt")
   public void testWhenEntryWithMultipleConditions() {
     runTest("js/js.translator/testData/lineNumbers/whenEntryWithMultipleConditions.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenEntryWithMultipleConditionsNonOptimized.kt")
   public void testWhenEntryWithMultipleConditionsNonOptimized() {
     runTest("js/js.translator/testData/lineNumbers/whenEntryWithMultipleConditionsNonOptimized.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenIn.kt")
   public void testWhenIn() {
     runTest("js/js.translator/testData/lineNumbers/whenIn.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenIs.kt")
   public void testWhenIs() {
     runTest("js/js.translator/testData/lineNumbers/whenIs.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whileWithComplexCondition.kt")
   public void testWhileWithComplexCondition() {
     runTest("js/js.translator/testData/lineNumbers/whileWithComplexCondition.kt");
@@ -329,12 +329,12 @@ public class JsIrLineNumberTestGenerated extends AbstractJsIrLineNumberTest {
   @TestMetadata("js/js.translator/testData/lineNumbers/inlineMultiModule")
   @TestDataPath("$PROJECT_ROOT")
   public class InlineMultiModule {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInInlineMultiModule() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/lineNumbers/inlineMultiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("js/js.translator/testData/lineNumbers/inlineMultiModule/simple.kt");

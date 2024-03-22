@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,48 +19,48 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/assign-plugin/testData/codegen")
 @TestDataPath("$PROJECT_ROOT")
 public class IrBlackBoxCodegenTestAssignmentPluginGenerated extends AbstractIrBlackBoxCodegenTestAssignmentPlugin {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInCodegen() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/assign-plugin/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotation.kt")
   public void testAnnotation() {
     runTest("plugins/assign-plugin/testData/codegen/annotation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("otherOperators.kt")
   public void testOtherOperators() {
     runTest("plugins/assign-plugin/testData/codegen/otherOperators.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("plusAssignPrecedence.kt")
   public void testPlusAssignPrecedence() {
     runTest("plugins/assign-plugin/testData/codegen/plusAssignPrecedence.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("qualifiedAnnotation.kt")
   public void testQualifiedAnnotation() {
     runTest("plugins/assign-plugin/testData/codegen/qualifiedAnnotation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("supportedUsage.kt")
   public void testSupportedUsage() {
     runTest("plugins/assign-plugin/testData/codegen/supportedUsage.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typealias.kt")
   public void testTypealias() {
     runTest("plugins/assign-plugin/testData/codegen/typealias.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("varBehaviour.kt")
   public void testVarBehaviour() {
     runTest("plugins/assign-plugin/testData/codegen/varBehaviour.kt");

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnDeclarationsTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -41,7 +41,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleAnalysisApiAnnotationsOnDe
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInAnnotationsOnDeclaration() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/annotationsOnDeclaration"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
@@ -50,7 +50,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleAnalysisApiAnnotationsOnDe
   @TestMetadata("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct")
   @TestDataPath("$PROJECT_ROOT")
   public class Direct {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInDirect() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -60,7 +60,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleAnalysisApiAnnotationsOnDe
   @TestMetadata("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/useSite")
   @TestDataPath("$PROJECT_ROOT")
   public class UseSite {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInUseSite() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/useSite"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }

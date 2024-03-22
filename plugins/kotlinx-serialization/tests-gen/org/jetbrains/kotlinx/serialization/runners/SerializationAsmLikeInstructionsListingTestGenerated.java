@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,36 +19,36 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kotlinx-serialization/testData/codegen")
 @TestDataPath("$PROJECT_ROOT")
 public class SerializationAsmLikeInstructionsListingTestGenerated extends AbstractSerializationAsmLikeInstructionsListingTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInCodegen() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("Basic.kt")
   public void testBasic() {
     runTest("plugins/kotlinx-serialization/testData/codegen/Basic.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("Intrinsics.kt")
   public void testIntrinsics() {
     runTest("plugins/kotlinx-serialization/testData/codegen/Intrinsics.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("IntrinsicsAdvanced.kt")
   public void testIntrinsicsAdvanced() {
     runTest("plugins/kotlinx-serialization/testData/codegen/IntrinsicsAdvanced.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("IntrinsicsNonReified.kt")
   public void testIntrinsicsNonReified() {
     runTest("plugins/kotlinx-serialization/testData/codegen/IntrinsicsNonReified.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("Sealed.kt")
   public void testSealed() {
     runTest("plugins/kotlinx-serialization/testData/codegen/Sealed.kt");

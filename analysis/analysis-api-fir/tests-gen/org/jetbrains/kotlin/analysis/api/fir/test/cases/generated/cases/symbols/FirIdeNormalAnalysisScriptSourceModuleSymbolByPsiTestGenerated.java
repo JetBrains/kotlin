@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByPsiTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -41,12 +41,12 @@ public class FirIdeNormalAnalysisScriptSourceModuleSymbolByPsiTestGenerated exte
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInSymbolByPsi() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("script.kts")
   public void testScript() {
     runTest("analysis/analysis-api/testData/symbols/symbolByPsi/script.kts");
@@ -56,7 +56,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleSymbolByPsiTestGenerated exte
   @TestMetadata("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers")
   @TestDataPath("$PROJECT_ROOT")
   public class ContextReceivers {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInContextReceivers() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -66,7 +66,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleSymbolByPsiTestGenerated exte
   @TestMetadata("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters")
   @TestDataPath("$PROJECT_ROOT")
   public class ValueParameters {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInValueParameters() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }

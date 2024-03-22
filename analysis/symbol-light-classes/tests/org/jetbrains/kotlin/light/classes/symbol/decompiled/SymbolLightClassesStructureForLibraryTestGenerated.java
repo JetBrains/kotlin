@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.decompiled;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,48 +18,48 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/symbol-light-classes/testData/structure")
 @TestDataPath("$PROJECT_ROOT")
 public class SymbolLightClassesStructureForLibraryTestGenerated extends AbstractSymbolLightClassesStructureForLibraryTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInStructure() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/symbol-light-classes/testData/structure"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("Annotations.kt")
   public void testAnnotations() {
     runTest("analysis/symbol-light-classes/testData/structure/Annotations.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("Classes.kt")
   public void testClasses() {
     runTest("analysis/symbol-light-classes/testData/structure/Classes.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("EnumEntries.kt")
   public void testEnumEntries() {
     runTest("analysis/symbol-light-classes/testData/structure/EnumEntries.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("InterfaceAndClasses.kt")
   public void testInterfaceAndClasses() {
     runTest("analysis/symbol-light-classes/testData/structure/InterfaceAndClasses.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("Interfaces.kt")
   public void testInterfaces() {
     runTest("analysis/symbol-light-classes/testData/structure/Interfaces.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("NestedClasses.kt")
   public void testNestedClasses() {
     runTest("analysis/symbol-light-classes/testData/structure/NestedClasses.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("Objects.kt")
   public void testObjects() {
     runTest("analysis/symbol-light-classes/testData/structure/Objects.kt");

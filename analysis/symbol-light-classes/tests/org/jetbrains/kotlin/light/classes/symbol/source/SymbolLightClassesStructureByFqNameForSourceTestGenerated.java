@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.source;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,12 +18,12 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/symbol-light-classes/testData/structureByFqName")
 @TestDataPath("$PROJECT_ROOT")
 public class SymbolLightClassesStructureByFqNameForSourceTestGenerated extends AbstractSymbolLightClassesStructureByFqNameForSourceTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInStructureByFqName() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/symbol-light-classes/testData/structureByFqName"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("DefaultImpls.kt")
   public void testDefaultImpls() {
     runTest("analysis/symbol-light-classes/testData/structureByFqName/DefaultImpls.kt");

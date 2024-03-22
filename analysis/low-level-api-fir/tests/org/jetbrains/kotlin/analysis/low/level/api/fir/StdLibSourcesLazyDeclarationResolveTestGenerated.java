@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,18 +18,18 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/lazyResolveStdlibSources")
 @TestDataPath("$PROJECT_ROOT")
 public class StdLibSourcesLazyDeclarationResolveTestGenerated extends AbstractStdLibSourcesLazyDeclarationResolveTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInLazyResolveStdlibSources() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveStdlibSources"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("linkedHashMap.kt")
   public void testLinkedHashMap() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveStdlibSources/linkedHashMap.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("wrappedInt.kt")
   public void testWrappedInt() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveStdlibSources/wrappedInt.kt");

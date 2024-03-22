@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.dataFlowInfoProvider.AbstractExitPointSnapshotTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -41,7 +41,7 @@ public class FirIdeNormalAnalysisSourceModuleExitPointSnapshotTestGenerated exte
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInExitPointSnapshot() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
@@ -50,48 +50,48 @@ public class FirIdeNormalAnalysisSourceModuleExitPointSnapshotTestGenerated exte
   @TestMetadata("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow")
   @TestDataPath("$PROJECT_ROOT")
   public class ControlFlow {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInControlFlow() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("breakContinue.kt")
     public void testBreakContinue() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/breakContinue.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("breakReturn.kt")
     public void testBreakReturn() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/breakReturn.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("breakReturn2.kt")
     public void testBreakReturn2() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/breakReturn2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("continueReturn.kt")
     public void testContinueReturn() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/continueReturn.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("continueReturn2.kt")
     public void testContinueReturn2() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/continueReturn2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("defaultTryCatch.kt")
     public void testDefaultTryCatch() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/defaultTryCatch.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("defaultTryCatch2.kt")
     public void testDefaultTryCatch2() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/defaultTryCatch2.kt");
@@ -101,54 +101,54 @@ public class FirIdeNormalAnalysisSourceModuleExitPointSnapshotTestGenerated exte
     @TestMetadata("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/conditionalJumps")
     @TestDataPath("$PROJECT_ROOT")
     public class ConditionalJumps {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInConditionalJumps() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/conditionalJumps"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("break.kt")
       public void testBreak() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/conditionalJumps/break.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("break2.kt")
       public void testBreak2() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/conditionalJumps/break2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("break3.kt")
       public void testBreak3() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/conditionalJumps/break3.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("break4.kt")
       public void testBreak4() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/conditionalJumps/break4.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("break5.kt")
       public void testBreak5() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/conditionalJumps/break5.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("return.kt")
       public void testReturn() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/conditionalJumps/return.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("return2.kt")
       public void testReturn2() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/conditionalJumps/return2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("return3.kt")
       public void testReturn3() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/conditionalJumps/return3.kt");
@@ -159,30 +159,30 @@ public class FirIdeNormalAnalysisSourceModuleExitPointSnapshotTestGenerated exte
     @TestMetadata("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/definiteJumps")
     @TestDataPath("$PROJECT_ROOT")
     public class DefiniteJumps {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInDefiniteJumps() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/definiteJumps"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("return.kt")
       public void testReturn() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/definiteJumps/return.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("return2.kt")
       public void testReturn2() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/definiteJumps/return2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("return3.kt")
       public void testReturn3() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/definiteJumps/return3.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("return4.kt")
       public void testReturn4() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/definiteJumps/return4.kt");
@@ -193,18 +193,18 @@ public class FirIdeNormalAnalysisSourceModuleExitPointSnapshotTestGenerated exte
     @TestMetadata("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/differentTargets")
     @TestDataPath("$PROJECT_ROOT")
     public class DifferentTargets {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInDifferentTargets() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/differentTargets"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("break.kt")
       public void testBreak() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/differentTargets/break.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("return.kt")
       public void testReturn() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/differentTargets/return.kt");
@@ -215,60 +215,60 @@ public class FirIdeNormalAnalysisSourceModuleExitPointSnapshotTestGenerated exte
     @TestMetadata("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/exitPointEquivalence")
     @TestDataPath("$PROJECT_ROOT")
     public class ExitPointEquivalence {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInExitPointEquivalence() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/exitPointEquivalence"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("breakAndReturn.kt")
       public void testBreakAndReturn() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/exitPointEquivalence/breakAndReturn.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("breakContinueAndDefault.kt")
       public void testBreakContinueAndDefault() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/exitPointEquivalence/breakContinueAndDefault.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("continueAndReturn.kt")
       public void testContinueAndReturn() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/exitPointEquivalence/continueAndReturn.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("defaultAndBreak.kt")
       public void testDefaultAndBreak() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/exitPointEquivalence/defaultAndBreak.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("defaultAndContinue.kt")
       public void testDefaultAndContinue() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/exitPointEquivalence/defaultAndContinue.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("defaultAndReturn.kt")
       public void testDefaultAndReturn() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/exitPointEquivalence/defaultAndReturn.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("defaultAndReturnInWhen.kt")
       public void testDefaultAndReturnInWhen() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/exitPointEquivalence/defaultAndReturnInWhen.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("defaultAndReturnInWhen2.kt")
       public void testDefaultAndReturnInWhen2() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/exitPointEquivalence/defaultAndReturnInWhen2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("multipleBreaks.kt")
       public void testMultipleBreaks() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/exitPointEquivalence/multipleBreaks.kt");
@@ -279,30 +279,30 @@ public class FirIdeNormalAnalysisSourceModuleExitPointSnapshotTestGenerated exte
     @TestMetadata("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/unconditionalJumps")
     @TestDataPath("$PROJECT_ROOT")
     public class UnconditionalJumps {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInUnconditionalJumps() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/unconditionalJumps"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("break.kt")
       public void testBreak() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/unconditionalJumps/break.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("break2.kt")
       public void testBreak2() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/unconditionalJumps/break2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("break3.kt")
       public void testBreak3() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/unconditionalJumps/break3.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("break4.kt")
       public void testBreak4() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/unconditionalJumps/break4.kt");
@@ -314,120 +314,120 @@ public class FirIdeNormalAnalysisSourceModuleExitPointSnapshotTestGenerated exte
   @TestMetadata("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues")
   @TestDataPath("$PROJECT_ROOT")
   public class DefaultValues {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInDefaultValues() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("anonymousFunction.kt")
     public void testAnonymousFunction() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/anonymousFunction.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("anonymousObject.kt")
     public void testAnonymousObject() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/anonymousObject.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("assignmentTarget.kt")
     public void testAssignmentTarget() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/assignmentTarget.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("assignmentValue.kt")
     public void testAssignmentValue() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/assignmentValue.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("calleeExpression.kt")
     public void testCalleeExpression() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/calleeExpression.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("errorDefaultType.kt")
     public void testErrorDefaultType() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/errorDefaultType.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("expressionBlock.kt")
     public void testExpressionBlock() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/expressionBlock.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("flexibleDefaultType.kt")
     public void testFlexibleDefaultType() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/flexibleDefaultType.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("functionBodyBlock.kt")
     public void testFunctionBodyBlock() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/functionBodyBlock.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("functionCall.kt")
     public void testFunctionCall() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/functionCall.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("infixOperator.kt")
     public void testInfixOperator() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/infixOperator.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("lambdaExpression.kt")
     public void testLambdaExpression() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/lambdaExpression.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nullableDefaultType.kt")
     public void testNullableDefaultType() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/nullableDefaultType.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("packageQualifier.kt")
     public void testPackageQualifier() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/packageQualifier.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("singleTypedExpression.kt")
     public void testSingleTypedExpression() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/singleTypedExpression.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("suspendFunctionCall.kt")
     public void testSuspendFunctionCall() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/suspendFunctionCall.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeQualifier.kt")
     public void testTypeQualifier() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/typeQualifier.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("variableDeclaration.kt")
     public void testVariableDeclaration() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/variableDeclaration.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("while.kt")
     public void testWhile() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/while.kt");
@@ -438,54 +438,54 @@ public class FirIdeNormalAnalysisSourceModuleExitPointSnapshotTestGenerated exte
   @TestMetadata("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/languageConstructs")
   @TestDataPath("$PROJECT_ROOT")
   public class LanguageConstructs {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInLanguageConstructs() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/languageConstructs"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("arrayLiteral.kt")
     public void testArrayLiteral() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/languageConstructs/arrayLiteral.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("labeledReturn.kt")
     public void testLabeledReturn() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/languageConstructs/labeledReturn.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nonLocalReturn.kt")
     public void testNonLocalReturn() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/languageConstructs/nonLocalReturn.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nonLocalReturn2.kt")
     public void testNonLocalReturn2() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/languageConstructs/nonLocalReturn2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("parameter.kt")
     public void testParameter() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/languageConstructs/parameter.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("parameterDefaultValue.kt")
     public void testParameterDefaultValue() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/languageConstructs/parameterDefaultValue.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("return.kt")
     public void testReturn() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/languageConstructs/return.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("trailingSemicolon.kt")
     public void testTrailingSemicolon() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/languageConstructs/trailingSemicolon.kt");
@@ -496,96 +496,96 @@ public class FirIdeNormalAnalysisSourceModuleExitPointSnapshotTestGenerated exte
   @TestMetadata("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables")
   @TestDataPath("$PROJECT_ROOT")
   public class Variables {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInVariables() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("arrayElementAugmentedReassignment.kt")
     public void testArrayElementAugmentedReassignment() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables/arrayElementAugmentedReassignment.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("arrayElementIncrementPostfix.kt")
     public void testArrayElementIncrementPostfix() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables/arrayElementIncrementPostfix.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("arrayElementIncrementPrefix.kt")
     public void testArrayElementIncrementPrefix() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables/arrayElementIncrementPrefix.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("augmentedReassignment.kt")
     public void testAugmentedReassignment() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables/augmentedReassignment.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classPropertyReassignment.kt")
     public void testClassPropertyReassignment() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables/classPropertyReassignment.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("conditionalReassignment.kt")
     public void testConditionalReassignment() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables/conditionalReassignment.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("destructuredReassignment.kt")
     public void testDestructuredReassignment() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables/destructuredReassignment.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("errorTargetReassignment.kt")
     public void testErrorTargetReassignment() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables/errorTargetReassignment.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("incrementPostfix.kt")
     public void testIncrementPostfix() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables/incrementPostfix.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("incrementPrefix.kt")
     public void testIncrementPrefix() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables/incrementPrefix.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("lambdaParameterReassignment.kt")
     public void testLambdaParameterReassignment() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables/lambdaParameterReassignment.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("localVariable.kt")
     public void testLocalVariable() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables/localVariable.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("parameterReassignment.kt")
     public void testParameterReassignment() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables/parameterReassignment.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleReassignment.kt")
     public void testSimpleReassignment() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables/simpleReassignment.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("topLevelPropertyReassignment.kt")
     public void testTopLevelPropertyReassignment() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables/topLevelPropertyReassignment.kt");

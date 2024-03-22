@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractExpectedExpressionTypeTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,432 +40,432 @@ public class FirIdeNormalAnalysisSourceModuleExpectedExpressionTypeTestGenerated
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("afterExclOperand.kt")
   public void testAfterExclOperand() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/afterExclOperand.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInExpectedExpressionType() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotationPositionalArgument.kt")
   public void testAnnotationPositionalArgument() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/annotationPositionalArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("arrayAccessExpressionGet.kt")
   public void testArrayAccessExpressionGet() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/arrayAccessExpressionGet.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("arrayAccessExpressionGetWithTypeParameters.kt")
   public void testArrayAccessExpressionGetWithTypeParameters() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/arrayAccessExpressionGetWithTypeParameters.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("arrayAccessExpressionSet.kt")
   public void testArrayAccessExpressionSet() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/arrayAccessExpressionSet.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("arrayAccessExpressionSetWithTypeParameters.kt")
   public void testArrayAccessExpressionSetWithTypeParameters() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/arrayAccessExpressionSetWithTypeParameters.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("conditionInWhenWithSubject.kt")
   public void testConditionInWhenWithSubject() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/conditionInWhenWithSubject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("conditionInWhenWithoutSubject.kt")
   public void testConditionInWhenWithoutSubject() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/conditionInWhenWithoutSubject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("delegatedConstructorCall.kt")
   public void testDelegatedConstructorCall() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/delegatedConstructorCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("elvisExpressionLeftOperand.kt")
   public void testElvisExpressionLeftOperand() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/elvisExpressionLeftOperand.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("elvisExpressionLeftOperandWithoutExplicitType.kt")
   public void testElvisExpressionLeftOperandWithoutExplicitType() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/elvisExpressionLeftOperandWithoutExplicitType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("elvisExpressionRightOperand.kt")
   public void testElvisExpressionRightOperand() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/elvisExpressionRightOperand.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("elvisExpressionRightOperandWithoutExplicitType.kt")
   public void testElvisExpressionRightOperandWithoutExplicitType() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/elvisExpressionRightOperandWithoutExplicitType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionExpressionBody.kt")
   public void testFunctionExpressionBody() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/functionExpressionBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionExpressionBodyBlockExpression.kt")
   public void testFunctionExpressionBodyBlockExpression() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/functionExpressionBodyBlockExpression.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionExpressionBodyQualified.kt")
   public void testFunctionExpressionBodyQualified() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/functionExpressionBodyQualified.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionExpressionBodyWithTypeFromRHS.kt")
   public void testFunctionExpressionBodyWithTypeFromRHS() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/functionExpressionBodyWithTypeFromRHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionExpressionBodyWithoutExplicitType.kt")
   public void testFunctionExpressionBodyWithoutExplicitType() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/functionExpressionBodyWithoutExplicitType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionLambdaParam.kt")
   public void testFunctionLambdaParam() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/functionLambdaParam.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionNamedlParam.kt")
   public void testFunctionNamedlParam() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/functionNamedlParam.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionParamWithTypeParam.kt")
   public void testFunctionParamWithTypeParam() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/functionParamWithTypeParam.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionPositionalParam.kt")
   public void testFunctionPositionalParam() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/functionPositionalParam.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionPositionalParamQualified.kt")
   public void testFunctionPositionalParamQualified() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/functionPositionalParamQualified.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionalTypeSubstitution.kt")
   public void testFunctionalTypeSubstitution() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/functionalTypeSubstitution.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("ifCondition.kt")
   public void testIfCondition() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/ifCondition.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("ifConditionQualified.kt")
   public void testIfConditionQualified() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/ifConditionQualified.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("infixFunctionAsRegularCallParam.kt")
   public void testInfixFunctionAsRegularCallParam() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/infixFunctionAsRegularCallParam.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("infixFunctionParam.kt")
   public void testInfixFunctionParam() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/infixFunctionParam.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("infixFunctionParamQualified.kt")
   public void testInfixFunctionParamQualified() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/infixFunctionParamQualified.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("infixFunctionTypeParameter.kt")
   public void testInfixFunctionTypeParameter() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/infixFunctionTypeParameter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lambdaWithExplicitTypeFromVariable.kt")
   public void testLambdaWithExplicitTypeFromVariable() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lambdaWithExplicitTypeFromVariable.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lambdaWithoutReturnNorExplicitType.kt")
   public void testLambdaWithoutReturnNorExplicitType() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lambdaWithoutReturnNorExplicitType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lastStatementInFunctionBlockBody.kt")
   public void testLastStatementInFunctionBlockBody() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lastStatementInFunctionBlockBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lastStatementInLambda.kt")
   public void testLastStatementInLambda() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lastStatementInLambda.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lastStatementInLambdaWithTypeMismatch.kt")
   public void testLastStatementInLambdaWithTypeMismatch() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lastStatementInLambdaWithTypeMismatch.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lastStatementInLambdaWithoutExplicitType.kt")
   public void testLastStatementInLambdaWithoutExplicitType() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lastStatementInLambdaWithoutExplicitType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lastStatementInTry.kt")
   public void testLastStatementInTry() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lastStatementInTry.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lastStatementInTryWithoutExplicitType.kt")
   public void testLastStatementInTryWithoutExplicitType() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lastStatementInTryWithoutExplicitType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyDeclaration.kt")
   public void testPropertyDeclaration() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/propertyDeclaration.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyDeclarationNoExplicitType.kt")
   public void testPropertyDeclarationNoExplicitType() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/propertyDeclarationNoExplicitType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyDeclarationQualified.kt")
   public void testPropertyDeclarationQualified() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/propertyDeclarationQualified.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyDeclarationWithSafeCast.kt")
   public void testPropertyDeclarationWithSafeCast() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/propertyDeclarationWithSafeCast.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyDeclarationWithTypeCast.kt")
   public void testPropertyDeclarationWithTypeCast() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/propertyDeclarationWithTypeCast.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyDeclarationWithTypeFromRHS.kt")
   public void testPropertyDeclarationWithTypeFromRHS() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/propertyDeclarationWithTypeFromRHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyDeclarationWithoutExplicitType.kt")
   public void testPropertyDeclarationWithoutExplicitType() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/propertyDeclarationWithoutExplicitType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("returnFromFunction.kt")
   public void testReturnFromFunction() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/returnFromFunction.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("returnFromFunctionQualifiedReceiver.kt")
   public void testReturnFromFunctionQualifiedReceiver() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/returnFromFunctionQualifiedReceiver.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("returnFromFunctionQualifiedSelector.kt")
   public void testReturnFromFunctionQualifiedSelector() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/returnFromFunctionQualifiedSelector.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("returnFromLambda.kt")
   public void testReturnFromLambda() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/returnFromLambda.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("safeCallArgument.kt")
   public void testSafeCallArgument() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/safeCallArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("sam.kt")
   public void testSam() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/sam.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("samAsArgument.kt")
   public void testSamAsArgument() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samAsArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("samAsConstructorArgument.kt")
   public void testSamAsConstructorArgument() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samAsConstructorArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("samAsReturn.kt")
   public void testSamAsReturn() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samAsReturn.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("samReferenceAsArgument.kt")
   public void testSamReferenceAsArgument() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samReferenceAsArgument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("samReferenceAsVararg.kt")
   public void testSamReferenceAsVararg() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samReferenceAsVararg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("samReferenceWithTypeCast.kt")
   public void testSamReferenceWithTypeCast() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samReferenceWithTypeCast.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("samWithExplicitTypeFromProperty.kt")
   public void testSamWithExplicitTypeFromProperty() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samWithExplicitTypeFromProperty.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("samWithReturnToExplicitLabel.kt")
   public void testSamWithReturnToExplicitLabel() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samWithReturnToExplicitLabel.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("samWithReturnToImplicitLabel.kt")
   public void testSamWithReturnToImplicitLabel() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samWithReturnToImplicitLabel.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("samWithTypeCast.kt")
   public void testSamWithTypeCast() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samWithTypeCast.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("statementInIf.kt")
   public void testStatementInIf() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/statementInIf.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("statementInIfBlockExpression.kt")
   public void testStatementInIfBlockExpression() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/statementInIfBlockExpression.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("statementInIfWithoutExplicitType.kt")
   public void testStatementInIfWithoutExplicitType() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/statementInIfWithoutExplicitType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("statementInWhen.kt")
   public void testStatementInWhen() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/statementInWhen.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("statementInWhenBlockExpression.kt")
   public void testStatementInWhenBlockExpression() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/statementInWhenBlockExpression.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("statementInWhenWithoutExplicitType.kt")
   public void testStatementInWhenWithoutExplicitType() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/statementInWhenWithoutExplicitType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("variableAssignment.kt")
   public void testVariableAssignment() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/variableAssignment.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("variableAssignmentQualified.kt")
   public void testVariableAssignmentQualified() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/variableAssignmentQualified.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whileCondition.kt")
   public void testWhileCondition() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/whileCondition.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whileConditionQualified.kt")
   public void testWhileConditionQualified() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/whileConditionQualified.kt");

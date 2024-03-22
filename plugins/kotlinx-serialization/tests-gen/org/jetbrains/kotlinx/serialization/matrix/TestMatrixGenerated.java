@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,12 +19,12 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kotlinx-serialization/testData/matrix")
 @TestDataPath("$PROJECT_ROOT")
 public class TestMatrixGenerated extends AbstractTestMatrix {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInMatrix() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/matrix"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enums.kt")
   public void testEnums() {
     runTest("plugins/kotlinx-serialization/testData/matrix/enums.kt");

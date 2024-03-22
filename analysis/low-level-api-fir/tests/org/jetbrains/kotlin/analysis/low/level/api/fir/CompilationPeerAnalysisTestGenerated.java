@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,42 +18,42 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/compilationPeers")
 @TestDataPath("$PROJECT_ROOT")
 public class CompilationPeerAnalysisTestGenerated extends AbstractCompilationPeerAnalysisTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInCompilationPeers() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/compilationPeers"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionCall.kt")
   public void testFunctionCall() {
     runTest("analysis/low-level-api-fir/testData/compilationPeers/functionCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionCallDeep.kt")
   public void testFunctionCallDeep() {
     runTest("analysis/low-level-api-fir/testData/compilationPeers/functionCallDeep.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("inlinedClasses.kt")
   public void testInlinedClasses() {
     runTest("analysis/low-level-api-fir/testData/compilationPeers/inlinedClasses.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("libraryFunctionCall.kt")
   public void testLibraryFunctionCall() {
     runTest("analysis/low-level-api-fir/testData/compilationPeers/libraryFunctionCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("noInline.kt")
   public void testNoInline() {
     runTest("analysis/low-level-api-fir/testData/compilationPeers/noInline.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyCall.kt")
   public void testPropertyCall() {
     runTest("analysis/low-level-api-fir/testData/compilationPeers/propertyCall.kt");

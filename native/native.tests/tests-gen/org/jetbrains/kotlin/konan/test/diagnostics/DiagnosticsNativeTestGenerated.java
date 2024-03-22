@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.konan.test.diagnostics;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,162 +18,162 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/diagnostics/nativeTests")
 @TestDataPath("$PROJECT_ROOT")
 public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInNativeTests() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "specialBackendChecks");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("arrays_after.kt")
   public void testArrays_after() {
     runTest("compiler/testData/diagnostics/nativeTests/arrays_after.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("cloneableInNative.kt")
   public void testCloneableInNative() {
     runTest("compiler/testData/diagnostics/nativeTests/cloneableInNative.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("forwardDeclarations.kt")
   public void testForwardDeclarations() {
     runTest("compiler/testData/diagnostics/nativeTests/forwardDeclarations.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("identifiers.kt")
   public void testIdentifiers() {
     runTest("compiler/testData/diagnostics/nativeTests/identifiers.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("isInitialized.kt")
   public void testIsInitialized() {
     runTest("compiler/testData/diagnostics/nativeTests/isInitialized.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("isInitializedError.kt")
   public void testIsInitializedError() {
     runTest("compiler/testData/diagnostics/nativeTests/isInitializedError.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nativeProtectedFunCall.kt")
   public void testNativeProtectedFunCall() {
     runTest("compiler/testData/diagnostics/nativeTests/nativeProtectedFunCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("noObjcOverrideConflictingOverloadsDisabled.kt")
   public void testNoObjcOverrideConflictingOverloadsDisabled() {
     runTest("compiler/testData/diagnostics/nativeTests/noObjcOverrideConflictingOverloadsDisabled.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("noObjcOverrideConflictingOverloadsEnabled.kt")
   public void testNoObjcOverrideConflictingOverloadsEnabled() {
     runTest("compiler/testData/diagnostics/nativeTests/noObjcOverrideConflictingOverloadsEnabled.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objCName.kt")
   public void testObjCName() {
     runTest("compiler/testData/diagnostics/nativeTests/objCName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objCName2.kt")
   public void testObjCName2() {
     runTest("compiler/testData/diagnostics/nativeTests/objCName2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objCName3.kt")
   public void testObjCName3() {
     runTest("compiler/testData/diagnostics/nativeTests/objCName3.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objCName4.kt")
   public void testObjCName4() {
     runTest("compiler/testData/diagnostics/nativeTests/objCName4.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objCName5.kt")
   public void testObjCName5() {
     runTest("compiler/testData/diagnostics/nativeTests/objCName5.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objCName6.kt")
   public void testObjCName6() {
     runTest("compiler/testData/diagnostics/nativeTests/objCName6.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objCNameWIthDifferentSwiftName.kt")
   public void testObjCNameWIthDifferentSwiftName() {
     runTest("compiler/testData/diagnostics/nativeTests/objCNameWIthDifferentSwiftName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objCNameWithTwoModules.kt")
   public void testObjCNameWithTwoModules() {
     runTest("compiler/testData/diagnostics/nativeTests/objCNameWithTwoModules.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objCRefinement.kt")
   public void testObjCRefinement() {
     runTest("compiler/testData/diagnostics/nativeTests/objCRefinement.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objcOverrideApplicability.kt")
   public void testObjcOverrideApplicability() {
     runTest("compiler/testData/diagnostics/nativeTests/objcOverrideApplicability.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("resolveToDelegatedProperty.kt")
   public void testResolveToDelegatedProperty() {
     runTest("compiler/testData/diagnostics/nativeTests/resolveToDelegatedProperty.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("sharedImmutable.kt")
   public void testSharedImmutable() {
     runTest("compiler/testData/diagnostics/nativeTests/sharedImmutable.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("stdClassAndTypealiasAmbiguity.kt")
   public void testStdClassAndTypealiasAmbiguity() {
     runTest("compiler/testData/diagnostics/nativeTests/stdClassAndTypealiasAmbiguity.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("threadLocal.kt")
   public void testThreadLocal() {
     runTest("compiler/testData/diagnostics/nativeTests/threadLocal.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("throws.kt")
   public void testThrows() {
     runTest("compiler/testData/diagnostics/nativeTests/throws.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("throwsClash.kt")
   public void testThrowsClash() {
     runTest("compiler/testData/diagnostics/nativeTests/throwsClash.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelSingleton.kt")
   public void testTopLevelSingleton() {
     runTest("compiler/testData/diagnostics/nativeTests/topLevelSingleton.kt");

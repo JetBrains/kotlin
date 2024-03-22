@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.multiplatformInfoProvider.AbstractExpectForActualTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,30 +40,30 @@ public class FirIdeNormalAnalysisSourceModuleExpectForActualTestGenerated extend
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("actual_object.kt")
   public void testActual_object() {
     runTest("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual/actual_object.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("actual_primaryConstructor.kt")
   public void testActual_primaryConstructor() {
     runTest("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual/actual_primaryConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInExpectForActual() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("matchingButIncompatibleExpect.kt")
   public void testMatchingButIncompatibleExpect() {
     runTest("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual/matchingButIncompatibleExpect.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("multipleExpects.kt")
   public void testMultipleExpects() {
     runTest("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual/multipleExpects.kt");

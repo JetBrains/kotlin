@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractIsUsedAsExpressionTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,1992 +40,1992 @@ public class FirStandaloneNormalAnalysisSourceModuleIsUsedAsExpressionTestGenera
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInIsUsedAsExpression() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotatedExpr.kt")
   public void testAnnotatedExpr() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/annotatedExpr.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotatedExprAnnotation.kt")
   public void testAnnotatedExprAnnotation() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/annotatedExprAnnotation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotatedExprBody.kt")
   public void testAnnotatedExprBody() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/annotatedExprBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotatedExprBodyUnused.kt")
   public void testAnnotatedExprBodyUnused() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/annotatedExprBodyUnused.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotationArg.kt")
   public void testAnnotationArg() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/annotationArg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotationCollectionLiteral.kt")
   public void testAnnotationCollectionLiteral() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/annotationCollectionLiteral.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotationCollectionLiteralEntry.kt")
   public void testAnnotationCollectionLiteralEntry() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/annotationCollectionLiteralEntry.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("annotationName.kt")
   public void testAnnotationName() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/annotationName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("argument.kt")
   public void testArgument() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/argument.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("arrayAccess.kt")
   public void testArrayAccess() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/arrayAccess.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("arrayAccessComputedIndex.kt")
   public void testArrayAccessComputedIndex() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/arrayAccessComputedIndex.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("arrayAccessComputedIndexIndex.kt")
   public void testArrayAccessComputedIndexIndex() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/arrayAccessComputedIndexIndex.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("arrayAccessIndex.kt")
   public void testArrayAccessIndex() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/arrayAccessIndex.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("arrayAccessLHS.kt")
   public void testArrayAccessLHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/arrayAccessLHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("arrayAccessModificationComputedReceiver.kt")
   public void testArrayAccessModificationComputedReceiver() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/arrayAccessModificationComputedReceiver.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("arrayAccessModificationComputedReceiverReceiver.kt")
   public void testArrayAccessModificationComputedReceiverReceiver() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/arrayAccessModificationComputedReceiverReceiver.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("arrayAccessModificationComputedReceiverReceiverInner.kt")
   public void testArrayAccessModificationComputedReceiverReceiverInner() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/arrayAccessModificationComputedReceiverReceiverInner.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("arrayAccessModificationReceiver.kt")
   public void testArrayAccessModificationReceiver() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/arrayAccessModificationReceiver.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("arrayAccessUnused.kt")
   public void testArrayAccessUnused() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/arrayAccessUnused.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("asExpression.kt")
   public void testAsExpression() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/asExpression.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("asExpressionElvisCall.kt")
   public void testAsExpressionElvisCall() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/asExpressionElvisCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("asExpressionElvisCallLHS.kt")
   public void testAsExpressionElvisCallLHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/asExpressionElvisCallLHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("asExpressionElvisCallRHS.kt")
   public void testAsExpressionElvisCallRHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/asExpressionElvisCallRHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("asExpressionElvisCallRHSUsed.kt")
   public void testAsExpressionElvisCallRHSUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/asExpressionElvisCallRHSUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("asExpressionElvisCallUsed.kt")
   public void testAsExpressionElvisCallUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/asExpressionElvisCallUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("asExpressionInner.kt")
   public void testAsExpressionInner() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/asExpressionInner.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("asExpressionLHS.kt")
   public void testAsExpressionLHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/asExpressionLHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("asExpressionNullable.kt")
   public void testAsExpressionNullable() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/asExpressionNullable.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("asExpressionNullableInner.kt")
   public void testAsExpressionNullableInner() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/asExpressionNullableInner.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("asExpressionNullableLet.kt")
   public void testAsExpressionNullableLet() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/asExpressionNullableLet.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("asExpressionNullableLetBlock.kt")
   public void testAsExpressionNullableLetBlock() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/asExpressionNullableLetBlock.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("asExpressionNullableLetBlockUsed.kt")
   public void testAsExpressionNullableLetBlockUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/asExpressionNullableLetBlockUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("asExpressionNullableLetExplicitIt.kt")
   public void testAsExpressionNullableLetExplicitIt() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/asExpressionNullableLetExplicitIt.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("asExpressionNullableLetIt.kt")
   public void testAsExpressionNullableLetIt() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/asExpressionNullableLetIt.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("asExpressionNullableLetName.kt")
   public void testAsExpressionNullableLetName() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/asExpressionNullableLetName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("asExpressionNullableLetUsed.kt")
   public void testAsExpressionNullableLetUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/asExpressionNullableLetUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("asExpressionRHS.kt")
   public void testAsExpressionRHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/asExpressionRHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("asExpressionUsed.kt")
   public void testAsExpressionUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/asExpressionUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("backingField.kt")
   public void testBackingField() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/backingField.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("backingFieldDecl.kt")
   public void testBackingFieldDecl() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/backingFieldDecl.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("backingFieldInitializer.kt")
   public void testBackingFieldInitializer() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/backingFieldInitializer.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("break.kt")
   public void testBreak() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/break.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callReceiver.kt")
   public void testCallReceiver() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/callReceiver.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callReceiverInParens.kt")
   public void testCallReceiverInParens() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/callReceiverInParens.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callReceiverParens.kt")
   public void testCallReceiverParens() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/callReceiverParens.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callableReference.kt")
   public void testCallableReference() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/callableReference.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callableReferenceDirectCall.kt")
   public void testCallableReferenceDirectCall() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/callableReferenceDirectCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callableReferenceIndirectCall.kt")
   public void testCallableReferenceIndirectCall() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/callableReferenceIndirectCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callableReferenceLHS.kt")
   public void testCallableReferenceLHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/callableReferenceLHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callableReferenceRHS.kt")
   public void testCallableReferenceRHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/callableReferenceRHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callableReferenceRHSUnused.kt")
   public void testCallableReferenceRHSUnused() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/callableReferenceRHSUnused.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callableReferenceStaticLHS.kt")
   public void testCallableReferenceStaticLHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/callableReferenceStaticLHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callableReferenceStaticLHSDirectCall.kt")
   public void testCallableReferenceStaticLHSDirectCall() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/callableReferenceStaticLHSDirectCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callableReferenceStaticLHSIndirectCall.kt")
   public void testCallableReferenceStaticLHSIndirectCall() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/callableReferenceStaticLHSIndirectCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callableReferenceStaticLHSLHS.kt")
   public void testCallableReferenceStaticLHSLHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/callableReferenceStaticLHSLHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callableReferenceStaticLHSRHS.kt")
   public void testCallableReferenceStaticLHSRHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/callableReferenceStaticLHSRHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callableReferenceStaticLHSRHSUnused.kt")
   public void testCallableReferenceStaticLHSRHSUnused() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/callableReferenceStaticLHSRHSUnused.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("callableReferenceUnused.kt")
   public void testCallableReferenceUnused() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/callableReferenceUnused.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classConstructorInvocation.kt")
   public void testClassConstructorInvocation() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/classConstructorInvocation.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classConstructorInvocationName.kt")
   public void testClassConstructorInvocationName() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/classConstructorInvocationName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classDecl.kt")
   public void testClassDecl() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/classDecl.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classDeclImplementsInterface.kt")
   public void testClassDeclImplementsInterface() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/classDeclImplementsInterface.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classDeclImplementsTypeParameter.kt")
   public void testClassDeclImplementsTypeParameter() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/classDeclImplementsTypeParameter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classDeclTypeParam.kt")
   public void testClassDeclTypeParam() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/classDeclTypeParam.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classInitBlock.kt")
   public void testClassInitBlock() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/classInitBlock.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classInitExpr.kt")
   public void testClassInitExpr() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/classInitExpr.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classInitializer.kt")
   public void testClassInitializer() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/classInitializer.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classLiteralExpressionComputedVar.kt")
   public void testClassLiteralExpressionComputedVar() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/classLiteralExpressionComputedVar.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classLiteralExpressionComputedVarParenthesized.kt")
   public void testClassLiteralExpressionComputedVarParenthesized() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/classLiteralExpressionComputedVarParenthesized.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classLiteralExpressionComputedVarUnused.kt")
   public void testClassLiteralExpressionComputedVarUnused() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/classLiteralExpressionComputedVarUnused.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classLiteralExpressionComputedVarUnusedWholeExpression.kt")
   public void testClassLiteralExpressionComputedVarUnusedWholeExpression() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/classLiteralExpressionComputedVarUnusedWholeExpression.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classLiteralExpressionLHSParenthesizedUsed.kt")
   public void testClassLiteralExpressionLHSParenthesizedUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/classLiteralExpressionLHSParenthesizedUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classLiteralExpressionLHSUsed.kt")
   public void testClassLiteralExpressionLHSUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/classLiteralExpressionLHSUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classLiteralExpressionUnused.kt")
   public void testClassLiteralExpressionUnused() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/classLiteralExpressionUnused.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classLiteralExpressionUnusedLHS.kt")
   public void testClassLiteralExpressionUnusedLHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/classLiteralExpressionUnusedLHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classLiteralExpressionUsed.kt")
   public void testClassLiteralExpressionUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/classLiteralExpressionUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("collectionLiteralInvalidUnused.kt")
   public void testCollectionLiteralInvalidUnused() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/collectionLiteralInvalidUnused.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("collectionLiteralInvalidUsed.kt")
   public void testCollectionLiteralInvalidUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/collectionLiteralInvalidUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("companionObjectDecl.kt")
   public void testCompanionObjectDecl() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/companionObjectDecl.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("compoundAssignRHS.kt")
   public void testCompoundAssignRHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/compoundAssignRHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("compoundAssignmentException.kt")
   public void testCompoundAssignmentException() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/compoundAssignmentException.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("compoundAssignmentExceptionCustom.kt")
   public void testCompoundAssignmentExceptionCustom() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/compoundAssignmentExceptionCustom.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("compoundAssignmentToProperty.kt")
   public void testCompoundAssignmentToProperty() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/compoundAssignmentToProperty.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("compoundAssignmentToPropertyLHS.kt")
   public void testCompoundAssignmentToPropertyLHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/compoundAssignmentToPropertyLHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("compoundAssignmentToPropertyRHS.kt")
   public void testCompoundAssignmentToPropertyRHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/compoundAssignmentToPropertyRHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("compoundAssignmentToPropertyReceiver.kt")
   public void testCompoundAssignmentToPropertyReceiver() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/compoundAssignmentToPropertyReceiver.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("compoundAssignmentToPropertyReference.kt")
   public void testCompoundAssignmentToPropertyReference() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/compoundAssignmentToPropertyReference.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("computedClassExpression.kt")
   public void testComputedClassExpression() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/computedClassExpression.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("computedClassExpressionLHS.kt")
   public void testComputedClassExpressionLHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/computedClassExpressionLHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorCallee.kt")
   public void testConstructorCallee() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/constructorCallee.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorCalleeUsed.kt")
   public void testConstructorCalleeUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/constructorCalleeUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorInvocationAsPropertyReceiver.kt")
   public void testConstructorInvocationAsPropertyReceiver() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/constructorInvocationAsPropertyReceiver.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorPrimarySuperCall.kt")
   public void testConstructorPrimarySuperCall() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/constructorPrimarySuperCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorSecondary.kt")
   public void testConstructorSecondary() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/constructorSecondary.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorSecondaryBlock.kt")
   public void testConstructorSecondaryBlock() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/constructorSecondaryBlock.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorSecondaryBlockBody.kt")
   public void testConstructorSecondaryBlockBody() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/constructorSecondaryBlockBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorSecondaryDefaultArg.kt")
   public void testConstructorSecondaryDefaultArg() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/constructorSecondaryDefaultArg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorSuperReference.kt")
   public void testConstructorSuperReference() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/constructorSuperReference.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("constructorSuperReferenceArg.kt")
   public void testConstructorSuperReferenceArg() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/constructorSuperReferenceArg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("continue.kt")
   public void testContinue() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/continue.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("defaultExtensionLambda.kt")
   public void testDefaultExtensionLambda() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/defaultExtensionLambda.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("defaultExtensionLambdaPropertyAccessOnThis.kt")
   public void testDefaultExtensionLambdaPropertyAccessOnThis() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/defaultExtensionLambdaPropertyAccessOnThis.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("defaultExtensionLambdaPropertyOnThis.kt")
   public void testDefaultExtensionLambdaPropertyOnThis() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/defaultExtensionLambdaPropertyOnThis.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("defaultExtensionLambdaThis.kt")
   public void testDefaultExtensionLambdaThis() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/defaultExtensionLambdaThis.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("default_parameter.kt")
   public void testDefault_parameter() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/default_parameter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("delegatedSuperEntry.kt")
   public void testDelegatedSuperEntry() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/delegatedSuperEntry.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("destructuringDecl.kt")
   public void testDestructuringDecl() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/destructuringDecl.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("destructuringDeclInForLoop.kt")
   public void testDestructuringDeclInForLoop() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/destructuringDeclInForLoop.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("destructuringDeclInForLoopRHS.kt")
   public void testDestructuringDeclInForLoopRHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/destructuringDeclInForLoopRHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("destructuringDeclInForLoopVariable.kt")
   public void testDestructuringDeclInForLoopVariable() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/destructuringDeclInForLoopVariable.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("destructuringDeclLHSVar.kt")
   public void testDestructuringDeclLHSVar() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/destructuringDeclLHSVar.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("destructuringDeclRHS.kt")
   public void testDestructuringDeclRHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/destructuringDeclRHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("destructuringDeclType.kt")
   public void testDestructuringDeclType() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/destructuringDeclType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("doWhileCondition.kt")
   public void testDoWhileCondition() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/doWhileCondition.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("doWhileExpr.kt")
   public void testDoWhileExpr() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/doWhileExpr.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("doWhileLoopBlock.kt")
   public void testDoWhileLoopBlock() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/doWhileLoopBlock.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("doubleColonClassLHS.kt")
   public void testDoubleColonClassLHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/doubleColonClassLHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("doubleColonCompanionLHS.kt")
   public void testDoubleColonCompanionLHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/doubleColonCompanionLHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("doubleColonLHS.kt")
   public void testDoubleColonLHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/doubleColonLHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("doubleColonUnqualifiedCompanionLHS.kt")
   public void testDoubleColonUnqualifiedCompanionLHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/doubleColonUnqualifiedCompanionLHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("doubleColonUnqualifiedCompanionLHSParenthesized.kt")
   public void testDoubleColonUnqualifiedCompanionLHSParenthesized() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/doubleColonUnqualifiedCompanionLHSParenthesized.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("elvisWithBreak.kt")
   public void testElvisWithBreak() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/elvisWithBreak.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("elvisWithContinue.kt")
   public void testElvisWithContinue() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/elvisWithContinue.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("elvisWithReturn.kt")
   public void testElvisWithReturn() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/elvisWithReturn.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("elvisWithThrow.kt")
   public void testElvisWithThrow() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/elvisWithThrow.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumDecl.kt")
   public void testEnumDecl() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/enumDecl.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumDeclArg.kt")
   public void testEnumDeclArg() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/enumDeclArg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumDeclConstructor.kt")
   public void testEnumDeclConstructor() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/enumDeclConstructor.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumDeclConstructorArg.kt")
   public void testEnumDeclConstructorArg() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/enumDeclConstructorArg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumDeclConstructorThis.kt")
   public void testEnumDeclConstructorThis() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/enumDeclConstructorThis.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumDeclPrimaryConstructorArg.kt")
   public void testEnumDeclPrimaryConstructorArg() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/enumDeclPrimaryConstructorArg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("enumDeclPrimaryConstructorArgList.kt")
   public void testEnumDeclPrimaryConstructorArgList() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/enumDeclPrimaryConstructorArgList.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("expressionBodyLambdaReturningInt.kt")
   public void testExpressionBodyLambdaReturningInt() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/expressionBodyLambdaReturningInt.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("expressionBodyUnitLambda.kt")
   public void testExpressionBodyUnitLambda() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/expressionBodyUnitLambda.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("extensionFunctionAnonymous.kt")
   public void testExtensionFunctionAnonymous() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/extensionFunctionAnonymous.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("extensionFunctionAnonymousReceiver.kt")
   public void testExtensionFunctionAnonymousReceiver() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/extensionFunctionAnonymousReceiver.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("forExpr.kt")
   public void testForExpr() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/forExpr.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("forExprBlock.kt")
   public void testForExprBlock() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/forExprBlock.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("forExprInvalid.kt")
   public void testForExprInvalid() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/forExprInvalid.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("forExprLoopVar.kt")
   public void testForExprLoopVar() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/forExprLoopVar.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("forExprRangeExpr.kt")
   public void testForExprRangeExpr() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/forExprRangeExpr.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("forExprRangeExprUpperBound.kt")
   public void testForExprRangeExprUpperBound() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/forExprRangeExprUpperBound.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("forLoopInvalid.kt")
   public void testForLoopInvalid() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/forLoopInvalid.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionLiteral.kt")
   public void testFunctionLiteral() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/functionLiteral.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionLiteralExpressionBody.kt")
   public void testFunctionLiteralExpressionBody() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/functionLiteralExpressionBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionLiteralExpressionBodyBody.kt")
   public void testFunctionLiteralExpressionBodyBody() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/functionLiteralExpressionBodyBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionLiteralExpressionBodyLambda.kt")
   public void testFunctionLiteralExpressionBodyLambda() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/functionLiteralExpressionBodyLambda.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionLiteralExpressionBodyLambdaBlock.kt")
   public void testFunctionLiteralExpressionBodyLambdaBlock() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/functionLiteralExpressionBodyLambdaBlock.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionLiteralExpressionBodyLambdaBlockInner.kt")
   public void testFunctionLiteralExpressionBodyLambdaBlockInner() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/functionLiteralExpressionBodyLambdaBlockInner.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionLiteralExpressionBodyLambdaBlockInnerUnit.kt")
   public void testFunctionLiteralExpressionBodyLambdaBlockInnerUnit() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/functionLiteralExpressionBodyLambdaBlockInnerUnit.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionLiteralExpressionBodyLambdaTypeAnnotationLHS.kt")
   public void testFunctionLiteralExpressionBodyLambdaTypeAnnotationLHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/functionLiteralExpressionBodyLambdaTypeAnnotationLHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionLiteralExpressionBodyLambdaTypeAnnotationRHS.kt")
   public void testFunctionLiteralExpressionBodyLambdaTypeAnnotationRHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/functionLiteralExpressionBodyLambdaTypeAnnotationRHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionLiteralExtensionReceiverType.kt")
   public void testFunctionLiteralExtensionReceiverType() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/functionLiteralExtensionReceiverType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("function_body_with_if.kt")
   public void testFunction_body_with_if() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/function_body_with_if.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("function_equal_block_with_if.kt")
   public void testFunction_equal_block_with_if() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/function_equal_block_with_if.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("ifBranches_unused.kt")
   public void testIfBranches_unused() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/ifBranches_unused.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("ifBranches_used.kt")
   public void testIfBranches_used() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/ifBranches_used.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("ifConditionParens.kt")
   public void testIfConditionParens() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/ifConditionParens.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("if_subject.kt")
   public void testIf_subject() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/if_subject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("implicitNullBlock.kt")
   public void testImplicitNullBlock() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/implicitNullBlock.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("implicitNullBlock2.kt")
   public void testImplicitNullBlock2() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/implicitNullBlock2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("implicitNullBlockMultiStatements.kt")
   public void testImplicitNullBlockMultiStatements() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/implicitNullBlockMultiStatements.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("initializer_when_branch.kt")
   public void testInitializer_when_branch() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/initializer_when_branch.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("initializer_when_branch_block.kt")
   public void testInitializer_when_branch_block() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/initializer_when_branch_block.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("initializer_when_branch_block_stmt.kt")
   public void testInitializer_when_branch_block_stmt() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/initializer_when_branch_block_stmt.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("innerClassDecl.kt")
   public void testInnerClassDecl() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/innerClassDecl.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("interfaceMemberDecl.kt")
   public void testInterfaceMemberDecl() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/interfaceMemberDecl.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("invokedLocalVariable.kt")
   public void testInvokedLocalVariable() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/invokedLocalVariable.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("isExpression.kt")
   public void testIsExpression() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/isExpression.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("isExpressionLHS.kt")
   public void testIsExpressionLHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/isExpressionLHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("isExpressionLHSInsideParens.kt")
   public void testIsExpressionLHSInsideParens() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/isExpressionLHSInsideParens.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("isExpressionLHSParens.kt")
   public void testIsExpressionLHSParens() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/isExpressionLHSParens.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("isExpressionOperator.kt")
   public void testIsExpressionOperator() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/isExpressionOperator.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("isExpressionRHS.kt")
   public void testIsExpressionRHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/isExpressionRHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("isExpressionRHSInsideParens.kt")
   public void testIsExpressionRHSInsideParens() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/isExpressionRHSInsideParens.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("isExpressionUnused.kt")
   public void testIsExpressionUnused() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/isExpressionUnused.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("labelledReturn.kt")
   public void testLabelledReturn() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/labelledReturn.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("labelledReturnLabel.kt")
   public void testLabelledReturnLabel() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/labelledReturnLabel.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("labelledReturnValue.kt")
   public void testLabelledReturnValue() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/labelledReturnValue.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("labelledThis.kt")
   public void testLabelledThis() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/labelledThis.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("labelledThisLabel.kt")
   public void testLabelledThisLabel() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/labelledThisLabel.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lambdaWithArgs.kt")
   public void testLambdaWithArgs() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/lambdaWithArgs.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lambdaWithArgsArgs.kt")
   public void testLambdaWithArgsArgs() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/lambdaWithArgsArgs.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lambdaWithArgsBody.kt")
   public void testLambdaWithArgsBody() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/lambdaWithArgsBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lambda_unused.kt")
   public void testLambda_unused() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/lambda_unused.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("lambda_unused_invoke.kt")
   public void testLambda_unused_invoke() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/lambda_unused_invoke.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localFunctionDecl.kt")
   public void testLocalFunctionDecl() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/localFunctionDecl.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("loopLabel.kt")
   public void testLoopLabel() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/loopLabel.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("loopLabelBreak.kt")
   public void testLoopLabelBreak() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/loopLabelBreak.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("loopLabelBreakLabel.kt")
   public void testLoopLabelBreakLabel() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/loopLabelBreakLabel.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("loopLabelBreakUsed.kt")
   public void testLoopLabelBreakUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/loopLabelBreakUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberFunctionDecl.kt")
   public void testMemberFunctionDecl() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/memberFunctionDecl.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nonunit_lambda.kt")
   public void testNonunit_lambda() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/nonunit_lambda.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("nonunit_lambda_multiple_statements.kt")
   public void testNonunit_lambda_multiple_statements() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/nonunit_lambda_multiple_statements.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objectDeclaration.kt")
   public void testObjectDeclaration() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/objectDeclaration.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objectDeclarationProperty.kt")
   public void testObjectDeclarationProperty() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/objectDeclarationProperty.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objectLiteral.kt")
   public void testObjectLiteral() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/objectLiteral.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("objectLiteralMember.kt")
   public void testObjectLiteralMember() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/objectLiteralMember.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("object_unused.kt")
   public void testObject_unused() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/object_unused.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("object_used.kt")
   public void testObject_used() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/object_used.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("parameterDecl.kt")
   public void testParameterDecl() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/parameterDecl.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("parameterType.kt")
   public void testParameterType() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/parameterType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("postfixBangBangUnused.kt")
   public void testPostfixBangBangUnused() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/postfixBangBangUnused.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("postfixBangBangUnusedArg.kt")
   public void testPostfixBangBangUnusedArg() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/postfixBangBangUnusedArg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("postfixBangBangUnusedOp.kt")
   public void testPostfixBangBangUnusedOp() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/postfixBangBangUnusedOp.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("postfixBangBangUsed.kt")
   public void testPostfixBangBangUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/postfixBangBangUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("postfixBangBangUsedOp.kt")
   public void testPostfixBangBangUsedOp() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/postfixBangBangUsedOp.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("postfixDecrementException.kt")
   public void testPostfixDecrementException() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/postfixDecrementException.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("postfixIncrementException.kt")
   public void testPostfixIncrementException() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/postfixIncrementException.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("postfixOperatorTechnicallyUnused.kt")
   public void testPostfixOperatorTechnicallyUnused() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/postfixOperatorTechnicallyUnused.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("postfixOperatorUsed.kt")
   public void testPostfixOperatorUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/postfixOperatorUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("postfixOperatorUsedArg.kt")
   public void testPostfixOperatorUsedArg() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/postfixOperatorUsedArg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("postfixOperatorUsedOp.kt")
   public void testPostfixOperatorUsedOp() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/postfixOperatorUsedOp.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("prefixOperator.kt")
   public void testPrefixOperator() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/prefixOperator.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("prefixOperatorArg.kt")
   public void testPrefixOperatorArg() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/prefixOperatorArg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("prefixOperatorArgInParens.kt")
   public void testPrefixOperatorArgInParens() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/prefixOperatorArgInParens.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("prefixOperatorInParens.kt")
   public void testPrefixOperatorInParens() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/prefixOperatorInParens.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("prefixOperatorOperator.kt")
   public void testPrefixOperatorOperator() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/prefixOperatorOperator.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("prefixOperatorUnused.kt")
   public void testPrefixOperatorUnused() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/prefixOperatorUnused.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("prefixOperatorUnusedArg.kt")
   public void testPrefixOperatorUnusedArg() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/prefixOperatorUnusedArg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyAsCallReceiverInParens.kt")
   public void testPropertyAsCallReceiverInParens() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/propertyAsCallReceiverInParens.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyCall.kt")
   public void testPropertyCall() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/propertyCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyDecl.kt")
   public void testPropertyDecl() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/propertyDecl.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyGetterBody.kt")
   public void testPropertyGetterBody() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/propertyGetterBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyGetterDecl.kt")
   public void testPropertyGetterDecl() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/propertyGetterDecl.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyGetterExpressionBody.kt")
   public void testPropertyGetterExpressionBody() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/propertyGetterExpressionBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyGetterFieldRef.kt")
   public void testPropertyGetterFieldRef() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/propertyGetterFieldRef.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyName.kt")
   public void testPropertyName() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/propertyName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyNameFieldGet.kt")
   public void testPropertyNameFieldGet() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/propertyNameFieldGet.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyNameFieldGetUnused.kt")
   public void testPropertyNameFieldGetUnused() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/propertyNameFieldGetUnused.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyReceiver.kt")
   public void testPropertyReceiver() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/propertyReceiver.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyReferenceAsCallReceiverInParens.kt")
   public void testPropertyReferenceAsCallReceiverInParens() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/propertyReferenceAsCallReceiverInParens.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyReferenceProperty.kt")
   public void testPropertyReferenceProperty() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/propertyReferenceProperty.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertyReferenceReceiver.kt")
   public void testPropertyReferenceReceiver() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/propertyReferenceReceiver.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertySetterArg.kt")
   public void testPropertySetterArg() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/propertySetterArg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertySetterCompoundAssign.kt")
   public void testPropertySetterCompoundAssign() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/propertySetterCompoundAssign.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("propertySetterFieldWrite.kt")
   public void testPropertySetterFieldWrite() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/propertySetterFieldWrite.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("redundantLabel.kt")
   public void testRedundantLabel() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/redundantLabel.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("redundantLabelParens.kt")
   public void testRedundantLabelParens() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/redundantLabelParens.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("redundantLabelParensWholeExpression.kt")
   public void testRedundantLabelParensWholeExpression() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/redundantLabelParensWholeExpression.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("redundantLabelParenthesized.kt")
   public void testRedundantLabelParenthesized() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/redundantLabelParenthesized.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("redundantLabelUsed.kt")
   public void testRedundantLabelUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/redundantLabelUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("redundantLabelledExpr.kt")
   public void testRedundantLabelledExpr() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/redundantLabelledExpr.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("return.kt")
   public void testReturn() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/return.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("returnType.kt")
   public void testReturnType() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/returnType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("return_explicit_unit.kt")
   public void testReturn_explicit_unit() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/return_explicit_unit.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("return_implicit_unit.kt")
   public void testReturn_implicit_unit() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/return_implicit_unit.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("return_inside_if.kt")
   public void testReturn_inside_if() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/return_inside_if.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("return_value.kt")
   public void testReturn_value() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/return_value.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("return_with_if.kt")
   public void testReturn_with_if() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/return_with_if.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("run_block.kt")
   public void testRun_block() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/run_block.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("stringTemplate.kt")
   public void testStringTemplate() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/stringTemplate.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("stringTemplateBracesInner.kt")
   public void testStringTemplateBracesInner() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/stringTemplateBracesInner.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("stringTemplateVar.kt")
   public void testStringTemplateVar() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/stringTemplateVar.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("superExpression.kt")
   public void testSuperExpression() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/superExpression.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("superExpressionArg.kt")
   public void testSuperExpressionArg() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/superExpressionArg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("superExpressionSuper.kt")
   public void testSuperExpressionSuper() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/superExpressionSuper.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("throw.kt")
   public void testThrow() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/throw.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("throwStmt.kt")
   public void testThrowStmt() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/throwStmt.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("throw_if_branch.kt")
   public void testThrow_if_branch() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/throw_if_branch.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("toplevelDecl.kt")
   public void testToplevelDecl() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/toplevelDecl.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("toplevelFunctionCall.kt")
   public void testToplevelFunctionCall() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/toplevelFunctionCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("toplevelFunctionCallReference.kt")
   public void testToplevelFunctionCallReference() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/toplevelFunctionCallReference.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("toplevelFunctionReferenceCall.kt")
   public void testToplevelFunctionReferenceCall() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/toplevelFunctionReferenceCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("toplevelFunctionReferenceCallArg.kt")
   public void testToplevelFunctionReferenceCallArg() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/toplevelFunctionReferenceCallArg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("toplevelFunctionReferenceCallReceiver.kt")
   public void testToplevelFunctionReferenceCallReceiver() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/toplevelFunctionReferenceCallReceiver.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("toplevelFunctionReferenceCallReference.kt")
   public void testToplevelFunctionReferenceCallReference() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/toplevelFunctionReferenceCallReference.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("trailingAnnotatedLambda.kt")
   public void testTrailingAnnotatedLambda() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/trailingAnnotatedLambda.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("trailingAnnotatedLambdaAnnotatedExpr.kt")
   public void testTrailingAnnotatedLambdaAnnotatedExpr() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/trailingAnnotatedLambdaAnnotatedExpr.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("trailingAnnotatedLambdaBlock.kt")
   public void testTrailingAnnotatedLambdaBlock() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/trailingAnnotatedLambdaBlock.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("trailingAnnotatedLambdaBlockInner.kt")
   public void testTrailingAnnotatedLambdaBlockInner() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/trailingAnnotatedLambdaBlockInner.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("trailingAnnotatedLambdaFun.kt")
   public void testTrailingAnnotatedLambdaFun() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/trailingAnnotatedLambdaFun.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("try.kt")
   public void testTry() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/try.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryBlockBlock.kt")
   public void testTryBlockBlock() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryBlockBlock.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryBlockBlockUsed.kt")
   public void testTryBlockBlockUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryBlockBlockUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryBlockInner.kt")
   public void testTryBlockInner() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryBlockInner.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryBlockInnerUsed.kt")
   public void testTryBlockInnerUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryBlockInnerUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryCatchArg.kt")
   public void testTryCatchArg() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryCatchArg.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryCatchArgUsed.kt")
   public void testTryCatchArgUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryCatchArgUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryCatchBlock.kt")
   public void testTryCatchBlock() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryCatchBlock.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryCatchBlockInner.kt")
   public void testTryCatchBlockInner() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryCatchBlockInner.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryCatchBlockInnerUsed.kt")
   public void testTryCatchBlockInnerUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryCatchBlockInnerUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryCatchBlockUsed.kt")
   public void testTryCatchBlockUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryCatchBlockUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryFinallyBlock.kt")
   public void testTryFinallyBlock() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryFinallyBlock.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryFinallyBlockInner.kt")
   public void testTryFinallyBlockInner() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryFinallyBlockInner.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryFinallyBlockInnerUsed.kt")
   public void testTryFinallyBlockInnerUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryFinallyBlockInnerUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryFinallyBlockUsed.kt")
   public void testTryFinallyBlockUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryFinallyBlockUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryOnlyFinallyBlock.kt")
   public void testTryOnlyFinallyBlock() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryOnlyFinallyBlock.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryOnlyFinallyBlockInner.kt")
   public void testTryOnlyFinallyBlockInner() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryOnlyFinallyBlockInner.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryOnlyFinallyBlockInnerUsed.kt")
   public void testTryOnlyFinallyBlockInnerUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryOnlyFinallyBlockInnerUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryOnlyFinallyBlockUsed.kt")
   public void testTryOnlyFinallyBlockUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryOnlyFinallyBlockUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryThrowsToFinallyInner.kt")
   public void testTryThrowsToFinallyInner() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryThrowsToFinallyInner.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryThrowsToFinallyInnerUsed.kt")
   public void testTryThrowsToFinallyInnerUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryThrowsToFinallyInnerUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("tryUsed.kt")
   public void testTryUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/tryUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("try_catch_binop.kt")
   public void testTry_catch_binop() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/try_catch_binop.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeAlias.kt")
   public void testTypeAlias() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/typeAlias.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeAliasLocal.kt")
   public void testTypeAliasLocal() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/typeAliasLocal.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeAliasParameter.kt")
   public void testTypeAliasParameter() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/typeAliasParameter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeAliasParameterBound.kt")
   public void testTypeAliasParameterBound() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/typeAliasParameterBound.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeAliasParameterBoundVariance.kt")
   public void testTypeAliasParameterBoundVariance() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/typeAliasParameterBoundVariance.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeAliasParameterWithBounds.kt")
   public void testTypeAliasParameterWithBounds() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/typeAliasParameterWithBounds.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeAliasRHS.kt")
   public void testTypeAliasRHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/typeAliasRHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("typeAliasRHSTypeParameter.kt")
   public void testTypeAliasRHSTypeParameter() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/typeAliasRHSTypeParameter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("unit_lambda.kt")
   public void testUnit_lambda() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/unit_lambda.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("unit_lambda_nonunit_function.kt")
   public void testUnit_lambda_nonunit_function() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/unit_lambda_nonunit_function.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("value_initializer.kt")
   public void testValue_initializer() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/value_initializer.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("var_reassignment_if.kt")
   public void testVar_reassignment_if() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/var_reassignment_if.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("variableDeclarationDecl.kt")
   public void testVariableDeclarationDecl() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/variableDeclarationDecl.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("variableDeclarationLHSType.kt")
   public void testVariableDeclarationLHSType() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/variableDeclarationLHSType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("variableDeclarationRHS.kt")
   public void testVariableDeclarationRHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/variableDeclarationRHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("when.kt")
   public void testWhen() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/when.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("when2.kt")
   public void testWhen2() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/when2.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenIsBranchMultiple.kt")
   public void testWhenIsBranchMultiple() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/whenIsBranchMultiple.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenIsBranchType.kt")
   public void testWhenIsBranchType() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/whenIsBranchType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenUsed.kt")
   public void testWhenUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/whenUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenWithVal.kt")
   public void testWhenWithVal() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/whenWithVal.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whenWithValRHS.kt")
   public void testWhenWithValRHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/whenWithValRHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("when_branch.kt")
   public void testWhen_branch() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/when_branch.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("when_branchUsed.kt")
   public void testWhen_branchUsed() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/when_branchUsed.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("when_condition.kt")
   public void testWhen_condition() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/when_condition.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("when_condition_unreachable.kt")
   public void testWhen_condition_unreachable() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/when_condition_unreachable.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("when_subject.kt")
   public void testWhen_subject() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/when_subject.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("when_subject_with_branches.kt")
   public void testWhen_subject_with_branches() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/when_subject_with_branches.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("when_syntaxerror.kt")
   public void testWhen_syntaxerror() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/when_syntaxerror.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whileExpr.kt")
   public void testWhileExpr() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/whileExpr.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whileLoop.kt")
   public void testWhileLoop() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/whileLoop.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whileLoopBlock.kt")
   public void testWhileLoopBlock() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/whileLoopBlock.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whileLoopBody.kt")
   public void testWhileLoopBody() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/whileLoopBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whileLoopCondition.kt")
   public void testWhileLoopCondition() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/whileLoopCondition.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whileLoopConditionLHS.kt")
   public void testWhileLoopConditionLHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/whileLoopConditionLHS.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("whileLoopConditionRHS.kt")
   public void testWhileLoopConditionRHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/whileLoopConditionRHS.kt");

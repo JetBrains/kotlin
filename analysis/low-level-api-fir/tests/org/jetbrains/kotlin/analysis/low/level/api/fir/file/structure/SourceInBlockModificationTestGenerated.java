@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,426 +18,426 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/inBlockModification")
 @TestDataPath("$PROJECT_ROOT")
 public class SourceInBlockModificationTestGenerated extends AbstractSourceInBlockModificationTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInInBlockModification() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/inBlockModification"), Pattern.compile("^(.+)\\.(kt)$"), null, false);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("contract.kt")
   public void testContract() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/contract.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("entireContract.kt")
   public void testEntireContract() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/entireContract.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("entireFunctionBody.kt")
   public void testEntireFunctionBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/entireFunctionBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("entireGetterBody.kt")
   public void testEntireGetterBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/entireGetterBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("entireInitializer.kt")
   public void testEntireInitializer() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/entireInitializer.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("entireSetterBody.kt")
   public void testEntireSetterBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/entireSetterBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("extensionWithDefaultParameters.kt")
   public void testExtensionWithDefaultParameters() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/extensionWithDefaultParameters.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("functionWithDefaultParameters.kt")
   public void testFunctionWithDefaultParameters() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/functionWithDefaultParameters.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("insideContract.kt")
   public void testInsideContract() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/insideContract.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("insideDefaultParameter.kt")
   public void testInsideDefaultParameter() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/insideDefaultParameter.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberFunWithBodyWithContract.kt")
   public void testMemberFunWithBodyWithContract() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberFunWithBodyWithContract.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberFunWithBodyWithErrorContract.kt")
   public void testMemberFunWithBodyWithErrorContract() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberFunWithBodyWithErrorContract.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberFunWithBodyWithFakeContract.kt")
   public void testMemberFunWithBodyWithFakeContract() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberFunWithBodyWithFakeContract.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberFunWithBodyWithType.kt")
   public void testMemberFunWithBodyWithType() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberFunWithBodyWithType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberFunWithBodyWithoutType.kt")
   public void testMemberFunWithBodyWithoutType() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberFunWithBodyWithoutType.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberFunWithBodyWithoutTypeWithoutName.kt")
   public void testMemberFunWithBodyWithoutTypeWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberFunWithBodyWithoutTypeWithoutName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberFunWithTypeWithoutBody.kt")
   public void testMemberFunWithTypeWithoutBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberFunWithTypeWithoutBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberFunWithoutBodyWithTypeWithoutName.kt")
   public void testMemberFunWithoutBodyWithTypeWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberFunWithoutBodyWithTypeWithoutName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberFunWithoutBodyWithoutTypeWithoutName.kt")
   public void testMemberFunWithoutBodyWithoutTypeWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberFunWithoutBodyWithoutTypeWithoutName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberFunWithoutTypeWithoutBody.kt")
   public void testMemberFunWithoutTypeWithoutBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberFunWithoutTypeWithoutBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberGetterWithBodyWithContract.kt")
   public void testMemberGetterWithBodyWithContract() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberGetterWithBodyWithContract.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberGetterWithBodyWithContractWithoutName.kt")
   public void testMemberGetterWithBodyWithContractWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberGetterWithBodyWithContractWithoutName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberGetterWithTypeWithBody.kt")
   public void testMemberGetterWithTypeWithBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberGetterWithTypeWithBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberGetterWithTypeWithoutBody.kt")
   public void testMemberGetterWithTypeWithoutBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberGetterWithTypeWithoutBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberGetterWithTypeWithoutBodyWithoutName.kt")
   public void testMemberGetterWithTypeWithoutBodyWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberGetterWithTypeWithoutBodyWithoutName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberGetterWithoutTypeWithBody.kt")
   public void testMemberGetterWithoutTypeWithBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberGetterWithoutTypeWithBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberGetterWithoutTypeWithoutBody.kt")
   public void testMemberGetterWithoutTypeWithoutBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberGetterWithoutTypeWithoutBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberPropertyWithTypeInDelegate.kt")
   public void testMemberPropertyWithTypeInDelegate() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberPropertyWithTypeInDelegate.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberPropertyWithTypeInDelegateWithoutName.kt")
   public void testMemberPropertyWithTypeInDelegateWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberPropertyWithTypeInDelegateWithoutName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberPropertyWithTypeInErrorDelegate.kt")
   public void testMemberPropertyWithTypeInErrorDelegate() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberPropertyWithTypeInErrorDelegate.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberPropertyWithTypeInInitializer.kt")
   public void testMemberPropertyWithTypeInInitializer() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberPropertyWithTypeInInitializer.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberPropertyWithTypeInInitializerWithoutName.kt")
   public void testMemberPropertyWithTypeInInitializerWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberPropertyWithTypeInInitializerWithoutName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberPropertyWithoutTypeInDelegate.kt")
   public void testMemberPropertyWithoutTypeInDelegate() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberPropertyWithoutTypeInDelegate.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberPropertyWithoutTypeInErrorDelegate.kt")
   public void testMemberPropertyWithoutTypeInErrorDelegate() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberPropertyWithoutTypeInErrorDelegate.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberPropertyWithoutTypeInInitializer.kt")
   public void testMemberPropertyWithoutTypeInInitializer() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberPropertyWithoutTypeInInitializer.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberSetterWithTypeWithBody.kt")
   public void testMemberSetterWithTypeWithBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithTypeWithBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberSetterWithTypeWithBodyWithoutName.kt")
   public void testMemberSetterWithTypeWithBodyWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithTypeWithBodyWithoutName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberSetterWithTypeWithoutBody.kt")
   public void testMemberSetterWithTypeWithoutBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithTypeWithoutBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberSetterWithTypeWithoutBodyWithoutName.kt")
   public void testMemberSetterWithTypeWithoutBodyWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithTypeWithoutBodyWithoutName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberSetterWithoutTypeWithBody.kt")
   public void testMemberSetterWithoutTypeWithBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithoutTypeWithBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("memberSetterWithoutTypeWithoutBody.kt")
   public void testMemberSetterWithoutTypeWithoutBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithoutTypeWithoutBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("rawContract.kt")
   public void testRawContract() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/rawContract.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelFunctionWithBodyWithoutTypeWithoutName.kt")
   public void testTopLevelFunctionWithBodyWithoutTypeWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelFunctionWithBodyWithoutTypeWithoutName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelFunctionWithTypeWithBody.kt")
   public void testTopLevelFunctionWithTypeWithBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelFunctionWithTypeWithBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelFunctionWithTypeWithBodyDumpFile.kt")
   public void testTopLevelFunctionWithTypeWithBodyDumpFile() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelFunctionWithTypeWithBodyDumpFile.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelFunctionWithTypeWithoutBody.kt")
   public void testTopLevelFunctionWithTypeWithoutBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelFunctionWithTypeWithoutBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelFunctionWithoutBodyWithTypeWithoutName.kt")
   public void testTopLevelFunctionWithoutBodyWithTypeWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelFunctionWithoutBodyWithTypeWithoutName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelFunctionWithoutBodyWithoutTypeWithoutName.kt")
   public void testTopLevelFunctionWithoutBodyWithoutTypeWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelFunctionWithoutBodyWithoutTypeWithoutName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelFunctionWithoutTypeWithBody.kt")
   public void testTopLevelFunctionWithoutTypeWithBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelFunctionWithoutTypeWithBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelFunctionWithoutTypeWithoutBody.kt")
   public void testTopLevelFunctionWithoutTypeWithoutBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelFunctionWithoutTypeWithoutBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelGetterWithTypeWithBody.kt")
   public void testTopLevelGetterWithTypeWithBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelGetterWithTypeWithBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelGetterWithTypeWithBodyWithoutName.kt")
   public void testTopLevelGetterWithTypeWithBodyWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelGetterWithTypeWithBodyWithoutName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelGetterWithTypeWithoutBody.kt")
   public void testTopLevelGetterWithTypeWithoutBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelGetterWithTypeWithoutBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelGetterWithTypeWithoutBodyWithoutName.kt")
   public void testTopLevelGetterWithTypeWithoutBodyWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelGetterWithTypeWithoutBodyWithoutName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelGetterWithoutTypeWithBody.kt")
   public void testTopLevelGetterWithoutTypeWithBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelGetterWithoutTypeWithBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelGetterWithoutTypeWithoutBody.kt")
   public void testTopLevelGetterWithoutTypeWithoutBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelGetterWithoutTypeWithoutBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelPropertyWithTypeInDelegate.kt")
   public void testTopLevelPropertyWithTypeInDelegate() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelPropertyWithTypeInDelegate.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelPropertyWithTypeInDelegateWithoutName.kt")
   public void testTopLevelPropertyWithTypeInDelegateWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelPropertyWithTypeInDelegateWithoutName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelPropertyWithTypeInErrorDelegate.kt")
   public void testTopLevelPropertyWithTypeInErrorDelegate() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelPropertyWithTypeInErrorDelegate.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelPropertyWithTypeInInititalzer.kt")
   public void testTopLevelPropertyWithTypeInInititalzer() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelPropertyWithTypeInInititalzer.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelPropertyWithTypeInInititalzerWithoutName.kt")
   public void testTopLevelPropertyWithTypeInInititalzerWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelPropertyWithTypeInInititalzerWithoutName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelPropertyWithoutTypeInDelegate.kt")
   public void testTopLevelPropertyWithoutTypeInDelegate() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelPropertyWithoutTypeInDelegate.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelPropertyWithoutTypeInErrorDelegate.kt")
   public void testTopLevelPropertyWithoutTypeInErrorDelegate() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelPropertyWithoutTypeInErrorDelegate.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelPropertyWithoutTypeInInititalzer.kt")
   public void testTopLevelPropertyWithoutTypeInInititalzer() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelPropertyWithoutTypeInInititalzer.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelSetterWithTypeWithBody.kt")
   public void testTopLevelSetterWithTypeWithBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithTypeWithBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelSetterWithTypeWithBodyWithoutName.kt")
   public void testTopLevelSetterWithTypeWithBodyWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithTypeWithBodyWithoutName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelSetterWithTypeWithoutBody.kt")
   public void testTopLevelSetterWithTypeWithoutBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithTypeWithoutBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelSetterWithTypeWithoutBodyWithoutName.kt")
   public void testTopLevelSetterWithTypeWithoutBodyWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithTypeWithoutBodyWithoutName.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelSetterWithoutTypeWithBody.kt")
   public void testTopLevelSetterWithoutTypeWithBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithoutTypeWithBody.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("topLevelSetterWithoutTypeWithoutBody.kt")
   public void testTopLevelSetterWithoutTypeWithoutBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithoutTypeWithoutBody.kt");

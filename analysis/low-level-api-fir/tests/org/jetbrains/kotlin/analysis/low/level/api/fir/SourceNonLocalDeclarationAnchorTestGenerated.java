@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -18,42 +18,42 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors")
 @TestDataPath("$PROJECT_ROOT")
 public class SourceNonLocalDeclarationAnchorTestGenerated extends AbstractSourceNonLocalDeclarationAnchorTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInNonLocalDeclarationAnchors() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("classWithMembers.kt")
   public void testClassWithMembers() {
     runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/classWithMembers.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localFunctionInsideAnnotationCall.kt")
   public void testLocalFunctionInsideAnnotationCall() {
     runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/localFunctionInsideAnnotationCall.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localFunctionInsideFunctionLiteral.kt")
   public void testLocalFunctionInsideFunctionLiteral() {
     runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/localFunctionInsideFunctionLiteral.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localFunctionInsideLambdaCallInsideStringTemplate.kt")
   public void testLocalFunctionInsideLambdaCallInsideStringTemplate() {
     runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/localFunctionInsideLambdaCallInsideStringTemplate.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localFunctionInsideStringTemplate.kt")
   public void testLocalFunctionInsideStringTemplate() {
     runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/localFunctionInsideStringTemplate.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("localFunctionInsideSuperEntryCall.kt")
   public void testLocalFunctionInsideSuperEntryCall() {
     runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/localFunctionInsideSuperEntryCall.kt");

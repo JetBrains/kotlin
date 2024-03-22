@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/boxInline")
 @TestDataPath("$PROJECT_ROOT")
 public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated extends AbstractFirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInBoxInline() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
   }
@@ -29,18 +29,18 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/annotations")
   @TestDataPath("$PROJECT_ROOT")
   public class Annotations {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInAnnotations() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("annotationInstanceInlining.kt")
     public void testAnnotationInstanceInlining() {
       runTest("compiler/testData/codegen/boxInline/annotations/annotationInstanceInlining.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("instanceInAnonymousClass.kt")
     public void testInstanceInAnonymousClass() {
       runTest("compiler/testData/codegen/boxInline/annotations/instanceInAnonymousClass.kt");
@@ -51,444 +51,444 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject")
   @TestDataPath("$PROJECT_ROOT")
   public class AnonymousObject {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInAnonymousObject() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("anonymousObjectInCallChildren.kt")
     public void testAnonymousObjectInCallChildren() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectInCallChildren.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("anonymousObjectInDefault.kt")
     public void testAnonymousObjectInDefault() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectInDefault.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("anonymousObjectOnCallSite.kt")
     public void testAnonymousObjectOnCallSite() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectOnCallSite.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("anonymousObjectOnCallSiteSuperParams.kt")
     public void testAnonymousObjectOnCallSiteSuperParams() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectOnCallSiteSuperParams.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("anonymousObjectOnDeclarationSite.kt")
     public void testAnonymousObjectOnDeclarationSite() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectOnDeclarationSite.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("anonymousObjectOnDeclarationSiteSuperParams.kt")
     public void testAnonymousObjectOnDeclarationSiteSuperParams() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectOnDeclarationSiteSuperParams.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("capturedLambdaInInline.kt")
     public void testCapturedLambdaInInline() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLambdaInInline.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("capturedLambdaInInline2.kt")
     public void testCapturedLambdaInInline2() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLambdaInInline2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("capturedLambdaInInline3.kt")
     public void testCapturedLambdaInInline3() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLambdaInInline3.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("capturedLambdaInInlineObject.kt")
     public void testCapturedLambdaInInlineObject() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLambdaInInlineObject.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("capturedLocalFun.kt")
     public void testCapturedLocalFun() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLocalFun.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("capturedLocalFunRef.kt")
     public void testCapturedLocalFunRef() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLocalFunRef.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("changingReturnType.kt")
     public void testChangingReturnType() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/changingReturnType.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("constructOriginalInRegenerated.kt")
     public void testConstructOriginalInRegenerated() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/constructOriginalInRegenerated.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("constructorVisibility.kt")
     public void testConstructorVisibility() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/constructorVisibility.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("constructorVisibilityInConstLambda.kt")
     public void testConstructorVisibilityInConstLambda() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/constructorVisibilityInConstLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("constructorVisibilityInLambda.kt")
     public void testConstructorVisibilityInLambda() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/constructorVisibilityInLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("defineClass.kt")
     public void testDefineClass() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/defineClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fakeOverrideInDefaultMultiModule.kt")
     public void testFakeOverrideInDefaultMultiModule() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/fakeOverrideInDefaultMultiModule.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fakeOverrideMultiModule.kt")
     public void testFakeOverrideMultiModule() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/fakeOverrideMultiModule.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("functionExpression.kt")
     public void testFunctionExpression() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/functionExpression.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineCallInsideInlineLambda.kt")
     public void testInlineCallInsideInlineLambda() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/inlineCallInsideInlineLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt13133.kt")
     public void testKt13133() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt13133.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt13182.kt")
     public void testKt13182() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt13182.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt13374.kt")
     public void testKt13374() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt13374.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt14011.kt")
     public void testKt14011() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt14011.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt14011_2.kt")
     public void testKt14011_2() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt14011_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt14011_3.kt")
     public void testKt14011_3() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt14011_3.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt15751.kt")
     public void testKt15751() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt15751.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt16193.kt")
     public void testKt16193() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt16193.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt17972.kt")
     public void testKt17972() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt17972.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt17972_2.kt")
     public void testKt17972_2() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt17972_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt17972_3.kt")
     public void testKt17972_3() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt17972_3.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt17972_4.kt")
     public void testKt17972_4() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt17972_4.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt17972_5.kt")
     public void testKt17972_5() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt17972_5.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt17972_super.kt")
     public void testKt17972_super() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt17972_super.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt17972_super2.kt")
     public void testKt17972_super2() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt17972_super2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt17972_super3.kt")
     public void testKt17972_super3() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt17972_super3.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt19389.kt")
     public void testKt19389() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt19389.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt19399.kt")
     public void testKt19399() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt19399.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt19434.kt")
     public void testKt19434() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt19434.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt19434_2.kt")
     public void testKt19434_2() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt19434_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt19723.kt")
     public void testKt19723() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt19723.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt29595.kt")
     public void testKt29595() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt29595.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt30696.kt")
     public void testKt30696() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt30696.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt34656.kt")
     public void testKt34656() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt34656.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt38197.kt")
     public void testKt38197() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt38197.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt41174.kt")
     public void testKt41174() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt41174.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt42815.kt")
     public void testKt42815() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt42815.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt42815_delegated.kt")
     public void testKt42815_delegated() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt42815_delegated.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt51950.kt")
     public void testKt51950() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt51950.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt52795.kt")
     public void testKt52795() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt52795_2.kt")
     public void testKt52795_2() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt52795_3.kt")
     public void testKt52795_3() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_3.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt52795_4.kt")
     public void testKt52795_4() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_4.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt52795_5.kt")
     public void testKt52795_5() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_5.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt57053.kt")
     public void testKt57053() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt57053.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt6007.kt")
     public void testKt6007() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt6007.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt6552.kt")
     public void testKt6552() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt6552.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt8133.kt")
     public void testKt8133() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt8133.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt9064.kt")
     public void testKt9064() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt9064.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt9064v2.kt")
     public void testKt9064v2() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt9064v2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt9591.kt")
     public void testKt9591() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt9591.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt9877.kt")
     public void testKt9877() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt9877.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt9877_2.kt")
     public void testKt9877_2() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/kt9877_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("objectInLambdaCapturesAnotherObject.kt")
     public void testObjectInLambdaCapturesAnotherObject() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/objectInLambdaCapturesAnotherObject.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("safeCall.kt")
     public void testSafeCall() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/safeCall.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("safeCall_2.kt")
     public void testSafeCall_2() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/safeCall_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("sam.kt")
     public void testSam() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/sam.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("sharedFromCrossinline.kt")
     public void testSharedFromCrossinline() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/sharedFromCrossinline.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("superConstructorWithObjectParameter.kt")
     public void testSuperConstructorWithObjectParameter() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/superConstructorWithObjectParameter.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeInfo.kt")
     public void testTypeInfo() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/typeInfo.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("withInlineMethod.kt")
     public void testWithInlineMethod() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/withInlineMethod.kt");
@@ -498,30 +498,30 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumEntries")
     @TestDataPath("$PROJECT_ROOT")
     public class EnumEntries {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInEnumEntries() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumEntries"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("callSite.kt")
       public void testCallSite() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/enumEntries/callSite.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("declSite.kt")
       public void testDeclSite() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/enumEntries/declSite.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("declSiteSeveralMappings.kt")
       public void testDeclSiteSeveralMappings() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/enumEntries/declSiteSeveralMappings.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("declSiteSeveralMappingsDifOrder.kt")
       public void testDeclSiteSeveralMappingsDifOrder() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/enumEntries/declSiteSeveralMappingsDifOrder.kt");
@@ -532,30 +532,30 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumWhen")
     @TestDataPath("$PROJECT_ROOT")
     public class EnumWhen {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInEnumWhen() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumWhen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("callSite.kt")
       public void testCallSite() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/enumWhen/callSite.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("declSite.kt")
       public void testDeclSite() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/enumWhen/declSite.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("declSiteSeveralMappings.kt")
       public void testDeclSiteSeveralMappings() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/enumWhen/declSiteSeveralMappings.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("declSiteSeveralMappingsDifOrder.kt")
       public void testDeclSiteSeveralMappingsDifOrder() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/enumWhen/declSiteSeveralMappingsDifOrder.kt");
@@ -566,42 +566,42 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing")
     @TestDataPath("$PROJECT_ROOT")
     public class ProperRecapturing {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInProperRecapturing() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineChain.kt")
       public void testInlineChain() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing/inlineChain.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("lambdaChain.kt")
       public void testLambdaChain() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing/lambdaChain.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("lambdaChainSimple.kt")
       public void testLambdaChainSimple() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing/lambdaChainSimple.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("lambdaChain_2.kt")
       public void testLambdaChain_2() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing/lambdaChain_2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("lambdaChain_3.kt")
       public void testLambdaChain_3() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing/lambdaChain_3.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("noInlineLambda.kt")
       public void testNoInlineLambda() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing/noInlineLambda.kt");
@@ -612,78 +612,78 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass")
     @TestDataPath("$PROJECT_ROOT")
     public class ProperRecapturingInClass {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInProperRecapturingInClass() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineChain.kt")
       public void testInlineChain() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/inlineChain.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlinelambdaChain.kt")
       public void testInlinelambdaChain() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/inlinelambdaChain.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("lambdaChain.kt")
       public void testLambdaChain() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/lambdaChain.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("lambdaChainSimple.kt")
       public void testLambdaChainSimple() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/lambdaChainSimple.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("lambdaChainSimple_2.kt")
       public void testLambdaChainSimple_2() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/lambdaChainSimple_2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("lambdaChain_2.kt")
       public void testLambdaChain_2() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/lambdaChain_2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("lambdaChain_3.kt")
       public void testLambdaChain_3() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/lambdaChain_3.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("noCapturedThisOnCallSite.kt")
       public void testNoCapturedThisOnCallSite() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/noCapturedThisOnCallSite.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("noInlineLambda.kt")
       public void testNoInlineLambda() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/noInlineLambda.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("twoInlineLambda.kt")
       public void testTwoInlineLambda() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/twoInlineLambda.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("twoInlineLambdaComplex.kt")
       public void testTwoInlineLambdaComplex() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/twoInlineLambdaComplex.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("twoInlineLambdaComplex_2.kt")
       public void testTwoInlineLambdaComplex_2() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/twoInlineLambdaComplex_2.kt");
@@ -694,48 +694,48 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/sam")
     @TestDataPath("$PROJECT_ROOT")
     public class Sam {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInSam() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("anonymousObjectToSam.kt")
       public void testAnonymousObjectToSam() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/sam/anonymousObjectToSam.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt17091.kt")
       public void testKt17091() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/sam/kt17091.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt21671.kt")
       public void testKt21671() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/sam/kt21671.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt21671_2.kt")
       public void testKt21671_2() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/sam/kt21671_2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt21671_3.kt")
       public void testKt21671_3() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/sam/kt21671_3.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt22304.kt")
       public void testKt22304() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/sam/kt22304.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("samOnCallSite.kt")
       public void testSamOnCallSite() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/sam/samOnCallSite.kt");
@@ -746,48 +746,48 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers")
     @TestDataPath("$PROJECT_ROOT")
     public class TwoCapturedReceivers {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInTwoCapturedReceivers() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt8668.kt")
       public void testKt8668() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers/kt8668.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt8668_2.kt")
       public void testKt8668_2() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers/kt8668_2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt8668_3.kt")
       public void testKt8668_3() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers/kt8668_3.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt8668_nested.kt")
       public void testKt8668_nested() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers/kt8668_nested.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt8668_nested_2.kt")
       public void testKt8668_nested_2() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers/kt8668_nested_2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("twoDifferentDispatchReceivers.kt")
       public void testTwoDifferentDispatchReceivers() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers/twoDifferentDispatchReceivers.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("twoExtensionReceivers.kt")
       public void testTwoExtensionReceivers() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers/twoExtensionReceivers.kt");
@@ -799,90 +799,90 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/argumentOrder")
   @TestDataPath("$PROJECT_ROOT")
   public class ArgumentOrder {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInArgumentOrder() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("boundFunctionReference.kt")
     public void testBoundFunctionReference() {
       runTest("compiler/testData/codegen/boxInline/argumentOrder/boundFunctionReference.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("boundFunctionReference2.kt")
     public void testBoundFunctionReference2() {
       runTest("compiler/testData/codegen/boxInline/argumentOrder/boundFunctionReference2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("captured.kt")
     public void testCaptured() {
       runTest("compiler/testData/codegen/boxInline/argumentOrder/captured.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("capturedInExtension.kt")
     public void testCapturedInExtension() {
       runTest("compiler/testData/codegen/boxInline/argumentOrder/capturedInExtension.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("defaultParametersAndLastVararg.kt")
     public void testDefaultParametersAndLastVararg() {
       runTest("compiler/testData/codegen/boxInline/argumentOrder/defaultParametersAndLastVararg.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("defaultParametersAndLastVarargWithCorrectOrder.kt")
     public void testDefaultParametersAndLastVarargWithCorrectOrder() {
       runTest("compiler/testData/codegen/boxInline/argumentOrder/defaultParametersAndLastVarargWithCorrectOrder.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("extension.kt")
     public void testExtension() {
       runTest("compiler/testData/codegen/boxInline/argumentOrder/extension.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("extensionInClass.kt")
     public void testExtensionInClass() {
       runTest("compiler/testData/codegen/boxInline/argumentOrder/extensionInClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("lambdaMigration.kt")
     public void testLambdaMigration() {
       runTest("compiler/testData/codegen/boxInline/argumentOrder/lambdaMigration.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("lambdaMigrationInClass.kt")
     public void testLambdaMigrationInClass() {
       runTest("compiler/testData/codegen/boxInline/argumentOrder/lambdaMigrationInClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("compiler/testData/codegen/boxInline/argumentOrder/simple.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleInClass.kt")
     public void testSimpleInClass() {
       runTest("compiler/testData/codegen/boxInline/argumentOrder/simpleInClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("varargAndDefaultParameters.kt")
     public void testVarargAndDefaultParameters() {
       runTest("compiler/testData/codegen/boxInline/argumentOrder/varargAndDefaultParameters.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("varargAndDefaultParametersWithCorrectOrder.kt")
     public void testVarargAndDefaultParametersWithCorrectOrder() {
       runTest("compiler/testData/codegen/boxInline/argumentOrder/varargAndDefaultParametersWithCorrectOrder.kt");
@@ -893,42 +893,42 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/arrayConvention")
   @TestDataPath("$PROJECT_ROOT")
   public class ArrayConvention {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInArrayConvention() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/arrayConvention"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleAccess.kt")
     public void testSimpleAccess() {
       runTest("compiler/testData/codegen/boxInline/arrayConvention/simpleAccess.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleAccessInClass.kt")
     public void testSimpleAccessInClass() {
       runTest("compiler/testData/codegen/boxInline/arrayConvention/simpleAccessInClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleAccessWithDefault.kt")
     public void testSimpleAccessWithDefault() {
       runTest("compiler/testData/codegen/boxInline/arrayConvention/simpleAccessWithDefault.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleAccessWithDefaultInClass.kt")
     public void testSimpleAccessWithDefaultInClass() {
       runTest("compiler/testData/codegen/boxInline/arrayConvention/simpleAccessWithDefaultInClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleAccessWithLambda.kt")
     public void testSimpleAccessWithLambda() {
       runTest("compiler/testData/codegen/boxInline/arrayConvention/simpleAccessWithLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleAccessWithLambdaInClass.kt")
     public void testSimpleAccessWithLambdaInClass() {
       runTest("compiler/testData/codegen/boxInline/arrayConvention/simpleAccessWithLambdaInClass.kt");
@@ -939,90 +939,90 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/assert")
   @TestDataPath("$PROJECT_ROOT")
   public class Assert {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInAssert() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/assert"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("jvmAssertInlineFunctionAssertionsDisabled.kt")
     public void testJvmAssertInlineFunctionAssertionsDisabled() {
       runTest("compiler/testData/codegen/boxInline/assert/jvmAssertInlineFunctionAssertionsDisabled.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("jvmAssertInlineFunctionAssertionsEnabled.kt")
     public void testJvmAssertInlineFunctionAssertionsEnabled() {
       runTest("compiler/testData/codegen/boxInline/assert/jvmAssertInlineFunctionAssertionsEnabled.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("jvmAssertInlineLambda.kt")
     public void testJvmAssertInlineLambda() {
       runTest("compiler/testData/codegen/boxInline/assert/jvmAssertInlineLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("jvmClassInitializer.kt")
     public void testJvmClassInitializer() {
       runTest("compiler/testData/codegen/boxInline/assert/jvmClassInitializer.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("jvmCompanion.kt")
     public void testJvmCompanion() {
       runTest("compiler/testData/codegen/boxInline/assert/jvmCompanion.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("jvmCrossinlineLambda.kt")
     public void testJvmCrossinlineLambda() {
       runTest("compiler/testData/codegen/boxInline/assert/jvmCrossinlineLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("jvmCrossinlineLambda2.kt")
     public void testJvmCrossinlineLambda2() {
       runTest("compiler/testData/codegen/boxInline/assert/jvmCrossinlineLambda2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("jvmCrossinlineLambdaDeclarationSite.kt")
     public void testJvmCrossinlineLambdaDeclarationSite() {
       runTest("compiler/testData/codegen/boxInline/assert/jvmCrossinlineLambdaDeclarationSite.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("jvmCrossinlineLambdaDeclarationSiteOnly.kt")
     public void testJvmCrossinlineLambdaDeclarationSiteOnly() {
       runTest("compiler/testData/codegen/boxInline/assert/jvmCrossinlineLambdaDeclarationSiteOnly.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("jvmCrossinlineRedundant.kt")
     public void testJvmCrossinlineRedundant() {
       runTest("compiler/testData/codegen/boxInline/assert/jvmCrossinlineRedundant.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("jvmCrossinlineSAMDeclarationSite.kt")
     public void testJvmCrossinlineSAMDeclarationSite() {
       runTest("compiler/testData/codegen/boxInline/assert/jvmCrossinlineSAMDeclarationSite.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("jvmDoubleInline.kt")
     public void testJvmDoubleInline() {
       runTest("compiler/testData/codegen/boxInline/assert/jvmDoubleInline.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("jvmInlineIntoTwoMethods.kt")
     public void testJvmInlineIntoTwoMethods() {
       runTest("compiler/testData/codegen/boxInline/assert/jvmInlineIntoTwoMethods.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("jvmInlineUsedAsNoinline.kt")
     public void testJvmInlineUsedAsNoinline() {
       runTest("compiler/testData/codegen/boxInline/assert/jvmInlineUsedAsNoinline.kt");
@@ -1033,18 +1033,18 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/builders")
   @TestDataPath("$PROJECT_ROOT")
   public class Builders {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInBuilders() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/builders"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("builders.kt")
     public void testBuilders() {
       runTest("compiler/testData/codegen/boxInline/builders/builders.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("buildersAndLambdaCapturing.kt")
     public void testBuildersAndLambdaCapturing() {
       runTest("compiler/testData/codegen/boxInline/builders/buildersAndLambdaCapturing.kt");
@@ -1055,18 +1055,18 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/bytecodePreprocessing")
   @TestDataPath("$PROJECT_ROOT")
   public class BytecodePreprocessing {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInBytecodePreprocessing() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/bytecodePreprocessing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("apiVersionAtLeast1.kt")
     public void testApiVersionAtLeast1() {
       runTest("compiler/testData/codegen/boxInline/bytecodePreprocessing/apiVersionAtLeast1.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineApiVersionAtLeastInStdlibInlineFunction.kt")
     public void testInlineApiVersionAtLeastInStdlibInlineFunction() {
       runTest("compiler/testData/codegen/boxInline/bytecodePreprocessing/inlineApiVersionAtLeastInStdlibInlineFunction.kt");
@@ -1077,108 +1077,108 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/callableReference")
   @TestDataPath("$PROJECT_ROOT")
   public class CallableReference {
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("adapted.kt")
     public void testAdapted() {
       runTest("compiler/testData/codegen/boxInline/callableReference/adapted.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInCallableReference() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classLevel.kt")
     public void testClassLevel() {
       runTest("compiler/testData/codegen/boxInline/callableReference/classLevel.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classLevel2.kt")
     public void testClassLevel2() {
       runTest("compiler/testData/codegen/boxInline/callableReference/classLevel2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("constructor.kt")
     public void testConstructor() {
       runTest("compiler/testData/codegen/boxInline/callableReference/constructor.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineCallableReference.kt")
     public void testInlineCallableReference() {
       runTest("compiler/testData/codegen/boxInline/callableReference/inlineCallableReference.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("innerGenericConstuctor.kt")
     public void testInnerGenericConstuctor() {
       runTest("compiler/testData/codegen/boxInline/callableReference/innerGenericConstuctor.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("intrinsic.kt")
     public void testIntrinsic() {
       runTest("compiler/testData/codegen/boxInline/callableReference/intrinsic.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("jvmFieldProperty.kt")
     public void testJvmFieldProperty() {
       runTest("compiler/testData/codegen/boxInline/callableReference/jvmFieldProperty.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt15449.kt")
     public void testKt15449() {
       runTest("compiler/testData/codegen/boxInline/callableReference/kt15449.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt15751_2.kt")
     public void testKt15751_2() {
       runTest("compiler/testData/codegen/boxInline/callableReference/kt15751_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt16411.kt")
     public void testKt16411() {
       runTest("compiler/testData/codegen/boxInline/callableReference/kt16411.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt35101.kt")
     public void testKt35101() {
       runTest("compiler/testData/codegen/boxInline/callableReference/kt35101.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("propertyIntrinsic.kt")
     public void testPropertyIntrinsic() {
       runTest("compiler/testData/codegen/boxInline/callableReference/propertyIntrinsic.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("propertyReference.kt")
     public void testPropertyReference() {
       runTest("compiler/testData/codegen/boxInline/callableReference/propertyReference.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("topLevel.kt")
     public void testTopLevel() {
       runTest("compiler/testData/codegen/boxInline/callableReference/topLevel.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("topLevelExtension.kt")
     public void testTopLevelExtension() {
       runTest("compiler/testData/codegen/boxInline/callableReference/topLevelExtension.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("topLevelProperty.kt")
     public void testTopLevelProperty() {
       runTest("compiler/testData/codegen/boxInline/callableReference/topLevelProperty.kt");
@@ -1188,42 +1188,42 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/callableReference/adaptedReferences")
     @TestDataPath("$PROJECT_ROOT")
     public class AdaptedReferences {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInAdaptedReferences() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference/adaptedReferences"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineBound.kt")
       public void testInlineBound() {
         runTest("compiler/testData/codegen/boxInline/callableReference/adaptedReferences/inlineBound.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineDefault.kt")
       public void testInlineDefault() {
         runTest("compiler/testData/codegen/boxInline/callableReference/adaptedReferences/inlineDefault.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineVararg.kt")
       public void testInlineVararg() {
         runTest("compiler/testData/codegen/boxInline/callableReference/adaptedReferences/inlineVararg.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineVarargAndDefault.kt")
       public void testInlineVarargAndDefault() {
         runTest("compiler/testData/codegen/boxInline/callableReference/adaptedReferences/inlineVarargAndDefault.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineVarargInts.kt")
       public void testInlineVarargInts() {
         runTest("compiler/testData/codegen/boxInline/callableReference/adaptedReferences/inlineVarargInts.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("multipleCallableReferenceUsage.kt")
       public void testMultipleCallableReferenceUsage() {
         runTest("compiler/testData/codegen/boxInline/callableReference/adaptedReferences/multipleCallableReferenceUsage.kt");
@@ -1234,168 +1234,168 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/callableReference/bound")
     @TestDataPath("$PROJECT_ROOT")
     public class Bound {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInBound() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("classProperty.kt")
       public void testClassProperty() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/classProperty.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("doubleBoundToThis.kt")
       public void testDoubleBoundToThis() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/doubleBoundToThis.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("emptyLhsFunction.kt")
       public void testEmptyLhsFunction() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/emptyLhsFunction.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("emptyLhsOnInlineProperty.kt")
       public void testEmptyLhsOnInlineProperty() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/emptyLhsOnInlineProperty.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("emptyLhsProperty.kt")
       public void testEmptyLhsProperty() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/emptyLhsProperty.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("expression.kt")
       public void testExpression() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/expression.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("extensionReceiver.kt")
       public void testExtensionReceiver() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/extensionReceiver.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("filter.kt")
       public void testFilter() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/filter.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineValueParameterInsteadOfReceiver.kt")
       public void testInlineValueParameterInsteadOfReceiver() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/inlineValueParameterInsteadOfReceiver.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("innerGenericConstuctor.kt")
       public void testInnerGenericConstuctor() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/innerGenericConstuctor.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("intrinsic.kt")
       public void testIntrinsic() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/intrinsic.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("jvmFieldProperty.kt")
       public void testJvmFieldProperty() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/jvmFieldProperty.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt18728.kt")
       public void testKt18728() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/kt18728.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt18728_2.kt")
       public void testKt18728_2() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/kt18728_2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt18728_3.kt")
       public void testKt18728_3() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/kt18728_3.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt18728_4.kt")
       public void testKt18728_4() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/kt18728_4.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt30933.kt")
       public void testKt30933() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/kt30933.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("lambdaOnLhs.kt")
       public void testLambdaOnLhs() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/lambdaOnLhs.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("map.kt")
       public void testMap() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/map.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("mixed.kt")
       public void testMixed() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/mixed.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("objectProperty.kt")
       public void testObjectProperty() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/objectProperty.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("propertyImportedFromObject.kt")
       public void testPropertyImportedFromObject() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/propertyImportedFromObject.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("sideEffect.kt")
       public void testSideEffect() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/sideEffect.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/simple.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simpleVal.kt")
       public void testSimpleVal() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/simpleVal.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simpleVal2.kt")
       public void testSimpleVal2() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/simpleVal2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("topLevelExtensionProperty.kt")
       public void testTopLevelExtensionProperty() {
         runTest("compiler/testData/codegen/boxInline/callableReference/bound/topLevelExtensionProperty.kt");
@@ -1407,72 +1407,72 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/capture")
   @TestDataPath("$PROJECT_ROOT")
   public class Capture {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInCapture() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/capture"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("captureInlinable.kt")
     public void testCaptureInlinable() {
       runTest("compiler/testData/codegen/boxInline/capture/captureInlinable.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("captureInlinableAndOther.kt")
     public void testCaptureInlinableAndOther() {
       runTest("compiler/testData/codegen/boxInline/capture/captureInlinableAndOther.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("captureThisAndReceiver.kt")
     public void testCaptureThisAndReceiver() {
       runTest("compiler/testData/codegen/boxInline/capture/captureThisAndReceiver.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("generics.kt")
     public void testGenerics() {
       runTest("compiler/testData/codegen/boxInline/capture/generics.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt48230.kt")
     public void testKt48230() {
       runTest("compiler/testData/codegen/boxInline/capture/kt48230.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt48230_2.kt")
     public void testKt48230_2() {
       runTest("compiler/testData/codegen/boxInline/capture/kt48230_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt56500.kt")
     public void testKt56500() {
       runTest("compiler/testData/codegen/boxInline/capture/kt56500.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt56965.kt")
     public void testKt56965() {
       runTest("compiler/testData/codegen/boxInline/capture/kt56965.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt56965_2.kt")
     public void testKt56965_2() {
       runTest("compiler/testData/codegen/boxInline/capture/kt56965_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleCapturingInClass.kt")
     public void testSimpleCapturingInClass() {
       runTest("compiler/testData/codegen/boxInline/capture/simpleCapturingInClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleCapturingInPackage.kt")
     public void testSimpleCapturingInPackage() {
       runTest("compiler/testData/codegen/boxInline/capture/simpleCapturingInPackage.kt");
@@ -1483,72 +1483,72 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/complex")
   @TestDataPath("$PROJECT_ROOT")
   public class Complex {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInComplex() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/complex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("closureChain.kt")
     public void testClosureChain() {
       runTest("compiler/testData/codegen/boxInline/complex/closureChain.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("forEachLine.kt")
     public void testForEachLine() {
       runTest("compiler/testData/codegen/boxInline/complex/forEachLine.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt44429.kt")
     public void testKt44429() {
       runTest("compiler/testData/codegen/boxInline/complex/kt44429.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt44429MustFail.kt")
     public void testKt44429MustFail() {
       runTest("compiler/testData/codegen/boxInline/complex/kt44429MustFail.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("lambdaInLambda.kt")
     public void testLambdaInLambda() {
       runTest("compiler/testData/codegen/boxInline/complex/lambdaInLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nestedCallsWithGeneric.kt")
     public void testNestedCallsWithGeneric() {
       runTest("compiler/testData/codegen/boxInline/complex/nestedCallsWithGeneric.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nestedCallsWithGenericToInt.kt")
     public void testNestedCallsWithGenericToInt() {
       runTest("compiler/testData/codegen/boxInline/complex/nestedCallsWithGenericToInt.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("swapAndWith.kt")
     public void testSwapAndWith() {
       runTest("compiler/testData/codegen/boxInline/complex/swapAndWith.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("swapAndWith2.kt")
     public void testSwapAndWith2() {
       runTest("compiler/testData/codegen/boxInline/complex/swapAndWith2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("use.kt")
     public void testUse() {
       runTest("compiler/testData/codegen/boxInline/complex/use.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("with.kt")
     public void testWith() {
       runTest("compiler/testData/codegen/boxInline/complex/with.kt");
@@ -1559,60 +1559,60 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/complexStack")
   @TestDataPath("$PROJECT_ROOT")
   public class ComplexStack {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInComplexStack() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/complexStack"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("asCheck.kt")
     public void testAsCheck() {
       runTest("compiler/testData/codegen/boxInline/complexStack/asCheck.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("asCheck2.kt")
     public void testAsCheck2() {
       runTest("compiler/testData/codegen/boxInline/complexStack/asCheck2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("breakContinueInInlineLambdaArgument.kt")
     public void testBreakContinueInInlineLambdaArgument() {
       runTest("compiler/testData/codegen/boxInline/complexStack/breakContinueInInlineLambdaArgument.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("compiler/testData/codegen/boxInline/complexStack/simple.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simple2.kt")
     public void testSimple2() {
       runTest("compiler/testData/codegen/boxInline/complexStack/simple2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simple3.kt")
     public void testSimple3() {
       runTest("compiler/testData/codegen/boxInline/complexStack/simple3.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simple4.kt")
     public void testSimple4() {
       runTest("compiler/testData/codegen/boxInline/complexStack/simple4.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleExtension.kt")
     public void testSimpleExtension() {
       runTest("compiler/testData/codegen/boxInline/complexStack/simpleExtension.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("spillConstructorArgumentsAndInlineLambdaParameter.kt")
     public void testSpillConstructorArgumentsAndInlineLambdaParameter() {
       runTest("compiler/testData/codegen/boxInline/complexStack/spillConstructorArgumentsAndInlineLambdaParameter.kt");
@@ -1623,96 +1623,96 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/contracts")
   @TestDataPath("$PROJECT_ROOT")
   public class Contracts {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInContracts() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/contracts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("cfgDependendValInitialization.kt")
     public void testCfgDependendValInitialization() {
       runTest("compiler/testData/codegen/boxInline/contracts/cfgDependendValInitialization.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("complexInitializer.kt")
     public void testComplexInitializer() {
       runTest("compiler/testData/codegen/boxInline/contracts/complexInitializer.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("complexInitializerWithStackTransformation.kt")
     public void testComplexInitializerWithStackTransformation() {
       runTest("compiler/testData/codegen/boxInline/contracts/complexInitializerWithStackTransformation.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("crossinlineCallableReference.kt")
     public void testCrossinlineCallableReference() {
       runTest("compiler/testData/codegen/boxInline/contracts/crossinlineCallableReference.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("definiteLongValInitialization.kt")
     public void testDefiniteLongValInitialization() {
       runTest("compiler/testData/codegen/boxInline/contracts/definiteLongValInitialization.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("definiteNestedValInitialization.kt")
     public void testDefiniteNestedValInitialization() {
       runTest("compiler/testData/codegen/boxInline/contracts/definiteNestedValInitialization.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("definiteValInitInInitializer.kt")
     public void testDefiniteValInitInInitializer() {
       runTest("compiler/testData/codegen/boxInline/contracts/definiteValInitInInitializer.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("definiteValInitialization.kt")
     public void testDefiniteValInitialization() {
       runTest("compiler/testData/codegen/boxInline/contracts/definiteValInitialization.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("exactlyOnceCrossinline.kt")
     public void testExactlyOnceCrossinline() {
       runTest("compiler/testData/codegen/boxInline/contracts/exactlyOnceCrossinline.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("exactlyOnceCrossinline2.kt")
     public void testExactlyOnceCrossinline2() {
       runTest("compiler/testData/codegen/boxInline/contracts/exactlyOnceCrossinline2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("exactlyOnceNoinline.kt")
     public void testExactlyOnceNoinline() {
       runTest("compiler/testData/codegen/boxInline/contracts/exactlyOnceNoinline.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nonLocalReturn.kt")
     public void testNonLocalReturn() {
       runTest("compiler/testData/codegen/boxInline/contracts/nonLocalReturn.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nonLocalReturnWithCycle.kt")
     public void testNonLocalReturnWithCycle() {
       runTest("compiler/testData/codegen/boxInline/contracts/nonLocalReturnWithCycle.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("propertyInitialization.kt")
     public void testPropertyInitialization() {
       runTest("compiler/testData/codegen/boxInline/contracts/propertyInitialization.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("valInitializationAndUsageInNestedLambda.kt")
     public void testValInitializationAndUsageInNestedLambda() {
       runTest("compiler/testData/codegen/boxInline/contracts/valInitializationAndUsageInNestedLambda.kt");
@@ -1723,126 +1723,126 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/defaultValues")
   @TestDataPath("$PROJECT_ROOT")
   public class DefaultValues {
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("33Parameters.kt")
     public void test33Parameters() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/33Parameters.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("33ParametersInConstructor.kt")
     public void test33ParametersInConstructor() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/33ParametersInConstructor.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInDefaultValues() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("defaultInExtension.kt")
     public void testDefaultInExtension() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/defaultInExtension.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("defaultMethod.kt")
     public void testDefaultMethod() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/defaultMethod.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("defaultMethodInClass.kt")
     public void testDefaultMethodInClass() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/defaultMethodInClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("defaultParamRemapping.kt")
     public void testDefaultParamRemapping() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/defaultParamRemapping.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineInDefaultParameter.kt")
     public void testInlineInDefaultParameter() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/inlineInDefaultParameter.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineLambdaInNoInlineDefault.kt")
     public void testInlineLambdaInNoInlineDefault() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/inlineLambdaInNoInlineDefault.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt11479.kt")
     public void testKt11479() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/kt11479.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt11479InlinedDefaultParameter.kt")
     public void testKt11479InlinedDefaultParameter() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/kt11479InlinedDefaultParameter.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt14564.kt")
     public void testKt14564() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/kt14564.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt14564_2.kt")
     public void testKt14564_2() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/kt14564_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt16496.kt")
     public void testKt16496() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/kt16496.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt18689.kt")
     public void testKt18689() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/kt18689.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt18689_2.kt")
     public void testKt18689_2() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/kt18689_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt18689_3.kt")
     public void testKt18689_3() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/kt18689_3.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt18689_4.kt")
     public void testKt18689_4() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/kt18689_4.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt5685.kt")
     public void testKt5685() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/kt5685.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleDefaultMethod.kt")
     public void testSimpleDefaultMethod() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/simpleDefaultMethod.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("varArgNoInline.kt")
     public void testVarArgNoInline() {
       runTest("compiler/testData/codegen/boxInline/defaultValues/varArgNoInline.kt");
@@ -1852,216 +1852,216 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining")
     @TestDataPath("$PROJECT_ROOT")
     public class LambdaInlining {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInLambdaInlining() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("checkLambdaClassIsPresent.kt")
       public void testCheckLambdaClassIsPresent() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/checkLambdaClassIsPresent.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("checkLambdaClassesArePresent.kt")
       public void testCheckLambdaClassesArePresent() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/checkLambdaClassesArePresent.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("checkObjectClassIsPresent.kt")
       public void testCheckObjectClassIsPresent() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/checkObjectClassIsPresent.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("checkStaticLambdaClassIsPresent.kt")
       public void testCheckStaticLambdaClassIsPresent() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/checkStaticLambdaClassIsPresent.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("checkStaticLambdaClassesArePresent.kt")
       public void testCheckStaticLambdaClassesArePresent() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/checkStaticLambdaClassesArePresent.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("checkStaticObjectClassIsPresent.kt")
       public void testCheckStaticObjectClassIsPresent() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/checkStaticObjectClassIsPresent.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("defaultAfterCapturing.kt")
       public void testDefaultAfterCapturing() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/defaultAfterCapturing.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("defaultCallInDefaultLambda.kt")
       public void testDefaultCallInDefaultLambda() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/defaultCallInDefaultLambda.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("defaultLambdaInNoInline.kt")
       public void testDefaultLambdaInNoInline() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/defaultLambdaInNoInline.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("differentInvokeSignature.kt")
       public void testDifferentInvokeSignature() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/differentInvokeSignature.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("genericLambda.kt")
       public void testGenericLambda() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/genericLambda.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("instanceCapturedInClass.kt")
       public void testInstanceCapturedInClass() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/instanceCapturedInClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("instanceCapturedInInterface.kt")
       public void testInstanceCapturedInInterface() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/instanceCapturedInInterface.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("jvmStaticDefault.kt")
       public void testJvmStaticDefault() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/jvmStaticDefault.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt21827.kt")
       public void testKt21827() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/kt21827.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt21946.kt")
       public void testKt21946() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/kt21946.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt24477.kt")
       public void testKt24477() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/kt24477.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt25106.kt")
       public void testKt25106() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/kt25106.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt26636.kt")
       public void testKt26636() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/kt26636.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("lambdaTakesResult.kt")
       public void testLambdaTakesResult() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/lambdaTakesResult.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("noInline.kt")
       public void testNoInline() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/noInline.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("nonDefaultInlineInNoInline.kt")
       public void testNonDefaultInlineInNoInline() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/nonDefaultInlineInNoInline.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("receiverClash.kt")
       public void testReceiverClash() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/receiverClash.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("receiverClash2.kt")
       public void testReceiverClash2() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/receiverClash2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("receiverClashInClass.kt")
       public void testReceiverClashInClass() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/receiverClashInClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("receiverClashInClass2.kt")
       public void testReceiverClashInClass2() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/receiverClashInClass2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("reordering.kt")
       public void testReordering() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/reordering.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/simple.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simpleErased.kt")
       public void testSimpleErased() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/simpleErased.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simpleErasedStaticInstance.kt")
       public void testSimpleErasedStaticInstance() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/simpleErasedStaticInstance.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simpleExtension.kt")
       public void testSimpleExtension() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/simpleExtension.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simpleGeneric.kt")
       public void testSimpleGeneric() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/simpleGeneric.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simpleStaticInstance.kt")
       public void testSimpleStaticInstance() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/simpleStaticInstance.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("thisClash.kt")
       public void testThisClash() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/thisClash.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("thisClashInClass.kt")
       public void testThisClashInClass() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/thisClashInClass.kt");
@@ -2071,174 +2071,174 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
       @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences")
       @TestDataPath("$PROJECT_ROOT")
       public class CallableReferences {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInCallableReferences() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("boundFunctionReference.kt")
         public void testBoundFunctionReference() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundFunctionReference.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("boundFunctionReferenceOnInt.kt")
         public void testBoundFunctionReferenceOnInt() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundFunctionReferenceOnInt.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("boundFunctionReferenceOnLong.kt")
         public void testBoundFunctionReferenceOnLong() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundFunctionReferenceOnLong.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("boundInlineClassMethod.kt")
         public void testBoundInlineClassMethod() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundInlineClassMethod.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("boundInlineClassMethodWithAny.kt")
         public void testBoundInlineClassMethodWithAny() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundInlineClassMethodWithAny.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("boundInlineClassMethodWithInt.kt")
         public void testBoundInlineClassMethodWithInt() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundInlineClassMethodWithInt.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("boundPropertyReference.kt")
         public void testBoundPropertyReference() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundPropertyReference.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("boundPropertyReferenceOnInt.kt")
         public void testBoundPropertyReferenceOnInt() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundPropertyReferenceOnInt.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("boundPropertyReferenceOnLong.kt")
         public void testBoundPropertyReferenceOnLong() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/boundPropertyReferenceOnLong.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("constuctorReference.kt")
         public void testConstuctorReference() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/constuctorReference.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("defaultAfterBoundReference.kt")
         public void testDefaultAfterBoundReference() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/defaultAfterBoundReference.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("differentInvokeSignature.kt")
         public void testDifferentInvokeSignature() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/differentInvokeSignature.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("differentInvokeSignature2.kt")
         public void testDifferentInvokeSignature2() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/differentInvokeSignature2.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("differentInvokeSignature3.kt")
         public void testDifferentInvokeSignature3() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/differentInvokeSignature3.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("functionImportedFromObject.kt")
         public void testFunctionImportedFromObject() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/functionImportedFromObject.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("functionReference.kt")
         public void testFunctionReference() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/functionReference.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("functionReferenceFromClass.kt")
         public void testFunctionReferenceFromClass() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/functionReferenceFromClass.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("functionReferenceFromObject.kt")
         public void testFunctionReferenceFromObject() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/functionReferenceFromObject.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("innerClassConstuctorReference.kt")
         public void testInnerClassConstuctorReference() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/innerClassConstuctorReference.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("mutableBoundPropertyReferenceFromClass.kt")
         public void testMutableBoundPropertyReferenceFromClass() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/mutableBoundPropertyReferenceFromClass.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("mutablePropertyReferenceFromClass.kt")
         public void testMutablePropertyReferenceFromClass() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/mutablePropertyReferenceFromClass.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("privateFunctionReference.kt")
         public void testPrivateFunctionReference() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/privateFunctionReference.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("privatePropertyReference.kt")
         public void testPrivatePropertyReference() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/privatePropertyReference.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("propertyImportedFromObject.kt")
         public void testPropertyImportedFromObject() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/propertyImportedFromObject.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("propertyReference.kt")
         public void testPropertyReference() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/propertyReference.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("propertyReferenceFromClass.kt")
         public void testPropertyReferenceFromClass() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/propertyReferenceFromClass.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("propertyReferenceFromObject.kt")
         public void testPropertyReferenceFromObject() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/propertyReferenceFromObject.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("withInlineClassParameter.kt")
         public void testWithInlineClassParameter() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/withInlineClassParameter.kt");
@@ -2250,48 +2250,48 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElimination")
     @TestDataPath("$PROJECT_ROOT")
     public class MaskElimination {
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("32Parameters.kt")
       public void test32Parameters() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/maskElimination/32Parameters.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("33Parameters.kt")
       public void test33Parameters() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/maskElimination/33Parameters.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInMaskElimination() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/maskElimination"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt18792.kt")
       public void testKt18792() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/maskElimination/kt18792.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt19679.kt")
       public void testKt19679() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/maskElimination/kt19679.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt19679_2.kt")
       public void testKt19679_2() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/maskElimination/kt19679_2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt19679_3.kt")
       public void testKt19679_3() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/maskElimination/kt19679_3.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/testData/codegen/boxInline/defaultValues/maskElimination/simple.kt");
@@ -2303,42 +2303,42 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/delegatedProperty")
   @TestDataPath("$PROJECT_ROOT")
   public class DelegatedProperty {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInDelegatedProperty() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt16864.kt")
     public void testKt16864() {
       runTest("compiler/testData/codegen/boxInline/delegatedProperty/kt16864.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt48498.kt")
     public void testKt48498() {
       runTest("compiler/testData/codegen/boxInline/delegatedProperty/kt48498.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("local.kt")
     public void testLocal() {
       runTest("compiler/testData/codegen/boxInline/delegatedProperty/local.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("localDeclaredInLambda.kt")
     public void testLocalDeclaredInLambda() {
       runTest("compiler/testData/codegen/boxInline/delegatedProperty/localDeclaredInLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("localInAnonymousObject.kt")
     public void testLocalInAnonymousObject() {
       runTest("compiler/testData/codegen/boxInline/delegatedProperty/localInAnonymousObject.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("localInLambda.kt")
     public void testLocalInLambda() {
       runTest("compiler/testData/codegen/boxInline/delegatedProperty/localInLambda.kt");
@@ -2349,66 +2349,66 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/dontReify")
   @TestDataPath("$PROJECT_ROOT")
   public class DontReify {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInDontReify() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/dontReify"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("arrayRead.kt")
     public void testArrayRead() {
       runTest("compiler/testData/codegen/boxInline/dontReify/arrayRead.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("arrayWrite.kt")
     public void testArrayWrite() {
       runTest("compiler/testData/codegen/boxInline/dontReify/arrayWrite.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("dispatchReceiver.kt")
     public void testDispatchReceiver() {
       runTest("compiler/testData/codegen/boxInline/dontReify/dispatchReceiver.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("extensionReceiver.kt")
     public void testExtensionReceiver() {
       runTest("compiler/testData/codegen/boxInline/dontReify/extensionReceiver.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("lambdaParameter.kt")
     public void testLambdaParameter() {
       runTest("compiler/testData/codegen/boxInline/dontReify/lambdaParameter.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("localDelegatedProperty.kt")
     public void testLocalDelegatedProperty() {
       runTest("compiler/testData/codegen/boxInline/dontReify/localDelegatedProperty.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("localObjectProperty.kt")
     public void testLocalObjectProperty() {
       runTest("compiler/testData/codegen/boxInline/dontReify/localObjectProperty.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("localVariable.kt")
     public void testLocalVariable() {
       runTest("compiler/testData/codegen/boxInline/dontReify/localVariable.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("methodReturnType.kt")
     public void testMethodReturnType() {
       runTest("compiler/testData/codegen/boxInline/dontReify/methodReturnType.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("parameterInLocalObject.kt")
     public void testParameterInLocalObject() {
       runTest("compiler/testData/codegen/boxInline/dontReify/parameterInLocalObject.kt");
@@ -2419,54 +2419,54 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/enclosingInfo")
   @TestDataPath("$PROJECT_ROOT")
   public class EnclosingInfo {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInEnclosingInfo() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/enclosingInfo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("anonymousInLambda.kt")
     public void testAnonymousInLambda() {
       runTest("compiler/testData/codegen/boxInline/enclosingInfo/anonymousInLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineChain.kt")
     public void testInlineChain() {
       runTest("compiler/testData/codegen/boxInline/enclosingInfo/inlineChain.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineChain2.kt")
     public void testInlineChain2() {
       runTest("compiler/testData/codegen/boxInline/enclosingInfo/inlineChain2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt52417.kt")
     public void testKt52417() {
       runTest("compiler/testData/codegen/boxInline/enclosingInfo/kt52417.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("objectInInlineFun.kt")
     public void testObjectInInlineFun() {
       runTest("compiler/testData/codegen/boxInline/enclosingInfo/objectInInlineFun.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("transformedConstructor.kt")
     public void testTransformedConstructor() {
       runTest("compiler/testData/codegen/boxInline/enclosingInfo/transformedConstructor.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("transformedConstructorWithAdditionalObject.kt")
     public void testTransformedConstructorWithAdditionalObject() {
       runTest("compiler/testData/codegen/boxInline/enclosingInfo/transformedConstructorWithAdditionalObject.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("transformedConstructorWithNestedInline.kt")
     public void testTransformedConstructorWithNestedInline() {
       runTest("compiler/testData/codegen/boxInline/enclosingInfo/transformedConstructorWithNestedInline.kt");
@@ -2477,108 +2477,108 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/enum")
   @TestDataPath("$PROJECT_ROOT")
   public class Enum {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInEnum() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("enumEntries.kt")
     public void testEnumEntries() {
       runTest("compiler/testData/codegen/boxInline/enum/enumEntries.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("enumEntriesChainCapturedType.kt")
     public void testEnumEntriesChainCapturedType() {
       runTest("compiler/testData/codegen/boxInline/enum/enumEntriesChainCapturedType.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("javaEnumEntries.kt")
     public void testJavaEnumEntries() {
       runTest("compiler/testData/codegen/boxInline/enum/javaEnumEntries.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("javaEnumEntriesChainCapturedType.kt")
     public void testJavaEnumEntriesChainCapturedType() {
       runTest("compiler/testData/codegen/boxInline/enum/javaEnumEntriesChainCapturedType.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt10569.kt")
     public void testKt10569() {
       runTest("compiler/testData/codegen/boxInline/enum/kt10569.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt18254.kt")
     public void testKt18254() {
       runTest("compiler/testData/codegen/boxInline/enum/kt18254.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("valueOf.kt")
     public void testValueOf() {
       runTest("compiler/testData/codegen/boxInline/enum/valueOf.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("valueOfCapturedType.kt")
     public void testValueOfCapturedType() {
       runTest("compiler/testData/codegen/boxInline/enum/valueOfCapturedType.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("valueOfChain.kt")
     public void testValueOfChain() {
       runTest("compiler/testData/codegen/boxInline/enum/valueOfChain.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("valueOfChainCapturedType.kt")
     public void testValueOfChainCapturedType() {
       runTest("compiler/testData/codegen/boxInline/enum/valueOfChainCapturedType.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("valueOfNonReified.kt")
     public void testValueOfNonReified() {
       runTest("compiler/testData/codegen/boxInline/enum/valueOfNonReified.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("values.kt")
     public void testValues() {
       runTest("compiler/testData/codegen/boxInline/enum/values.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("valuesAsArray.kt")
     public void testValuesAsArray() {
       runTest("compiler/testData/codegen/boxInline/enum/valuesAsArray.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("valuesCapturedType.kt")
     public void testValuesCapturedType() {
       runTest("compiler/testData/codegen/boxInline/enum/valuesCapturedType.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("valuesChain.kt")
     public void testValuesChain() {
       runTest("compiler/testData/codegen/boxInline/enum/valuesChain.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("valuesChainCapturedType.kt")
     public void testValuesChainCapturedType() {
       runTest("compiler/testData/codegen/boxInline/enum/valuesChainCapturedType.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("valuesNonReified.kt")
     public void testValuesNonReified() {
       runTest("compiler/testData/codegen/boxInline/enum/valuesNonReified.kt");
@@ -2589,12 +2589,12 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/functionExpression")
   @TestDataPath("$PROJECT_ROOT")
   public class FunctionExpression {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInFunctionExpression() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/functionExpression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("extension.kt")
     public void testExtension() {
       runTest("compiler/testData/codegen/boxInline/functionExpression/extension.kt");
@@ -2605,12 +2605,12 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/inlineArgsInplace")
   @TestDataPath("$PROJECT_ROOT")
   public class InlineArgsInplace {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInInlineArgsInplace() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineArgsInplace"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("callArgumentReordering.kt")
     public void testCallArgumentReordering() {
       runTest("compiler/testData/codegen/boxInline/inlineArgsInplace/callArgumentReordering.kt");
@@ -2621,66 +2621,66 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses")
   @TestDataPath("$PROJECT_ROOT")
   public class InlineClasses {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInInlineClasses() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("anonymousObject.kt")
     public void testAnonymousObject() {
       runTest("compiler/testData/codegen/boxInline/inlineClasses/anonymousObject.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineClassWithInlineValReturningInlineClass.kt")
     public void testInlineClassWithInlineValReturningInlineClass() {
       runTest("compiler/testData/codegen/boxInline/inlineClasses/inlineClassWithInlineValReturningInlineClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineFunctionInsideInlineClassesBox.kt")
     public void testInlineFunctionInsideInlineClassesBox() {
       runTest("compiler/testData/codegen/boxInline/inlineClasses/inlineFunctionInsideInlineClassesBox.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt62313.kt")
     public void testKt62313() {
       runTest("compiler/testData/codegen/boxInline/inlineClasses/kt62313.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("noReturnTypeManglingFun.kt")
     public void testNoReturnTypeManglingFun() {
       runTest("compiler/testData/codegen/boxInline/inlineClasses/noReturnTypeManglingFun.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("noReturnTypeManglingFunJvmName.kt")
     public void testNoReturnTypeManglingFunJvmName() {
       runTest("compiler/testData/codegen/boxInline/inlineClasses/noReturnTypeManglingFunJvmName.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("noReturnTypeManglingVal.kt")
     public void testNoReturnTypeManglingVal() {
       runTest("compiler/testData/codegen/boxInline/inlineClasses/noReturnTypeManglingVal.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("withReturnTypeManglingFun.kt")
     public void testWithReturnTypeManglingFun() {
       runTest("compiler/testData/codegen/boxInline/inlineClasses/withReturnTypeManglingFun.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("withReturnTypeManglingFunJvmName.kt")
     public void testWithReturnTypeManglingFunJvmName() {
       runTest("compiler/testData/codegen/boxInline/inlineClasses/withReturnTypeManglingFunJvmName.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("withReturnTypeManglingVal.kt")
     public void testWithReturnTypeManglingVal() {
       runTest("compiler/testData/codegen/boxInline/inlineClasses/withReturnTypeManglingVal.kt");
@@ -2690,7 +2690,7 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter")
     @TestDataPath("$PROJECT_ROOT")
     public class UnboxGenericParameter {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInUnboxGenericParameter() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
@@ -2699,42 +2699,42 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
       @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface")
       @TestDataPath("$PROJECT_ROOT")
       public class FunInterface {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInFunInterface() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("any.kt")
         public void testAny() {
           runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface/any.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("anyN.kt")
         public void testAnyN() {
           runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface/anyN.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("iface.kt")
         public void testIface() {
           runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface/iface.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ifaceChild.kt")
         public void testIfaceChild() {
           runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface/ifaceChild.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("primitive.kt")
         public void testPrimitive() {
           runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface/primitive.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("string.kt")
         public void testString() {
           runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface/string.kt");
@@ -2745,42 +2745,42 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
       @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda")
       @TestDataPath("$PROJECT_ROOT")
       public class Lambda {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInLambda() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("any.kt")
         public void testAny() {
           runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda/any.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("anyN.kt")
         public void testAnyN() {
           runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda/anyN.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("iface.kt")
         public void testIface() {
           runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda/iface.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ifaceChild.kt")
         public void testIfaceChild() {
           runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda/ifaceChild.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("primitive.kt")
         public void testPrimitive() {
           runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda/primitive.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("string.kt")
         public void testString() {
           runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda/string.kt");
@@ -2791,42 +2791,42 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
       @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral")
       @TestDataPath("$PROJECT_ROOT")
       public class ObjectLiteral {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInObjectLiteral() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("any.kt")
         public void testAny() {
           runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral/any.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("anyN.kt")
         public void testAnyN() {
           runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral/anyN.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("iface.kt")
         public void testIface() {
           runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral/iface.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("ifaceChild.kt")
         public void testIfaceChild() {
           runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral/ifaceChild.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("primitive.kt")
         public void testPrimitive() {
           runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral/primitive.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("string.kt")
         public void testString() {
           runTest("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral/string.kt");
@@ -2839,66 +2839,66 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/innerClasses")
   @TestDataPath("$PROJECT_ROOT")
   public class InnerClasses {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInInnerClasses() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/innerClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("captureThisAndOuter.kt")
     public void testCaptureThisAndOuter() {
       runTest("compiler/testData/codegen/boxInline/innerClasses/captureThisAndOuter.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fakeOverride.kt")
     public void testFakeOverride() {
       runTest("compiler/testData/codegen/boxInline/innerClasses/fakeOverride.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("innerInlineFunCapturesOuter.kt")
     public void testInnerInlineFunCapturesOuter() {
       runTest("compiler/testData/codegen/boxInline/innerClasses/innerInlineFunCapturesOuter.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("innerInlineFunCapturesOuterByAnotherInlineFun.kt")
     public void testInnerInlineFunCapturesOuterByAnotherInlineFun() {
       runTest("compiler/testData/codegen/boxInline/innerClasses/innerInlineFunCapturesOuterByAnotherInlineFun.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("innerInlineFunCapturesOuterDeep.kt")
     public void testInnerInlineFunCapturesOuterDeep() {
       runTest("compiler/testData/codegen/boxInline/innerClasses/innerInlineFunCapturesOuterDeep.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("innerInlineFunCapturesOuterFunRef.kt")
     public void testInnerInlineFunCapturesOuterFunRef() {
       runTest("compiler/testData/codegen/boxInline/innerClasses/innerInlineFunCapturesOuterFunRef.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("innerInlineFunCapturesOuterWithInlineClass.kt")
     public void testInnerInlineFunCapturesOuterWithInlineClass() {
       runTest("compiler/testData/codegen/boxInline/innerClasses/innerInlineFunCapturesOuterWithInlineClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("innerLambda.kt")
     public void testInnerLambda() {
       runTest("compiler/testData/codegen/boxInline/innerClasses/innerLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt10259.kt")
     public void testKt10259() {
       runTest("compiler/testData/codegen/boxInline/innerClasses/kt10259.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt12126.kt")
     public void testKt12126() {
       runTest("compiler/testData/codegen/boxInline/innerClasses/kt12126.kt");
@@ -2909,7 +2909,7 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/invokedynamic")
   @TestDataPath("$PROJECT_ROOT")
   public class Invokedynamic {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInInvokedynamic() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
@@ -2918,30 +2918,30 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/invokedynamic/lambdas")
     @TestDataPath("$PROJECT_ROOT")
     public class Lambdas {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInLambdas() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("crossinlineLambda1.kt")
       public void testCrossinlineLambda1() {
         runTest("compiler/testData/codegen/boxInline/invokedynamic/lambdas/crossinlineLambda1.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("crossinlineLambda2.kt")
       public void testCrossinlineLambda2() {
         runTest("compiler/testData/codegen/boxInline/invokedynamic/lambdas/crossinlineLambda2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineFunInDifferentPackage.kt")
       public void testInlineFunInDifferentPackage() {
         runTest("compiler/testData/codegen/boxInline/invokedynamic/lambdas/inlineFunInDifferentPackage.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineLambda1.kt")
       public void testInlineLambda1() {
         runTest("compiler/testData/codegen/boxInline/invokedynamic/lambdas/inlineLambda1.kt");
@@ -2952,30 +2952,30 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/invokedynamic/sam")
     @TestDataPath("$PROJECT_ROOT")
     public class Sam {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInSam() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("crossinlineLambda1.kt")
       public void testCrossinlineLambda1() {
         runTest("compiler/testData/codegen/boxInline/invokedynamic/sam/crossinlineLambda1.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("crossinlineLambda2.kt")
       public void testCrossinlineLambda2() {
         runTest("compiler/testData/codegen/boxInline/invokedynamic/sam/crossinlineLambda2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineFunInDifferentPackage.kt")
       public void testInlineFunInDifferentPackage() {
         runTest("compiler/testData/codegen/boxInline/invokedynamic/sam/inlineFunInDifferentPackage.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineLambda1.kt")
       public void testInlineLambda1() {
         runTest("compiler/testData/codegen/boxInline/invokedynamic/sam/inlineLambda1.kt");
@@ -2987,12 +2987,12 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/jvmName")
   @TestDataPath("$PROJECT_ROOT")
   public class JvmName {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInJvmName() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/jvmName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("compiler/testData/codegen/boxInline/jvmName/simple.kt");
@@ -3003,12 +3003,12 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/jvmPackageName")
   @TestDataPath("$PROJECT_ROOT")
   public class JvmPackageName {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInJvmPackageName() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/jvmPackageName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("compiler/testData/codegen/boxInline/jvmPackageName/simple.kt");
@@ -3019,18 +3019,18 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/lambdaClassClash")
   @TestDataPath("$PROJECT_ROOT")
   public class LambdaClassClash {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInLambdaClassClash() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaClassClash"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("lambdaClassClash.kt")
     public void testLambdaClassClash() {
       runTest("compiler/testData/codegen/boxInline/lambdaClassClash/lambdaClassClash.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("noInlineLambdaX2.kt")
     public void testNoInlineLambdaX2() {
       runTest("compiler/testData/codegen/boxInline/lambdaClassClash/noInlineLambdaX2.kt");
@@ -3041,42 +3041,42 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/lambdaTransformation")
   @TestDataPath("$PROJECT_ROOT")
   public class LambdaTransformation {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInLambdaTransformation() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaTransformation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("lambdaCloning.kt")
     public void testLambdaCloning() {
       runTest("compiler/testData/codegen/boxInline/lambdaTransformation/lambdaCloning.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("lambdaInLambda2.kt")
     public void testLambdaInLambda2() {
       runTest("compiler/testData/codegen/boxInline/lambdaTransformation/lambdaInLambda2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("lambdaInLambdaNoInline.kt")
     public void testLambdaInLambdaNoInline() {
       runTest("compiler/testData/codegen/boxInline/lambdaTransformation/lambdaInLambdaNoInline.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("regeneratedLambdaName.kt")
     public void testRegeneratedLambdaName() {
       runTest("compiler/testData/codegen/boxInline/lambdaTransformation/regeneratedLambdaName.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("regeneratedLambdaName2.kt")
     public void testRegeneratedLambdaName2() {
       runTest("compiler/testData/codegen/boxInline/lambdaTransformation/regeneratedLambdaName2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("sameCaptured.kt")
     public void testSameCaptured() {
       runTest("compiler/testData/codegen/boxInline/lambdaTransformation/sameCaptured.kt");
@@ -3087,30 +3087,30 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/localFunInLambda")
   @TestDataPath("$PROJECT_ROOT")
   public class LocalFunInLambda {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInLocalFunInLambda() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/localFunInLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("defaultParam.kt")
     public void testDefaultParam() {
       runTest("compiler/testData/codegen/boxInline/localFunInLambda/defaultParam.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("lambdaInLambdaCapturesAnotherFun.kt")
     public void testLambdaInLambdaCapturesAnotherFun() {
       runTest("compiler/testData/codegen/boxInline/localFunInLambda/lambdaInLambdaCapturesAnotherFun.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("localFunInLambda.kt")
     public void testLocalFunInLambda() {
       runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("localFunInLambdaCapturesAnotherFun.kt")
     public void testLocalFunInLambdaCapturesAnotherFun() {
       runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaCapturesAnotherFun.kt");
@@ -3121,12 +3121,12 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/multiModule")
   @TestDataPath("$PROJECT_ROOT")
   public class MultiModule {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInMultiModule() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("tryCatchWithRecursiveInline.kt")
     public void testTryCatchWithRecursiveInline() {
       runTest("compiler/testData/codegen/boxInline/multiModule/tryCatchWithRecursiveInline.kt");
@@ -3137,24 +3137,24 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/multifileClasses")
   @TestDataPath("$PROJECT_ROOT")
   public class MultifileClasses {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInMultifileClasses() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("defaultArguments.kt")
     public void testDefaultArguments() {
       runTest("compiler/testData/codegen/boxInline/multifileClasses/defaultArguments.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineFromOptimizedMultifileClass.kt")
     public void testInlineFromOptimizedMultifileClass() {
       runTest("compiler/testData/codegen/boxInline/multifileClasses/inlineFromOptimizedMultifileClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineFromOtherPackage.kt")
     public void testInlineFromOtherPackage() {
       runTest("compiler/testData/codegen/boxInline/multifileClasses/inlineFromOtherPackage.kt");
@@ -3165,7 +3165,7 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/multiplatform")
   @TestDataPath("$PROJECT_ROOT")
   public class Multiplatform {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInMultiplatform() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
@@ -3174,12 +3174,12 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/multiplatform/defaultArguments")
     @TestDataPath("$PROJECT_ROOT")
     public class DefaultArguments {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInDefaultArguments() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiplatform/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("receiversAndParametersInLambda.kt")
       public void testReceiversAndParametersInLambda() {
         runTest("compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt");
@@ -3191,48 +3191,48 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/noInline")
   @TestDataPath("$PROJECT_ROOT")
   public class NoInline {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInNoInline() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/noInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("extensionReceiver.kt")
     public void testExtensionReceiver() {
       runTest("compiler/testData/codegen/boxInline/noInline/extensionReceiver.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("lambdaAsGeneric.kt")
     public void testLambdaAsGeneric() {
       runTest("compiler/testData/codegen/boxInline/noInline/lambdaAsGeneric.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("lambdaAsNonFunction.kt")
     public void testLambdaAsNonFunction() {
       runTest("compiler/testData/codegen/boxInline/noInline/lambdaAsNonFunction.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("noInline.kt")
     public void testNoInline() {
       runTest("compiler/testData/codegen/boxInline/noInline/noInline.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("noInlineLambdaChain.kt")
     public void testNoInlineLambdaChain() {
       runTest("compiler/testData/codegen/boxInline/noInline/noInlineLambdaChain.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("noInlineLambdaChainWithCapturedInline.kt")
     public void testNoInlineLambdaChainWithCapturedInline() {
       runTest("compiler/testData/codegen/boxInline/noInline/noInlineLambdaChainWithCapturedInline.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("withoutInline.kt")
     public void testWithoutInline() {
       runTest("compiler/testData/codegen/boxInline/noInline/withoutInline.kt");
@@ -3243,144 +3243,144 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns")
   @TestDataPath("$PROJECT_ROOT")
   public class NonLocalReturns {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInNonLocalReturns() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("explicitLocalReturn.kt")
     public void testExplicitLocalReturn() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/explicitLocalReturn.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fromArrayGenerator.kt")
     public void testFromArrayGenerator() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromArrayGenerator.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fromArrayGeneratorCatch.kt")
     public void testFromArrayGeneratorCatch() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromArrayGeneratorCatch.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fromArrayGeneratorNested.kt")
     public void testFromArrayGeneratorNested() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromArrayGeneratorNested.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fromArrayGeneratorWithCapture.kt")
     public void testFromArrayGeneratorWithCapture() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromArrayGeneratorWithCapture.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fromArrayGeneratorWithCatch.kt")
     public void testFromArrayGeneratorWithCatch() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromArrayGeneratorWithCatch.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fromArrayGeneratorWithFinally.kt")
     public void testFromArrayGeneratorWithFinally() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromArrayGeneratorWithFinally.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fromArrayGeneratorWithFinallyX2.kt")
     public void testFromArrayGeneratorWithFinallyX2() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromArrayGeneratorWithFinallyX2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fromArrayGeneratorWithFinallyX2_2.kt")
     public void testFromArrayGeneratorWithFinallyX2_2() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromArrayGeneratorWithFinallyX2_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fromInterfaceDefaultGetter.kt")
     public void testFromInterfaceDefaultGetter() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromInterfaceDefaultGetter.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("justReturnInLambda.kt")
     public void testJustReturnInLambda() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/justReturnInLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt5199.kt")
     public void testKt5199() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/kt5199.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt8948.kt")
     public void testKt8948() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/kt8948.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt8948v2.kt")
     public void testKt8948v2() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/kt8948v2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt9304.kt")
     public void testKt9304() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/kt9304.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nestedNonLocals.kt")
     public void testNestedNonLocals() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/nestedNonLocals.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("noInlineLocalReturn.kt")
     public void testNoInlineLocalReturn() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/noInlineLocalReturn.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nonLocalReturnFromOuterLambda.kt")
     public void testNonLocalReturnFromOuterLambda() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/nonLocalReturnFromOuterLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("propertyAccessors.kt")
     public void testPropertyAccessors() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/propertyAccessors.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("returnFromFunctionExpr.kt")
     public void testReturnFromFunctionExpr() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/returnFromFunctionExpr.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/simple.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleFunctional.kt")
     public void testSimpleFunctional() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/simpleFunctional.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleVoid.kt")
     public void testSimpleVoid() {
       runTest("compiler/testData/codegen/boxInline/nonLocalReturns/simpleVoid.kt");
@@ -3390,18 +3390,18 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize")
     @TestDataPath("$PROJECT_ROOT")
     public class Deparenthesize {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInDeparenthesize() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("bracket.kt")
       public void testBracket() {
         runTest("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize/bracket.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("labeled.kt")
       public void testLabeled() {
         runTest("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize/labeled.kt");
@@ -3412,84 +3412,84 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally")
     @TestDataPath("$PROJECT_ROOT")
     public class TryFinally {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInTryFinally() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt16417.kt")
       public void testKt16417() {
         runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt16417.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt20433.kt")
       public void testKt20433() {
         runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt20433_2.kt")
       public void testKt20433_2() {
         runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433_2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt20433_2_void.kt")
       public void testKt20433_2_void() {
         runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433_2_void.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt20433_void.kt")
       public void testKt20433_void() {
         runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433_void.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt26384.kt")
       public void testKt26384() {
         runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt26384.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt26384_2.kt")
       public void testKt26384_2() {
         runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt26384_2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt28546.kt")
       public void testKt28546() {
         runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt28546.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt6956.kt")
       public void testKt6956() {
         runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt6956.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt7273.kt")
       public void testKt7273() {
         runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt7273.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("nonLocalReturnFromCatchBlock.kt")
       public void testNonLocalReturnFromCatchBlock() {
         runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/nonLocalReturnFromCatchBlock.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("nonLocalReturnFromOuterLambda.kt")
       public void testNonLocalReturnFromOuterLambda() {
         runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/nonLocalReturnFromOuterLambda.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("nonLocalReturnToCatchBlock.kt")
       public void testNonLocalReturnToCatchBlock() {
         runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/nonLocalReturnToCatchBlock.kt");
@@ -3499,42 +3499,42 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
       @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite")
       @TestDataPath("$PROJECT_ROOT")
       public class CallSite {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInCallSite() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("callSite.kt")
         public void testCallSite() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/callSite.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("callSiteComplex.kt")
         public void testCallSiteComplex() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/callSiteComplex.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("exceptionTableSplit.kt")
         public void testExceptionTableSplit() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/exceptionTableSplit.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("exceptionTableSplitNoReturn.kt")
         public void testExceptionTableSplitNoReturn() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/exceptionTableSplitNoReturn.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("finallyInFinally.kt")
         public void testFinallyInFinally() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/finallyInFinally.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("wrongVarInterval.kt")
         public void testWrongVarInterval() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/wrongVarInterval.kt");
@@ -3545,54 +3545,54 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
       @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained")
       @TestDataPath("$PROJECT_ROOT")
       public class Chained {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInChained() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("finallyInFinally.kt")
         public void testFinallyInFinally() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/finallyInFinally.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("finallyInFinally2.kt")
         public void testFinallyInFinally2() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/finallyInFinally2.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("intReturn.kt")
         public void testIntReturn() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturn.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("intReturnComplex.kt")
         public void testIntReturnComplex() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturnComplex.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("intReturnComplex2.kt")
         public void testIntReturnComplex2() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturnComplex2.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("intReturnComplex3.kt")
         public void testIntReturnComplex3() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturnComplex3.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("intReturnComplex4.kt")
         public void testIntReturnComplex4() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturnComplex4.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("nestedLambda.kt")
         public void testNestedLambda() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/nestedLambda.kt");
@@ -3603,78 +3603,78 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
       @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite")
       @TestDataPath("$PROJECT_ROOT")
       public class DeclSite {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInDeclSite() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("complex.kt")
         public void testComplex() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/complex.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("intReturn.kt")
         public void testIntReturn() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/intReturn.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("intReturnComplex.kt")
         public void testIntReturnComplex() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/intReturnComplex.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("longReturn.kt")
         public void testLongReturn() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/longReturn.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("nested.kt")
         public void testNested() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/nested.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("returnInFinally.kt")
         public void testReturnInFinally() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/returnInFinally.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("returnInTry.kt")
         public void testReturnInTry() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/returnInTry.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("returnInTryAndFinally.kt")
         public void testReturnInTryAndFinally() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/returnInTryAndFinally.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("severalInTry.kt")
         public void testSeveralInTry() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/severalInTry.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("severalInTryComplex.kt")
         public void testSeveralInTryComplex() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/severalInTryComplex.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("voidInlineFun.kt")
         public void testVoidInlineFun() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/voidInlineFun.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("voidNonLocal.kt")
         public void testVoidNonLocal() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/voidNonLocal.kt");
@@ -3685,132 +3685,132 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
       @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable")
       @TestDataPath("$PROJECT_ROOT")
       public class ExceptionTable {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInExceptionTable() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("break.kt")
         public void testBreak() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/break.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("continue.kt")
         public void testContinue() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/continue.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("exceptionInFinally.kt")
         public void testExceptionInFinally() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/exceptionInFinally.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("forInFinally.kt")
         public void testForInFinally() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/forInFinally.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("innerAndExternal.kt")
         public void testInnerAndExternal() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/innerAndExternal.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("innerAndExternalNested.kt")
         public void testInnerAndExternalNested() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/innerAndExternalNested.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("innerAndExternalSimple.kt")
         public void testInnerAndExternalSimple() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/innerAndExternalSimple.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("kt31653.kt")
         public void testKt31653() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/kt31653.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("kt31653_2.kt")
         public void testKt31653_2() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/kt31653_2.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("kt31923.kt")
         public void testKt31923() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/kt31923.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("kt31923_2.kt")
         public void testKt31923_2() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/kt31923_2.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("kt31923_wrong.kt")
         public void testKt31923_wrong() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/kt31923_wrong.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("nested.kt")
         public void testNested() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/nested.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("nestedWithReturns.kt")
         public void testNestedWithReturns() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/nestedWithReturns.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("nestedWithReturnsSimple.kt")
         public void testNestedWithReturnsSimple() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/nestedWithReturnsSimple.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("noFinally.kt")
         public void testNoFinally() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/noFinally.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("severalCatchClause.kt")
         public void testSeveralCatchClause() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/severalCatchClause.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("simpleThrow.kt")
         public void testSimpleThrow() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/simpleThrow.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("synchonized.kt")
         public void testSynchonized() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/synchonized.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("throwInFinally.kt")
         public void testThrowInFinally() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/throwInFinally.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("tryCatchInFinally.kt")
         public void testTryCatchInFinally() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/tryCatchInFinally.kt");
@@ -3821,12 +3821,12 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
       @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables")
       @TestDataPath("$PROJECT_ROOT")
       public class Variables {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInVariables() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("kt7792.kt")
         public void testKt7792() {
           runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables/kt7792.kt");
@@ -3839,12 +3839,12 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/optimizations")
   @TestDataPath("$PROJECT_ROOT")
   public class Optimizations {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInOptimizations() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/optimizations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt20844.kt")
     public void testKt20844() {
       runTest("compiler/testData/codegen/boxInline/optimizations/kt20844.kt");
@@ -3855,84 +3855,84 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/private")
   @TestDataPath("$PROJECT_ROOT")
   public class Private {
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("accessorForConst.kt")
     public void testAccessorForConst() {
       runTest("compiler/testData/codegen/boxInline/private/accessorForConst.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("accessorStability.kt")
     public void testAccessorStability() {
       runTest("compiler/testData/codegen/boxInline/private/accessorStability.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("accessorStabilityInClass.kt")
     public void testAccessorStabilityInClass() {
       runTest("compiler/testData/codegen/boxInline/private/accessorStabilityInClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInPrivate() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/private"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("effectivePrivate.kt")
     public void testEffectivePrivate() {
       runTest("compiler/testData/codegen/boxInline/private/effectivePrivate.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt6453.kt")
     public void testKt6453() {
       runTest("compiler/testData/codegen/boxInline/private/kt6453.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt8094.kt")
     public void testKt8094() {
       runTest("compiler/testData/codegen/boxInline/private/kt8094.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt8095.kt")
     public void testKt8095() {
       runTest("compiler/testData/codegen/boxInline/private/kt8095.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nestedInPrivateClass.kt")
     public void testNestedInPrivateClass() {
       runTest("compiler/testData/codegen/boxInline/private/nestedInPrivateClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nestedInPrivateClass2.kt")
     public void testNestedInPrivateClass2() {
       runTest("compiler/testData/codegen/boxInline/private/nestedInPrivateClass2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("privateClass.kt")
     public void testPrivateClass() {
       runTest("compiler/testData/codegen/boxInline/private/privateClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("privateClassExtensionLambda.kt")
     public void testPrivateClassExtensionLambda() {
       runTest("compiler/testData/codegen/boxInline/private/privateClassExtensionLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("privateInInlineInMultiFileFacade.kt")
     public void testPrivateInInlineInMultiFileFacade() {
       runTest("compiler/testData/codegen/boxInline/private/privateInInlineInMultiFileFacade.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("privateInline.kt")
     public void testPrivateInline() {
       runTest("compiler/testData/codegen/boxInline/private/privateInline.kt");
@@ -3943,102 +3943,102 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/property")
   @TestDataPath("$PROJECT_ROOT")
   public class Property {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInProperty() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/property"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("augAssignmentAndInc.kt")
     public void testAugAssignmentAndInc() {
       runTest("compiler/testData/codegen/boxInline/property/augAssignmentAndInc.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("augAssignmentAndIncInClass.kt")
     public void testAugAssignmentAndIncInClass() {
       runTest("compiler/testData/codegen/boxInline/property/augAssignmentAndIncInClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("augAssignmentAndIncInClassViaConvention.kt")
     public void testAugAssignmentAndIncInClassViaConvention() {
       runTest("compiler/testData/codegen/boxInline/property/augAssignmentAndIncInClassViaConvention.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("augAssignmentAndIncOnExtension.kt")
     public void testAugAssignmentAndIncOnExtension() {
       runTest("compiler/testData/codegen/boxInline/property/augAssignmentAndIncOnExtension.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("augAssignmentAndIncOnExtensionInClass.kt")
     public void testAugAssignmentAndIncOnExtensionInClass() {
       runTest("compiler/testData/codegen/boxInline/property/augAssignmentAndIncOnExtensionInClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("augAssignmentAndIncViaConvention.kt")
     public void testAugAssignmentAndIncViaConvention() {
       runTest("compiler/testData/codegen/boxInline/property/augAssignmentAndIncViaConvention.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("crossinlineFunctional.kt")
     public void testCrossinlineFunctional() {
       runTest("compiler/testData/codegen/boxInline/property/crossinlineFunctional.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fromObject.kt")
     public void testFromObject() {
       runTest("compiler/testData/codegen/boxInline/property/fromObject.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt22649.kt")
     public void testKt22649() {
       runTest("compiler/testData/codegen/boxInline/property/kt22649.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("noinlineFunctional.kt")
     public void testNoinlineFunctional() {
       runTest("compiler/testData/codegen/boxInline/property/noinlineFunctional.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("property.kt")
     public void testProperty() {
       runTest("compiler/testData/codegen/boxInline/property/property.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("reifiedVal.kt")
     public void testReifiedVal() {
       runTest("compiler/testData/codegen/boxInline/property/reifiedVal.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("reifiedValMultiModule.kt")
     public void testReifiedValMultiModule() {
       runTest("compiler/testData/codegen/boxInline/property/reifiedValMultiModule.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("reifiedVar.kt")
     public void testReifiedVar() {
       runTest("compiler/testData/codegen/boxInline/property/reifiedVar.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("compiler/testData/codegen/boxInline/property/simple.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleExtension.kt")
     public void testSimpleExtension() {
       runTest("compiler/testData/codegen/boxInline/property/simpleExtension.kt");
@@ -4049,204 +4049,204 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/reified")
   @TestDataPath("$PROJECT_ROOT")
   public class Reified {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInReified() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("arrayConstructor.kt")
     public void testArrayConstructor() {
       runTest("compiler/testData/codegen/boxInline/reified/arrayConstructor.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("arrayOf.kt")
     public void testArrayOf() {
       runTest("compiler/testData/codegen/boxInline/reified/arrayOf.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("capturedLambda.kt")
     public void testCapturedLambda() {
       runTest("compiler/testData/codegen/boxInline/reified/capturedLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("capturedLambda2.kt")
     public void testCapturedLambda2() {
       runTest("compiler/testData/codegen/boxInline/reified/capturedLambda2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("dontSubstituteNonReified.kt")
     public void testDontSubstituteNonReified() {
       runTest("compiler/testData/codegen/boxInline/reified/dontSubstituteNonReified.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt11081.kt")
     public void testKt11081() {
       runTest("compiler/testData/codegen/boxInline/reified/kt11081.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt11677.kt")
     public void testKt11677() {
       runTest("compiler/testData/codegen/boxInline/reified/kt11677.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt15956.kt")
     public void testKt15956() {
       runTest("compiler/testData/codegen/boxInline/reified/kt15956.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt15997.kt")
     public void testKt15997() {
       runTest("compiler/testData/codegen/boxInline/reified/kt15997.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt15997_2.kt")
     public void testKt15997_2() {
       runTest("compiler/testData/codegen/boxInline/reified/kt15997_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt18977.kt")
     public void testKt18977() {
       runTest("compiler/testData/codegen/boxInline/reified/kt18977.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt28234.kt")
     public void testKt28234() {
       runTest("compiler/testData/codegen/boxInline/reified/kt28234.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt35511.kt")
     public void testKt35511() {
       runTest("compiler/testData/codegen/boxInline/reified/kt35511.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt35511_try.kt")
     public void testKt35511_try() {
       runTest("compiler/testData/codegen/boxInline/reified/kt35511_try.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt35511_try_valueOf.kt")
     public void testKt35511_try_valueOf() {
       runTest("compiler/testData/codegen/boxInline/reified/kt35511_try_valueOf.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt35511_try_values.kt")
     public void testKt35511_try_values() {
       runTest("compiler/testData/codegen/boxInline/reified/kt35511_try_values.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt44770.kt")
     public void testKt44770() {
       runTest("compiler/testData/codegen/boxInline/reified/kt44770.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt44770_2.kt")
     public void testKt44770_2() {
       runTest("compiler/testData/codegen/boxInline/reified/kt44770_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt46584.kt")
     public void testKt46584() {
       runTest("compiler/testData/codegen/boxInline/reified/kt46584.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt46584_2.kt")
     public void testKt46584_2() {
       runTest("compiler/testData/codegen/boxInline/reified/kt46584_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt55398.kt")
     public void testKt55398() {
       runTest("compiler/testData/codegen/boxInline/reified/kt55398.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt6988.kt")
     public void testKt6988() {
       runTest("compiler/testData/codegen/boxInline/reified/kt6988.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt6988_2.kt")
     public void testKt6988_2() {
       runTest("compiler/testData/codegen/boxInline/reified/kt6988_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt6990.kt")
     public void testKt6990() {
       runTest("compiler/testData/codegen/boxInline/reified/kt6990.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt7017.kt")
     public void testKt7017() {
       runTest("compiler/testData/codegen/boxInline/reified/kt7017.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt8047.kt")
     public void testKt8047() {
       runTest("compiler/testData/codegen/boxInline/reified/kt8047.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt8047_2.kt")
     public void testKt8047_2() {
       runTest("compiler/testData/codegen/boxInline/reified/kt8047_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt9637.kt")
     public void testKt9637() {
       runTest("compiler/testData/codegen/boxInline/reified/kt9637.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt9637_2.kt")
     public void testKt9637_2() {
       runTest("compiler/testData/codegen/boxInline/reified/kt9637_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nameClash.kt")
     public void testNameClash() {
       runTest("compiler/testData/codegen/boxInline/reified/nameClash.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nonCapturingObjectInLambda.kt")
     public void testNonCapturingObjectInLambda() {
       runTest("compiler/testData/codegen/boxInline/reified/nonCapturingObjectInLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("packages.kt")
     public void testPackages() {
       runTest("compiler/testData/codegen/boxInline/reified/packages.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("singletonLambda.kt")
     public void testSingletonLambda() {
       runTest("compiler/testData/codegen/boxInline/reified/singletonLambda.kt");
@@ -4256,66 +4256,66 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/reified/checkCast")
     @TestDataPath("$PROJECT_ROOT")
     public class CheckCast {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInCheckCast() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/checkCast"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("chain.kt")
       public void testChain() {
         runTest("compiler/testData/codegen/boxInline/reified/checkCast/chain.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt26435.kt")
       public void testKt26435() {
         runTest("compiler/testData/codegen/boxInline/reified/checkCast/kt26435.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt26435_2.kt")
       public void testKt26435_2() {
         runTest("compiler/testData/codegen/boxInline/reified/checkCast/kt26435_2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt26435_3.kt")
       public void testKt26435_3() {
         runTest("compiler/testData/codegen/boxInline/reified/checkCast/kt26435_3.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt8043.kt")
       public void testKt8043() {
         runTest("compiler/testData/codegen/boxInline/reified/checkCast/kt8043.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("maxStack.kt")
       public void testMaxStack() {
         runTest("compiler/testData/codegen/boxInline/reified/checkCast/maxStack.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("nullable.kt")
       public void testNullable() {
         runTest("compiler/testData/codegen/boxInline/reified/checkCast/nullable.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/testData/codegen/boxInline/reified/checkCast/simple.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simpleSafe.kt")
       public void testSimpleSafe() {
         runTest("compiler/testData/codegen/boxInline/reified/checkCast/simpleSafe.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simple_1_3.kt")
       public void testSimple_1_3() {
         runTest("compiler/testData/codegen/boxInline/reified/checkCast/simple_1_3.kt");
@@ -4326,54 +4326,54 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda")
     @TestDataPath("$PROJECT_ROOT")
     public class DefaultLambda {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInDefaultLambda() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/defaultLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("chain.kt")
       public void testChain() {
         runTest("compiler/testData/codegen/boxInline/reified/defaultLambda/chain.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("nested.kt")
       public void testNested() {
         runTest("compiler/testData/codegen/boxInline/reified/defaultLambda/nested.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("nested2.kt")
       public void testNested2() {
         runTest("compiler/testData/codegen/boxInline/reified/defaultLambda/nested2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("nested2Static.kt")
       public void testNested2Static() {
         runTest("compiler/testData/codegen/boxInline/reified/defaultLambda/nested2Static.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("nestedStatic.kt")
       public void testNestedStatic() {
         runTest("compiler/testData/codegen/boxInline/reified/defaultLambda/nestedStatic.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/testData/codegen/boxInline/reified/defaultLambda/simple.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("transitiveChain.kt")
       public void testTransitiveChain() {
         runTest("compiler/testData/codegen/boxInline/reified/defaultLambda/transitiveChain.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("transitiveChainStatic.kt")
       public void testTransitiveChainStatic() {
         runTest("compiler/testData/codegen/boxInline/reified/defaultLambda/transitiveChainStatic.kt");
@@ -4384,24 +4384,24 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/reified/isCheck")
     @TestDataPath("$PROJECT_ROOT")
     public class IsCheck {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInIsCheck() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/isCheck"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("chain.kt")
       public void testChain() {
         runTest("compiler/testData/codegen/boxInline/reified/isCheck/chain.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("nullable.kt")
       public void testNullable() {
         runTest("compiler/testData/codegen/boxInline/reified/isCheck/nullable.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/testData/codegen/boxInline/reified/isCheck/simple.kt");
@@ -4413,72 +4413,72 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/signature")
   @TestDataPath("$PROJECT_ROOT")
   public class Signature {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInSignature() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/signature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("byteIteratorWithForLoop.kt")
     public void testByteIteratorWithForLoop() {
       runTest("compiler/testData/codegen/boxInline/signature/byteIteratorWithForLoop.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("byteIteratorWithWhileLoop.kt")
     public void testByteIteratorWithWhileLoop() {
       runTest("compiler/testData/codegen/boxInline/signature/byteIteratorWithWhileLoop.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inProjectionSubstitution.kt")
     public void testInProjectionSubstitution() {
       runTest("compiler/testData/codegen/boxInline/signature/inProjectionSubstitution.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("outProjectionSubstitution.kt")
     public void testOutProjectionSubstitution() {
       runTest("compiler/testData/codegen/boxInline/signature/outProjectionSubstitution.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("recursion.kt")
     public void testRecursion() {
       runTest("compiler/testData/codegen/boxInline/signature/recursion.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("sameFormalParameterName.kt")
     public void testSameFormalParameterName() {
       runTest("compiler/testData/codegen/boxInline/signature/sameFormalParameterName.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("sameReifiedFormalParameterName.kt")
     public void testSameReifiedFormalParameterName() {
       runTest("compiler/testData/codegen/boxInline/signature/sameReifiedFormalParameterName.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("starProjectionSubstitution.kt")
     public void testStarProjectionSubstitution() {
       runTest("compiler/testData/codegen/boxInline/signature/starProjectionSubstitution.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeParameterInLambda.kt")
     public void testTypeParameterInLambda() {
       runTest("compiler/testData/codegen/boxInline/signature/typeParameterInLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeParametersSubstitution.kt")
     public void testTypeParametersSubstitution() {
       runTest("compiler/testData/codegen/boxInline/signature/typeParametersSubstitution.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeParametersSubstitution2.kt")
     public void testTypeParametersSubstitution2() {
       runTest("compiler/testData/codegen/boxInline/signature/typeParametersSubstitution2.kt");
@@ -4489,30 +4489,30 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/signatureMangling")
   @TestDataPath("$PROJECT_ROOT")
   public class SignatureMangling {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInSignatureMangling() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/signatureMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("flexibleType.kt")
     public void testFlexibleType() {
       runTest("compiler/testData/codegen/boxInline/signatureMangling/flexibleType.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("indices.kt")
     public void testIndices() {
       runTest("compiler/testData/codegen/boxInline/signatureMangling/indices.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inheritFromJava.kt")
     public void testInheritFromJava() {
       runTest("compiler/testData/codegen/boxInline/signatureMangling/inheritFromJava.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("rawType.kt")
     public void testRawType() {
       runTest("compiler/testData/codegen/boxInline/signatureMangling/rawType.kt");
@@ -4523,156 +4523,156 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/simple")
   @TestDataPath("$PROJECT_ROOT")
   public class Simple {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInSimple() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/simple"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("captureAndArgumentIncompatibleTypes.kt")
     public void testCaptureAndArgumentIncompatibleTypes() {
       runTest("compiler/testData/codegen/boxInline/simple/captureAndArgumentIncompatibleTypes.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classObject.kt")
     public void testClassObject() {
       runTest("compiler/testData/codegen/boxInline/simple/classObject.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("destructuring.kt")
     public void testDestructuring() {
       runTest("compiler/testData/codegen/boxInline/simple/destructuring.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("destructuringIndexClash.kt")
     public void testDestructuringIndexClash() {
       runTest("compiler/testData/codegen/boxInline/simple/destructuringIndexClash.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("extension.kt")
     public void testExtension() {
       runTest("compiler/testData/codegen/boxInline/simple/extension.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("extensionLambda.kt")
     public void testExtensionLambda() {
       runTest("compiler/testData/codegen/boxInline/simple/extensionLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("funImportedFromObject.kt")
     public void testFunImportedFromObject() {
       runTest("compiler/testData/codegen/boxInline/simple/funImportedFromObject.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("importedJavaStaticField.kt")
     public void testImportedJavaStaticField() {
       runTest("compiler/testData/codegen/boxInline/simple/importedJavaStaticField.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineCallInInlineLambda.kt")
     public void testInlineCallInInlineLambda() {
       runTest("compiler/testData/codegen/boxInline/simple/inlineCallInInlineLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt17431.kt")
     public void testKt17431() {
       runTest("compiler/testData/codegen/boxInline/simple/kt17431.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt28547.kt")
     public void testKt28547() {
       runTest("compiler/testData/codegen/boxInline/simple/kt28547.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt28547_2.kt")
     public void testKt28547_2() {
       runTest("compiler/testData/codegen/boxInline/simple/kt28547_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("params.kt")
     public void testParams() {
       runTest("compiler/testData/codegen/boxInline/simple/params.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("propImportedFromObject.kt")
     public void testPropImportedFromObject() {
       runTest("compiler/testData/codegen/boxInline/simple/propImportedFromObject.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("rootConstructor.kt")
     public void testRootConstructor() {
       runTest("compiler/testData/codegen/boxInline/simple/rootConstructor.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("safeCall.kt")
     public void testSafeCall() {
       runTest("compiler/testData/codegen/boxInline/simple/safeCall.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("severalClosures.kt")
     public void testSeveralClosures() {
       runTest("compiler/testData/codegen/boxInline/simple/severalClosures.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("severalUsage.kt")
     public void testSeveralUsage() {
       runTest("compiler/testData/codegen/boxInline/simple/severalUsage.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleDouble.kt")
     public void testSimpleDouble() {
       runTest("compiler/testData/codegen/boxInline/simple/simpleDouble.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleEnum.kt")
     public void testSimpleEnum() {
       runTest("compiler/testData/codegen/boxInline/simple/simpleEnum.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleGenerics.kt")
     public void testSimpleGenerics() {
       runTest("compiler/testData/codegen/boxInline/simple/simpleGenerics.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleInt.kt")
     public void testSimpleInt() {
       runTest("compiler/testData/codegen/boxInline/simple/simpleInt.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleLambda.kt")
     public void testSimpleLambda() {
       runTest("compiler/testData/codegen/boxInline/simple/simpleLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("simpleObject.kt")
     public void testSimpleObject() {
       runTest("compiler/testData/codegen/boxInline/simple/simpleObject.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("vararg.kt")
     public void testVararg() {
       runTest("compiler/testData/codegen/boxInline/simple/vararg.kt");
@@ -4683,144 +4683,144 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/smap")
   @TestDataPath("$PROJECT_ROOT")
   public class Smap {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInSmap() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("assertion.kt")
     public void testAssertion() {
       runTest("compiler/testData/codegen/boxInline/smap/assertion.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classCycle.kt")
     public void testClassCycle() {
       runTest("compiler/testData/codegen/boxInline/smap/classCycle.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classFromDefaultPackage.kt")
     public void testClassFromDefaultPackage() {
       runTest("compiler/testData/codegen/boxInline/smap/classFromDefaultPackage.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("coroutinesWithTailCallOtpimization.kt")
     public void testCoroutinesWithTailCallOtpimization() {
       runTest("compiler/testData/codegen/boxInline/smap/coroutinesWithTailCallOtpimization.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("crossroutines.kt")
     public void testCrossroutines() {
       runTest("compiler/testData/codegen/boxInline/smap/crossroutines.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("defaultFunction.kt")
     public void testDefaultFunction() {
       runTest("compiler/testData/codegen/boxInline/smap/defaultFunction.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("defaultFunctionWithInlineCall.kt")
     public void testDefaultFunctionWithInlineCall() {
       runTest("compiler/testData/codegen/boxInline/smap/defaultFunctionWithInlineCall.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("forInline.kt")
     public void testForInline() {
       runTest("compiler/testData/codegen/boxInline/smap/forInline.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineProperty.kt")
     public void testInlineProperty() {
       runTest("compiler/testData/codegen/boxInline/smap/inlineProperty.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("interleavedFiles.kt")
     public void testInterleavedFiles() {
       runTest("compiler/testData/codegen/boxInline/smap/interleavedFiles.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt23369.kt")
     public void testKt23369() {
       runTest("compiler/testData/codegen/boxInline/smap/kt23369.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt23369_2.kt")
     public void testKt23369_2() {
       runTest("compiler/testData/codegen/boxInline/smap/kt23369_2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt23369_3.kt")
     public void testKt23369_3() {
       runTest("compiler/testData/codegen/boxInline/smap/kt23369_3.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt35006.kt")
     public void testKt35006() {
       runTest("compiler/testData/codegen/boxInline/smap/kt35006.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("multiFileFacade.kt")
     public void testMultiFileFacade() {
       runTest("compiler/testData/codegen/boxInline/smap/multiFileFacade.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("oneFile.kt")
     public void testOneFile() {
       runTest("compiler/testData/codegen/boxInline/smap/oneFile.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("rangeFolding.kt")
     public void testRangeFolding() {
       runTest("compiler/testData/codegen/boxInline/smap/rangeFolding.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("rangeFoldingInClass.kt")
     public void testRangeFoldingInClass() {
       runTest("compiler/testData/codegen/boxInline/smap/rangeFoldingInClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("smap.kt")
     public void testSmap() {
       runTest("compiler/testData/codegen/boxInline/smap/smap.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("smapWithNewSyntax.kt")
     public void testSmapWithNewSyntax() {
       runTest("compiler/testData/codegen/boxInline/smap/smapWithNewSyntax.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("smapWithOldSyntax.kt")
     public void testSmapWithOldSyntax() {
       runTest("compiler/testData/codegen/boxInline/smap/smapWithOldSyntax.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("tryFinally1.kt")
     public void testTryFinally1() {
       runTest("compiler/testData/codegen/boxInline/smap/tryFinally1.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("tryFinally2.kt")
     public void testTryFinally2() {
       runTest("compiler/testData/codegen/boxInline/smap/tryFinally2.kt");
@@ -4830,66 +4830,66 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/smap/anonymous")
     @TestDataPath("$PROJECT_ROOT")
     public class Anonymous {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInAnonymous() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/anonymous"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt19175.kt")
       public void testKt19175() {
         runTest("compiler/testData/codegen/boxInline/smap/anonymous/kt19175.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("lambda.kt")
       public void testLambda() {
         runTest("compiler/testData/codegen/boxInline/smap/anonymous/lambda.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("lambdaOnCallSite.kt")
       public void testLambdaOnCallSite() {
         runTest("compiler/testData/codegen/boxInline/smap/anonymous/lambdaOnCallSite.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("lambdaOnInlineCallSite.kt")
       public void testLambdaOnInlineCallSite() {
         runTest("compiler/testData/codegen/boxInline/smap/anonymous/lambdaOnInlineCallSite.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("object.kt")
       public void testObject() {
         runTest("compiler/testData/codegen/boxInline/smap/anonymous/object.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("objectOnCallSite.kt")
       public void testObjectOnCallSite() {
         runTest("compiler/testData/codegen/boxInline/smap/anonymous/objectOnCallSite.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("objectOnInlineCallSite.kt")
       public void testObjectOnInlineCallSite() {
         runTest("compiler/testData/codegen/boxInline/smap/anonymous/objectOnInlineCallSite.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("objectOnInlineCallSite2.kt")
       public void testObjectOnInlineCallSite2() {
         runTest("compiler/testData/codegen/boxInline/smap/anonymous/objectOnInlineCallSite2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("objectOnInlineCallSiteWithCapture.kt")
       public void testObjectOnInlineCallSiteWithCapture() {
         runTest("compiler/testData/codegen/boxInline/smap/anonymous/objectOnInlineCallSiteWithCapture.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("severalMappingsForDefaultFile.kt")
       public void testSeveralMappingsForDefaultFile() {
         runTest("compiler/testData/codegen/boxInline/smap/anonymous/severalMappingsForDefaultFile.kt");
@@ -4900,60 +4900,60 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/smap/defaultLambda")
     @TestDataPath("$PROJECT_ROOT")
     public class DefaultLambda {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInDefaultLambda() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/defaultLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("defaultLambdaInAnonymous.kt")
       public void testDefaultLambdaInAnonymous() {
         runTest("compiler/testData/codegen/boxInline/smap/defaultLambda/defaultLambdaInAnonymous.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineAnonymousInDefault.kt")
       public void testInlineAnonymousInDefault() {
         runTest("compiler/testData/codegen/boxInline/smap/defaultLambda/inlineAnonymousInDefault.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineAnonymousInDefault2.kt")
       public void testInlineAnonymousInDefault2() {
         runTest("compiler/testData/codegen/boxInline/smap/defaultLambda/inlineAnonymousInDefault2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineInDefault.kt")
       public void testInlineInDefault() {
         runTest("compiler/testData/codegen/boxInline/smap/defaultLambda/inlineInDefault.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineInDefault2.kt")
       public void testInlineInDefault2() {
         runTest("compiler/testData/codegen/boxInline/smap/defaultLambda/inlineInDefault2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt21827.kt")
       public void testKt21827() {
         runTest("compiler/testData/codegen/boxInline/smap/defaultLambda/kt21827.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("nested.kt")
       public void testNested() {
         runTest("compiler/testData/codegen/boxInline/smap/defaultLambda/nested.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/testData/codegen/boxInline/smap/defaultLambda/simple.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simple2.kt")
       public void testSimple2() {
         runTest("compiler/testData/codegen/boxInline/smap/defaultLambda/simple2.kt");
@@ -4964,42 +4964,42 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/smap/inlineOnly")
     @TestDataPath("$PROJECT_ROOT")
     public class InlineOnly {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInInlineOnly() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/inlineOnly"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("noSmap.kt")
       public void testNoSmap() {
         runTest("compiler/testData/codegen/boxInline/smap/inlineOnly/noSmap.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("noSmapWithProperty.kt")
       public void testNoSmapWithProperty() {
         runTest("compiler/testData/codegen/boxInline/smap/inlineOnly/noSmapWithProperty.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("reified.kt")
       public void testReified() {
         runTest("compiler/testData/codegen/boxInline/smap/inlineOnly/reified.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("reifiedProperty.kt")
       public void testReifiedProperty() {
         runTest("compiler/testData/codegen/boxInline/smap/inlineOnly/reifiedProperty.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("stdlibInlineOnly.kt")
       public void testStdlibInlineOnly() {
         runTest("compiler/testData/codegen/boxInline/smap/inlineOnly/stdlibInlineOnly.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("stdlibInlineOnlyOneLine.kt")
       public void testStdlibInlineOnlyOneLine() {
         runTest("compiler/testData/codegen/boxInline/smap/inlineOnly/stdlibInlineOnlyOneLine.kt");
@@ -5010,30 +5010,30 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/smap/newsmap")
     @TestDataPath("$PROJECT_ROOT")
     public class Newsmap {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInNewsmap() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/newsmap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("differentMapping.kt")
       public void testDifferentMapping() {
         runTest("compiler/testData/codegen/boxInline/smap/newsmap/differentMapping.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("mappingInInlineFunLambda.kt")
       public void testMappingInInlineFunLambda() {
         runTest("compiler/testData/codegen/boxInline/smap/newsmap/mappingInInlineFunLambda.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("mappingInSubInlineLambda.kt")
       public void testMappingInSubInlineLambda() {
         runTest("compiler/testData/codegen/boxInline/smap/newsmap/mappingInSubInlineLambda.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("mappingInSubInlineLambdaSameFileInline.kt")
       public void testMappingInSubInlineLambdaSameFileInline() {
         runTest("compiler/testData/codegen/boxInline/smap/newsmap/mappingInSubInlineLambdaSameFileInline.kt");
@@ -5044,18 +5044,18 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/smap/resolve")
     @TestDataPath("$PROJECT_ROOT")
     public class Resolve {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInResolve() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/resolve"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineComponent.kt")
       public void testInlineComponent() {
         runTest("compiler/testData/codegen/boxInline/smap/resolve/inlineComponent.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineIterator.kt")
       public void testInlineIterator() {
         runTest("compiler/testData/codegen/boxInline/smap/resolve/inlineIterator.kt");
@@ -5067,72 +5067,72 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/special")
   @TestDataPath("$PROJECT_ROOT")
   public class Special {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInSpecial() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/special"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("blockReturnsNullableUnit.kt")
     public void testBlockReturnsNullableUnit() {
       runTest("compiler/testData/codegen/boxInline/special/blockReturnsNullableUnit.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("identityCheck.kt")
     public void testIdentityCheck() {
       runTest("compiler/testData/codegen/boxInline/special/identityCheck.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ifBranches.kt")
     public void testIfBranches() {
       runTest("compiler/testData/codegen/boxInline/special/ifBranches.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("iinc.kt")
     public void testIinc() {
       runTest("compiler/testData/codegen/boxInline/special/iinc.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineChain.kt")
     public void testInlineChain() {
       runTest("compiler/testData/codegen/boxInline/special/inlineChain.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("loopInStoreLoadChains.kt")
     public void testLoopInStoreLoadChains() {
       runTest("compiler/testData/codegen/boxInline/special/loopInStoreLoadChains.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("loopInStoreLoadChains2.kt")
     public void testLoopInStoreLoadChains2() {
       runTest("compiler/testData/codegen/boxInline/special/loopInStoreLoadChains2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("monitorEnterExit.kt")
     public void testMonitorEnterExit() {
       runTest("compiler/testData/codegen/boxInline/special/monitorEnterExit.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("plusAssign.kt")
     public void testPlusAssign() {
       runTest("compiler/testData/codegen/boxInline/special/plusAssign.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("stackHeightBug.kt")
     public void testStackHeightBug() {
       runTest("compiler/testData/codegen/boxInline/special/stackHeightBug.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("unusedInlineLambda.kt")
     public void testUnusedInlineLambda() {
       runTest("compiler/testData/codegen/boxInline/special/unusedInlineLambda.kt");
@@ -5143,102 +5143,102 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/stackOnReturn")
   @TestDataPath("$PROJECT_ROOT")
   public class StackOnReturn {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInStackOnReturn() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/stackOnReturn"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("elvis.kt")
     public void testElvis() {
       runTest("compiler/testData/codegen/boxInline/stackOnReturn/elvis.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ifThenElse.kt")
     public void testIfThenElse() {
       runTest("compiler/testData/codegen/boxInline/stackOnReturn/ifThenElse.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt11499.kt")
     public void testKt11499() {
       runTest("compiler/testData/codegen/boxInline/stackOnReturn/kt11499.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt17591.kt")
     public void testKt17591() {
       runTest("compiler/testData/codegen/boxInline/stackOnReturn/kt17591.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt17591a.kt")
     public void testKt17591a() {
       runTest("compiler/testData/codegen/boxInline/stackOnReturn/kt17591a.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt17591b.kt")
     public void testKt17591b() {
       runTest("compiler/testData/codegen/boxInline/stackOnReturn/kt17591b.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("mixedTypesOnStack1.kt")
     public void testMixedTypesOnStack1() {
       runTest("compiler/testData/codegen/boxInline/stackOnReturn/mixedTypesOnStack1.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("mixedTypesOnStack2.kt")
     public void testMixedTypesOnStack2() {
       runTest("compiler/testData/codegen/boxInline/stackOnReturn/mixedTypesOnStack2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("mixedTypesOnStack3.kt")
     public void testMixedTypesOnStack3() {
       runTest("compiler/testData/codegen/boxInline/stackOnReturn/mixedTypesOnStack3.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nonLocalReturn1.kt")
     public void testNonLocalReturn1() {
       runTest("compiler/testData/codegen/boxInline/stackOnReturn/nonLocalReturn1.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nonLocalReturn2.kt")
     public void testNonLocalReturn2() {
       runTest("compiler/testData/codegen/boxInline/stackOnReturn/nonLocalReturn2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nonLocalReturn3.kt")
     public void testNonLocalReturn3() {
       runTest("compiler/testData/codegen/boxInline/stackOnReturn/nonLocalReturn3.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("poppedLocalReturn.kt")
     public void testPoppedLocalReturn() {
       runTest("compiler/testData/codegen/boxInline/stackOnReturn/poppedLocalReturn.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("poppedLocalReturn2.kt")
     public void testPoppedLocalReturn2() {
       runTest("compiler/testData/codegen/boxInline/stackOnReturn/poppedLocalReturn2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("returnLong.kt")
     public void testReturnLong() {
       runTest("compiler/testData/codegen/boxInline/stackOnReturn/returnLong.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("tryFinally.kt")
     public void testTryFinally() {
       runTest("compiler/testData/codegen/boxInline/stackOnReturn/tryFinally.kt");
@@ -5249,204 +5249,204 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/suspend")
   @TestDataPath("$PROJECT_ROOT")
   public class Suspend {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInSuspend() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("capturedVariables.kt")
     public void testCapturedVariables() {
       runTest("compiler/testData/codegen/boxInline/suspend/capturedVariables.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("crossinlineSuspendLambdaInsideCrossinlineSuspendLambda.kt")
     public void testCrossinlineSuspendLambdaInsideCrossinlineSuspendLambda() {
       runTest("compiler/testData/codegen/boxInline/suspend/crossinlineSuspendLambdaInsideCrossinlineSuspendLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("debugMetadataCrossinline.kt")
     public void testDebugMetadataCrossinline() {
       runTest("compiler/testData/codegen/boxInline/suspend/debugMetadataCrossinline.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("delegatedProperties.kt")
     public void testDelegatedProperties() {
       runTest("compiler/testData/codegen/boxInline/suspend/delegatedProperties.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("doubleRegenerationWithNonSuspendingLambda.kt")
     public void testDoubleRegenerationWithNonSuspendingLambda() {
       runTest("compiler/testData/codegen/boxInline/suspend/doubleRegenerationWithNonSuspendingLambda.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("enclodingMethod.kt")
     public void testEnclodingMethod() {
       runTest("compiler/testData/codegen/boxInline/suspend/enclodingMethod.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fileNameInMetadata.kt")
     public void testFileNameInMetadata() {
       runTest("compiler/testData/codegen/boxInline/suspend/fileNameInMetadata.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineOrdinaryOfCrossinlineSuspend.kt")
     public void testInlineOrdinaryOfCrossinlineSuspend() {
       runTest("compiler/testData/codegen/boxInline/suspend/inlineOrdinaryOfCrossinlineSuspend.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineOrdinaryOfNoinlineSuspend.kt")
     public void testInlineOrdinaryOfNoinlineSuspend() {
       runTest("compiler/testData/codegen/boxInline/suspend/inlineOrdinaryOfNoinlineSuspend.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlinePassthrough.kt")
     public void testInlinePassthrough() {
       runTest("compiler/testData/codegen/boxInline/suspend/inlinePassthrough.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlinePassthroughWithSuspendConversion.kt")
     public void testInlinePassthroughWithSuspendConversion() {
       runTest("compiler/testData/codegen/boxInline/suspend/inlinePassthroughWithSuspendConversion.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineSuspendContinuation.kt")
     public void testInlineSuspendContinuation() {
       runTest("compiler/testData/codegen/boxInline/suspend/inlineSuspendContinuation.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineSuspendInMultifileClass.kt")
     public void testInlineSuspendInMultifileClass() {
       runTest("compiler/testData/codegen/boxInline/suspend/inlineSuspendInMultifileClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineSuspendOfCrossinlineOrdinary.kt")
     public void testInlineSuspendOfCrossinlineOrdinary() {
       runTest("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfCrossinlineOrdinary.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineSuspendOfCrossinlineSuspend.kt")
     public void testInlineSuspendOfCrossinlineSuspend() {
       runTest("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfCrossinlineSuspend.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineSuspendOfNoinlineOrdinary.kt")
     public void testInlineSuspendOfNoinlineOrdinary() {
       runTest("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfNoinlineOrdinary.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineSuspendOfNoinlineSuspend.kt")
     public void testInlineSuspendOfNoinlineSuspend() {
       runTest("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfNoinlineSuspend.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineSuspendOfOrdinary.kt")
     public void testInlineSuspendOfOrdinary() {
       runTest("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfOrdinary.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineSuspendOfSuspend.kt")
     public void testInlineSuspendOfSuspend() {
       runTest("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfSuspend.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("jvmName.kt")
     public void testJvmName() {
       runTest("compiler/testData/codegen/boxInline/suspend/jvmName.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt26658.kt")
     public void testKt26658() {
       runTest("compiler/testData/codegen/boxInline/suspend/kt26658.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt52198.kt")
     public void testKt52198() {
       runTest("compiler/testData/codegen/boxInline/suspend/kt52198.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("maxStackWithCrossinline.kt")
     public void testMaxStackWithCrossinline() {
       runTest("compiler/testData/codegen/boxInline/suspend/maxStackWithCrossinline.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("multipleLocals.kt")
     public void testMultipleLocals() {
       runTest("compiler/testData/codegen/boxInline/suspend/multipleLocals.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("multipleSuspensionPoints.kt")
     public void testMultipleSuspensionPoints() {
       runTest("compiler/testData/codegen/boxInline/suspend/multipleSuspensionPoints.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nestedMethodWith2XParameter.kt")
     public void testNestedMethodWith2XParameter() {
       runTest("compiler/testData/codegen/boxInline/suspend/nestedMethodWith2XParameter.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nonLocalReturn.kt")
     public void testNonLocalReturn() {
       runTest("compiler/testData/codegen/boxInline/suspend/nonLocalReturn.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nonSuspendCrossinline.kt")
     public void testNonSuspendCrossinline() {
       runTest("compiler/testData/codegen/boxInline/suspend/nonSuspendCrossinline.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("returnValue.kt")
     public void testReturnValue() {
       runTest("compiler/testData/codegen/boxInline/suspend/returnValue.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("tryCatchReceiver.kt")
     public void testTryCatchReceiver() {
       runTest("compiler/testData/codegen/boxInline/suspend/tryCatchReceiver.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("tryCatchStackTransform.kt")
     public void testTryCatchStackTransform() {
       runTest("compiler/testData/codegen/boxInline/suspend/tryCatchStackTransform.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("twiceRegeneratedAnonymousObject.kt")
     public void testTwiceRegeneratedAnonymousObject() {
       runTest("compiler/testData/codegen/boxInline/suspend/twiceRegeneratedAnonymousObject.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("twiceRegeneratedSuspendLambda.kt")
     public void testTwiceRegeneratedSuspendLambda() {
       runTest("compiler/testData/codegen/boxInline/suspend/twiceRegeneratedSuspendLambda.kt");
@@ -5456,36 +5456,36 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/suspend/callableReference")
     @TestDataPath("$PROJECT_ROOT")
     public class CallableReference {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInCallableReference() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("isAsReified.kt")
       public void testIsAsReified() {
         runTest("compiler/testData/codegen/boxInline/suspend/callableReference/isAsReified.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("isAsReified2.kt")
       public void testIsAsReified2() {
         runTest("compiler/testData/codegen/boxInline/suspend/callableReference/isAsReified2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("nonTailCall.kt")
       public void testNonTailCall() {
         runTest("compiler/testData/codegen/boxInline/suspend/callableReference/nonTailCall.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/testData/codegen/boxInline/suspend/callableReference/simple.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("unitReturn.kt")
       public void testUnitReturn() {
         runTest("compiler/testData/codegen/boxInline/suspend/callableReference/unitReturn.kt");
@@ -5496,42 +5496,42 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/suspend/defaultParameter")
     @TestDataPath("$PROJECT_ROOT")
     public class DefaultParameter {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInDefaultParameter() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/defaultParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("defaultInlineLambda.kt")
       public void testDefaultInlineLambda() {
         runTest("compiler/testData/codegen/boxInline/suspend/defaultParameter/defaultInlineLambda.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("defaultInlineReference.kt")
       public void testDefaultInlineReference() {
         runTest("compiler/testData/codegen/boxInline/suspend/defaultParameter/defaultInlineReference.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("defaultValueCrossinline.kt")
       public void testDefaultValueCrossinline() {
         runTest("compiler/testData/codegen/boxInline/suspend/defaultParameter/defaultValueCrossinline.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("defaultValueInClass.kt")
       public void testDefaultValueInClass() {
         runTest("compiler/testData/codegen/boxInline/suspend/defaultParameter/defaultValueInClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("defaultValueInline.kt")
       public void testDefaultValueInline() {
         runTest("compiler/testData/codegen/boxInline/suspend/defaultParameter/defaultValueInline.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("defaultValueInlineFromMultiFileFacade.kt")
       public void testDefaultValueInlineFromMultiFileFacade() {
         runTest("compiler/testData/codegen/boxInline/suspend/defaultParameter/defaultValueInlineFromMultiFileFacade.kt");
@@ -5542,30 +5542,30 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/suspend/inlineClass")
     @TestDataPath("$PROJECT_ROOT")
     public class InlineClass {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInInlineClass() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/inlineClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("returnBoxedFromLambda.kt")
       public void testReturnBoxedFromLambda() {
         runTest("compiler/testData/codegen/boxInline/suspend/inlineClass/returnBoxedFromLambda.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("returnUnboxedDirect.kt")
       public void testReturnUnboxedDirect() {
         runTest("compiler/testData/codegen/boxInline/suspend/inlineClass/returnUnboxedDirect.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("returnUnboxedFromLambda.kt")
       public void testReturnUnboxedFromLambda() {
         runTest("compiler/testData/codegen/boxInline/suspend/inlineClass/returnUnboxedFromLambda.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("returnUnboxedResume.kt")
       public void testReturnUnboxedResume() {
         runTest("compiler/testData/codegen/boxInline/suspend/inlineClass/returnUnboxedResume.kt");
@@ -5576,30 +5576,30 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline")
     @TestDataPath("$PROJECT_ROOT")
     public class InlineUsedAsNoinline {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInInlineUsedAsNoinline() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineOnly.kt")
       public void testInlineOnly() {
         runTest("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline/inlineOnly.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("simpleNamed.kt")
       public void testSimpleNamed() {
         runTest("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline/simpleNamed.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("withCapturedInlineLambda.kt")
       public void testWithCapturedInlineLambda() {
         runTest("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline/withCapturedInlineLambda.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("withCapturedInlineLambda2.kt")
       public void testWithCapturedInlineLambda2() {
         runTest("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline/withCapturedInlineLambda2.kt");
@@ -5610,54 +5610,54 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/suspend/receiver")
     @TestDataPath("$PROJECT_ROOT")
     public class Receiver {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInReceiver() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/receiver"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineOrdinaryOfCrossinlineSuspend.kt")
       public void testInlineOrdinaryOfCrossinlineSuspend() {
         runTest("compiler/testData/codegen/boxInline/suspend/receiver/inlineOrdinaryOfCrossinlineSuspend.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineOrdinaryOfNoinlineSuspend.kt")
       public void testInlineOrdinaryOfNoinlineSuspend() {
         runTest("compiler/testData/codegen/boxInline/suspend/receiver/inlineOrdinaryOfNoinlineSuspend.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineSuspendOfCrossinlineOrdinary.kt")
       public void testInlineSuspendOfCrossinlineOrdinary() {
         runTest("compiler/testData/codegen/boxInline/suspend/receiver/inlineSuspendOfCrossinlineOrdinary.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineSuspendOfCrossinlineSuspend.kt")
       public void testInlineSuspendOfCrossinlineSuspend() {
         runTest("compiler/testData/codegen/boxInline/suspend/receiver/inlineSuspendOfCrossinlineSuspend.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineSuspendOfNoinlineOrdinary.kt")
       public void testInlineSuspendOfNoinlineOrdinary() {
         runTest("compiler/testData/codegen/boxInline/suspend/receiver/inlineSuspendOfNoinlineOrdinary.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineSuspendOfNoinlineSuspend.kt")
       public void testInlineSuspendOfNoinlineSuspend() {
         runTest("compiler/testData/codegen/boxInline/suspend/receiver/inlineSuspendOfNoinlineSuspend.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineSuspendOfOrdinary.kt")
       public void testInlineSuspendOfOrdinary() {
         runTest("compiler/testData/codegen/boxInline/suspend/receiver/inlineSuspendOfOrdinary.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("inlineSuspendOfSuspend.kt")
       public void testInlineSuspendOfSuspend() {
         runTest("compiler/testData/codegen/boxInline/suspend/receiver/inlineSuspendOfSuspend.kt");
@@ -5668,144 +5668,144 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/suspend/stateMachine")
     @TestDataPath("$PROJECT_ROOT")
     public class StateMachine {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInStateMachine() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/stateMachine"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("crossingCoroutineBoundaries.kt")
       public void testCrossingCoroutineBoundaries() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/crossingCoroutineBoundaries.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("independentInline.kt")
       public void testIndependentInline() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/independentInline.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("innerLambda.kt")
       public void testInnerLambda() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/innerLambda.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("innerLambdaInsideLambda.kt")
       public void testInnerLambdaInsideLambda() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/innerLambdaInsideLambda.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("innerLambdaWithoutCrossinline.kt")
       public void testInnerLambdaWithoutCrossinline() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/innerLambdaWithoutCrossinline.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("innerMadness.kt")
       public void testInnerMadness() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/innerMadness.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("innerMadnessCallSite.kt")
       public void testInnerMadnessCallSite() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/innerMadnessCallSite.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("innerObject.kt")
       public void testInnerObject() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/innerObject.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("innerObjectInsideInnerObject.kt")
       public void testInnerObjectInsideInnerObject() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/innerObjectInsideInnerObject.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("innerObjectRetransformation.kt")
       public void testInnerObjectRetransformation() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/innerObjectRetransformation.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("innerObjectSeveralFunctions.kt")
       public void testInnerObjectSeveralFunctions() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/innerObjectSeveralFunctions.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("innerObjectWithoutCapturingCrossinline.kt")
       public void testInnerObjectWithoutCapturingCrossinline() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/innerObjectWithoutCapturingCrossinline.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("insideObject.kt")
       public void testInsideObject() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/insideObject.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt30708.kt")
       public void testKt30708() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/kt30708.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("lambdaTransformation.kt")
       public void testLambdaTransformation() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/lambdaTransformation.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("normalInline.kt")
       public void testNormalInline() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/normalInline.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("numberOfSuspentions.kt")
       public void testNumberOfSuspentions() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/numberOfSuspentions.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("objectInsideLambdas.kt")
       public void testObjectInsideLambdas() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/objectInsideLambdas.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("oneInlineTwoCaptures.kt")
       public void testOneInlineTwoCaptures() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/oneInlineTwoCaptures.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("passLambda.kt")
       public void testPassLambda() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/passLambda.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("passParameter.kt")
       public void testPassParameter() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/passParameter.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("passParameterLambda.kt")
       public void testPassParameterLambda() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/passParameterLambda.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("unreachableSuspendMarker.kt")
       public void testUnreachableSuspendMarker() {
         runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/unreachableSuspendMarker.kt");
@@ -5817,54 +5817,54 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/syntheticAccessors")
   @TestDataPath("$PROJECT_ROOT")
   public class SyntheticAccessors {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInSyntheticAccessors() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("constField.kt")
     public void testConstField() {
       runTest("compiler/testData/codegen/boxInline/syntheticAccessors/constField.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("packagePrivateMembers.kt")
     public void testPackagePrivateMembers() {
       runTest("compiler/testData/codegen/boxInline/syntheticAccessors/packagePrivateMembers.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("propertyModifiers.kt")
     public void testPropertyModifiers() {
       runTest("compiler/testData/codegen/boxInline/syntheticAccessors/propertyModifiers.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("protectedMembers.kt")
     public void testProtectedMembers() {
       runTest("compiler/testData/codegen/boxInline/syntheticAccessors/protectedMembers.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("protectedMembersFromSuper.kt")
     public void testProtectedMembersFromSuper() {
       runTest("compiler/testData/codegen/boxInline/syntheticAccessors/protectedMembersFromSuper.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("superCall.kt")
     public void testSuperCall() {
       runTest("compiler/testData/codegen/boxInline/syntheticAccessors/superCall.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("superCallFromMultipleSubclasses.kt")
     public void testSuperCallFromMultipleSubclasses() {
       runTest("compiler/testData/codegen/boxInline/syntheticAccessors/superCallFromMultipleSubclasses.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("superProperty.kt")
     public void testSuperProperty() {
       runTest("compiler/testData/codegen/boxInline/syntheticAccessors/superProperty.kt");
@@ -5874,60 +5874,60 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
     @TestMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda")
     @TestDataPath("$PROJECT_ROOT")
     public class WithinInlineLambda {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInWithinInlineLambda() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("directFieldAccess.kt")
       public void testDirectFieldAccess() {
         runTest("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/directFieldAccess.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("directFieldAccessInCrossInline.kt")
       public void testDirectFieldAccessInCrossInline() {
         runTest("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/directFieldAccessInCrossInline.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("privateCall.kt")
       public void testPrivateCall() {
         runTest("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/privateCall.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("privateInCrossInline.kt")
       public void testPrivateInCrossInline() {
         runTest("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/privateInCrossInline.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("privateInDefaultStubArgument.kt")
       public void testPrivateInDefaultStubArgument() {
         runTest("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/privateInDefaultStubArgument.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("protectedInCrossinline.kt")
       public void testProtectedInCrossinline() {
         runTest("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/protectedInCrossinline.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("protectedMembersFromSuper.kt")
       public void testProtectedMembersFromSuper() {
         runTest("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/protectedMembersFromSuper.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("superCall.kt")
       public void testSuperCall() {
         runTest("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/superCall.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("superInCrossInline.kt")
       public void testSuperInCrossInline() {
         runTest("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/superInCrossInline.kt");
@@ -5939,12 +5939,12 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/trait")
   @TestDataPath("$PROJECT_ROOT")
   public class Trait {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInTrait() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/trait"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("trait.kt")
     public void testTrait() {
       runTest("compiler/testData/codegen/boxInline/trait/trait.kt");
@@ -5955,30 +5955,30 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/tryCatchFinally")
   @TestDataPath("$PROJECT_ROOT")
   public class TryCatchFinally {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInTryCatchFinally() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/tryCatchFinally"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt5863.kt")
     public void testKt5863() {
       runTest("compiler/testData/codegen/boxInline/tryCatchFinally/kt5863.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("tryCatch.kt")
     public void testTryCatch() {
       runTest("compiler/testData/codegen/boxInline/tryCatchFinally/tryCatch.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("tryCatch2.kt")
     public void testTryCatch2() {
       runTest("compiler/testData/codegen/boxInline/tryCatchFinally/tryCatch2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("tryCatchFinally.kt")
     public void testTryCatchFinally() {
       runTest("compiler/testData/codegen/boxInline/tryCatchFinally/tryCatchFinally.kt");
@@ -5989,42 +5989,42 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/typeParameters")
   @TestDataPath("$PROJECT_ROOT")
   public class TypeParameters {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInTypeParameters() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/typeParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("anonymousObject.kt")
     public void testAnonymousObject() {
       runTest("compiler/testData/codegen/boxInline/typeParameters/anonymousObject.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("basic.kt")
     public void testBasic() {
       runTest("compiler/testData/codegen/boxInline/typeParameters/basic.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("projectionTypeArguments.kt")
     public void testProjectionTypeArguments() {
       runTest("compiler/testData/codegen/boxInline/typeParameters/projectionTypeArguments.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("severalUpperBounds.kt")
     public void testSeveralUpperBounds() {
       runTest("compiler/testData/codegen/boxInline/typeParameters/severalUpperBounds.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeArgFromGenericBaseClass.kt")
     public void testTypeArgFromGenericBaseClass() {
       runTest("compiler/testData/codegen/boxInline/typeParameters/typeArgFromGenericBaseClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("uncheckedCastToNothing.kt")
     public void testUncheckedCastToNothing() {
       runTest("compiler/testData/codegen/boxInline/typeParameters/uncheckedCastToNothing.kt");
@@ -6035,24 +6035,24 @@ public class FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated e
   @TestMetadata("compiler/testData/codegen/boxInline/varargs")
   @TestDataPath("$PROJECT_ROOT")
   public class Varargs {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInVarargs() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/varargs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt17653.kt")
     public void testKt17653() {
       runTest("compiler/testData/codegen/boxInline/varargs/kt17653.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("varargAndDefaultParameters.kt")
     public void testVarargAndDefaultParameters() {
       runTest("compiler/testData/codegen/boxInline/varargs/varargAndDefaultParameters.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("varargAndDefaultParameters2.kt")
     public void testVarargAndDefaultParameters2() {
       runTest("compiler/testData/codegen/boxInline/varargs/varargAndDefaultParameters2.kt");

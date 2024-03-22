@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCreator.AbstractTypeParameterTypeTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -40,24 +40,24 @@ public class FirIdeDependentAnalysisSourceModuleTypeParameterTypeTestGenerated e
     );
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInTypeParameter() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeCreator/typeParameter"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("multipleBounds.kt")
   public void testMultipleBounds() {
     runTest("analysis/analysis-api/testData/components/typeCreator/typeParameter/multipleBounds.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("regular.kt")
   public void testRegular() {
     runTest("analysis/analysis-api/testData/components/typeCreator/typeParameter/regular.kt");
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("reified.kt")
   public void testReified() {
     runTest("analysis/analysis-api/testData/components/typeCreator/typeParameter/reified.kt");

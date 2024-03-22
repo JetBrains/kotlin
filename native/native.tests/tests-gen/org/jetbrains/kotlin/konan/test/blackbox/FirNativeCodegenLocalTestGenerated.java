@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGrou
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -26,12 +26,12 @@ import java.util.regex.Pattern;
 @FirPipeline()
 @UseExtTestCaseGroupProvider()
 public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInCodegen() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
   }
 
-  @Test
+  @RepeatedTest(value = 3)
   @TestMetadata("kt62262.kt")
   public void testKt62262() {
     runTest("native/native.tests/testData/codegen/kt62262.kt");
@@ -44,24 +44,24 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class AssociatedObjects {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInAssociatedObjects() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/associatedObjects"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("associatedObjects1_testBasics1.kt")
     public void testAssociatedObjects1_testBasics1() {
       runTest("native/native.tests/testData/codegen/associatedObjects/associatedObjects1_testBasics1.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("associatedObjects1_testGlobalOptimizations1.kt")
     public void testAssociatedObjects1_testGlobalOptimizations1() {
       runTest("native/native.tests/testData/codegen/associatedObjects/associatedObjects1_testGlobalOptimizations1.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("associatedObjects1_testGlobalOptimizations2.kt")
     public void testAssociatedObjects1_testGlobalOptimizations2() {
       runTest("native/native.tests/testData/codegen/associatedObjects/associatedObjects1_testGlobalOptimizations2.kt");
@@ -75,12 +75,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Bridges {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInBridges() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/bridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nativePointed.kt")
     public void testNativePointed() {
       runTest("native/native.tests/testData/codegen/bridges/nativePointed.kt");
@@ -94,138 +94,138 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Cinterop {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInCinterop() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/cinterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("arrayPointers.kt")
     public void testArrayPointers() {
       runTest("native/native.tests/testData/codegen/cinterop/arrayPointers.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("auxiliarySources.kt")
     public void testAuxiliarySources() {
       runTest("native/native.tests/testData/codegen/cinterop/auxiliarySources.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("bitfields.kt")
     public void testBitfields() {
       runTest("native/native.tests/testData/codegen/cinterop/bitfields.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("callbacksAndVarargs.kt")
     public void testCallbacksAndVarargs() {
       runTest("native/native.tests/testData/codegen/cinterop/callbacksAndVarargs.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("enums.kt")
     public void testEnums() {
       runTest("native/native.tests/testData/codegen/cinterop/enums.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("forwardDeclarations.kt")
     public void testForwardDeclarations() {
       runTest("native/native.tests/testData/codegen/cinterop/forwardDeclarations.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("forwardDeclarationsTwoLibs.kt")
     public void testForwardDeclarationsTwoLibs() {
       runTest("native/native.tests/testData/codegen/cinterop/forwardDeclarationsTwoLibs.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("globals.kt")
     public void testGlobals() {
       runTest("native/native.tests/testData/codegen/cinterop/globals.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("incompleteTypes.kt")
     public void testIncompleteTypes() {
       runTest("native/native.tests/testData/codegen/cinterop/incompleteTypes.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt40426.kt")
     public void testKt40426() {
       runTest("native/native.tests/testData/codegen/cinterop/kt40426.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt43265.kt")
     public void testKt43265() {
       runTest("native/native.tests/testData/codegen/cinterop/kt43265.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt44283.kt")
     public void testKt44283() {
       runTest("native/native.tests/testData/codegen/cinterop/kt44283.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt51925.kt")
     public void testKt51925() {
       runTest("native/native.tests/testData/codegen/cinterop/kt51925.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt54284.kt")
     public void testKt54284() {
       runTest("native/native.tests/testData/codegen/cinterop/kt54284.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt54284_fmodules.kt")
     public void testKt54284_fmodules() {
       runTest("native/native.tests/testData/codegen/cinterop/kt54284_fmodules.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt55938.kt")
     public void testKt55938() {
       runTest("native/native.tests/testData/codegen/cinterop/kt55938.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt57640.kt")
     public void testKt57640() {
       runTest("native/native.tests/testData/codegen/cinterop/kt57640.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt59167.kt")
     public void testKt59167() {
       runTest("native/native.tests/testData/codegen/cinterop/kt59167.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt63048.kt")
     public void testKt63048() {
       runTest("native/native.tests/testData/codegen/cinterop/kt63048.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt63049.kt")
     public void testKt63049() {
       runTest("native/native.tests/testData/codegen/cinterop/kt63049.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt64105.kt")
     public void testKt64105() {
       runTest("native/native.tests/testData/codegen/cinterop/kt64105.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("toKString.kt")
     public void testToKString() {
       runTest("native/native.tests/testData/codegen/cinterop/toKString.kt");
@@ -238,144 +238,144 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     @FirPipeline()
     @UseExtTestCaseGroupProvider()
     public class Basics {
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("1.kt")
       public void test1() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/1.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("3.kt")
       public void test3() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/3.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInBasics() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/cinterop/basics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("available_processors.kt")
       public void testAvailable_processors() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/available_processors.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("macros.kt")
       public void testMacros() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/macros.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("mangling.kt")
       public void testMangling() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/mangling.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("mangling2.kt")
       public void testMangling2() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/mangling2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("mangling_keywords.kt")
       public void testMangling_keywords() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/mangling_keywords.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("mangling_keywords2.kt")
       public void testMangling_keywords2() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/mangling_keywords2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("statbuf.kt")
       public void testStatbuf() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/statbuf.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("structAnonRecordMember_ExplicitAlignment.kt")
       public void testStructAnonRecordMember_ExplicitAlignment() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonRecordMember_ExplicitAlignment.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("structAnonRecordMember_ImplicitAlignment.kt")
       public void testStructAnonRecordMember_ImplicitAlignment() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonRecordMember_ImplicitAlignment.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("structAnonRecordMember_Nested.kt")
       public void testStructAnonRecordMember_Nested() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonRecordMember_Nested.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("structAnonym_Complicate.kt")
       public void testStructAnonym_Complicate() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonym_Complicate.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("structAnonym_GLKVector3.kt")
       public void testStructAnonym_GLKVector3() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonym_GLKVector3.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("structAnonym_Packed.kt")
       public void testStructAnonym_Packed() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonym_Packed.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("structAnonym_Packed2.kt")
       public void testStructAnonym_Packed2() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonym_Packed2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("structAnonym_PragmaPacked.kt")
       public void testStructAnonym_PragmaPacked() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonym_PragmaPacked.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("structs.kt")
       public void testStructs() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/structs.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("types.kt")
       public void testTypes() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/types.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("union.kt")
       public void testUnion() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/union.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("unsupported.kt")
       public void testUnsupported() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/unsupported.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("values.kt")
       public void testValues() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/values.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("vectors.kt")
       public void testVectors() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/vectors.kt");
@@ -389,12 +389,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     @FirPipeline()
     @UseExtTestCaseGroupProvider()
     public class Exceptions {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInExceptions() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/cinterop/exceptions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("cCallback.kt")
       public void testCCallback() {
         runTest("native/native.tests/testData/codegen/cinterop/exceptions/cCallback.kt");
@@ -408,66 +408,66 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     @FirPipeline()
     @UseExtTestCaseGroupProvider()
     public class Objc {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInObjc() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/cinterop/objc"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("direct.kt")
       public void testDirect() {
         runTest("native/native.tests/testData/codegen/cinterop/objc/direct.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("forwardDeclarationsCast.kt")
       public void testForwardDeclarationsCast() {
         runTest("native/native.tests/testData/codegen/cinterop/objc/forwardDeclarationsCast.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt34467.kt")
       public void testKt34467() {
         runTest("native/native.tests/testData/codegen/cinterop/objc/kt34467.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt48816_lazy_ir_disable.kt")
       public void testKt48816_lazy_ir_disable() {
         runTest("native/native.tests/testData/codegen/cinterop/objc/kt48816_lazy_ir_disable.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt48816_lazy_ir_enable.kt")
       public void testKt48816_lazy_ir_enable() {
         runTest("native/native.tests/testData/codegen/cinterop/objc/kt48816_lazy_ir_enable.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt49034_objcclass.kt")
       public void testKt49034_objcclass() {
         runTest("native/native.tests/testData/codegen/cinterop/objc/kt49034_objcclass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt49034_struct.kt")
       public void testKt49034_struct() {
         runTest("native/native.tests/testData/codegen/cinterop/objc/kt49034_struct.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt53151.kt")
       public void testKt53151() {
         runTest("native/native.tests/testData/codegen/cinterop/objc/kt53151.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("overridabilityCondition.kt")
       public void testOverridabilityCondition() {
         runTest("native/native.tests/testData/codegen/cinterop/objc/overridabilityCondition.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("sharing_with_weak.kt")
       public void testSharing_with_weak() {
         runTest("native/native.tests/testData/codegen/cinterop/objc/sharing_with_weak.kt");
@@ -481,42 +481,42 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     @FirPipeline()
     @UseExtTestCaseGroupProvider()
     public class Packages {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInPackages() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/cinterop/packages"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("dotFnameNested1.kt")
       public void testDotFnameNested1() {
         runTest("native/native.tests/testData/codegen/cinterop/packages/dotFnameNested1.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("dotFnameNested2.kt")
       public void testDotFnameNested2() {
         runTest("native/native.tests/testData/codegen/cinterop/packages/dotFnameNested2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("dotFnameRoot.kt")
       public void testDotFnameRoot() {
         runTest("native/native.tests/testData/codegen/cinterop/packages/dotFnameRoot.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("nested1.kt")
       public void testNested1() {
         runTest("native/native.tests/testData/codegen/cinterop/packages/nested1.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("nested2.kt")
       public void testNested2() {
         runTest("native/native.tests/testData/codegen/cinterop/packages/nested2.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("root.kt")
       public void testRoot() {
         runTest("native/native.tests/testData/codegen/cinterop/packages/root.kt");
@@ -530,66 +530,66 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     @FirPipeline()
     @UseExtTestCaseGroupProvider()
     public class ThreadStates {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInThreadStates() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/cinterop/threadStates"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("callback.kt")
       public void testCallback() {
         runTest("native/native.tests/testData/codegen/cinterop/threadStates/callback.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("callbackOnSeparateThread.kt")
       public void testCallbackOnSeparateThread() {
         runTest("native/native.tests/testData/codegen/cinterop/threadStates/callbackOnSeparateThread.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("callbackWithException.kt")
       public void testCallbackWithException() {
         runTest("native/native.tests/testData/codegen/cinterop/threadStates/callbackWithException.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("callbackWithFinally.kt")
       public void testCallbackWithFinally() {
         runTest("native/native.tests/testData/codegen/cinterop/threadStates/callbackWithFinally.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("callbackWithFinallyNoCatch.kt")
       public void testCallbackWithFinallyNoCatch() {
         runTest("native/native.tests/testData/codegen/cinterop/threadStates/callbackWithFinallyNoCatch.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("directStaticCFunctionCall.kt")
       public void testDirectStaticCFunctionCall() {
         runTest("native/native.tests/testData/codegen/cinterop/threadStates/directStaticCFunctionCall.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("nativeCall.kt")
       public void testNativeCall() {
         runTest("native/native.tests/testData/codegen/cinterop/threadStates/nativeCall.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("nestedCallbackWithException.kt")
       public void testNestedCallbackWithException() {
         runTest("native/native.tests/testData/codegen/cinterop/threadStates/nestedCallbackWithException.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("nestedCallbackWithFinally.kt")
       public void testNestedCallbackWithFinally() {
         runTest("native/native.tests/testData/codegen/cinterop/threadStates/nestedCallbackWithFinally.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("nestedCalls.kt")
       public void testNestedCalls() {
         runTest("native/native.tests/testData/codegen/cinterop/threadStates/nestedCalls.kt");
@@ -604,12 +604,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Controlflow {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInControlflow() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/controlflow"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("for_loops_array.kt")
     public void testFor_loops_array() {
       runTest("native/native.tests/testData/codegen/controlflow/for_loops_array.kt");
@@ -623,12 +623,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Coroutines {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInCoroutines() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inheritance.kt")
     public void testInheritance() {
       runTest("native/native.tests/testData/codegen/coroutines/inheritance.kt");
@@ -642,18 +642,18 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Enum {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInEnum() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("identity.kt")
     public void testIdentity() {
       runTest("native/native.tests/testData/codegen/enum/identity.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("isFrozen.kt")
     public void testIsFrozen() {
       runTest("native/native.tests/testData/codegen/enum/isFrozen.kt");
@@ -667,36 +667,36 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class EscapeAnalysis {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInEscapeAnalysis() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/escapeAnalysis"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("negativeArraySize.kt")
     public void testNegativeArraySize() {
       runTest("native/native.tests/testData/codegen/escapeAnalysis/negativeArraySize.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("stackAllocated.kt")
     public void testStackAllocated() {
       runTest("native/native.tests/testData/codegen/escapeAnalysis/stackAllocated.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("stackAllocatedString.kt")
     public void testStackAllocatedString() {
       runTest("native/native.tests/testData/codegen/escapeAnalysis/stackAllocatedString.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("stackNotAllocated.kt")
     public void testStackNotAllocated() {
       runTest("native/native.tests/testData/codegen/escapeAnalysis/stackNotAllocated.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("stackNotAllocatedString.kt")
     public void testStackNotAllocatedString() {
       runTest("native/native.tests/testData/codegen/escapeAnalysis/stackNotAllocatedString.kt");
@@ -710,12 +710,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Exceptions {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInExceptions() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/exceptions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("throw_cleanup.kt")
     public void testThrow_cleanup() {
       runTest("native/native.tests/testData/codegen/exceptions/throw_cleanup.kt");
@@ -729,192 +729,192 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class FileCheck {
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("adopted_function_reference.kt")
     public void testAdopted_function_reference() {
       runTest("native/native.tests/testData/codegen/fileCheck/adopted_function_reference.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInFileCheck() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/fileCheck"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("atomics.kt")
     public void testAtomics() {
       runTest("native/native.tests/testData/codegen/fileCheck/atomics.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("bce.kt")
     public void testBce() {
       runTest("native/native.tests/testData/codegen/fileCheck/bce.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("constants_merge.kt")
     public void testConstants_merge() {
       runTest("native/native.tests/testData/codegen/fileCheck/constants_merge.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("default_parameters_dont_box.kt")
     public void testDefault_parameters_dont_box() {
       runTest("native/native.tests/testData/codegen/fileCheck/default_parameters_dont_box.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("enum_when.kt")
     public void testEnum_when() {
       runTest("native/native.tests/testData/codegen/fileCheck/enum_when.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("escape_analysis.kt")
     public void testEscape_analysis() {
       runTest("native/native.tests/testData/codegen/fileCheck/escape_analysis.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("filecheck_expected_failure.kt")
     public void testFilecheck_expected_failure() {
       runTest("native/native.tests/testData/codegen/fileCheck/filecheck_expected_failure.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("force_arm_instruction_set.kt")
     public void testForce_arm_instruction_set() {
       runTest("native/native.tests/testData/codegen/fileCheck/force_arm_instruction_set.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("function_attributes_at_callsite.kt")
     public void testFunction_attributes_at_callsite() {
       runTest("native/native.tests/testData/codegen/fileCheck/function_attributes_at_callsite.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("generic_function_references.kt")
     public void testGeneric_function_references() {
       runTest("native/native.tests/testData/codegen/fileCheck/generic_function_references.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("intrinsics.kt")
     public void testIntrinsics() {
       runTest("native/native.tests/testData/codegen/fileCheck/intrinsics.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt49847_class.kt")
     public void testKt49847_class() {
       runTest("native/native.tests/testData/codegen/fileCheck/kt49847_class.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt49847_generic.kt")
     public void testKt49847_generic() {
       runTest("native/native.tests/testData/codegen/fileCheck/kt49847_generic.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt49847_generic_receiver.kt")
     public void testKt49847_generic_receiver() {
       runTest("native/native.tests/testData/codegen/fileCheck/kt49847_generic_receiver.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt49847_sam_Any.kt")
     public void testKt49847_sam_Any() {
       runTest("native/native.tests/testData/codegen/fileCheck/kt49847_sam_Any.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt49847_sam_Any_generic.kt")
     public void testKt49847_sam_Any_generic() {
       runTest("native/native.tests/testData/codegen/fileCheck/kt49847_sam_Any_generic.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt49847_sam_Int.kt")
     public void testKt49847_sam_Int() {
       runTest("native/native.tests/testData/codegen/fileCheck/kt49847_sam_Int.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt49847_sam_Int_generic.kt")
     public void testKt49847_sam_Int_generic() {
       runTest("native/native.tests/testData/codegen/fileCheck/kt49847_sam_Int_generic.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt49847_simple_function_reference.kt")
     public void testKt49847_simple_function_reference() {
       runTest("native/native.tests/testData/codegen/fileCheck/kt49847_simple_function_reference.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt58654.kt")
     public void testKt58654() {
       runTest("native/native.tests/testData/codegen/fileCheck/kt58654.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("no_frame_on_constant_object_access.kt")
     public void testNo_frame_on_constant_object_access() {
       runTest("native/native.tests/testData/codegen/fileCheck/no_frame_on_constant_object_access.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("redundant_safepoints.kt")
     public void testRedundant_safepoints() {
       runTest("native/native.tests/testData/codegen/fileCheck/redundant_safepoints.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("replace_invoke_with_call.kt")
     public void testReplace_invoke_with_call() {
       runTest("native/native.tests/testData/codegen/fileCheck/replace_invoke_with_call.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("signext_zeroext0.kt")
     public void testSignext_zeroext0() {
       runTest("native/native.tests/testData/codegen/fileCheck/signext_zeroext0.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("single_tls_load.kt")
     public void testSingle_tls_load() {
       runTest("native/native.tests/testData/codegen/fileCheck/single_tls_load.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("smoke0.kt")
     public void testSmoke0() {
       runTest("native/native.tests/testData/codegen/fileCheck/smoke0.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("suspend_returnNothing.kt")
     public void testSuspend_returnNothing() {
       runTest("native/native.tests/testData/codegen/fileCheck/suspend_returnNothing.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("suspend_tailcalls_functions.kt")
     public void testSuspend_tailcalls_functions() {
       runTest("native/native.tests/testData/codegen/fileCheck/suspend_tailcalls_functions.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("suspend_tailcalls_lambdas.kt")
     public void testSuspend_tailcalls_lambdas() {
       runTest("native/native.tests/testData/codegen/fileCheck/suspend_tailcalls_lambdas.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("when.kt")
     public void testWhen() {
       runTest("native/native.tests/testData/codegen/fileCheck/when.kt");
@@ -927,18 +927,18 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     @FirPipeline()
     @UseExtTestCaseGroupProvider()
     public class Cinterop {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInCinterop() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/fileCheck/cinterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("direct.kt")
       public void testDirect() {
         runTest("native/native.tests/testData/codegen/fileCheck/cinterop/direct.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("signext_zeroext_interop.kt")
       public void testSignext_zeroext_interop() {
         runTest("native/native.tests/testData/codegen/fileCheck/cinterop/signext_zeroext_interop.kt");
@@ -952,66 +952,66 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     @FirPipeline()
     @UseExtTestCaseGroupProvider()
     public class Kt53261 {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInKt53261() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/fileCheck/kt53261"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt53261_inline_unbox.kt")
       public void testKt53261_inline_unbox() {
         runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_inline_unbox.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt53261_noinline_CPointer.kt")
       public void testKt53261_noinline_CPointer() {
         runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_noinline_CPointer.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt53261_noinline_NativePointed.kt")
       public void testKt53261_noinline_NativePointed() {
         runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_noinline_NativePointed.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt53261_noinline_NonNullNativePtr.kt")
       public void testKt53261_noinline_NonNullNativePtr() {
         runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_noinline_NonNullNativePtr.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt53261_noinline_StableRef.kt")
       public void testKt53261_noinline_StableRef() {
         runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_noinline_StableRef.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt53261_noinline_UByteArray.kt")
       public void testKt53261_noinline_UByteArray() {
         runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_noinline_UByteArray.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt53261_noinline_UIntArray.kt")
       public void testKt53261_noinline_UIntArray() {
         runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_noinline_UIntArray.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt53261_noinline_ULongArray.kt")
       public void testKt53261_noinline_ULongArray() {
         runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_noinline_ULongArray.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt53261_noinline_UShortArray.kt")
       public void testKt53261_noinline_UShortArray() {
         runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_noinline_UShortArray.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt53261_noinline_value_unbox.kt")
       public void testKt53261_noinline_value_unbox() {
         runTest("native/native.tests/testData/codegen/fileCheck/kt53261/kt53261_noinline_value_unbox.kt");
@@ -1025,42 +1025,42 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     @FirPipeline()
     @UseExtTestCaseGroupProvider()
     public class StringConcatenationTypeNarrowing {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInStringConcatenationTypeNarrowing() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/fileCheck/stringConcatenationTypeNarrowing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt53119_append_generated.kt")
       public void testKt53119_append_generated() {
         runTest("native/native.tests/testData/codegen/fileCheck/stringConcatenationTypeNarrowing/kt53119_append_generated.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt53119_append_manual.kt")
       public void testKt53119_append_manual() {
         runTest("native/native.tests/testData/codegen/fileCheck/stringConcatenationTypeNarrowing/kt53119_append_manual.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt53119_plus_extension.kt")
       public void testKt53119_plus_extension() {
         runTest("native/native.tests/testData/codegen/fileCheck/stringConcatenationTypeNarrowing/kt53119_plus_extension.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt53119_plus_generated_noescape.kt")
       public void testKt53119_plus_generated_noescape() {
         runTest("native/native.tests/testData/codegen/fileCheck/stringConcatenationTypeNarrowing/kt53119_plus_generated_noescape.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt53119_plus_member.kt")
       public void testKt53119_plus_member() {
         runTest("native/native.tests/testData/codegen/fileCheck/stringConcatenationTypeNarrowing/kt53119_plus_member.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("kt53119_side_effect.kt")
       public void testKt53119_side_effect() {
         runTest("native/native.tests/testData/codegen/fileCheck/stringConcatenationTypeNarrowing/kt53119_side_effect.kt");
@@ -1075,12 +1075,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class FunInterface {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInFunInterface() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kt43887.kt")
     public void testKt43887() {
       runTest("native/native.tests/testData/codegen/funInterface/kt43887.kt");
@@ -1094,84 +1094,84 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Initializers {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInInitializers() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/initializers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("initializers6.kt")
     public void testInitializers6() {
       runTest("native/native.tests/testData/codegen/initializers/initializers6.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("multipleModules2.kt")
     public void testMultipleModules2() {
       runTest("native/native.tests/testData/codegen/initializers/multipleModules2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("return1.kt")
     public void testReturn1() {
       runTest("native/native.tests/testData/codegen/initializers/return1.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("return2.kt")
     public void testReturn2() {
       runTest("native/native.tests/testData/codegen/initializers/return2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("static_constantObjectInFinally.kt")
     public void testStatic_constantObjectInFinally() {
       runTest("native/native.tests/testData/codegen/initializers/static_constantObjectInFinally.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("static_kType.kt")
     public void testStatic_kType() {
       runTest("native/native.tests/testData/codegen/initializers/static_kType.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("static_permanent.kt")
     public void testStatic_permanent() {
       runTest("native/native.tests/testData/codegen/initializers/static_permanent.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("static_reifiedKType.kt")
     public void testStatic_reifiedKType() {
       runTest("native/native.tests/testData/codegen/initializers/static_reifiedKType.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("when1.kt")
     public void testWhen1() {
       runTest("native/native.tests/testData/codegen/initializers/when1.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("when2.kt")
     public void testWhen2() {
       runTest("native/native.tests/testData/codegen/initializers/when2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("while1.kt")
     public void testWhile1() {
       runTest("native/native.tests/testData/codegen/initializers/while1.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("while2.kt")
     public void testWhile2() {
       runTest("native/native.tests/testData/codegen/initializers/while2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("while3.kt")
     public void testWhile3() {
       runTest("native/native.tests/testData/codegen/initializers/while3.kt");
@@ -1184,24 +1184,24 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     @FirPipeline()
     @UseExtTestCaseGroupProvider()
     public class Files {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInFiles() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/initializers/files"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("globalInitedBeforeThreadLocal.kt")
       public void testGlobalInitedBeforeThreadLocal() {
         runTest("native/native.tests/testData/codegen/initializers/files/globalInitedBeforeThreadLocal.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("workers1.kt")
       public void testWorkers1() {
         runTest("native/native.tests/testData/codegen/initializers/files/workers1.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("workers2.kt")
       public void testWorkers2() {
         runTest("native/native.tests/testData/codegen/initializers/files/workers2.kt");
@@ -1214,30 +1214,30 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
       @FirPipeline()
       @UseExtTestCaseGroupProvider()
       public class EagerInitialization {
-        @Test
+        @RepeatedTest(value = 3)
         public void testAllFilesPresentInEagerInitialization() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/initializers/files/eagerInitialization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("global1.kt")
         public void testGlobal1() {
           runTest("native/native.tests/testData/codegen/initializers/files/eagerInitialization/global1.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("global2.kt")
         public void testGlobal2() {
           runTest("native/native.tests/testData/codegen/initializers/files/eagerInitialization/global2.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("threadLocal1.kt")
         public void testThreadLocal1() {
           runTest("native/native.tests/testData/codegen/initializers/files/eagerInitialization/threadLocal1.kt");
         }
 
-        @Test
+        @RepeatedTest(value = 3)
         @TestMetadata("threadLocal2.kt")
         public void testThreadLocal2() {
           runTest("native/native.tests/testData/codegen/initializers/files/eagerInitialization/threadLocal2.kt");
@@ -1250,30 +1250,30 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
         @FirPipeline()
         @UseExtTestCaseGroupProvider()
         public class MultiModule {
-          @Test
+          @RepeatedTest(value = 3)
           public void testAllFilesPresentInMultiModule() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/initializers/files/eagerInitialization/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("global1.kt")
           public void testGlobal1() {
             runTest("native/native.tests/testData/codegen/initializers/files/eagerInitialization/multiModule/global1.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("global2.kt")
           public void testGlobal2() {
             runTest("native/native.tests/testData/codegen/initializers/files/eagerInitialization/multiModule/global2.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("threadLocal1.kt")
           public void testThreadLocal1() {
             runTest("native/native.tests/testData/codegen/initializers/files/eagerInitialization/multiModule/threadLocal1.kt");
           }
 
-          @Test
+          @RepeatedTest(value = 3)
           @TestMetadata("threadLocal2.kt")
           public void testThreadLocal2() {
             runTest("native/native.tests/testData/codegen/initializers/files/eagerInitialization/multiModule/threadLocal2.kt");
@@ -1290,12 +1290,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Inline {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInInline() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/inline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inline18.kt")
     public void testInline18() {
       runTest("native/native.tests/testData/codegen/inline/inline18.kt");
@@ -1309,18 +1309,18 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class InlineClass {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInInlineClass() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/inlineClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineClass0.kt")
     public void testInlineClass0() {
       runTest("native/native.tests/testData/codegen/inlineClass/inlineClass0.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("valueClass0.kt")
     public void testValueClass0() {
       runTest("native/native.tests/testData/codegen/inlineClass/valueClass0.kt");
@@ -1334,12 +1334,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class InterfaceCallsNCasts {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInInterfaceCallsNCasts() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/interfaceCallsNCasts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("functionNameClash.kt")
     public void testFunctionNameClash() {
       runTest("native/native.tests/testData/codegen/interfaceCallsNCasts/functionNameClash.kt");
@@ -1353,12 +1353,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Interop {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInInterop() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/interop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("platform_zlib.kt")
     public void testPlatform_zlib() {
       runTest("native/native.tests/testData/codegen/interop/platform_zlib.kt");
@@ -1372,36 +1372,36 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Intrinsics {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInIntrinsics() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/intrinsics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("interop_convertAll.kt")
     public void testInterop_convertAll() {
       runTest("native/native.tests/testData/codegen/intrinsics/interop_convertAll.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("interop_convertNI.kt")
     public void testInterop_convertNI() {
       runTest("native/native.tests/testData/codegen/intrinsics/interop_convertNI.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("interop_convertSimple.kt")
     public void testInterop_convertSimple() {
       runTest("native/native.tests/testData/codegen/intrinsics/interop_convertSimple.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("interop_sourceCodeStruct.kt")
     public void testInterop_sourceCodeStruct() {
       runTest("native/native.tests/testData/codegen/intrinsics/interop_sourceCodeStruct.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("isExperimentalMM.kt")
     public void testIsExperimentalMM() {
       runTest("native/native.tests/testData/codegen/intrinsics/isExperimentalMM.kt");
@@ -1415,24 +1415,24 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Kclass {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInKclass() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/kclass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("anonymousObjectInInlineFunction.kt")
     public void testAnonymousObjectInInlineFunction() {
       runTest("native/native.tests/testData/codegen/kclass/anonymousObjectInInlineFunction.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("anonymousObjectInInlineFunctionWithCache.kt")
     public void testAnonymousObjectInInlineFunctionWithCache() {
       runTest("native/native.tests/testData/codegen/kclass/anonymousObjectInInlineFunctionWithCache.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("kclass0.kt")
     public void testKclass0() {
       runTest("native/native.tests/testData/codegen/kclass/kclass0.kt");
@@ -1446,12 +1446,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Ktype {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInKtype() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/ktype"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ktype1_anonymousObject.kt")
     public void testKtype1_anonymousObject() {
       runTest("native/native.tests/testData/codegen/ktype/ktype1_anonymousObject.kt");
@@ -1465,42 +1465,42 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Link {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInLink() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/link"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("klibName.kt")
     public void testKlibName() {
       runTest("native/native.tests/testData/codegen/link/klibName.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("link.kt")
     public void testLink() {
       runTest("native/native.tests/testData/codegen/link/link.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("noPurgeForDependencies.kt")
     public void testNoPurgeForDependencies() {
       runTest("native/native.tests/testData/codegen/link/noPurgeForDependencies.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("omitUnused.kt")
     public void testOmitUnused() {
       runTest("native/native.tests/testData/codegen/link/omitUnused.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("privateFakeOverridesInherit.kt")
     public void testPrivateFakeOverridesInherit() {
       runTest("native/native.tests/testData/codegen/link/privateFakeOverridesInherit.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("privateFakeOverridesOverride.kt")
     public void testPrivateFakeOverridesOverride() {
       runTest("native/native.tests/testData/codegen/link/privateFakeOverridesOverride.kt");
@@ -1514,12 +1514,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Literals {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInLiterals() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/literals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("strdedup2.kt")
     public void testStrdedup2() {
       runTest("native/native.tests/testData/codegen/literals/strdedup2.kt");
@@ -1533,18 +1533,18 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Mangling {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInMangling() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/mangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("direct.kt")
     public void testDirect() {
       runTest("native/native.tests/testData/codegen/mangling/direct.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("param.kt")
     public void testParam() {
       runTest("native/native.tests/testData/codegen/mangling/param.kt");
@@ -1558,12 +1558,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Object {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInObject() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/object"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("fields2_2.kt")
     public void testFields2_2() {
       runTest("native/native.tests/testData/codegen/object/fields2_2.kt");
@@ -1577,48 +1577,48 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class ObjectDeclaration {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInObjectDeclaration() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/objectDeclaration"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("compileTime.kt")
     public void testCompileTime() {
       runTest("native/native.tests/testData/codegen/objectDeclaration/compileTime.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("globalConstants_checkComputedField.kt")
     public void testGlobalConstants_checkComputedField() {
       runTest("native/native.tests/testData/codegen/objectDeclaration/globalConstants_checkComputedField.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("globalConstants_checkConstructor.kt")
     public void testGlobalConstants_checkConstructor() {
       runTest("native/native.tests/testData/codegen/objectDeclaration/globalConstants_checkConstructor.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("globalConstants_checkEmptyClass.kt")
     public void testGlobalConstants_checkEmptyClass() {
       runTest("native/native.tests/testData/codegen/objectDeclaration/globalConstants_checkEmptyClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("globalConstants_checkField.kt")
     public void testGlobalConstants_checkField() {
       runTest("native/native.tests/testData/codegen/objectDeclaration/globalConstants_checkField.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("globalConstants_checkInit.kt")
     public void testGlobalConstants_checkInit() {
       runTest("native/native.tests/testData/codegen/objectDeclaration/globalConstants_checkInit.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("isFrozen.kt")
     public void testIsFrozen() {
       runTest("native/native.tests/testData/codegen/objectDeclaration/isFrozen.kt");
@@ -1632,7 +1632,7 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Reflection {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInReflection() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/reflection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
@@ -1644,48 +1644,48 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     @FirPipeline()
     @UseExtTestCaseGroupProvider()
     public class CollectReferenceFieldValues {
-      @Test
+      @RepeatedTest(value = 3)
       public void testAllFilesPresentInCollectReferenceFieldValues() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("bigClassWithMixedValues.kt")
       public void testBigClassWithMixedValues() {
         runTest("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues/bigClassWithMixedValues.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("callOnArray.kt")
       public void testCallOnArray() {
         runTest("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues/callOnArray.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("callOnPrimitive.kt")
       public void testCallOnPrimitive() {
         runTest("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues/callOnPrimitive.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("callOnPrimitiveArray.kt")
       public void testCallOnPrimitiveArray() {
         runTest("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues/callOnPrimitiveArray.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("callOnString.kt")
       public void testCallOnString() {
         runTest("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues/callOnString.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("callOnValueClass.kt")
       public void testCallOnValueClass() {
         runTest("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues/callOnValueClass.kt");
       }
 
-      @Test
+      @RepeatedTest(value = 3)
       @TestMetadata("callOnValueOverPrimitiveClass.kt")
       public void testCallOnValueOverPrimitiveClass() {
         runTest("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues/callOnValueOverPrimitiveClass.kt");
@@ -1700,30 +1700,30 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Variables {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInVariables() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/variables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("var1.kt")
     public void testVar1() {
       runTest("native/native.tests/testData/codegen/variables/var1.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("var2.kt")
     public void testVar2() {
       runTest("native/native.tests/testData/codegen/variables/var2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("var3.kt")
     public void testVar3() {
       runTest("native/native.tests/testData/codegen/variables/var3.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("var4.kt")
     public void testVar4() {
       runTest("native/native.tests/testData/codegen/variables/var4.kt");
@@ -1737,12 +1737,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Vector {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInVector() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/vector"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("default_argument.kt")
     public void testDefault_argument() {
       runTest("native/native.tests/testData/codegen/vector/default_argument.kt");

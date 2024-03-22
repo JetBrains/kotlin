@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -21,186 +21,186 @@ public class SerializationFirPsiDiagnosticTestGenerated extends AbstractSerializ
   @TestMetadata("plugins/kotlinx-serialization/testData/diagnostics")
   @TestDataPath("$PROJECT_ROOT")
   public class Diagnostics {
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("abstractCustomSerializer.kt")
     public void testAbstractCustomSerializer() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/abstractCustomSerializer.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInDiagnostics() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("companionObjectSerializers.kt")
     public void testCompanionObjectSerializers() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/companionObjectSerializers.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("customSerializers.kt")
     public void testCustomSerializers() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/customSerializers.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("DuplicateSerialName.kt")
     public void testDuplicateSerialName() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/DuplicateSerialName.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("EnumDuplicateSerialName.kt")
     public void testEnumDuplicateSerialName() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/EnumDuplicateSerialName.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("externalSerialierJava.kt")
     public void testExternalSerialierJava() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/externalSerialierJava.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ExternalSerializers.kt")
     public void testExternalSerializers() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/ExternalSerializers.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("GeneratedSerializerInaccessible.kt")
     public void testGeneratedSerializerInaccessible() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/GeneratedSerializerInaccessible.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("GenericArrays.kt")
     public void testGenericArrays() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/GenericArrays.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("IncorrectTransient.kt")
     public void testIncorrectTransient() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/IncorrectTransient.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("IncorrectTransient2.kt")
     public void testIncorrectTransient2() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/IncorrectTransient2.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("InheritableInfo.kt")
     public void testInheritableInfo() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/InheritableInfo.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("LazyRecursionBug.kt")
     public void testLazyRecursionBug() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/LazyRecursionBug.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("LocalAndAnonymous.kt")
     public void testLocalAndAnonymous() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/LocalAndAnonymous.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("metaSerializableNested.kt")
     public void testMetaSerializableNested() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/metaSerializableNested.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("NoSuitableCtorInParent.kt")
     public void testNoSuitableCtorInParent() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/NoSuitableCtorInParent.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("NonSerializable.kt")
     public void testNonSerializable() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/NonSerializable.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("NullabilityIncompatible.kt")
     public void testNullabilityIncompatible() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/NullabilityIncompatible.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ParamIsNotProperty.kt")
     public void testParamIsNotProperty() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/ParamIsNotProperty.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("ParametrizedExternalSerializers.kt")
     public void testParametrizedExternalSerializers() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/ParametrizedExternalSerializers.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("repeatableSerialInfo.kt")
     public void testRepeatableSerialInfo() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/repeatableSerialInfo.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("SerializableEnums.kt")
     public void testSerializableEnums() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/SerializableEnums.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("SerializableIgnored.kt")
     public void testSerializableIgnored() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/SerializableIgnored.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("serializerFromOtherModule.kt")
     public void testSerializerFromOtherModule() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/serializerFromOtherModule.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("SerializerTypeCompatibleForSpecials.kt")
     public void testSerializerTypeCompatibleForSpecials() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/SerializerTypeCompatibleForSpecials.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("SerializerTypeIncompatible.kt")
     public void testSerializerTypeIncompatible() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/SerializerTypeIncompatible.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("SerializerTypeIncompatibleViaTypealias.kt")
     public void testSerializerTypeIncompatibleViaTypealias() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/SerializerTypeIncompatibleViaTypealias.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("Transients.kt")
     public void testTransients() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/Transients.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeAliases.kt")
     public void testTypeAliases() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/typeAliases.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("typeAliasesCustomized.kt")
     public void testTypeAliasesCustomized() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/typeAliasesCustomized.kt");
@@ -211,96 +211,96 @@ public class SerializationFirPsiDiagnosticTestGenerated extends AbstractSerializ
   @TestMetadata("plugins/kotlinx-serialization/testData/firMembers")
   @TestDataPath("$PROJECT_ROOT")
   public class FirMembers {
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("abstractAndSealed.kt")
     public void testAbstractAndSealed() {
       runTest("plugins/kotlinx-serialization/testData/firMembers/abstractAndSealed.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInFirMembers() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/firMembers"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classWithCompanionObject.kt")
     public void testClassWithCompanionObject() {
       runTest("plugins/kotlinx-serialization/testData/firMembers/classWithCompanionObject.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("classWithGenericParameters.kt")
     public void testClassWithGenericParameters() {
       runTest("plugins/kotlinx-serialization/testData/firMembers/classWithGenericParameters.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("defaultProperties.kt")
     public void testDefaultProperties() {
       runTest("plugins/kotlinx-serialization/testData/firMembers/defaultProperties.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("enums.kt")
     public void testEnums() {
       runTest("plugins/kotlinx-serialization/testData/firMembers/enums.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("externalSerializers.kt")
     public void testExternalSerializers() {
       runTest("plugins/kotlinx-serialization/testData/firMembers/externalSerializers.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("inlineClasses.kt")
     public void testInlineClasses() {
       runTest("plugins/kotlinx-serialization/testData/firMembers/inlineClasses.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("metaSerializable.kt")
     public void testMetaSerializable() {
       runTest("plugins/kotlinx-serialization/testData/firMembers/metaSerializable.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("multipleProperties.kt")
     public void testMultipleProperties() {
       runTest("plugins/kotlinx-serialization/testData/firMembers/multipleProperties.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("privatePropertiesSerialization.kt")
     public void testPrivatePropertiesSerialization() {
       runTest("plugins/kotlinx-serialization/testData/firMembers/privatePropertiesSerialization.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("serializableObject.kt")
     public void testSerializableObject() {
       runTest("plugins/kotlinx-serialization/testData/firMembers/serializableObject.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("serializableWith.kt")
     public void testSerializableWith() {
       runTest("plugins/kotlinx-serialization/testData/firMembers/serializableWith.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("serializableWithCompanion.kt")
     public void testSerializableWithCompanion() {
       runTest("plugins/kotlinx-serialization/testData/firMembers/serializableWithCompanion.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("serializerInLocalClass.kt")
     public void testSerializerInLocalClass() {
       runTest("plugins/kotlinx-serialization/testData/firMembers/serializerInLocalClass.kt");
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("serializerViaCompanion.kt")
     public void testSerializerViaCompanion() {
       runTest("plugins/kotlinx-serialization/testData/firMembers/serializerViaCompanion.kt");

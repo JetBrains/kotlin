@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("js/js.translator/testData/typescript-export/wasm")
 @TestDataPath("$PROJECT_ROOT")
 public class FirWasmTypeScriptExportTestGenerated extends AbstractFirWasmTypeScriptExportTest {
-  @Test
+  @RepeatedTest(value = 3)
   public void testAllFilesPresentInWasm() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
   }
@@ -29,12 +29,12 @@ public class FirWasmTypeScriptExportTestGenerated extends AbstractFirWasmTypeScr
   @TestMetadata("js/js.translator/testData/typescript-export/wasm/externalDeclarations")
   @TestDataPath("$PROJECT_ROOT")
   public class ExternalDeclarations {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInExternalDeclarations() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/externalDeclarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("externalDeclarations.kt")
     public void testExternalDeclarations() {
       runTest("js/js.translator/testData/typescript-export/wasm/externalDeclarations/externalDeclarations.kt");
@@ -45,12 +45,12 @@ public class FirWasmTypeScriptExportTestGenerated extends AbstractFirWasmTypeScr
   @TestMetadata("js/js.translator/testData/typescript-export/wasm/generics")
   @TestDataPath("$PROJECT_ROOT")
   public class Generics {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInGenerics() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/generics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("generics.kt")
     public void testGenerics() {
       runTest("js/js.translator/testData/typescript-export/wasm/generics/generics.kt");
@@ -61,12 +61,12 @@ public class FirWasmTypeScriptExportTestGenerated extends AbstractFirWasmTypeScr
   @TestMetadata("js/js.translator/testData/typescript-export/wasm/jsPrimitives")
   @TestDataPath("$PROJECT_ROOT")
   public class JsPrimitives {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInJsPrimitives() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/jsPrimitives"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("jsPrimitives.kt")
     public void testJsPrimitives() {
       runTest("js/js.translator/testData/typescript-export/wasm/jsPrimitives/jsPrimitives.kt");
@@ -77,12 +77,12 @@ public class FirWasmTypeScriptExportTestGenerated extends AbstractFirWasmTypeScr
   @TestMetadata("js/js.translator/testData/typescript-export/wasm/nullableJsPrimitives")
   @TestDataPath("$PROJECT_ROOT")
   public class NullableJsPrimitives {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInNullableJsPrimitives() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/nullableJsPrimitives"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nullableJsPrimitives.kt")
     public void testNullableJsPrimitives() {
       runTest("js/js.translator/testData/typescript-export/wasm/nullableJsPrimitives/nullableJsPrimitives.kt");
@@ -93,12 +93,12 @@ public class FirWasmTypeScriptExportTestGenerated extends AbstractFirWasmTypeScr
   @TestMetadata("js/js.translator/testData/typescript-export/wasm/nullablePrimitives")
   @TestDataPath("$PROJECT_ROOT")
   public class NullablePrimitives {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInNullablePrimitives() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/nullablePrimitives"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nullablePrimitives.kt")
     public void testNullablePrimitives() {
       runTest("js/js.translator/testData/typescript-export/wasm/nullablePrimitives/nullablePrimitives.kt");
@@ -109,12 +109,12 @@ public class FirWasmTypeScriptExportTestGenerated extends AbstractFirWasmTypeScr
   @TestMetadata("js/js.translator/testData/typescript-export/wasm/nullableUnsigned")
   @TestDataPath("$PROJECT_ROOT")
   public class NullableUnsigned {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInNullableUnsigned() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/nullableUnsigned"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("nullableUnsinged.kt")
     public void testNullableUnsinged() {
       runTest("js/js.translator/testData/typescript-export/wasm/nullableUnsigned/nullableUnsinged.kt");
@@ -125,12 +125,12 @@ public class FirWasmTypeScriptExportTestGenerated extends AbstractFirWasmTypeScr
   @TestMetadata("js/js.translator/testData/typescript-export/wasm/primitives")
   @TestDataPath("$PROJECT_ROOT")
   public class Primitives {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInPrimitives() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/primitives"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("primitives.kt")
     public void testPrimitives() {
       runTest("js/js.translator/testData/typescript-export/wasm/primitives/primitives.kt");
@@ -141,12 +141,12 @@ public class FirWasmTypeScriptExportTestGenerated extends AbstractFirWasmTypeScr
   @TestMetadata("js/js.translator/testData/typescript-export/wasm/unsigned")
   @TestDataPath("$PROJECT_ROOT")
   public class Unsigned {
-    @Test
+    @RepeatedTest(value = 3)
     public void testAllFilesPresentInUnsigned() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/unsigned"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     @TestMetadata("unsinged.kt")
     public void testUnsinged() {
       runTest("js/js.translator/testData/typescript-export/wasm/unsigned/unsinged.kt");
