@@ -1714,6 +1714,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     }
 
     @Test
+    @TestMetadata("varOverriddenByValThroughIntersection.kt")
+    public void testVarOverriddenByValThroughIntersection() {
+      runTest("compiler/testData/diagnostics/tests/varOverriddenByValThroughIntersection.kt");
+    }
+
+    @Test
     @TestMetadata("VarargTypes.kt")
     public void testVarargTypes() {
       runTest("compiler/testData/diagnostics/tests/VarargTypes.kt");
