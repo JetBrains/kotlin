@@ -39,6 +39,7 @@ class AndroidCodegenIT : KGPBaseTest() {
             enableGradleDebug = false,
             buildJdk = jdkVersion.location
         ) {
+            makeSnapshotTo("tmp")
             build("assembleAndroidTest", forceOutput = true, enableGradleDaemonMemoryLimitInMb = 6000)
             build("nexusCheck", forceOutput = true, enableGradleDaemonMemoryLimitInMb = 6000)
         }

@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId = "org.jetbrains.kotlin.android.tests"
-        minSdk = 14
+        minSdk = 21
         compileSdk = 34
         targetSdk = 34
         versionCode = 1
@@ -28,14 +28,8 @@ android {
     productFlavors {
         listOf(
             "common0",
-            "common1",
-            "common2",
-            "common3",
             "reflect0",
             "common_ir0",
-            "common_ir1",
-            "common_ir2",
-            "common_ir3",
             "reflect_ir0"
         ).forEach {
             create(it) {

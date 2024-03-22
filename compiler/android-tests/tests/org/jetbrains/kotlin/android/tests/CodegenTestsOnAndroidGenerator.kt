@@ -49,9 +49,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     //keep it globally to avoid test grouping on TC
     private val generatedTestNames = hashSetOf<String>()
 
-    private val common = FlavorConfig(TargetBackend.ANDROID, "common", 4)
+    private val common = FlavorConfig(TargetBackend.ANDROID, "common")
     private val reflect = FlavorConfig(TargetBackend.ANDROID, "reflect")
-    private val commonIr = FlavorConfig(TargetBackend.ANDROID_IR, "common_ir", 4)
+    private val commonIr = FlavorConfig(TargetBackend.ANDROID_IR, "common_ir")
     private val reflectIr = FlavorConfig(TargetBackend.ANDROID_IR, "reflect_ir")
 
     class FlavorConfig(private val backend: TargetBackend, private val prefix: String, private val limit: Int = 1) {
@@ -66,7 +66,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             // Allocating up to 2500 files per folder should be fine for each app flavor,
             // thus avoiding the need for multidex, which is necessary when there are more than 64K methods.
             // Each folder will be archived using build.gradle.kts.
-            val index = writtenFilesCount / 2500
+            val index = writtenFilesCount / 65535
             val name = "$prefix$index"
             check(index < limit) { "Please add a new flavor in build.gradle for $name" }
             return name
