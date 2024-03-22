@@ -39092,6 +39092,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     @TestDataPath("$PROJECT_ROOT")
     public class ThisAndSuper {
       @Test
+      @TestMetadata("aliasedSupertype.kt")
+      public void testAliasedSupertype() {
+        runTest("compiler/testData/diagnostics/tests/thisAndSuper/aliasedSupertype.kt");
+      }
+
+      @Test
       public void testAllFilesPresentInThisAndSuper() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/thisAndSuper"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
