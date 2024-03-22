@@ -31,7 +31,7 @@ class JvmLocalDeclarationsLowering(context: JvmBackendContext) : LocalDeclaratio
     getConstructorsThatCouldCaptureParamsWithoutFieldCreating = {
         declarations.filterIsInstanceAnd<IrConstructor> { it.delegationKind(context.irBuiltIns) == ConstructorDelegationKind.CALLS_SUPER }
     },
-    postLocalDeclarationLoweringCallback = context.localDeclarationsLoweringData?.let {
+    postLocalDeclarationLoweringCallback = context.evaluatorData?.localDeclarationsLoweringData?.let {
         { data ->
             data.localFunctions.forEach { (localFunction, localContext) ->
                 it[localFunction] =
