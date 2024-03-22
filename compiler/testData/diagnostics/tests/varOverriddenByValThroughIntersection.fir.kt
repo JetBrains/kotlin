@@ -48,12 +48,12 @@ abstract class CB2 : ClassWithAbstractVar(), InterfaceWithAbstractVar
 <!VAR_OVERRIDDEN_BY_VAL!>abstract class CB3 : ClassWithAbstractVar(), InterfaceWithDefaultVal<!>
 abstract class CB4 : ClassWithAbstractVar(), InterfaceWithDefaultVar
 
-abstract class CC1 : ClassWithDefaultVal(), InterfaceWithAbstractVal
-abstract <!VAR_IMPLEMENTED_BY_INHERITED_VAL_WARNING!>class CC2<!> : ClassWithDefaultVal(), InterfaceWithAbstractVar
+abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>CC1<!> : ClassWithDefaultVal(), InterfaceWithAbstractVal
+abstract <!VAR_IMPLEMENTED_BY_INHERITED_VAL_WARNING!>class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>CC2<!><!> : ClassWithDefaultVal(), InterfaceWithAbstractVar
 abstract <!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class CC3<!> : ClassWithDefaultVal(), InterfaceWithDefaultVal
 abstract <!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class CC4<!> : ClassWithDefaultVal(), InterfaceWithDefaultVar
 
-<!VAR_OVERRIDDEN_BY_VAL!>abstract class CD1 : ClassWithDefaultVar(), InterfaceWithAbstractVal<!>
+<!VAR_OVERRIDDEN_BY_VAL!>abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>CD1<!> : ClassWithDefaultVar(), InterfaceWithAbstractVal<!>
 abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>CD2<!> : ClassWithDefaultVar(), InterfaceWithAbstractVar
 <!VAR_OVERRIDDEN_BY_VAL!>abstract <!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class CD3<!> : ClassWithDefaultVar(), InterfaceWithDefaultVal<!>
 abstract <!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class CD4<!> : ClassWithDefaultVar(), InterfaceWithDefaultVar

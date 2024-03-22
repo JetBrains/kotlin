@@ -68,8 +68,8 @@ interface IVarDefault {
 
 abstract class A1 : WithVal(), IVal
 abstract class B1 : WithVar(), IVal
-<!VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL!>abstract class C1 : WithProtectedVar(), IVal<!>
-<!VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL!>abstract class D1 : WithInternalVar(), IVal<!>
+<!VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL!>abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>C1<!> : WithProtectedVar(), IVal<!>
+<!VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL!>abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>D1<!> : WithInternalVar(), IVal<!>
 abstract class E1 : WithVarInternalSet(), IVal
 abstract class F1 : WithVarProtectedSet(), IVal
 abstract class G1 : WithVarPrivateSet(), IVal
@@ -84,8 +84,8 @@ abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING, CANNOT_WEAKEN_ACCESS_PR
 
 abstract class A3 : IVal, WithVal()
 abstract class B3 : IVal, WithVar()
-<!VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL!>abstract class C3 : IVal, WithProtectedVar()<!>
-<!VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL!>abstract class D3 : IVal, WithInternalVar()<!>
+<!VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL!>abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>C3<!> : IVal, WithProtectedVar()<!>
+<!VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL!>abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>D3<!> : IVal, WithInternalVar()<!>
 abstract class E3 : IVal, WithVarInternalSet()
 abstract class F3 : IVal, WithVarProtectedSet()
 abstract class G3 : IVal, WithVarPrivateSet()

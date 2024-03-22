@@ -26,9 +26,9 @@ interface IVarDefault {
         set(value) {}
 }
 
-<!VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL!>abstract class C1 : WithInternalVar(), IVal<!>
+<!VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL!>abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>C1<!> : WithInternalVar(), IVal<!>
 abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>C2<!> : WithInternalVar(), IVar
-<!VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL!>abstract class C3 : IVal, WithInternalVar()<!>
+<!VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL!>abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>C3<!> : IVal, WithInternalVar()<!>
 abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>C4<!> : IVar, WithInternalVar()
 <!VAR_OVERRIDDEN_BY_VAL!>abstract class C5 : WithInternalVar(), IValDefault<!>
 abstract class C6 : WithInternalVar(), IVarDefault
