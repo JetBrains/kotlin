@@ -1,0 +1,161 @@
+// A.class
+// ------------------------------------------
+public final annotation class A : kotlin/Annotation {
+
+  // signature: <init>(BSIFJDLkotlin/UInt;Lkotlin/UByte;Lkotlin/UShort;Lkotlin/ULong;)V
+  public constructor(b: kotlin/Byte, s: kotlin/Short, i: kotlin/Int, f: kotlin/Float, j: kotlin/Long, d: kotlin/Double, ui: kotlin/UInt, ub: kotlin/UByte, us: kotlin/UShort, ul: kotlin/ULong)
+
+  // getter: b()B
+  public final val b: kotlin/Byte
+    public final get
+
+  // getter: d()D
+  public final val d: kotlin/Double
+    public final get
+
+  // getter: f()F
+  public final val f: kotlin/Float
+    public final get
+
+  // getter: i()I
+  public final val i: kotlin/Int
+    public final get
+
+  // getter: j()J
+  public final val j: kotlin/Long
+    public final get
+
+  // getter: s()S
+  public final val s: kotlin/Short
+    public final get
+
+  // getter: ub()B
+  public final val ub: kotlin/UByte
+    public final get
+
+  // getter: ui()I
+  public final val ui: kotlin/UInt
+    public final get
+
+  // getter: ul()J
+  public final val ul: kotlin/ULong
+    public final get
+
+  // getter: us()S
+  public final val us: kotlin/UShort
+    public final get
+
+  // module name: test-module
+}
+// Aliased.class
+// ------------------------------------------
+public final annotation class Aliased : kotlin/Annotation {
+
+  // signature: <init>(BSIFJDLkotlin/UInt;Lkotlin/UByte;Lkotlin/UShort;Lkotlin/ULong;)V
+  public constructor(b: kotlin/Byte /* = Byte0^ */, s: kotlin/Short /* = Short0^ */, i: kotlin/Int /* = Int0^ */, f: kotlin/Float /* = Float0^ */, j: kotlin/Long /* = Long0^ */, d: kotlin/Double /* = Double0^ */, ui: kotlin/UInt /* = UInt0^ */, ub: kotlin/UByte /* = UByte0^ */, us: kotlin/UShort /* = UShort0^ */, ul: kotlin/ULong /* = ULong0^ */)
+
+  // getter: b()B
+  public final val b: kotlin/Byte /* = Byte0^ */
+    public final get
+
+  // getter: d()D
+  public final val d: kotlin/Double /* = Double0^ */
+    public final get
+
+  // getter: f()F
+  public final val f: kotlin/Float /* = Float0^ */
+    public final get
+
+  // getter: i()I
+  public final val i: kotlin/Int /* = Int0^ */
+    public final get
+
+  // getter: j()J
+  public final val j: kotlin/Long /* = Long0^ */
+    public final get
+
+  // getter: s()S
+  public final val s: kotlin/Short /* = Short0^ */
+    public final get
+
+  // getter: ub()B
+  public final val ub: kotlin/UByte /* = UByte0^ */
+    public final get
+
+  // getter: ui()I
+  public final val ui: kotlin/UInt /* = UInt0^ */
+    public final get
+
+  // getter: ul()J
+  public final val ul: kotlin/ULong /* = ULong0^ */
+    public final get
+
+  // getter: us()S
+  public final val us: kotlin/UShort /* = UShort0^ */
+    public final get
+
+  // module name: test-module
+}
+// AnnotationWithQualifiedExpressionInArgumentKt.class
+// ------------------------------------------
+package {
+
+  public typealias Byte0 = kotlin/Byte /* = kotlin/Byte */
+
+  public typealias Double0 = kotlin/Double /* = kotlin/Double */
+
+  public typealias Float0 = kotlin/Float /* = kotlin/Float */
+
+  public typealias Int0 = kotlin/Int /* = kotlin/Int */
+
+  public typealias Long0 = kotlin/Long /* = kotlin/Long */
+
+  public typealias Short0 = kotlin/Short /* = kotlin/Short */
+
+  public typealias UByte0 = kotlin/UByte /* = kotlin/UByte */
+
+  public typealias UInt0 = kotlin/UInt /* = kotlin/UInt */
+
+  public typealias ULong0 = kotlin/ULong /* = kotlin/ULong */
+
+  public typealias UShort0 = kotlin/UShort /* = kotlin/UShort */
+
+  // module name: test-module
+}
+// C.class
+// ------------------------------------------
+public final class C : kotlin/Any {
+
+  // signature: <init>()V
+  public constructor()
+
+  // signature: maxValues()V
+  public final fun maxValues(): @A(b = 127.toByte(), s = 32767.toShort(), i = 2147483647, f = 3.4028235E38f, j = 9223372036854775807L, d = 1.7976931348623157E308, ui = 4294967295u, ub = 255.toUByte(), us = 65535.toUShort(), ul = 18446744073709551615uL) kotlin/Unit
+
+  // signature: minValues()V
+  public final fun minValues(): @A(b = -128.toByte(), s = -32768.toShort(), i = -2147483648, f = 1.4E-45f, j = -9223372036854775808L, d = 4.9E-324, ui = 0u, ub = 0.toUByte(), us = 0.toUShort(), ul = 0uL) kotlin/Unit
+
+  // module name: test-module
+}
+// D.class
+// ------------------------------------------
+public final class D : kotlin/Any {
+
+  // signature: <init>()V
+  public constructor()
+
+  // signature: maxValues()V
+  public final fun maxValues(): @Aliased(b = 127.toByte(), s = 32767.toShort(), i = 2147483647, f = 3.4028235E38f, j = 9223372036854775807L, d = 1.7976931348623157E308, ui = 4294967295u, ub = 255.toUByte(), us = 65535.toUShort(), ul = 18446744073709551615uL) kotlin/Unit
+
+  // signature: minValues()V
+  public final fun minValues(): @Aliased(b = -128.toByte(), s = -32768.toShort(), i = -2147483648, f = 1.4E-45f, j = -9223372036854775808L, d = 4.9E-324, ui = 0u, ub = 0.toUByte(), us = 0.toUShort(), ul = 0uL) kotlin/Unit
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    AnnotationWithQualifiedExpressionInArgumentKt
+  }
+}

@@ -23,7 +23,9 @@ class FirJvmConstDeserializer(
     private val binaryClass: KotlinJvmBinaryClass,
     protocol: SerializerExtensionProtocol,
 ) : FirConstDeserializer(session, protocol) {
-    override fun loadConstant(propertyProto: ProtoBuf.Property, callableId: CallableId, nameResolver: NameResolver): FirExpression? {
+    override fun loadConstant(
+        propertyProto: ProtoBuf.Property, callableId: CallableId, nameResolver: NameResolver, isUnsigned: Boolean,
+    ): FirExpression? {
         if (!Flags.HAS_CONSTANT.get(propertyProto.flags)) return null
         constantCache[callableId]?.let { return it }
 
@@ -32,7 +34,7 @@ class FirJvmConstDeserializer(
 
             override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor? {
                 if (initializer != null) {
-                    val constant = buildFirConstant(null, initializer, desc, nameResolver)
+                    val constant = buildFirConstant(null, initializer, desc, nameResolver, isUnsigned)
                     constant?.let { constantCache[callableId.replaceName(name)] = it }
                 }
                 return null

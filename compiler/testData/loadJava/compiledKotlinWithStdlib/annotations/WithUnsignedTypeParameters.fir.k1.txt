@@ -1,13 +1,13 @@
-public final const val ubyteConst: R|kotlin/UByte| = Byte(10)
+public final const val ubyteConst: R|kotlin/UByte| = UByte(10)
     public get(): R|kotlin/UByte|
 
-public final const val uintConst: R|kotlin/UInt| = Int(30)
+public final const val uintConst: R|kotlin/UInt| = UInt(30)
     public get(): R|kotlin/UInt|
 
-public final const val ulongConst: R|kotlin/ULong| = Long(40)
+public final const val ulongConst: R|kotlin/ULong| = ULong(40)
     public get(): R|kotlin/ULong|
 
-public final const val ushortConst: R|kotlin/UShort| = Short(20)
+public final const val ushortConst: R|kotlin/UShort| = UShort(20)
     public get(): R|kotlin/UShort|
 
 public final class A : R|kotlin/Any| {
