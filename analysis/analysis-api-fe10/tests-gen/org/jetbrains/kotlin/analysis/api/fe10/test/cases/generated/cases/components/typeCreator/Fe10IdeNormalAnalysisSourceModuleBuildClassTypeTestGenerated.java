@@ -40,12 +40,12 @@ public class Fe10IdeNormalAnalysisSourceModuleBuildClassTypeTestGenerated extend
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInClassType() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeCreator/classType"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unresolved.kt")
   public void testUnresolved() {
     runTest("analysis/analysis-api/testData/components/typeCreator/classType/unresolved.kt");

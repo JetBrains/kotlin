@@ -40,96 +40,96 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiKtTypeByPsiTypeProvid
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInAsKtType() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("anonym.kt")
   public void testAnonym() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/anonym.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("extends.kt")
   public void testExtends() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/extends.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("methodTypeParameterWithKotlinUseSite.kt")
   public void testMethodTypeParameterWithKotlinUseSite() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/methodTypeParameterWithKotlinUseSite.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("methodTypeParameterWithMethodUseSite.kt")
   public void testMethodTypeParameterWithMethodUseSite() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/methodTypeParameterWithMethodUseSite.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("methodTypeParameterWithTypeParameterUseSite.kt")
   public void testMethodTypeParameterWithTypeParameterUseSite() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/methodTypeParameterWithTypeParameterUseSite.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("methodTypeParameters.kt")
   public void testMethodTypeParameters() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/methodTypeParameters.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedGenerics.kt")
   public void testNestedGenerics() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/nestedGenerics.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nullableString.kt")
   public void testNullableString() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/nullableString.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("primitive.kt")
   public void testPrimitive() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/primitive.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeAnnotation.kt")
   public void testTypeAnnotation() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeAnnotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeAnnotationOnString.kt")
   public void testTypeAnnotationOnString() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeAnnotationOnString.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameterWithKotlinUseSite.kt")
   public void testTypeParameterWithKotlinUseSite() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeParameterWithKotlinUseSite.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameterWithMethodUseSite.kt")
   public void testTypeParameterWithMethodUseSite() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeParameterWithMethodUseSite.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameters.kt")
   public void testTypeParameters() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeParameters.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameters2.kt")
   public void testTypeParameters2() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeParameters2.kt");

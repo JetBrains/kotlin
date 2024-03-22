@@ -19,54 +19,54 @@ import java.util.regex.Pattern;
 @TestMetadata("js/js.translator/testData/incremental/invalidationWithPL")
 @TestDataPath("$PROJECT_ROOT")
 public class JsIrInvalidationPerModuleWithPLTestGenerated extends AbstractJsIrInvalidationPerModuleWithPLTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInInvalidationWithPL() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidationWithPL"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR, false);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("changeFunctionSignature")
   public void testChangeFunctionSignature() {
     runTest("js/js.translator/testData/incremental/invalidationWithPL/changeFunctionSignature/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("interfaceBecomeClass")
   public void testInterfaceBecomeClass() {
     runTest("js/js.translator/testData/incremental/invalidationWithPL/interfaceBecomeClass/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("removeFunction")
   public void testRemoveFunction() {
     runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunction/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("removeFunctionFromBlock")
   public void testRemoveFunctionFromBlock() {
     runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromBlock/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("removeFunctionFromChainCall")
   public void testRemoveFunctionFromChainCall() {
     runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromChainCall/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("removeFunctionFromElvis")
   public void testRemoveFunctionFromElvis() {
     runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromElvis/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("removeFunctionFromInline")
   public void testRemoveFunctionFromInline() {
     runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromInline/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("removeInlineFunction")
   public void testRemoveInlineFunction() {
     runTest("js/js.translator/testData/incremental/invalidationWithPL/removeInlineFunction/");

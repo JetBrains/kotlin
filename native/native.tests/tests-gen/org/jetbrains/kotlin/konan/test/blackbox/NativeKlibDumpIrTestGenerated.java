@@ -18,42 +18,42 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/testData/klib/dump-ir")
 @TestDataPath("$PROJECT_ROOT")
 public class NativeKlibDumpIrTestGenerated extends AbstractNativeKlibDumpIrTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInDump_ir() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/dump-ir"), Pattern.compile("^([^_](.+)).kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("class.kt")
   public void testClass() {
     runTest("native/native.tests/testData/klib/dump-ir/class.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("constructor.kt")
   public void testConstructor() {
     runTest("native/native.tests/testData/klib/dump-ir/constructor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enum.kt")
   public void testEnum() {
     runTest("native/native.tests/testData/klib/dump-ir/enum.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("field.kt")
   public void testField() {
     runTest("native/native.tests/testData/klib/dump-ir/field.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fun.kt")
   public void testFun() {
     runTest("native/native.tests/testData/klib/dump-ir/fun.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typealias.kt")
   public void testTypealias() {
     runTest("native/native.tests/testData/klib/dump-ir/typealias.kt");

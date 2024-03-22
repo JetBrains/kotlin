@@ -41,7 +41,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCallTestGenerated exte
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInResolveCall() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
@@ -50,7 +50,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCallTestGenerated exte
   @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/assignments")
   @TestDataPath("$PROJECT_ROOT")
   public class Assignments {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInAssignments() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/assignments"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -60,7 +60,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCallTestGenerated exte
   @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences")
   @TestDataPath("$PROJECT_ROOT")
   public class CallableReferences {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInCallableReferences() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReferences"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -70,7 +70,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCallTestGenerated exte
   @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode")
   @TestDataPath("$PROJECT_ROOT")
   public class InvalidCode {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInInvalidCode() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -80,7 +80,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCallTestGenerated exte
   @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/invokeOnObjects")
   @TestDataPath("$PROJECT_ROOT")
   public class InvokeOnObjects {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInInvokeOnObjects() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/invokeOnObjects"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -90,7 +90,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCallTestGenerated exte
   @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/nonCalls")
   @TestDataPath("$PROJECT_ROOT")
   public class NonCalls {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInNonCalls() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/nonCalls"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -100,7 +100,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCallTestGenerated exte
   @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/withTestCompilerPluginEnabled")
   @TestDataPath("$PROJECT_ROOT")
   public class WithTestCompilerPluginEnabled {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }

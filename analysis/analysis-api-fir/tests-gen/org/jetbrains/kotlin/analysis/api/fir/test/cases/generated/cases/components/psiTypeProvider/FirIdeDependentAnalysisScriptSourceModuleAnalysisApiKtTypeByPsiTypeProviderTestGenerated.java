@@ -40,7 +40,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleAnalysisApiKtTypeByPsiType
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInAsKtType() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

@@ -18,24 +18,24 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/testData/CInterop/KT-39120/defs")
 @TestDataPath("$PROJECT_ROOT")
 public class CInteropKT39120TestGenerated extends AbstractNativeCInteropKT39120Test {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInDefs() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CInterop/KT-39120/defs"), Pattern.compile("^([^_](.+))$"), null, false);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("ForwardEnum")
   public void testForwardEnum() {
     runTest("native/native.tests/testData/CInterop/KT-39120/defs/ForwardEnum/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("interModuleImport")
   public void testInterModuleImport() {
     runTest("native/native.tests/testData/CInterop/KT-39120/defs/interModuleImport/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("KT-39120")
   public void testKT_39120() {
     runTest("native/native.tests/testData/CInterop/KT-39120/defs/KT-39120/");

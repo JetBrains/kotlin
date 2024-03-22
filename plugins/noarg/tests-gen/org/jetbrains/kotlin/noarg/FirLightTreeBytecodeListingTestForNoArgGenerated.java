@@ -19,60 +19,60 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/noarg/testData/bytecodeListing")
 @TestDataPath("$PROJECT_ROOT")
 public class FirLightTreeBytecodeListingTestForNoArgGenerated extends AbstractFirLightTreeBytecodeListingTestForNoArg {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInBytecodeListing() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/noarg/testData/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annoOnNotClass.kt")
   public void testAnnoOnNotClass() {
     runTest("plugins/noarg/testData/bytecodeListing/annoOnNotClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("constructorVisibility.kt")
   public void testConstructorVisibility() {
     runTest("plugins/noarg/testData/bytecodeListing/constructorVisibility.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("defaultParameters.kt")
   public void testDefaultParameters() {
     runTest("plugins/noarg/testData/bytecodeListing/defaultParameters.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inherited.kt")
   public void testInherited() {
     runTest("plugins/noarg/testData/bytecodeListing/inherited.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedClass.kt")
   public void testNestedClass() {
     runTest("plugins/noarg/testData/bytecodeListing/nestedClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("noNoArg.kt")
   public void testNoNoArg() {
     runTest("plugins/noarg/testData/bytecodeListing/noNoArg.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("severalNoArg.kt")
   public void testSeveralNoArg() {
     runTest("plugins/noarg/testData/bytecodeListing/severalNoArg.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simple.kt")
   public void testSimple() {
     runTest("plugins/noarg/testData/bytecodeListing/simple.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("superTypes.kt")
   public void testSuperTypes() {
     runTest("plugins/noarg/testData/bytecodeListing/superTypes.kt");

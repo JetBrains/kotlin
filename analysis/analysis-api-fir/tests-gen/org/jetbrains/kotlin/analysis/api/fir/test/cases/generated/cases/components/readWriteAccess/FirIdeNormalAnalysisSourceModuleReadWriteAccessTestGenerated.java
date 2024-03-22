@@ -40,42 +40,42 @@ public class FirIdeNormalAnalysisSourceModuleReadWriteAccessTestGenerated extend
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInReadWriteAccess() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionInfoProvider/readWriteAccess"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("assignment.kt")
   public void testAssignment() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/readWriteAccess/assignment.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("assignmentPlusEq.kt")
   public void testAssignmentPlusEq() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/readWriteAccess/assignmentPlusEq.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("namedArguments.kt")
   public void testNamedArguments() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/readWriteAccess/namedArguments.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("readReference.kt")
   public void testReadReference() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/readWriteAccess/readReference.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("readReferenceInParenthesis.kt")
   public void testReadReferenceInParenthesis() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/readWriteAccess/readReferenceInParenthesis.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unary.kt")
   public void testUnary() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/readWriteAccess/unary.kt");

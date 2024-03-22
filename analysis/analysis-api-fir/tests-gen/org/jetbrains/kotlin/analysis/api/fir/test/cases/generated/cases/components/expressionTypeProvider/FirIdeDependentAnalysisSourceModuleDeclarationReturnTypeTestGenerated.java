@@ -40,72 +40,72 @@ public class FirIdeDependentAnalysisSourceModuleDeclarationReturnTypeTestGenerat
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInDeclarationReturnType() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("declarationInPrimaryConstructor.kt")
   public void testDeclarationInPrimaryConstructor() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/declarationInPrimaryConstructor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegateProperties.kt")
   public void testDelegateProperties() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/delegateProperties.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionWithoutParameterList.kt")
   public void testFunctionWithoutParameterList() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/functionWithoutParameterList.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("funtionType.kt")
   public void testFuntionType() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/funtionType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localDeclarations.kt")
   public void testLocalDeclarations() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/localDeclarations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("overriddenMember.kt")
   public void testOverriddenMember() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/overriddenMember.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("platformType.kt")
   public void testPlatformType() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/platformType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyAccessor.kt")
   public void testPropertyAccessor() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/propertyAccessor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simpleDeclaration.kt")
   public void testSimpleDeclaration() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/simpleDeclaration.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameters.kt")
   public void testTypeParameters() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/typeParameters.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("varargParam.kt")
   public void testVarargParam() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/varargParam.kt");

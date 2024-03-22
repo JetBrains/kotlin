@@ -20,96 +20,96 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib")
 @TestDataPath("$PROJECT_ROOT")
 public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractFirLightTreeJsDiagnosticTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInTestsWithJsStdLib() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("candidateNotSuccessfulButNoContradiction.kt")
   public void testCandidateNotSuccessfulButNoContradiction() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/candidateNotSuccessfulButNoContradiction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("dynamicUnresolved.kt")
   public void testDynamicUnresolved() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicUnresolved.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("externalInterfaceClassLiteral.kt")
   public void testExternalInterfaceClassLiteral() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/externalInterfaceClassLiteral.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("externalTypeInheritsExternalTypeViaTypeAlias.kt")
   public void testExternalTypeInheritsExternalTypeViaTypeAlias() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/externalTypeInheritsExternalTypeViaTypeAlias.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("funConstructorCallJS.kt")
   public void testFunConstructorCallJS() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/funConstructorCallJS.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("implementingFunction.kt")
   public void testImplementingFunction() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/implementingFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("jsExternalArgument.kt")
   public void testJsExternalArgument() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsExternalArgument.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("jsExternalInheritorsOnly.kt")
   public void testJsExternalInheritorsOnly() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsExternalInheritorsOnly.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("jsExternalSuperclassWithoutArguments.kt")
   public void testJsExternalSuperclassWithoutArguments() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsExternalSuperclassWithoutArguments.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localClassMetadata.kt")
   public void testLocalClassMetadata() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/localClassMetadata.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("noImpl.kt")
   public void testNoImpl() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/noImpl.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("platformDependent.kt")
   public void testPlatformDependent() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/platformDependent.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("runtimeAnnotations.kt")
   public void testRuntimeAnnotations() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/runtimeAnnotations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unsafeCastFunctionOnDynamicType.kt")
   public void testUnsafeCastFunctionOnDynamicType() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/unsafeCastFunctionOnDynamicType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("wrongMultipleInheritance.kt")
   public void testWrongMultipleInheritance() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/wrongMultipleInheritance.kt");
@@ -119,18 +119,18 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/classLiteral")
   @TestDataPath("$PROJECT_ROOT")
   public class ClassLiteral {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInClassLiteral() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/classLiteral"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrays_after.kt")
     public void testArrays_after() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/classLiteral/arrays_after.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrays_before.kt")
     public void testArrays_before() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/classLiteral/arrays_before.kt");
@@ -141,318 +141,318 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes")
   @TestDataPath("$PROJECT_ROOT")
   public class DynamicTypes {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInDynamicTypes() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("allowedDynamicFunctionType.kt")
     public void testAllowedDynamicFunctionType() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/allowedDynamicFunctionType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("assignment.kt")
     public void testAssignment() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/assignment.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("block.kt")
     public void testBlock() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/block.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callableReferences.kt")
     public void testCallableReferences() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/callableReferences.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("capturedDynamic.kt")
     public void testCapturedDynamic() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/capturedDynamic.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("capturedDynamicNI.kt")
     public void testCapturedDynamicNI() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/capturedDynamicNI.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classDelegateBy.kt")
     public void testClassDelegateBy() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/classDelegateBy.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("comparisonToNull.kt")
     public void testComparisonToNull() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/comparisonToNull.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("conditions.kt")
     public void testConditions() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/conditions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("conventions.kt")
     public void testConventions() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/conventions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("destructuring.kt")
     public void testDestructuring() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/destructuring.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("dynamicCalls.kt")
     public void testDynamicCalls() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/dynamicCalls.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("dynamicCallsWithLambdas.kt")
     public void testDynamicCallsWithLambdas() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/dynamicCallsWithLambdas.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("dynamicCastTarget.kt")
     public void testDynamicCastTarget() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/dynamicCastTarget.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("dynamicExtension.kt")
     public void testDynamicExtension() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/dynamicExtension.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("dynamicExtensionCallableReference.kt")
     public void testDynamicExtensionCallableReference() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/dynamicExtensionCallableReference.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("dynamicSafeCalls.kt")
     public void testDynamicSafeCalls() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/dynamicSafeCalls.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("dynamicVsGeneric.kt")
     public void testDynamicVsGeneric() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/dynamicVsGeneric.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionVals.kt")
     public void testExtensionVals() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/extensionVals.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionVars.kt")
     public void testExtensionVars() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/extensionVars.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensions.kt")
     public void testExtensions() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/extensions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionsToDynamic.kt")
     public void testExtensionsToDynamic() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/extensionsToDynamic.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("implicitDynamicReceiver.kt")
     public void testImplicitDynamicReceiver() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/implicitDynamicReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inExpression.kt")
     public void testInExpression() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/inExpression.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("indexedAccess.kt")
     public void testIndexedAccess() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/indexedAccess.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inference.kt")
     public void testInference() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/inference.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt57960.kt")
     public void testKt57960() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/kt57960.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("membersOfAny.kt")
     public void testMembersOfAny() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/membersOfAny.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("namedArguments.kt")
     public void testNamedArguments() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/namedArguments.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("noUnsupportedInLocals.kt")
     public void testNoUnsupportedInLocals() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/noUnsupportedInLocals.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nullable.kt")
     public void testNullable() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/nullable.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectAccessInLambdaWithDynamicReceiver.kt")
     public void testObjectAccessInLambdaWithDynamicReceiver() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/objectAccessInLambdaWithDynamicReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overloading.kt")
     public void testOverloading() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/overloading.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overloadingAmbiguity.kt")
     public void testOverloadingAmbiguity() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/overloadingAmbiguity.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overrides.kt")
     public void testOverrides() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/overrides.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyDelegateBy.kt")
     public void testPropertyDelegateBy() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/propertyDelegateBy.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("protected.kt")
     public void testProtected() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/protected.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("rangeExpression.kt")
     public void testRangeExpression() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/rangeExpression.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("rangeUntilExpression.kt")
     public void testRangeUntilExpression() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/rangeUntilExpression.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("reified.kt")
     public void testReified() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/reified.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("setOperatorOnDynamic.kt")
     public void testSetOperatorOnDynamic() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/setOperatorOnDynamic.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("smartCast.kt")
     public void testSmartCast() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/smartCast.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("spreadOperator.kt")
     public void testSpreadOperator() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/spreadOperator.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("staticCallsInDynamicContext.kt")
     public void testStaticCallsInDynamicContext() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/staticCallsInDynamicContext.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("staticExtensions.kt")
     public void testStaticExtensions() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/staticExtensions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("substitution.kt")
     public void testSubstitution() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/substitution.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("supertypesAndBounds.kt")
     public void testSupertypesAndBounds() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/supertypesAndBounds.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typealiasExpandingToDynamic.kt")
     public void testTypealiasExpandingToDynamic() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/typealiasExpandingToDynamic.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typealiasWithAnnotatedDynamic.kt")
     public void testTypealiasWithAnnotatedDynamic() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/typealiasWithAnnotatedDynamic.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typealiasWithAnnotatedDynamicInAbstractClass.kt")
     public void testTypealiasWithAnnotatedDynamicInAbstractClass() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/typealiasWithAnnotatedDynamicInAbstractClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typealiasWithDynamic.kt")
     public void testTypealiasWithDynamic() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/typealiasWithDynamic.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("varargs.kt")
     public void testVarargs() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/varargs.kt");
@@ -463,84 +463,84 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/export")
   @TestDataPath("$PROJECT_ROOT")
   public class Export {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInExport() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/export"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extendingNonExportedType.kt")
     public void testExtendingNonExportedType() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/extendingNonExportedType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("genericClassWithInner.kt")
     public void testGenericClassWithInner() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/genericClassWithInner.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsExportOnNestedDeclarations.kt")
     public void testJsExportOnNestedDeclarations() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/jsExportOnNestedDeclarations.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nonConsumableIdentifiers.kt")
     public void testNonConsumableIdentifiers() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/nonConsumableIdentifiers.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nonConsumableIdentifiersInExportedFile.kt")
     public void testNonConsumableIdentifiersInExportedFile() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/nonConsumableIdentifiersInExportedFile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("primitiveNullableTypes.kt")
     public void testPrimitiveNullableTypes() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/primitiveNullableTypes.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("secondaryConstructorWithoutJsName.kt")
     public void testSecondaryConstructorWithoutJsName() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/secondaryConstructorWithoutJsName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("secondaryConstructorWithoutJsNameInExportedFile.kt")
     public void testSecondaryConstructorWithoutJsNameInExportedFile() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/secondaryConstructorWithoutJsNameInExportedFile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unexportableTypesInSignature.kt")
     public void testUnexportableTypesInSignature() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/unexportableTypesInSignature.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unexportableTypesInTypeParameters.kt")
     public void testUnexportableTypesInTypeParameters() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/unexportableTypesInTypeParameters.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("wrongExportedDeclaration.kt")
     public void testWrongExportedDeclaration() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/wrongExportedDeclaration.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("wrongExportedDeclarationInExportedFile.kt")
     public void testWrongExportedDeclarationInExportedFile() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/wrongExportedDeclarationInExportedFile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("wrongExportedDeclarationInExportedFileWhenIgnored.kt")
     public void testWrongExportedDeclarationInExportedFileWhenIgnored() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/wrongExportedDeclarationInExportedFileWhenIgnored.kt");
@@ -551,12 +551,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/inline")
   @TestDataPath("$PROJECT_ROOT")
   public class Inline {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInInline() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/inline"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("Reified.kt")
     public void testReified() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/inline/Reified.kt");
@@ -567,12 +567,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jvmDeclarations")
   @TestDataPath("$PROJECT_ROOT")
   public class JvmDeclarations {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInJvmDeclarations() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/jvmDeclarations"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("cloneable.kt")
     public void testCloneable() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/jvmDeclarations/cloneable.kt");
@@ -583,60 +583,60 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module")
   @TestDataPath("$PROJECT_ROOT")
   public class Module {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInModule() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/module"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("dualModuleFromUmd.kt")
     public void testDualModuleFromUmd() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/module/dualModuleFromUmd.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("incompleteReifiedArg.kt")
     public void testIncompleteReifiedArg() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/module/incompleteReifiedArg.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsModuleNonExternal.kt")
     public void testJsModuleNonExternal() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/module/jsModuleNonExternal.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsModuleWithoutParameters.kt")
     public void testJsModuleWithoutParameters() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/module/jsModuleWithoutParameters.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsVarProhibited.kt")
     public void testJsVarProhibited() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/module/jsVarProhibited.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedProhibited.kt")
     public void testNestedProhibited() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/module/nestedProhibited.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("prohibitedOnNonNative.kt")
     public void testProhibitedOnNonNative() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/module/prohibitedOnNonNative.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("wrongCallToModule.kt")
     public void testWrongCallToModule() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/module/wrongCallToModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("wrongCallToNonModule.kt")
     public void testWrongCallToNonModule() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/module/wrongCallToNonModule.kt");
@@ -647,264 +647,264 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name")
   @TestDataPath("$PROJECT_ROOT")
   public class Name {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInName() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/name"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("bridgeClash.kt")
     public void testBridgeClash() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/bridgeClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("builtinClash.kt")
     public void testBuiltinClash() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/builtinClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classAndFunction.kt")
     public void testClassAndFunction() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/classAndFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classAndTypealias.kt")
     public void testClassAndTypealias() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/classAndTypealias.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classInheritance.kt")
     public void testClassInheritance() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/classInheritance.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classInheritanceExtensions.kt")
     public void testClassInheritanceExtensions() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/classInheritanceExtensions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classLevelMethodAndProperty.kt")
     public void testClassLevelMethodAndProperty() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/classLevelMethodAndProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classMembers.kt")
     public void testClassMembers() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/classMembers.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("companionInheritsOwnerClass.kt")
     public void testCompanionInheritsOwnerClass() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/companionInheritsOwnerClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("conflictingNamesFromSuperclass.kt")
     public void testConflictingNamesFromSuperclass() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/conflictingNamesFromSuperclass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constructorsWithSameJsName.kt")
     public void testConstructorsWithSameJsName() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/constructorsWithSameJsName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("declarationClash.kt")
     public void testDeclarationClash() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/declarationClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionPropertyAndMethod.kt")
     public void testExtensionPropertyAndMethod() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/extensionPropertyAndMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionPropertyAndMethodWithJsName.kt")
     public void testExtensionPropertyAndMethodWithJsName() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/extensionPropertyAndMethodWithJsName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalClassInheritance.kt")
     public void testExternalClassInheritance() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/externalClassInheritance.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("illegalName.kt")
     public void testIllegalName() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/illegalName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("illegalNameIR.kt")
     public void testIllegalNameIR() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/illegalNameIR.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("illegalPackageName.kt")
     public void testIllegalPackageName() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/illegalPackageName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("IntersectionInheritance.kt")
     public void testIntersectionInheritance() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/IntersectionInheritance.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsNameAndOverridden.kt")
     public void testJsNameAndOverridden() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameAndOverridden.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsNameClash.kt")
     public void testJsNameClash() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsNameClashWithDefault.kt")
     public void testJsNameClashWithDefault() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameClashWithDefault.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsNameMissingOnAccessors.kt")
     public void testJsNameMissingOnAccessors() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameMissingOnAccessors.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsNameOnAccessors.kt")
     public void testJsNameOnAccessors() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameOnAccessors.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsNameOnOverride.kt")
     public void testJsNameOnOverride() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameOnOverride.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsNameOnPropertyAndAccessor.kt")
     public void testJsNameOnPropertyAndAccessor() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameOnPropertyAndAccessor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsNamePrihibitedOnPrimaryConstructor.kt")
     public void testJsNamePrihibitedOnPrimaryConstructor() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNamePrihibitedOnPrimaryConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsNameProhibitedOnExtensionProperty.kt")
     public void testJsNameProhibitedOnExtensionProperty() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameProhibitedOnExtensionProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsNameUseTargetOnProperty.kt")
     public void testJsNameUseTargetOnProperty() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameUseTargetOnProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsNameWithoutParameter.kt")
     public void testJsNameWithoutParameter() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameWithoutParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("legalPackageName.kt")
     public void testLegalPackageName() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/legalPackageName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("methodAndMethod.kt")
     public void testMethodAndMethod() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/methodAndMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nameSwapInOverride.kt")
     public void testNameSwapInOverride() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/nameSwapInOverride.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nonASCIIName.kt")
     public void testNonASCIIName() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/nonASCIIName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overrideOverloadedNativeFunction.kt")
     public void testOverrideOverloadedNativeFunction() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/overrideOverloadedNativeFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("packageAndMethod.kt")
     public void testPackageAndMethod() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/packageAndMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("packageAndProperty.kt")
     public void testPackageAndProperty() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/packageAndProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateJsNameClash.kt")
     public void testPrivateJsNameClash() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/privateJsNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyAndMethodInImplementor.kt")
     public void testPropertyAndMethodInImplementor() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/propertyAndMethodInImplementor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyAndMethodInSubclass.kt")
     public void testPropertyAndMethodInSubclass() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/propertyAndMethodInSubclass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelDeclarations.kt")
     public void testTopLevelDeclarations() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/topLevelDeclarations.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelMethodAndJsNameConstructor.kt")
     public void testTopLevelMethodAndJsNameConstructor() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/topLevelMethodAndJsNameConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelMethodAndProperty.kt")
     public void testTopLevelMethodAndProperty() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/topLevelMethodAndProperty.kt");
@@ -915,162 +915,162 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native")
   @TestDataPath("$PROJECT_ROOT")
   public class Native {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInNative() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("anonymousInitializer.kt")
     public void testAnonymousInitializer() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/anonymousInitializer.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("body.kt")
     public void testBody() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/body.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegatedConstructorCall.kt")
     public void testDelegatedConstructorCall() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/delegatedConstructorCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegation.kt")
     public void testDelegation() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/delegation.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("enumEntry.kt")
     public void testEnumEntry() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/enumEntry.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionFunctionAndProperty.kt")
     public void testExtensionFunctionAndProperty() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/extensionFunctionAndProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionFunctionArgumentOrReturnType.kt")
     public void testExtensionFunctionArgumentOrReturnType() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/extensionFunctionArgumentOrReturnType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalFunInterface.kt")
     public void testExternalFunInterface() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/externalFunInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalInterfaceNested.kt")
     public void testExternalInterfaceNested() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/externalInterfaceNested.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inheritance.kt")
     public void testInheritance() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/inheritance.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inline.kt")
     public void testInline() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/inline.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineClass.kt")
     public void testInlineClass() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/inlineClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineClassAsParameterOrReturnTypeWhenPropertyParametersAllowed.kt.kt")
     public void testInlineClassAsParameterOrReturnTypeWhenPropertyParametersAllowed_kt() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/inlineClassAsParameterOrReturnTypeWhenPropertyParametersAllowed.kt.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineClassAsParameterOrReturnTypeWithPropertyParameters_allowed.kt.kt")
     public void testInlineClassAsParameterOrReturnTypeWithPropertyParameters_allowed_kt() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/inlineClassAsParameterOrReturnTypeWithPropertyParameters_allowed.kt.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineClassAsParameterOrReturnType_allowed.kt.kt")
     public void testInlineClassAsParameterOrReturnType_allowed_kt() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/inlineClassAsParameterOrReturnType_allowed.kt.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineClassAsParameterOrReturnType.kt.kt")
     public void testInlineClassAsParameterOrReturnType_kt() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/inlineClassAsParameterOrReturnType.kt.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineClassWithAllowedPropertyParameter.kt")
     public void testInlineClassWithAllowedPropertyParameter() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/inlineClassWithAllowedPropertyParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineExtensionToNative.kt")
     public void testInlineExtensionToNative() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/inlineExtensionToNative.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("innerClass.kt")
     public void testInnerClass() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/innerClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nested.kt")
     public void testNested() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nested.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nonAbstractMembersOfInterface.kt")
     public void testNonAbstractMembersOfInterface() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nonAbstractMembersOfInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overrideOptionalParam.kt")
     public void testOverrideOptionalParam() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/overrideOptionalParam.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateMembers.kt")
     public void testPrivateMembers() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/privateMembers.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyParameter.kt")
     public void testPropertyParameter() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/propertyParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyParameterWhenItsAllowed.kt")
     public void testPropertyParameterWhenItsAllowed() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/propertyParameterWhenItsAllowed.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("wrongTarget.kt")
     public void testWrongTarget() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/wrongTarget.kt");
@@ -1080,60 +1080,60 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeGetter")
     @TestDataPath("$PROJECT_ROOT")
     public class NativeGetter {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInNativeGetter() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeGetter"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onLocalExtensionFun.kt")
       public void testOnLocalExtensionFun() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeGetter/onLocalExtensionFun.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onLocalNonNativeClassMembers.kt")
       public void testOnLocalNonNativeClassMembers() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeGetter/onLocalNonNativeClassMembers.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onLocalOtherDeclarations.kt")
       public void testOnLocalOtherDeclarations() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeGetter/onLocalOtherDeclarations.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onNativeClassMembers.kt")
       public void testOnNativeClassMembers() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeGetter/onNativeClassMembers.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onNestedDeclarationsInsideNativeClass.kt")
       public void testOnNestedDeclarationsInsideNativeClass() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeGetter/onNestedDeclarationsInsideNativeClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onNestedDeclarationsInsideNonNativeClass.kt")
       public void testOnNestedDeclarationsInsideNonNativeClass() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeGetter/onNestedDeclarationsInsideNonNativeClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onNonNativeClassMembers.kt")
       public void testOnNonNativeClassMembers() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeGetter/onNonNativeClassMembers.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onToplevelExtensionFun.kt")
       public void testOnToplevelExtensionFun() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeGetter/onToplevelExtensionFun.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onToplevelOtherDeclarations.kt")
       public void testOnToplevelOtherDeclarations() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeGetter/onToplevelOtherDeclarations.kt");
@@ -1144,60 +1144,60 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeInvoke")
     @TestDataPath("$PROJECT_ROOT")
     public class NativeInvoke {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInNativeInvoke() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeInvoke"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onLocalExtensionFun.kt")
       public void testOnLocalExtensionFun() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeInvoke/onLocalExtensionFun.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onLocalNonNativeClassMembers.kt")
       public void testOnLocalNonNativeClassMembers() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeInvoke/onLocalNonNativeClassMembers.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onLocalOtherDeclarations.kt")
       public void testOnLocalOtherDeclarations() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeInvoke/onLocalOtherDeclarations.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onNativeClassMembers.kt")
       public void testOnNativeClassMembers() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeInvoke/onNativeClassMembers.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onNestedDeclarationsInsideNativeClass.kt")
       public void testOnNestedDeclarationsInsideNativeClass() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeInvoke/onNestedDeclarationsInsideNativeClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onNestedDeclarationsInsideNonNativeClass.kt")
       public void testOnNestedDeclarationsInsideNonNativeClass() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeInvoke/onNestedDeclarationsInsideNonNativeClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onNonNativeClassMembers.kt")
       public void testOnNonNativeClassMembers() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeInvoke/onNonNativeClassMembers.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onToplevelExtensionFun.kt")
       public void testOnToplevelExtensionFun() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeInvoke/onToplevelExtensionFun.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onToplevelOtherDeclarations.kt")
       public void testOnToplevelOtherDeclarations() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeInvoke/onToplevelOtherDeclarations.kt");
@@ -1208,60 +1208,60 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeSetter")
     @TestDataPath("$PROJECT_ROOT")
     public class NativeSetter {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInNativeSetter() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeSetter"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onLocalExtensionFun.kt")
       public void testOnLocalExtensionFun() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeSetter/onLocalExtensionFun.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onLocalNonNativeClassMembers.kt")
       public void testOnLocalNonNativeClassMembers() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeSetter/onLocalNonNativeClassMembers.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onLocalOtherDeclarations.kt")
       public void testOnLocalOtherDeclarations() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeSetter/onLocalOtherDeclarations.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onNativeClassMembers.kt")
       public void testOnNativeClassMembers() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeSetter/onNativeClassMembers.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onNestedDeclarationsInsideNativeClass.kt")
       public void testOnNestedDeclarationsInsideNativeClass() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeSetter/onNestedDeclarationsInsideNativeClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onNestedDeclarationsInsideNonNativeClass.kt")
       public void testOnNestedDeclarationsInsideNonNativeClass() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeSetter/onNestedDeclarationsInsideNonNativeClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onNonNativeClassMembers.kt")
       public void testOnNonNativeClassMembers() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeSetter/onNonNativeClassMembers.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onToplevelExtensionFun.kt")
       public void testOnToplevelExtensionFun() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeSetter/onToplevelExtensionFun.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onToplevelOtherDeclarations.kt")
       public void testOnToplevelOtherDeclarations() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeSetter/onToplevelOtherDeclarations.kt");
@@ -1272,30 +1272,30 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/optionlBody")
     @TestDataPath("$PROJECT_ROOT")
     public class OptionlBody {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInOptionlBody() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/optionlBody"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("native.kt")
       public void testNative() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/optionlBody/native.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nativeGetter.kt")
       public void testNativeGetter() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/optionlBody/nativeGetter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nativeInvoke.kt")
       public void testNativeInvoke() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/optionlBody/nativeInvoke.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nativeSetter.kt")
       public void testNativeSetter() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/optionlBody/nativeSetter.kt");
@@ -1306,36 +1306,36 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti")
     @TestDataPath("$PROJECT_ROOT")
     public class Rtti {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInRtti() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("castToNativeInterface.kt")
       public void testCastToNativeInterface() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti/castToNativeInterface.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("checkForNativeInterface.kt")
       public void testCheckForNativeInterface() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti/checkForNativeInterface.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nativeInterfaceAsReifiedTypeArgument.kt")
       public void testNativeInterfaceAsReifiedTypeArgument() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti/nativeInterfaceAsReifiedTypeArgument.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nativeInterfaceClassLiteral.kt")
       public void testNativeInterfaceClassLiteral() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti/nativeInterfaceClassLiteral.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenIsNativeInterface.kt")
       public void testWhenIsNativeInterface() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti/whenIsNativeInterface.kt");
@@ -1346,30 +1346,30 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/unusedParam")
     @TestDataPath("$PROJECT_ROOT")
     public class UnusedParam {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInUnusedParam() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/unusedParam"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("native.kt")
       public void testNative() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/unusedParam/native.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nativeGetter.kt")
       public void testNativeGetter() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/unusedParam/nativeGetter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nativeInvoke.kt")
       public void testNativeInvoke() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/unusedParam/nativeInvoke.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nativeSetter.kt")
       public void testNativeSetter() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/unusedParam/nativeSetter.kt");
@@ -1381,18 +1381,18 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/qualifier")
   @TestDataPath("$PROJECT_ROOT")
   public class Qualifier {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInQualifier() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/qualifier"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsQualifierNonExternal.kt")
     public void testJsQualifierNonExternal() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/qualifier/jsQualifierNonExternal.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("wrongQualifier.kt")
     public void testWrongQualifier() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/qualifier/wrongQualifier.kt");
@@ -1403,12 +1403,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/reflection")
   @TestDataPath("$PROJECT_ROOT")
   public class Reflection {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInReflection() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/reflection"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("reflectionApi.kt")
     public void testReflectionApi() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/reflection/reflectionApi.kt");

@@ -40,18 +40,18 @@ public class Fe10IdeNormalAnalysisSourceModuleBuiltInTypeTestGenerated extends A
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInBuiltins() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/builtins"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("any.kt")
   public void testAny() {
     runTest("analysis/analysis-api/testData/types/builtins/any.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("anyWithoutBuiltins.kt")
   public void testAnyWithoutBuiltins() {
     runTest("analysis/analysis-api/testData/types/builtins/anyWithoutBuiltins.kt");

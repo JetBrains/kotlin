@@ -40,54 +40,54 @@ public class FirIdeNormalAnalysisSourceModuleTypeScopeTestGenerated extends Abst
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInTypeScope() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/typeScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("errorType.kt")
   public void testErrorType() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/errorType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("innerClassTypeParamsSubstitution.kt")
   public void testInnerClassTypeParamsSubstitution() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/innerClassTypeParamsSubstitution.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("intList.kt")
   public void testIntList() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/intList.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("outerClassTypeParamsSubstitution.kt")
   public void testOuterClassTypeParamsSubstitution() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/outerClassTypeParamsSubstitution.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("outerTypeParamsSubstitution.kt")
   public void testOuterTypeParamsSubstitution() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/outerTypeParamsSubstitution.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutedTypeFromLib.kt")
   public void testSubstitutedTypeFromLib() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/substitutedTypeFromLib.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParamList.kt")
   public void testTypeParamList() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/typeParamList.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeWithSyntheticProperties.kt")
   public void testTypeWithSyntheticProperties() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/typeWithSyntheticProperties.kt");

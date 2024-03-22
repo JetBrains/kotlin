@@ -18,66 +18,66 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/lombok/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class DiagnosticTestForLombokGenerated extends AbstractDiagnosticTestForLombok {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("accessorsStripPrefixCombined.kt")
   public void testAccessorsStripPrefixCombined() {
     runTest("plugins/lombok/testData/diagnostics/accessorsStripPrefixCombined.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/lombok/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationTypes.kt")
   public void testAnnotationTypes() {
     runTest("plugins/lombok/testData/diagnostics/annotationTypes.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("builderAnnotationArguments.kt")
   public void testBuilderAnnotationArguments() {
     runTest("plugins/lombok/testData/diagnostics/builderAnnotationArguments.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("builderConfig.kt")
   public void testBuilderConfig() {
     runTest("plugins/lombok/testData/diagnostics/builderConfig.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("builderSingularNullability.kt")
   public void testBuilderSingularNullability() {
     runTest("plugins/lombok/testData/diagnostics/builderSingularNullability.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("clashAccessors.kt")
   public void testClashAccessors() {
     runTest("plugins/lombok/testData/diagnostics/clashAccessors.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("getters.kt")
   public void testGetters() {
     runTest("plugins/lombok/testData/diagnostics/getters.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("gettersClassLevel.kt")
   public void testGettersClassLevel() {
     runTest("plugins/lombok/testData/diagnostics/gettersClassLevel.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("setters.kt")
   public void testSetters() {
     runTest("plugins/lombok/testData/diagnostics/setters.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("settersClassLevel.kt")
   public void testSettersClassLevel() {
     runTest("plugins/lombok/testData/diagnostics/settersClassLevel.kt");

@@ -40,72 +40,72 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSymbolByFqName() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByFqName"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("class.kt")
   public void testClass() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/class.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classFromJdk.kt")
   public void testClassFromJdk() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/classFromJdk.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enumEntry.kt")
   public void testEnumEntry() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/enumEntry.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fileWalkDirectionEnum.kt")
   public void testFileWalkDirectionEnum() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/fileWalkDirectionEnum.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("iterator.kt")
   public void testIterator() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/iterator.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kclass.kt")
   public void testKclass() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/kclass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("listOf.kt")
   public void testListOf() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/listOf.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("memberFunction.kt")
   public void testMemberFunction() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/memberFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("memberFunctionWithOverloads.kt")
   public void testMemberFunctionWithOverloads() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/memberFunctionWithOverloads.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedClass.kt")
   public void testNestedClass() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/nestedClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typealias.kt")
   public void testTypealias() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/typealias.kt");

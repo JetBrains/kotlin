@@ -40,48 +40,48 @@ public class FirStandaloneNormalAnalysisSourceModuleContainingDeclarationProvide
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInContainingDeclarationByPsi() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classes.kt")
   public void testClasses() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/classes.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("codeFragments.kt")
   public void testCodeFragments() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/codeFragments.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("deeplyNestedCode.kt")
   public void testDeeplyNestedCode() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/deeplyNestedCode.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enums.kt")
   public void testEnums() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/enums.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functions.kt")
   public void testFunctions() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/functions.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localDeclarations.kt")
   public void testLocalDeclarations() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/localDeclarations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeAliases.kt")
   public void testTypeAliases() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/typeAliases.kt");

@@ -30,102 +30,102 @@ import java.util.regex.Pattern;
 @Tag("frontend-fir")
 @FirPipeline()
 public class FirLldbTestGenerated extends AbstractNativeBlackBoxTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInLldb() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/lldb"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("canInspectArrayChildren.kt")
   public void testCanInspectArrayChildren() {
     runTest("native/native.tests/testData/lldb/canInspectArrayChildren.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("canInspectArrays.kt")
   public void testCanInspectArrays() {
     runTest("native/native.tests/testData/lldb/canInspectArrays.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("canInspectCatchParameter.kt")
   public void testCanInspectCatchParameter() {
     runTest("native/native.tests/testData/lldb/canInspectCatchParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("canInspectClasses.kt")
   public void testCanInspectClasses() {
     runTest("native/native.tests/testData/lldb/canInspectClasses.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("canInspectStrings.kt")
   public void testCanInspectStrings() {
     runTest("native/native.tests/testData/lldb/canInspectStrings.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("canInspectValuesOfPrimitiveTypes.kt")
   public void testCanInspectValuesOfPrimitiveTypes() {
     runTest("native/native.tests/testData/lldb/canInspectValuesOfPrimitiveTypes.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("canStepThroughCode.kt")
   public void testCanStepThroughCode() {
     runTest("native/native.tests/testData/lldb/canStepThroughCode.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt33055.kt")
   public void testKt33055() {
     runTest("native/native.tests/testData/lldb/kt33055.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt33364.kt")
   public void testKt33364() {
     runTest("native/native.tests/testData/lldb/kt33364.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt42208.kt")
   public void testKt42208() {
     runTest("native/native.tests/testData/lldb/kt42208.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt42208WithPassingLambdaToAnotherFunction.kt")
   public void testKt42208WithPassingLambdaToAnotherFunction() {
     runTest("native/native.tests/testData/lldb/kt42208WithPassingLambdaToAnotherFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt42208WithVariable.kt")
   public void testKt42208WithVariable() {
     runTest("native/native.tests/testData/lldb/kt42208WithVariable.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt47198.kt")
   public void testKt47198() {
     runTest("native/native.tests/testData/lldb/kt47198.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt47198WithBody.kt")
   public void testKt47198WithBody() {
     runTest("native/native.tests/testData/lldb/kt47198WithBody.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt61131.kt")
   public void testKt61131() {
     runTest("native/native.tests/testData/lldb/kt61131.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("stepThroughInlineArguments.kt")
   public void testStepThroughInlineArguments() {
     runTest("native/native.tests/testData/lldb/stepThroughInlineArguments.kt");

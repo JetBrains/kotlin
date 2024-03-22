@@ -18,24 +18,24 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib")
 @TestDataPath("$PROJECT_ROOT")
 public class StdLibBasedGetOrBuildFirTestGenerated extends AbstractStdLibBasedGetOrBuildFirTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInGetOrBuildFirForStdLib() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("emptyArray.kt")
   public void testEmptyArray() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib/emptyArray.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("flattenArray.kt")
   public void testFlattenArray() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib/flattenArray.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fromBits.kt")
   public void testFromBits() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirForStdLib/fromBits.kt");

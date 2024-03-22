@@ -18,48 +18,48 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/symbol-light-classes/testData/structure")
 @TestDataPath("$PROJECT_ROOT")
 public class SymbolLightClassesStructureForSourceTestGenerated extends AbstractSymbolLightClassesStructureForSourceTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInStructure() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/symbol-light-classes/testData/structure"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("Annotations.kt")
   public void testAnnotations() {
     runTest("analysis/symbol-light-classes/testData/structure/Annotations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("Classes.kt")
   public void testClasses() {
     runTest("analysis/symbol-light-classes/testData/structure/Classes.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("EnumEntries.kt")
   public void testEnumEntries() {
     runTest("analysis/symbol-light-classes/testData/structure/EnumEntries.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("InterfaceAndClasses.kt")
   public void testInterfaceAndClasses() {
     runTest("analysis/symbol-light-classes/testData/structure/InterfaceAndClasses.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("Interfaces.kt")
   public void testInterfaces() {
     runTest("analysis/symbol-light-classes/testData/structure/Interfaces.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("NestedClasses.kt")
   public void testNestedClasses() {
     runTest("analysis/symbol-light-classes/testData/structure/NestedClasses.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("Objects.kt")
   public void testObjects() {
     runTest("analysis/symbol-light-classes/testData/structure/Objects.kt");

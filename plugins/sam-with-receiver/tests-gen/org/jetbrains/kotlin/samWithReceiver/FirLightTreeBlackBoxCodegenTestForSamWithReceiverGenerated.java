@@ -19,18 +19,18 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/sam-with-receiver/testData/codegen")
 @TestDataPath("$PROJECT_ROOT")
 public class FirLightTreeBlackBoxCodegenTestForSamWithReceiverGenerated extends AbstractFirLightTreeBlackBoxCodegenTestForSamWithReceiver {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInCodegen() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/sam-with-receiver/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("SamConstructor.kt")
   public void testSamConstructor() {
     runTest("plugins/sam-with-receiver/testData/codegen/SamConstructor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("SamConversion.kt")
   public void testSamConversion() {
     runTest("plugins/sam-with-receiver/testData/codegen/SamConversion.kt");

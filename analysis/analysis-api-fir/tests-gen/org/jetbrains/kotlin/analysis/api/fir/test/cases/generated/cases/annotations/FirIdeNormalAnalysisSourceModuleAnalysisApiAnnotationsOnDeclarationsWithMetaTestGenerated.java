@@ -40,12 +40,12 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiAnnotationsOnDeclaration
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInMetaAnnotations() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/metaAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("onProperty_javaAnnotation_varargParameter.kt")
   public void testOnProperty_javaAnnotation_varargParameter() {
     runTest("analysis/analysis-api/testData/annotations/metaAnnotations/onProperty_javaAnnotation_varargParameter.kt");

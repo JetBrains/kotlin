@@ -40,12 +40,12 @@ public class FirIdeNormalAnalysisSourceModuleContainingDeclarationProviderForSet
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInContainingDeclarationForSetterParameter() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationForSetterParameter"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("defaultSetter.kt")
   public void testDefaultSetter() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationForSetterParameter/defaultSetter.kt");

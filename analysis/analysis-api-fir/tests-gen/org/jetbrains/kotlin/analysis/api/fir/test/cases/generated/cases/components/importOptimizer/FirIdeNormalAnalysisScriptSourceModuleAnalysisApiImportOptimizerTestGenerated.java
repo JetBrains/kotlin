@@ -41,7 +41,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleAnalysisApiImportOptimizerTes
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInAnalyseImports() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/importOptimizer/analyseImports"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
@@ -50,7 +50,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleAnalysisApiImportOptimizerTes
   @TestMetadata("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors")
   @TestDataPath("$PROJECT_ROOT")
   public class ReferencesWithErrors {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInReferencesWithErrors() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }

@@ -41,7 +41,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCandidatesTestGenerate
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInResolveCandidates() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCandidates"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
@@ -50,7 +50,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCandidatesTestGenerate
   @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates")
   @TestDataPath("$PROJECT_ROOT")
   public class MultipleCandidates {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInMultipleCandidates() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -60,7 +60,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCandidatesTestGenerate
   @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCandidates/noCandidates")
   @TestDataPath("$PROJECT_ROOT")
   public class NoCandidates {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInNoCandidates() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCandidates/noCandidates"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -70,7 +70,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCandidatesTestGenerate
   @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate")
   @TestDataPath("$PROJECT_ROOT")
   public class SingleCandidate {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInSingleCandidate() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }

@@ -18,12 +18,12 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/diagnostics/wasmWasiTests")
 @TestDataPath("$PROJECT_ROOT")
 public class DiagnosticsWasmWasiTestGenerated extends AbstractDiagnosticsWasmWasiTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInWasmWasiTests() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmWasiTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("external.kt")
   public void testExternal() {
     runTest("compiler/testData/diagnostics/wasmWasiTests/external.kt");

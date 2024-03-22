@@ -40,7 +40,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleTypeScopeTestGenerated extend
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInTypeScope() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/typeScope"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

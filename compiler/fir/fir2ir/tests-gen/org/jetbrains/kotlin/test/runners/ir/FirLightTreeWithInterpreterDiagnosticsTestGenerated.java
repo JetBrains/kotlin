@@ -19,18 +19,18 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/diagnostics/irInterpreter")
 @TestDataPath("$PROJECT_ROOT")
 public class FirLightTreeWithInterpreterDiagnosticsTestGenerated extends AbstractFirLightTreeWithInterpreterDiagnosticsTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInIrInterpreter() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInterpreter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("exceptionFromInterpreter.kt")
   public void testExceptionFromInterpreter() {
     runTest("compiler/testData/diagnostics/irInterpreter/exceptionFromInterpreter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("recursionAccess.kt")
   public void testRecursionAccess() {
     runTest("compiler/testData/diagnostics/irInterpreter/recursionAccess.kt");

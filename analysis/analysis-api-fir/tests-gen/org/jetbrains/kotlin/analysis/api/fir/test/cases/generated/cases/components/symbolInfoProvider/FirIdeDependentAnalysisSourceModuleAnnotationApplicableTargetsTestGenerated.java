@@ -40,36 +40,36 @@ public class FirIdeDependentAnalysisSourceModuleAnnotationApplicableTargetsTestG
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInAnnotationApplicableTargets() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("defaultTargets.kt")
   public void testDefaultTargets() {
     runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/defaultTargets.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("emptyTargets.kt")
   public void testEmptyTargets() {
     runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/emptyTargets.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaAnnotation.kt")
   public void testJavaAnnotation() {
     runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/javaAnnotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("listedTargets.kt")
   public void testListedTargets() {
     runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/listedTargets.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nonAnnotationClass.kt")
   public void testNonAnnotationClass() {
     runTest("analysis/analysis-api/testData/components/symbolInfoProvider/annotationApplicableTargets/nonAnnotationClass.kt");

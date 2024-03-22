@@ -40,30 +40,30 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiSubstitutorsTestG
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInTypeSubstitution() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/substitutors/typeSubstitution"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("directSubstitution.kt")
   public void testDirectSubstitution() {
     runTest("analysis/analysis-api/testData/substitutors/typeSubstitution/directSubstitution.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("emptySubstitution.kt")
   public void testEmptySubstitution() {
     runTest("analysis/analysis-api/testData/substitutors/typeSubstitution/emptySubstitution.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("notApplicableSubstitutor.kt")
   public void testNotApplicableSubstitutor() {
     runTest("analysis/analysis-api/testData/substitutors/typeSubstitution/notApplicableSubstitutor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionWithTypeParams.kt")
   public void testSubstitutionWithTypeParams() {
     runTest("analysis/analysis-api/testData/substitutors/typeSubstitution/substitutionWithTypeParams.kt");

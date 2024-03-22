@@ -19,576 +19,576 @@ import java.util.regex.Pattern;
 @TestMetadata("js/js.translator/testData/incremental/invalidation")
 @TestDataPath("$PROJECT_ROOT")
 public class JsFirES6InvalidationPerModuleTestGenerated extends AbstractJsFirES6InvalidationPerModuleTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("abstractClassWithJsExport")
   public void testAbstractClassWithJsExport() {
     runTest("js/js.translator/testData/incremental/invalidation/abstractClassWithJsExport/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("addUpdateRemoveDependentFile")
   public void testAddUpdateRemoveDependentFile() {
     runTest("js/js.translator/testData/incremental/invalidation/addUpdateRemoveDependentFile/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("addUpdateRemoveDependentModule")
   public void testAddUpdateRemoveDependentModule() {
     runTest("js/js.translator/testData/incremental/invalidation/addUpdateRemoveDependentModule/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInInvalidation() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR_ES6, false);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("circleExportsUpdate")
   public void testCircleExportsUpdate() {
     runTest("js/js.translator/testData/incremental/invalidation/circleExportsUpdate/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("circleInlineImportsUpdate")
   public void testCircleInlineImportsUpdate() {
     runTest("js/js.translator/testData/incremental/invalidation/circleInlineImportsUpdate/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("class")
   public void testClass() {
     runTest("js/js.translator/testData/incremental/invalidation/class/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classFunctionsAndFields")
   public void testClassFunctionsAndFields() {
     runTest("js/js.translator/testData/incremental/invalidation/classFunctionsAndFields/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classWithJsExport")
   public void testClassWithJsExport() {
     runTest("js/js.translator/testData/incremental/invalidation/classWithJsExport/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("companionConstVal")
   public void testCompanionConstVal() {
     runTest("js/js.translator/testData/incremental/invalidation/companionConstVal/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("companionFunction")
   public void testCompanionFunction() {
     runTest("js/js.translator/testData/incremental/invalidation/companionFunction/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("companionInlineFunction")
   public void testCompanionInlineFunction() {
     runTest("js/js.translator/testData/incremental/invalidation/companionInlineFunction/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("companionProperties")
   public void testCompanionProperties() {
     runTest("js/js.translator/testData/incremental/invalidation/companionProperties/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("companionWithStdLibCall")
   public void testCompanionWithStdLibCall() {
     runTest("js/js.translator/testData/incremental/invalidation/companionWithStdLibCall/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("constVals")
   public void testConstVals() {
     runTest("js/js.translator/testData/incremental/invalidation/constVals/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("crossModuleReferences")
   public void testCrossModuleReferences() {
     runTest("js/js.translator/testData/incremental/invalidation/crossModuleReferences/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("eagerInitialization")
   public void testEagerInitialization() {
     runTest("js/js.translator/testData/incremental/invalidation/eagerInitialization/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enum")
   public void testEnum() {
     runTest("js/js.translator/testData/incremental/invalidation/enum/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enumsInInlineFunctions")
   public void testEnumsInInlineFunctions() {
     runTest("js/js.translator/testData/incremental/invalidation/enumsInInlineFunctions/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("exceptionsFromInlineFunction")
   public void testExceptionsFromInlineFunction() {
     runTest("js/js.translator/testData/incremental/invalidation/exceptionsFromInlineFunction/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("exportsThroughInlineFunction")
   public void testExportsThroughInlineFunction() {
     runTest("js/js.translator/testData/incremental/invalidation/exportsThroughInlineFunction/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fakeOverrideClassFunctionQualifiers")
   public void testFakeOverrideClassFunctionQualifiers() {
     runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideClassFunctionQualifiers/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fakeOverrideInheritance")
   public void testFakeOverrideInheritance() {
     runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInheritance/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fakeOverrideInlineExtension")
   public void testFakeOverrideInlineExtension() {
     runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInlineExtension/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fakeOverrideInlineFunction")
   public void testFakeOverrideInlineFunction() {
     runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInlineFunction/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fakeOverrideInlineProperty")
   public void testFakeOverrideInlineProperty() {
     runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInlineProperty/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fakeOverrideInterfaceFunctionQualifiers")
   public void testFakeOverrideInterfaceFunctionQualifiers() {
     runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInterfaceFunctionQualifiers/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fastPath1")
   public void testFastPath1() {
     runTest("js/js.translator/testData/incremental/invalidation/fastPath1/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fastPath2")
   public void testFastPath2() {
     runTest("js/js.translator/testData/incremental/invalidation/fastPath2/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fileNameClash")
   public void testFileNameClash() {
     runTest("js/js.translator/testData/incremental/invalidation/fileNameClash/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("friendDependency")
   public void testFriendDependency() {
     runTest("js/js.translator/testData/incremental/invalidation/friendDependency/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionDefaultParams")
   public void testFunctionDefaultParams() {
     runTest("js/js.translator/testData/incremental/invalidation/functionDefaultParams/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionSignature")
   public void testFunctionSignature() {
     runTest("js/js.translator/testData/incremental/invalidation/functionSignature/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionTypeInterface")
   public void testFunctionTypeInterface() {
     runTest("js/js.translator/testData/incremental/invalidation/functionTypeInterface/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionTypeInterfaceReflect")
   public void testFunctionTypeInterfaceReflect() {
     runTest("js/js.translator/testData/incremental/invalidation/functionTypeInterfaceReflect/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("genericFunctions")
   public void testGenericFunctions() {
     runTest("js/js.translator/testData/incremental/invalidation/genericFunctions/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("genericInlineFunctions")
   public void testGenericInlineFunctions() {
     runTest("js/js.translator/testData/incremental/invalidation/genericInlineFunctions/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("gettersAndSettersInlining")
   public void testGettersAndSettersInlining() {
     runTest("js/js.translator/testData/incremental/invalidation/gettersAndSettersInlining/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineBecomeNonInline")
   public void testInlineBecomeNonInline() {
     runTest("js/js.translator/testData/incremental/invalidation/inlineBecomeNonInline/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineFunctionAnnotations")
   public void testInlineFunctionAnnotations() {
     runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionAnnotations/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineFunctionAsFunctionReference")
   public void testInlineFunctionAsFunctionReference() {
     runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionAsFunctionReference/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineFunctionAsParam")
   public void testInlineFunctionAsParam() {
     runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionAsParam/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineFunctionCircleUsage")
   public void testInlineFunctionCircleUsage() {
     runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionCircleUsage/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineFunctionDefaultParams")
   public void testInlineFunctionDefaultParams() {
     runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionDefaultParams/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineFunctionWithObject")
   public void testInlineFunctionWithObject() {
     runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionWithObject/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("interfaceOpenMethods")
   public void testInterfaceOpenMethods() {
     runTest("js/js.translator/testData/incremental/invalidation/interfaceOpenMethods/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("interfaceOpenMethodsInOpenClass")
   public void testInterfaceOpenMethodsInOpenClass() {
     runTest("js/js.translator/testData/incremental/invalidation/interfaceOpenMethodsInOpenClass/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("interfaceSuperUsage")
   public void testInterfaceSuperUsage() {
     runTest("js/js.translator/testData/incremental/invalidation/interfaceSuperUsage/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("interfaceWithDefaultParams")
   public void testInterfaceWithDefaultParams() {
     runTest("js/js.translator/testData/incremental/invalidation/interfaceWithDefaultParams/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("interfaceWithJsExport")
   public void testInterfaceWithJsExport() {
     runTest("js/js.translator/testData/incremental/invalidation/interfaceWithJsExport/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("jsCode")
   public void testJsCode() {
     runTest("js/js.translator/testData/incremental/invalidation/jsCode/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("jsCodeWithConstString")
   public void testJsCodeWithConstString() {
     runTest("js/js.translator/testData/incremental/invalidation/jsCodeWithConstString/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("jsCodeWithConstStringFromOtherModule")
   public void testJsCodeWithConstStringFromOtherModule() {
     runTest("js/js.translator/testData/incremental/invalidation/jsCodeWithConstStringFromOtherModule/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("jsExport")
   public void testJsExport() {
     runTest("js/js.translator/testData/incremental/invalidation/jsExport/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("jsExportReexport")
   public void testJsExportReexport() {
     runTest("js/js.translator/testData/incremental/invalidation/jsExportReexport/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("jsExportWithMultipleFiles")
   public void testJsExportWithMultipleFiles() {
     runTest("js/js.translator/testData/incremental/invalidation/jsExportWithMultipleFiles/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("jsModuleAnnotation")
   public void testJsModuleAnnotation() {
     runTest("js/js.translator/testData/incremental/invalidation/jsModuleAnnotation/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("jsModuleAnnotationOnObjectWithUsage")
   public void testJsModuleAnnotationOnObjectWithUsage() {
     runTest("js/js.translator/testData/incremental/invalidation/jsModuleAnnotationOnObjectWithUsage/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("jsName")
   public void testJsName() {
     runTest("js/js.translator/testData/incremental/invalidation/jsName/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kotlinTest")
   public void testKotlinTest() {
     runTest("js/js.translator/testData/incremental/invalidation/kotlinTest/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("languageVersionSettings")
   public void testLanguageVersionSettings() {
     runTest("js/js.translator/testData/incremental/invalidation/languageVersionSettings/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localInlineFunction")
   public void testLocalInlineFunction() {
     runTest("js/js.translator/testData/incremental/invalidation/localInlineFunction/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localObjectsLeakThroughInterface")
   public void testLocalObjectsLeakThroughInterface() {
     runTest("js/js.translator/testData/incremental/invalidation/localObjectsLeakThroughInterface/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("mainFunction")
   public void testMainFunction() {
     runTest("js/js.translator/testData/incremental/invalidation/mainFunction/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("mainModuleInvalidation")
   public void testMainModuleInvalidation() {
     runTest("js/js.translator/testData/incremental/invalidation/mainModuleInvalidation/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("moveAndModifyInlineFunction")
   public void testMoveAndModifyInlineFunction() {
     runTest("js/js.translator/testData/incremental/invalidation/moveAndModifyInlineFunction/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("moveExternalDeclarationsBetweenFiles")
   public void testMoveExternalDeclarationsBetweenFiles() {
     runTest("js/js.translator/testData/incremental/invalidation/moveExternalDeclarationsBetweenFiles/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("moveExternalDeclarationsBetweenJsModules")
   public void testMoveExternalDeclarationsBetweenJsModules() {
     runTest("js/js.translator/testData/incremental/invalidation/moveExternalDeclarationsBetweenJsModules/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("moveFilesBetweenModules")
   public void testMoveFilesBetweenModules() {
     runTest("js/js.translator/testData/incremental/invalidation/moveFilesBetweenModules/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("moveInlineFunctionBetweenModules")
   public void testMoveInlineFunctionBetweenModules() {
     runTest("js/js.translator/testData/incremental/invalidation/moveInlineFunctionBetweenModules/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multiPlatformClashFileNames")
   public void testMultiPlatformClashFileNames() {
     runTest("js/js.translator/testData/incremental/invalidation/multiPlatformClashFileNames/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multiPlatformSimple")
   public void testMultiPlatformSimple() {
     runTest("js/js.translator/testData/incremental/invalidation/multiPlatformSimple/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedClass")
   public void testNestedClass() {
     runTest("js/js.translator/testData/incremental/invalidation/nestedClass/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nonInlineBecomeInline")
   public void testNonInlineBecomeInline() {
     runTest("js/js.translator/testData/incremental/invalidation/nonInlineBecomeInline/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("openClassWithInternalField")
   public void testOpenClassWithInternalField() {
     runTest("js/js.translator/testData/incremental/invalidation/openClassWithInternalField/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("privateDeclarationLeakThroughDefaultParam")
   public void testPrivateDeclarationLeakThroughDefaultParam() {
     runTest("js/js.translator/testData/incremental/invalidation/privateDeclarationLeakThroughDefaultParam/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("privateInlineFunction1")
   public void testPrivateInlineFunction1() {
     runTest("js/js.translator/testData/incremental/invalidation/privateInlineFunction1/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("privateObjectsLeakThroughSealedInterface")
   public void testPrivateObjectsLeakThroughSealedInterface() {
     runTest("js/js.translator/testData/incremental/invalidation/privateObjectsLeakThroughSealedInterface/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("removeFile")
   public void testRemoveFile() {
     runTest("js/js.translator/testData/incremental/invalidation/removeFile/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("removeModule")
   public void testRemoveModule() {
     runTest("js/js.translator/testData/incremental/invalidation/removeModule/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("removeUnusedFile")
   public void testRemoveUnusedFile() {
     runTest("js/js.translator/testData/incremental/invalidation/removeUnusedFile/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("renameFile")
   public void testRenameFile() {
     runTest("js/js.translator/testData/incremental/invalidation/renameFile/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("renameModule")
   public void testRenameModule() {
     runTest("js/js.translator/testData/incremental/invalidation/renameModule/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simple")
   public void testSimple() {
     runTest("js/js.translator/testData/incremental/invalidation/simple/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("splitJoinModule")
   public void testSplitJoinModule() {
     runTest("js/js.translator/testData/incremental/invalidation/splitJoinModule/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("suspendFunctions")
   public void testSuspendFunctions() {
     runTest("js/js.translator/testData/incremental/invalidation/suspendFunctions/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("suspendGenerator")
   public void testSuspendGenerator() {
     runTest("js/js.translator/testData/incremental/invalidation/suspendGenerator/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("suspendInterfaceWithDefaultParams")
   public void testSuspendInterfaceWithDefaultParams() {
     runTest("js/js.translator/testData/incremental/invalidation/suspendInterfaceWithDefaultParams/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("toplevelProperties")
   public void testToplevelProperties() {
     runTest("js/js.translator/testData/incremental/invalidation/toplevelProperties/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("transitiveInlineFunction")
   public void testTransitiveInlineFunction() {
     runTest("js/js.translator/testData/incremental/invalidation/transitiveInlineFunction/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeScriptExportsPerFile")
   public void testTypeScriptExportsPerFile() {
     runTest("js/js.translator/testData/incremental/invalidation/typeScriptExportsPerFile/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeScriptExportsPerModule")
   public void testTypeScriptExportsPerModule() {
     runTest("js/js.translator/testData/incremental/invalidation/typeScriptExportsPerModule/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unicodeSerializationAndDeserialization")
   public void testUnicodeSerializationAndDeserialization() {
     runTest("js/js.translator/testData/incremental/invalidation/unicodeSerializationAndDeserialization/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("updateExports")
   public void testUpdateExports() {
     runTest("js/js.translator/testData/incremental/invalidation/updateExports/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("updateExportsAndInlineImports")
   public void testUpdateExportsAndInlineImports() {
     runTest("js/js.translator/testData/incremental/invalidation/updateExportsAndInlineImports/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("variance")
   public void testVariance() {
     runTest("js/js.translator/testData/incremental/invalidation/variance/");

@@ -18,36 +18,36 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider")
 @TestDataPath("$PROJECT_ROOT")
 public class SourceFileBasedKotlinDeclarationProviderTestGenerated extends AbstractSourceFileBasedKotlinDeclarationProviderTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInFileBasedDeclarationProvider() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("defaultPackage.kt")
   public void testDefaultPackage() {
     runTest("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/defaultPackage.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("local.kt")
   public void testLocal() {
     runTest("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/local.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedTypeAlias.kt")
   public void testNestedTypeAlias() {
     runTest("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/nestedTypeAlias.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("sameNames.kt")
   public void testSameNames() {
     runTest("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/sameNames.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simple.kt")
   public void testSimple() {
     runTest("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/simple.kt");

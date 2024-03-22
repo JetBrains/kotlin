@@ -41,7 +41,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleMemberScopeTestGenerated exte
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInMemberScope() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/memberScope"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
@@ -50,7 +50,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleMemberScopeTestGenerated exte
   @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/memberScope/withTestCompilerPluginEnabled")
   @TestDataPath("$PROJECT_ROOT")
   public class WithTestCompilerPluginEnabled {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/memberScope/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }

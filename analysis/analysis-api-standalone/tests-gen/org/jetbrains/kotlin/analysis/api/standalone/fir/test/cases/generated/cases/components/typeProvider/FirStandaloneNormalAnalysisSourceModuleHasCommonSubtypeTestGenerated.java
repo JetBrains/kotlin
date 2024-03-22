@@ -40,30 +40,30 @@ public class FirStandaloneNormalAnalysisSourceModuleHasCommonSubtypeTestGenerate
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInHaveCommonSubtype() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeProvider/haveCommonSubtype"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("collections.kt")
   public void testCollections() {
     runTest("analysis/analysis-api/testData/components/typeProvider/haveCommonSubtype/collections.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("dataClasses.kt")
   public void testDataClasses() {
     runTest("analysis/analysis-api/testData/components/typeProvider/haveCommonSubtype/dataClasses.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enums.kt")
   public void testEnums() {
     runTest("analysis/analysis-api/testData/components/typeProvider/haveCommonSubtype/enums.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simple.kt")
   public void testSimple() {
     runTest("analysis/analysis-api/testData/components/typeProvider/haveCommonSubtype/simple.kt");

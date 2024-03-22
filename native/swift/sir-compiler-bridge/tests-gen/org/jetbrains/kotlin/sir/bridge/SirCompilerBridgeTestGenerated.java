@@ -18,42 +18,42 @@ import java.util.regex.Pattern;
 @TestMetadata("native/swift/sir-compiler-bridge/testData")
 @TestDataPath("$PROJECT_ROOT")
 public class SirCompilerBridgeTestGenerated extends AbstractKotlinSirBridgeTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInTestData() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/sir-compiler-bridge/testData"), Pattern.compile("^([^\\.]+)$"), null, false);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multiple_requests")
   public void testMultiple_requests() {
     runTest("native/swift/sir-compiler-bridge/testData/multiple_requests/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("primitive_parameters")
   public void testPrimitive_parameters() {
     runTest("native/swift/sir-compiler-bridge/testData/primitive_parameters/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("primitive_types")
   public void testPrimitive_types() {
     runTest("native/swift/sir-compiler-bridge/testData/primitive_types/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("property_accessors")
   public void testProperty_accessors() {
     runTest("native/swift/sir-compiler-bridge/testData/property_accessors/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("smoke0")
   public void testSmoke0() {
     runTest("native/swift/sir-compiler-bridge/testData/smoke0/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unsigned_primitive_types")
   public void testUnsigned_primitive_types() {
     runTest("native/swift/sir-compiler-bridge/testData/unsigned_primitive_types/");

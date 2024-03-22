@@ -29,30 +29,30 @@ import java.util.regex.Pattern;
 @Tag("frontend-fir")
 @FirPipeline()
 public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInStandalone() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/standalone"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("funptr.kt")
   public void testFunptr() {
     runTest("native/native.tests/testData/standalone/funptr.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("initRuntimeInGlobal.kt")
   public void testInitRuntimeInGlobal() {
     runTest("native/native.tests/testData/standalone/initRuntimeInGlobal.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt56048.kt")
   public void testKt56048() {
     runTest("native/native.tests/testData/standalone/kt56048.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("workerSignals.kt")
   public void testWorkerSignals() {
     runTest("native/native.tests/testData/standalone/workerSignals.kt");
@@ -67,84 +67,84 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
   @Tag("frontend-fir")
   @FirPipeline()
   public class Checkers {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInCheckers() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/standalone/checkers"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("cleaner_in_main_with_checker.kt")
     public void testCleaner_in_main_with_checker() {
       runTest("native/native.tests/testData/standalone/checkers/cleaner_in_main_with_checker.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("cleaner_in_main_without_checker.kt")
     public void testCleaner_in_main_without_checker() {
       runTest("native/native.tests/testData/standalone/checkers/cleaner_in_main_without_checker.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("cleaner_in_tls_main_with_checker.kt")
     public void testCleaner_in_tls_main_with_checker() {
       runTest("native/native.tests/testData/standalone/checkers/cleaner_in_tls_main_with_checker.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("cleaner_in_tls_main_without_checker.kt")
     public void testCleaner_in_tls_main_without_checker() {
       runTest("native/native.tests/testData/standalone/checkers/cleaner_in_tls_main_without_checker.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("cleaner_leak_with_checker.kt")
     public void testCleaner_leak_with_checker() {
       runTest("native/native.tests/testData/standalone/checkers/cleaner_leak_with_checker.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("cleaner_leak_without_checker.kt")
     public void testCleaner_leak_without_checker() {
       runTest("native/native.tests/testData/standalone/checkers/cleaner_leak_without_checker.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("leakMemoryWithRunningThreadChecked.kt")
     public void testLeakMemoryWithRunningThreadChecked() {
       runTest("native/native.tests/testData/standalone/checkers/leakMemoryWithRunningThreadChecked.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("leakMemoryWithRunningThreadUnchecked.kt")
     public void testLeakMemoryWithRunningThreadUnchecked() {
       runTest("native/native.tests/testData/standalone/checkers/leakMemoryWithRunningThreadUnchecked.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("leak_memory.kt")
     public void testLeak_memory() {
       runTest("native/native.tests/testData/standalone/checkers/leak_memory.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("leak_memory_test_runner.kt")
     public void testLeak_memory_test_runner() {
       runTest("native/native.tests/testData/standalone/checkers/leak_memory_test_runner.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("leak_memory_with_worker_termination.kt")
     public void testLeak_memory_with_worker_termination() {
       runTest("native/native.tests/testData/standalone/checkers/leak_memory_with_worker_termination.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("leak_worker.kt")
     public void testLeak_worker() {
       runTest("native/native.tests/testData/standalone/checkers/leak_worker.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("worker_threadlocal_no_leak.kt")
     public void testWorker_threadlocal_no_leak() {
       runTest("native/native.tests/testData/standalone/checkers/worker_threadlocal_no_leak.kt");
@@ -160,66 +160,66 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
   @Tag("frontend-fir")
   @FirPipeline()
   public class Console {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInConsole() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/standalone/console"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("fprintf.kt")
     public void testFprintf() {
       runTest("native/native.tests/testData/standalone/console/fprintf.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("printf.kt")
     public void testPrintf() {
       runTest("native/native.tests/testData/standalone/console/printf.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("println.kt")
     public void testPrintln() {
       runTest("native/native.tests/testData/standalone/console/println.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("puts.kt")
     public void testPuts() {
       runTest("native/native.tests/testData/standalone/console/puts.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("readLine.kt")
     public void testReadLine() {
       runTest("native/native.tests/testData/standalone/console/readLine.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("readLineEmpty.kt")
     public void testReadLineEmpty() {
       runTest("native/native.tests/testData/standalone/console/readLineEmpty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("readLineSingleEmptyLine.kt")
     public void testReadLineSingleEmptyLine() {
       runTest("native/native.tests/testData/standalone/console/readLineSingleEmptyLine.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("readln.kt")
     public void testReadln() {
       runTest("native/native.tests/testData/standalone/console/readln.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("readlnEmpty.kt")
     public void testReadlnEmpty() {
       runTest("native/native.tests/testData/standalone/console/readlnEmpty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("readlnOrNullEmpty.kt")
     public void testReadlnOrNullEmpty() {
       runTest("native/native.tests/testData/standalone/console/readlnOrNullEmpty.kt");
@@ -235,42 +235,42 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
   @Tag("frontend-fir")
   @FirPipeline()
   public class EntryPoint {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInEntryPoint() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/standalone/entryPoint"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("args.kt")
     public void testArgs() {
       runTest("native/native.tests/testData/standalone/entryPoint/args.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("differentEntry.kt")
     public void testDifferentEntry() {
       runTest("native/native.tests/testData/standalone/entryPoint/differentEntry.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("differentEntryMultiModule.kt")
     public void testDifferentEntryMultiModule() {
       runTest("native/native.tests/testData/standalone/entryPoint/differentEntryMultiModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("differentEntryNoArgs.kt")
     public void testDifferentEntryNoArgs() {
       runTest("native/native.tests/testData/standalone/entryPoint/differentEntryNoArgs.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("mainOverloading.kt")
     public void testMainOverloading() {
       runTest("native/native.tests/testData/standalone/entryPoint/mainOverloading.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("mainOverloadingNoArgs.kt")
     public void testMainOverloadingNoArgs() {
       runTest("native/native.tests/testData/standalone/entryPoint/mainOverloadingNoArgs.kt");
@@ -286,18 +286,18 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
   @Tag("frontend-fir")
   @FirPipeline()
   public class RuntimeLogging {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInRuntimeLogging() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/standalone/runtimeLogging"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("logging.kt")
     public void testLogging() {
       runTest("native/native.tests/testData/standalone/runtimeLogging/logging.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("logging_override.kt")
     public void testLogging_override() {
       runTest("native/native.tests/testData/standalone/runtimeLogging/logging_override.kt");
@@ -313,144 +313,144 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
   @Tag("frontend-fir")
   @FirPipeline()
   public class Termination {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInTermination() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/standalone/termination"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("concurrentTerminate.kt")
     public void testConcurrentTerminate() {
       runTest("native/native.tests/testData/standalone/termination/concurrentTerminate.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exitProcess.kt")
     public void testExitProcess() {
       runTest("native/native.tests/testData/standalone/termination/exitProcess.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("globalThrow.kt")
     public void testGlobalThrow() {
       runTest("native/native.tests/testData/standalone/termination/globalThrow.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("mainThrow.kt")
     public void testMainThrow() {
       runTest("native/native.tests/testData/standalone/termination/mainThrow.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("processUnhandledException.kt")
     public void testProcessUnhandledException() {
       runTest("native/native.tests/testData/standalone/termination/processUnhandledException.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("terminateMainThreadWorker.kt")
     public void testTerminateMainThreadWorker() {
       runTest("native/native.tests/testData/standalone/termination/terminateMainThreadWorker.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("terminateWithUnhandledException.kt")
     public void testTerminateWithUnhandledException() {
       runTest("native/native.tests/testData/standalone/termination/terminateWithUnhandledException.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unhandledException.kt")
     public void testUnhandledException() {
       runTest("native/native.tests/testData/standalone/termination/unhandledException.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unhandledExceptionHookClosure.kt")
     public void testUnhandledExceptionHookClosure() {
       runTest("native/native.tests/testData/standalone/termination/unhandledExceptionHookClosure.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unhandledExceptionHookFun.kt")
     public void testUnhandledExceptionHookFun() {
       runTest("native/native.tests/testData/standalone/termination/unhandledExceptionHookFun.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unhandledExceptionHookGet.kt")
     public void testUnhandledExceptionHookGet() {
       runTest("native/native.tests/testData/standalone/termination/unhandledExceptionHookGet.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unhandledExceptionHookTerminate.kt")
     public void testUnhandledExceptionHookTerminate() {
       runTest("native/native.tests/testData/standalone/termination/unhandledExceptionHookTerminate.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unhandledExceptionHookTerminateWithProcess.kt")
     public void testUnhandledExceptionHookTerminateWithProcess() {
       runTest("native/native.tests/testData/standalone/termination/unhandledExceptionHookTerminateWithProcess.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unhandledExceptionHookThrow.kt")
     public void testUnhandledExceptionHookThrow() {
       runTest("native/native.tests/testData/standalone/termination/unhandledExceptionHookThrow.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unhandledExceptionHookWithProcess.kt")
     public void testUnhandledExceptionHookWithProcess() {
       runTest("native/native.tests/testData/standalone/termination/unhandledExceptionHookWithProcess.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unhandledExceptionInCurrentWorkerExecuteAfter.kt")
     public void testUnhandledExceptionInCurrentWorkerExecuteAfter() {
       runTest("native/native.tests/testData/standalone/termination/unhandledExceptionInCurrentWorkerExecuteAfter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unhandledExceptionInCurrentWorkerExecuteAfterWithHook.kt")
     public void testUnhandledExceptionInCurrentWorkerExecuteAfterWithHook() {
       runTest("native/native.tests/testData/standalone/termination/unhandledExceptionInCurrentWorkerExecuteAfterWithHook.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unhandledExceptionInForeignThread.kt")
     public void testUnhandledExceptionInForeignThread() {
       runTest("native/native.tests/testData/standalone/termination/unhandledExceptionInForeignThread.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unhandledExceptionInWorkerExecute.kt")
     public void testUnhandledExceptionInWorkerExecute() {
       runTest("native/native.tests/testData/standalone/termination/unhandledExceptionInWorkerExecute.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unhandledExceptionInWorkerExecuteAfter.kt")
     public void testUnhandledExceptionInWorkerExecuteAfter() {
       runTest("native/native.tests/testData/standalone/termination/unhandledExceptionInWorkerExecuteAfter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unhandledExceptionInWorkerExecuteAfterQuiet.kt")
     public void testUnhandledExceptionInWorkerExecuteAfterQuiet() {
       runTest("native/native.tests/testData/standalone/termination/unhandledExceptionInWorkerExecuteAfterQuiet.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unhandledExceptionInWorkerExecuteAfterWithHook.kt")
     public void testUnhandledExceptionInWorkerExecuteAfterWithHook() {
       runTest("native/native.tests/testData/standalone/termination/unhandledExceptionInWorkerExecuteAfterWithHook.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unhandledExceptionInWorkerExecuteQuiet.kt")
     public void testUnhandledExceptionInWorkerExecuteQuiet() {
       runTest("native/native.tests/testData/standalone/termination/unhandledExceptionInWorkerExecuteQuiet.kt");

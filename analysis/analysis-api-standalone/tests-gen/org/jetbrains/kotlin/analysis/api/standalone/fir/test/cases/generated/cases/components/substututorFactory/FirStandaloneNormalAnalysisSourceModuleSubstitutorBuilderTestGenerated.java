@@ -40,12 +40,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSubstitutorBuilderTestGenera
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSubstitutorBuilder() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/substitutorFactory/substitutorBuilder"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("function.kt")
   public void testFunction() {
     runTest("analysis/analysis-api/testData/components/substitutorFactory/substitutorBuilder/function.kt");

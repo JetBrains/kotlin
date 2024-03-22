@@ -18,12 +18,12 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider")
 @TestDataPath("$PROJECT_ROOT")
 public class ScriptFileBasedKotlinDeclarationProviderTestGenerated extends AbstractScriptFileBasedKotlinDeclarationProviderTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInFileBasedDeclarationProvider() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("script.kts")
   public void testScript() {
     runTest("analysis/low-level-api-fir/testData/fileBasedDeclarationProvider/script.kts");

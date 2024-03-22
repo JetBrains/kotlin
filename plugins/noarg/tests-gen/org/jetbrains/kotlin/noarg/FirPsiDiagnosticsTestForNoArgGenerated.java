@@ -18,18 +18,18 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/noarg/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class FirPsiDiagnosticsTestForNoArgGenerated extends AbstractFirPsiDiagnosticsTestForNoArg {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/noarg/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("innerClass.kt")
   public void testInnerClass() {
     runTest("plugins/noarg/testData/diagnostics/innerClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("noNoargCtorInSuperclass.kt")
   public void testNoNoargCtorInSuperclass() {
     runTest("plugins/noarg/testData/diagnostics/noNoargCtorInSuperclass.kt");

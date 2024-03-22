@@ -41,18 +41,18 @@ public class FirIdeNormalAnalysisScriptSourceModuleSymbolByReferenceTestGenerate
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSymbolByReference() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByReference"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("scriptArgument.kts")
   public void testScriptArgument() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/scriptArgument.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("scriptResult.kts")
   public void testScriptResult() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/scriptResult.kts");
@@ -62,7 +62,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleSymbolByReferenceTestGenerate
   @TestMetadata("analysis/analysis-api/testData/symbols/symbolByReference/js")
   @TestDataPath("$PROJECT_ROOT")
   public class Js {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInJs() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByReference/js"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -72,7 +72,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleSymbolByReferenceTestGenerate
   @TestMetadata("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled")
   @TestDataPath("$PROJECT_ROOT")
   public class WithTestCompilerPluginEnabled {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }

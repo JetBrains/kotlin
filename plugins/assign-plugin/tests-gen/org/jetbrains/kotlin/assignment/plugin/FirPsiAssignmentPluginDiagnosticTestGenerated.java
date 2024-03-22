@@ -18,42 +18,42 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/assign-plugin/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class FirPsiAssignmentPluginDiagnosticTestGenerated extends AbstractFirPsiAssignmentPluginDiagnosticTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/assign-plugin/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("incorrectUsage.kt")
   public void testIncorrectUsage() {
     runTest("plugins/assign-plugin/testData/diagnostics/incorrectUsage.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localVariables.kt")
   public void testLocalVariables() {
     runTest("plugins/assign-plugin/testData/diagnostics/localVariables.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("methodDeclaration.kt")
   public void testMethodDeclaration() {
     runTest("plugins/assign-plugin/testData/diagnostics/methodDeclaration.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("noAnnotation.kt")
   public void testNoAnnotation() {
     runTest("plugins/assign-plugin/testData/diagnostics/noAnnotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("otherOperators.kt")
   public void testOtherOperators() {
     runTest("plugins/assign-plugin/testData/diagnostics/otherOperators.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("plusAssignPrecedence.kt")
   public void testPlusAssignPrecedence() {
     runTest("plugins/assign-plugin/testData/diagnostics/plusAssignPrecedence.kt");

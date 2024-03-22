@@ -18,84 +18,84 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kapt3/kapt3-cli/testData/integration")
 @TestDataPath("$PROJECT_ROOT")
 public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegrationTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInIntegration() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-cli/testData/integration"), Pattern.compile("^([^\\.]+)$"), null, false);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("argfile")
   public void testArgfile() {
     runTest("plugins/kapt3/kapt3-cli/testData/integration/argfile/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("correctErrorTypesOff")
   public void testCorrectErrorTypesOff() {
     runTest("plugins/kapt3/kapt3-cli/testData/integration/correctErrorTypesOff/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("correctErrorTypesOn")
   public void testCorrectErrorTypesOn() {
     runTest("plugins/kapt3/kapt3-cli/testData/integration/correctErrorTypesOn/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("defaultPackage")
   public void testDefaultPackage() {
     runTest("plugins/kapt3/kapt3-cli/testData/integration/defaultPackage/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fallback")
   public void testFallback() {
     runTest("plugins/kapt3/kapt3-cli/testData/integration/fallback/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kotlinFileGeneration")
   public void testKotlinFileGeneration() {
     runTest("plugins/kapt3/kapt3-cli/testData/integration/kotlinFileGeneration/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kotlinFileGenerationCorrectErrorTypes")
   public void testKotlinFileGenerationCorrectErrorTypes() {
     runTest("plugins/kapt3/kapt3-cli/testData/integration/kotlinFileGenerationCorrectErrorTypes/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kotlinFileGenerationDefaultOutput")
   public void testKotlinFileGenerationDefaultOutput() {
     runTest("plugins/kapt3/kapt3-cli/testData/integration/kotlinFileGenerationDefaultOutput/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt33800")
   public void testKt33800() {
     runTest("plugins/kapt3/kapt3-cli/testData/integration/kt33800/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multipass")
   public void testMultipass() {
     runTest("plugins/kapt3/kapt3-cli/testData/integration/multipass/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("separateStubAptCompilation")
   public void testSeparateStubAptCompilation() {
     runTest("plugins/kapt3/kapt3-cli/testData/integration/separateStubAptCompilation/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simple")
   public void testSimple() {
     runTest("plugins/kapt3/kapt3-cli/testData/integration/simple/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("withoutService")
   public void testWithoutService() {
     runTest("plugins/kapt3/kapt3-cli/testData/integration/withoutService/");

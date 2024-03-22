@@ -41,30 +41,30 @@ public class FirIdeDependentAnalysisSourceModuleDanglingFileReferenceResolveTest
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInDanglingFileReferenceResolve() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/danglingFileReferenceResolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classDifferentFile.kt")
   public void testClassDifferentFile() {
     runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/classDifferentFile.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classSameFile.kt")
   public void testClassSameFile() {
     runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/classSameFile.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionDifferentFile.kt")
   public void testFunctionDifferentFile() {
     runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/functionDifferentFile.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionSameFile.kt")
   public void testFunctionSameFile() {
     runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/functionSameFile.kt");
@@ -74,96 +74,96 @@ public class FirIdeDependentAnalysisSourceModuleDanglingFileReferenceResolveTest
   @TestMetadata("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf")
   @TestDataPath("$PROJECT_ROOT")
   public class IgnoreSelf {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInIgnoreSelf() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classTypeParameter.kt")
     public void testClassTypeParameter() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/classTypeParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("companionObject.kt")
     public void testCompanionObject() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/companionObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionTypeParameter.kt")
     public void testFunctionTypeParameter() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/functionTypeParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localClass.kt")
     public void testLocalClass() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/localClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localVariable.kt")
     public void testLocalVariable() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/localVariable.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("outerClassProperty.kt")
     public void testOuterClassProperty() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/outerClassProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("primaryConstructorParameter.kt")
     public void testPrimaryConstructorParameter() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/primaryConstructorParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateClass.kt")
     public void testPrivateClass() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/privateClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateFunction.kt")
     public void testPrivateFunction() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/privateFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateProperty.kt")
     public void testPrivateProperty() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/privateProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("publicFunction.kt")
     public void testPublicFunction() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/publicFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("publicProperty.kt")
     public void testPublicProperty() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/publicProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("syntheticFieldVariable.kt")
     public void testSyntheticFieldVariable() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/syntheticFieldVariable.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelFunction.kt")
     public void testTopLevelFunction() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/topLevelFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("valueParameter.kt")
     public void testValueParameter() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/valueParameter.kt");
@@ -174,96 +174,96 @@ public class FirIdeDependentAnalysisSourceModuleDanglingFileReferenceResolveTest
   @TestMetadata("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf")
   @TestDataPath("$PROJECT_ROOT")
   public class PreferSelf {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInPreferSelf() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classTypeParameter.kt")
     public void testClassTypeParameter() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/classTypeParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("companionObject.kt")
     public void testCompanionObject() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/companionObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionTypeParameter.kt")
     public void testFunctionTypeParameter() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/functionTypeParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localClass.kt")
     public void testLocalClass() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/localClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localVariable.kt")
     public void testLocalVariable() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/localVariable.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("outerClassProperty.kt")
     public void testOuterClassProperty() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/outerClassProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("primaryConstructorParameter.kt")
     public void testPrimaryConstructorParameter() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/primaryConstructorParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateClass.kt")
     public void testPrivateClass() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/privateClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateFunction.kt")
     public void testPrivateFunction() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/privateFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateProperty.kt")
     public void testPrivateProperty() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/privateProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("publicFunction.kt")
     public void testPublicFunction() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/publicFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("publicProperty.kt")
     public void testPublicProperty() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/publicProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("syntheticFieldVariable.kt")
     public void testSyntheticFieldVariable() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/syntheticFieldVariable.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelFunction.kt")
     public void testTopLevelFunction() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/topLevelFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("valueParameter.kt")
     public void testValueParameter() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/valueParameter.kt");

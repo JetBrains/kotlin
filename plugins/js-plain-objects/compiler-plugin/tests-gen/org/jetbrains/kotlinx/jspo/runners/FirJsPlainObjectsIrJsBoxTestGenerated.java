@@ -19,36 +19,36 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/js-plain-objects/compiler-plugin/testData/box")
 @TestDataPath("$PROJECT_ROOT")
 public class FirJsPlainObjectsIrJsBoxTestGenerated extends AbstractFirJsPlainObjectsIrJsBoxTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/js-plain-objects/compiler-plugin/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("copy.kt")
   public void testCopy() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/box/copy.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("optional.kt")
   public void testOptional() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/box/optional.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simple.kt")
   public void testSimple() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/box/simple.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("with-inheritance.kt")
   public void testWith_inheritance() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/box/with-inheritance.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("with-multiple-inheritance.kt")
   public void testWith_multiple_inheritance() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/box/with-multiple-inheritance.kt");

@@ -41,36 +41,36 @@ public class FirIdeNormalAnalysisSourceModuleMultiModuleCompilerFacilityTestGene
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInCompilationMultiModule() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("commonUsage.kt")
   public void testCommonUsage() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/commonUsage.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("defaultParameterValue.kt")
   public void testDefaultParameterValue() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/defaultParameterValue.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("dependencyBetweenBinaryLibraries.kt")
   public void testDependencyBetweenBinaryLibraries() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/dependencyBetweenBinaryLibraries.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("internalUsage.kt")
   public void testInternalUsage() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/internalUsage.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaAnnotationWithVararg.kt")
   public void testJavaAnnotationWithVararg() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/javaAnnotationWithVararg.kt");
@@ -80,12 +80,12 @@ public class FirIdeNormalAnalysisSourceModuleMultiModuleCompilerFacilityTestGene
   @TestMetadata("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments")
   @TestDataPath("$PROJECT_ROOT")
   public class CodeFragments {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInCodeFragments() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("compilerPluginUsage.kt")
     public void testCompilerPluginUsage() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments/compilerPluginUsage.kt");

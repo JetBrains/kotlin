@@ -40,60 +40,60 @@ public class FirIdeNormalAnalysisSourceModuleHLSmartCastInfoTestGenerated extend
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSmartCastInfo() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/smartCastProvider/smartCastInfo"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("bothImplicitReceiversSmartCast.kt")
   public void testBothImplicitReceiversSmartCast() {
     runTest("analysis/analysis-api/testData/components/smartCastProvider/smartCastInfo/bothImplicitReceiversSmartCast.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multiSmartcastAsReceiver_stable.kt")
   public void testMultiSmartcastAsReceiver_stable() {
     runTest("analysis/analysis-api/testData/components/smartCastProvider/smartCastInfo/multiSmartcastAsReceiver_stable.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multiSmartcastAsReceiver_unstable.kt")
   public void testMultiSmartcastAsReceiver_unstable() {
     runTest("analysis/analysis-api/testData/components/smartCastProvider/smartCastInfo/multiSmartcastAsReceiver_unstable.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multiSmartcast_stable.kt")
   public void testMultiSmartcast_stable() {
     runTest("analysis/analysis-api/testData/components/smartCastProvider/smartCastInfo/multiSmartcast_stable.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multiSmartcast_unstable.kt")
   public void testMultiSmartcast_unstable() {
     runTest("analysis/analysis-api/testData/components/smartCastProvider/smartCastInfo/multiSmartcast_unstable.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("smartcastAsReceiver_stable.kt")
   public void testSmartcastAsReceiver_stable() {
     runTest("analysis/analysis-api/testData/components/smartCastProvider/smartCastInfo/smartcastAsReceiver_stable.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("smartcastAsReceiver_unstable.kt")
   public void testSmartcastAsReceiver_unstable() {
     runTest("analysis/analysis-api/testData/components/smartCastProvider/smartCastInfo/smartcastAsReceiver_unstable.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("smartcast_stable.kt")
   public void testSmartcast_stable() {
     runTest("analysis/analysis-api/testData/components/smartCastProvider/smartCastInfo/smartcast_stable.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("smartcast_unstable.kt")
   public void testSmartcast_unstable() {
     runTest("analysis/analysis-api/testData/components/smartCastProvider/smartCastInfo/smartcast_unstable.kt");

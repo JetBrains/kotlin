@@ -19,18 +19,18 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/boxWasmWasi")
 @TestDataPath("$PROJECT_ROOT")
 public class K1WasmWasiCodegenBoxTestGenerated extends AbstractK1WasmWasiCodegenBoxTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInBoxWasmWasi() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmWasi"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("onExportedFunctionExit.kt")
   public void testOnExportedFunctionExit() {
     runTest("compiler/testData/codegen/boxWasmWasi/onExportedFunctionExit.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simpleWasi.kt")
   public void testSimpleWasi() {
     runTest("compiler/testData/codegen/boxWasmWasi/simpleWasi.kt");

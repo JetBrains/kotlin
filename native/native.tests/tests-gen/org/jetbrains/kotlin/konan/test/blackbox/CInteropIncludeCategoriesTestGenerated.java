@@ -18,36 +18,36 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases")
 @TestDataPath("$PROJECT_ROOT")
 public class CInteropIncludeCategoriesTestGenerated extends AbstractNativeCInteropIncludeCategoriesTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInCases() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases"), Pattern.compile("^([^_](.+))$"), null, false);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("smoke0")
   public void testSmoke0() {
     runTest("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases/smoke0/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("smoke1")
   public void testSmoke1() {
     runTest("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases/smoke1/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("smoke2")
   public void testSmoke2() {
     runTest("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases/smoke2/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("smoke3")
   public void testSmoke3() {
     runTest("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases/smoke3/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("smoke4")
   public void testSmoke4() {
     runTest("native/native.tests/testData/CInterop/frameworkIncludeCategories/cases/smoke4/");

@@ -41,300 +41,300 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("accessorField.kt")
   public void testAccessorField() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/accessorField.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSymbolByReference() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("constructorValueParameter.kt")
   public void testConstructorValueParameter() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorValueParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("constructorViaTypeAlias.kt")
   public void testConstructorViaTypeAlias() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorViaTypeAlias.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enumEntries.kt")
   public void testEnumEntries() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/enumEntries.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enumValueOf.kt")
   public void testEnumValueOf() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/enumValueOf.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enumValues.kt")
   public void testEnumValues() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/enumValues.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("explicitLambdaParameter.kt")
   public void testExplicitLambdaParameter() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/explicitLambdaParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionReceiverParameter.kt")
   public void testFunctionReceiverParameter() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/functionReceiverParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("genericFromFunctionInLocalClass.kt")
   public void testGenericFromFunctionInLocalClass() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/genericFromFunctionInLocalClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("genericFromOuterClassInInnerClass.kt")
   public void testGenericFromOuterClassInInnerClass() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/genericFromOuterClassInInnerClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("implicitLambdaParameter.kt")
   public void testImplicitLambdaParameter() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/implicitLambdaParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaClassWithEmptyAnnotationName.kt")
   public void testJavaClassWithEmptyAnnotationName() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaClassWithEmptyAnnotationName.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaField.kt")
   public void testJavaField() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaField.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaFieldWithTypeAnnotation.kt")
   public void testJavaFieldWithTypeAnnotation() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaFieldWithTypeAnnotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaMethod.kt")
   public void testJavaMethod() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaMethod.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaMethodWithExternalNotNullAnnotation.kt")
   public void testJavaMethodWithExternalNotNullAnnotation() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaMethodWithExternalNotNullAnnotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaMethodWithNotNullAnnotation.kt")
   public void testJavaMethodWithNotNullAnnotation() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaMethodWithNotNullAnnotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaStaticField.kt")
   public void testJavaStaticField() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaStaticField.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaStaticMethod.kt")
   public void testJavaStaticMethod() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaStaticMethod.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaSyntheticAccessor.kt")
   public void testJavaSyntheticAccessor() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaSyntheticAccessor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryConstructorProperty.kt")
   public void testLibraryConstructorProperty() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryConstructorProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryConstructorPropertyWithAnnotations.kt")
   public void testLibraryConstructorPropertyWithAnnotations() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryConstructorPropertyWithAnnotations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryConstructorVariable.kt")
   public void testLibraryConstructorVariable() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryConstructorVariable.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryConstructorVariableWithAnnotations.kt")
   public void testLibraryConstructorVariableWithAnnotations() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryConstructorVariableWithAnnotations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryDataClass_component.kt")
   public void testLibraryDataClass_component() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryDataClass_component.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryDataClass_copy.kt")
   public void testLibraryDataClass_copy() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryDataClass_copy.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryDataClass_equals.kt")
   public void testLibraryDataClass_equals() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryDataClass_equals.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryDataClass_hashCode.kt")
   public void testLibraryDataClass_hashCode() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryDataClass_hashCode.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryDataClass_toString.kt")
   public void testLibraryDataClass_toString() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryDataClass_toString.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryMemberProperty.kt")
   public void testLibraryMemberProperty() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryMemberProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryMemberPropertyWithAnnotations.kt")
   public void testLibraryMemberPropertyWithAnnotations() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryMemberPropertyWithAnnotations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryMemberVariable.kt")
   public void testLibraryMemberVariable() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryMemberVariable.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryMemberVariableWithAnnotations.kt")
   public void testLibraryMemberVariableWithAnnotations() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryMemberVariableWithAnnotations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryProperty.kt")
   public void testLibraryProperty() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryPropertyWithAnnotations.kt")
   public void testLibraryPropertyWithAnnotations() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryPropertyWithAnnotations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryValueClass_equals.kt")
   public void testLibraryValueClass_equals() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryValueClass_equals.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryValueClass_hashCode.kt")
   public void testLibraryValueClass_hashCode() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryValueClass_hashCode.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryValueClass_toString.kt")
   public void testLibraryValueClass_toString() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryValueClass_toString.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryVariable.kt")
   public void testLibraryVariable() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryVariable.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryVariableWithAnnotations.kt")
   public void testLibraryVariableWithAnnotations() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryVariableWithAnnotations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("primaryConstructorValueParameter.kt")
   public void testPrimaryConstructorValueParameter() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/primaryConstructorValueParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("primaryConstructorValueParameterAsProperty.kt")
   public void testPrimaryConstructorValueParameterAsProperty() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/primaryConstructorValueParameterAsProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyReceiverParameter.kt")
   public void testPropertyReceiverParameter() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/propertyReceiverParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("samConstructor.kt")
   public void testSamConstructor() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/samConstructor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("setterValueParameter.kt")
   public void testSetterValueParameter() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/setterValueParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("syntheticProperty.kt")
   public void testSyntheticProperty() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/syntheticProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeAnnotationOnBackingField.kt")
   public void testTypeAnnotationOnBackingField() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/typeAnnotationOnBackingField.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameter.kt")
   public void testTypeParameter() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/typeParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("valueParameter.kt")
   public void testValueParameter() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/valueParameter.kt");
@@ -344,24 +344,24 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
   @TestMetadata("analysis/analysis-api/testData/symbols/symbolByReference/js")
   @TestDataPath("$PROJECT_ROOT")
   public class Js {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInJs() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByReference/js"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionFromJsDynamicScopeNoArguments.kt")
     public void testFunctionFromJsDynamicScopeNoArguments() {
       runTest("analysis/analysis-api/testData/symbols/symbolByReference/js/functionFromJsDynamicScopeNoArguments.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionFromJsDynamicScopeWithArguments.kt")
     public void testFunctionFromJsDynamicScopeWithArguments() {
       runTest("analysis/analysis-api/testData/symbols/symbolByReference/js/functionFromJsDynamicScopeWithArguments.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyFromJsDynamicScope.kt")
     public void testPropertyFromJsDynamicScope() {
       runTest("analysis/analysis-api/testData/symbols/symbolByReference/js/propertyFromJsDynamicScope.kt");
@@ -372,12 +372,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
   @TestMetadata("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled")
   @TestDataPath("$PROJECT_ROOT")
   public class WithTestCompilerPluginEnabled {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("generatedCompanionWorksAsValue.kt")
     public void testGeneratedCompanionWorksAsValue() {
       runTest("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled/generatedCompanionWorksAsValue.kt");

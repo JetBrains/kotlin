@@ -18,30 +18,30 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors")
 @TestDataPath("$PROJECT_ROOT")
 public class ScriptNonLocalDeclarationAnchorTestGenerated extends AbstractScriptNonLocalDeclarationAnchorTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInNonLocalDeclarationAnchors() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classWithMembersScript.kts")
   public void testClassWithMembersScript() {
     runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/classWithMembersScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classWithMembersWithPackage.kts")
   public void testClassWithMembersWithPackage() {
     runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/classWithMembersWithPackage.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("statements.kts")
   public void testStatements() {
     runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/statements.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("topLevelFor.kts")
   public void testTopLevelFor() {
     runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/topLevelFor.kts");

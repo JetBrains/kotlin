@@ -41,18 +41,18 @@ public class FirStandaloneNormalAnalysisSourceModuleMultiModuleResolveCallTestGe
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInResolveCall() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("implicitTypeSubstituteOverrideFromOtherModule.kt")
   public void testImplicitTypeSubstituteOverrideFromOtherModule() {
     runTest("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/implicitTypeSubstituteOverrideFromOtherModule.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unitTypeFromOtherModule.kt")
   public void testUnitTypeFromOtherModule() {
     runTest("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/unitTypeFromOtherModule.kt");
@@ -62,12 +62,12 @@ public class FirStandaloneNormalAnalysisSourceModuleMultiModuleResolveCallTestGe
   @TestMetadata("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/withTestCompilerPluginEnabled")
   @TestDataPath("$PROJECT_ROOT")
   public class WithTestCompilerPluginEnabled {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("annotationFromOtherModule.kt")
     public void testAnnotationFromOtherModule() {
       runTest("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/withTestCompilerPluginEnabled/annotationFromOtherModule.kt");

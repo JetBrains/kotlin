@@ -22,246 +22,246 @@ import java.util.regex.Pattern;
 @Tag("frontend-fir")
 @FirPipeline()
 public class FirNativeKlibEvolutionTestGenerated extends AbstractNativeKlibEvolutionTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("addAbstractMemberBody.kt")
   public void testAddAbstractMemberBody() {
     runTest("compiler/testData/klib/evolution/addAbstractMemberBody.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("addCompanionObject.kt")
   public void testAddCompanionObject() {
     runTest("compiler/testData/klib/evolution/addCompanionObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("addDefaultImplementations.kt")
   public void testAddDefaultImplementations() {
     runTest("compiler/testData/klib/evolution/addDefaultImplementations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("addEnumClassMember.kt")
   public void testAddEnumClassMember() {
     runTest("compiler/testData/klib/evolution/addEnumClassMember.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("addLateinitToVar.kt")
   public void testAddLateinitToVar() {
     runTest("compiler/testData/klib/evolution/addLateinitToVar.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("addOpenToClass.kt")
   public void testAddOpenToClass() {
     runTest("compiler/testData/klib/evolution/addOpenToClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("addOpenToMember.kt")
   public void testAddOpenToMember() {
     runTest("compiler/testData/klib/evolution/addOpenToMember.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("addOrRemoveConst.kt")
   public void testAddOrRemoveConst() {
     runTest("compiler/testData/klib/evolution/addOrRemoveConst.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("addOrRemoveInitBlock.kt")
   public void testAddOrRemoveInitBlock() {
     runTest("compiler/testData/klib/evolution/addOrRemoveInitBlock.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("addOverloads.kt")
   public void testAddOverloads() {
     runTest("compiler/testData/klib/evolution/addOverloads.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("addParameterDefaulValue.kt")
   public void testAddParameterDefaulValue() {
     runTest("compiler/testData/klib/evolution/addParameterDefaulValue.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("addPropertyAccessor.kt")
   public void testAddPropertyAccessor() {
     runTest("compiler/testData/klib/evolution/addPropertyAccessor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("addingSealedClassMember.kt")
   public void testAddingSealedClassMember() {
     runTest("compiler/testData/klib/evolution/addingSealedClassMember.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInEvolution() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/evolution"), Pattern.compile("^(.+)\\.kt$"), null, false);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("changeBaseClassOrder.kt")
   public void testChangeBaseClassOrder() {
     runTest("compiler/testData/klib/evolution/changeBaseClassOrder.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("changeCompanionToNestedObject.kt")
   public void testChangeCompanionToNestedObject() {
     runTest("compiler/testData/klib/evolution/changeCompanionToNestedObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("changeConstInitialization.kt")
   public void testChangeConstInitialization() {
     runTest("compiler/testData/klib/evolution/changeConstInitialization.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("changeFakeOverrides.kt")
   public void testChangeFakeOverrides() {
     runTest("compiler/testData/klib/evolution/changeFakeOverrides.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("changeNamesOfTypeParameters.kt")
   public void testChangeNamesOfTypeParameters() {
     runTest("compiler/testData/klib/evolution/changeNamesOfTypeParameters.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("changeObjectToCompanion.kt")
   public void testChangeObjectToCompanion() {
     runTest("compiler/testData/klib/evolution/changeObjectToCompanion.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("changeParameterDefaultValue.kt")
   public void testChangeParameterDefaultValue() {
     runTest("compiler/testData/klib/evolution/changeParameterDefaultValue.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("changePropertyFromValToVar.kt")
   public void testChangePropertyFromValToVar() {
     runTest("compiler/testData/klib/evolution/changePropertyFromValToVar.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("changePropertyInitialization.kt")
   public void testChangePropertyInitialization() {
     runTest("compiler/testData/klib/evolution/changePropertyInitialization.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("constructorParameterMarkValVar.kt")
   public void testConstructorParameterMarkValVar() {
     runTest("compiler/testData/klib/evolution/constructorParameterMarkValVar.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("deleteOverrideMember.kt")
   public void testDeleteOverrideMember() {
     runTest("compiler/testData/klib/evolution/deleteOverrideMember.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("deletePrivateMembers.kt")
   public void testDeletePrivateMembers() {
     runTest("compiler/testData/klib/evolution/deletePrivateMembers.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineBodyChange.kt")
   public void testInlineBodyChange() {
     runTest("compiler/testData/klib/evolution/inlineBodyChange.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineFunction.kt")
   public void testInlineFunction() {
     runTest("compiler/testData/klib/evolution/inlineFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("makeFunctionInfixOrTailrec.kt")
   public void testMakeFunctionInfixOrTailrec() {
     runTest("compiler/testData/klib/evolution/makeFunctionInfixOrTailrec.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("moreSpecificBaseClass.kt")
   public void testMoreSpecificBaseClass() {
     runTest("compiler/testData/klib/evolution/moreSpecificBaseClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("moveMemberUpInHierarchy.kt")
   public void testMoveMemberUpInHierarchy() {
     runTest("compiler/testData/klib/evolution/moveMemberUpInHierarchy.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("newFakeOverride.kt")
   public void testNewFakeOverride() {
     runTest("compiler/testData/klib/evolution/newFakeOverride.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("newOverrideMember.kt")
   public void testNewOverrideMember() {
     runTest("compiler/testData/klib/evolution/newOverrideMember.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("removeAbstractFromClass.kt")
   public void testRemoveAbstractFromClass() {
     runTest("compiler/testData/klib/evolution/removeAbstractFromClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("removeInfixOrTailrecFromFunction.kt")
   public void testRemoveInfixOrTailrecFromFunction() {
     runTest("compiler/testData/klib/evolution/removeInfixOrTailrecFromFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("removeLateinitFromVar.kt")
   public void testRemoveLateinitFromVar() {
     runTest("compiler/testData/klib/evolution/removeLateinitFromVar.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("removePropertyAccessor.kt")
   public void testRemovePropertyAccessor() {
     runTest("compiler/testData/klib/evolution/removePropertyAccessor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("renameArguments.kt")
   public void testRenameArguments() {
     runTest("compiler/testData/klib/evolution/renameArguments.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("reorderClassConstructors.kt")
   public void testReorderClassConstructors() {
     runTest("compiler/testData/klib/evolution/reorderClassConstructors.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("turnClassIntoDataClass.kt")
   public void testTurnClassIntoDataClass() {
     runTest("compiler/testData/klib/evolution/turnClassIntoDataClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("widenSuperMemberVisibility.kt")
   public void testWidenSuperMemberVisibility() {
     runTest("compiler/testData/klib/evolution/widenSuperMemberVisibility.kt");

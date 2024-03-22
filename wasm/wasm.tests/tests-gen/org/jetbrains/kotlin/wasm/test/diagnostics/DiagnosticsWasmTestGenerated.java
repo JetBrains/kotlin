@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/diagnostics/wasmTests")
 @TestDataPath("$PROJECT_ROOT")
 public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInWasmTests() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
   }
@@ -28,120 +28,120 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
   @TestMetadata("compiler/testData/diagnostics/wasmTests/jsInterop")
   @TestDataPath("$PROJECT_ROOT")
   public class JsInterop {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInJsInterop() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests/jsInterop"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("anonymousInitializer.kt")
     public void testAnonymousInitializer() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/anonymousInitializer.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("associatedObjects.kt")
     public void testAssociatedObjects() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/associatedObjects.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("body.kt")
     public void testBody() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/body.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("complexCasesWithJsInteropTypes.kt")
     public void testComplexCasesWithJsInteropTypes() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/complexCasesWithJsInteropTypes.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("correctJsInteropTypes.kt")
     public void testCorrectJsInteropTypes() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/correctJsInteropTypes.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("definedExternally.kt")
     public void testDefinedExternally() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/definedExternally.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegatedConstructorCall.kt")
     public void testDelegatedConstructorCall() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/delegatedConstructorCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegation.kt")
     public void testDelegation() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/delegation.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("dynamicUnsupported.kt")
     public void testDynamicUnsupported() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/dynamicUnsupported.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("external.kt")
     public void testExternal() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/external.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalInterfaceNested.kt")
     public void testExternalInterfaceNested() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/externalInterfaceNested.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inheritance.kt")
     public void testInheritance() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/inheritance.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsCode.kt")
     public void testJsCode() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/jsCode.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsExport.kt")
     public void testJsExport() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/jsExport.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsFun.kt")
     public void testJsFun() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/jsFun.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedExternal.kt")
     public void testNestedExternal() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/nestedExternal.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nonAbstractMembersOfInterface.kt")
     public void testNonAbstractMembersOfInterface() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/nonAbstractMembersOfInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("wrongJsInteropTypes.kt")
     public void testWrongJsInteropTypes() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/wrongJsInteropTypes.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("wrongQualifier.kt")
     public void testWrongQualifier() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/wrongQualifier.kt");
@@ -151,30 +151,30 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
     @TestMetadata("compiler/testData/diagnostics/wasmTests/jsInterop/module")
     @TestDataPath("$PROJECT_ROOT")
     public class Module {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInModule() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests/jsInterop/module"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("jsModuleNonExternal.kt")
       public void testJsModuleNonExternal() {
         runTest("compiler/testData/diagnostics/wasmTests/jsInterop/module/jsModuleNonExternal.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("jsVarProhibited.kt")
       public void testJsVarProhibited() {
         runTest("compiler/testData/diagnostics/wasmTests/jsInterop/module/jsVarProhibited.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nestedProhibited.kt")
       public void testNestedProhibited() {
         runTest("compiler/testData/diagnostics/wasmTests/jsInterop/module/nestedProhibited.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("prohibitedOnNonNative.kt")
       public void testProhibitedOnNonNative() {
         runTest("compiler/testData/diagnostics/wasmTests/jsInterop/module/prohibitedOnNonNative.kt");
@@ -185,12 +185,12 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
     @TestMetadata("compiler/testData/diagnostics/wasmTests/jsInterop/qualifier")
     @TestDataPath("$PROJECT_ROOT")
     public class Qualifier {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInQualifier() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests/jsInterop/qualifier"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("jsQualifierNonExternal.kt")
       public void testJsQualifierNonExternal() {
         runTest("compiler/testData/diagnostics/wasmTests/jsInterop/qualifier/jsQualifierNonExternal.kt");
@@ -201,36 +201,36 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
     @TestMetadata("compiler/testData/diagnostics/wasmTests/jsInterop/rtti")
     @TestDataPath("$PROJECT_ROOT")
     public class Rtti {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInRtti() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests/jsInterop/rtti"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("castToNativeInterface.kt")
       public void testCastToNativeInterface() {
         runTest("compiler/testData/diagnostics/wasmTests/jsInterop/rtti/castToNativeInterface.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("checkForNativeInterface.kt")
       public void testCheckForNativeInterface() {
         runTest("compiler/testData/diagnostics/wasmTests/jsInterop/rtti/checkForNativeInterface.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nativeInterfaceAsReifiedTypeArgument.kt")
       public void testNativeInterfaceAsReifiedTypeArgument() {
         runTest("compiler/testData/diagnostics/wasmTests/jsInterop/rtti/nativeInterfaceAsReifiedTypeArgument.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nativeInterfaceClassLiteral.kt")
       public void testNativeInterfaceClassLiteral() {
         runTest("compiler/testData/diagnostics/wasmTests/jsInterop/rtti/nativeInterfaceClassLiteral.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenIsNativeInterface.kt")
       public void testWhenIsNativeInterface() {
         runTest("compiler/testData/diagnostics/wasmTests/jsInterop/rtti/whenIsNativeInterface.kt");
@@ -242,13 +242,13 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
   @TestMetadata("compiler/testData/diagnostics/wasmTests/multiplatform")
   @TestDataPath("$PROJECT_ROOT")
   public class Multiplatform {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("ActualExternalTypeAsJsInteropType.kt")
     public void testActualExternalTypeAsJsInteropType() {
       runTest("compiler/testData/diagnostics/wasmTests/multiplatform/ActualExternalTypeAsJsInteropType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInMultiplatform() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests/multiplatform"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
@@ -258,18 +258,18 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
   @TestMetadata("compiler/testData/diagnostics/wasmTests/wasmInterop")
   @TestDataPath("$PROJECT_ROOT")
   public class WasmInterop {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInWasmInterop() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests/wasmInterop"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("wasmExport.kt")
     public void testWasmExport() {
       runTest("compiler/testData/diagnostics/wasmTests/wasmInterop/wasmExport.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("wasmImport.kt")
     public void testWasmImport() {
       runTest("compiler/testData/diagnostics/wasmTests/wasmInterop/wasmImport.kt");

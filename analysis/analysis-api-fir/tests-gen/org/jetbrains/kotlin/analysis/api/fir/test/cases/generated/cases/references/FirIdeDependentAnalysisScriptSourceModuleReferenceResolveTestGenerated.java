@@ -41,18 +41,18 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInReferenceResolve() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("ScriptArgument.kts")
   public void testScriptArgument() {
     runTest("analysis/analysis-api/testData/referenceResolve/ScriptArgument.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("ScriptResult.kts")
   public void testScriptResult() {
     runTest("analysis/analysis-api/testData/referenceResolve/ScriptResult.kts");
@@ -62,7 +62,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
   @TestMetadata("analysis/analysis-api/testData/referenceResolve/arrayAccess")
   @TestDataPath("$PROJECT_ROOT")
   public class ArrayAccess {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInArrayAccess() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/arrayAccess"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -71,7 +71,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/arrayAccess/withErrors")
     @TestDataPath("$PROJECT_ROOT")
     public class WithErrors {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInWithErrors() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/arrayAccess/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -82,7 +82,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
   @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment")
   @TestDataPath("$PROJECT_ROOT")
   public class CodeFragment {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInCodeFragment() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -91,7 +91,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment")
     @TestDataPath("$PROJECT_ROOT")
     public class BlockCodeFragment {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInBlockCodeFragment() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment/blockCodeFragment"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -101,7 +101,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment")
     @TestDataPath("$PROJECT_ROOT")
     public class ExpressionCodeFragment {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInExpressionCodeFragment() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -111,7 +111,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/codeFragment/typeCodeFragment")
     @TestDataPath("$PROJECT_ROOT")
     public class TypeCodeFragment {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInTypeCodeFragment() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment/typeCodeFragment"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -122,7 +122,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
   @TestMetadata("analysis/analysis-api/testData/referenceResolve/constructorDelegatingReference")
   @TestDataPath("$PROJECT_ROOT")
   public class ConstructorDelegatingReference {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInConstructorDelegatingReference() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/constructorDelegatingReference"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -132,7 +132,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
   @TestMetadata("analysis/analysis-api/testData/referenceResolve/danglingAnnotations")
   @TestDataPath("$PROJECT_ROOT")
   public class DanglingAnnotations {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInDanglingAnnotations() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/danglingAnnotations"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -142,7 +142,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
   @TestMetadata("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors")
   @TestDataPath("$PROJECT_ROOT")
   public class DelegatedPropertyAccessors {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInDelegatedPropertyAccessors() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -151,7 +151,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/inSource")
     @TestDataPath("$PROJECT_ROOT")
     public class InSource {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInInSource() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/inSource"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -161,7 +161,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/inStandardLibrary")
     @TestDataPath("$PROJECT_ROOT")
     public class InStandardLibrary {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInInStandardLibrary() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/inStandardLibrary"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -171,7 +171,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/withErrors")
     @TestDataPath("$PROJECT_ROOT")
     public class WithErrors {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInWithErrors() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -182,7 +182,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
   @TestMetadata("analysis/analysis-api/testData/referenceResolve/forLoopIn")
   @TestDataPath("$PROJECT_ROOT")
   public class ForLoopIn {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInForLoopIn() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -191,7 +191,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/forLoopIn/inBuiltIns")
     @TestDataPath("$PROJECT_ROOT")
     public class InBuiltIns {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInInBuiltIns() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/inBuiltIns"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -201,7 +201,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/forLoopIn/inLibrary")
     @TestDataPath("$PROJECT_ROOT")
     public class InLibrary {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInInLibrary() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/inLibrary"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -211,7 +211,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/forLoopIn/inSource")
     @TestDataPath("$PROJECT_ROOT")
     public class InSource {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInInSource() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/inSource"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -220,7 +220,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
       @TestMetadata("analysis/analysis-api/testData/referenceResolve/forLoopIn/inSource/withErrors")
       @TestDataPath("$PROJECT_ROOT")
       public class WithErrors {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInWithErrors() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/inSource/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
         }
@@ -231,7 +231,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/forLoopIn/withErrors")
     @TestDataPath("$PROJECT_ROOT")
     public class WithErrors {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInWithErrors() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -242,7 +242,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
   @TestMetadata("analysis/analysis-api/testData/referenceResolve/inImport")
   @TestDataPath("$PROJECT_ROOT")
   public class InImport {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInInImport() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/inImport"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -252,7 +252,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
   @TestMetadata("analysis/analysis-api/testData/referenceResolve/invoke")
   @TestDataPath("$PROJECT_ROOT")
   public class Invoke {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInInvoke() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/invoke"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -261,7 +261,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/invoke/onObjects")
     @TestDataPath("$PROJECT_ROOT")
     public class OnObjects {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInOnObjects() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/invoke/onObjects"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -271,7 +271,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/invoke/withErrors")
     @TestDataPath("$PROJECT_ROOT")
     public class WithErrors {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInWithErrors() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/invoke/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -282,7 +282,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
   @TestMetadata("analysis/analysis-api/testData/referenceResolve/java")
   @TestDataPath("$PROJECT_ROOT")
   public class Java {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInJava() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/java"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -291,7 +291,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/java/enumWithCustomGetName")
     @TestDataPath("$PROJECT_ROOT")
     public class EnumWithCustomGetName {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInEnumWithCustomGetName() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/java/enumWithCustomGetName"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -302,7 +302,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
   @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc")
   @TestDataPath("$PROJECT_ROOT")
   public class KDoc {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInKDoc() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -311,7 +311,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject")
     @TestDataPath("$PROJECT_ROOT")
     public class CompanionObject {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInCompanionObject() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -321,7 +321,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/extensions")
     @TestDataPath("$PROJECT_ROOT")
     public class Extensions {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInExtensions() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/extensions"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -330,7 +330,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
       @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/generics")
       @TestDataPath("$PROJECT_ROOT")
       public class Generics {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInGenerics() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/extensions/generics"), Pattern.compile("^(.+)\\.kts$"), null, true);
         }
@@ -341,7 +341,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/imports")
     @TestDataPath("$PROJECT_ROOT")
     public class Imports {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInImports() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/imports"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -351,7 +351,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations")
     @TestDataPath("$PROJECT_ROOT")
     public class JavaDeclarations {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInJavaDeclarations() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -361,7 +361,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/localContext")
     @TestDataPath("$PROJECT_ROOT")
     public class LocalContext {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInLocalContext() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/localContext"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -371,7 +371,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/packages")
     @TestDataPath("$PROJECT_ROOT")
     public class Packages {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInPackages() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/packages"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -381,7 +381,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/parameters")
     @TestDataPath("$PROJECT_ROOT")
     public class Parameters {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInParameters() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/parameters"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -391,7 +391,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified")
     @TestDataPath("$PROJECT_ROOT")
     public class Qualified {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInQualified() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -400,7 +400,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
       @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables")
       @TestDataPath("$PROJECT_ROOT")
       public class Callables {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInCallables() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables"), Pattern.compile("^(.+)\\.kts$"), null, true);
         }
@@ -409,7 +409,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
         @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported")
         @TestDataPath("$PROJECT_ROOT")
         public class NotImported {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInNotImported() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported"), Pattern.compile("^(.+)\\.kts$"), null, true);
           }
@@ -420,7 +420,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
       @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/conflictResolution")
       @TestDataPath("$PROJECT_ROOT")
       public class ConflictResolution {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInConflictResolution() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/conflictResolution"), Pattern.compile("^(.+)\\.kts$"), null, true);
         }
@@ -430,7 +430,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
       @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/fromOtherFile")
       @TestDataPath("$PROJECT_ROOT")
       public class FromOtherFile {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInFromOtherFile() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/fromOtherFile"), Pattern.compile("^(.+)\\.kts$"), null, true);
         }
@@ -440,7 +440,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
       @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib")
       @TestDataPath("$PROJECT_ROOT")
       public class Stdlib {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInStdlib() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib"), Pattern.compile("^(.+)\\.kts$"), null, true);
         }
@@ -451,7 +451,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/thisQualifier")
     @TestDataPath("$PROJECT_ROOT")
     public class ThisQualifier {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInThisQualifier() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/thisQualifier"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -461,7 +461,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/withErrors")
     @TestDataPath("$PROJECT_ROOT")
     public class WithErrors {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInWithErrors() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -472,7 +472,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
   @TestMetadata("analysis/analysis-api/testData/referenceResolve/kotlinPackage")
   @TestDataPath("$PROJECT_ROOT")
   public class KotlinPackage {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInKotlinPackage() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kotlinPackage"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -482,7 +482,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
   @TestMetadata("analysis/analysis-api/testData/referenceResolve/nestedTypes")
   @TestDataPath("$PROJECT_ROOT")
   public class NestedTypes {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInNestedTypes() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/nestedTypes"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -492,7 +492,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
   @TestMetadata("analysis/analysis-api/testData/referenceResolve/packageReference")
   @TestDataPath("$PROJECT_ROOT")
   public class PackageReference {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInPackageReference() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/packageReference"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -502,7 +502,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
   @TestMetadata("analysis/analysis-api/testData/referenceResolve/qualifiedAccess")
   @TestDataPath("$PROJECT_ROOT")
   public class QualifiedAccess {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInQualifiedAccess() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/qualifiedAccess"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -512,7 +512,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
   @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument")
   @TestDataPath("$PROJECT_ROOT")
   public class TypeArgument {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInTypeArgument() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -521,7 +521,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument/constant")
     @TestDataPath("$PROJECT_ROOT")
     public class Constant {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInConstant() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument/constant"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -531,7 +531,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall")
     @TestDataPath("$PROJECT_ROOT")
     public class FunctionCall {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInFunctionCall() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -541,7 +541,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument/propertyAccess")
     @TestDataPath("$PROJECT_ROOT")
     public class PropertyAccess {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInPropertyAccess() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument/propertyAccess"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -551,7 +551,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument/type")
     @TestDataPath("$PROJECT_ROOT")
     public class Type {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInType() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument/type"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -562,7 +562,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
   @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeParameter")
   @TestDataPath("$PROJECT_ROOT")
   public class TypeParameter {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInTypeParameter() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeParameter"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -572,7 +572,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
   @TestMetadata("analysis/analysis-api/testData/referenceResolve/withErrors")
   @TestDataPath("$PROJECT_ROOT")
   public class WithErrors {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInWithErrors() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -581,7 +581,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/withErrors/partiallyUnresolvedTypeQualifier")
     @TestDataPath("$PROJECT_ROOT")
     public class PartiallyUnresolvedTypeQualifier {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInPartiallyUnresolvedTypeQualifier() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/withErrors/partiallyUnresolvedTypeQualifier"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }

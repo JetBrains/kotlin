@@ -40,7 +40,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleSymbolRestoreFromDifferentMod
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSymbolRestoreFromDifferentModule() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolRestoreFromDifferentModule"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

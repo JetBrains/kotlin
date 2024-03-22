@@ -40,42 +40,42 @@ public class FirStandaloneNormalAnalysisSourceModuleIsSubclassOfTestGenerated ex
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInIsSubclassOf() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("childClass.kt")
   public void testChildClass() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf/childClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("grandParentClass.kt")
   public void testGrandParentClass() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf/grandParentClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localClasses.kt")
   public void testLocalClasses() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf/localClasses.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("parentClass.kt")
   public void testParentClass() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf/parentClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("sameClass.kt")
   public void testSameClass() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf/sameClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unrelatedClass.kt")
   public void testUnrelatedClass() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf/unrelatedClass.kt");

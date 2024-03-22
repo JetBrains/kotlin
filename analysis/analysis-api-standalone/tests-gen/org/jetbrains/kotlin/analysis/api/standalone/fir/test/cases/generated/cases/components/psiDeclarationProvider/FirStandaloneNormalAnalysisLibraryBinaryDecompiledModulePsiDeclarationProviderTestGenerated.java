@@ -40,84 +40,84 @@ public class FirStandaloneNormalAnalysisLibraryBinaryDecompiledModulePsiDeclarat
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInBinary() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/standalone/binary"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multifileFacade.kt")
   public void testMultifileFacade() {
     runTest("analysis/analysis-api/testData/standalone/binary/multifileFacade.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertiesInCompanionObject.kt")
   public void testPropertiesInCompanionObject() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInCompanionObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertiesInCompanionObject_JvmField.kt")
   public void testPropertiesInCompanionObject_JvmField() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInCompanionObject_JvmField.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertiesInCompanionObject_JvmStatic.kt")
   public void testPropertiesInCompanionObject_JvmStatic() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInCompanionObject_JvmStatic.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertiesInInnerClass.kt")
   public void testPropertiesInInnerClass() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInInnerClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertiesInNamedCompanionObject.kt")
   public void testPropertiesInNamedCompanionObject() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInNamedCompanionObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertiesInNamedCompanionObject_JvmField.kt")
   public void testPropertiesInNamedCompanionObject_JvmField() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInNamedCompanionObject_JvmField.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertiesInNamedCompanionObject_JvmStatic.kt")
   public void testPropertiesInNamedCompanionObject_JvmStatic() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInNamedCompanionObject_JvmStatic.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertiesInNestedObject.kt")
   public void testPropertiesInNestedObject() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInNestedObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertiesInObject.kt")
   public void testPropertiesInObject() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertiesInOuterClass.kt")
   public void testPropertiesInOuterClass() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertiesInOuterClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyWithValueClass.kt")
   public void testPropertyWithValueClass() {
     runTest("analysis/analysis-api/testData/standalone/binary/propertyWithValueClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("topLevelFunctionWithValueClass.kt")
   public void testTopLevelFunctionWithValueClass() {
     runTest("analysis/analysis-api/testData/standalone/binary/topLevelFunctionWithValueClass.kt");

@@ -40,7 +40,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleIsImplicitCompanionReferenceT
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInIsImplicitReferenceToCompanion() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

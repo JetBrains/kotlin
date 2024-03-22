@@ -41,222 +41,222 @@ public class FirIdeNormalAnalysisSourceModuleCompileTimeConstantEvaluatorTestGen
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInEvaluate() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("arrayWithInc.kt")
   public void testArrayWithInc() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/arrayWithInc.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("binaryExpressionWithString.kt")
   public void testBinaryExpressionWithString() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/binaryExpressionWithString.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("integerLiteral_minusOne_entire.kt")
   public void testIntegerLiteral_minusOne_entire() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/integerLiteral_minusOne_entire.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("integerLiteral_minusOne_justOne.kt")
   public void testIntegerLiteral_minusOne_justOne() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/integerLiteral_minusOne_justOne.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("integerLiteral_plusOne_entire.kt")
   public void testIntegerLiteral_plusOne_entire() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/integerLiteral_plusOne_entire.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("integerLiteral_plusOne_justOne.kt")
   public void testIntegerLiteral_plusOne_justOne() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/integerLiteral_plusOne_justOne.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("interpolationWithInc.kt")
   public void testInterpolationWithInc() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/interpolationWithInc.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaFinalField.kt")
   public void testJavaFinalField() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/javaFinalField.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaStaticField.kt")
   public void testJavaStaticField() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/javaStaticField.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaStaticFinalField.kt")
   public void testJavaStaticFinalField() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/javaStaticFinalField.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("namedReference_const.kt")
   public void testNamedReference_const() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference_const.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("namedReference_userType.kt")
   public void testNamedReference_userType() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference_userType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("namedReference_val.kt")
   public void testNamedReference_val() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference_val.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("namedReference_var.kt")
   public void testNamedReference_var() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference_var.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyInCompanionObject.kt")
   public void testPropertyInCompanionObject() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInCompanionObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyInCompanionObject_indirect.kt")
   public void testPropertyInCompanionObject_indirect() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInCompanionObject_indirect.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyInCompanionObject_indirect_twice.kt")
   public void testPropertyInCompanionObject_indirect_twice() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInCompanionObject_indirect_twice.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyInit_Byte.kt")
   public void testPropertyInit_Byte() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_Byte.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyInit_DivByOtherProperty_const.kt")
   public void testPropertyInit_DivByOtherProperty_const() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_DivByOtherProperty_const.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyInit_DivByOtherProperty_val.kt")
   public void testPropertyInit_DivByOtherProperty_val() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_DivByOtherProperty_val.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyInit_DivByZero.kt")
   public void testPropertyInit_DivByZero() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_DivByZero.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyInit_Double.kt")
   public void testPropertyInit_Double() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_Double.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyInit_Float.kt")
   public void testPropertyInit_Float() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_Float.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyInit_Int.kt")
   public void testPropertyInit_Int() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_Int.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyInit_Long.kt")
   public void testPropertyInit_Long() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_Long.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyInit_UInt.kt")
   public void testPropertyInit_UInt() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_UInt.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("stringLiteral.kt")
   public void testStringLiteral() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/stringLiteral.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("string_compareTo.kt")
   public void testString_compareTo() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_compareTo.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("string_length.kt")
   public void testString_length() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_length.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("string_plusMany.kt")
   public void testString_plusMany() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_plusMany.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("string_plusOnce.kt")
   public void testString_plusOnce() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_plusOnce.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("string_plusTwice.kt")
   public void testString_plusTwice() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_plusTwice.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("string_templateConst.kt")
   public void testString_templateConst() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_templateConst.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("string_templateNonConst.kt")
   public void testString_templateNonConst() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_templateNonConst.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("string_toString.kt")
   public void testString_toString() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_toString.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("string_trimIndent.kt")
   public void testString_trimIndent() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_trimIndent.kt");
@@ -266,30 +266,30 @@ public class FirIdeNormalAnalysisSourceModuleCompileTimeConstantEvaluatorTestGen
   @TestMetadata("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode")
   @TestDataPath("$PROJECT_ROOT")
   public class IncompleteCode {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInIncompleteCode() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("incompleteRange.kt")
     public void testIncompleteRange() {
       runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode/incompleteRange.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("noRightOperand.kt")
     public void testNoRightOperand() {
       runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode/noRightOperand.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("noRightOperandLong.kt")
     public void testNoRightOperandLong() {
       runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode/noRightOperandLong.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("noRightOperandUnsignedLong.kt")
     public void testNoRightOperandUnsignedLong() {
       runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode/noRightOperandUnsignedLong.kt");

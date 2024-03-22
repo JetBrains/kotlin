@@ -40,18 +40,18 @@ public class FirStandaloneNormalAnalysisSourceModuleFileScopeTestGenerated exten
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInFileScopeTest() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/fileScopeTest"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fileScope.kt")
   public void testFileScope() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/fileScopeTest/fileScope.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simpleFileScope.kt")
   public void testSimpleFileScope() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/fileScopeTest/simpleFileScope.kt");

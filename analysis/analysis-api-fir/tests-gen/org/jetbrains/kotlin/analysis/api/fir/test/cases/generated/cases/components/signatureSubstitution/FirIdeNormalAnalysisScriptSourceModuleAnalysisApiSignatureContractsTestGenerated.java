@@ -40,7 +40,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleAnalysisApiSignatureContracts
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSignatureContracts() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/signatureSubstitution/signatureContracts"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

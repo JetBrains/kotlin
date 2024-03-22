@@ -19,708 +19,708 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve")
 @TestDataPath("$PROJECT_ROOT")
 public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends AbstractFirOutOfContentRootLazyDeclarationResolveTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInLazyResolve() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationArgumentsMix.kt")
   public void testAnnotationArgumentsMix() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationArgumentsMix.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationClassWithJavaTarget.kt")
   public void testAnnotationClassWithJavaTarget() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationClassWithJavaTarget.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationFromImplicitJavaType.kt")
   public void testAnnotationFromImplicitJavaType() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationFromImplicitJavaType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationFromImplicitJavaTypeWithJavaAnnotation.kt")
   public void testAnnotationFromImplicitJavaTypeWithJavaAnnotation() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationFromImplicitJavaTypeWithJavaAnnotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationInsideWhereFunction.kt")
   public void testAnnotationInsideWhereFunction() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationInsideWhereFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationInsideWhereProperty.kt")
   public void testAnnotationInsideWhereProperty() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationInsideWhereProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationOnLocalClass.kt")
   public void testAnnotationOnLocalClass() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationOnLocalClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationParameters.kt")
   public void testAnnotationParameters() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationParameters.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationWithCycleInDefaults.kt")
   public void testAnnotationWithCycleInDefaults() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationWithCycleInDefaults.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationWithDefaults.kt")
   public void testAnnotationWithDefaults() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationWithDefaults.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationWithEnumFromBody.kt")
   public void testAnnotationWithEnumFromBody() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationWithEnumFromBody.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationWithSecondaryConstructor.kt")
   public void testAnnotationWithSecondaryConstructor() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationWithSecondaryConstructor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationWithSecondaryConstructor2.kt")
   public void testAnnotationWithSecondaryConstructor2() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationWithSecondaryConstructor2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationWithTypeArgument.kt")
   public void testAnnotationWithTypeArgument() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationWithTypeArgument.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationWithoutDefaults.kt")
   public void testAnnotationWithoutDefaults() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationWithoutDefaults.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotations.kt")
   public void testAnnotations() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("anonymousFunctionWithAnnotatedParameter.kt")
   public void testAnonymousFunctionWithAnnotatedParameter() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/anonymousFunctionWithAnnotatedParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("anonymousFunctionWithAnnotatedParameter2.kt")
   public void testAnonymousFunctionWithAnnotatedParameter2() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/anonymousFunctionWithAnnotatedParameter2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("anonymousFunctionWithAnnotatedParameterOnImplicitTypePhase.kt")
   public void testAnonymousFunctionWithAnnotatedParameterOnImplicitTypePhase() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/anonymousFunctionWithAnnotatedParameterOnImplicitTypePhase.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classMembers.kt")
   public void testClassMembers() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/classMembers.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("compilerRequiredAnnotationOnLocalClass.kt")
   public void testCompilerRequiredAnnotationOnLocalClass() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationOnLocalClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("compilerRequiredAnnotationsOnConstructor.kt")
   public void testCompilerRequiredAnnotationsOnConstructor() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnConstructor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("compilerRequiredAnnotationsOnConstructorProperty.kt")
   public void testCompilerRequiredAnnotationsOnConstructorProperty() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnConstructorProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("compilerRequiredAnnotationsOnFunction.kt")
   public void testCompilerRequiredAnnotationsOnFunction() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("compilerRequiredAnnotationsOnProperty.kt")
   public void testCompilerRequiredAnnotationsOnProperty() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("compilerRequiredAnnotationsOnPropertyDelegate.kt")
   public void testCompilerRequiredAnnotationsOnPropertyDelegate() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnPropertyDelegate.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("complexLocalHierarchy.kt")
   public void testComplexLocalHierarchy() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/complexLocalHierarchy.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("complexRedeclaration.kt")
   public void testComplexRedeclaration() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/complexRedeclaration.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("cyclicHierarchy.kt")
   public void testCyclicHierarchy() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/cyclicHierarchy.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("cyclicHierarchy2.kt")
   public void testCyclicHierarchy2() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/cyclicHierarchy2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("cyclicHierarchy3.kt")
   public void testCyclicHierarchy3() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/cyclicHierarchy3.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("cyclicNestedHierarchy.kt")
   public void testCyclicNestedHierarchy() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/cyclicNestedHierarchy.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("cyclicNestedHierarchy2.kt")
   public void testCyclicNestedHierarchy2() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/cyclicNestedHierarchy2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("dataClassCopy.kt")
   public void testDataClassCopy() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/dataClassCopy.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("dataComponent2.kt")
   public void testDataComponent2() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/dataComponent2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegateWithImplicitType.kt")
   public void testDelegateWithImplicitType() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/delegateWithImplicitType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegateWithImplicitTypeInDifferentModules.kt")
   public void testDelegateWithImplicitTypeInDifferentModules() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/delegateWithImplicitTypeInDifferentModules.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegatedField.kt")
   public void testDelegatedField() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatedField.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegatedFieldNestedNameClash.kt")
   public void testDelegatedFieldNestedNameClash() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatedFieldNestedNameClash.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegatedFieldNestedNameClashWithNestedTypes.kt")
   public void testDelegatedFieldNestedNameClashWithNestedTypes() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatedFieldNestedNameClashWithNestedTypes.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegates.kt")
   public void testDelegates() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/delegates.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enumEntries.kt")
   public void testEnumEntries() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/enumEntries.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enumEntry.kt")
   public void testEnumEntry() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/enumEntry.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enumValueOf.kt")
   public void testEnumValueOf() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/enumValueOf.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enumValues.kt")
   public void testEnumValues() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/enumValues.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("expectClass.kt")
   public void testExpectClass() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/expectClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("explicitSubstitutionOverrideProperty.kt")
   public void testExplicitSubstitutionOverrideProperty() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/explicitSubstitutionOverrideProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fakeOverride.kt")
   public void testFakeOverride() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/fakeOverride.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fakePrimaryConstructor.kt")
   public void testFakePrimaryConstructor() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/fakePrimaryConstructor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fileAnnotations.kt")
   public void testFileAnnotations() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/fileAnnotations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fileElements.kt")
   public void testFileElements() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/fileElements.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fromLocalHierarchyToOuter.kt")
   public void testFromLocalHierarchyToOuter() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/fromLocalHierarchyToOuter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionWithImplicitTypeAndAnnotations.kt")
   public void testFunctionWithImplicitTypeAndAnnotations() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/functionWithImplicitTypeAndAnnotations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionWithImplicitTypeAndStringTemplateAsDefaultValue.kt")
   public void testFunctionWithImplicitTypeAndStringTemplateAsDefaultValue() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/functionWithImplicitTypeAndStringTemplateAsDefaultValue.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionWithParameter.kt")
   public void testFunctionWithParameter() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/functionWithParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionWithWhere.kt")
   public void testFunctionWithWhere() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/functionWithWhere.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("implicitSubstitutionOverrideProperty.kt")
   public void testImplicitSubstitutionOverrideProperty() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/implicitSubstitutionOverrideProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("implicitTypeOnFunctionWithRawContract.kt")
   public void testImplicitTypeOnFunctionWithRawContract() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/implicitTypeOnFunctionWithRawContract.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("implicitTypeOnFunctionWithUnresolvedRawContract.kt")
   public void testImplicitTypeOnFunctionWithUnresolvedRawContract() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/implicitTypeOnFunctionWithUnresolvedRawContract.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("implicitTypeOnFunctionWithWrongRawContract.kt")
   public void testImplicitTypeOnFunctionWithWrongRawContract() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/implicitTypeOnFunctionWithWrongRawContract.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("implicitTypeWithInaccessibleAnnotation.kt")
   public void testImplicitTypeWithInaccessibleAnnotation() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/implicitTypeWithInaccessibleAnnotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("initWithAnnotation.kt")
   public void testInitWithAnnotation() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/initWithAnnotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("lambdaAsSAMInterface.kt")
   public void testLambdaAsSAMInterface() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/lambdaAsSAMInterface.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("lazyProperty.kt")
   public void testLazyProperty() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/lazyProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localAnnotations.kt")
   public void testLocalAnnotations() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/localAnnotations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localConstructor.kt")
   public void testLocalConstructor() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/localConstructor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunctionInsideAnnotationCall.kt")
   public void testLocalFunctionInsideAnnotationCall() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideAnnotationCall.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunctionInsideFunctionLiteral.kt")
   public void testLocalFunctionInsideFunctionLiteral() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideFunctionLiteral.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunctionInsideLambdaCallInsideStringTemplate.kt")
   public void testLocalFunctionInsideLambdaCallInsideStringTemplate() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideLambdaCallInsideStringTemplate.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunctionInsideStringTemplate.kt")
   public void testLocalFunctionInsideStringTemplate() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideStringTemplate.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunctionInsideSuperEntryCall.kt")
   public void testLocalFunctionInsideSuperEntryCall() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideSuperEntryCall.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localNestedClass.kt")
   public void testLocalNestedClass() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/localNestedClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localParameterInsideSuperEntryCall.kt")
   public void testLocalParameterInsideSuperEntryCall() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/localParameterInsideSuperEntryCall.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedCompilerRequiredAnnotations.kt")
   public void testNestedCompilerRequiredAnnotations() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/nestedCompilerRequiredAnnotations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedCompilerRequiredAnnotationsForMember.kt")
   public void testNestedCompilerRequiredAnnotationsForMember() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/nestedCompilerRequiredAnnotationsForMember.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedCompilerRequiredAnnotationsInsideBody.kt")
   public void testNestedCompilerRequiredAnnotationsInsideBody() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/nestedCompilerRequiredAnnotationsInsideBody.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedTypeAlias.kt")
   public void testNestedTypeAlias() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/nestedTypeAlias.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedTypeAlias2.kt")
   public void testNestedTypeAlias2() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/nestedTypeAlias2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("parameterOfNonLocalSetter.kt")
   public void testParameterOfNonLocalSetter() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/parameterOfNonLocalSetter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("parameterOfTopSetter.kt")
   public void testParameterOfTopSetter() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/parameterOfTopSetter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("primaryConstructor.kt")
   public void testPrimaryConstructor() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/primaryConstructor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("primaryConstructorParameter.kt")
   public void testPrimaryConstructorParameter() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/primaryConstructorParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("primaryConstructorProperty.kt")
   public void testPrimaryConstructorProperty() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/primaryConstructorProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyDelegateWithImplicitType.kt")
   public void testPropertyDelegateWithImplicitType() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyDelegateWithImplicitType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyWithGetter.kt")
   public void testPropertyWithGetter() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyWithGetter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyWithGetterAndSetter.kt")
   public void testPropertyWithGetterAndSetter() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyWithGetterAndSetter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyWithImplicitTypeAndAnnotations.kt")
   public void testPropertyWithImplicitTypeAndAnnotations() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyWithImplicitTypeAndAnnotations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyWithImplicitTypeAndFieldAnnotations.kt")
   public void testPropertyWithImplicitTypeAndFieldAnnotations() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyWithImplicitTypeAndFieldAnnotations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyWithInitializer.kt")
   public void testPropertyWithInitializer() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyWithInitializer.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyWithWhere.kt")
   public void testPropertyWithWhere() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyWithWhere.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("redeclaration.kt")
   public void testRedeclaration() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/redeclaration.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("resolveSuperTypeFromLocalClass.kt")
   public void testResolveSuperTypeFromLocalClass() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/resolveSuperTypeFromLocalClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("resolveTypeFromLocalClassConstructor.kt")
   public void testResolveTypeFromLocalClassConstructor() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/resolveTypeFromLocalClassConstructor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("resolveTypeFromLocalFunction.kt")
   public void testResolveTypeFromLocalFunction() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/resolveTypeFromLocalFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("secondaryConstructor.kt")
   public void testSecondaryConstructor() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/secondaryConstructor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("secondaryConstructorParameter.kt")
   public void testSecondaryConstructorParameter() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/secondaryConstructorParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionFakeOverride.kt")
   public void testSubstitutionFakeOverride() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverride.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionFakeOverrideConstructor.kt")
   public void testSubstitutionFakeOverrideConstructor() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideConstructor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionFakeOverrideFunction.kt")
   public void testSubstitutionFakeOverrideFunction() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionFakeOverrideFunctionWithImplicitType.kt")
   public void testSubstitutionFakeOverrideFunctionWithImplicitType() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideFunctionWithImplicitType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionFakeOverrideInDifferentModules.kt")
   public void testSubstitutionFakeOverrideInDifferentModules() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideInDifferentModules.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionFakeOverrideWithImplicitType.kt")
   public void testSubstitutionFakeOverrideWithImplicitType() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideWithImplicitType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionFakeOverrideWithImplicitTypeAndReceiver.kt")
   public void testSubstitutionFakeOverrideWithImplicitTypeAndReceiver() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideWithImplicitTypeAndReceiver.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("superQualifierTypeArgsInDelegatedConstructorInnerClass.kt")
   public void testSuperQualifierTypeArgsInDelegatedConstructorInnerClass() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/superQualifierTypeArgsInDelegatedConstructorInnerClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("superQualifierTypeArgsInDelegatedConstructorLocalClass.kt")
   public void testSuperQualifierTypeArgsInDelegatedConstructorLocalClass() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/superQualifierTypeArgsInDelegatedConstructorLocalClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("superTypes.kt")
   public void testSuperTypes() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/superTypes.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("superTypesLoop.kt")
   public void testSuperTypesLoop() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/superTypesLoop.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("topLevelFunctions.kt")
   public void testTopLevelFunctions() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/topLevelFunctions.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("topLevelFunctionsWithExpressionBodyAndExplicitType.kt")
   public void testTopLevelFunctionsWithExpressionBodyAndExplicitType() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/topLevelFunctionsWithExpressionBodyAndExplicitType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("topLevelFunctionsWithImplicitType.kt")
   public void testTopLevelFunctionsWithImplicitType() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/topLevelFunctionsWithImplicitType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameterBounds.kt")
   public void testTypeParameterBounds() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterBounds.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameterOfClass.kt")
   public void testTypeParameterOfClass() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameterOfClass2.kt")
   public void testTypeParameterOfClass2() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfClass2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameterOfNonLocalFunction.kt")
   public void testTypeParameterOfNonLocalFunction() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfNonLocalFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameterOfTopFunction.kt")
   public void testTypeParameterOfTopFunction() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfTopFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameterOfTopSetter.kt")
   public void testTypeParameterOfTopSetter() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfTopSetter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameterOfTypeAlias.kt")
   public void testTypeParameterOfTypeAlias() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfTypeAlias.kt");
@@ -730,150 +730,150 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/classes")
   @TestDataPath("$PROJECT_ROOT")
   public class Classes {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("actual.kt")
     public void testActual() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/actual.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInClasses() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/classes"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("annotationWithArgumentInsideSuperTypeCall.kt")
     public void testAnnotationWithArgumentInsideSuperTypeCall() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/annotationWithArgumentInsideSuperTypeCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("annotationWithArgumentInsideSuperTypeCallUnresolved.kt")
     public void testAnnotationWithArgumentInsideSuperTypeCallUnresolved() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/annotationWithArgumentInsideSuperTypeCallUnresolved.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("annotationWithConstantFromNestedClass.kt")
     public void testAnnotationWithConstantFromNestedClass() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/annotationWithConstantFromNestedClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("annotationWithTarget.kt")
     public void testAnnotationWithTarget() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/annotationWithTarget.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classDelegatedInCommonCode.kt")
     public void testClassDelegatedInCommonCode() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/classDelegatedInCommonCode.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classWithTypeParameters.kt")
     public void testClassWithTypeParameters() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/classWithTypeParameters.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classpathSubstitution.kt")
     public void testClasspathSubstitution() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/classpathSubstitution.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("compilerRequiredAnnotationConflict.kt")
     public void testCompilerRequiredAnnotationConflict() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/compilerRequiredAnnotationConflict.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("compilerRequiredAnnotationConflict2.kt")
     public void testCompilerRequiredAnnotationConflict2() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/compilerRequiredAnnotationConflict2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionInValueClass.kt")
     public void testFunctionInValueClass() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/functionInValueClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverride.kt")
     public void testHierarchyWithOverride() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverride.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClass.kt")
     public void testHierarchyWithOverrideAndNestedClass() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideAndNestedClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClass2.kt")
     public void testHierarchyWithOverrideAndNestedClass2() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideAndNestedClass2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClass3.kt")
     public void testHierarchyWithOverrideAndNestedClass3() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideAndNestedClass3.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClass4.kt")
     public void testHierarchyWithOverrideAndNestedClass4() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideAndNestedClass4.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedClass.kt")
     public void testNestedClass() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/nestedClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedClassWithPropertiesOverrides.kt")
     public void testNestedClassWithPropertiesOverrides() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/nestedClassWithPropertiesOverrides.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleLoopInOverride.kt")
     public void testSimpleLoopInOverride() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/simpleLoopInOverride.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleLoopInOverride2.kt")
     public void testSimpleLoopInOverride2() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/simpleLoopInOverride2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallNameClash.kt")
     public void testSuperTypeCallNameClash() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallNameClashImplicitConstructor.kt")
     public void testSuperTypeCallNameClashImplicitConstructor() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNameClashImplicitConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallNestedNameClash.kt")
     public void testSuperTypeCallNestedNameClash() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNestedNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallNestedNameClashImplicitConstructor.kt")
     public void testSuperTypeCallNestedNameClashImplicitConstructor() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNestedNameClashImplicitConstructor.kt");
@@ -883,30 +883,30 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass")
     @TestDataPath("$PROJECT_ROOT")
     public class DataClass {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInDataClass() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("component1TypeCollision.kt")
       public void testComponent1TypeCollision() {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/component1TypeCollision.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("copyTypeCollision.kt")
       public void testCopyTypeCollision() {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/copyTypeCollision.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("parameterTypeCollision.kt")
       public void testParameterTypeCollision() {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/parameterTypeCollision.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("propertyTypeCollision.kt")
       public void testPropertyTypeCollision() {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/propertyTypeCollision.kt");
@@ -918,18 +918,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/errors")
   @TestDataPath("$PROJECT_ROOT")
   public class Errors {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInErrors() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/errors"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("annotationWithNamedFunctionArgument.kt")
     public void testAnnotationWithNamedFunctionArgument() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/annotationWithNamedFunctionArgument.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("anonymousObjectInInvalidPosition.kt")
     public void testAnonymousObjectInInvalidPosition() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/anonymousObjectInInvalidPosition.kt");
@@ -940,180 +940,180 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/functions")
   @TestDataPath("$PROJECT_ROOT")
   public class Functions {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("actualOverride.kt")
     public void testActualOverride() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/actualOverride.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInFunctions() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/functions"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classpathSubstitution.kt")
     public void testClasspathSubstitution() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/classpathSubstitution.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classpathSubstitution2.kt")
     public void testClasspathSubstitution2() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/classpathSubstitution2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classpathSubstitutionWithLibraryClass.kt")
     public void testClasspathSubstitutionWithLibraryClass() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/classpathSubstitutionWithLibraryClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classpathSubstitutionWithPreresolvedClass.kt")
     public void testClasspathSubstitutionWithPreresolvedClass() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/classpathSubstitutionWithPreresolvedClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("contract.kt")
     public void testContract() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/contract.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionCallWithGenericResult.kt")
     public void testFunctionCallWithGenericResult() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/functionCallWithGenericResult.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionParameter.kt")
     public void testFunctionParameter() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/functionParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionTypeParameter.kt")
     public void testFunctionTypeParameter() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/functionTypeParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionWithGenericExpectedTypeInside.kt")
     public void testFunctionWithGenericExpectedTypeInside() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/functionWithGenericExpectedTypeInside.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionWithTypeParameters.kt")
     public void testFunctionWithTypeParameters() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/functionWithTypeParameters.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverride.kt")
     public void testHierarchyWithOverride() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/hierarchyWithOverride.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClass.kt")
     public void testHierarchyWithOverrideAndNestedClass() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/hierarchyWithOverrideAndNestedClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClass2.kt")
     public void testHierarchyWithOverrideAndNestedClass2() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/hierarchyWithOverrideAndNestedClass2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClass3.kt")
     public void testHierarchyWithOverrideAndNestedClass3() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/hierarchyWithOverrideAndNestedClass3.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("implicitTypeFromFunctionWithDuplicatedName.kt")
     public void testImplicitTypeFromFunctionWithDuplicatedName() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/implicitTypeFromFunctionWithDuplicatedName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("incompleteFunctionTypeParameter.kt")
     public void testIncompleteFunctionTypeParameter() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/incompleteFunctionTypeParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("javaAnnotationWithDefaultValueForenumArray.kt")
     public void testJavaAnnotationWithDefaultValueForenumArray() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/javaAnnotationWithDefaultValueForenumArray.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overrideWithTransitiveClass.kt")
     public void testOverrideWithTransitiveClass() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/overrideWithTransitiveClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overrideWithTransitiveClassWithPreresolvedClass.kt")
     public void testOverrideWithTransitiveClassWithPreresolvedClass() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/overrideWithTransitiveClassWithPreresolvedClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleLoopInOverride.kt")
     public void testSimpleLoopInOverride() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/simpleLoopInOverride.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleLoopInOverride2.kt")
     public void testSimpleLoopInOverride2() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/simpleLoopInOverride2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallNameClash.kt")
     public void testSuperTypeCallNameClash() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallNameClashImplicitConstructor.kt")
     public void testSuperTypeCallNameClashImplicitConstructor() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNameClashImplicitConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallNestedNameClash.kt")
     public void testSuperTypeCallNestedNameClash() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNestedNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallNestedNameClashImplicitConstructor.kt")
     public void testSuperTypeCallNestedNameClashImplicitConstructor() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNestedNameClashImplicitConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("transitiveSubstitutionFakeOverride.kt")
     public void testTransitiveSubstitutionFakeOverride() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/transitiveSubstitutionFakeOverride.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeArgumentInAnnotation.kt")
     public void testTypeArgumentInAnnotation() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/typeArgumentInAnnotation.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unresolvedAnnotationOnFunctionType.kt")
     public void testUnresolvedAnnotationOnFunctionType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/unresolvedAnnotationOnFunctionType.kt");
@@ -1124,18 +1124,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/noRuntime")
   @TestDataPath("$PROJECT_ROOT")
   public class NoRuntime {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInNoRuntime() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/noRuntime"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayOfCall.kt")
     public void testArrayOfCall() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/arrayOfCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("integerLiteralCall.kt")
     public void testIntegerLiteralCall() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/integerLiteralCall.kt");
@@ -1146,168 +1146,168 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/properties")
   @TestDataPath("$PROJECT_ROOT")
   public class Properties {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInProperties() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/properties"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constCyclePropertyWithExplicitType.kt")
     public void testConstCyclePropertyWithExplicitType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/constCyclePropertyWithExplicitType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constErrorPropertyWithExplicitType.kt")
     public void testConstErrorPropertyWithExplicitType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/constErrorPropertyWithExplicitType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constPropertiesWithExplicitType.kt")
     public void testConstPropertiesWithExplicitType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/constPropertiesWithExplicitType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constPropertyWithExplicitTypeAndInitializer.kt")
     public void testConstPropertyWithExplicitTypeAndInitializer() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/constPropertyWithExplicitTypeAndInitializer.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constructorParameter.kt")
     public void testConstructorParameter() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/constructorParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constructorParameterWithImplicitParameterAnnotation.kt")
     public void testConstructorParameterWithImplicitParameterAnnotation() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/constructorParameterWithImplicitParameterAnnotation.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegateWithAnnotationOnAccessor.kt")
     public void testDelegateWithAnnotationOnAccessor() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/delegateWithAnnotationOnAccessor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegateWithAnnotationOnAccessorWithExplicitType.kt")
     public void testDelegateWithAnnotationOnAccessorWithExplicitType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/delegateWithAnnotationOnAccessorWithExplicitType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("generatedPropertyFromParameter.kt")
     public void testGeneratedPropertyFromParameter() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/generatedPropertyFromParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("generatedPropertyFromParameterWithImplicitAnnotation.kt")
     public void testGeneratedPropertyFromParameterWithImplicitAnnotation() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/generatedPropertyFromParameterWithImplicitAnnotation.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("getterWithDelegation.kt")
     public void testGetterWithDelegation() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/getterWithDelegation.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverride.kt")
     public void testHierarchyWithOverride() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverride.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClass.kt")
     public void testHierarchyWithOverrideAndNestedClass() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverrideAndNestedClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClass2.kt")
     public void testHierarchyWithOverrideAndNestedClass2() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverrideAndNestedClass2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClass3.kt")
     public void testHierarchyWithOverrideAndNestedClass3() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverrideAndNestedClass3.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClass4.kt")
     public void testHierarchyWithOverrideAndNestedClass4() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverrideAndNestedClass4.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("impliciyTypeWithAnnotationOnFunction.kt")
     public void testImpliciyTypeWithAnnotationOnFunction() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/impliciyTypeWithAnnotationOnFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("impliciyTypeWithAnnotationOnProperty.kt")
     public void testImpliciyTypeWithAnnotationOnProperty() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/impliciyTypeWithAnnotationOnProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyGetterWithExplicitType.kt")
     public void testPropertyGetterWithExplicitType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/propertyGetterWithExplicitType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyGetterWithExplicitTypeAndBody.kt")
     public void testPropertyGetterWithExplicitTypeAndBody() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/propertyGetterWithExplicitTypeAndBody.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyGetterWithImplicitType.kt")
     public void testPropertyGetterWithImplicitType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/propertyGetterWithImplicitType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertySetter.kt")
     public void testPropertySetter() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/propertySetter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyWithTypeParameters.kt")
     public void testPropertyWithTypeParameters() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/propertyWithTypeParameters.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleLoopInOverride.kt")
     public void testSimpleLoopInOverride() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/simpleLoopInOverride.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleLoopInOverride2.kt")
     public void testSimpleLoopInOverride2() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/simpleLoopInOverride2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeParameterAnnotations.kt")
     public void testTypeParameterAnnotations() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/typeParameterAnnotations.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unresolvedAnnotationOnPropertyType.kt")
     public void testUnresolvedAnnotationOnPropertyType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/unresolvedAnnotationOnPropertyType.kt");
@@ -1318,78 +1318,78 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties")
   @TestDataPath("$PROJECT_ROOT")
   public class SyntheticProperties {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInSyntheticProperties() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("explicitReturnType.kt")
     public void testExplicitReturnType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/explicitReturnType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("explicitReturnTypeAndAnnotations.kt")
     public void testExplicitReturnTypeAndAnnotations() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/explicitReturnTypeAndAnnotations.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("getterFromLibraryAndSetterFromSources.kt")
     public void testGetterFromLibraryAndSetterFromSources() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/getterFromLibraryAndSetterFromSources.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("implicitReturnType.kt")
     public void testImplicitReturnType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/implicitReturnType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("implicitReturnTypeAndAnnotations.kt")
     public void testImplicitReturnTypeAndAnnotations() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/implicitReturnTypeAndAnnotations.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("implicitReturnTypeAndAnnotationsAsGetter.kt")
     public void testImplicitReturnTypeAndAnnotationsAsGetter() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/implicitReturnTypeAndAnnotationsAsGetter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("secondGenerationOverride.kt")
     public void testSecondGenerationOverride() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/secondGenerationOverride.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("setterAndExplicitReturnType.kt")
     public void testSetterAndExplicitReturnType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/setterAndExplicitReturnType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("setterAndExplicitReturnTypeAndAnnotations.kt")
     public void testSetterAndExplicitReturnTypeAndAnnotations() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/setterAndExplicitReturnTypeAndAnnotations.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("setterAndExplicitReturnTypeAndAnnotationsAsGetter.kt")
     public void testSetterAndExplicitReturnTypeAndAnnotationsAsGetter() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/setterAndExplicitReturnTypeAndAnnotationsAsGetter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("setterAndExplicitReturnTypeAndAnnotationsAsSetter.kt")
     public void testSetterAndExplicitReturnTypeAndAnnotationsAsSetter() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/setterAndExplicitReturnTypeAndAnnotationsAsSetter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("setterFromLibraryAndGetterFromSources.kt")
     public void testSetterFromLibraryAndGetterFromSources() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/setterFromLibraryAndGetterFromSources.kt");
@@ -1400,24 +1400,24 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/typeAliases")
   @TestDataPath("$PROJECT_ROOT")
   public class TypeAliases {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInTypeAliases() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/typeAliases"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeAliasWithAnnotationOnType.kt")
     public void testTypeAliasWithAnnotationOnType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/typeAliases/typeAliasWithAnnotationOnType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeAliasWithTypeParameters.kt")
     public void testTypeAliasWithTypeParameters() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/typeAliases/typeAliasWithTypeParameters.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unresolvedAnnotationOnTypeAlias.kt")
     public void testUnresolvedAnnotationOnTypeAlias() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/typeAliases/unresolvedAnnotationOnTypeAlias.kt");

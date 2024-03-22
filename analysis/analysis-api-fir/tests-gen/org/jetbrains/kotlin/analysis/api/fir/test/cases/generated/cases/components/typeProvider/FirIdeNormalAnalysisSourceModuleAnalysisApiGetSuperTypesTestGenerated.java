@@ -40,90 +40,90 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiGetSuperTypesTestGenerat
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSuperTypes() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeInfoProvider/superTypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("anonymousObject.kt")
   public void testAnonymousObject() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/superTypes/anonymousObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("any.kt")
   public void testAny() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/superTypes/any.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("contravariant.kt")
   public void testContravariant() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/superTypes/contravariant.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("covariant.kt")
   public void testCovariant() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/superTypes/covariant.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("errorType.kt")
   public void testErrorType() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/superTypes/errorType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("flexibleType.kt")
   public void testFlexibleType() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/superTypes/flexibleType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("int.kt")
   public void testInt() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/superTypes/int.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("invariant.kt")
   public void testInvariant() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/superTypes/invariant.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("recursiveTypeParameter.kt")
   public void testRecursiveTypeParameter() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/superTypes/recursiveTypeParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("regularClass.kt")
   public void testRegularClass() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/superTypes/regularClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("regularClassWithBounds.kt")
   public void testRegularClassWithBounds() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/superTypes/regularClassWithBounds.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("star.kt")
   public void testStar() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/superTypes/star.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("string.kt")
   public void testString() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/superTypes/string.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameter.kt")
   public void testTypeParameter() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/superTypes/typeParameter.kt");

@@ -41,618 +41,618 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInShortenRange() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotaiton.kt")
   public void testAnnotaiton() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/annotaiton.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("anonymousFunction_annotation.kt")
   public void testAnonymousFunction_annotation() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/anonymousFunction_annotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("anonymousFunction_receiverType.kt")
   public void testAnonymousFunction_receiverType() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/anonymousFunction_receiverType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("anonymousFunction_returnType.kt")
   public void testAnonymousFunction_returnType() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/anonymousFunction_returnType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("callableFromDefaultImport.kt")
   public void testCallableFromDefaultImport() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/callableFromDefaultImport.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("callableFromDefaultImport2.kt")
   public void testCallableFromDefaultImport2() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/callableFromDefaultImport2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("callableFromExplicitImport.kt")
   public void testCallableFromExplicitImport() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/callableFromExplicitImport.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classScopes.kt")
   public void testClassScopes() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/classScopes.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classScopes2.kt")
   public void testClassScopes2() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/classScopes2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classScopes3.kt")
   public void testClassScopes3() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/classScopes3.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classType.kt")
   public void testClassType() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/classType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classType2.kt")
   public void testClassType2() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/classType2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classWithWrongNumberOfTypeArguments.kt")
   public void testClassWithWrongNumberOfTypeArguments() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/classWithWrongNumberOfTypeArguments.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classesWithSameName.kt")
   public void testClassesWithSameName() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/classesWithSameName.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classesWithSameName10.kt")
   public void testClassesWithSameName10() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/classesWithSameName10.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classesWithSameName11.kt")
   public void testClassesWithSameName11() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/classesWithSameName11.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classesWithSameName2.kt")
   public void testClassesWithSameName2() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/classesWithSameName2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classesWithSameName3.kt")
   public void testClassesWithSameName3() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/classesWithSameName3.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classesWithSameName4.kt")
   public void testClassesWithSameName4() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/classesWithSameName4.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classesWithSameName5.kt")
   public void testClassesWithSameName5() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/classesWithSameName5.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classesWithSameName6.kt")
   public void testClassesWithSameName6() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/classesWithSameName6.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classesWithSameName7.kt")
   public void testClassesWithSameName7() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/classesWithSameName7.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classesWithSameName8.kt")
   public void testClassesWithSameName8() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/classesWithSameName8.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classesWithSameName9.kt")
   public void testClassesWithSameName9() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/classesWithSameName9.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("companionClassLiteral.kt")
   public void testCompanionClassLiteral() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/companionClassLiteral.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("companionClassLiteral2.kt")
   public void testCompanionClassLiteral2() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/companionClassLiteral2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("companionClassLiteral3.kt")
   public void testCompanionClassLiteral3() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/companionClassLiteral3.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("companionQualifier.kt")
   public void testCompanionQualifier() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/companionQualifier.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("companionUsedOutOfClass.kt")
   public void testCompanionUsedOutOfClass() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/companionUsedOutOfClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("constructorParameter.kt")
   public void testConstructorParameter() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/constructorParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("contextReceiver.kt")
   public void testContextReceiver() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/contextReceiver.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enumClassCompanionAlreadyImported.kt")
   public void testEnumClassCompanionAlreadyImported() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/enumClassCompanionAlreadyImported.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enumEntryInitUsesCompanion.kt")
   public void testEnumEntryInitUsesCompanion() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/enumEntryInitUsesCompanion.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enumEntryInitUsesCompanion2.kt")
   public void testEnumEntryInitUsesCompanion2() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/enumEntryInitUsesCompanion2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("extensionFromObject.kt")
   public void testExtensionFromObject() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/extensionFromObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("extensionFunction_objectReceiverWithOtherThisInScope.kt")
   public void testExtensionFunction_objectReceiverWithOtherThisInScope() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/extensionFunction_objectReceiverWithOtherThisInScope.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("extensionProperty_objectReceiverWithOtherThisInScope.kt")
   public void testExtensionProperty_objectReceiverWithOtherThisInScope() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/extensionProperty_objectReceiverWithOtherThisInScope.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionalType_parameterPosition.kt")
   public void testFunctionalType_parameterPosition() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/functionalType_parameterPosition.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("importAliasAndStarImport.kt")
   public void testImportAliasAndStarImport() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/importAliasAndStarImport.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("importAliasForFunction.kt")
   public void testImportAliasForFunction() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/importAliasForFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("importAliasForProperty.kt")
   public void testImportAliasForProperty() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/importAliasForProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("importAliasForType.kt")
   public void testImportAliasForType() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/importAliasForType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("importAliasForTypeQualifier.kt")
   public void testImportAliasForTypeQualifier() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/importAliasForTypeQualifier.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kdoc.kt")
   public void testKdoc() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/kdoc.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kdocQualifierSelected.kt")
   public void testKdocQualifierSelected() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/kdocQualifierSelected.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kdocQualifierSelected_rootIdePrefix.kt")
   public void testKdocQualifierSelected_rootIdePrefix() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/kdocQualifierSelected_rootIdePrefix.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kdocUnresolved.kt")
   public void testKdocUnresolved() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/kdocUnresolved.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("memberVsCompanionObjectMemberConflict.kt")
   public void testMemberVsCompanionObjectMemberConflict() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/memberVsCompanionObjectMemberConflict.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multipleImport.kt")
   public void testMultipleImport() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/multipleImport.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multipleImportAlias.kt")
   public void testMultipleImportAlias() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/multipleImportAlias.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multipleImportAlias2.kt")
   public void testMultipleImportAlias2() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/multipleImportAlias2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedClass.kt")
   public void testNestedClass() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedClass2.kt")
   public void testNestedClass2() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClass2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedClass3.kt")
   public void testNestedClass3() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClass3.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("objectWithInvokeOperator.kt")
   public void testObjectWithInvokeOperator() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/objectWithInvokeOperator.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("parameterTypeTopLevelTypeLoses.kt")
   public void testParameterTypeTopLevelTypeLoses() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/parameterTypeTopLevelTypeLoses.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("partiallySelectedQualifiedCall1.kt")
   public void testPartiallySelectedQualifiedCall1() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/partiallySelectedQualifiedCall1.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("partiallySelectedQualifiedCall2.kt")
   public void testPartiallySelectedQualifiedCall2() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/partiallySelectedQualifiedCall2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("partiallySelectedQualifiedCall3.kt")
   public void testPartiallySelectedQualifiedCall3() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/partiallySelectedQualifiedCall3.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("partiallySelectedQualifiedCall4.kt")
   public void testPartiallySelectedQualifiedCall4() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/partiallySelectedQualifiedCall4.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("partiallySelectedType1.kt")
   public void testPartiallySelectedType1() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/partiallySelectedType1.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("partiallySelectedType2.kt")
   public void testPartiallySelectedType2() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/partiallySelectedType2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("partiallySelectedType3.kt")
   public void testPartiallySelectedType3() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/partiallySelectedType3.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("partiallySelectedType4.kt")
   public void testPartiallySelectedType4() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/partiallySelectedType4.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("partiallySelectedTypeQualifier1.kt")
   public void testPartiallySelectedTypeQualifier1() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/partiallySelectedTypeQualifier1.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("partiallySelectedTypeQualifier2.kt")
   public void testPartiallySelectedTypeQualifier2() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/partiallySelectedTypeQualifier2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("partiallySelectedTypeQualifier3.kt")
   public void testPartiallySelectedTypeQualifier3() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/partiallySelectedTypeQualifier3.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("partiallySelectedTypeQualifier4.kt")
   public void testPartiallySelectedTypeQualifier4() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/partiallySelectedTypeQualifier4.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("qualifierOfUnresolvedReference.kt")
   public void testQualifierOfUnresolvedReference() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/qualifierOfUnresolvedReference.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("receiver.kt")
   public void testReceiver() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/receiver.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("receiver2.kt")
   public void testReceiver2() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/receiver2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("receiver3.kt")
   public void testReceiver3() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/receiver3.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("receiver4.kt")
   public void testReceiver4() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/receiver4.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("referenceInNestedClass.kt")
   public void testReferenceInNestedClass() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/referenceInNestedClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("samInterface_constructorCall.kt")
   public void testSamInterface_constructorCall() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/samInterface_constructorCall.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("samInterface_constructorCall_java.kt")
   public void testSamInterface_constructorCall_java() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/samInterface_constructorCall_java.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("sameNameDifferentParams.kt")
   public void testSameNameDifferentParams() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/sameNameDifferentParams.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("sameNameDifferentReceiver.kt")
   public void testSameNameDifferentReceiver() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/sameNameDifferentReceiver.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("sameTypeNamesWithinSameScopes.kt")
   public void testSameTypeNamesWithinSameScopes() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/sameTypeNamesWithinSameScopes.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("selfPropertyChain.kt")
   public void testSelfPropertyChain() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/selfPropertyChain.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("selfPropertyChain1.kt")
   public void testSelfPropertyChain1() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/selfPropertyChain1.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("shortenAlreadyImportedClass.kt")
   public void testShortenAlreadyImportedClass() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/shortenAlreadyImportedClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("shortenAlreadyImportedClass2.kt")
   public void testShortenAlreadyImportedClass2() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/shortenAlreadyImportedClass2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("shortenAlreadyImportedFunction.kt")
   public void testShortenAlreadyImportedFunction() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/shortenAlreadyImportedFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("shortenAlreadyImportedFunction2.kt")
   public void testShortenAlreadyImportedFunction2() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/shortenAlreadyImportedFunction2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("shortenAlreadyImportedFunction3.kt")
   public void testShortenAlreadyImportedFunction3() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/shortenAlreadyImportedFunction3.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("shortenAlreadyImportedFunction4.kt")
   public void testShortenAlreadyImportedFunction4() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/shortenAlreadyImportedFunction4.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("starImport.kt")
   public void testStarImport() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/starImport.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("staticMethodFromBaseClassConflict.kt")
   public void testStaticMethodFromBaseClassConflict() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/staticMethodFromBaseClassConflict.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("superClass.kt")
   public void testSuperClass() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/superClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("superEntry.kt")
   public void testSuperEntry() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/superEntry.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeArgument.kt")
   public void testTypeArgument() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/typeArgument.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParams.kt")
   public void testTypeParams() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/typeParams.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParams2.kt")
   public void testTypeParams2() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/typeParams2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("vararg.kt")
   public void testVararg() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/vararg.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("variable.kt")
   public void testVariable() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/variable.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("variable2.kt")
   public void testVariable2() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/variable2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("variableAssignment.kt")
   public void testVariableAssignment() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/variableAssignment.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("variableAssignment_plusAssignOperator.kt")
   public void testVariableAssignment_plusAssignOperator() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/variableAssignment_plusAssignOperator.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("variableAssignment_plusOperator.kt")
   public void testVariableAssignment_plusOperator() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/variableAssignment_plusOperator.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("variable_invokeOperator.kt")
   public void testVariable_invokeOperator() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/variable_invokeOperator.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("_rootIdePackage_IsNotRemovedIfNotSelected.kt")
   public void test_rootIdePackage_IsNotRemovedIfNotSelected() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/_rootIdePackage_IsNotRemovedIfNotSelected.kt");
@@ -662,7 +662,7 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
   @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts")
   @TestDataPath("$PROJECT_ROOT")
   public class Conflicts {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInConflicts() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
@@ -671,60 +671,60 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
     @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName")
     @TestDataPath("$PROJECT_ROOT")
     public class ClassWithSameName {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInClassWithSameName() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructorCall_vs_constructorCall.kt")
       public void testConstructorCall_vs_constructorCall() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName/constructorCall_vs_constructorCall.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructorCall_vs_noUsages.kt")
       public void testConstructorCall_vs_noUsages() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName/constructorCall_vs_noUsages.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructorCall_vs_typeRefs.kt")
       public void testConstructorCall_vs_typeRefs() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName/constructorCall_vs_typeRefs.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("qualifier_vs_constructorCall.kt")
       public void testQualifier_vs_constructorCall() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName/qualifier_vs_constructorCall.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("qualifier_vs_noUsages.kt")
       public void testQualifier_vs_noUsages() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName/qualifier_vs_noUsages.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("qualifier_vs_typeRef.kt")
       public void testQualifier_vs_typeRef() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName/qualifier_vs_typeRef.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeRef_vs_constructorCall.kt")
       public void testTypeRef_vs_constructorCall() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName/typeRef_vs_constructorCall.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeRef_vs_noUsages.kt")
       public void testTypeRef_vs_noUsages() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName/typeRef_vs_noUsages.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeRef_vs_typeRef.kt")
       public void testTypeRef_vs_typeRef() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName/typeRef_vs_typeRef.kt");
@@ -736,126 +736,126 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
   @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses")
   @TestDataPath("$PROJECT_ROOT")
   public class NestedClasses {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInNestedClasses() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classAndObjectHaveConflictingNestedClasses_inside.kt")
     public void testClassAndObjectHaveConflictingNestedClasses_inside() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classAndObjectHaveConflictingNestedClasses_inside.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classAndObjectHaveConflictingNestedClasses_inside_companion.kt")
     public void testClassAndObjectHaveConflictingNestedClasses_inside_companion() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classAndObjectHaveConflictingNestedClasses_inside_companion.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classAndObjectHaveConflictingNestedClasses_inside_namedCompanion.kt")
     public void testClassAndObjectHaveConflictingNestedClasses_inside_namedCompanion() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classAndObjectHaveConflictingNestedClasses_inside_namedCompanion.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classAndObjectHaveConflictingNestedClasses_outside.kt")
     public void testClassAndObjectHaveConflictingNestedClasses_outside() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classAndObjectHaveConflictingNestedClasses_outside.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classAndObjectHaveConflictingNestedClasses_outside_companion.kt")
     public void testClassAndObjectHaveConflictingNestedClasses_outside_companion() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classAndObjectHaveConflictingNestedClasses_outside_companion.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classAndObjectHaveConflictingNestedClasses_outside_namedCompanion.kt")
     public void testClassAndObjectHaveConflictingNestedClasses_outside_namedCompanion() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classAndObjectHaveConflictingNestedClasses_outside_namedCompanion.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedClassFromSupertypes1.kt")
     public void testNestedClassFromSupertypes1() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/nestedClassFromSupertypes1.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedClassFromSupertypes1_java.kt")
     public void testNestedClassFromSupertypes1_java() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/nestedClassFromSupertypes1_java.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedClassFromSupertypes2.kt")
     public void testNestedClassFromSupertypes2() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/nestedClassFromSupertypes2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedClassFromSupertypes2_java.kt")
     public void testNestedClassFromSupertypes2_java() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/nestedClassFromSupertypes2_java.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedClassFromSupertypes3.kt")
     public void testNestedClassFromSupertypes3() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/nestedClassFromSupertypes3.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedClassFromSupertypes3_java.kt")
     public void testNestedClassFromSupertypes3_java() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/nestedClassFromSupertypes3_java.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedClassFromSupertypes4.kt")
     public void testNestedClassFromSupertypes4() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/nestedClassFromSupertypes4.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedClassFromSupertypes5.kt")
     public void testNestedClassFromSupertypes5() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/nestedClassFromSupertypes5.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedClassFromSupertypes5_java.kt")
     public void testNestedClassFromSupertypes5_java() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/nestedClassFromSupertypes5_java.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedClassFromSupertypes6.kt")
     public void testNestedClassFromSupertypes6() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/nestedClassFromSupertypes6.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedClassFromSupertypes6_java.kt")
     public void testNestedClassFromSupertypes6_java() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/nestedClassFromSupertypes6_java.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedSamInterface_constructorCall.kt")
     public void testNestedSamInterface_constructorCall() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/nestedSamInterface_constructorCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("TypeWithGenericsAsExtensionReceiverType_innerType.kt")
     public void testTypeWithGenericsAsExtensionReceiverType_innerType() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/TypeWithGenericsAsExtensionReceiverType_innerType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("TypeWithGenericsAsExtensionReceiverType_nestedType.kt")
     public void testTypeWithGenericsAsExtensionReceiverType_nestedType() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/TypeWithGenericsAsExtensionReceiverType_nestedType.kt");
@@ -865,180 +865,180 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
     @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions")
     @TestDataPath("$PROJECT_ROOT")
     public class ClassHeaderPositions {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInClassHeaderPositions() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("annotationOnClass.kt")
       public void testAnnotationOnClass() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/annotationOnClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("annotationOnClass_nested.kt")
       public void testAnnotationOnClass_nested() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/annotationOnClass_nested.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("annotationOnConstructor.kt")
       public void testAnnotationOnConstructor() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/annotationOnConstructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("annotationOnConstructor_nested.kt")
       public void testAnnotationOnConstructor_nested() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/annotationOnConstructor_nested.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("annotationOnParameter.kt")
       public void testAnnotationOnParameter() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/annotationOnParameter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("annotationOnParameter_nested.kt")
       public void testAnnotationOnParameter_nested() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/annotationOnParameter_nested.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructorParameterVsTopLevelProperty_conflict.kt")
       public void testConstructorParameterVsTopLevelProperty_conflict() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/constructorParameterVsTopLevelProperty_conflict.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructorParameterVsTopLevelProperty_noConflict.kt")
       public void testConstructorParameterVsTopLevelProperty_noConflict() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/constructorParameterVsTopLevelProperty_noConflict.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("contextReceiver.kt")
       public void testContextReceiver() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/contextReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("contextReceiver_nested.kt")
       public void testContextReceiver_nested() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/contextReceiver_nested.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("primaryConstructorParameter.kt")
       public void testPrimaryConstructorParameter() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/primaryConstructorParameter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("primaryConstructorParameter_nested.kt")
       public void testPrimaryConstructorParameter_nested() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/primaryConstructorParameter_nested.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superType.kt")
       public void testSuperType() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/superType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superTypeConstructor.kt")
       public void testSuperTypeConstructor() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/superTypeConstructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superTypeConstructorArgument.kt")
       public void testSuperTypeConstructorArgument() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/superTypeConstructorArgument.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superTypeConstructorArgument_nested.kt")
       public void testSuperTypeConstructorArgument_nested() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/superTypeConstructorArgument_nested.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superTypeConstructorArgument_nested_objectLiteral.kt")
       public void testSuperTypeConstructorArgument_nested_objectLiteral() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/superTypeConstructorArgument_nested_objectLiteral.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superTypeConstructorArgument_objectLiteral.kt")
       public void testSuperTypeConstructorArgument_objectLiteral() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/superTypeConstructorArgument_objectLiteral.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superTypeConstructor_nested.kt")
       public void testSuperTypeConstructor_nested() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/superTypeConstructor_nested.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superTypeConstructor_nested_objectLiteral.kt")
       public void testSuperTypeConstructor_nested_objectLiteral() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/superTypeConstructor_nested_objectLiteral.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superTypeConstructor_objectLiteral.kt")
       public void testSuperTypeConstructor_objectLiteral() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/superTypeConstructor_objectLiteral.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superTypeDelegation.kt")
       public void testSuperTypeDelegation() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/superTypeDelegation.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superTypeDelegation_nested.kt")
       public void testSuperTypeDelegation_nested() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/superTypeDelegation_nested.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superTypeTypeArguments.kt")
       public void testSuperTypeTypeArguments() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/superTypeTypeArguments.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superTypeTypeArguments_nested.kt")
       public void testSuperTypeTypeArguments_nested() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/superTypeTypeArguments_nested.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superType_nested.kt")
       public void testSuperType_nested() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/superType_nested.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeBound.kt")
       public void testTypeBound() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/typeBound.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeBound_nested.kt")
       public void testTypeBound_nested() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/typeBound_nested.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeBound_whereClause.kt")
       public void testTypeBound_whereClause() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions/typeBound_whereClause.kt");
@@ -1050,84 +1050,84 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
   @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference")
   @TestDataPath("$PROJECT_ROOT")
   public class ThisReference {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInThisReference() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("this_extensionFunction_fromExtensionFunction.kt")
     public void testThis_extensionFunction_fromExtensionFunction() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/this_extensionFunction_fromExtensionFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("this_extensionFunction_fromExtensionFunction_conflictWithLocal.kt")
     public void testThis_extensionFunction_fromExtensionFunction_conflictWithLocal() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/this_extensionFunction_fromExtensionFunction_conflictWithLocal.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("this_memberFunction_fromMemberFunction.kt")
     public void testThis_memberFunction_fromMemberFunction() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/this_memberFunction_fromMemberFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("this_memberFunction_fromMemberFunction_conflictWithLocal.kt")
     public void testThis_memberFunction_fromMemberFunction_conflictWithLocal() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/this_memberFunction_fromMemberFunction_conflictWithLocal.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("this_memberProperty_fromInit.kt")
     public void testThis_memberProperty_fromInit() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/this_memberProperty_fromInit.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("this_memberProperty_fromInit_conflictWithParameter.kt")
     public void testThis_memberProperty_fromInit_conflictWithParameter() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/this_memberProperty_fromInit_conflictWithParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("this_memberProperty_fromMemberFunction.kt")
     public void testThis_memberProperty_fromMemberFunction() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/this_memberProperty_fromMemberFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("this_memberProperty_fromMemberFunctionWithContextReceiver.kt")
     public void testThis_memberProperty_fromMemberFunctionWithContextReceiver() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/this_memberProperty_fromMemberFunctionWithContextReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("this_memberProperty_fromMemberFunction_conflictWithLocal.kt")
     public void testThis_memberProperty_fromMemberFunction_conflictWithLocal() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/this_memberProperty_fromMemberFunction_conflictWithLocal.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("this_memberProperty_fromMemberFunction_conflictWithParameter.kt")
     public void testThis_memberProperty_fromMemberFunction_conflictWithParameter() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/this_memberProperty_fromMemberFunction_conflictWithParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("this_memberProperty_fromMemberFunction_noConflictWithLocal.kt")
     public void testThis_memberProperty_fromMemberFunction_noConflictWithLocal() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/this_memberProperty_fromMemberFunction_noConflictWithLocal.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("this_nullableReceiver.kt")
     public void testThis_nullableReceiver() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/this_nullableReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("this_safeCall.kt")
     public void testThis_safeCall() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/this_safeCall.kt");
@@ -1137,54 +1137,54 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
     @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel")
     @TestDataPath("$PROJECT_ROOT")
     public class WithLabel {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInWithLabel() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionReceiver.kt")
       public void testExtensionReceiver() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel/extensionReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionReceiver_vs_lambdaReceiver.kt")
       public void testExtensionReceiver_vs_lambdaReceiver() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel/extensionReceiver_vs_lambdaReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionReceiver_vs_local.kt")
       public void testExtensionReceiver_vs_local() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel/extensionReceiver_vs_local.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdaReceiver.kt")
       public void testLambdaReceiver() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel/lambdaReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdaReceiver_vs_lambdaReceiver.kt")
       public void testLambdaReceiver_vs_lambdaReceiver() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel/lambdaReceiver_vs_lambdaReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("regularClass.kt")
       public void testRegularClass() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel/regularClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("regularClass_vs_extensionReceiver.kt")
       public void testRegularClass_vs_extensionReceiver() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel/regularClass_vs_extensionReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("regularClass_vs_innerClass.kt")
       public void testRegularClass_vs_innerClass() {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel/regularClass_vs_innerClass.kt");
@@ -1196,30 +1196,30 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
   @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/typeParameters")
   @TestDataPath("$PROJECT_ROOT")
   public class TypeParameters {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInTypeParameters() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/typeParameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionTypeParameterVsType.kt")
     public void testFunctionTypeParameterVsType() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/typeParameters/functionTypeParameterVsType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeParameterVsNestedType.kt")
     public void testTypeParameterVsNestedType() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/typeParameters/typeParameterVsNestedType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeParameterVsType_conflict.kt")
     public void testTypeParameterVsType_conflict() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/typeParameters/typeParameterVsType_conflict.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeParameterVsType_noConflict.kt")
     public void testTypeParameterVsType_noConflict() {
       runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/typeParameters/typeParameterVsType_noConflict.kt");

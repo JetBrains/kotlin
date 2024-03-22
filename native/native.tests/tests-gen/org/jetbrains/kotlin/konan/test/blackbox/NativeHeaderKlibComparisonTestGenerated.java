@@ -18,108 +18,108 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/testData/klib/header-klibs/comparison")
 @TestDataPath("$PROJECT_ROOT")
 public class NativeHeaderKlibComparisonTestGenerated extends AbstractNativeHeaderKlibComparisonTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInComparison() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/header-klibs/comparison"), Pattern.compile("^([^\\.]+)$"), null, false);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("anonymousObjects")
   public void testAnonymousObjects() {
     runTest("native/native.tests/testData/klib/header-klibs/comparison/anonymousObjects/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classFlags")
   public void testClassFlags() {
     runTest("native/native.tests/testData/klib/header-klibs/comparison/classFlags/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classPrivateMembers")
   public void testClassPrivateMembers() {
     runTest("native/native.tests/testData/klib/header-klibs/comparison/classPrivateMembers/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("constant")
   public void testConstant() {
     runTest("native/native.tests/testData/klib/header-klibs/comparison/constant/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("declarationOrderInline")
   public void testDeclarationOrderInline() {
     runTest("native/native.tests/testData/klib/header-klibs/comparison/declarationOrderInline/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionBody")
   public void testFunctionBody() {
     runTest("native/native.tests/testData/klib/header-klibs/comparison/functionBody/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineFunInPrivateClass")
   public void testInlineFunInPrivateClass() {
     runTest("native/native.tests/testData/klib/header-klibs/comparison/inlineFunInPrivateClass/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineFunInPrivateNestedClass")
   public void testInlineFunInPrivateNestedClass() {
     runTest("native/native.tests/testData/klib/header-klibs/comparison/inlineFunInPrivateNestedClass/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineFunctionBody")
   public void testInlineFunctionBody() {
     runTest("native/native.tests/testData/klib/header-klibs/comparison/inlineFunctionBody/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("lambdas")
   public void testLambdas() {
     runTest("native/native.tests/testData/klib/header-klibs/comparison/lambdas/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("parameterName")
   public void testParameterName() {
     runTest("native/native.tests/testData/klib/header-klibs/comparison/parameterName/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("privateInterface")
   public void testPrivateInterface() {
     runTest("native/native.tests/testData/klib/header-klibs/comparison/privateInterface/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("privateTypealias")
   public void testPrivateTypealias() {
     runTest("native/native.tests/testData/klib/header-klibs/comparison/privateTypealias/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("returnType")
   public void testReturnType() {
     runTest("native/native.tests/testData/klib/header-klibs/comparison/returnType/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("superClass")
   public void testSuperClass() {
     runTest("native/native.tests/testData/klib/header-klibs/comparison/superClass/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("syntheticAccessors")
   public void testSyntheticAccessors() {
     runTest("native/native.tests/testData/klib/header-klibs/comparison/syntheticAccessors/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("topLevelPrivateMembers")
   public void testTopLevelPrivateMembers() {
     runTest("native/native.tests/testData/klib/header-klibs/comparison/topLevelPrivateMembers/");

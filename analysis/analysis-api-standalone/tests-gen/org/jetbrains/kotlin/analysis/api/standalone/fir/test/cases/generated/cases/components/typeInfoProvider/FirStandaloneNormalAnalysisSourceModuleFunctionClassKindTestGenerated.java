@@ -40,30 +40,30 @@ public class FirStandaloneNormalAnalysisSourceModuleFunctionClassKindTestGenerat
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInFunctionClassKind() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("function.kt")
   public void testFunction() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind/function.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kFunction.kt")
   public void testKFunction() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind/kFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kSuspendFunction.kt")
   public void testKSuspendFunction() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind/kSuspendFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("suspendFunction.kt")
   public void testSuspendFunction() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind/suspendFunction.kt");

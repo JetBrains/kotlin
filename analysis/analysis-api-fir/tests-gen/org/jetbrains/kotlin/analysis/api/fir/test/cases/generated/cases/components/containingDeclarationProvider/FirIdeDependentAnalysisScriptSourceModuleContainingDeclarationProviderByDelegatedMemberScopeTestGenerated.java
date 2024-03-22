@@ -40,7 +40,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleContainingDeclarationProvi
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInContainingDeclarationByDelegatedMemberScope() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByDelegatedMemberScope"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

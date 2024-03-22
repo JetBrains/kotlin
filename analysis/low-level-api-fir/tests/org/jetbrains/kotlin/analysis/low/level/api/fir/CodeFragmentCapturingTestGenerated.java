@@ -18,234 +18,234 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing")
 @TestDataPath("$PROJECT_ROOT")
 public class CodeFragmentCapturingTestGenerated extends AbstractCodeFragmentCapturingTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInCapturing() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("contextReceiver.kt")
   public void testContextReceiver() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/contextReceiver.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("contextReceiverExplicit.kt")
   public void testContextReceiverExplicit() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/contextReceiverExplicit.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("extensionReceiver.kt")
   public void testExtensionReceiver() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/extensionReceiver.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("extensionReceiverExplicit.kt")
   public void testExtensionReceiverExplicit() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/extensionReceiverExplicit.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("extensionReceiverLabeled.kt")
   public void testExtensionReceiverLabeled() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/extensionReceiverLabeled.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("extensionReceiverProperty.kt")
   public void testExtensionReceiverProperty() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/extensionReceiverProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("extensionReceiverPropertyExplicit.kt")
   public void testExtensionReceiverPropertyExplicit() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/extensionReceiverPropertyExplicit.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("extensionReceiverPropertyLabeled.kt")
   public void testExtensionReceiverPropertyLabeled() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/extensionReceiverPropertyLabeled.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("extensionReceiverSmartCasted.kt")
   public void testExtensionReceiverSmartCasted() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/extensionReceiverSmartCasted.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("foreignValue.kt")
   public void testForeignValue() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/foreignValue.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("initializer.kt")
   public void testInitializer() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/initializer.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("local.kt")
   public void testLocal() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/local.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localDelegatedProperty.kt")
   public void testLocalDelegatedProperty() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localDelegatedProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunction.kt")
   public void testLocalFunction() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunctionContainingClassClosure.kt")
   public void testLocalFunctionContainingClassClosure() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localFunctionContainingClassClosure.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunctionExtensionReceiverClosure.kt")
   public void testLocalFunctionExtensionReceiverClosure() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localFunctionExtensionReceiverClosure.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunctionLambdaParameterClosure.kt")
   public void testLocalFunctionLambdaParameterClosure() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localFunctionLambdaParameterClosure.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunctionLocalClosure.kt")
   public void testLocalFunctionLocalClosure() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localFunctionLocalClosure.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunctionLocalClosureMutating.kt")
   public void testLocalFunctionLocalClosureMutating() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localFunctionLocalClosureMutating.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunctionMultipleCapturing.kt")
   public void testLocalFunctionMultipleCapturing() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localFunctionMultipleCapturing.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunctionParameterClosure.kt")
   public void testLocalFunctionParameterClosure() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localFunctionParameterClosure.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localMutated.kt")
   public void testLocalMutated() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localMutated.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localVariable.kt")
   public void testLocalVariable() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localVariable.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multipleClassAndFunctionContextReceivers.kt")
   public void testMultipleClassAndFunctionContextReceivers() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/multipleClassAndFunctionContextReceivers.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multipleClassContextReceivers.kt")
   public void testMultipleClassContextReceivers() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/multipleClassContextReceivers.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multipleFunctionContextReceivers.kt")
   public void testMultipleFunctionContextReceivers() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/multipleFunctionContextReceivers.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedOuterClass.kt")
   public void testNestedOuterClass() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/nestedOuterClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("objectFunction.kt")
   public void testObjectFunction() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/objectFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("outerClass.kt")
   public void testOuterClass() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/outerClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("outerClassMutated.kt")
   public void testOuterClassMutated() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/outerClassMutated.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("outerClassMutatedPrivate.kt")
   public void testOuterClassMutatedPrivate() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/outerClassMutatedPrivate.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("preferCorrectResolve.kt")
   public void testPreferCorrectResolve() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/preferCorrectResolve.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("privateMemberCall.kt")
   public void testPrivateMemberCall() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/privateMemberCall.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("secondClassContextReceiver.kt")
   public void testSecondClassContextReceiver() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/secondClassContextReceiver.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("singleClassContextReceiver.kt")
   public void testSingleClassContextReceiver() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/singleClassContextReceiver.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("smartCastExtensionReceiver.kt")
   public void testSmartCastExtensionReceiver() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/smartCastExtensionReceiver.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("smartCastValueParameter.kt")
   public void testSmartCastValueParameter() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/smartCastValueParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("valueParameter.kt")
   public void testValueParameter() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/valueParameter.kt");

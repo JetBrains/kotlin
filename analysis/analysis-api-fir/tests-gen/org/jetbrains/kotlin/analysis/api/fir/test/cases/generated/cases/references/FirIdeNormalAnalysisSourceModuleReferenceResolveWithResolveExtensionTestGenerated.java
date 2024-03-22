@@ -41,7 +41,7 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveWithResolveExtensio
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInReferenceResolve() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
@@ -50,7 +50,7 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveWithResolveExtensio
   @TestMetadata("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule")
   @TestDataPath("$PROJECT_ROOT")
   public class MultiModule {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInMultiModule() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
@@ -59,42 +59,42 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveWithResolveExtensio
     @TestMetadata("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency")
     @TestDataPath("$PROJECT_ROOT")
     public class ExtendedModuleDependency {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInExtendedModuleDependency() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classMember.kt")
       public void testClassMember() {
         runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency/classMember.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionFunction.kt")
       public void testExtensionFunction() {
         runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency/extensionFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("shadowedDeclaration.kt")
       public void testShadowedDeclaration() {
         runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency/shadowedDeclaration.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("shadowedJava.kt")
       public void testShadowedJava() {
         runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency/shadowedJava.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("shadowedOverload.kt")
       public void testShadowedOverload() {
         runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency/shadowedOverload.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevelFunction.kt")
       public void testTopLevelFunction() {
         runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency/topLevelFunction.kt");
@@ -106,42 +106,42 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveWithResolveExtensio
   @TestMetadata("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule")
   @TestDataPath("$PROJECT_ROOT")
   public class SingleModule {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInSingleModule() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classMember.kt")
     public void testClassMember() {
       runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule/classMember.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionFunction.kt")
     public void testExtensionFunction() {
       runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule/extensionFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("shadowedDeclaration.kt")
     public void testShadowedDeclaration() {
       runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule/shadowedDeclaration.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("shadowedJava.kt")
     public void testShadowedJava() {
       runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule/shadowedJava.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("shadowedOverload.kt")
     public void testShadowedOverload() {
       runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule/shadowedOverload.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelFunction.kt")
     public void testTopLevelFunction() {
       runTest("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule/topLevelFunction.kt");

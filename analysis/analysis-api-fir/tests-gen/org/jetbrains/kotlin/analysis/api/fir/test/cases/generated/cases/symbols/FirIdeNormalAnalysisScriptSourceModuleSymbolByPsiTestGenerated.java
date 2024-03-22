@@ -41,12 +41,12 @@ public class FirIdeNormalAnalysisScriptSourceModuleSymbolByPsiTestGenerated exte
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSymbolByPsi() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("script.kts")
   public void testScript() {
     runTest("analysis/analysis-api/testData/symbols/symbolByPsi/script.kts");
@@ -56,7 +56,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleSymbolByPsiTestGenerated exte
   @TestMetadata("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers")
   @TestDataPath("$PROJECT_ROOT")
   public class ContextReceivers {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInContextReceivers() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -66,7 +66,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleSymbolByPsiTestGenerated exte
   @TestMetadata("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters")
   @TestDataPath("$PROJECT_ROOT")
   public class ValueParameters {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInValueParameters() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }

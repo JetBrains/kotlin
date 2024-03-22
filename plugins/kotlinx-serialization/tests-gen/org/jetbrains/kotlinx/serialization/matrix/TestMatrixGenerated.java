@@ -19,12 +19,12 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kotlinx-serialization/testData/matrix")
 @TestDataPath("$PROJECT_ROOT")
 public class TestMatrixGenerated extends AbstractTestMatrix {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInMatrix() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/matrix"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enums.kt")
   public void testEnums() {
     runTest("plugins/kotlinx-serialization/testData/matrix/enums.kt");

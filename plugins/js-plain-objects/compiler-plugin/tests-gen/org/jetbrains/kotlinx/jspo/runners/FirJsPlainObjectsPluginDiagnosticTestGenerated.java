@@ -18,24 +18,24 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/js-plain-objects/compiler-plugin/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class FirJsPlainObjectsPluginDiagnosticTestGenerated extends AbstractFirJsPlainObjectsPluginDiagnosticTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/js-plain-objects/compiler-plugin/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inheritance.kt")
   public void testInheritance() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/diagnostics/inheritance.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("only-properties.kt")
   public void testOnly_properties() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/diagnostics/only-properties.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("wrongAnnotationTarget.kt")
   public void testWrongAnnotationTarget() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/diagnostics/wrongAnnotationTarget.kt");

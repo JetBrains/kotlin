@@ -18,48 +18,48 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/partialRawBuilder")
 @TestDataPath("$PROJECT_ROOT")
 public class OutOfContentRootPartialRawFirBuilderTestCaseGenerated extends AbstractOutOfContentRootPartialRawFirBuilderTestCase {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInPartialRawBuilder() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/partialRawBuilder"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunction.kt")
   public void testLocalFunction() {
     runTest("analysis/low-level-api-fir/testData/partialRawBuilder/localFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("memberFunction.kt")
   public void testMemberFunction() {
     runTest("analysis/low-level-api-fir/testData/partialRawBuilder/memberFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("memberProperty.kt")
   public void testMemberProperty() {
     runTest("analysis/low-level-api-fir/testData/partialRawBuilder/memberProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("paramemtersCatching.kt")
   public void testParamemtersCatching() {
     runTest("analysis/low-level-api-fir/testData/partialRawBuilder/paramemtersCatching.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simpleFunction.kt")
   public void testSimpleFunction() {
     runTest("analysis/low-level-api-fir/testData/partialRawBuilder/simpleFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simpleVal.kt")
   public void testSimpleVal() {
     runTest("analysis/low-level-api-fir/testData/partialRawBuilder/simpleVal.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simpleVar.kt")
   public void testSimpleVar() {
     runTest("analysis/low-level-api-fir/testData/partialRawBuilder/simpleVar.kt");

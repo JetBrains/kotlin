@@ -18,36 +18,36 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kapt3/kapt3-cli/testData/argumentParsing")
 @TestDataPath("$PROJECT_ROOT")
 public class ArgumentParsingTestGenerated extends AbstractArgumentParsingTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInArgumentParsing() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-cli/testData/argumentParsing"), Pattern.compile("^(.+)\\.txt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("errorFlag.txt")
   public void testErrorFlag() {
     runTest("plugins/kapt3/kapt3-cli/testData/argumentParsing/errorFlag.txt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("errorKeyValue.txt")
   public void testErrorKeyValue() {
     runTest("plugins/kapt3/kapt3-cli/testData/argumentParsing/errorKeyValue.txt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("errorValue.txt")
   public void testErrorValue() {
     runTest("plugins/kapt3/kapt3-cli/testData/argumentParsing/errorValue.txt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kotlincHelp.txt")
   public void testKotlincHelp() {
     runTest("plugins/kapt3/kapt3-cli/testData/argumentParsing/kotlincHelp.txt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simple.txt")
   public void testSimple() {
     runTest("plugins/kapt3/kapt3-cli/testData/argumentParsing/simple.txt");

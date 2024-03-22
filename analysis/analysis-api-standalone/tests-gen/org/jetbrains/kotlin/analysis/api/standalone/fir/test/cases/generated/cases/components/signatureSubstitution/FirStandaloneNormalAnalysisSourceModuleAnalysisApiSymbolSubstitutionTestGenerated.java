@@ -40,18 +40,18 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiSymbolSubstitutio
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSymbolSubstitution() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/signatureSubstitution/symbolSubstitution"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("function.kt")
   public void testFunction() {
     runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolSubstitution/function.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("property.kt")
   public void testProperty() {
     runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolSubstitution/property.kt");

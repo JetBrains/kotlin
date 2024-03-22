@@ -40,36 +40,36 @@ public class FirStandaloneNormalAnalysisSourceModuleDelegateMemberScopeTestGener
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInDelegatedMemberScope() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyWithGetter.kt")
   public void testPropertyWithGetter() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/propertyWithGetter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simple.kt")
   public void testSimple() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/simple.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simpleLibrary.kt")
   public void testSimpleLibrary() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/simpleLibrary.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("withImplicitType.kt")
   public void testWithImplicitType() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/withImplicitType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("withOverridden.kt")
   public void testWithOverridden() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/withOverridden.kt");

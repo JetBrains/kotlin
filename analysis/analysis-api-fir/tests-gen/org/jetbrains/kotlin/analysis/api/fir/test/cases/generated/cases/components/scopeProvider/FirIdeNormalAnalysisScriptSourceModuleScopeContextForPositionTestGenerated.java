@@ -40,7 +40,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleScopeContextForPositionTestGe
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInScopeContextForPosition() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

@@ -19,654 +19,654 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve")
 @TestDataPath("$PROJECT_ROOT")
 public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScriptLazyDeclarationResolveTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInLazyResolve() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationArgumentsMixScript.kts")
   public void testAnnotationArgumentsMixScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationArgumentsMixScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationClassWithJavaTargetScript.kts")
   public void testAnnotationClassWithJavaTargetScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationClassWithJavaTargetScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationOnLocalClassScript.kts")
   public void testAnnotationOnLocalClassScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationOnLocalClassScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationParametersScript.kts")
   public void testAnnotationParametersScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationParametersScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationWithTypeArgumentScript.kts")
   public void testAnnotationWithTypeArgumentScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationWithTypeArgumentScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationsScript.kts")
   public void testAnnotationsScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/annotationsScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("anonymousFunctionWithAnnotatedParameter2Script.kts")
   public void testAnonymousFunctionWithAnnotatedParameter2Script() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/anonymousFunctionWithAnnotatedParameter2Script.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("anonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript.kts")
   public void testAnonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/anonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("anonymousFunctionWithAnnotatedParameterScript.kts")
   public void testAnonymousFunctionWithAnnotatedParameterScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/anonymousFunctionWithAnnotatedParameterScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classMembersScript.kts")
   public void testClassMembersScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/classMembersScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("compilerRequiredAnnotationOnLocalClassScript.kts")
   public void testCompilerRequiredAnnotationOnLocalClassScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationOnLocalClassScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("compilerRequiredAnnotationsOnConstructorPropertyScript.kts")
   public void testCompilerRequiredAnnotationsOnConstructorPropertyScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnConstructorPropertyScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("compilerRequiredAnnotationsOnConstructorScript.kts")
   public void testCompilerRequiredAnnotationsOnConstructorScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnConstructorScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("compilerRequiredAnnotationsOnFunctionScript.kts")
   public void testCompilerRequiredAnnotationsOnFunctionScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnFunctionScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("compilerRequiredAnnotationsOnPropertyDelegateScript.kts")
   public void testCompilerRequiredAnnotationsOnPropertyDelegateScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnPropertyDelegateScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("compilerRequiredAnnotationsOnPropertyScript.kts")
   public void testCompilerRequiredAnnotationsOnPropertyScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/compilerRequiredAnnotationsOnPropertyScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("complexLocalHierarchyScript.kts")
   public void testComplexLocalHierarchyScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/complexLocalHierarchyScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("complexRedeclarationScript.kts")
   public void testComplexRedeclarationScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/complexRedeclarationScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("cyclicHierarchy2Script.kts")
   public void testCyclicHierarchy2Script() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/cyclicHierarchy2Script.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("cyclicHierarchy3Script.kts")
   public void testCyclicHierarchy3Script() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/cyclicHierarchy3Script.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("cyclicHierarchyScript.kts")
   public void testCyclicHierarchyScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/cyclicHierarchyScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("cyclicNestedHierarchy2Script.kts")
   public void testCyclicNestedHierarchy2Script() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/cyclicNestedHierarchy2Script.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("cyclicNestedHierarchyScript.kts")
   public void testCyclicNestedHierarchyScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/cyclicNestedHierarchyScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("dataClassCopyScript.kts")
   public void testDataClassCopyScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/dataClassCopyScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("dataComponent2Script.kts")
   public void testDataComponent2Script() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/dataComponent2Script.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegateWithImplicitTypeScript.kts")
   public void testDelegateWithImplicitTypeScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/delegateWithImplicitTypeScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegatedFieldNestedNameClashScript.kts")
   public void testDelegatedFieldNestedNameClashScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatedFieldNestedNameClashScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegatedFieldNestedNameClashWithNestedTypesScript.kts")
   public void testDelegatedFieldNestedNameClashWithNestedTypesScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatedFieldNestedNameClashWithNestedTypesScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegatedFieldScript.kts")
   public void testDelegatedFieldScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatedFieldScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegatesScript.kts")
   public void testDelegatesScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatesScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("destructuring.kts")
   public void testDestructuring() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/destructuring.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("destructuringFirstEntry.kts")
   public void testDestructuringFirstEntry() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/destructuringFirstEntry.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("destructuringSecondEntry.kts")
   public void testDestructuringSecondEntry() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/destructuringSecondEntry.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enumEntriesScript.kts")
   public void testEnumEntriesScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/enumEntriesScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enumEntryScript.kts")
   public void testEnumEntryScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/enumEntryScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enumValueOfScript.kts")
   public void testEnumValueOfScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/enumValueOfScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enumValuesScript.kts")
   public void testEnumValuesScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/enumValuesScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("explicitSubstitutionOverridePropertyScript.kts")
   public void testExplicitSubstitutionOverridePropertyScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/explicitSubstitutionOverridePropertyScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fakeOverrideScript.kts")
   public void testFakeOverrideScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/fakeOverrideScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fakePrimaryConstructorScript.kts")
   public void testFakePrimaryConstructorScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/fakePrimaryConstructorScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fileAnnotationsScript.kts")
   public void testFileAnnotationsScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/fileAnnotationsScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fromLocalHierarchyToOuterScript.kts")
   public void testFromLocalHierarchyToOuterScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/fromLocalHierarchyToOuterScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionWithImplicitTypeAndAnnotationsScript.kts")
   public void testFunctionWithImplicitTypeAndAnnotationsScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/functionWithImplicitTypeAndAnnotationsScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts")
   public void testFunctionWithImplicitTypeAndStringTemplateAsDefaultValueScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionWithParameterScript.kts")
   public void testFunctionWithParameterScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/functionWithParameterScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("implicitSubstitutionOverridePropertyScript.kts")
   public void testImplicitSubstitutionOverridePropertyScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/implicitSubstitutionOverridePropertyScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("lambdaAsSAMInterfaceScript.kts")
   public void testLambdaAsSAMInterfaceScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/lambdaAsSAMInterfaceScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("lastStatementWithDestructuringDeclarationReference.kts")
   public void testLastStatementWithDestructuringDeclarationReference() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/lastStatementWithDestructuringDeclarationReference.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("lazyPropertyScript.kts")
   public void testLazyPropertyScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/lazyPropertyScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localConstructorScript.kts")
   public void testLocalConstructorScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/localConstructorScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunctionInsideAnnotationCallScript.kts")
   public void testLocalFunctionInsideAnnotationCallScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideAnnotationCallScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunctionInsideFunctionLiteralScript.kts")
   public void testLocalFunctionInsideFunctionLiteralScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideFunctionLiteralScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunctionInsideLambdaCallInsideStringTemplateScript.kts")
   public void testLocalFunctionInsideLambdaCallInsideStringTemplateScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideLambdaCallInsideStringTemplateScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunctionInsideStatement.kts")
   public void testLocalFunctionInsideStatement() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideStatement.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunctionInsideStringTemplateScript.kts")
   public void testLocalFunctionInsideStringTemplateScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideStringTemplateScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunctionInsideSuperEntryCallScript.kts")
   public void testLocalFunctionInsideSuperEntryCallScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/localFunctionInsideSuperEntryCallScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localNestedClassScript.kts")
   public void testLocalNestedClassScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/localNestedClassScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localParameterInsideSuperEntryCallScript.kts")
   public void testLocalParameterInsideSuperEntryCallScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/localParameterInsideSuperEntryCallScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedCompilerRequiredAnnotationsForMemberScript.kts")
   public void testNestedCompilerRequiredAnnotationsForMemberScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/nestedCompilerRequiredAnnotationsForMemberScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedCompilerRequiredAnnotationsInsideBodyScript.kts")
   public void testNestedCompilerRequiredAnnotationsInsideBodyScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/nestedCompilerRequiredAnnotationsInsideBodyScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedCompilerRequiredAnnotationsScript.kts")
   public void testNestedCompilerRequiredAnnotationsScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/nestedCompilerRequiredAnnotationsScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedTypeAlias2Script.kts")
   public void testNestedTypeAlias2Script() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/nestedTypeAlias2Script.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedTypeAliasScript.kts")
   public void testNestedTypeAliasScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/nestedTypeAliasScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("parameterOfNonLocalSetterScript.kts")
   public void testParameterOfNonLocalSetterScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/parameterOfNonLocalSetterScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("parameterOfTopSetterScript.kts")
   public void testParameterOfTopSetterScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/parameterOfTopSetterScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("primaryConstructorParameterScript.kts")
   public void testPrimaryConstructorParameterScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/primaryConstructorParameterScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("primaryConstructorPropertyScript.kts")
   public void testPrimaryConstructorPropertyScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/primaryConstructorPropertyScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("primaryConstructorScript.kts")
   public void testPrimaryConstructorScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/primaryConstructorScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyDelegateWithImplicitTypeScript.kts")
   public void testPropertyDelegateWithImplicitTypeScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyDelegateWithImplicitTypeScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyWithGetterAndSetterScript.kts")
   public void testPropertyWithGetterAndSetterScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyWithGetterAndSetterScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyWithGetterScript.kts")
   public void testPropertyWithGetterScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyWithGetterScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyWithImplicitTypeAndAnnotationsScript.kts")
   public void testPropertyWithImplicitTypeAndAnnotationsScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyWithImplicitTypeAndAnnotationsScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyWithImplicitTypeAndFieldAnnotationsScript.kts")
   public void testPropertyWithImplicitTypeAndFieldAnnotationsScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyWithImplicitTypeAndFieldAnnotationsScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyWithInitializerScript.kts")
   public void testPropertyWithInitializerScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyWithInitializerScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("redeclarationScript.kts")
   public void testRedeclarationScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/redeclarationScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("resolveSuperTypeFromLocalClassScript.kts")
   public void testResolveSuperTypeFromLocalClassScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/resolveSuperTypeFromLocalClassScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("resolveTypeFromLocalClassConstructorScript.kts")
   public void testResolveTypeFromLocalClassConstructorScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/resolveTypeFromLocalClassConstructorScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("resolveTypeFromLocalFunctionScript.kts")
   public void testResolveTypeFromLocalFunctionScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/resolveTypeFromLocalFunctionScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("script.kts")
   public void testScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/script.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("script2.kts")
   public void testScript2() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/script2.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("script3.kts")
   public void testScript3() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/script3.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("script4.kts")
   public void testScript4() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/script4.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("scriptArgument.kts")
   public void testScriptArgument() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/scriptArgument.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("secondaryConstructorParameterScript.kts")
   public void testSecondaryConstructorParameterScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/secondaryConstructorParameterScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("secondaryConstructorScript.kts")
   public void testSecondaryConstructorScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/secondaryConstructorScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("statement.kts")
   public void testStatement() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/statement.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("statement2.kts")
   public void testStatement2() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/statement2.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("statementTransformation.kts")
   public void testStatementTransformation() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/statementTransformation.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionFakeOverrideConstructorScript.kts")
   public void testSubstitutionFakeOverrideConstructorScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideConstructorScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionFakeOverrideFunctionScript.kts")
   public void testSubstitutionFakeOverrideFunctionScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideFunctionScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionFakeOverrideFunctionWithImplicitTypeScript.kts")
   public void testSubstitutionFakeOverrideFunctionWithImplicitTypeScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideFunctionWithImplicitTypeScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionFakeOverrideScript.kts")
   public void testSubstitutionFakeOverrideScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts")
   public void testSubstitutionFakeOverrideWithImplicitTypeAndReceiverScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionFakeOverrideWithImplicitTypeScript.kts")
   public void testSubstitutionFakeOverrideWithImplicitTypeScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideWithImplicitTypeScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("superTypesLoopScript.kts")
   public void testSuperTypesLoopScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/superTypesLoopScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("superTypesScript.kts")
   public void testSuperTypesScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/superTypesScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("syntheticResultDeclaration.kts")
   public void testSyntheticResultDeclaration() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticResultDeclaration.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("syntheticResultDeclarationWithBigBody.kts")
   public void testSyntheticResultDeclarationWithBigBody() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticResultDeclarationWithBigBody.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("topLevelFunctionsScript.kts")
   public void testTopLevelFunctionsScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/topLevelFunctionsScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("topLevelFunctionsWithExpressionBodyAndExplicitTypeScript.kts")
   public void testTopLevelFunctionsWithExpressionBodyAndExplicitTypeScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/topLevelFunctionsWithExpressionBodyAndExplicitTypeScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("topLevelFunctionsWithImplicitTypeScript.kts")
   public void testTopLevelFunctionsWithImplicitTypeScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/topLevelFunctionsWithImplicitTypeScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameterBoundsScript.kts")
   public void testTypeParameterBoundsScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterBoundsScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameterOfClass2Script.kts")
   public void testTypeParameterOfClass2Script() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfClass2Script.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameterOfClassScript.kts")
   public void testTypeParameterOfClassScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfClassScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameterOfNonLocalFunctionScript.kts")
   public void testTypeParameterOfNonLocalFunctionScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfNonLocalFunctionScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameterOfTopFunctionScript.kts")
   public void testTypeParameterOfTopFunctionScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfTopFunctionScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameterOfTopSetterScript.kts")
   public void testTypeParameterOfTopSetterScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfTopSetterScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameterOfTypeAliasScript.kts")
   public void testTypeParameterOfTypeAliasScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/typeParameterOfTypeAliasScript.kts");
@@ -676,102 +676,102 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/classes")
   @TestDataPath("$PROJECT_ROOT")
   public class Classes {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInClasses() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/classes"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("annotationWithTargetScript.kts")
     public void testAnnotationWithTargetScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/annotationWithTargetScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classWithTypeParametersScript.kts")
     public void testClassWithTypeParametersScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/classWithTypeParametersScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionInValueClassScript.kts")
     public void testFunctionInValueClassScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/functionInValueClassScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClass2Script.kts")
     public void testHierarchyWithOverrideAndNestedClass2Script() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideAndNestedClass2Script.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClass3Script.kts")
     public void testHierarchyWithOverrideAndNestedClass3Script() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideAndNestedClass3Script.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClass4Script.kts")
     public void testHierarchyWithOverrideAndNestedClass4Script() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideAndNestedClass4Script.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClassScript.kts")
     public void testHierarchyWithOverrideAndNestedClassScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideAndNestedClassScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideScript.kts")
     public void testHierarchyWithOverrideScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedClassScript.kts")
     public void testNestedClassScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/nestedClassScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedClassWithPropertiesOverridesScript.kts")
     public void testNestedClassWithPropertiesOverridesScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/nestedClassWithPropertiesOverridesScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleLoopInOverride2Script.kts")
     public void testSimpleLoopInOverride2Script() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/simpleLoopInOverride2Script.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleLoopInOverrideScript.kts")
     public void testSimpleLoopInOverrideScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/simpleLoopInOverrideScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallNameClashImplicitConstructorScript.kts")
     public void testSuperTypeCallNameClashImplicitConstructorScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNameClashImplicitConstructorScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallNameClashScript.kts")
     public void testSuperTypeCallNameClashScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNameClashScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallNestedNameClashImplicitConstructorScript.kts")
     public void testSuperTypeCallNestedNameClashImplicitConstructorScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNestedNameClashImplicitConstructorScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallNestedNameClashScript.kts")
     public void testSuperTypeCallNestedNameClashScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNestedNameClashScript.kts");
@@ -781,30 +781,30 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
     @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass")
     @TestDataPath("$PROJECT_ROOT")
     public class DataClass {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInDataClass() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("component1TypeCollisionScript.kts")
       public void testComponent1TypeCollisionScript() {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/component1TypeCollisionScript.kts");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("copyTypeCollisionScript.kts")
       public void testCopyTypeCollisionScript() {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/copyTypeCollisionScript.kts");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("parameterTypeCollisionScript.kts")
       public void testParameterTypeCollisionScript() {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/parameterTypeCollisionScript.kts");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("propertyTypeCollisionScript.kts")
       public void testPropertyTypeCollisionScript() {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/propertyTypeCollisionScript.kts");
@@ -816,7 +816,7 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/errors")
   @TestDataPath("$PROJECT_ROOT")
   public class Errors {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInErrors() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/errors"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
@@ -826,102 +826,102 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/functions")
   @TestDataPath("$PROJECT_ROOT")
   public class Functions {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInFunctions() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/functions"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("contractScript.kts")
     public void testContractScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/contractScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("contractScript2.kts")
     public void testContractScript2() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/contractScript2.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionCallWithGenericResultScript.kts")
     public void testFunctionCallWithGenericResultScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/functionCallWithGenericResultScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionParameterScript.kts")
     public void testFunctionParameterScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/functionParameterScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionWithGenericExpectedTypeInsideScript.kts")
     public void testFunctionWithGenericExpectedTypeInsideScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/functionWithGenericExpectedTypeInsideScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionWithTypeParametersScript.kts")
     public void testFunctionWithTypeParametersScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/functionWithTypeParametersScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClass2Script.kts")
     public void testHierarchyWithOverrideAndNestedClass2Script() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/hierarchyWithOverrideAndNestedClass2Script.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClass3Script.kts")
     public void testHierarchyWithOverrideAndNestedClass3Script() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/hierarchyWithOverrideAndNestedClass3Script.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClassScript.kts")
     public void testHierarchyWithOverrideAndNestedClassScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/hierarchyWithOverrideAndNestedClassScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideScript.kts")
     public void testHierarchyWithOverrideScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/hierarchyWithOverrideScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleLoopInOverride2Script.kts")
     public void testSimpleLoopInOverride2Script() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/simpleLoopInOverride2Script.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleLoopInOverrideScript.kts")
     public void testSimpleLoopInOverrideScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/simpleLoopInOverrideScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallNameClashImplicitConstructorScript.kts")
     public void testSuperTypeCallNameClashImplicitConstructorScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNameClashImplicitConstructorScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallNameClashScript.kts")
     public void testSuperTypeCallNameClashScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNameClashScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallNestedNameClashImplicitConstructorScript.kts")
     public void testSuperTypeCallNestedNameClashImplicitConstructorScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNestedNameClashImplicitConstructorScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallNestedNameClashScript.kts")
     public void testSuperTypeCallNestedNameClashScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNestedNameClashScript.kts");
@@ -932,7 +932,7 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/noRuntime")
   @TestDataPath("$PROJECT_ROOT")
   public class NoRuntime {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInNoRuntime() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/noRuntime"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
@@ -942,102 +942,102 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/properties")
   @TestDataPath("$PROJECT_ROOT")
   public class Properties {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInProperties() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/properties"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("getterWithDelegationScript.kts")
     public void testGetterWithDelegationScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/getterWithDelegationScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClass2Script.kts")
     public void testHierarchyWithOverrideAndNestedClass2Script() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverrideAndNestedClass2Script.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClass3Script.kts")
     public void testHierarchyWithOverrideAndNestedClass3Script() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverrideAndNestedClass3Script.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClass4Script.kts")
     public void testHierarchyWithOverrideAndNestedClass4Script() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverrideAndNestedClass4Script.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideAndNestedClassScript.kts")
     public void testHierarchyWithOverrideAndNestedClassScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverrideAndNestedClassScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hierarchyWithOverrideScript.kts")
     public void testHierarchyWithOverrideScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/hierarchyWithOverrideScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyGetterWithExplicitTypeAndBodyScript.kts")
     public void testPropertyGetterWithExplicitTypeAndBodyScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/propertyGetterWithExplicitTypeAndBodyScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyGetterWithExplicitTypeScript.kts")
     public void testPropertyGetterWithExplicitTypeScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/propertyGetterWithExplicitTypeScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyGetterWithImplicitTypeScript.kts")
     public void testPropertyGetterWithImplicitTypeScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/propertyGetterWithImplicitTypeScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertySetterScript.kts")
     public void testPropertySetterScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/propertySetterScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyWithTypeParametersScript.kts")
     public void testPropertyWithTypeParametersScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/propertyWithTypeParametersScript.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("resultWithPropagatedType.kts")
     public void testResultWithPropagatedType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/resultWithPropagatedType.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("scriptWithResultWithPropagatedType.kts")
     public void testScriptWithResultWithPropagatedType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/scriptWithResultWithPropagatedType.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("scriptWithTypeAnnotationsOnDeclaration.kts")
     public void testScriptWithTypeAnnotationsOnDeclaration() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/scriptWithTypeAnnotationsOnDeclaration.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleLoopInOverride2Script.kts")
     public void testSimpleLoopInOverride2Script() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/simpleLoopInOverride2Script.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleLoopInOverrideScript.kts")
     public void testSimpleLoopInOverrideScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/simpleLoopInOverrideScript.kts");
@@ -1048,7 +1048,7 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties")
   @TestDataPath("$PROJECT_ROOT")
   public class SyntheticProperties {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInSyntheticProperties() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
@@ -1058,12 +1058,12 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/typeAliases")
   @TestDataPath("$PROJECT_ROOT")
   public class TypeAliases {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInTypeAliases() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/typeAliases"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeAliasWithTypeParametersScript.kts")
     public void testTypeAliasWithTypeParametersScript() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/typeAliases/typeAliasWithTypeParametersScript.kts");

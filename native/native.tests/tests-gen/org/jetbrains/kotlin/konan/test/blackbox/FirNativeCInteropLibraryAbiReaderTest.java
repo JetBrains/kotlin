@@ -22,12 +22,12 @@ import java.util.regex.Pattern;
 @Tag("frontend-fir")
 @FirPipeline()
 public class FirNativeCInteropLibraryAbiReaderTest extends AbstractNativeCInteropLibraryAbiReaderTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInCinterop() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/dump-abi/cinterop"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("interop_class_inheritor.kt")
   public void testInterop_class_inheritor() {
     runTest("compiler/testData/klib/dump-abi/cinterop/interop_class_inheritor.kt");

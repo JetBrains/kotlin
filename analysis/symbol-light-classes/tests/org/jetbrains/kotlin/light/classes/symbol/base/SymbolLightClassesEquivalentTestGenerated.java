@@ -18,66 +18,66 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/symbol-light-classes/testData/equivalentTo")
 @TestDataPath("$PROJECT_ROOT")
 public class SymbolLightClassesEquivalentTestGenerated extends AbstractSymbolLightClassesEquivalentTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInEquivalentTo() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/symbol-light-classes/testData/equivalentTo"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("AnnotationClass.kt")
   public void testAnnotationClass() {
     runTest("analysis/symbol-light-classes/testData/equivalentTo/AnnotationClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("AnonymousClass.kt")
   public void testAnonymousClass() {
     runTest("analysis/symbol-light-classes/testData/equivalentTo/AnonymousClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("ClassPropertyWithAccessor.kt")
   public void testClassPropertyWithAccessor() {
     runTest("analysis/symbol-light-classes/testData/equivalentTo/ClassPropertyWithAccessor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("CompanionProperty.kt")
   public void testCompanionProperty() {
     runTest("analysis/symbol-light-classes/testData/equivalentTo/CompanionProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("Constructor.kt")
   public void testConstructor() {
     runTest("analysis/symbol-light-classes/testData/equivalentTo/Constructor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("EnumClassEntry.kt")
   public void testEnumClassEntry() {
     runTest("analysis/symbol-light-classes/testData/equivalentTo/EnumClassEntry.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("Function.kt")
   public void testFunction() {
     runTest("analysis/symbol-light-classes/testData/equivalentTo/Function.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("Interface.kt")
   public void testInterface() {
     runTest("analysis/symbol-light-classes/testData/equivalentTo/Interface.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("Klass.kt")
   public void testKlass() {
     runTest("analysis/symbol-light-classes/testData/equivalentTo/Klass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("TypeParameter.kt")
   public void testTypeParameter() {
     runTest("analysis/symbol-light-classes/testData/equivalentTo/TypeParameter.kt");

@@ -20,342 +20,342 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/ir/interpreter")
 @TestDataPath("$PROJECT_ROOT")
 public class JvmIrInterpreterAfterPsi2IrTestGenerated extends AbstractJvmIrInterpreterAfterPsi2IrTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("abstract1.kt")
   public void testAbstract1() {
     runTest("compiler/testData/ir/interpreter/abstract1.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("abstract2.kt")
   public void testAbstract2() {
     runTest("compiler/testData/ir/interpreter/abstract2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("abstract3.kt")
   public void testAbstract3() {
     runTest("compiler/testData/ir/interpreter/abstract3.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("abstract4.kt")
   public void testAbstract4() {
     runTest("compiler/testData/ir/interpreter/abstract4.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInInterpreter() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "helpers");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("arrayClassCast.kt")
   public void testArrayClassCast() {
     runTest("compiler/testData/ir/interpreter/arrayClassCast.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("branches.kt")
   public void testBranches() {
     runTest("compiler/testData/ir/interpreter/branches.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("companionOverride.kt")
   public void testCompanionOverride() {
     runTest("compiler/testData/ir/interpreter/companionOverride.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("complexReturn.kt")
   public void testComplexReturn() {
     runTest("compiler/testData/ir/interpreter/complexReturn.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("composition.kt")
   public void testComposition() {
     runTest("compiler/testData/ir/interpreter/composition.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("copyReceivedValue.kt")
   public void testCopyReceivedValue() {
     runTest("compiler/testData/ir/interpreter/copyReceivedValue.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("dataClass.kt")
   public void testDataClass() {
     runTest("compiler/testData/ir/interpreter/dataClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("defaultArgs.kt")
   public void testDefaultArgs() {
     runTest("compiler/testData/ir/interpreter/defaultArgs.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("defaultEquals.kt")
   public void testDefaultEquals() {
     runTest("compiler/testData/ir/interpreter/defaultEquals.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("defaultHashCode.kt")
   public void testDefaultHashCode() {
     runTest("compiler/testData/ir/interpreter/defaultHashCode.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("defaultToString.kt")
   public void testDefaultToString() {
     runTest("compiler/testData/ir/interpreter/defaultToString.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("doWhileLoop.kt")
   public void testDoWhileLoop() {
     runTest("compiler/testData/ir/interpreter/doWhileLoop.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("elvis.kt")
   public void testElvis() {
     runTest("compiler/testData/ir/interpreter/elvis.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enums1.kt")
   public void testEnums1() {
     runTest("compiler/testData/ir/interpreter/enums1.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enums2.kt")
   public void testEnums2() {
     runTest("compiler/testData/ir/interpreter/enums2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enums3.kt")
   public void testEnums3() {
     runTest("compiler/testData/ir/interpreter/enums3.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("extensionReceiver.kt")
   public void testExtensionReceiver() {
     runTest("compiler/testData/ir/interpreter/extensionReceiver.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fib.kt")
   public void testFib() {
     runTest("compiler/testData/ir/interpreter/fib.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("genericListOfPairs.kt")
   public void testGenericListOfPairs() {
     runTest("compiler/testData/ir/interpreter/genericListOfPairs.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inKeyword.kt")
   public void testInKeyword() {
     runTest("compiler/testData/ir/interpreter/inKeyword.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineReturn.kt")
   public void testInlineReturn() {
     runTest("compiler/testData/ir/interpreter/inlineReturn.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("innerClass.kt")
   public void testInnerClass() {
     runTest("compiler/testData/ir/interpreter/innerClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("instanceOf.kt")
   public void testInstanceOf() {
     runTest("compiler/testData/ir/interpreter/instanceOf.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("instanceOfWithTypeParameters.kt")
   public void testInstanceOfWithTypeParameters() {
     runTest("compiler/testData/ir/interpreter/instanceOfWithTypeParameters.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("interface.kt")
   public void testInterface() {
     runTest("compiler/testData/ir/interpreter/interface.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("interfaceDefault.kt")
   public void testInterfaceDefault() {
     runTest("compiler/testData/ir/interpreter/interfaceDefault.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("lambda.kt")
   public void testLambda() {
     runTest("compiler/testData/ir/interpreter/lambda.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunction.kt")
   public void testLocalFunction() {
     runTest("compiler/testData/ir/interpreter/localFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localObject.kt")
   public void testLocalObject() {
     runTest("compiler/testData/ir/interpreter/localObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("logIntrinsic.kt")
   public void testLogIntrinsic() {
     runTest("compiler/testData/ir/interpreter/logIntrinsic.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("loop.kt")
   public void testLoop() {
     runTest("compiler/testData/ir/interpreter/loop.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multipleOverridden.kt")
   public void testMultipleOverridden() {
     runTest("compiler/testData/ir/interpreter/multipleOverridden.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("object.kt")
   public void testObject() {
     runTest("compiler/testData/ir/interpreter/object.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("objectOverride.kt")
   public void testObjectOverride() {
     runTest("compiler/testData/ir/interpreter/objectOverride.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("overrideDifferentName.kt")
   public void testOverrideDifferentName() {
     runTest("compiler/testData/ir/interpreter/overrideDifferentName.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("overrideExtension.kt")
   public void testOverrideExtension() {
     runTest("compiler/testData/ir/interpreter/overrideExtension.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("progressionFromClosedRange.kt")
   public void testProgressionFromClosedRange() {
     runTest("compiler/testData/ir/interpreter/progressionFromClosedRange.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("rangeTo.kt")
   public void testRangeTo() {
     runTest("compiler/testData/ir/interpreter/rangeTo.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("regex.kt")
   public void testRegex() {
     runTest("compiler/testData/ir/interpreter/regex.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("safeClassCast.kt")
   public void testSafeClassCast() {
     runTest("compiler/testData/ir/interpreter/safeClassCast.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("samConversion.kt")
   public void testSamConversion() {
     runTest("compiler/testData/ir/interpreter/samConversion.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("scopeFunctions.kt")
   public void testScopeFunctions() {
     runTest("compiler/testData/ir/interpreter/scopeFunctions.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("secondaryConstructor.kt")
   public void testSecondaryConstructor() {
     runTest("compiler/testData/ir/interpreter/secondaryConstructor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("spreadOperator.kt")
   public void testSpreadOperator() {
     runTest("compiler/testData/ir/interpreter/spreadOperator.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("stringBuilder.kt")
   public void testStringBuilder() {
     runTest("compiler/testData/ir/interpreter/stringBuilder.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("stringConcatenation.kt")
   public void testStringConcatenation() {
     runTest("compiler/testData/ir/interpreter/stringConcatenation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("superClass.kt")
   public void testSuperClass() {
     runTest("compiler/testData/ir/interpreter/superClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unitResult.kt")
   public void testUnitResult() {
     runTest("compiler/testData/ir/interpreter/unitResult.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("vararg.kt")
   public void testVararg() {
     runTest("compiler/testData/ir/interpreter/vararg.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("variableShadowing.kt")
   public void testVariableShadowing() {
     runTest("compiler/testData/ir/interpreter/variableShadowing.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("variables.kt")
   public void testVariables() {
     runTest("compiler/testData/ir/interpreter/variables.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("withReceivers.kt")
   public void testWithReceivers() {
     runTest("compiler/testData/ir/interpreter/withReceivers.kt");
@@ -365,84 +365,84 @@ public class JvmIrInterpreterAfterPsi2IrTestGenerated extends AbstractJvmIrInter
   @TestMetadata("compiler/testData/ir/interpreter/collections")
   @TestDataPath("$PROJECT_ROOT")
   public class Collections {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInCollections() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/collections"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayConstructor.kt")
     public void testArrayConstructor() {
       runTest("compiler/testData/ir/interpreter/collections/arrayConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayOf.kt")
     public void testArrayOf() {
       runTest("compiler/testData/ir/interpreter/collections/arrayOf.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("doubleArrayOf.kt")
     public void testDoubleArrayOf() {
       runTest("compiler/testData/ir/interpreter/collections/doubleArrayOf.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("doubleList.kt")
     public void testDoubleList() {
       runTest("compiler/testData/ir/interpreter/collections/doubleList.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("listOf.kt")
     public void testListOf() {
       runTest("compiler/testData/ir/interpreter/collections/listOf.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("mapOf.kt")
     public void testMapOf() {
       runTest("compiler/testData/ir/interpreter/collections/mapOf.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("matrixArray.kt")
     public void testMatrixArray() {
       runTest("compiler/testData/ir/interpreter/collections/matrixArray.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("matrixList.kt")
     public void testMatrixList() {
       runTest("compiler/testData/ir/interpreter/collections/matrixList.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("mutableListOf.kt")
     public void testMutableListOf() {
       runTest("compiler/testData/ir/interpreter/collections/mutableListOf.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("mutableMapOf.kt")
     public void testMutableMapOf() {
       runTest("compiler/testData/ir/interpreter/collections/mutableMapOf.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("mutableSetOf.kt")
     public void testMutableSetOf() {
       runTest("compiler/testData/ir/interpreter/collections/mutableSetOf.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("sequenceOf.kt")
     public void testSequenceOf() {
       runTest("compiler/testData/ir/interpreter/collections/sequenceOf.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("setOf.kt")
     public void testSetOf() {
       runTest("compiler/testData/ir/interpreter/collections/setOf.kt");
@@ -453,90 +453,90 @@ public class JvmIrInterpreterAfterPsi2IrTestGenerated extends AbstractJvmIrInter
   @TestMetadata("compiler/testData/ir/interpreter/exceptions")
   @TestDataPath("$PROJECT_ROOT")
   public class Exceptions {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInExceptions() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/exceptions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arithmeticExceptionThrow.kt")
     public void testArithmeticExceptionThrow() {
       runTest("compiler/testData/ir/interpreter/exceptions/arithmeticExceptionThrow.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arithmeticExceptionTryBlock.kt")
     public void testArithmeticExceptionTryBlock() {
       runTest("compiler/testData/ir/interpreter/exceptions/arithmeticExceptionTryBlock.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arithmeticExceptionTryCatchFinally.kt")
     public void testArithmeticExceptionTryCatchFinally() {
       runTest("compiler/testData/ir/interpreter/exceptions/arithmeticExceptionTryCatchFinally.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classCastException.kt")
     public void testClassCastException() {
       runTest("compiler/testData/ir/interpreter/exceptions/classCastException.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("commandsOutException.kt")
     public void testCommandsOutException() {
       runTest("compiler/testData/ir/interpreter/exceptions/commandsOutException.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("divideByZero.kt")
     public void testDivideByZero() {
       runTest("compiler/testData/ir/interpreter/exceptions/divideByZero.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exceptionFromWrapper.kt")
     public void testExceptionFromWrapper() {
       runTest("compiler/testData/ir/interpreter/exceptions/exceptionFromWrapper.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exceptionWithCause.kt")
     public void testExceptionWithCause() {
       runTest("compiler/testData/ir/interpreter/exceptions/exceptionWithCause.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("getCauseMessage.kt")
     public void testGetCauseMessage() {
       runTest("compiler/testData/ir/interpreter/exceptions/getCauseMessage.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("multifileStackTrace.kt")
     public void testMultifileStackTrace() {
       runTest("compiler/testData/ir/interpreter/exceptions/multifileStackTrace.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nullPointerException.kt")
     public void testNullPointerException() {
       runTest("compiler/testData/ir/interpreter/exceptions/nullPointerException.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("stackOverflow.kt")
     public void testStackOverflow() {
       runTest("compiler/testData/ir/interpreter/exceptions/stackOverflow.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("stackTrace.kt")
     public void testStackTrace() {
       runTest("compiler/testData/ir/interpreter/exceptions/stackTrace.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("tryFinally.kt")
     public void testTryFinally() {
       runTest("compiler/testData/ir/interpreter/exceptions/tryFinally.kt");
@@ -547,42 +547,42 @@ public class JvmIrInterpreterAfterPsi2IrTestGenerated extends AbstractJvmIrInter
   @TestMetadata("compiler/testData/ir/interpreter/generatedStdlib")
   @TestDataPath("$PROJECT_ROOT")
   public class GeneratedStdlib {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInGeneratedStdlib() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/generatedStdlib"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("contains.kt")
     public void testContains() {
       runTest("compiler/testData/ir/interpreter/generatedStdlib/contains.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("elementAtOrElse.kt")
     public void testElementAtOrElse() {
       runTest("compiler/testData/ir/interpreter/generatedStdlib/elementAtOrElse.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("first.kt")
     public void testFirst() {
       runTest("compiler/testData/ir/interpreter/generatedStdlib/first.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("joinToString.kt")
     public void testJoinToString() {
       runTest("compiler/testData/ir/interpreter/generatedStdlib/joinToString.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("toList.kt")
     public void testToList() {
       runTest("compiler/testData/ir/interpreter/generatedStdlib/toList.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("trim.kt")
     public void testTrim() {
       runTest("compiler/testData/ir/interpreter/generatedStdlib/trim.kt");
@@ -593,30 +593,30 @@ public class JvmIrInterpreterAfterPsi2IrTestGenerated extends AbstractJvmIrInter
   @TestMetadata("compiler/testData/ir/interpreter/jvm")
   @TestDataPath("$PROJECT_ROOT")
   public class Jvm {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInJvm() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/jvm"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classReference.kt")
     public void testClassReference() {
       runTest("compiler/testData/ir/interpreter/jvm/classReference.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("javaStatic.kt")
     public void testJavaStatic() {
       runTest("compiler/testData/ir/interpreter/jvm/javaStatic.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kProperty2.kt")
     public void testKProperty2() {
       runTest("compiler/testData/ir/interpreter/jvm/kProperty2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("parameterReference.kt")
     public void testParameterReference() {
       runTest("compiler/testData/ir/interpreter/jvm/parameterReference.kt");
@@ -627,30 +627,30 @@ public class JvmIrInterpreterAfterPsi2IrTestGenerated extends AbstractJvmIrInter
   @TestMetadata("compiler/testData/ir/interpreter/primitives")
   @TestDataPath("$PROJECT_ROOT")
   public class Primitives {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInPrimitives() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/primitives"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("charMethods.kt")
     public void testCharMethods() {
       runTest("compiler/testData/ir/interpreter/primitives/charMethods.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("intMethods.kt")
     public void testIntMethods() {
       runTest("compiler/testData/ir/interpreter/primitives/intMethods.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("longMethods.kt")
     public void testLongMethods() {
       runTest("compiler/testData/ir/interpreter/primitives/longMethods.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("uInt.kt")
     public void testUInt() {
       runTest("compiler/testData/ir/interpreter/primitives/uInt.kt");
@@ -661,30 +661,30 @@ public class JvmIrInterpreterAfterPsi2IrTestGenerated extends AbstractJvmIrInter
   @TestMetadata("compiler/testData/ir/interpreter/proxy")
   @TestDataPath("$PROJECT_ROOT")
   public class Proxy {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInProxy() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/proxy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("customCharSequence.kt")
     public void testCustomCharSequence() {
       runTest("compiler/testData/ir/interpreter/proxy/customCharSequence.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("customEquals.kt")
     public void testCustomEquals() {
       runTest("compiler/testData/ir/interpreter/proxy/customEquals.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("proxyPair.kt")
     public void testProxyPair() {
       runTest("compiler/testData/ir/interpreter/proxy/proxyPair.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superWrapper.kt")
     public void testSuperWrapper() {
       runTest("compiler/testData/ir/interpreter/proxy/superWrapper.kt");
@@ -695,30 +695,30 @@ public class JvmIrInterpreterAfterPsi2IrTestGenerated extends AbstractJvmIrInter
   @TestMetadata("compiler/testData/ir/interpreter/reference")
   @TestDataPath("$PROJECT_ROOT")
   public class Reference {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInReference() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/reference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionReference.kt")
     public void testFunctionReference() {
       runTest("compiler/testData/ir/interpreter/reference/functionReference.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("getClass.kt")
     public void testGetClass() {
       runTest("compiler/testData/ir/interpreter/reference/getClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("javaPropertyReference.kt")
     public void testJavaPropertyReference() {
       runTest("compiler/testData/ir/interpreter/reference/javaPropertyReference.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyReference.kt")
     public void testPropertyReference() {
       runTest("compiler/testData/ir/interpreter/reference/propertyReference.kt");

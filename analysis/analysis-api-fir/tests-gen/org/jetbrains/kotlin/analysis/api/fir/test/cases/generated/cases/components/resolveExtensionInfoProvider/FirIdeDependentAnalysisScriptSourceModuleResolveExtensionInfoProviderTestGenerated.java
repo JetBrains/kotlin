@@ -40,7 +40,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleResolveExtensionInfoProvid
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInExtensionScopeWithPsi() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolveExtensionInfoProvider/extensionScopeWithPsi"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

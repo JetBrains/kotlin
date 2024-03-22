@@ -23,30 +23,30 @@ import java.util.regex.Pattern;
 @FirPipeline()
 @Tag("klib")
 public class FirPsiNativeKlibDiagnosticsTestGenerated extends AbstractFirPsiNativeDiagnosticsWithBackendTestBase {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInKlibSerializationTests() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/klibSerializationTests"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("signatureClashClasses.kt")
   public void testSignatureClashClasses() {
     runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClashClasses.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("signatureClashFunctions.kt")
   public void testSignatureClashFunctions() {
     runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClashFunctions.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("signatureClashVariables.kt")
   public void testSignatureClashVariables() {
     runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClashVariables.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("signatureClash_MPP.kt")
   public void testSignatureClash_MPP() {
     runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClash_MPP.kt");

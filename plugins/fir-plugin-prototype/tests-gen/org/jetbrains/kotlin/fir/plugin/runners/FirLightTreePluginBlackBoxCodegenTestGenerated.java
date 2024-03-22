@@ -19,132 +19,132 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/fir-plugin-prototype/testData/box")
 @TestDataPath("$PROJECT_ROOT")
 public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirLightTreePluginBlackBoxCodegenTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir-plugin-prototype/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationsGeneratedInBackend_mpp.kt")
   public void testAnnotationsGeneratedInBackend_mpp() {
     runTest("plugins/fir-plugin-prototype/testData/box/annotationsGeneratedInBackend_mpp.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("builtins.kt")
   public void testBuiltins() {
     runTest("plugins/fir-plugin-prototype/testData/box/builtins.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classWithAllPropertiesConstructor.kt")
   public void testClassWithAllPropertiesConstructor() {
     runTest("plugins/fir-plugin-prototype/testData/box/classWithAllPropertiesConstructor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classWithCompanionObject.kt")
   public void testClassWithCompanionObject() {
     runTest("plugins/fir-plugin-prototype/testData/box/classWithCompanionObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classWithGeneratedMembersAndNestedClass.kt")
   public void testClassWithGeneratedMembersAndNestedClass() {
     runTest("plugins/fir-plugin-prototype/testData/box/classWithGeneratedMembersAndNestedClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("composableFunction.kt")
   public void testComposableFunction() {
     runTest("plugins/fir-plugin-prototype/testData/box/composableFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("composableFunctionMultiModules.kt")
   public void testComposableFunctionMultiModules() {
     runTest("plugins/fir-plugin-prototype/testData/box/composableFunctionMultiModules.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("composableFunctionMultiModules2.kt")
   public void testComposableFunctionMultiModules2() {
     runTest("plugins/fir-plugin-prototype/testData/box/composableFunctionMultiModules2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("expectComposableFunction.kt")
   public void testExpectComposableFunction() {
     runTest("plugins/fir-plugin-prototype/testData/box/expectComposableFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("extendsJava.kt")
   public void testExtendsJava() {
     runTest("plugins/fir-plugin-prototype/testData/box/extendsJava.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("generatedClassWithMembersAndNestedClasses.kt")
   public void testGeneratedClassWithMembersAndNestedClasses() {
     runTest("plugins/fir-plugin-prototype/testData/box/generatedClassWithMembersAndNestedClasses.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localClassWithCompanionObject.kt")
   public void testLocalClassWithCompanionObject() {
     runTest("plugins/fir-plugin-prototype/testData/box/localClassWithCompanionObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("metaAnnotationFromLibrary.kt")
   public void testMetaAnnotationFromLibrary() {
     runTest("plugins/fir-plugin-prototype/testData/box/metaAnnotationFromLibrary.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("newSupertype.kt")
   public void testNewSupertype() {
     runTest("plugins/fir-plugin-prototype/testData/box/newSupertype.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nullableComposableParameterAcrossModules.kt")
   public void testNullableComposableParameterAcrossModules() {
     runTest("plugins/fir-plugin-prototype/testData/box/nullableComposableParameterAcrossModules.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("replaceActualFunctionBodyWitExpectDefaultValue.kt")
   public void testReplaceActualFunctionBodyWitExpectDefaultValue() {
     runTest("plugins/fir-plugin-prototype/testData/box/replaceActualFunctionBodyWitExpectDefaultValue.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("serializer.kt")
   public void testSerializer() {
     runTest("plugins/fir-plugin-prototype/testData/box/serializer.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("superCompiledClassAnnotation.kt")
   public void testSuperCompiledClassAnnotation() {
     runTest("plugins/fir-plugin-prototype/testData/box/superCompiledClassAnnotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("superJavaClassAnnotation.kt")
   public void testSuperJavaClassAnnotation() {
     runTest("plugins/fir-plugin-prototype/testData/box/superJavaClassAnnotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("topLevelCallables.kt")
   public void testTopLevelCallables() {
     runTest("plugins/fir-plugin-prototype/testData/box/topLevelCallables.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("topLevelPrivateSuspendFun.kt")
   public void testTopLevelPrivateSuspendFun() {
     runTest("plugins/fir-plugin-prototype/testData/box/topLevelPrivateSuspendFun.kt");

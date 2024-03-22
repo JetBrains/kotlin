@@ -40,7 +40,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleBuildClassTypeTestGenerated e
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInClassType() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeCreator/classType"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

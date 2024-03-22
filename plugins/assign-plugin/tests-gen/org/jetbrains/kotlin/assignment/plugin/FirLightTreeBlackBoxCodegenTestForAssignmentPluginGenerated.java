@@ -19,48 +19,48 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/assign-plugin/testData/codegen")
 @TestDataPath("$PROJECT_ROOT")
 public class FirLightTreeBlackBoxCodegenTestForAssignmentPluginGenerated extends AbstractFirLightTreeBlackBoxCodegenTestForAssignmentPlugin {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInCodegen() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/assign-plugin/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotation.kt")
   public void testAnnotation() {
     runTest("plugins/assign-plugin/testData/codegen/annotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("otherOperators.kt")
   public void testOtherOperators() {
     runTest("plugins/assign-plugin/testData/codegen/otherOperators.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("plusAssignPrecedence.kt")
   public void testPlusAssignPrecedence() {
     runTest("plugins/assign-plugin/testData/codegen/plusAssignPrecedence.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("qualifiedAnnotation.kt")
   public void testQualifiedAnnotation() {
     runTest("plugins/assign-plugin/testData/codegen/qualifiedAnnotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("supportedUsage.kt")
   public void testSupportedUsage() {
     runTest("plugins/assign-plugin/testData/codegen/supportedUsage.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typealias.kt")
   public void testTypealias() {
     runTest("plugins/assign-plugin/testData/codegen/typealias.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("varBehaviour.kt")
   public void testVarBehaviour() {
     runTest("plugins/assign-plugin/testData/codegen/varBehaviour.kt");

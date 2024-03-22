@@ -40,36 +40,36 @@ public class FirStandaloneNormalAnalysisSourceModuleFileImportingScopeContextTes
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInImportingScopeContext() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("errorImport.kt")
   public void testErrorImport() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/errorImport.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("importAlias.kt")
   public void testImportAlias() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/importAlias.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("noImports.kt")
   public void testNoImports() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/noImports.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simpleImport.kt")
   public void testSimpleImport() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/simpleImport.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("starImport.kt")
   public void testStarImport() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext/starImport.kt");

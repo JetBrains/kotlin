@@ -22,54 +22,54 @@ import java.util.regex.Pattern;
 @Tag("frontend-fir")
 @FirPipeline()
 public class FirNativeKlibDumpMetadataSignaturesTestGenerated extends AbstractNativeKlibDumpMetadataSignaturesTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInDump_signatures() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/dump-signatures"), Pattern.compile("^([^_](.+)).(kt|def)$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("callables.kt")
   public void testCallables() {
     runTest("native/native.tests/testData/klib/dump-signatures/callables.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("imported_declarations.kt")
   public void testImported_declarations() {
     runTest("native/native.tests/testData/klib/dump-signatures/imported_declarations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("imported_from_cinterop.kt")
   public void testImported_from_cinterop() {
     runTest("native/native.tests/testData/klib/dump-signatures/imported_from_cinterop.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("imported_from_cinterop.lib.def")
   public void testImported_from_cinterop_lib() {
     runTest("native/native.tests/testData/klib/dump-signatures/imported_from_cinterop.lib.def");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("just_cinterop_c.def")
   public void testJust_cinterop_c() {
     runTest("native/native.tests/testData/klib/dump-signatures/just_cinterop_c.def");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("just_cinterop_objc.def")
   public void testJust_cinterop_objc() {
     runTest("native/native.tests/testData/klib/dump-signatures/just_cinterop_objc.def");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("type_parameters.kt")
   public void testType_parameters() {
     runTest("native/native.tests/testData/klib/dump-signatures/type_parameters.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("visibility.kt")
   public void testVisibility() {
     runTest("native/native.tests/testData/klib/dump-signatures/visibility.kt");

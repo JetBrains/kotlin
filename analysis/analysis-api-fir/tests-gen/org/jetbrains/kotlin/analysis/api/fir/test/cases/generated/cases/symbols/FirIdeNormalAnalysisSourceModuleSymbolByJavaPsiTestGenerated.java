@@ -40,30 +40,30 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByJavaPsiTestGenerated extend
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSymbolByJavaPsi() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByJavaPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaField.kt")
   public void testJavaField() {
     runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaField.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaFieldFromSuperclass.kt")
   public void testJavaFieldFromSuperclass() {
     runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaFieldFromSuperclass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaStaticField.kt")
   public void testJavaStaticField() {
     runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaStaticField.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaStaticFieldFromSuperclass.kt")
   public void testJavaStaticFieldFromSuperclass() {
     runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaStaticFieldFromSuperclass.kt");

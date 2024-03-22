@@ -18,60 +18,60 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/sam-with-receiver/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class FirPsiSamWithReceiverDiagnosticTestGenerated extends AbstractFirPsiSamWithReceiverDiagnosticTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/sam-with-receiver/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("noParameters.kt")
   public void testNoParameters() {
     runTest("plugins/sam-with-receiver/testData/diagnostics/noParameters.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("noReturnType.kt")
   public void testNoReturnType() {
     runTest("plugins/sam-with-receiver/testData/diagnostics/noReturnType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("samConversionNoParameters.kt")
   public void testSamConversionNoParameters() {
     runTest("plugins/sam-with-receiver/testData/diagnostics/samConversionNoParameters.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("samConversionSimple.kt")
   public void testSamConversionSimple() {
     runTest("plugins/sam-with-receiver/testData/diagnostics/samConversionSimple.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("samConversionSimpleWithoutAnnotation.kt")
   public void testSamConversionSimpleWithoutAnnotation() {
     runTest("plugins/sam-with-receiver/testData/diagnostics/samConversionSimpleWithoutAnnotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("samWithAnnotation.kt")
   public void testSamWithAnnotation() {
     runTest("plugins/sam-with-receiver/testData/diagnostics/samWithAnnotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("samWithoutAnnotation.kt")
   public void testSamWithoutAnnotation() {
     runTest("plugins/sam-with-receiver/testData/diagnostics/samWithoutAnnotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("singleParameter.kt")
   public void testSingleParameter() {
     runTest("plugins/sam-with-receiver/testData/diagnostics/singleParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("singleParameterWithoutAnnotation.kt")
   public void testSingleParameterWithoutAnnotation() {
     runTest("plugins/sam-with-receiver/testData/diagnostics/singleParameterWithoutAnnotation.kt");

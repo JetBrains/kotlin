@@ -40,24 +40,24 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeParameterTypeTestGenerated ext
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInTypeParameter() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeCreator/typeParameter"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multipleBounds.kt")
   public void testMultipleBounds() {
     runTest("analysis/analysis-api/testData/components/typeCreator/typeParameter/multipleBounds.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("regular.kt")
   public void testRegular() {
     runTest("analysis/analysis-api/testData/components/typeCreator/typeParameter/regular.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("reified.kt")
   public void testReified() {
     runTest("analysis/analysis-api/testData/components/typeCreator/typeParameter/reified.kt");

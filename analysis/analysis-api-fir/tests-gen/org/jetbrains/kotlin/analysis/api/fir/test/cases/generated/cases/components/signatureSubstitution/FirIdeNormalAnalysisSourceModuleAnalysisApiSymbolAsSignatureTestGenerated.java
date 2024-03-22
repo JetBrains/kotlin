@@ -40,36 +40,36 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiSymbolAsSignatureTestGen
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSymbolAsSignature() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("function.kt")
   public void testFunction() {
     runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/function.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyGetter.kt")
   public void testPropertyGetter() {
     runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/propertyGetter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyNoAccessors.kt")
   public void testPropertyNoAccessors() {
     runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/propertyNoAccessors.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertySetter.kt")
   public void testPropertySetter() {
     runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/propertySetter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyWithAccessors.kt")
   public void testPropertyWithAccessors() {
     runTest("analysis/analysis-api/testData/components/signatureSubstitution/symbolAsSignature/propertyWithAccessors.kt");

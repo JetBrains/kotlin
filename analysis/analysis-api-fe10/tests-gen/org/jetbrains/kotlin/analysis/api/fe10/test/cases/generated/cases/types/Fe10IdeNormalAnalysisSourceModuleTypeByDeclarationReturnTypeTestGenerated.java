@@ -40,30 +40,30 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeByDeclarationReturnTypeTestGen
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInByDeclarationReturnType() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/byDeclarationReturnType"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("anonymousFunction.kt")
   public void testAnonymousFunction() {
     runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/anonymousFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localClassType.kt")
   public void testLocalClassType() {
     runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localClassType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localClassWithTypeArgumentsType.kt")
   public void testLocalClassWithTypeArgumentsType() {
     runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localClassWithTypeArgumentsType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localNestedClassType.kt")
   public void testLocalNestedClassType() {
     runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localNestedClassType.kt");

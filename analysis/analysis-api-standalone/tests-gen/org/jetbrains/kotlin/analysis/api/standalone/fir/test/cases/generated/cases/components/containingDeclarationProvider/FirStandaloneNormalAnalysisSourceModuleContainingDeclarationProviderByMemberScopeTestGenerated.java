@@ -40,18 +40,18 @@ public class FirStandaloneNormalAnalysisSourceModuleContainingDeclarationProvide
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInContainingDeclarationFromMemberScope() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationFromMemberScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("intersectionOverride.kt")
   public void testIntersectionOverride() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationFromMemberScope/intersectionOverride.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("subsitutionOverride.kt")
   public void testSubsitutionOverride() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationFromMemberScope/subsitutionOverride.kt");

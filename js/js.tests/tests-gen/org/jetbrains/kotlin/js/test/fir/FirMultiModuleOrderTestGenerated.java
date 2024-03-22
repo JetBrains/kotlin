@@ -19,18 +19,18 @@ import java.util.regex.Pattern;
 @TestMetadata("js/js.translator/testData/multiModuleOrder")
 @TestDataPath("$PROJECT_ROOT")
 public class FirMultiModuleOrderTestGenerated extends AbstractFirMultiModuleOrderTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInMultiModuleOrder() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/multiModuleOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("plain.kt")
   public void testPlain() {
     runTest("js/js.translator/testData/multiModuleOrder/plain.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("umd.kt")
   public void testUmd() {
     runTest("js/js.translator/testData/multiModuleOrder/umd.kt");

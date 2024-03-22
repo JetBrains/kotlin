@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis")
 @TestDataPath("$PROJECT_ROOT")
 public class DiagnosticsWithMultiplatformCompositeAnalysisTestGenerated extends AbstractDiagnosticsWithMultiplatformCompositeAnalysisTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInTestsWithMultiplatformCompositeAnalysis() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
   }
@@ -28,12 +28,12 @@ public class DiagnosticsWithMultiplatformCompositeAnalysisTestGenerated extends 
   @TestMetadata("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis/constVals")
   @TestDataPath("$PROJECT_ROOT")
   public class ConstVals {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInConstVals() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis/constVals"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nonConstExpectConstActual.kt")
     public void testNonConstExpectConstActual() {
       runTest("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis/constVals/nonConstExpectConstActual.kt");
@@ -44,18 +44,18 @@ public class DiagnosticsWithMultiplatformCompositeAnalysisTestGenerated extends 
   @TestMetadata("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis/defaultArguments")
   @TestDataPath("$PROJECT_ROOT")
   public class DefaultArguments {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInDefaultArguments() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis/defaultArguments"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constructor.kt")
     public void testConstructor() {
       runTest("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis/defaultArguments/constructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("function.kt")
     public void testFunction() {
       runTest("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis/defaultArguments/function.kt");

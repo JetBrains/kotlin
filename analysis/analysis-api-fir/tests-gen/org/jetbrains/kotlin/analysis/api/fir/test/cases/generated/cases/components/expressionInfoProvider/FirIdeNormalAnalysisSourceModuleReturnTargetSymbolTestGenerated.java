@@ -40,24 +40,24 @@ public class FirIdeNormalAnalysisSourceModuleReturnTargetSymbolTestGenerated ext
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInReturnExpressionTargetSymbol() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionInfoProvider/returnExpressionTargetSymbol"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("labeledReturn.kt")
   public void testLabeledReturn() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/returnExpressionTargetSymbol/labeledReturn.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("normalReturn.kt")
   public void testNormalReturn() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/returnExpressionTargetSymbol/normalReturn.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unresolvedReturn.kt")
   public void testUnresolvedReturn() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/returnExpressionTargetSymbol/unresolvedReturn.kt");

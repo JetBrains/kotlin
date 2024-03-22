@@ -40,18 +40,18 @@ public class FirIdeNormalAnalysisSourceModuleResolveExtensionInfoProviderTestGen
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInExtensionScopeWithPsi() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolveExtensionInfoProvider/extensionScopeWithPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multipleExtensions.kt")
   public void testMultipleExtensions() {
     runTest("analysis/analysis-api/testData/components/resolveExtensionInfoProvider/extensionScopeWithPsi/multipleExtensions.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("singleModule.kt")
   public void testSingleModule() {
     runTest("analysis/analysis-api/testData/components/resolveExtensionInfoProvider/extensionScopeWithPsi/singleModule.kt");

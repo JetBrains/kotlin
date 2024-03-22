@@ -18,18 +18,18 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/lazyResolveStdlibSources")
 @TestDataPath("$PROJECT_ROOT")
 public class StdLibSourcesLazyDeclarationResolveTestGenerated extends AbstractStdLibSourcesLazyDeclarationResolveTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInLazyResolveStdlibSources() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveStdlibSources"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("linkedHashMap.kt")
   public void testLinkedHashMap() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveStdlibSources/linkedHashMap.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("wrappedInt.kt")
   public void testWrappedInt() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveStdlibSources/wrappedInt.kt");

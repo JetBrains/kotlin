@@ -40,18 +40,18 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerForWholeFi
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInShortenWholeFile() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fileWithKDoc.kt")
   public void testFileWithKDoc() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/fileWithKDoc.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fileWithMultipleDeclarations.kt")
   public void testFileWithMultipleDeclarations() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/fileWithMultipleDeclarations.kt");

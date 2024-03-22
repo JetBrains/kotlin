@@ -18,36 +18,36 @@ import java.util.regex.Pattern;
 @TestMetadata("native/swift/swift-export-standalone/testData")
 @TestDataPath("$PROJECT_ROOT")
 public class SwiftExportRunnerTest extends AbstractSwiftRunnerTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInTestData() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData"), Pattern.compile("^([^\\.]+)$"), null, false);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classes")
   public void testClasses() {
     runTest("native/swift/swift-export-standalone/testData/classes/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("documentation")
   public void testDocumentation() {
     runTest("native/swift/swift-export-standalone/testData/documentation/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functions")
   public void testFunctions() {
     runTest("native/swift/swift-export-standalone/testData/functions/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("no_package")
   public void testNo_package() {
     runTest("native/swift/swift-export-standalone/testData/no_package/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("variables")
   public void testVariables() {
     runTest("native/swift/swift-export-standalone/testData/variables/");

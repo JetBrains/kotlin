@@ -18,30 +18,30 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/allopen/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class FirPsiDiagnosticTestForAllOpenGenerated extends AbstractFirPsiDiagnosticTestForAllOpen {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/allopen/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("allOpenOnAnnotation.kt")
   public void testAllOpenOnAnnotation() {
     runTest("plugins/allopen/testData/diagnostics/allOpenOnAnnotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt54260.kt")
   public void testKt54260() {
     runTest("plugins/allopen/testData/diagnostics/kt54260.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt60448.kt")
   public void testKt60448() {
     runTest("plugins/allopen/testData/diagnostics/kt60448.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("smartcast.kt")
   public void testSmartcast() {
     runTest("plugins/allopen/testData/diagnostics/smartcast.kt");

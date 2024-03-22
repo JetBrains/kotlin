@@ -18,42 +18,42 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/compilationPeers")
 @TestDataPath("$PROJECT_ROOT")
 public class CompilationPeerAnalysisTestGenerated extends AbstractCompilationPeerAnalysisTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInCompilationPeers() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/compilationPeers"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionCall.kt")
   public void testFunctionCall() {
     runTest("analysis/low-level-api-fir/testData/compilationPeers/functionCall.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionCallDeep.kt")
   public void testFunctionCallDeep() {
     runTest("analysis/low-level-api-fir/testData/compilationPeers/functionCallDeep.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlinedClasses.kt")
   public void testInlinedClasses() {
     runTest("analysis/low-level-api-fir/testData/compilationPeers/inlinedClasses.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("libraryFunctionCall.kt")
   public void testLibraryFunctionCall() {
     runTest("analysis/low-level-api-fir/testData/compilationPeers/libraryFunctionCall.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("noInline.kt")
   public void testNoInline() {
     runTest("analysis/low-level-api-fir/testData/compilationPeers/noInline.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyCall.kt")
   public void testPropertyCall() {
     runTest("analysis/low-level-api-fir/testData/compilationPeers/propertyCall.kt");

@@ -40,30 +40,30 @@ public class FirStandaloneNormalAnalysisSourceModuleIsDenotableTestGenerated ext
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInIsDenotable() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile(".*\\.descriptors\\.kt$"), true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localTypes.kt")
   public void testLocalTypes() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable/localTypes.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simpleTypes.kt")
   public void testSimpleTypes() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable/simpleTypes.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("smartcast.kt")
   public void testSmartcast() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable/smartcast.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameter.kt")
   public void testTypeParameter() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable/typeParameter.kt");

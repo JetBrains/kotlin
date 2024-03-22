@@ -40,12 +40,12 @@ public class FirIdeDependentAnalysisScriptSourceModuleContainingModuleByFileTest
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInContainingModuleByFile() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingModuleByFile"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("script.kts")
   public void testScript() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingModuleByFile/script.kts");

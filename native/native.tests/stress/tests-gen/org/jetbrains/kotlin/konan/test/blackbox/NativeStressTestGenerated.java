@@ -25,24 +25,24 @@ import java.util.regex.Pattern;
 @EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "5m")
 @UseStandardTestCaseGroupProvider()
 public class NativeStressTestGenerated extends AbstractNativeBlackBoxTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInTestData() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/stress/testData"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("array_out_of_memory.kt")
   public void testArray_out_of_memory() {
     runTest("native/native.tests/stress/testData/array_out_of_memory.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt63423_dispose_on_main_stress.kt")
   public void testKt63423_dispose_on_main_stress() {
     runTest("native/native.tests/stress/testData/kt63423_dispose_on_main_stress.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("stress_gc_allocations.kt")
   public void testStress_gc_allocations() {
     runTest("native/native.tests/stress/testData/stress_gc_allocations.kt");

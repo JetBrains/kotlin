@@ -19,30 +19,30 @@ import java.util.regex.Pattern;
 @TestMetadata("js/js.translator/testData/sourcemap")
 @TestDataPath("$PROJECT_ROOT")
 public class FirSourceMapGenerationSmokeTestGenerated extends AbstractFirSourceMapGenerationSmokeTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSourcemap() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/sourcemap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("binaryOperation.kt")
   public void testBinaryOperation() {
     runTest("js/js.translator/testData/sourcemap/binaryOperation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("emptyIfInsideInlineLambda.kt")
   public void testEmptyIfInsideInlineLambda() {
     runTest("js/js.translator/testData/sourcemap/emptyIfInsideInlineLambda.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("expressionBody.kt")
   public void testExpressionBody() {
     runTest("js/js.translator/testData/sourcemap/expressionBody.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("methodCallInMethod.kt")
   public void testMethodCallInMethod() {
     runTest("js/js.translator/testData/sourcemap/methodCallInMethod.kt");

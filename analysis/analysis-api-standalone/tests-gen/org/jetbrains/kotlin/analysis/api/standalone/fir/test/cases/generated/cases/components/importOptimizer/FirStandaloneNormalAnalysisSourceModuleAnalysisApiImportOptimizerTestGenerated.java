@@ -41,228 +41,228 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiImportOptimizerTe
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInAnalyseImports() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/importOptimizer/analyseImports"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unsedObjectWithExtensionFromObject.kt")
   public void testUnsedObjectWithExtensionFromObject() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unsedObjectWithExtensionFromObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unusedAliasedImportFromSamePackage.kt")
   public void testUnusedAliasedImportFromSamePackage() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedAliasedImportFromSamePackage.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unusedAliasedTypeImport.kt")
   public void testUnusedAliasedTypeImport() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedAliasedTypeImport.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unusedExtensionFunctionFromObject_implicitReceiver.kt")
   public void testUnusedExtensionFunctionFromObject_implicitReceiver() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedExtensionFunctionFromObject_implicitReceiver.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unusedExtensionFunction_componentOperator.kt")
   public void testUnusedExtensionFunction_componentOperator() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedExtensionFunction_componentOperator.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unusedFunctionImportedFromObjectSuperClass.kt")
   public void testUnusedFunctionImportedFromObjectSuperClass() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedFunctionImportedFromObjectSuperClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unusedFunctionImports.kt")
   public void testUnusedFunctionImports() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedFunctionImports.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unusedGenericTypeQualifier.kt")
   public void testUnusedGenericTypeQualifier() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedGenericTypeQualifier.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unusedImplicitReturnTypeReference_destructuring.kt")
   public void testUnusedImplicitReturnTypeReference_destructuring() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedImplicitReturnTypeReference_destructuring.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unusedImportFromObject.kt")
   public void testUnusedImportFromObject() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedImportFromObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unusedImportsFromSamePackage.kt")
   public void testUnusedImportsFromSamePackage() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedImportsFromSamePackage.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unusedInvokeOperatorImport.kt")
   public void testUnusedInvokeOperatorImport() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedInvokeOperatorImport.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unusedObject_invokeOperator.kt")
   public void testUnusedObject_invokeOperator() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedObject_invokeOperator.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unusedStaticFunctionImportFromJavaChildClass.kt")
   public void testUnusedStaticFunctionImportFromJavaChildClass() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedStaticFunctionImportFromJavaChildClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unusedTypeAsVarargType.kt")
   public void testUnusedTypeAsVarargType() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedTypeAsVarargType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unusedType_underscoreNameInCatchSection.kt")
   public void testUnusedType_underscoreNameInCatchSection() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedType_underscoreNameInCatchSection.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("unusedType_underscoreVariableInDestructuringDeclaration.kt")
   public void testUnusedType_underscoreVariableInDestructuringDeclaration() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedType_underscoreVariableInDestructuringDeclaration.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedAliasedAndRegularImportsFromSamePackage.kt")
   public void testUsedAliasedAndRegularImportsFromSamePackage() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedAliasedAndRegularImportsFromSamePackage.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedAliasedFunctionReference.kt")
   public void testUsedAliasedFunctionReference() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedAliasedFunctionReference.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedAliasedImportsFromSamePackage.kt")
   public void testUsedAliasedImportsFromSamePackage() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedAliasedImportsFromSamePackage.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedAliasedTypeImport.kt")
   public void testUsedAliasedTypeImport() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedAliasedTypeImport.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedExtensionFunctionFromObject_implicitReceiver.kt")
   public void testUsedExtensionFunctionFromObject_implicitReceiver() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedExtensionFunctionFromObject_implicitReceiver.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedExtensionFunction_componentOperator.kt")
   public void testUsedExtensionFunction_componentOperator() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedExtensionFunction_componentOperator.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedExtensionFunction_objectReceiver.kt")
   public void testUsedExtensionFunction_objectReceiver() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedExtensionFunction_objectReceiver.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedFunctionImport.kt")
   public void testUsedFunctionImport() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedFunctionImport.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedFunctionImportedFromObjectSuperClass.kt")
   public void testUsedFunctionImportedFromObjectSuperClass() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedFunctionImportedFromObjectSuperClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedGenericTypeQualifier.kt")
   public void testUsedGenericTypeQualifier() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedGenericTypeQualifier.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedImportFromObject.kt")
   public void testUsedImportFromObject() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedImportFromObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedInvokeOperatorAliasedImport.kt")
   public void testUsedInvokeOperatorAliasedImport() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedInvokeOperatorAliasedImport.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedInvokeOperatorExplicitImport.kt")
   public void testUsedInvokeOperatorExplicitImport() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedInvokeOperatorExplicitImport.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedInvokeOperatorImport.kt")
   public void testUsedInvokeOperatorImport() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedInvokeOperatorImport.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedNestedSamInterface_constructorCall.kt")
   public void testUsedNestedSamInterface_constructorCall() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedNestedSamInterface_constructorCall.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedNestedSamInterface_constructorReference.kt")
   public void testUsedNestedSamInterface_constructorReference() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedNestedSamInterface_constructorReference.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedObject_invokeOperator.kt")
   public void testUsedObject_invokeOperator() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedObject_invokeOperator.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedStaticFunctionImportFromJavaChildClass.kt")
   public void testUsedStaticFunctionImportFromJavaChildClass() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedStaticFunctionImportFromJavaChildClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedTypeAsTypeParameter.kt")
   public void testUsedTypeAsTypeParameter() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedTypeAsTypeParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("usedTypeAsVarargType.kt")
   public void testUsedTypeAsVarargType() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedTypeAsVarargType.kt");
@@ -272,120 +272,120 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiImportOptimizerTe
   @TestMetadata("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors")
   @TestDataPath("$PROJECT_ROOT")
   public class ReferencesWithErrors {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInReferencesWithErrors() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("ambiguousFunction.kt")
     public void testAmbiguousFunction() {
       runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/ambiguousFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("missingFunctionCall.kt")
     public void testMissingFunctionCall() {
       runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/missingFunctionCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unresolvedFunction.kt")
     public void testUnresolvedFunction() {
       runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unresolvedFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unresolvedFunctionStarImport.kt")
     public void testUnresolvedFunctionStarImport() {
       runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unresolvedFunctionStarImport.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unresolvedProperty.kt")
     public void testUnresolvedProperty() {
       runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unresolvedProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unresolvedType.kt")
     public void testUnresolvedType() {
       runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unresolvedType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unresolvedTypeArgument.kt")
     public void testUnresolvedTypeArgument() {
       runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unresolvedTypeArgument.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unresolvedTypeQualifier.kt")
     public void testUnresolvedTypeQualifier() {
       runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unresolvedTypeQualifier.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unresolvedTypeQualifierConstructor.kt")
     public void testUnresolvedTypeQualifierConstructor() {
       runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unresolvedTypeQualifierConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unresolvedViaImportAlias.kt")
     public void testUnresolvedViaImportAlias() {
       runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unresolvedViaImportAlias.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unusedTypeHiddenByTypeParameter_invalidAsArgument.kt")
     public void testUnusedTypeHiddenByTypeParameter_invalidAsArgument() {
       runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unusedTypeHiddenByTypeParameter_invalidAsArgument.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unusedUnresolvedImport.kt")
     public void testUnusedUnresolvedImport() {
       runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unusedUnresolvedImport.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("usedConstructor_invalidArguments.kt")
     public void testUsedConstructor_invalidArguments() {
       runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/usedConstructor_invalidArguments.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("usedConstructor_missingCall.kt")
     public void testUsedConstructor_missingCall() {
       runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/usedConstructor_missingCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("usedExtensionFunction_invalidArguments.kt")
     public void testUsedExtensionFunction_invalidArguments() {
       runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/usedExtensionFunction_invalidArguments.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("usedExtensionProperty_invalidReceiver.kt")
     public void testUsedExtensionProperty_invalidReceiver() {
       runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/usedExtensionProperty_invalidReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("usedInvokeOperator_invalidArguments.kt")
     public void testUsedInvokeOperator_invalidArguments() {
       runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/usedInvokeOperator_invalidArguments.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("usedTypeAsTypeParameter_missingOuterType.kt")
     public void testUsedTypeAsTypeParameter_missingOuterType() {
       runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/usedTypeAsTypeParameter_missingOuterType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("usedTypeImport_missingGeneric.kt")
     public void testUsedTypeImport_missingGeneric() {
       runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/usedTypeImport_missingGeneric.kt");

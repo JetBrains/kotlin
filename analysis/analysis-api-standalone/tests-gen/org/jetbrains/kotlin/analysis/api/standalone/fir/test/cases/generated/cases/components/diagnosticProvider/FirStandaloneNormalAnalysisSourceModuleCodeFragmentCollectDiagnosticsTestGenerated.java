@@ -40,36 +40,36 @@ public class FirStandaloneNormalAnalysisSourceModuleCodeFragmentCollectDiagnosti
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInCodeFragmentDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/codeFragmentDiagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("evalJvm.kt")
   public void testEvalJvm() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/codeFragmentDiagnostics/evalJvm.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("evalJvmJs.kt")
   public void testEvalJvmJs() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/codeFragmentDiagnostics/evalJvmJs.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localClass.kt")
   public void testLocalClass() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/codeFragmentDiagnostics/localClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunction.kt")
   public void testLocalFunction() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/codeFragmentDiagnostics/localFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeMismatch.kt")
   public void testTypeMismatch() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/codeFragmentDiagnostics/typeMismatch.kt");

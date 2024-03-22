@@ -40,7 +40,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleIsSubclassOfTestGenerated ext
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInIsSubclassOf() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

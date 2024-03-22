@@ -40,12 +40,12 @@ public class FirIdeNormalAnalysisScriptSourceModuleStaticDeclaredMemberScopeTest
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInStaticDeclaredMemberScope() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("scriptWithClassDeclaration.kts")
   public void testScriptWithClassDeclaration() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope/scriptWithClassDeclaration.kts");

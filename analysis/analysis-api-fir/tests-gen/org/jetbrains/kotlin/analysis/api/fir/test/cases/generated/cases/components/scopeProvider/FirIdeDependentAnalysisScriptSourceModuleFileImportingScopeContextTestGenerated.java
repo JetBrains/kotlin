@@ -40,7 +40,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleFileImportingScopeContextT
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInImportingScopeContext() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

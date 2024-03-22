@@ -40,7 +40,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleMultiModuleSymbolByPsiTestGen
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInMultiModuleSymbolByPsi() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/multiModuleSymbolByPsi"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

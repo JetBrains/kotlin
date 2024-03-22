@@ -22,12 +22,12 @@ import java.util.regex.Pattern;
 @Tag("frontend-fir")
 @FirPipeline()
 public class FirObjCExportTestGenerated extends AbstractNativeObjCExportTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInObjCExport() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/ObjCExport"), Pattern.compile("^([^_](.+))$"), null, false);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kdocExport")
   public void testKdocExport() {
     runTest("native/native.tests/testData/ObjCExport/kdocExport/");

@@ -40,24 +40,24 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceShortenerForWholeFil
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInShortenWholeFile() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("callInsideScriptExpression.kts")
   public void testCallInsideScriptExpression() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/callInsideScriptExpression.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("scriptFileWithImportStatement.kts")
   public void testScriptFileWithImportStatement() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/scriptFileWithImportStatement.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("scriptFileWithoutImportStatements.kts")
   public void testScriptFileWithoutImportStatements() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/scriptFileWithoutImportStatements.kts");

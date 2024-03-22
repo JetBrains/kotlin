@@ -40,60 +40,60 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiExpressionPsiTypeProvide
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInForExpression() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("capturedBoundType.kt")
   public void testCapturedBoundType() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/capturedBoundType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("class_object_call.kt")
   public void testClass_object_call() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/class_object_call.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("class_object_constructor.kt")
   public void testClass_object_constructor() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/class_object_constructor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("errorType.kt")
   public void testErrorType() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/errorType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("KTIJ25461.kt")
   public void testKTIJ25461() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/KTIJ25461.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localClassWithUnresolvedSuperType.kt")
   public void testLocalClassWithUnresolvedSuperType() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/localClassWithUnresolvedSuperType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("recursiveTypeParameter_localSimple.kt")
   public void testRecursiveTypeParameter_localSimple() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/recursiveTypeParameter_localSimple.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("recursiveTypeParameter_localWithTypeParameter.kt")
   public void testRecursiveTypeParameter_localWithTypeParameter() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/recursiveTypeParameter_localWithTypeParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParamFlexibleUpperBound.kt")
   public void testTypeParamFlexibleUpperBound() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/typeParamFlexibleUpperBound.kt");

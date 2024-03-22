@@ -41,7 +41,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleAnalysisApiAnnotationsOnDecla
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInAnnotationsOnDeclaration() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/annotationsOnDeclaration"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
@@ -50,7 +50,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleAnalysisApiAnnotationsOnDecla
   @TestMetadata("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct")
   @TestDataPath("$PROJECT_ROOT")
   public class Direct {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInDirect() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -60,7 +60,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleAnalysisApiAnnotationsOnDecla
   @TestMetadata("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/useSite")
   @TestDataPath("$PROJECT_ROOT")
   public class UseSite {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInUseSite() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/useSite"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }

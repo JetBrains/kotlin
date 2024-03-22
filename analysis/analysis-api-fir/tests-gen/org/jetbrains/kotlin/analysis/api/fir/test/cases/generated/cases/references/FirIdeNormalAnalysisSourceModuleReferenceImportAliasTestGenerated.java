@@ -40,24 +40,24 @@ public class FirIdeNormalAnalysisSourceModuleReferenceImportAliasTestGenerated e
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInImportAliases() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/imports/importAliases"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classAlias.kt")
   public void testClassAlias() {
     runTest("analysis/analysis-api/testData/imports/importAliases/classAlias.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("functionAlias.kt")
   public void testFunctionAlias() {
     runTest("analysis/analysis-api/testData/imports/importAliases/functionAlias.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyAlias.kt")
   public void testPropertyAlias() {
     runTest("analysis/analysis-api/testData/imports/importAliases/propertyAlias.kt");

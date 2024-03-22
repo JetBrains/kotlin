@@ -40,7 +40,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleHLSmartCastInfoTestGenerated 
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSmartCastInfo() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/smartCastProvider/smartCastInfo"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

@@ -40,7 +40,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleIsUsedAsExpressionTestGenerat
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInIsUsedAsExpression() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

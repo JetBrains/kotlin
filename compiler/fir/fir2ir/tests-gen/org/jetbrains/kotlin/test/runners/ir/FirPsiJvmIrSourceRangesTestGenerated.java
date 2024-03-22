@@ -20,84 +20,84 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/ir/sourceRanges")
 @TestDataPath("$PROJECT_ROOT")
 public class FirPsiJvmIrSourceRangesTestGenerated extends AbstractFirPsiJvmIrSourceRangesTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSourceRanges() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/sourceRanges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotations.kt")
   public void testAnnotations() {
     runTest("compiler/testData/ir/sourceRanges/annotations.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("augmentedAssignmentWithExpression.kt")
   public void testAugmentedAssignmentWithExpression() {
     runTest("compiler/testData/ir/sourceRanges/augmentedAssignmentWithExpression.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("comments.kt")
   public void testComments() {
     runTest("compiler/testData/ir/sourceRanges/comments.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("elvis.kt")
   public void testElvis() {
     runTest("compiler/testData/ir/sourceRanges/elvis.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("extensionLambdaCall.kt")
   public void testExtensionLambdaCall() {
     runTest("compiler/testData/ir/sourceRanges/extensionLambdaCall.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt17108.kt")
   public void testKt17108() {
     runTest("compiler/testData/ir/sourceRanges/kt17108.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt24258.kt")
   public void testKt24258() {
     runTest("compiler/testData/ir/sourceRanges/kt24258.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt63779.kt")
   public void testKt63779() {
     runTest("compiler/testData/ir/sourceRanges/kt63779.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt63779_2.kt")
   public void testKt63779_2() {
     runTest("compiler/testData/ir/sourceRanges/kt63779_2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multiLineCall.kt")
   public void testMultiLineCall() {
     runTest("compiler/testData/ir/sourceRanges/multiLineCall.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("operators.kt")
   public void testOperators() {
     runTest("compiler/testData/ir/sourceRanges/operators.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("postfixIncrementDecrement.kt")
   public void testPostfixIncrementDecrement() {
     runTest("compiler/testData/ir/sourceRanges/postfixIncrementDecrement.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("this.kt")
   public void testThis() {
     runTest("compiler/testData/ir/sourceRanges/this.kt");
@@ -107,78 +107,78 @@ public class FirPsiJvmIrSourceRangesTestGenerated extends AbstractFirPsiJvmIrSou
   @TestMetadata("compiler/testData/ir/sourceRanges/declarations")
   @TestDataPath("$PROJECT_ROOT")
   public class Declarations {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInDeclarations() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/sourceRanges/declarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classFuns.kt")
     public void testClassFuns() {
       runTest("compiler/testData/ir/sourceRanges/declarations/classFuns.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classProperties.kt")
     public void testClassProperties() {
       runTest("compiler/testData/ir/sourceRanges/declarations/classProperties.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classes.kt")
     public void testClasses() {
       runTest("compiler/testData/ir/sourceRanges/declarations/classes.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegatedProperties.kt")
     public void testDelegatedProperties() {
       runTest("compiler/testData/ir/sourceRanges/declarations/delegatedProperties.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("fakeOverrides.kt")
     public void testFakeOverrides() {
       runTest("compiler/testData/ir/sourceRanges/declarations/fakeOverrides.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("fakeOverrides2.kt")
     public void testFakeOverrides2() {
       runTest("compiler/testData/ir/sourceRanges/declarations/fakeOverrides2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt29862.kt")
     public void testKt29862() {
       runTest("compiler/testData/ir/sourceRanges/declarations/kt29862.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("primaryConstructors.kt")
     public void testPrimaryConstructors() {
       runTest("compiler/testData/ir/sourceRanges/declarations/primaryConstructors.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("secondaryConstructors.kt")
     public void testSecondaryConstructors() {
       runTest("compiler/testData/ir/sourceRanges/declarations/secondaryConstructors.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("synthesizedDataClassMembers.kt")
     public void testSynthesizedDataClassMembers() {
       runTest("compiler/testData/ir/sourceRanges/declarations/synthesizedDataClassMembers.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelFuns.kt")
     public void testTopLevelFuns() {
       runTest("compiler/testData/ir/sourceRanges/declarations/topLevelFuns.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelProperties.kt")
     public void testTopLevelProperties() {
       runTest("compiler/testData/ir/sourceRanges/declarations/topLevelProperties.kt");

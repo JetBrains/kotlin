@@ -40,7 +40,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleSubstitutionOverridesUnwrappi
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSubstitutionOverridesUnwrapping() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

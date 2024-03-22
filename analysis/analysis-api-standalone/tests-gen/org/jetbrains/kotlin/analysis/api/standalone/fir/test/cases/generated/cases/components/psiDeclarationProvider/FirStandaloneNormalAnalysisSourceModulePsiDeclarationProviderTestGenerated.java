@@ -40,60 +40,60 @@ public class FirStandaloneNormalAnalysisSourceModulePsiDeclarationProviderTestGe
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSource() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/standalone/source"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("capitalize_default.kt")
   public void testCapitalize_default() {
     runTest("analysis/analysis-api/testData/standalone/source/capitalize_default.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("capitalize_locale.kt")
   public void testCapitalize_locale() {
     runTest("analysis/analysis-api/testData/standalone/source/capitalize_locale.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("listIterator.kt")
   public void testListIterator() {
     runTest("analysis/analysis-api/testData/standalone/source/listIterator.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("mapGetOrDefault.kt")
   public void testMapGetOrDefault() {
     runTest("analysis/analysis-api/testData/standalone/source/mapGetOrDefault.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("mapGetOrDefault_nullable.kt")
   public void testMapGetOrDefault_nullable() {
     runTest("analysis/analysis-api/testData/standalone/source/mapGetOrDefault_nullable.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multipleFiles.kt")
   public void testMultipleFiles() {
     runTest("analysis/analysis-api/testData/standalone/source/multipleFiles.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("setOf_last_vararg.kt")
   public void testSetOf_last_vararg() {
     runTest("analysis/analysis-api/testData/standalone/source/setOf_last_vararg.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("singleFile.kt")
   public void testSingleFile() {
     runTest("analysis/analysis-api/testData/standalone/source/singleFile.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("todo.kt")
   public void testTodo() {
     runTest("analysis/analysis-api/testData/standalone/source/todo.kt");

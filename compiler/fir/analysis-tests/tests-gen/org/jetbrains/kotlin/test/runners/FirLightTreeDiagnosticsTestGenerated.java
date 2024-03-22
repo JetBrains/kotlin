@@ -21,756 +21,756 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
   @TestMetadata("compiler/fir/analysis-tests/testData/resolve")
   @TestDataPath("$PROJECT_ROOT")
   public class Resolve {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("accessJavaFromKotlinViaImport.kt")
     public void testAccessJavaFromKotlinViaImport() {
       runTest("compiler/fir/analysis-tests/testData/resolve/accessJavaFromKotlinViaImport.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("accessJavaFromKotlinViaStaticImport.kt")
     public void testAccessJavaFromKotlinViaStaticImport() {
       runTest("compiler/fir/analysis-tests/testData/resolve/accessJavaFromKotlinViaStaticImport.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("accessJavaFromKotlinViaStaticImport2.kt")
     public void testAccessJavaFromKotlinViaStaticImport2() {
       runTest("compiler/fir/analysis-tests/testData/resolve/accessJavaFromKotlinViaStaticImport2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("accessJavaFromKotlinViaStaticImportAndPermits.kt")
     public void testAccessJavaFromKotlinViaStaticImportAndPermits() {
       runTest("compiler/fir/analysis-tests/testData/resolve/accessJavaFromKotlinViaStaticImportAndPermits.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("accessJavaFromKotlinViaStaticImportWithoutPermits.kt")
     public void testAccessJavaFromKotlinViaStaticImportWithoutPermits() {
       runTest("compiler/fir/analysis-tests/testData/resolve/accessJavaFromKotlinViaStaticImportWithoutPermits.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInResolve() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("annotationOnDeclarationWithDifferentArguments.kt")
     public void testAnnotationOnDeclarationWithDifferentArguments() {
       runTest("compiler/fir/analysis-tests/testData/resolve/annotationOnDeclarationWithDifferentArguments.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("annotationOnGetClassCall.kt")
     public void testAnnotationOnGetClassCall() {
       runTest("compiler/fir/analysis-tests/testData/resolve/annotationOnGetClassCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("annotationUsedAsAnnotationArgument.kt")
     public void testAnnotationUsedAsAnnotationArgument() {
       runTest("compiler/fir/analysis-tests/testData/resolve/annotationUsedAsAnnotationArgument.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("asImports.kt")
     public void testAsImports() {
       runTest("compiler/fir/analysis-tests/testData/resolve/asImports.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("bareTypes.kt")
     public void testBareTypes() {
       runTest("compiler/fir/analysis-tests/testData/resolve/bareTypes.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("bareTypes2.kt")
     public void testBareTypes2() {
       runTest("compiler/fir/analysis-tests/testData/resolve/bareTypes2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("bareTypesWithFlexibleArguments.kt")
     public void testBareTypesWithFlexibleArguments() {
       runTest("compiler/fir/analysis-tests/testData/resolve/bareTypesWithFlexibleArguments.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("cast.kt")
     public void testCast() {
       runTest("compiler/fir/analysis-tests/testData/resolve/cast.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("catchParameter.kt")
     public void testCatchParameter() {
       runTest("compiler/fir/analysis-tests/testData/resolve/catchParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classCallInLambda.kt")
     public void testClassCallInLambda() {
       runTest("compiler/fir/analysis-tests/testData/resolve/classCallInLambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("companion.kt")
     public void testCompanion() {
       runTest("compiler/fir/analysis-tests/testData/resolve/companion.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("companionAccessInEnum.kt")
     public void testCompanionAccessInEnum() {
       runTest("compiler/fir/analysis-tests/testData/resolve/companionAccessInEnum.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("companionObjectCall.kt")
     public void testCompanionObjectCall() {
       runTest("compiler/fir/analysis-tests/testData/resolve/companionObjectCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("companionUsesNested.kt")
     public void testCompanionUsesNested() {
       runTest("compiler/fir/analysis-tests/testData/resolve/companionUsesNested.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constantValues.kt")
     public void testConstantValues() {
       runTest("compiler/fir/analysis-tests/testData/resolve/constantValues.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("copy.kt")
     public void testCopy() {
       runTest("compiler/fir/analysis-tests/testData/resolve/copy.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("covariantArrayAsReceiver.kt")
     public void testCovariantArrayAsReceiver() {
       runTest("compiler/fir/analysis-tests/testData/resolve/covariantArrayAsReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("defaultJavaImportHiding.kt")
     public void testDefaultJavaImportHiding() {
       runTest("compiler/fir/analysis-tests/testData/resolve/defaultJavaImportHiding.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("defaultParametersInheritedToJava.kt")
     public void testDefaultParametersInheritedToJava() {
       runTest("compiler/fir/analysis-tests/testData/resolve/defaultParametersInheritedToJava.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("definitelyNotNullAmbiguity.kt")
     public void testDefinitelyNotNullAmbiguity() {
       runTest("compiler/fir/analysis-tests/testData/resolve/definitelyNotNullAmbiguity.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegateByArrayLiteral.kt")
     public void testDelegateByArrayLiteral() {
       runTest("compiler/fir/analysis-tests/testData/resolve/delegateByArrayLiteral.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegatedSuperType.kt")
     public void testDelegatedSuperType() {
       runTest("compiler/fir/analysis-tests/testData/resolve/delegatedSuperType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegatingConstructorCall.kt")
     public void testDelegatingConstructorCall() {
       runTest("compiler/fir/analysis-tests/testData/resolve/delegatingConstructorCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegatingConstructorsAndTypeAliases.kt")
     public void testDelegatingConstructorsAndTypeAliases() {
       runTest("compiler/fir/analysis-tests/testData/resolve/delegatingConstructorsAndTypeAliases.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("derivedClass.kt")
     public void testDerivedClass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/derivedClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("elvisReturnSimple.kt")
     public void testElvisReturnSimple() {
       runTest("compiler/fir/analysis-tests/testData/resolve/elvisReturnSimple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("enum.kt")
     public void testEnum() {
       runTest("compiler/fir/analysis-tests/testData/resolve/enum.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("enumWithCompanion.kt")
     public void testEnumWithCompanion() {
       runTest("compiler/fir/analysis-tests/testData/resolve/enumWithCompanion.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extension.kt")
     public void testExtension() {
       runTest("compiler/fir/analysis-tests/testData/resolve/extension.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("F.kt")
     public void testF() {
       runTest("compiler/fir/analysis-tests/testData/resolve/F.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("fakeRecursiveSupertype.kt")
     public void testFakeRecursiveSupertype() {
       runTest("compiler/fir/analysis-tests/testData/resolve/fakeRecursiveSupertype.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("fakeRecursiveTypealias.kt")
     public void testFakeRecursiveTypealias() {
       runTest("compiler/fir/analysis-tests/testData/resolve/fakeRecursiveTypealias.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("fib.kt")
     public void testFib() {
       runTest("compiler/fir/analysis-tests/testData/resolve/fib.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("flexibleCapturedType.kt")
     public void testFlexibleCapturedType() {
       runTest("compiler/fir/analysis-tests/testData/resolve/flexibleCapturedType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("flexibleTypeRendering.kt")
     public void testFlexibleTypeRendering() {
       runTest("compiler/fir/analysis-tests/testData/resolve/flexibleTypeRendering.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("ft.kt")
     public void testFt() {
       runTest("compiler/fir/analysis-tests/testData/resolve/ft.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("funInterfaceDeclaration.kt")
     public void testFunInterfaceDeclaration() {
       runTest("compiler/fir/analysis-tests/testData/resolve/funInterfaceDeclaration.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionTypeAlias.kt")
     public void testFunctionTypeAlias() {
       runTest("compiler/fir/analysis-tests/testData/resolve/functionTypeAlias.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionTypes.kt")
     public void testFunctionTypes() {
       runTest("compiler/fir/analysis-tests/testData/resolve/functionTypes.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("genericConstructors.kt")
     public void testGenericConstructors() {
       runTest("compiler/fir/analysis-tests/testData/resolve/genericConstructors.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("genericFunctions.kt")
     public void testGenericFunctions() {
       runTest("compiler/fir/analysis-tests/testData/resolve/genericFunctions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("genericReceiverPropertyOverride.kt")
     public void testGenericReceiverPropertyOverride() {
       runTest("compiler/fir/analysis-tests/testData/resolve/genericReceiverPropertyOverride.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("implicitTypeFromOtherModule.kt")
     public void testImplicitTypeFromOtherModule() {
       runTest("compiler/fir/analysis-tests/testData/resolve/implicitTypeFromOtherModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("implicitTypeInFakeOverride.kt")
     public void testImplicitTypeInFakeOverride() {
       runTest("compiler/fir/analysis-tests/testData/resolve/implicitTypeInFakeOverride.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("implicitTypeIntersectionOverrideFromOtherModule.kt")
     public void testImplicitTypeIntersectionOverrideFromOtherModule() {
       runTest("compiler/fir/analysis-tests/testData/resolve/implicitTypeIntersectionOverrideFromOtherModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("implicitTypeSubstituteOverrideFromOtherModule.kt")
     public void testImplicitTypeSubstituteOverrideFromOtherModule() {
       runTest("compiler/fir/analysis-tests/testData/resolve/implicitTypeSubstituteOverrideFromOtherModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("implicitTypeSubstituteOverrideInNestedClassFromOtherModule.kt")
     public void testImplicitTypeSubstituteOverrideInNestedClassFromOtherModule() {
       runTest("compiler/fir/analysis-tests/testData/resolve/implicitTypeSubstituteOverrideInNestedClassFromOtherModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("implicitTypeWithTypeBound.kt")
     public void testImplicitTypeWithTypeBound() {
       runTest("compiler/fir/analysis-tests/testData/resolve/implicitTypeWithTypeBound.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("incorrectDataClass.kt")
     public void testIncorrectDataClass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/incorrectDataClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("incorrectSuperCall.kt")
     public void testIncorrectSuperCall() {
       runTest("compiler/fir/analysis-tests/testData/resolve/incorrectSuperCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inherentlyImportedTypeFromOtherModule.kt")
     public void testInherentlyImportedTypeFromOtherModule() {
       runTest("compiler/fir/analysis-tests/testData/resolve/inherentlyImportedTypeFromOtherModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inherentlyImportedTypeFromOtherModule2.kt")
     public void testInherentlyImportedTypeFromOtherModule2() {
       runTest("compiler/fir/analysis-tests/testData/resolve/inherentlyImportedTypeFromOtherModule2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inherentlyImportedTypeFromOtherModule3.kt")
     public void testInherentlyImportedTypeFromOtherModule3() {
       runTest("compiler/fir/analysis-tests/testData/resolve/inherentlyImportedTypeFromOtherModule3.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("intersectionScope.kt")
     public void testIntersectionScope() {
       runTest("compiler/fir/analysis-tests/testData/resolve/intersectionScope.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("intersectionTypes.kt")
     public void testIntersectionTypes() {
       runTest("compiler/fir/analysis-tests/testData/resolve/intersectionTypes.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("invokeInWhenSubjectVariableInitializer.kt")
     public void testInvokeInWhenSubjectVariableInitializer() {
       runTest("compiler/fir/analysis-tests/testData/resolve/invokeInWhenSubjectVariableInitializer.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("invokeOfLambdaWithReceiver.kt")
     public void testInvokeOfLambdaWithReceiver() {
       runTest("compiler/fir/analysis-tests/testData/resolve/invokeOfLambdaWithReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("javaFieldVsAccessor.kt")
     public void testJavaFieldVsAccessor() {
       runTest("compiler/fir/analysis-tests/testData/resolve/javaFieldVsAccessor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("javaStaticScopeInheritance.kt")
     public void testJavaStaticScopeInheritance() {
       runTest("compiler/fir/analysis-tests/testData/resolve/javaStaticScopeInheritance.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("KT-65044.kt")
     public void testKT_65044() {
       runTest("compiler/fir/analysis-tests/testData/resolve/KT-65044.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt41984.kt")
     public void testKt41984() {
       runTest("compiler/fir/analysis-tests/testData/resolve/kt41984.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt41990.kt")
     public void testKt41990() {
       runTest("compiler/fir/analysis-tests/testData/resolve/kt41990.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt54220.kt")
     public void testKt54220() {
       runTest("compiler/fir/analysis-tests/testData/resolve/kt54220.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt54775.kt")
     public void testKt54775() {
       runTest("compiler/fir/analysis-tests/testData/resolve/kt54775.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("labelAndReceiverForInfix.kt")
     public void testLabelAndReceiverForInfix() {
       runTest("compiler/fir/analysis-tests/testData/resolve/labelAndReceiverForInfix.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("labeledReturnFromNotLabeledUnnamedFunction.kt")
     public void testLabeledReturnFromNotLabeledUnnamedFunction() {
       runTest("compiler/fir/analysis-tests/testData/resolve/labeledReturnFromNotLabeledUnnamedFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaArgInScopeFunction.kt")
     public void testLambdaArgInScopeFunction() {
       runTest("compiler/fir/analysis-tests/testData/resolve/lambdaArgInScopeFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaInLhsOfTypeOperatorCall.kt")
     public void testLambdaInLhsOfTypeOperatorCall() {
       runTest("compiler/fir/analysis-tests/testData/resolve/lambdaInLhsOfTypeOperatorCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaPropertyTypeInference.kt")
     public void testLambdaPropertyTypeInference() {
       runTest("compiler/fir/analysis-tests/testData/resolve/lambdaPropertyTypeInference.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localFunctionsHiding.kt")
     public void testLocalFunctionsHiding() {
       runTest("compiler/fir/analysis-tests/testData/resolve/localFunctionsHiding.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localObject.kt")
     public void testLocalObject() {
       runTest("compiler/fir/analysis-tests/testData/resolve/localObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedAnnotationConstExprArguments.kt")
     public void testNestedAnnotationConstExprArguments() {
       runTest("compiler/fir/analysis-tests/testData/resolve/nestedAnnotationConstExprArguments.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedClass.kt")
     public void testNestedClass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/nestedClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedClassContructor.kt")
     public void testNestedClassContructor() {
       runTest("compiler/fir/analysis-tests/testData/resolve/nestedClassContructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedClassNameClash.kt")
     public void testNestedClassNameClash() {
       runTest("compiler/fir/analysis-tests/testData/resolve/nestedClassNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("NestedOfAliasedType.kt")
     public void testNestedOfAliasedType() {
       runTest("compiler/fir/analysis-tests/testData/resolve/NestedOfAliasedType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedReturnType.kt")
     public void testNestedReturnType() {
       runTest("compiler/fir/analysis-tests/testData/resolve/nestedReturnType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("NestedSuperType.kt")
     public void testNestedSuperType() {
       runTest("compiler/fir/analysis-tests/testData/resolve/NestedSuperType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectInnerClass.kt")
     public void testObjectInnerClass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/objectInnerClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("offOrderMultiBoundGenericOverride.kt")
     public void testOffOrderMultiBoundGenericOverride() {
       runTest("compiler/fir/analysis-tests/testData/resolve/offOrderMultiBoundGenericOverride.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("openInInterface.kt")
     public void testOpenInInterface() {
       runTest("compiler/fir/analysis-tests/testData/resolve/openInInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("problems2.kt")
     public void testProblems2() {
       runTest("compiler/fir/analysis-tests/testData/resolve/problems2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("properLocalPackages.kt")
     public void testProperLocalPackages() {
       runTest("compiler/fir/analysis-tests/testData/resolve/properLocalPackages.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyFromJavaPlusAssign.kt")
     public void testPropertyFromJavaPlusAssign() {
       runTest("compiler/fir/analysis-tests/testData/resolve/propertyFromJavaPlusAssign.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyGetterWithoutType.kt")
     public void testPropertyGetterWithoutType() {
       runTest("compiler/fir/analysis-tests/testData/resolve/propertyGetterWithoutType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("qualifierWithCompanion.kt")
     public void testQualifierWithCompanion() {
       runTest("compiler/fir/analysis-tests/testData/resolve/qualifierWithCompanion.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("rawTypeSam.kt")
     public void testRawTypeSam() {
       runTest("compiler/fir/analysis-tests/testData/resolve/rawTypeSam.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("recursiveCallOnWhenWithSealedClass.kt")
     public void testRecursiveCallOnWhenWithSealedClass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/recursiveCallOnWhenWithSealedClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("recursiveTypeAlias.kt")
     public void testRecursiveTypeAlias() {
       runTest("compiler/fir/analysis-tests/testData/resolve/recursiveTypeAlias.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("reifiedTypeOverload.kt")
     public void testReifiedTypeOverload() {
       runTest("compiler/fir/analysis-tests/testData/resolve/reifiedTypeOverload.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("returnFromDelegatedConstuctor.kt")
     public void testReturnFromDelegatedConstuctor() {
       runTest("compiler/fir/analysis-tests/testData/resolve/returnFromDelegatedConstuctor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("sealedClass.kt")
     public void testSealedClass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/sealedClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("settersGetters.kt")
     public void testSettersGetters() {
       runTest("compiler/fir/analysis-tests/testData/resolve/settersGetters.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleClass.kt")
     public void testSimpleClass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/simpleClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleTypeAlias.kt")
     public void testSimpleTypeAlias() {
       runTest("compiler/fir/analysis-tests/testData/resolve/simpleTypeAlias.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("spreadOperator.kt")
     public void testSpreadOperator() {
       runTest("compiler/fir/analysis-tests/testData/resolve/spreadOperator.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("statusResolveForTypealiasAsSuperClass.kt")
     public void testStatusResolveForTypealiasAsSuperClass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/statusResolveForTypealiasAsSuperClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("supertypesForAnnotationClass.kt")
     public void testSupertypesForAnnotationClass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/supertypesForAnnotationClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("syntheticsVsNormalProperties.kt")
     public void testSyntheticsVsNormalProperties() {
       runTest("compiler/fir/analysis-tests/testData/resolve/syntheticsVsNormalProperties.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("throwableSubclass.kt")
     public void testThrowableSubclass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/throwableSubclass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelDestruction.kt")
     public void testTopLevelDestruction() {
       runTest("compiler/fir/analysis-tests/testData/resolve/topLevelDestruction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("treeSet.kt")
     public void testTreeSet() {
       runTest("compiler/fir/analysis-tests/testData/resolve/treeSet.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("tryInference.kt")
     public void testTryInference() {
       runTest("compiler/fir/analysis-tests/testData/resolve/tryInference.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("TwoDeclarationsInSameFile.kt")
     public void testTwoDeclarationsInSameFile() {
       runTest("compiler/fir/analysis-tests/testData/resolve/TwoDeclarationsInSameFile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeAliasWithGeneric.kt")
     public void testTypeAliasWithGeneric() {
       runTest("compiler/fir/analysis-tests/testData/resolve/typeAliasWithGeneric.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeAliasWithTypeArguments.kt")
     public void testTypeAliasWithTypeArguments() {
       runTest("compiler/fir/analysis-tests/testData/resolve/typeAliasWithTypeArguments.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeFromGetter.kt")
     public void testTypeFromGetter() {
       runTest("compiler/fir/analysis-tests/testData/resolve/typeFromGetter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeParameterInBoundsLocalFunction.kt")
     public void testTypeParameterInBoundsLocalFunction() {
       runTest("compiler/fir/analysis-tests/testData/resolve/typeParameterInBoundsLocalFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeParameterInPropertyReceiver.kt")
     public void testTypeParameterInPropertyReceiver() {
       runTest("compiler/fir/analysis-tests/testData/resolve/typeParameterInPropertyReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeParameterVsNested.kt")
     public void testTypeParameterVsNested() {
       runTest("compiler/fir/analysis-tests/testData/resolve/typeParameterVsNested.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typesInLocalFunctions.kt")
     public void testTypesInLocalFunctions() {
       runTest("compiler/fir/analysis-tests/testData/resolve/typesInLocalFunctions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unitTypeFromOtherModule.kt")
     public void testUnitTypeFromOtherModule() {
       runTest("compiler/fir/analysis-tests/testData/resolve/unitTypeFromOtherModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unitTypeSubstituteOverrideInNestedClassFromOtherModule.kt")
     public void testUnitTypeSubstituteOverrideInNestedClassFromOtherModule() {
       runTest("compiler/fir/analysis-tests/testData/resolve/unitTypeSubstituteOverrideInNestedClassFromOtherModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("varargInPrimaryConstructor.kt")
     public void testVarargInPrimaryConstructor() {
       runTest("compiler/fir/analysis-tests/testData/resolve/varargInPrimaryConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("visibleVsInvisibleQualifier.kt")
     public void testVisibleVsInvisibleQualifier() {
       runTest("compiler/fir/analysis-tests/testData/resolve/visibleVsInvisibleQualifier.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("whenAsReceiver.kt")
     public void testWhenAsReceiver() {
       runTest("compiler/fir/analysis-tests/testData/resolve/whenAsReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("whenElse.kt")
     public void testWhenElse() {
       runTest("compiler/fir/analysis-tests/testData/resolve/whenElse.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("whenExpressionType.kt")
     public void testWhenExpressionType() {
       runTest("compiler/fir/analysis-tests/testData/resolve/whenExpressionType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("whenInference.kt")
     public void testWhenInference() {
       runTest("compiler/fir/analysis-tests/testData/resolve/whenInference.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("whenWithWhenAsStatement.kt")
     public void testWhenWithWhenAsStatement() {
       runTest("compiler/fir/analysis-tests/testData/resolve/whenWithWhenAsStatement.kt");
@@ -780,30 +780,30 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/annotations")
     @TestDataPath("$PROJECT_ROOT")
     public class Annotations {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInAnnotations() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/annotations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kindaCompilerRequiredNestedAnnotation.kt")
       public void testKindaCompilerRequiredNestedAnnotation() {
         runTest("compiler/fir/analysis-tests/testData/resolve/annotations/kindaCompilerRequiredNestedAnnotation.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt43936.kt")
       public void testKt43936() {
         runTest("compiler/fir/analysis-tests/testData/resolve/annotations/kt43936.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt54478.kt")
       public void testKt54478() {
         runTest("compiler/fir/analysis-tests/testData/resolve/annotations/kt54478.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt55286.kt")
       public void testKt55286() {
         runTest("compiler/fir/analysis-tests/testData/resolve/annotations/kt55286.kt");
@@ -814,234 +814,234 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/arguments")
     @TestDataPath("$PROJECT_ROOT")
     public class Arguments {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInArguments() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/arguments"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("ambiguityOnJavaOverride.kt")
       public void testAmbiguityOnJavaOverride() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/ambiguityOnJavaOverride.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("argParamTypeMismatch.kt")
       public void testArgParamTypeMismatch() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/argParamTypeMismatch.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("argumentsOfAnnotations.kt")
       public void testArgumentsOfAnnotations() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/argumentsOfAnnotations.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("argumentsOfJavaAnnotation.kt")
       public void testArgumentsOfJavaAnnotation() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/argumentsOfJavaAnnotation.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("default.kt")
       public void testDefault() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/default.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("defaultFromOverrides.kt")
       public void testDefaultFromOverrides() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/defaultFromOverrides.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("definetelyNotNullForTypeParameter.kt")
       public void testDefinetelyNotNullForTypeParameter() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/definetelyNotNullForTypeParameter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("destructuring.kt")
       public void testDestructuring() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/destructuring.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionLambdaInDefaultArgument.kt")
       public void testExtensionLambdaInDefaultArgument() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/extensionLambdaInDefaultArgument.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("fieldPlusAssign.kt")
       public void testFieldPlusAssign() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/fieldPlusAssign.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("incorrectFunctionalType.kt")
       public void testIncorrectFunctionalType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/incorrectFunctionalType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("integerLiteralTypes.kt")
       public void testIntegerLiteralTypes() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/integerLiteralTypes.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("integerOverloads.kt")
       public void testIntegerOverloads() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/integerOverloads.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("invoke.kt")
       public void testInvoke() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/invoke.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("javaAnnotationsWithArrayValue.kt")
       public void testJavaAnnotationsWithArrayValue() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/javaAnnotationsWithArrayValue.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("javaArrayVariance.kt")
       public void testJavaArrayVariance() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/javaArrayVariance.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt41940.kt")
       public void testKt41940() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/kt41940.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambda.kt")
       public void testLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/lambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdaInLambda.kt")
       public void testLambdaInLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/lambdaInLambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdaInLambda2.kt")
       public void testLambdaInLambda2() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/lambdaInLambda2.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdaInUnresolvedCall.kt")
       public void testLambdaInUnresolvedCall() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/lambdaInUnresolvedCall.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("namedArrayInAnnotation.kt")
       public void testNamedArrayInAnnotation() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/namedArrayInAnnotation.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nestedClassInAnnotationArgument.kt")
       public void testNestedClassInAnnotationArgument() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/nestedClassInAnnotationArgument.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("noParameterForName.kt")
       public void testNoParameterForName() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/noParameterForName.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nullForDifferentProjections.kt")
       public void testNullForDifferentProjections() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/nullForDifferentProjections.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("operatorsOverLiterals.kt")
       public void testOperatorsOverLiterals() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/operatorsOverLiterals.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overloadByReceiver.kt")
       public void testOverloadByReceiver() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/overloadByReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overloadWithDefault.kt")
       public void testOverloadWithDefault() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/overloadWithDefault.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("setWithTrailingLambda.kt")
       public void testSetWithTrailingLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/setWithTrailingLambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/simple.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("stringTemplates.kt")
       public void testStringTemplates() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/stringTemplates.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("tryInLambda.kt")
       public void testTryInLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/tryInLambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeMismatchOnExpectedJavaMap.kt")
       public void testTypeMismatchOnExpectedJavaMap() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/typeMismatchOnExpectedJavaMap.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("untouchedReturnInIf.kt")
       public void testUntouchedReturnInIf() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/untouchedReturnInIf.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("vararg.kt")
       public void testVararg() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/vararg.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("varargFromJava.kt")
       public void testVarargFromJava() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/varargFromJava.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("varargOfLambdasWithReceiver.kt")
       public void testVarargOfLambdasWithReceiver() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/varargOfLambdasWithReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("varargProjection.kt")
       public void testVarargProjection() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/varargProjection.kt");
@@ -1052,18 +1052,18 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/arrays")
     @TestDataPath("$PROJECT_ROOT")
     public class Arrays {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInArrays() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/arrays"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("arraySet.kt")
       public void testArraySet() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arrays/arraySet.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("arraySetWithOperation.kt")
       public void testArraySetWithOperation() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arrays/arraySetWithOperation.kt");
@@ -1074,12 +1074,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/builtins")
     @TestDataPath("$PROJECT_ROOT")
     public class Builtins {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInBuiltins() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/builtins"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lists.kt")
       public void testLists() {
         runTest("compiler/fir/analysis-tests/testData/resolve/builtins/lists.kt");
@@ -1090,156 +1090,156 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/callResolution")
     @TestDataPath("$PROJECT_ROOT")
     public class CallResolution {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInCallResolution() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/callResolution"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("arraySetWithPlusAssign.kt")
       public void testArraySetWithPlusAssign() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/arraySetWithPlusAssign.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("chooseOverloadByShapeOfLambda.kt")
       public void testChooseOverloadByShapeOfLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/chooseOverloadByShapeOfLambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("companionInvoke.kt")
       public void testCompanionInvoke() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/companionInvoke.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("companionVsSuperStatic.kt")
       public void testCompanionVsSuperStatic() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/companionVsSuperStatic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("debugExpressionType.kt")
       public void testDebugExpressionType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/debugExpressionType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("debugInfoCall.kt")
       public void testDebugInfoCall() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/debugInfoCall.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("errorCandidates.kt")
       public void testErrorCandidates() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/errorCandidates.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exponentialArraySetWithPlusAssign.kt")
       public void testExponentialArraySetWithPlusAssign() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/exponentialArraySetWithPlusAssign.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionInvokeAfterSafeCall.kt")
       public void testExtensionInvokeAfterSafeCall() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/extensionInvokeAfterSafeCall.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("incorrectPlusOperatorFromJava.kt")
       public void testIncorrectPlusOperatorFromJava() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/incorrectPlusOperatorFromJava.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("invokeAmbiguity.kt")
       public void testInvokeAmbiguity() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/invokeAmbiguity.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("invokeWithReceiverAndArgument.kt")
       public void testInvokeWithReceiverAndArgument() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/invokeWithReceiverAndArgument.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt37056.kt")
       public void testKt37056() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/kt37056.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt50386.kt")
       public void testKt50386() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/kt50386.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdaAsReceiver.kt")
       public void testLambdaAsReceiver() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/lambdaAsReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("objectInvoke.kt")
       public void testObjectInvoke() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/objectInvoke.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overloadsWithGenericAndGenericLambda.kt")
       public void testOverloadsWithGenericAndGenericLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/overloadsWithGenericAndGenericLambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("referenceToNestedClass.kt")
       public void testReferenceToNestedClass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/referenceToNestedClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("safeCallOnTypeAlias.kt")
       public void testSafeCallOnTypeAlias() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/safeCallOnTypeAlias.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superAny.kt")
       public void testSuperAny() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/superAny.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("suspendCOnversionForReceiver.kt")
       public void testSuspendCOnversionForReceiver() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/suspendCOnversionForReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("syntheticPropertiesWrongImplicitReceiver.kt")
       public void testSyntheticPropertiesWrongImplicitReceiver() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/syntheticPropertiesWrongImplicitReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("twoLocalLambdasWithSameName.kt")
       public void testTwoLocalLambdasWithSameName() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/twoLocalLambdasWithSameName.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeAliasWithNotNullBound.kt")
       public void testTypeAliasWithNotNullBound() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/typeAliasWithNotNullBound.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("uselessMultipleBounds.kt")
       public void testUselessMultipleBounds() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/uselessMultipleBounds.kt");
@@ -1250,36 +1250,36 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/cfa")
     @TestDataPath("$PROJECT_ROOT")
     public class Cfa {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInCfa() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/cfa"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("initializationInTry.kt")
       public void testInitializationInTry() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfa/initializationInTry.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt53819.kt")
       public void testKt53819() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfa/kt53819.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("reassignOfNonLocalProperty_initializedProperties.kt")
       public void testReassignOfNonLocalProperty_initializedProperties() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfa/reassignOfNonLocalProperty_initializedProperties.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("reassignOfNonMemberProperty_lateInitialization.kt")
       public void testReassignOfNonMemberProperty_lateInitialization() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfa/reassignOfNonMemberProperty_lateInitialization.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("smartcastOnThisDuringClassInitialization.kt")
       public void testSmartcastOnThisDuringClassInitialization() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfa/smartcastOnThisDuringClassInitialization.kt");
@@ -1290,210 +1290,210 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/cfg")
     @TestDataPath("$PROJECT_ROOT")
     public class Cfg {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInCfg() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/cfg"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("annotatedLocalClass.kt")
       public void testAnnotatedLocalClass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/annotatedLocalClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("anonymousObjectInUnreachableCode.kt")
       public void testAnonymousObjectInUnreachableCode() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/anonymousObjectInUnreachableCode.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("binaryOperations.kt")
       public void testBinaryOperations() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/binaryOperations.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("booleanOperatorsWithConsts.kt")
       public void testBooleanOperatorsWithConsts() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/booleanOperatorsWithConsts.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("complex.kt")
       public void testComplex() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/complex.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("defaultArguments.kt")
       public void testDefaultArguments() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/defaultArguments.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("emptyWhen.kt")
       public void testEmptyWhen() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/emptyWhen.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("flowFromInplaceLambda.kt")
       public void testFlowFromInplaceLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/flowFromInplaceLambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("flowFromInplaceLambda2.kt")
       public void testFlowFromInplaceLambda2() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/flowFromInplaceLambda2.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("flowFromInplaceLambda3.kt")
       public void testFlowFromInplaceLambda3() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/flowFromInplaceLambda3.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("flowFromTwoInplaceLambdas.kt")
       public void testFlowFromTwoInplaceLambdas() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/flowFromTwoInplaceLambdas.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("initBlock.kt")
       public void testInitBlock() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/initBlock.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("initBlockAndInPlaceLambda.kt")
       public void testInitBlockAndInPlaceLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/initBlockAndInPlaceLambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inlineLambdasAreInplace.kt")
       public void testInlineLambdasAreInplace() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/inlineLambdasAreInplace.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("innerClassInAnonymousObject.kt")
       public void testInnerClassInAnonymousObject() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/innerClassInAnonymousObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inplaceLambdaInControlFlowExpressions.kt")
       public void testInplaceLambdaInControlFlowExpressions() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/inplaceLambdaInControlFlowExpressions.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("jumps.kt")
       public void testJumps() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/jumps.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdaAsReturnOfLambda.kt")
       public void testLambdaAsReturnOfLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/lambdaAsReturnOfLambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdaInIfInTry.kt")
       public void testLambdaInIfInTry() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/lambdaInIfInTry.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdaReturningObject.kt")
       public void testLambdaReturningObject() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/lambdaReturningObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdas.kt")
       public void testLambdas() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/lambdas.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localClassesWithImplicit.kt")
       public void testLocalClassesWithImplicit() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/localClassesWithImplicit.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("loops.kt")
       public void testLoops() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/loops.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nestedClass.kt")
       public void testNestedClass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/nestedClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("postponedLambdaInConstructor.kt")
       public void testPostponedLambdaInConstructor() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/postponedLambdaInConstructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("postponedLambdaInReturn.kt")
       public void testPostponedLambdaInReturn() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/postponedLambdaInReturn.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("postponedLambdas.kt")
       public void testPostponedLambdas() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/postponedLambdas.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("propertiesAndInitBlocks.kt")
       public void testPropertiesAndInitBlocks() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/propertiesAndInitBlocks.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("returnValuesFromLambda.kt")
       public void testReturnValuesFromLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/returnValuesFromLambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("safeCalls.kt")
       public void testSafeCalls() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/safeCalls.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/simple.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("tryCatch.kt")
       public void testTryCatch() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/tryCatch.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("variableInitializedInTryBlock.kt")
       public void testVariableInitializedInTryBlock() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/variableInitializedInTryBlock.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("when.kt")
       public void testWhen() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/when.kt");
@@ -1504,84 +1504,84 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/checkers")
     @TestDataPath("$PROJECT_ROOT")
     public class Checkers {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInCheckers() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/checkers"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("complexConflictingProjections.kt")
       public void testComplexConflictingProjections() {
         runTest("compiler/fir/analysis-tests/testData/resolve/checkers/complexConflictingProjections.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("contextReceiversSubtyping.kt")
       public void testContextReceiversSubtyping() {
         runTest("compiler/fir/analysis-tests/testData/resolve/checkers/contextReceiversSubtyping.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("importAnnotationWithRequiresOptIn.kt")
       public void testImportAnnotationWithRequiresOptIn() {
         runTest("compiler/fir/analysis-tests/testData/resolve/checkers/importAnnotationWithRequiresOptIn.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("internalImplicitInvokeFromInlineFun.kt")
       public void testInternalImplicitInvokeFromInlineFun() {
         runTest("compiler/fir/analysis-tests/testData/resolve/checkers/internalImplicitInvokeFromInlineFun.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("internalSuperCallFromInlineFun.kt")
       public void testInternalSuperCallFromInlineFun() {
         runTest("compiler/fir/analysis-tests/testData/resolve/checkers/internalSuperCallFromInlineFun.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("invalidLhsOfClassLiteral.kt")
       public void testInvalidLhsOfClassLiteral() {
         runTest("compiler/fir/analysis-tests/testData/resolve/checkers/invalidLhsOfClassLiteral.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("notUselessCast_1.kt")
       public void testNotUselessCast_1() {
         runTest("compiler/fir/analysis-tests/testData/resolve/checkers/notUselessCast_1.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("notUselessCast_2.kt")
       public void testNotUselessCast_2() {
         runTest("compiler/fir/analysis-tests/testData/resolve/checkers/notUselessCast_2.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("notUselessCast_3.kt")
       public void testNotUselessCast_3() {
         runTest("compiler/fir/analysis-tests/testData/resolve/checkers/notUselessCast_3.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("recursiveDependencyBetweenReturnTypeAndSupertype.kt")
       public void testRecursiveDependencyBetweenReturnTypeAndSupertype() {
         runTest("compiler/fir/analysis-tests/testData/resolve/checkers/recursiveDependencyBetweenReturnTypeAndSupertype.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("redundantNullCheckOnAsCast.kt")
       public void testRedundantNullCheckOnAsCast() {
         runTest("compiler/fir/analysis-tests/testData/resolve/checkers/redundantNullCheckOnAsCast.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("unsuccessfullCastToStartProjectedType.kt")
       public void testUnsuccessfullCastToStartProjectedType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/checkers/unsuccessfullCastToStartProjectedType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("uselessCastLeadsToRecursiveProblem.kt")
       public void testUselessCastLeadsToRecursiveProblem() {
         runTest("compiler/fir/analysis-tests/testData/resolve/checkers/uselessCastLeadsToRecursiveProblem.kt");
@@ -1592,30 +1592,30 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/constVal")
     @TestDataPath("$PROJECT_ROOT")
     public class ConstVal {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInConstVal() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/constVal"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("const.kt")
       public void testConst() {
         runTest("compiler/fir/analysis-tests/testData/resolve/constVal/const.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constValNotTopLevelOrObject.kt")
       public void testConstValNotTopLevelOrObject() {
         runTest("compiler/fir/analysis-tests/testData/resolve/constVal/constValNotTopLevelOrObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constValWithGetterOrDelegate.kt")
       public void testConstValWithGetterOrDelegate() {
         runTest("compiler/fir/analysis-tests/testData/resolve/constVal/constValWithGetterOrDelegate.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constValWithTypealiasType.kt")
       public void testConstValWithTypealiasType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/constVal/constValWithTypealiasType.kt");
@@ -1626,18 +1626,18 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/constructors")
     @TestDataPath("$PROJECT_ROOT")
     public class Constructors {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInConstructors() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/constructors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("erroneousDelegatedConstructorCall.kt")
       public void testErroneousDelegatedConstructorCall() {
         runTest("compiler/fir/analysis-tests/testData/resolve/constructors/erroneousDelegatedConstructorCall.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("noSuperCallInSupertypes.kt")
       public void testNoSuperCallInSupertypes() {
         runTest("compiler/fir/analysis-tests/testData/resolve/constructors/noSuperCallInSupertypes.kt");
@@ -1648,42 +1648,42 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contracts")
     @TestDataPath("$PROJECT_ROOT")
     public class Contracts {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInContracts() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("contractFromOtherModule.kt")
       public void testContractFromOtherModule() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contracts/contractFromOtherModule.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("contractFromOtherModule_samePackage.kt")
       public void testContractFromOtherModule_samePackage() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contracts/contractFromOtherModule_samePackage.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("contractOnInfixFunction.kt")
       public void testContractOnInfixFunction() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contracts/contractOnInfixFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("disabledFeature.kt")
       public void testDisabledFeature() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contracts/disabledFeature.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("genericContract.kt")
       public void testGenericContract() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contracts/genericContract.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inPlaceAfterVararg.kt")
       public void testInPlaceAfterVararg() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contracts/inPlaceAfterVararg.kt");
@@ -1694,60 +1694,60 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/delegates")
     @TestDataPath("$PROJECT_ROOT")
     public class Delegates {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInDelegates() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/delegates"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("callOnThisInDelegateExpression.kt")
       public void testCallOnThisInDelegateExpression() {
         runTest("compiler/fir/analysis-tests/testData/resolve/delegates/callOnThisInDelegateExpression.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("delegateInference.kt")
       public void testDelegateInference() {
         runTest("compiler/fir/analysis-tests/testData/resolve/delegates/delegateInference.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("delegateWithArgInference.kt")
       public void testDelegateWithArgInference() {
         runTest("compiler/fir/analysis-tests/testData/resolve/delegates/delegateWithArgInference.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("delegateWithLambda.kt")
       public void testDelegateWithLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolve/delegates/delegateWithLambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionGenericGetValue.kt")
       public void testExtensionGenericGetValue() {
         runTest("compiler/fir/analysis-tests/testData/resolve/delegates/extensionGenericGetValue.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionGetValueWithTypeVariableAsReceiver.kt")
       public void testExtensionGetValueWithTypeVariableAsReceiver() {
         runTest("compiler/fir/analysis-tests/testData/resolve/delegates/extensionGetValueWithTypeVariableAsReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt41982.kt")
       public void testKt41982() {
         runTest("compiler/fir/analysis-tests/testData/resolve/delegates/kt41982.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("provideDelegate.kt")
       public void testProvideDelegate() {
         runTest("compiler/fir/analysis-tests/testData/resolve/delegates/provideDelegate.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("receiverInference.kt")
       public void testReceiverInference() {
         runTest("compiler/fir/analysis-tests/testData/resolve/delegates/receiverInference.kt");
@@ -1758,330 +1758,330 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/diagnostics")
     @TestDataPath("$PROJECT_ROOT")
     public class Diagnostics {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("abstractSuperCall.kt")
       public void testAbstractSuperCall() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/abstractSuperCall.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("abstractSuperCallInPresenseOfNonAbstractMethodInParent.kt")
       public void testAbstractSuperCallInPresenseOfNonAbstractMethodInParent() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/abstractSuperCallInPresenseOfNonAbstractMethodInParent.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInDiagnostics() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("annotationArgumentKClassLiteralTypeError.kt")
       public void testAnnotationArgumentKClassLiteralTypeError() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/annotationArgumentKClassLiteralTypeError.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("annotationArgumentMustBeConst.kt")
       public void testAnnotationArgumentMustBeConst() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/annotationArgumentMustBeConst.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("annotationArgumentMustBeEnumConst.kt")
       public void testAnnotationArgumentMustBeEnumConst() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/annotationArgumentMustBeEnumConst.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("annotationArgumentMustBeKClassLiteral.kt")
       public void testAnnotationArgumentMustBeKClassLiteral() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/annotationArgumentMustBeKClassLiteral.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("annotationClassMember.kt")
       public void testAnnotationClassMember() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/annotationClassMember.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("anonymousObjectByDelegate.kt")
       public void testAnonymousObjectByDelegate() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/anonymousObjectByDelegate.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classInSupertypeForEnum.kt")
       public void testClassInSupertypeForEnum() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/classInSupertypeForEnum.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("conflictingOverloads.kt")
       public void testConflictingOverloads() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/conflictingOverloads.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("conflictingProjection.kt")
       public void testConflictingProjection() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/conflictingProjection.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructorInInterface.kt")
       public void testConstructorInInterface() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/constructorInInterface.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("cyclicConstructorDelegationCall.kt")
       public void testCyclicConstructorDelegationCall() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/cyclicConstructorDelegationCall.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("delegationInInterface.kt")
       public void testDelegationInInterface() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/delegationInInterface.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("delegationSuperCallInEnumConstructor.kt")
       public void testDelegationSuperCallInEnumConstructor() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/delegationSuperCallInEnumConstructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("explicitDelegationCallRequired.kt")
       public void testExplicitDelegationCallRequired() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/explicitDelegationCallRequired.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inapplicableLateinitModifier.kt")
       public void testInapplicableLateinitModifier() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/inapplicableLateinitModifier.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("incompatibleModifiers.kt")
       public void testIncompatibleModifiers() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/incompatibleModifiers.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("infixFunctions.kt")
       public void testInfixFunctions() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/infixFunctions.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("instanceAccessBeforeSuperCall.kt")
       public void testInstanceAccessBeforeSuperCall() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/instanceAccessBeforeSuperCall.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("interfaceWithSuperclass.kt")
       public void testInterfaceWithSuperclass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/interfaceWithSuperclass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localAnnotationClass.kt")
       public void testLocalAnnotationClass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/localAnnotationClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localEntitytNotAllowed.kt")
       public void testLocalEntitytNotAllowed() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/localEntitytNotAllowed.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("manyCompanionObjects.kt")
       public void testManyCompanionObjects() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/manyCompanionObjects.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("methodOfAnyImplementedInInterface.kt")
       public void testMethodOfAnyImplementedInInterface() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/methodOfAnyImplementedInInterface.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("multipleBounds.kt")
       public void testMultipleBounds() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/multipleBounds.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nonConstValInAnnotationArgument.kt")
       public void testNonConstValInAnnotationArgument() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/nonConstValInAnnotationArgument.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("notASupertype.kt")
       public void testNotASupertype() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/notASupertype.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("primaryConstructorParametersInSecondaryConstructor.kt")
       public void testPrimaryConstructorParametersInSecondaryConstructor() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/primaryConstructorParametersInSecondaryConstructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("primaryConstructorRequiredForDataClass.kt")
       public void testPrimaryConstructorRequiredForDataClass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/primaryConstructorRequiredForDataClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("projectionsOnNonClassTypeArguments.kt")
       public void testProjectionsOnNonClassTypeArguments() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/projectionsOnNonClassTypeArguments.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("propertyTypeMismatchOnOverride.kt")
       public void testPropertyTypeMismatchOnOverride() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/propertyTypeMismatchOnOverride.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("qualifiedSupertypeExtendedByOtherSupertype.kt")
       public void testQualifiedSupertypeExtendedByOtherSupertype() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/qualifiedSupertypeExtendedByOtherSupertype.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("recursiveProblemWithSyntaxError.kt")
       public void testRecursiveProblemWithSyntaxError() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/recursiveProblemWithSyntaxError.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("redundantModifier.kt")
       public void testRedundantModifier() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/redundantModifier.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("repeatedModifier.kt")
       public void testRepeatedModifier() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/repeatedModifier.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("returnTypeMismatchOnOverride.kt")
       public void testReturnTypeMismatchOnOverride() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/returnTypeMismatchOnOverride.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("sealedClassConstructorCall.kt")
       public void testSealedClassConstructorCall() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/sealedClassConstructorCall.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("sealedSupertype.kt")
       public void testSealedSupertype() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/sealedSupertype.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("someOverridesTest.kt")
       public void testSomeOverridesTest() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/someOverridesTest.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superCallWithDelegation.kt")
       public void testSuperCallWithDelegation() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/superCallWithDelegation.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superIsNotAnExpression.kt")
       public void testSuperIsNotAnExpression() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/superIsNotAnExpression.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superNotAvailable.kt")
       public void testSuperNotAvailable() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/superNotAvailable.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superclassNotAccessibleFromInterface.kt")
       public void testSuperclassNotAccessibleFromInterface() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/superclassNotAccessibleFromInterface.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("supertypeInitializedInInterface.kt")
       public void testSupertypeInitializedInInterface() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/supertypeInitializedInInterface.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("supertypeInitializedWithoutPrimaryConstructor.kt")
       public void testSupertypeInitializedWithoutPrimaryConstructor() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/supertypeInitializedWithoutPrimaryConstructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("suspendAnonymousFunction.kt")
       public void testSuspendAnonymousFunction() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/suspendAnonymousFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("testIllegalAnnotationClass.kt")
       public void testTestIllegalAnnotationClass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/testIllegalAnnotationClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeArgumentsNotAllowed.kt")
       public void testTypeArgumentsNotAllowed() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/typeArgumentsNotAllowed.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeOfAnnotationMember.kt")
       public void testTypeOfAnnotationMember() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/typeOfAnnotationMember.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeParametersInEnum.kt")
       public void testTypeParametersInEnum() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/typeParametersInEnum.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeParametersInObject.kt")
       public void testTypeParametersInObject() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/typeParametersInObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("upperBoundViolated.kt")
       public void testUpperBoundViolated() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/upperBoundViolated.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("valOnAnnotationParameter.kt")
       public void testValOnAnnotationParameter() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/valOnAnnotationParameter.kt");
@@ -2091,12 +2091,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/diagnostics/functionAsExpression")
       @TestDataPath("$PROJECT_ROOT")
       public class FunctionAsExpression {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInFunctionAsExpression() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics/functionAsExpression"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("Parameters.kt")
         public void testParameters() {
           runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/functionAsExpression/Parameters.kt");
@@ -2108,7 +2108,7 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/exhaustiveness")
     @TestDataPath("$PROJECT_ROOT")
     public class Exhaustiveness {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInExhaustiveness() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
@@ -2117,36 +2117,36 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative")
       @TestDataPath("$PROJECT_ROOT")
       public class Negative {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInNegative() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("missingBooleanBranch.kt")
         public void testMissingBooleanBranch() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/missingBooleanBranch.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("missingElse.kt")
         public void testMissingElse() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/missingElse.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("missingEnumEntry.kt")
         public void testMissingEnumEntry() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/missingEnumEntry.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("missingSealedInheritor.kt")
         public void testMissingSealedInheritor() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/missingSealedInheritor.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("nonExhaustiveWhenWithoutCoercionToUnit.kt")
         public void testNonExhaustiveWhenWithoutCoercionToUnit() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/nonExhaustiveWhenWithoutCoercionToUnit.kt");
@@ -2157,90 +2157,90 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive")
       @TestDataPath("$PROJECT_ROOT")
       public class Positive {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInPositive() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("annotatedBranch.kt")
         public void testAnnotatedBranch() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/annotatedBranch.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("exhaustiveWhenAndDNNType.kt")
         public void testExhaustiveWhenAndDNNType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveWhenAndDNNType.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("exhaustiveWhenAndFlexibleType.kt")
         public void testExhaustiveWhenAndFlexibleType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveWhenAndFlexibleType.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("exhaustiveness_boolean.kt")
         public void testExhaustiveness_boolean() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveness_boolean.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("exhaustiveness_enum.kt")
         public void testExhaustiveness_enum() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveness_enum.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("exhaustiveness_enumJava.kt")
         public void testExhaustiveness_enumJava() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveness_enumJava.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("exhaustiveness_sealedClass.kt")
         public void testExhaustiveness_sealedClass() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveness_sealedClass.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("exhaustiveness_sealedObject.kt")
         public void testExhaustiveness_sealedObject() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveness_sealedObject.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("exhaustiveness_sealedSubClass.kt")
         public void testExhaustiveness_sealedSubClass() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveness_sealedSubClass.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("exhaustiveness_smartcastedBoolean.kt")
         public void testExhaustiveness_smartcastedBoolean() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveness_smartcastedBoolean.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("nestedIfInLambda.kt")
         public void testNestedIfInLambda() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/nestedIfInLambda.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("nonExhaustiveWhenWithCoercionToUnit.kt")
         public void testNonExhaustiveWhenWithCoercionToUnit() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/nonExhaustiveWhenWithCoercionToUnit.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("sameBranchMultipleConditions.kt")
         public void testSameBranchMultipleConditions() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/sameBranchMultipleConditions.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("smartcastToExhaustiveInterface.kt")
         public void testSmartcastToExhaustiveInterface() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/smartcastToExhaustiveInterface.kt");
@@ -2252,384 +2252,384 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/expresssions")
     @TestDataPath("$PROJECT_ROOT")
     public class Expresssions {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("access.kt")
       public void testAccess() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/access.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInExpresssions() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("annotationWithReturn.kt")
       public void testAnnotationWithReturn() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/annotationWithReturn.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("annotations.kt")
       public void testAnnotations() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/annotations.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("baseQualifier.kt")
       public void testBaseQualifier() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/baseQualifier.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("blockLocalScopes.kt")
       public void testBlockLocalScopes() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/blockLocalScopes.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("CallBasedInExpressionGenerator.kt")
       public void testCallBasedInExpressionGenerator() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/CallBasedInExpressionGenerator.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("checkArguments.kt")
       public void testCheckArguments() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/checkArguments.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classifierAccessFromCompanion.kt")
       public void testClassifierAccessFromCompanion() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/classifierAccessFromCompanion.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("companion.kt")
       public void testCompanion() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/companion.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("companionExtension.kt")
       public void testCompanionExtension() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/companionExtension.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructor.kt")
       public void testConstructor() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/constructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("dispatchReceiver.kt")
       public void testDispatchReceiver() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/dispatchReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("enumEntryUse.kt")
       public void testEnumEntryUse() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/enumEntryUse.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("enumValues.kt")
       public void testEnumValues() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/enumValues.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("errCallable.kt")
       public void testErrCallable() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/errCallable.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionPropertyInLambda.kt")
       public void testExtensionPropertyInLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/extensionPropertyInLambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("genericDecorator.kt")
       public void testGenericDecorator() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/genericDecorator.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("genericDescriptor.kt")
       public void testGenericDescriptor() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/genericDescriptor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("genericDiagnostic.kt")
       public void testGenericDiagnostic() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/genericDiagnostic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("genericPropertyAccess.kt")
       public void testGenericPropertyAccess() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/genericPropertyAccess.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("genericUsedInFunction.kt")
       public void testGenericUsedInFunction() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/genericUsedInFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("importedReceiver.kt")
       public void testImportedReceiver() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/importedReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("innerQualifier.kt")
       public void testInnerQualifier() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/innerQualifier.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("innerWithSuperCompanion.kt")
       public void testInnerWithSuperCompanion() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/innerWithSuperCompanion.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("javaFieldCallable.kt")
       public void testJavaFieldCallable() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/javaFieldCallable.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambda.kt")
       public void testLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/lambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdaWithReceiver.kt")
       public void testLambdaWithReceiver() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/lambdaWithReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localClassAccessesContainingClass.kt")
       public void testLocalClassAccessesContainingClass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/localClassAccessesContainingClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localConstructor.kt")
       public void testLocalConstructor() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/localConstructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localExtension.kt")
       public void testLocalExtension() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/localExtension.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localImplicitBodies.kt")
       public void testLocalImplicitBodies() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/localImplicitBodies.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localInnerClass.kt")
       public void testLocalInnerClass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/localInnerClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localObjects.kt")
       public void testLocalObjects() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/localObjects.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localScopes.kt")
       public void testLocalScopes() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/localScopes.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localTypes.kt")
       public void testLocalTypes() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/localTypes.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localWithBooleanNot.kt")
       public void testLocalWithBooleanNot() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/localWithBooleanNot.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("memberExtension.kt")
       public void testMemberExtension() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/memberExtension.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nestedConstructorCallable.kt")
       public void testNestedConstructorCallable() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/nestedConstructorCallable.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nestedObjects.kt")
       public void testNestedObjects() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/nestedObjects.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nestedVisibility.kt")
       public void testNestedVisibility() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/nestedVisibility.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("objectOverrideCallViaImport.kt")
       public void testObjectOverrideCallViaImport() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/objectOverrideCallViaImport.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("objectVsProperty.kt")
       public void testObjectVsProperty() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/objectVsProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("objects.kt")
       public void testObjects() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/objects.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("outerMemberAccesses.kt")
       public void testOuterMemberAccesses() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/outerMemberAccesses.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("outerObject.kt")
       public void testOuterObject() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/outerObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overriddenJavaGetter.kt")
       public void testOverriddenJavaGetter() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/overriddenJavaGetter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("plusWithAssignSmartCast.kt")
       public void testPlusWithAssignSmartCast() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/plusWithAssignSmartCast.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("privateObjectLiteral.kt")
       public void testPrivateObjectLiteral() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/privateObjectLiteral.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("privateVisibility.kt")
       public void testPrivateVisibility() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/privateVisibility.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("propertyAccessWithExplicitTypeArguments.kt")
       public void testPropertyAccessWithExplicitTypeArguments() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/propertyAccessWithExplicitTypeArguments.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("protectedVisibility.kt")
       public void testProtectedVisibility() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/protectedVisibility.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("qualifiedExpressions.kt")
       public void testQualifiedExpressions() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/qualifiedExpressions.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("qualifierPriority.kt")
       public void testQualifierPriority() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/qualifierPriority.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("receiverConsistency.kt")
       public void testReceiverConsistency() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/receiverConsistency.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("sameReceiver.kt")
       public void testSameReceiver() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/sameReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/simple.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("syntheticInImplicitBody.kt")
       public void testSyntheticInImplicitBody() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/syntheticInImplicitBody.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("syntheticSmartCast.kt")
       public void testSyntheticSmartCast() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/syntheticSmartCast.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("this.kt")
       public void testThis() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/this.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topExtensionVsOuterMember.kt")
       public void testTopExtensionVsOuterMember() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/topExtensionVsOuterMember.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeAliasConstructor.kt")
       public void testTypeAliasConstructor() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/typeAliasConstructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("vararg.kt")
       public void testVararg() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/vararg.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("when.kt")
       public void testWhen() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/when.kt");
@@ -2639,24 +2639,24 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/expresssions/inference")
       @TestDataPath("$PROJECT_ROOT")
       public class Inference {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInInference() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("id.kt")
         public void testId() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/inference/id.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("typeParameters.kt")
         public void testTypeParameters() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/inference/typeParameters.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("typeParameters2.kt")
         public void testTypeParameters2() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/inference/typeParameters2.kt");
@@ -2667,96 +2667,96 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke")
       @TestDataPath("$PROJECT_ROOT")
       public class Invoke {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInInvoke() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("doubleBrackets.kt")
         public void testDoubleBrackets() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/doubleBrackets.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("explicitReceiver.kt")
         public void testExplicitReceiver() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/explicitReceiver.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("explicitReceiver2.kt")
         public void testExplicitReceiver2() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/explicitReceiver2.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("extension.kt")
         public void testExtension() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/extension.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("extensionOnObject.kt")
         public void testExtensionOnObject() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/extensionOnObject.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("extensionSafeCall.kt")
         public void testExtensionSafeCall() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/extensionSafeCall.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("farInvokeExtension.kt")
         public void testFarInvokeExtension() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/farInvokeExtension.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("implicitTypeOrder.kt")
         public void testImplicitTypeOrder() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/implicitTypeOrder.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("inBrackets.kt")
         public void testInBrackets() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/inBrackets.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("incorrectInvokeReceiver.kt")
         public void testIncorrectInvokeReceiver() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/incorrectInvokeReceiver.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("propertyFromParameter.kt")
         public void testPropertyFromParameter() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/propertyFromParameter.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("propertyWithExtensionType.kt")
         public void testPropertyWithExtensionType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/propertyWithExtensionType.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("simple.kt")
         public void testSimple() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/simple.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("threeReceivers.kt")
         public void testThreeReceivers() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/threeReceivers.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("threeReceiversCorrect.kt")
         public void testThreeReceiversCorrect() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/threeReceiversCorrect.kt");
@@ -2767,24 +2767,24 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/expresssions/operators")
       @TestDataPath("$PROJECT_ROOT")
       public class Operators {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInOperators() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/operators"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("plus.kt")
         public void testPlus() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/plus.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("plusAndPlusAssign.kt")
         public void testPlusAndPlusAssign() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/plusAndPlusAssign.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("plusAssign.kt")
         public void testPlusAssign() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/plusAssign.kt");
@@ -2796,72 +2796,72 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers")
     @TestDataPath("$PROJECT_ROOT")
     public class ExtendedCheckers {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInExtendedCheckers() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extendedCheckers"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("ArrayEqualityCanBeReplacedWithEquals.kt")
       public void testArrayEqualityCanBeReplacedWithEquals() {
         runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/ArrayEqualityCanBeReplacedWithEquals.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("CanBeValChecker.kt")
       public void testCanBeValChecker() {
         runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/CanBeValChecker.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("RedundantExplicitTypeChecker.kt")
       public void testRedundantExplicitTypeChecker() {
         runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantExplicitTypeChecker.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("RedundantModalityModifierChecker.kt")
       public void testRedundantModalityModifierChecker() {
         runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantModalityModifierChecker.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("RedundantReturnUnitTypeChecker.kt")
       public void testRedundantReturnUnitTypeChecker() {
         runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantReturnUnitTypeChecker.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("RedundantSetterParameterTypeChecker.kt")
       public void testRedundantSetterParameterTypeChecker() {
         runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantSetterParameterTypeChecker.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("RedundantSingleExpressionStringTemplateChecker.kt")
       public void testRedundantSingleExpressionStringTemplateChecker() {
         runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantSingleExpressionStringTemplateChecker.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("RedundantVisibilityDueToOverride.kt")
       public void testRedundantVisibilityDueToOverride() {
         runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantVisibilityDueToOverride.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("RedundantVisibilityModifierChecker.kt")
       public void testRedundantVisibilityModifierChecker() {
         runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantVisibilityModifierChecker.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("RedundantVisibilityModifierCheckerForInnerComponents.kt")
       public void testRedundantVisibilityModifierCheckerForInnerComponents() {
         runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantVisibilityModifierCheckerForInnerComponents.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("RedundantVisibilityModifierCheckerWithExplicitApiMode.kt")
       public void testRedundantVisibilityModifierCheckerWithExplicitApiMode() {
         runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantVisibilityModifierCheckerWithExplicitApiMode.kt");
@@ -2871,120 +2871,120 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment")
       @TestDataPath("$PROJECT_ROOT")
       public class CanBeReplacedWithOperatorAssignment {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInCanBeReplacedWithOperatorAssignment() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("BasicTest.kt")
         public void testBasicTest() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/BasicTest.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("ComplexExpression.kt")
         public void testComplexExpression() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/ComplexExpression.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("flexibleTypeBug.kt")
         public void testFlexibleTypeBug() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/flexibleTypeBug.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("illegalMultipleOperators.kt")
         public void testIllegalMultipleOperators() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/illegalMultipleOperators.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("illegalMultipleOperatorsMiddle.kt")
         public void testIllegalMultipleOperatorsMiddle() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/illegalMultipleOperatorsMiddle.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("invalidSubtraction.kt")
         public void testInvalidSubtraction() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/invalidSubtraction.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("list.kt")
         public void testList() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/list.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("logicOperators.kt")
         public void testLogicOperators() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/logicOperators.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("multipleOperators.kt")
         public void testMultipleOperators() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/multipleOperators.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("multipleOperatorsRightSideRepeat.kt")
         public void testMultipleOperatorsRightSideRepeat() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/multipleOperatorsRightSideRepeat.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("mutableList.kt")
         public void testMutableList() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/mutableList.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("nonCommutativeRepeat.kt")
         public void testNonCommutativeRepeat() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/nonCommutativeRepeat.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("nonRepeatingAssignment.kt")
         public void testNonRepeatingAssignment() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/nonRepeatingAssignment.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("OperatorAssignment.kt")
         public void testOperatorAssignment() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/OperatorAssignment.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("plusAssignConflict.kt")
         public void testPlusAssignConflict() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/plusAssignConflict.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("rightSideRepeat.kt")
         public void testRightSideRepeat() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/rightSideRepeat.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("simpleAssign.kt")
         public void testSimpleAssign() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/simpleAssign.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("validAddition.kt")
         public void testValidAddition() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/validAddition.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("validSubtraction.kt")
         public void testValidSubtraction() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/validSubtraction.kt");
@@ -2995,18 +2995,18 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/emptyRangeChecker")
       @TestDataPath("$PROJECT_ROOT")
       public class EmptyRangeChecker {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInEmptyRangeChecker() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/emptyRangeChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("NoWarning.kt")
         public void testNoWarning() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/emptyRangeChecker/NoWarning.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("Warning.kt")
         public void testWarning() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/emptyRangeChecker/Warning.kt");
@@ -3017,126 +3017,126 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod")
       @TestDataPath("$PROJECT_ROOT")
       public class RedundantCallOfConversionMethod {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInRedundantCallOfConversionMethod() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("booleanToInt.kt")
         public void testBooleanToInt() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/booleanToInt.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("byte.kt")
         public void testByte() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/byte.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("char.kt")
         public void testChar() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/char.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("double.kt")
         public void testDouble() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/double.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("float.kt")
         public void testFloat() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/float.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("int.kt")
         public void testInt() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/int.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("long.kt")
         public void testLong() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/long.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("nullable.kt")
         public void testNullable() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/nullable.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("nullable2.kt")
         public void testNullable2() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/nullable2.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("safeString.kt")
         public void testSafeString() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/safeString.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("safeString2.kt")
         public void testSafeString2() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/safeString2.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("short.kt")
         public void testShort() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/short.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("string.kt")
         public void testString() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/string.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("StringTemplate.kt")
         public void testStringTemplate() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/StringTemplate.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("toOtherType.kt")
         public void testToOtherType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/toOtherType.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("uByte.kt")
         public void testUByte() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/uByte.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("uInt.kt")
         public void testUInt() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/uInt.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("uLong.kt")
         public void testULong() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/uLong.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("uShort.kt")
         public void testUShort() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/uShort.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("variable.kt")
         public void testVariable() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/variable.kt");
@@ -3147,108 +3147,108 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused")
       @TestDataPath("$PROJECT_ROOT")
       public class Unused {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInUnused() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("classProperty.kt")
         public void testClassProperty() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/classProperty.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("invoke.kt")
         public void testInvoke() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invoke.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("invokeCustomTypeExt.kt")
         public void testInvokeCustomTypeExt() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeCustomTypeExt.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("invokeCustomTypeMember.kt")
         public void testInvokeCustomTypeMember() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeCustomTypeMember.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("invokeKFunction.kt")
         public void testInvokeKFunction() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeKFunction.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("invokeKFunctionFromMethodReference.kt")
         public void testInvokeKFunctionFromMethodReference() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeKFunctionFromMethodReference.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("invokeKSuspendFunction.kt")
         public void testInvokeKSuspendFunction() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeKSuspendFunction.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("invokeOverload1.kt")
         public void testInvokeOverload1() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeOverload1.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("invokeOverload2.kt")
         public void testInvokeOverload2() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeOverload2.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("invokeSuspend.kt")
         public void testInvokeSuspend() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeSuspend.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("invokeWithExtensionReceiver.kt")
         public void testInvokeWithExtensionReceiver() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeWithExtensionReceiver.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("lambda.kt")
         public void testLambda() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/lambda.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("localVariable.kt")
         public void testLocalVariable() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/localVariable.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("localVariableInSecondaryConstructor.kt")
         public void testLocalVariableInSecondaryConstructor() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/localVariableInSecondaryConstructor.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("manyLocalVariables.kt")
         public void testManyLocalVariables() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/manyLocalVariables.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("usedInAnnotationArguments.kt")
         public void testUsedInAnnotationArguments() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/usedInAnnotationArguments.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("valueIsNeverRead.kt")
         public void testValueIsNeverRead() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/valueIsNeverRead.kt");
@@ -3259,72 +3259,72 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker")
       @TestDataPath("$PROJECT_ROOT")
       public class UselessCallOnNotNullChecker {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInUselessCallOnNotNullChecker() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("Basic.kt")
         public void testBasic() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/Basic.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("NotNullType.kt")
         public void testNotNullType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/NotNullType.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("NotNullTypeChain.kt")
         public void testNotNullTypeChain() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/NotNullTypeChain.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("NullOrBlankSafe.kt")
         public void testNullOrBlankSafe() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/NullOrBlankSafe.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("NullOrEmpty.kt")
         public void testNullOrEmpty() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/NullOrEmpty.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("NullOrEmptyFake.kt")
         public void testNullOrEmptyFake() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/NullOrEmptyFake.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("NullOrEmptySafe.kt")
         public void testNullOrEmptySafe() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/NullOrEmptySafe.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("OrEmptyFake.kt")
         public void testOrEmptyFake() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/OrEmptyFake.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("SafeCall.kt")
         public void testSafeCall() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/SafeCall.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("Sequence.kt")
         public void testSequence() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/Sequence.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("String.kt")
         public void testString() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/String.kt");
@@ -3336,36 +3336,36 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/fromBuilder")
     @TestDataPath("$PROJECT_ROOT")
     public class FromBuilder {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInFromBuilder() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/fromBuilder"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("complexTypes.kt")
       public void testComplexTypes() {
         runTest("compiler/fir/analysis-tests/testData/resolve/fromBuilder/complexTypes.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("enums.kt")
       public void testEnums() {
         runTest("compiler/fir/analysis-tests/testData/resolve/fromBuilder/enums.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("noPrimaryConstructor.kt")
       public void testNoPrimaryConstructor() {
         runTest("compiler/fir/analysis-tests/testData/resolve/fromBuilder/noPrimaryConstructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simpleClass.kt")
       public void testSimpleClass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/fromBuilder/simpleClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeParameters.kt")
       public void testTypeParameters() {
         runTest("compiler/fir/analysis-tests/testData/resolve/fromBuilder/typeParameters.kt");
@@ -3376,216 +3376,216 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference")
     @TestDataPath("$PROJECT_ROOT")
     public class Inference {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInInference() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("callableReferenceOnInstance.kt")
       public void testCallableReferenceOnInstance() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/callableReferenceOnInstance.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("callableReferenceToLocalClass.kt")
       public void testCallableReferenceToLocalClass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/callableReferenceToLocalClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("callableReferencesAndDefaultParameters.kt")
       public void testCallableReferencesAndDefaultParameters() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/callableReferencesAndDefaultParameters.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("capturedTypeForJavaTypeParameter.kt")
       public void testCapturedTypeForJavaTypeParameter() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/capturedTypeForJavaTypeParameter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("coercionToUnitWithEarlyReturn.kt")
       public void testCoercionToUnitWithEarlyReturn() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/coercionToUnitWithEarlyReturn.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("definitelyNotNullIntersectionType.kt")
       public void testDefinitelyNotNullIntersectionType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/definitelyNotNullIntersectionType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("dnnThrowJavaCall.kt")
       public void testDnnThrowJavaCall() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/dnnThrowJavaCall.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("elvisAndUnit.kt")
       public void testElvisAndUnit() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/elvisAndUnit.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("equals.kt")
       public void testEquals() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/equals.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionCallableReferences.kt")
       public void testExtensionCallableReferences() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/extensionCallableReferences.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("flexibleTypeAtRightSideOfElvis.kt")
       public void testFlexibleTypeAtRightSideOfElvis() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/flexibleTypeAtRightSideOfElvis.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("integerLiteralAsComparable.kt")
       public void testIntegerLiteralAsComparable() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/integerLiteralAsComparable.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("intersectionTypesInConstraints.kt")
       public void testIntersectionTypesInConstraints() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/intersectionTypesInConstraints.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("javaCollector.kt")
       public void testJavaCollector() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/javaCollector.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt40131.kt")
       public void testKt40131() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/kt40131.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt41989.kt")
       public void testKt41989() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/kt41989.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt53494.kt")
       public void testKt53494() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/kt53494.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt54990.kt")
       public void testKt54990() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/kt54990.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdaAsReturnStatementOfLambda.kt")
       public void testLambdaAsReturnStatementOfLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/lambdaAsReturnStatementOfLambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdaInElvis.kt")
       public void testLambdaInElvis() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/lambdaInElvis.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdaWithoutExpectedType.kt")
       public void testLambdaWithoutExpectedType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/lambdaWithoutExpectedType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdasReturns.kt")
       public void testLambdasReturns() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/lambdasReturns.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nestedExtensionFunctionType.kt")
       public void testNestedExtensionFunctionType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/nestedExtensionFunctionType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nestedLambdas.kt")
       public void testNestedLambdas() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/nestedLambdas.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("noEnhancementOnFinalStaticConstFields.kt")
       public void testNoEnhancementOnFinalStaticConstFields() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/noEnhancementOnFinalStaticConstFields.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nullableIntegerLiteralType.kt")
       public void testNullableIntegerLiteralType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/nullableIntegerLiteralType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onlyInputTypesCapturedTypeWithRecursiveBounds.kt")
       public void testOnlyInputTypesCapturedTypeWithRecursiveBounds() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/onlyInputTypesCapturedTypeWithRecursiveBounds.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("onlyInputTypesCapturedTypeWithRecursiveBoundsAfter.kt")
       public void testOnlyInputTypesCapturedTypeWithRecursiveBoundsAfter() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/onlyInputTypesCapturedTypeWithRecursiveBoundsAfter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overloadResolutionByLambdaArgumentType.kt")
       public void testOverloadResolutionByLambdaArgumentType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/overloadResolutionByLambdaArgumentType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("receiverWithCapturedType.kt")
       public void testReceiverWithCapturedType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/receiverWithCapturedType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("recursiveSelfTypes.kt")
       public void testRecursiveSelfTypes() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/recursiveSelfTypes.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("selfTypeFromJava.kt")
       public void testSelfTypeFromJava() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/selfTypeFromJava.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simpleCapturedTypes.kt")
       public void testSimpleCapturedTypes() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/simpleCapturedTypes.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeDepthForTypeAlias.kt")
       public void testTypeDepthForTypeAlias() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/typeDepthForTypeAlias.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("unitUpperBound.kt")
       public void testUnitUpperBound() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/unitUpperBound.kt");
@@ -3595,18 +3595,18 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference/builderInference")
       @TestDataPath("$PROJECT_ROOT")
       public class BuilderInference {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInBuilderInference() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/builderInference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("doubleSquareBracketsInBuilderArgument.kt")
         public void testDoubleSquareBracketsInBuilderArgument() {
           runTest("compiler/fir/analysis-tests/testData/resolve/inference/builderInference/doubleSquareBracketsInBuilderArgument.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("ifInBuildMap.kt")
         public void testIfInBuildMap() {
           runTest("compiler/fir/analysis-tests/testData/resolve/inference/builderInference/ifInBuildMap.kt");
@@ -3618,24 +3618,24 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inlineClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class InlineClasses {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInInlineClasses() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inlineClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inlineClassConstructor.kt")
       public void testInlineClassConstructor() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inlineClasses/inlineClassConstructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inlineClassDeclaration.kt")
       public void testInlineClassDeclaration() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inlineClasses/inlineClassDeclaration.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inlineClassMembers.kt")
       public void testInlineClassMembers() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inlineClasses/inlineClassMembers.kt");
@@ -3646,30 +3646,30 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/innerClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class InnerClasses {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInInnerClasses() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/innerClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inner.kt")
       public void testInner() {
         runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inner.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("innerTypeFromSuperClassInBody.kt")
       public void testInnerTypeFromSuperClassInBody() {
         runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/innerTypeFromSuperClassInBody.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("innerTypes.kt")
       public void testInnerTypes() {
         runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/innerTypes.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/simple.kt");
@@ -3680,48 +3680,48 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/localClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class LocalClasses {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInLocalClasses() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/localClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("anonObject.kt")
       public void testAnonObject() {
         runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/anonObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("anonymousInAnonymous.kt")
       public void testAnonymousInAnonymous() {
         runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/anonymousInAnonymous.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("implicitInAnonymous.kt")
       public void testImplicitInAnonymous() {
         runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/implicitInAnonymous.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("implicitInLocalClasses.kt")
       public void testImplicitInLocalClasses() {
         runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/implicitInLocalClasses.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdaWithAnonymousObject.kt")
       public void testLambdaWithAnonymousObject() {
         runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/lambdaWithAnonymousObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overrideInLocal.kt")
       public void testOverrideInLocal() {
         runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/overrideInLocal.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typesFromSuperClasses.kt")
       public void testTypesFromSuperClasses() {
         runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/typesFromSuperClasses.kt");
@@ -3732,72 +3732,72 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/multifile")
     @TestDataPath("$PROJECT_ROOT")
     public class Multifile {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInMultifile() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/multifile"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("Annotations.kt")
       public void testAnnotations() {
         runTest("compiler/fir/analysis-tests/testData/resolve/multifile/Annotations.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("ByteArray.kt")
       public void testByteArray() {
         runTest("compiler/fir/analysis-tests/testData/resolve/multifile/ByteArray.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("importFromObject.kt")
       public void testImportFromObject() {
         runTest("compiler/fir/analysis-tests/testData/resolve/multifile/importFromObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("NestedSuperType.kt")
       public void testNestedSuperType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/multifile/NestedSuperType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("sealedStarImport.kt")
       public void testSealedStarImport() {
         runTest("compiler/fir/analysis-tests/testData/resolve/multifile/sealedStarImport.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simpleAliasedImport.kt")
       public void testSimpleAliasedImport() {
         runTest("compiler/fir/analysis-tests/testData/resolve/multifile/simpleAliasedImport.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simpleImport.kt")
       public void testSimpleImport() {
         runTest("compiler/fir/analysis-tests/testData/resolve/multifile/simpleImport.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simpleImportNested.kt")
       public void testSimpleImportNested() {
         runTest("compiler/fir/analysis-tests/testData/resolve/multifile/simpleImportNested.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simpleImportOuter.kt")
       public void testSimpleImportOuter() {
         runTest("compiler/fir/analysis-tests/testData/resolve/multifile/simpleImportOuter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simpleStarImport.kt")
       public void testSimpleStarImport() {
         runTest("compiler/fir/analysis-tests/testData/resolve/multifile/simpleStarImport.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("TypeAliasExpansion.kt")
       public void testTypeAliasExpansion() {
         runTest("compiler/fir/analysis-tests/testData/resolve/multifile/TypeAliasExpansion.kt");
@@ -3808,60 +3808,60 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/overrides")
     @TestDataPath("$PROJECT_ROOT")
     public class Overrides {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInOverrides() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/overrides"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("generics.kt")
       public void testGenerics() {
         runTest("compiler/fir/analysis-tests/testData/resolve/overrides/generics.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("protobufExt.kt")
       public void testProtobufExt() {
         runTest("compiler/fir/analysis-tests/testData/resolve/overrides/protobufExt.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("sameValueParametersDifferentReceiver.kt")
       public void testSameValueParametersDifferentReceiver() {
         runTest("compiler/fir/analysis-tests/testData/resolve/overrides/sameValueParametersDifferentReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/fir/analysis-tests/testData/resolve/overrides/simple.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simpleFakeOverride.kt")
       public void testSimpleFakeOverride() {
         runTest("compiler/fir/analysis-tests/testData/resolve/overrides/simpleFakeOverride.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simpleMostSpecific.kt")
       public void testSimpleMostSpecific() {
         runTest("compiler/fir/analysis-tests/testData/resolve/overrides/simpleMostSpecific.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("supertypeGenerics.kt")
       public void testSupertypeGenerics() {
         runTest("compiler/fir/analysis-tests/testData/resolve/overrides/supertypeGenerics.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("supertypeGenericsComplex.kt")
       public void testSupertypeGenericsComplex() {
         runTest("compiler/fir/analysis-tests/testData/resolve/overrides/supertypeGenericsComplex.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("three.kt")
       public void testThree() {
         runTest("compiler/fir/analysis-tests/testData/resolve/overrides/three.kt");
@@ -3872,198 +3872,198 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/problems")
     @TestDataPath("$PROJECT_ROOT")
     public class Problems {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInProblems() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classLiteralWithExclExcl.kt")
       public void testClassLiteralWithExclExcl() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/classLiteralWithExclExcl.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("compilerPhase.kt")
       public void testCompilerPhase() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/compilerPhase.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("complexLambdaWithTypeVariableAsExpectedType.kt")
       public void testComplexLambdaWithTypeVariableAsExpectedType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/complexLambdaWithTypeVariableAsExpectedType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("defaultParametersFromDifferentScopes.kt")
       public void testDefaultParametersFromDifferentScopes() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/defaultParametersFromDifferentScopes.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("definitelyNotNullAndOriginalType.kt")
       public void testDefinitelyNotNullAndOriginalType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/definitelyNotNullAndOriginalType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("doubleGenericDiamond.kt")
       public void testDoubleGenericDiamond() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/doubleGenericDiamond.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("emptySelectorInQualifiedExpression.kt")
       public void testEmptySelectorInQualifiedExpression() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/emptySelectorInQualifiedExpression.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("enumEntryFieldShadow.kt")
       public void testEnumEntryFieldShadow() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/enumEntryFieldShadow.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("expectConstructor.kt")
       public void testExpectConstructor() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/expectConstructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("fakeTypeMismatchOnExtensionReference.kt")
       public void testFakeTypeMismatchOnExtensionReference() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/fakeTypeMismatchOnExtensionReference.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("falseIntersection.kt")
       public void testFalseIntersection() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/falseIntersection.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("flexibleTypeVarAgainstNull.kt")
       public void testFlexibleTypeVarAgainstNull() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/flexibleTypeVarAgainstNull.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inaccessibleJavaGetter.kt")
       public void testInaccessibleJavaGetter() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/inaccessibleJavaGetter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("incompleteUserType.kt")
       public void testIncompleteUserType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/incompleteUserType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("incompleteUserTypeWithUnresovledTypeArgument.kt")
       public void testIncompleteUserTypeWithUnresovledTypeArgument() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/incompleteUserTypeWithUnresovledTypeArgument.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("incompleteWhen.kt")
       public void testIncompleteWhen() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/incompleteWhen.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("incorrectGenericLambdaProperty.kt")
       public void testIncorrectGenericLambdaProperty() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/incorrectGenericLambdaProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("innerClassHierarchy.kt")
       public void testInnerClassHierarchy() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/innerClassHierarchy.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("invalidCode.kt")
       public void testInvalidCode() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/invalidCode.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("javaClassWithEmptyAnnotationName.kt")
       public void testJavaClassWithEmptyAnnotationName() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/javaClassWithEmptyAnnotationName.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("javaQualifier.kt")
       public void testJavaQualifier() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/javaQualifier.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt42346.kt")
       public void testKt42346() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/kt42346.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("multipleJavaClassesInOneFile.kt")
       public void testMultipleJavaClassesInOneFile() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/multipleJavaClassesInOneFile.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("objectDerivedFromInnerClass.kt")
       public void testObjectDerivedFromInnerClass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/objectDerivedFromInnerClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("primaryConstructorParameterWithoutReturnType.kt")
       public void testPrimaryConstructorParameterWithoutReturnType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/primaryConstructorParameterWithoutReturnType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("questionableSmartCast.kt")
       public void testQuestionableSmartCast() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/questionableSmartCast.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("recursiveNamedAnnotation.kt")
       public void testRecursiveNamedAnnotation() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/recursiveNamedAnnotation.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("safeCallInvoke.kt")
       public void testSafeCallInvoke() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/safeCallInvoke.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("secondaryConstructorCfg.kt")
       public void testSecondaryConstructorCfg() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/secondaryConstructorCfg.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("symbolsAndDescriptors.kt")
       public void testSymbolsAndDescriptors() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/symbolsAndDescriptors.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("transform.kt")
       public void testTransform() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/transform.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeArgumentsOnThis.kt")
       public void testTypeArgumentsOnThis() {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems/typeArgumentsOnThis.kt");
@@ -4074,60 +4074,60 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/properties")
     @TestDataPath("$PROJECT_ROOT")
     public class Properties {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInProperties() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("assignToStarProjectedType.kt")
       public void testAssignToStarProjectedType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/properties/assignToStarProjectedType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("getterWithEarlyReturn.kt")
       public void testGetterWithEarlyReturn() {
         runTest("compiler/fir/analysis-tests/testData/resolve/properties/getterWithEarlyReturn.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("javaAccessorConversion.kt")
       public void testJavaAccessorConversion() {
         runTest("compiler/fir/analysis-tests/testData/resolve/properties/javaAccessorConversion.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("javaAccessorsComplex.kt")
       public void testJavaAccessorsComplex() {
         runTest("compiler/fir/analysis-tests/testData/resolve/properties/javaAccessorsComplex.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kotlinOverridesJavaComplex.kt")
       public void testKotlinOverridesJavaComplex() {
         runTest("compiler/fir/analysis-tests/testData/resolve/properties/kotlinOverridesJavaComplex.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lazyValWithElvisToNothingInside.kt")
       public void testLazyValWithElvisToNothingInside() {
         runTest("compiler/fir/analysis-tests/testData/resolve/properties/lazyValWithElvisToNothingInside.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("noBackingFieldForExtension.kt")
       public void testNoBackingFieldForExtension() {
         runTest("compiler/fir/analysis-tests/testData/resolve/properties/noBackingFieldForExtension.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("noBackingFieldInProperty.kt")
       public void testNoBackingFieldInProperty() {
         runTest("compiler/fir/analysis-tests/testData/resolve/properties/noBackingFieldInProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("syntheticPropertiesForJavaAnnotations.kt")
       public void testSyntheticPropertiesForJavaAnnotations() {
         runTest("compiler/fir/analysis-tests/testData/resolve/properties/syntheticPropertiesForJavaAnnotations.kt");
@@ -4138,30 +4138,30 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/propertyVsField")
     @TestDataPath("$PROJECT_ROOT")
     public class PropertyVsField {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInPropertyVsField() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/propertyVsField"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("fieldPropertyShadow.kt")
       public void testFieldPropertyShadow() {
         runTest("compiler/fir/analysis-tests/testData/resolve/propertyVsField/fieldPropertyShadow.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("javaFieldAndKotlinPropertyReferenceFromInner.kt")
       public void testJavaFieldAndKotlinPropertyReferenceFromInner() {
         runTest("compiler/fir/analysis-tests/testData/resolve/propertyVsField/javaFieldAndKotlinPropertyReferenceFromInner.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("propertyAndTwoFields.kt")
       public void testPropertyAndTwoFields() {
         runTest("compiler/fir/analysis-tests/testData/resolve/propertyVsField/propertyAndTwoFields.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("propertyFieldShadow.kt")
       public void testPropertyFieldShadow() {
         runTest("compiler/fir/analysis-tests/testData/resolve/propertyVsField/propertyFieldShadow.kt");
@@ -4172,78 +4172,78 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/references")
     @TestDataPath("$PROJECT_ROOT")
     public class References {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInReferences() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/references"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("ambigousParenthesizedReference.kt")
       public void testAmbigousParenthesizedReference() {
         runTest("compiler/fir/analysis-tests/testData/resolve/references/ambigousParenthesizedReference.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("incorrectReferenceOnInnerClassMember.kt")
       public void testIncorrectReferenceOnInnerClassMember() {
         runTest("compiler/fir/analysis-tests/testData/resolve/references/incorrectReferenceOnInnerClassMember.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("integerLiteralInLhs.kt")
       public void testIntegerLiteralInLhs() {
         runTest("compiler/fir/analysis-tests/testData/resolve/references/integerLiteralInLhs.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("leakedImplicitType.kt")
       public void testLeakedImplicitType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/references/leakedImplicitType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("mutablePropertyGenericButNotCapturedType.kt")
       public void testMutablePropertyGenericButNotCapturedType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/references/mutablePropertyGenericButNotCapturedType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("mutablePropertyWithCapturedType.kt")
       public void testMutablePropertyWithCapturedType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/references/mutablePropertyWithCapturedType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("referenceToExtension.kt")
       public void testReferenceToExtension() {
         runTest("compiler/fir/analysis-tests/testData/resolve/references/referenceToExtension.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("referenceToField.kt")
       public void testReferenceToField() {
         runTest("compiler/fir/analysis-tests/testData/resolve/references/referenceToField.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("referenceToSyntheticJavaPropertyWithProjection.kt")
       public void testReferenceToSyntheticJavaPropertyWithProjection() {
         runTest("compiler/fir/analysis-tests/testData/resolve/references/referenceToSyntheticJavaPropertyWithProjection.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/fir/analysis-tests/testData/resolve/references/simple.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superMember.kt")
       public void testSuperMember() {
         runTest("compiler/fir/analysis-tests/testData/resolve/references/superMember.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("unresovledReferenceInFinally.kt")
       public void testUnresovledReferenceInFinally() {
         runTest("compiler/fir/analysis-tests/testData/resolve/references/unresovledReferenceInFinally.kt");
@@ -4254,48 +4254,48 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/samConstructors")
     @TestDataPath("$PROJECT_ROOT")
     public class SamConstructors {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInSamConstructors() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/samConstructors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("funInterfaceConstructorReference.kt")
       public void testFunInterfaceConstructorReference() {
         runTest("compiler/fir/analysis-tests/testData/resolve/samConstructors/funInterfaceConstructorReference.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("genericSam.kt")
       public void testGenericSam() {
         runTest("compiler/fir/analysis-tests/testData/resolve/samConstructors/genericSam.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("genericSamInferenceFromExpectType.kt")
       public void testGenericSamInferenceFromExpectType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/samConstructors/genericSamInferenceFromExpectType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kotlinSam.kt")
       public void testKotlinSam() {
         runTest("compiler/fir/analysis-tests/testData/resolve/samConstructors/kotlinSam.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("realConstructorFunction.kt")
       public void testRealConstructorFunction() {
         runTest("compiler/fir/analysis-tests/testData/resolve/samConstructors/realConstructorFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("runnable.kt")
       public void testRunnable() {
         runTest("compiler/fir/analysis-tests/testData/resolve/samConstructors/runnable.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/fir/analysis-tests/testData/resolve/samConstructors/simple.kt");
@@ -4306,72 +4306,72 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/samConversions")
     @TestDataPath("$PROJECT_ROOT")
     public class SamConversions {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInSamConversions() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/samConversions"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("genericSam.kt")
       public void testGenericSam() {
         runTest("compiler/fir/analysis-tests/testData/resolve/samConversions/genericSam.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kotlinSam.kt")
       public void testKotlinSam() {
         runTest("compiler/fir/analysis-tests/testData/resolve/samConversions/kotlinSam.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("notSamBecauseOfSupertype.kt")
       public void testNotSamBecauseOfSupertype() {
         runTest("compiler/fir/analysis-tests/testData/resolve/samConversions/notSamBecauseOfSupertype.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nothingVararg.kt")
       public void testNothingVararg() {
         runTest("compiler/fir/analysis-tests/testData/resolve/samConversions/nothingVararg.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("runnable.kt")
       public void testRunnable() {
         runTest("compiler/fir/analysis-tests/testData/resolve/samConversions/runnable.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("samConversionInConstructorCall.kt")
       public void testSamConversionInConstructorCall() {
         runTest("compiler/fir/analysis-tests/testData/resolve/samConversions/samConversionInConstructorCall.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("samSupertype.kt")
       public void testSamSupertype() {
         runTest("compiler/fir/analysis-tests/testData/resolve/samConversions/samSupertype.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("samSupertypeWithOverride.kt")
       public void testSamSupertypeWithOverride() {
         runTest("compiler/fir/analysis-tests/testData/resolve/samConversions/samSupertypeWithOverride.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("samVsLambda.kt")
       public void testSamVsLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolve/samConversions/samVsLambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("samWithEquals.kt")
       public void testSamWithEquals() {
         runTest("compiler/fir/analysis-tests/testData/resolve/samConversions/samWithEquals.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/fir/analysis-tests/testData/resolve/samConversions/simple.kt");
@@ -4382,102 +4382,102 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/scopes")
     @TestDataPath("$PROJECT_ROOT")
     public class Scopes {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInScopes() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/scopes"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("delegatedDataClass.kt")
       public void testDelegatedDataClass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/scopes/delegatedDataClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("explicitOverrideOfTwoMembers.kt")
       public void testExplicitOverrideOfTwoMembers() {
         runTest("compiler/fir/analysis-tests/testData/resolve/scopes/explicitOverrideOfTwoMembers.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("explicitOverrideOfTwoMembers_java.kt")
       public void testExplicitOverrideOfTwoMembers_java() {
         runTest("compiler/fir/analysis-tests/testData/resolve/scopes/explicitOverrideOfTwoMembers_java.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("getterOverrideAndKotlinProperty.kt")
       public void testGetterOverrideAndKotlinProperty() {
         runTest("compiler/fir/analysis-tests/testData/resolve/scopes/getterOverrideAndKotlinProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("intersectionOverrideOfTwoMembers.kt")
       public void testIntersectionOverrideOfTwoMembers() {
         runTest("compiler/fir/analysis-tests/testData/resolve/scopes/intersectionOverrideOfTwoMembers.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("intersectionOverrideOfTwoMembers_java.kt")
       public void testIntersectionOverrideOfTwoMembers_java() {
         runTest("compiler/fir/analysis-tests/testData/resolve/scopes/intersectionOverrideOfTwoMembers_java.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("javaFunctionAndKotlinPropertyFromDifferentSupertypes.kt")
       public void testJavaFunctionAndKotlinPropertyFromDifferentSupertypes() {
         runTest("compiler/fir/analysis-tests/testData/resolve/scopes/javaFunctionAndKotlinPropertyFromDifferentSupertypes.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kotlinAccessorsLikeFunctionsThrowJavaClass.kt")
       public void testKotlinAccessorsLikeFunctionsThrowJavaClass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/scopes/kotlinAccessorsLikeFunctionsThrowJavaClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("noIntersectionOverrideOfTwoMembers.kt")
       public void testNoIntersectionOverrideOfTwoMembers() {
         runTest("compiler/fir/analysis-tests/testData/resolve/scopes/noIntersectionOverrideOfTwoMembers.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("noIntersectionOverrideOfTwoMembers_java.kt")
       public void testNoIntersectionOverrideOfTwoMembers_java() {
         runTest("compiler/fir/analysis-tests/testData/resolve/scopes/noIntersectionOverrideOfTwoMembers_java.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("publicJavaAndPrivateKotlinVar.kt")
       public void testPublicJavaAndPrivateKotlinVar() {
         runTest("compiler/fir/analysis-tests/testData/resolve/scopes/publicJavaAndPrivateKotlinVar.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("singleIntersectionOverride.kt")
       public void testSingleIntersectionOverride() {
         runTest("compiler/fir/analysis-tests/testData/resolve/scopes/singleIntersectionOverride.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("specialFunctionInJava_1.kt")
       public void testSpecialFunctionInJava_1() {
         runTest("compiler/fir/analysis-tests/testData/resolve/scopes/specialFunctionInJava_1.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("specialFunctionInJava_2.kt")
       public void testSpecialFunctionInJava_2() {
         runTest("compiler/fir/analysis-tests/testData/resolve/scopes/specialFunctionInJava_2.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("specialFunctionInJava_3.kt")
       public void testSpecialFunctionInJava_3() {
         runTest("compiler/fir/analysis-tests/testData/resolve/scopes/specialFunctionInJava_3.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("specialFunctionInJava_4.kt")
       public void testSpecialFunctionInJava_4() {
         runTest("compiler/fir/analysis-tests/testData/resolve/scopes/specialFunctionInJava_4.kt");
@@ -4488,7 +4488,7 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/scripts")
     @TestDataPath("$PROJECT_ROOT")
     public class Scripts {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInScripts() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/scripts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
@@ -4498,180 +4498,180 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts")
     @TestDataPath("$PROJECT_ROOT")
     public class Smartcasts {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("accessToMemberAfterReceiverReassignment.kt")
       public void testAccessToMemberAfterReceiverReassignment() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/accessToMemberAfterReceiverReassignment.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInSmartcasts() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("bangbang.kt")
       public void testBangbang() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/bangbang.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("casts.kt")
       public void testCasts() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/casts.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("contractSafeCall.kt")
       public void testContractSafeCall() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/contractSafeCall.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("equalsAndIdentity.kt")
       public void testEqualsAndIdentity() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/equalsAndIdentity.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("incorrectSmartcastToNothing.kt")
       public void testIncorrectSmartcastToNothing() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/incorrectSmartcastToNothing.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt10240.kt")
       public void testKt10240() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/kt10240.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt37327.kt")
       public void testKt37327() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/kt37327.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt39000.kt")
       public void testKt39000() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/kt39000.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt50788.kt")
       public void testKt50788() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/kt50788.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt50875.kt")
       public void testKt50875() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/kt50875.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("literalInWhenSubject.kt")
       public void testLiteralInWhenSubject() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/literalInWhenSubject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("longElvisChain.kt")
       public void testLongElvisChain() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/longElvisChain.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("multipleCasts.kt")
       public void testMultipleCasts() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/multipleCasts.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nullability.kt")
       public void testNullability() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/nullability.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("orInWhenBranch.kt")
       public void testOrInWhenBranch() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/orInWhenBranch.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("smartCastInInit.kt")
       public void testSmartCastInInit() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartCastInInit.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("smartcastInByClause.kt")
       public void testSmartcastInByClause() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastInByClause.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("smartcastOnFunctionalType.kt")
       public void testSmartcastOnFunctionalType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastOnFunctionalType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("smartcastOnImplicitReceiverOfCallableReference.kt")
       public void testSmartcastOnImplicitReceiverOfCallableReference() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastOnImplicitReceiverOfCallableReference.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("smartcastToNothing.kt")
       public void testSmartcastToNothing() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastToNothing.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("smartcastToStarProjectedType.kt")
       public void testSmartcastToStarProjectedType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastToStarProjectedType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("smartcastToTypeParameter.kt")
       public void testSmartcastToTypeParameter() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastToTypeParameter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("smartcastedField.kt")
       public void testSmartcastedField() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastedField.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("smartcastsFromEquals_differentModule.kt")
       public void testSmartcastsFromEquals_differentModule() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastsFromEquals_differentModule.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("smartcastsFromEquals_sameModule.kt")
       public void testSmartcastsFromEquals_sameModule() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastsFromEquals_sameModule.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeOfLambdaWithSmartcast.kt")
       public void testTypeOfLambdaWithSmartcast() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/typeOfLambdaWithSmartcast.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("unstableSmartcastAndAmbiguity.kt")
       public void testUnstableSmartcastAndAmbiguity() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/unstableSmartcastAndAmbiguity.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("valCapturedInLambda.kt")
       public void testValCapturedInLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/valCapturedInLambda.kt");
@@ -4681,30 +4681,30 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans")
       @TestDataPath("$PROJECT_ROOT")
       public class Booleans {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInBooleans() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("booleanElvisBoundSmartcast.kt")
         public void testBooleanElvisBoundSmartcast() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans/booleanElvisBoundSmartcast.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("booleanOperators.kt")
         public void testBooleanOperators() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans/booleanOperators.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("equalsToBoolean.kt")
         public void testEqualsToBoolean() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans/equalsToBoolean.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("jumpFromRhsOfOperator.kt")
         public void testJumpFromRhsOfOperator() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans/jumpFromRhsOfOperator.kt");
@@ -4715,42 +4715,42 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts")
       @TestDataPath("$PROJECT_ROOT")
       public class BoundSmartcasts {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInBoundSmartcasts() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("assignToBoundSmartcastedVariable.kt")
         public void testAssignToBoundSmartcastedVariable() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts/assignToBoundSmartcastedVariable.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("boundSmartcastWithProjection.kt")
         public void testBoundSmartcastWithProjection() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts/boundSmartcastWithProjection.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("boundSmartcasts.kt")
         public void testBoundSmartcasts() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts/boundSmartcasts.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("boundSmartcastsInBranches.kt")
         public void testBoundSmartcastsInBranches() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts/boundSmartcastsInBranches.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("functionCallBound.kt")
         public void testFunctionCallBound() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts/functionCallBound.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("thisAssignment.kt")
         public void testThisAssignment() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts/thisAssignment.kt");
@@ -4761,54 +4761,54 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures")
       @TestDataPath("$PROJECT_ROOT")
       public class ControlStructures {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInControlStructures() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("earlyReturnInNonExhaustiveWhen.kt")
         public void testEarlyReturnInNonExhaustiveWhen() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures/earlyReturnInNonExhaustiveWhen.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("elvis.kt")
         public void testElvis() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures/elvis.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("returnFromWhen.kt")
         public void testReturnFromWhen() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures/returnFromWhen.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("returns.kt")
         public void testReturns() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures/returns.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("simpleIf.kt")
         public void testSimpleIf() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures/simpleIf.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("smartcastFromArgument.kt")
         public void testSmartcastFromArgument() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures/smartcastFromArgument.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("when.kt")
         public void testWhen() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures/when.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("whenSubjectExpression.kt")
         public void testWhenSubjectExpression() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures/whenSubjectExpression.kt");
@@ -4819,24 +4819,24 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/lambdas")
       @TestDataPath("$PROJECT_ROOT")
       public class Lambdas {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInLambdas() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/lambdas"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("inPlaceLambdas.kt")
         public void testInPlaceLambdas() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/lambdas/inPlaceLambdas.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("lambdaInWhenBranch.kt")
         public void testLambdaInWhenBranch() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/lambdas/lambdaInWhenBranch.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("smartcastOnLambda.kt")
         public void testSmartcastOnLambda() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/lambdas/smartcastOnLambda.kt");
@@ -4847,24 +4847,24 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/loops")
       @TestDataPath("$PROJECT_ROOT")
       public class Loops {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInLoops() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/loops"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("dataFlowInfoFromWhileCondition.kt")
         public void testDataFlowInfoFromWhileCondition() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/loops/dataFlowInfoFromWhileCondition.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("elvisAtTheEndOfLoop.kt")
         public void testElvisAtTheEndOfLoop() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/loops/elvisAtTheEndOfLoop.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("endlessLoops.kt")
         public void testEndlessLoops() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/loops/endlessLoops.kt");
@@ -4875,24 +4875,24 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/problems")
       @TestDataPath("$PROJECT_ROOT")
       public class Problems {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInProblems() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("invoke.kt")
         public void testInvoke() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/problems/invoke.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("noSmartcastToNullableNothing.kt")
         public void testNoSmartcastToNullableNothing() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/problems/noSmartcastToNullableNothing.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("smartcastToStarProjectedSubclass.kt")
         public void testSmartcastToStarProjectedSubclass() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/problems/smartcastToStarProjectedSubclass.kt");
@@ -4903,36 +4903,36 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/receivers")
       @TestDataPath("$PROJECT_ROOT")
       public class Receivers {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInReceivers() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/receivers"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("implicitReceiverAsWhenSubject.kt")
         public void testImplicitReceiverAsWhenSubject() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/receivers/implicitReceiverAsWhenSubject.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("implicitReceivers.kt")
         public void testImplicitReceivers() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/receivers/implicitReceivers.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("mixingImplicitAndExplicitReceivers.kt")
         public void testMixingImplicitAndExplicitReceivers() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/receivers/mixingImplicitAndExplicitReceivers.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("smartCastingExplicitReceiver.kt")
         public void testSmartCastingExplicitReceiver() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/receivers/smartCastingExplicitReceiver.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("thisOfExtensionProperty.kt")
         public void testThisOfExtensionProperty() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/receivers/thisOfExtensionProperty.kt");
@@ -4943,42 +4943,42 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls")
       @TestDataPath("$PROJECT_ROOT")
       public class SafeCalls {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInSafeCalls() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("assignSafeCall.kt")
         public void testAssignSafeCall() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/assignSafeCall.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("boundSafeCallAndIsCheck.kt")
         public void testBoundSafeCallAndIsCheck() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/boundSafeCallAndIsCheck.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("complexIfWithOr.kt")
         public void testComplexIfWithOr() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/complexIfWithOr.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("safeCallAndEqualityToBool.kt")
         public void testSafeCallAndEqualityToBool() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/safeCallAndEqualityToBool.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("safeCalls.kt")
         public void testSafeCalls() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/safeCalls.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("unstableSmartCastOnSafeCallArgument.kt")
         public void testUnstableSmartCastOnSafeCallArgument() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/unstableSmartCastOnSafeCallArgument.kt");
@@ -4989,12 +4989,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/stability")
       @TestDataPath("$PROJECT_ROOT")
       public class Stability {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInStability() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/stability"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("overridenOpenVal.kt")
         public void testOverridenOpenVal() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/stability/overridenOpenVal.kt");
@@ -5005,24 +5005,24 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/variables")
       @TestDataPath("$PROJECT_ROOT")
       public class Variables {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInVariables() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/variables"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("delayedAssignment.kt")
         public void testDelayedAssignment() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/variables/delayedAssignment.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("smartcastAfterReassignment.kt")
         public void testSmartcastAfterReassignment() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/variables/smartcastAfterReassignment.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("smartcastStoredInLocalVar.kt")
         public void testSmartcastStoredInLocalVar() {
           runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/variables/smartcastStoredInLocalVar.kt");
@@ -5034,7 +5034,7 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/stdlib")
     @TestDataPath("$PROJECT_ROOT")
     public class Stdlib {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInStdlib() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/stdlib"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
@@ -5043,18 +5043,18 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/stdlib/j+k")
       @TestDataPath("$PROJECT_ROOT")
       public class J_k {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInJ_k() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/stdlib/j+k"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("ArrayInGenericArguments.kt")
         public void testArrayInGenericArguments() {
           runTest("compiler/fir/analysis-tests/testData/resolve/stdlib/j+k/ArrayInGenericArguments.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("flexibleWildcard.kt")
         public void testFlexibleWildcard() {
           runTest("compiler/fir/analysis-tests/testData/resolve/stdlib/j+k/flexibleWildcard.kt");
@@ -5066,42 +5066,42 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/suppress")
     @TestDataPath("$PROJECT_ROOT")
     public class Suppress {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInSuppress() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/suppress"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("allWarnings.kt")
       public void testAllWarnings() {
         runTest("compiler/fir/analysis-tests/testData/resolve/suppress/allWarnings.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("multipleWarnings.kt")
       public void testMultipleWarnings() {
         runTest("compiler/fir/analysis-tests/testData/resolve/suppress/multipleWarnings.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("singleError.kt")
       public void testSingleError() {
         runTest("compiler/fir/analysis-tests/testData/resolve/suppress/singleError.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("singleWarning.kt")
       public void testSingleWarning() {
         runTest("compiler/fir/analysis-tests/testData/resolve/suppress/singleWarning.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("withSuppression.kt")
       public void testWithSuppression() {
         runTest("compiler/fir/analysis-tests/testData/resolve/suppress/withSuppression.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("withSuppression2.kt")
       public void testWithSuppression2() {
         runTest("compiler/fir/analysis-tests/testData/resolve/suppress/withSuppression2.kt");
@@ -5112,18 +5112,18 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/typeParameters")
     @TestDataPath("$PROJECT_ROOT")
     public class TypeParameters {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInTypeParameters() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/typeParameters"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt38288.kt")
       public void testKt38288() {
         runTest("compiler/fir/analysis-tests/testData/resolve/typeParameters/kt38288.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("starProjectionForMultipleBounds.kt")
       public void testStarProjectionForMultipleBounds() {
         runTest("compiler/fir/analysis-tests/testData/resolve/typeParameters/starProjectionForMultipleBounds.kt");
@@ -5134,42 +5134,42 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/types")
     @TestDataPath("$PROJECT_ROOT")
     public class Types {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInTypes() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/types"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("bareWithDnnArg.kt")
       public void testBareWithDnnArg() {
         runTest("compiler/fir/analysis-tests/testData/resolve/types/bareWithDnnArg.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("bareWithFlexibleArg.kt")
       public void testBareWithFlexibleArg() {
         runTest("compiler/fir/analysis-tests/testData/resolve/types/bareWithFlexibleArg.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("bareWithSubjectTypeAlias.kt")
       public void testBareWithSubjectTypeAlias() {
         runTest("compiler/fir/analysis-tests/testData/resolve/types/bareWithSubjectTypeAlias.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("capturedParametersOfInnerClasses.kt")
       public void testCapturedParametersOfInnerClasses() {
         runTest("compiler/fir/analysis-tests/testData/resolve/types/capturedParametersOfInnerClasses.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("castToBareType.kt")
       public void testCastToBareType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/types/castToBareType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeAliasInArguments.kt")
       public void testTypeAliasInArguments() {
         runTest("compiler/fir/analysis-tests/testData/resolve/types/typeAliasInArguments.kt");
@@ -5180,54 +5180,54 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum")
     @TestDataPath("$PROJECT_ROOT")
     public class UnqualifiedEnum {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInUnqualifiedEnum() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("correctJava.kt")
       public void testCorrectJava() {
         runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/correctJava.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("enumWithTheSameNameAsEntry.kt")
       public void testEnumWithTheSameNameAsEntry() {
         runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/enumWithTheSameNameAsEntry.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("incorrectJava.kt")
       public void testIncorrectJava() {
         runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/incorrectJava.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nested.kt")
       public void testNested() {
         runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/nested.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("notInsideBranches.kt")
       public void testNotInsideBranches() {
         runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/notInsideBranches.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("priority.kt")
       public void testPriority() {
         runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/priority.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeAlias.kt")
       public void testTypeAlias() {
         runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/typeAlias.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("unqualifiedEnum.kt")
       public void testUnqualifiedEnum() {
         runTest("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum/unqualifiedEnum.kt");
@@ -5238,90 +5238,90 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/visibility")
     @TestDataPath("$PROJECT_ROOT")
     public class Visibility {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInVisibility() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/visibility"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exposedFunctionParameterType.kt")
       public void testExposedFunctionParameterType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/visibility/exposedFunctionParameterType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exposedFunctionReturnType.kt")
       public void testExposedFunctionReturnType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/visibility/exposedFunctionReturnType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exposedPropertyType.kt")
       public void testExposedPropertyType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/visibility/exposedPropertyType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exposedSupertype.kt")
       public void testExposedSupertype() {
         runTest("compiler/fir/analysis-tests/testData/resolve/visibility/exposedSupertype.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exposedTypeAlias.kt")
       public void testExposedTypeAlias() {
         runTest("compiler/fir/analysis-tests/testData/resolve/visibility/exposedTypeAlias.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exposedTypeParameters.kt")
       public void testExposedTypeParameters() {
         runTest("compiler/fir/analysis-tests/testData/resolve/visibility/exposedTypeParameters.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("intersectionOverrideWithImplicitTypes.kt")
       public void testIntersectionOverrideWithImplicitTypes() {
         runTest("compiler/fir/analysis-tests/testData/resolve/visibility/intersectionOverrideWithImplicitTypes.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kotlinJavaKotlinHierarchy.kt")
       public void testKotlinJavaKotlinHierarchy() {
         runTest("compiler/fir/analysis-tests/testData/resolve/visibility/kotlinJavaKotlinHierarchy.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("privateAliasInSamePackage.kt")
       public void testPrivateAliasInSamePackage() {
         runTest("compiler/fir/analysis-tests/testData/resolve/visibility/privateAliasInSamePackage.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("protectedAnnotationClassFromJava.kt")
       public void testProtectedAnnotationClassFromJava() {
         runTest("compiler/fir/analysis-tests/testData/resolve/visibility/protectedAnnotationClassFromJava.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("protectedInCompanion.kt")
       public void testProtectedInCompanion() {
         runTest("compiler/fir/analysis-tests/testData/resolve/visibility/protectedInCompanion.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("singletonConstructors.kt")
       public void testSingletonConstructors() {
         runTest("compiler/fir/analysis-tests/testData/resolve/visibility/singletonConstructors.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superAccessToJavaField.kt")
       public void testSuperAccessToJavaField() {
         runTest("compiler/fir/analysis-tests/testData/resolve/visibility/superAccessToJavaField.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("visibilityWithOverrides.kt")
       public void testVisibilityWithOverrides() {
         runTest("compiler/fir/analysis-tests/testData/resolve/visibility/visibilityWithOverrides.kt");
@@ -5332,12 +5332,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/withAllowedKotlinPackage")
     @TestDataPath("$PROJECT_ROOT")
     public class WithAllowedKotlinPackage {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInWithAllowedKotlinPackage() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/withAllowedKotlinPackage"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionFunctionAddedToStdlib.kt")
       public void testExtensionFunctionAddedToStdlib() {
         runTest("compiler/fir/analysis-tests/testData/resolve/withAllowedKotlinPackage/extensionFunctionAddedToStdlib.kt");
@@ -5349,390 +5349,390 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
   @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib")
   @TestDataPath("$PROJECT_ROOT")
   public class ResolveWithStdlib {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("addAllOnJavaCollection.kt")
     public void testAddAllOnJavaCollection() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/addAllOnJavaCollection.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInResolveWithStdlib() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("annotationUseSites.kt")
     public void testAnnotationUseSites() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotationUseSites.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayFilterCapturedType.kt")
     public void testArrayFilterCapturedType() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/arrayFilterCapturedType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayFirstOrNull.kt")
     public void testArrayFirstOrNull() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/arrayFirstOrNull.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayInLocal.kt")
     public void testArrayInLocal() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/arrayInLocal.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("assignmentWithWrongLhs.kt")
     public void testAssignmentWithWrongLhs() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/assignmentWithWrongLhs.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("backingField.kt")
     public void testBackingField() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/backingField.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("castForFunctionsWithDifferentArities.kt")
     public void testCastForFunctionsWithDifferentArities() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/castForFunctionsWithDifferentArities.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("ClassIdDiagnosticRendering.kt")
     public void testClassIdDiagnosticRendering() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/ClassIdDiagnosticRendering.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classLiteralForParameter.kt")
     public void testClassLiteralForParameter() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/classLiteralForParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("cloneArray.kt")
     public void testCloneArray() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/cloneArray.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("companionLoad.kt")
     public void testCompanionLoad() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/companionLoad.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("complexPostponedCfg.kt")
     public void testComplexPostponedCfg() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/complexPostponedCfg.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("components.kt")
     public void testComponents() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/components.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("concurrent.kt")
     public void testConcurrent() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/concurrent.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("concurrentMapOfAliases.kt")
     public void testConcurrentMapOfAliases() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/concurrentMapOfAliases.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("emptyArray.kt")
     public void testEmptyArray() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/emptyArray.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("enumValuesDeserialized.kt")
     public void testEnumValuesDeserialized() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/enumValuesDeserialized.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("errorsInUnreachable.kt")
     public void testErrorsInUnreachable() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/errorsInUnreachable.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exception.kt")
     public void testException() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/exception.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("factoryFunctionOverloads.kt")
     public void testFactoryFunctionOverloads() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/factoryFunctionOverloads.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("fillInStackTrace.kt")
     public void testFillInStackTrace() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/fillInStackTrace.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionAndFunctionN.kt")
     public void testFunctionAndFunctionN() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/functionAndFunctionN.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionX.kt")
     public void testFunctionX() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/functionX.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("getOnKProperty.kt")
     public void testGetOnKProperty() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/getOnKProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("getOrPutAmbiguity.kt")
     public void testGetOrPutAmbiguity() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/getOrPutAmbiguity.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hashMapTypeAlias.kt")
     public void testHashMapTypeAlias() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/hashMapTypeAlias.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hashSet.kt")
     public void testHashSet() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/hashSet.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hashTableWithForEach.kt")
     public void testHashTableWithForEach() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/hashTableWithForEach.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("helloWorld.kt")
     public void testHelloWorld() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/helloWorld.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("implicitReceiverOrder.kt")
     public void testImplicitReceiverOrder() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/implicitReceiverOrder.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inapplicableRemoveAll.kt")
     public void testInapplicableRemoveAll() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inapplicableRemoveAll.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("intersectDynamicAndString.kt")
     public void testIntersectDynamicAndString() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intersectDynamicAndString.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("intersectRawAndMutable.kt")
     public void testIntersectRawAndMutable() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intersectRawAndMutable.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("javaEnumSynthetic.kt")
     public void testJavaEnumSynthetic() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/javaEnumSynthetic.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("javaLangComparator.kt")
     public void testJavaLangComparator() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/javaLangComparator.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kotlinComparatorAlias.kt")
     public void testKotlinComparatorAlias() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/kotlinComparatorAlias.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt54220.kt")
     public void testKt54220() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/kt54220.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("listPlusAssign.kt")
     public void testListPlusAssign() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/listPlusAssign.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lowPriorityInResolution.kt")
     public void testLowPriorityInResolution() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/lowPriorityInResolution.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("mapList.kt")
     public void testMapList() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/mapList.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("multipleImplicitReceivers.kt")
     public void testMultipleImplicitReceivers() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/multipleImplicitReceivers.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("noneWithForEach.kt")
     public void testNoneWithForEach() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/noneWithForEach.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nullableTypeParameter.kt")
     public void testNullableTypeParameter() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/nullableTypeParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("plusAssignNullable.kt")
     public void testPlusAssignNullable() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/plusAssignNullable.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("problems.kt")
     public void testProblems() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("rangeTo.kt")
     public void testRangeTo() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/rangeTo.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("recursiveBug.kt")
     public void testRecursiveBug() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/recursiveBug.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("reflectionClass.kt")
     public void testReflectionClass() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/reflectionClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("removeIf.kt")
     public void testRemoveIf() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/removeIf.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("removeOnAbstractMap.kt")
     public void testRemoveOnAbstractMap() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/removeOnAbstractMap.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("repeatedAnnotations.kt")
     public void testRepeatedAnnotations() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/repeatedAnnotations.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("runOnIntegerLiteral.kt")
     public void testRunOnIntegerLiteral() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/runOnIntegerLiteral.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("samForComparator.kt")
     public void testSamForComparator() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/samForComparator.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleLazy.kt")
     public void testSimpleLazy() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/simpleLazy.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("stringConstructors.kt")
     public void testStringConstructors() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/stringConstructors.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("toSortedMapWithComparator.kt")
     public void testToSortedMapWithComparator() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/toSortedMapWithComparator.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelResolve.kt")
     public void testTopLevelResolve() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/topLevelResolve.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeAliasDeserialization.kt")
     public void testTypeAliasDeserialization() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/typeAliasDeserialization.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeAliasWithForEach.kt")
     public void testTypeAliasWithForEach() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/typeAliasWithForEach.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeParameterDerived.kt")
     public void testTypeParameterDerived() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/typeParameterDerived.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unaryOperators.kt")
     public void testUnaryOperators() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/unaryOperators.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("whenAsLambdaReturnStatement.kt")
     public void testWhenAsLambdaReturnStatement() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/whenAsLambdaReturnStatement.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("withInInitializer.kt")
     public void testWithInInitializer() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/withInInitializer.kt");
@@ -5742,150 +5742,150 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences")
     @TestDataPath("$PROJECT_ROOT")
     public class CallableReferences {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInCallableReferences() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("beyoundCalls.kt")
       public void testBeyoundCalls() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/beyoundCalls.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("coercionToUnit.kt")
       public void testCoercionToUnit() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/coercionToUnit.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("companions.kt")
       public void testCompanions() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/companions.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructors.kt")
       public void testConstructors() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/constructors.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("differentLevels.kt")
       public void testDifferentLevels() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/differentLevels.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionReceiverInference.kt")
       public void testExtensionReceiverInference() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/extensionReceiverInference.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("genericInReceiver.kt")
       public void testGenericInReceiver() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/genericInReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("ifWithCR.kt")
       public void testIfWithCR() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/ifWithCR.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("implicitTypes.kt")
       public void testImplicitTypes() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/implicitTypes.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inferenceFromCallableReferenceType.kt")
       public void testInferenceFromCallableReferenceType() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/inferenceFromCallableReferenceType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inferenceFromExpectedType.kt")
       public void testInferenceFromExpectedType() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/inferenceFromExpectedType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("javaStatic.kt")
       public void testJavaStatic() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/javaStatic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("manyCandidatesInference.kt")
       public void testManyCandidatesInference() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/manyCandidatesInference.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("manyInnerCandidates.kt")
       public void testManyInnerCandidates() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/manyInnerCandidates.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("manyInnerManyOuterCandidates.kt")
       public void testManyInnerManyOuterCandidates() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/manyInnerManyOuterCandidates.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("manyInnermanyOuterCandidatesAmbiguity.kt")
       public void testManyInnermanyOuterCandidatesAmbiguity() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/manyInnermanyOuterCandidatesAmbiguity.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("manyOuterCandidates.kt")
       public void testManyOuterCandidates() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/manyOuterCandidates.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("properties.kt")
       public void testProperties() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/properties.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("referenceToJavaStdlib.kt")
       public void testReferenceToJavaStdlib() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/referenceToJavaStdlib.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("sam.kt")
       public void testSam() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/sam.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simpleClassReceiver.kt")
       public void testSimpleClassReceiver() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/simpleClassReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simpleExpressionReceiver.kt")
       public void testSimpleExpressionReceiver() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/simpleExpressionReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simpleNoReceiver.kt")
       public void testSimpleNoReceiver() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/simpleNoReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("varProperties.kt")
       public void testVarProperties() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/varProperties.kt");
@@ -5895,84 +5895,84 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests")
       @TestDataPath("$PROJECT_ROOT")
       public class FromBasicDiagnosticTests {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInFromBasicDiagnosticTests() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("ambiguityWhenNoApplicableCallableReferenceCandidate.kt")
         public void testAmbiguityWhenNoApplicableCallableReferenceCandidate() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests/ambiguityWhenNoApplicableCallableReferenceCandidate.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("applicableCallableReferenceFromDistantScope.kt")
         public void testApplicableCallableReferenceFromDistantScope() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests/applicableCallableReferenceFromDistantScope.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("chooseCallableReferenceDependingOnInferredReceiver.kt")
         public void testChooseCallableReferenceDependingOnInferredReceiver() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests/chooseCallableReferenceDependingOnInferredReceiver.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("commonSupertypeFromReturnTypesOfCallableReference.kt")
         public void testCommonSupertypeFromReturnTypesOfCallableReference() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests/commonSupertypeFromReturnTypesOfCallableReference.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("eagerAndPostponedCallableReferences.kt")
         public void testEagerAndPostponedCallableReferences() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests/eagerAndPostponedCallableReferences.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("eagerResolveOfSingleCallableReference.kt")
         public void testEagerResolveOfSingleCallableReference() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests/eagerResolveOfSingleCallableReference.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("moreSpecificAmbiguousExtensions.kt")
         public void testMoreSpecificAmbiguousExtensions() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests/moreSpecificAmbiguousExtensions.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("multipleOutersAndMultipleCallableReferences.kt")
         public void testMultipleOutersAndMultipleCallableReferences() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests/multipleOutersAndMultipleCallableReferences.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("noAmbiguityBetweenTopLevelAndMemberProperty.kt")
         public void testNoAmbiguityBetweenTopLevelAndMemberProperty() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests/noAmbiguityBetweenTopLevelAndMemberProperty.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("overloadsBound.kt")
         public void testOverloadsBound() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests/overloadsBound.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("postponedResolveOfManyCallableReference.kt")
         public void testPostponedResolveOfManyCallableReference() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests/postponedResolveOfManyCallableReference.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("resolveCallableReferencesAfterAllSimpleArguments.kt")
         public void testResolveCallableReferencesAfterAllSimpleArguments() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests/resolveCallableReferencesAfterAllSimpleArguments.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("withGenericFun.kt")
         public void testWithGenericFun() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests/withGenericFun.kt");
@@ -5984,7 +5984,7 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts")
     @TestDataPath("$PROJECT_ROOT")
     public class Contracts {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInContracts() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
@@ -5993,24 +5993,24 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromLibrary")
       @TestDataPath("$PROJECT_ROOT")
       public class FromLibrary {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInFromLibrary() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromLibrary"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("callsInPlace.kt")
         public void testCallsInPlace() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromLibrary/callsInPlace.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("conditionalEffects.kt")
         public void testConditionalEffects() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromLibrary/conditionalEffects.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("notIsNullOrEmpty.kt")
         public void testNotIsNullOrEmpty() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromLibrary/notIsNullOrEmpty.kt");
@@ -6021,7 +6021,7 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource")
       @TestDataPath("$PROJECT_ROOT")
       public class FromSource {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInFromSource() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
@@ -6030,12 +6030,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
         @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad")
         @TestDataPath("$PROJECT_ROOT")
         public class Bad {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInBad() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("noOptIn.kt")
           public void testNoOptIn() {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/noOptIn.kt");
@@ -6045,30 +6045,30 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
           @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace")
           @TestDataPath("$PROJECT_ROOT")
           public class CallsInPlace {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInCallsInPlace() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("inAnonymousObject.kt")
             public void testInAnonymousObject() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace/inAnonymousObject.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("inLocalClass.kt")
             public void testInLocalClass() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace/inLocalClass.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("inLocalFunction.kt")
             public void testInLocalFunction() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace/inLocalFunction.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("toLocalVariables.kt")
             public void testToLocalVariables() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace/toLocalVariables.kt");
@@ -6079,24 +6079,24 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
           @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies")
           @TestDataPath("$PROJECT_ROOT")
           public class ReturnsImplies {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInReturnsImplies() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("notNull.kt")
             public void testNotNull() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies/notNull.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("propertyGetter.kt")
             public void testPropertyGetter() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies/propertyGetter.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("redundantConditions.kt")
             public void testRedundantConditions() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies/redundantConditions.kt");
@@ -6108,7 +6108,7 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
         @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good")
         @TestDataPath("$PROJECT_ROOT")
         public class Good {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInGood() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
           }
@@ -6117,72 +6117,72 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
           @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace")
           @TestDataPath("$PROJECT_ROOT")
           public class CallsInPlace {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInCallsInPlace() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("atLeastOnce.kt")
             public void testAtLeastOnce() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/atLeastOnce.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("atMostOnce.kt")
             public void testAtMostOnce() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/atMostOnce.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("contractsUsage.kt")
             public void testContractsUsage() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/contractsUsage.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("exactlyOnce.kt")
             public void testExactlyOnce() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/exactlyOnce.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("flow.kt")
             public void testFlow() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/flow.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("inPlaceLambda.kt")
             public void testInPlaceLambda() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/inPlaceLambda.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("infiniteLoop.kt")
             public void testInfiniteLoop() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/infiniteLoop.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("namedArgument.kt")
             public void testNamedArgument() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/namedArgument.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("simple.kt")
             public void testSimple() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/simple.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("tryFinally.kt")
             public void testTryFinally() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/tryFinally.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("unknown.kt")
             public void testUnknown() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/unknown.kt");
@@ -6193,72 +6193,72 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
           @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies")
           @TestDataPath("$PROJECT_ROOT")
           public class ReturnsImplies {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInReturnsImplies() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("booleanOperators.kt")
             public void testBooleanOperators() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/booleanOperators.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("conditionLogic.kt")
             public void testConditionLogic() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/conditionLogic.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("eqNotEq.kt")
             public void testEqNotEq() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/eqNotEq.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("inapplicable.kt")
             public void testInapplicable() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/inapplicable.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("namedArguments.kt")
             public void testNamedArguments() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/namedArguments.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("notNull.kt")
             public void testNotNull() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/notNull.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("propertyAccessors.kt")
             public void testPropertyAccessors() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/propertyAccessors.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("receivers.kt")
             public void testReceivers() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/receivers.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("safeCall.kt")
             public void testSafeCall() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/safeCall.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("trickyCases.kt")
             public void testTrickyCases() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/trickyCases.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("typePredicate.kt")
             public void testTypePredicate() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/typePredicate.kt");
@@ -6269,7 +6269,7 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
           @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts")
           @TestDataPath("$PROJECT_ROOT")
           public class VariousContracts {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInVariousContracts() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
@@ -6278,12 +6278,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
             @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts/newSyntax")
             @TestDataPath("$PROJECT_ROOT")
             public class NewSyntax {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNewSyntax() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts/newSyntax"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("functionsWithContract.kt")
               public void testFunctionsWithContract() {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts/newSyntax/functionsWithContract.kt");
@@ -6298,78 +6298,78 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates")
     @TestDataPath("$PROJECT_ROOT")
     public class Delegates {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInDelegates() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("annotationArgumentMapping.kt")
       public void testAnnotationArgumentMapping() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/annotationArgumentMapping.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("anonymousInDelegate.kt")
       public void testAnonymousInDelegate() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/anonymousInDelegate.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("delegateTypeMismatch.kt")
       public void testDelegateTypeMismatch() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/delegateTypeMismatch.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("delegateWithAnonymousObject.kt")
       public void testDelegateWithAnonymousObject() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/delegateWithAnonymousObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("getClassLet.kt")
       public void testGetClassLet() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/getClassLet.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt41917.kt")
       public void testKt41917() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/kt41917.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("mapValuesLazy.kt")
       public void testMapValuesLazy() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/mapValuesLazy.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nullableTypeDelegate.kt")
       public void testNullableTypeDelegate() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/nullableTypeDelegate.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("propertyWithFunctionalType.kt")
       public void testPropertyWithFunctionalType() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/propertyWithFunctionalType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("sequentialLazy.kt")
       public void testSequentialLazy() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/sequentialLazy.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simpleDelegateProvider.kt")
       public void testSimpleDelegateProvider() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/simpleDelegateProvider.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simpleDelegatedToMap.kt")
       public void testSimpleDelegatedToMap() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/simpleDelegatedToMap.kt");
@@ -6380,12 +6380,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics")
     @TestDataPath("$PROJECT_ROOT")
     public class Diagnostics {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInDiagnostics() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("forLoopChecker.kt")
       public void testForLoopChecker() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/forLoopChecker.kt");
@@ -6395,12 +6395,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/functionReturnTypeMismatchChecker")
       @TestDataPath("$PROJECT_ROOT")
       public class FunctionReturnTypeMismatchChecker {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInFunctionReturnTypeMismatchChecker() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/functionReturnTypeMismatchChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("basic.kt")
         public void testBasic() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/functionReturnTypeMismatchChecker/basic.kt");
@@ -6411,12 +6411,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/initializerTypeMismatchChecker")
       @TestDataPath("$PROJECT_ROOT")
       public class InitializerTypeMismatchChecker {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInInitializerTypeMismatchChecker() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/initializerTypeMismatchChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("functionType.kt")
         public void testFunctionType() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/initializerTypeMismatchChecker/functionType.kt");
@@ -6428,48 +6428,48 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference")
     @TestDataPath("$PROJECT_ROOT")
     public class Inference {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInInference() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("builderInference.kt")
       public void testBuilderInference() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/builderInference.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("builderInferenceAndCoercionToUnit.kt")
       public void testBuilderInferenceAndCoercionToUnit() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/builderInferenceAndCoercionToUnit.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("builderInferenceFromStdlib.kt")
       public void testBuilderInferenceFromStdlib() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/builderInferenceFromStdlib.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("complexConstraintSystem.kt")
       public void testComplexConstraintSystem() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/complexConstraintSystem.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("flexibleTypeInSystem.kt")
       public void testFlexibleTypeInSystem() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/flexibleTypeInSystem.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("ifElvisReturn.kt")
       public void testIfElvisReturn() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/ifElvisReturn.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("plusAssignWithLambdaInRhs.kt")
       public void testPlusAssignWithLambdaInRhs() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/plusAssignWithLambdaInRhs.kt");
@@ -6479,30 +6479,30 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems")
       @TestDataPath("$PROJECT_ROOT")
       public class Problems {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInProblems() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("buildList.kt")
         public void testBuildList() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems/buildList.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("buildListLazy.kt")
         public void testBuildListLazy() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems/buildListLazy.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("buildSetWithVisitor.kt")
         public void testBuildSetWithVisitor() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems/buildSetWithVisitor.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("expectedType.kt")
         public void testExpectedType() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems/expectedType.kt");
@@ -6514,12 +6514,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/initialization")
     @TestDataPath("$PROJECT_ROOT")
     public class Initialization {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInInitialization() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/initialization"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("fromLocalMembers.kt")
       public void testFromLocalMembers() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/initialization/fromLocalMembers.kt");
@@ -6530,102 +6530,102 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij")
     @TestDataPath("$PROJECT_ROOT")
     public class Intellij {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("accessInSetter.kt")
       public void testAccessInSetter() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/accessInSetter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInIntellij() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("arrayOfImports.kt")
       public void testArrayOfImports() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/arrayOfImports.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("baseIntrospector.kt")
       public void testBaseIntrospector() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/baseIntrospector.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("DailyAggregatedDoubleFactor.kt")
       public void testDailyAggregatedDoubleFactor() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/DailyAggregatedDoubleFactor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("defaultParameterFromBase.kt")
       public void testDefaultParameterFromBase() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/defaultParameterFromBase.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("EnumWithToString.kt")
       public void testEnumWithToString() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/EnumWithToString.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("FieldVsSyntheticAccessor.kt")
       public void testFieldVsSyntheticAccessor() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/FieldVsSyntheticAccessor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("hideBySeverity.kt")
       public void testHideBySeverity() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/hideBySeverity.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("InnerClassOfThrowableOnObject.kt")
       public void testInnerClassOfThrowableOnObject() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/InnerClassOfThrowableOnObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("IntersectionWithJavaString.kt")
       public void testIntersectionWithJavaString() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/IntersectionWithJavaString.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdaForKfunction.kt")
       public void testLambdaForKfunction() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/lambdaForKfunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("ParentOfType.kt")
       public void testParentOfType() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/ParentOfType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("PersistentStateComponent.kt")
       public void testPersistentStateComponent() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/PersistentStateComponent.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeAliasAmbiguity.kt")
       public void testTypeAliasAmbiguity() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/typeAliasAmbiguity.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("UastPatterns.kt")
       public void testUastPatterns() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/UastPatterns.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("WithSpeedSearch.kt")
       public void testWithSpeedSearch() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/WithSpeedSearch.kt");
@@ -6636,318 +6636,318 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k")
     @TestDataPath("$PROJECT_ROOT")
     public class J_k {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInJ_k() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("AnnotationWithEnum.kt")
       public void testAnnotationWithEnum() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/AnnotationWithEnum.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("BasicWithAnnotatedJava.kt")
       public void testBasicWithAnnotatedJava() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/BasicWithAnnotatedJava.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("BasicWithAnnotatedOverriddenJava.kt")
       public void testBasicWithAnnotatedOverriddenJava() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/BasicWithAnnotatedOverriddenJava.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("BasicWithJava.kt")
       public void testBasicWithJava() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/BasicWithJava.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("BasicWithJavaFakeOverride.kt")
       public void testBasicWithJavaFakeOverride() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/BasicWithJavaFakeOverride.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("BasicWithPrimitiveJava.kt")
       public void testBasicWithPrimitiveJava() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/BasicWithPrimitiveJava.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("capturedFlexible.kt")
       public void testCapturedFlexible() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/capturedFlexible.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("complexFlexibleInference.kt")
       public void testComplexFlexibleInference() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/complexFlexibleInference.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("FieldAccessFromDerived.kt")
       public void testFieldAccessFromDerived() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/FieldAccessFromDerived.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("FieldAndGetter.kt")
       public void testFieldAndGetter() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/FieldAndGetter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("fieldOverride.kt")
       public void testFieldOverride() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/fieldOverride.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("FieldSubstitution.kt")
       public void testFieldSubstitution() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/FieldSubstitution.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("FlexiblePrimitiveOverloading.kt")
       public void testFlexiblePrimitiveOverloading() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/FlexiblePrimitiveOverloading.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("flexibleTypeAliases.kt")
       public void testFlexibleTypeAliases() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/flexibleTypeAliases.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("FunctionTypeInJava.kt")
       public void testFunctionTypeInJava() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/FunctionTypeInJava.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("genericGetterForJavaOverriddenProperty.kt")
       public void testGenericGetterForJavaOverriddenProperty() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/genericGetterForJavaOverriddenProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("genericGetterForJavaOverriddenProperty2.kt")
       public void testGenericGetterForJavaOverriddenProperty2() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/genericGetterForJavaOverriddenProperty2.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("genericGetterForSyntheticProperty.kt")
       public void testGenericGetterForSyntheticProperty() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/genericGetterForSyntheticProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("IntersectionTypesProblem.kt")
       public void testIntersectionTypesProblem() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/IntersectionTypesProblem.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("JavaGetPrefixConflict.kt")
       public void testJavaGetPrefixConflict() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/JavaGetPrefixConflict.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("JavaInheritsKotlinDerived.kt")
       public void testJavaInheritsKotlinDerived() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/JavaInheritsKotlinDerived.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("JavaInheritsKotlinExtension.kt")
       public void testJavaInheritsKotlinExtension() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/JavaInheritsKotlinExtension.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("JavaInheritsKotlinProperty.kt")
       public void testJavaInheritsKotlinProperty() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/JavaInheritsKotlinProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("JavaInheritsRawKotlin.kt")
       public void testJavaInheritsRawKotlin() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/JavaInheritsRawKotlin.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("JavaSyntheticProperty.kt")
       public void testJavaSyntheticProperty() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/JavaSyntheticProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("JavaVisibility2.kt")
       public void testJavaVisibility2() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/JavaVisibility2.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KJKComplexHierarchy.kt")
       public void testKJKComplexHierarchy() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/KJKComplexHierarchy.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KJKComplexHierarchyWithNested.kt")
       public void testKJKComplexHierarchyWithNested() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/KJKComplexHierarchyWithNested.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KJKInheritance.kt")
       public void testKJKInheritance() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/KJKInheritance.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KJKInheritanceGeneric.kt")
       public void testKJKInheritanceGeneric() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/KJKInheritanceGeneric.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KotlinClassParameter.kt")
       public void testKotlinClassParameter() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/KotlinClassParameter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KotlinClassParameterGeneric.kt")
       public void testKotlinClassParameterGeneric() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/KotlinClassParameterGeneric.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt39076.kt")
       public void testKt39076() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/kt39076.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("LoggerInstance.kt")
       public void testLoggerInstance() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/LoggerInstance.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("MapCompute.kt")
       public void testMapCompute() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/MapCompute.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("MapEntry.kt")
       public void testMapEntry() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/MapEntry.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("mapMerge.kt")
       public void testMapMerge() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/mapMerge.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("MyException.kt")
       public void testMyException() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/MyException.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("MyIterable.kt")
       public void testMyIterable() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/MyIterable.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("MyMap.kt")
       public void testMyMap() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/MyMap.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("outerInnerClasses.kt")
       public void testOuterInnerClasses() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/outerInnerClasses.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("OverrideWithJava.kt")
       public void testOverrideWithJava() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/OverrideWithJava.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("RawType.kt")
       public void testRawType() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/RawType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("serializableString.kt")
       public void testSerializableString() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/serializableString.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("smartSet.kt")
       public void testSmartSet() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/smartSet.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("StaticClassConstructorFromBaseClass.kt")
       public void testStaticClassConstructorFromBaseClass() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/StaticClassConstructorFromBaseClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("StaticFromBaseClass.kt")
       public void testStaticFromBaseClass() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/StaticFromBaseClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("StaticGenericMethod.kt")
       public void testStaticGenericMethod() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/StaticGenericMethod.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("SyntheticAfterFiltering.kt")
       public void testSyntheticAfterFiltering() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/SyntheticAfterFiltering.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("SyntheticWithForEach.kt")
       public void testSyntheticWithForEach() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/SyntheticWithForEach.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeParameterUse.kt")
       public void testTypeParameterUse() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/typeParameterUse.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("UsingObject.kt")
       public void testUsingObject() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/UsingObject.kt");
@@ -6958,36 +6958,36 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule")
     @TestDataPath("$PROJECT_ROOT")
     public class MultiModule {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInMultiModule() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("Basic.kt")
       public void testBasic() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule/Basic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("FakeOverrides.kt")
       public void testFakeOverrides() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule/FakeOverrides.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("MemberType.kt")
       public void testMemberType() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule/MemberType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("Members.kt")
       public void testMembers() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule/Members.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("SuperTypes.kt")
       public void testSuperTypes() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule/SuperTypes.kt");
@@ -6998,210 +6998,210 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems")
     @TestDataPath("$PROJECT_ROOT")
     public class Problems {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("AbstractToolConfig.kt")
       public void testAbstractToolConfig() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/AbstractToolConfig.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInProblems() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("argumentTypeMismatch.kt")
       public void testArgumentTypeMismatch() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/argumentTypeMismatch.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("capturedTypeInEquality.kt")
       public void testCapturedTypeInEquality() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/capturedTypeInEquality.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classCastWithRawKotlinType.kt")
       public void testClassCastWithRawKotlinType() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/classCastWithRawKotlinType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("DeepCopyIrTree.kt")
       public void testDeepCopyIrTree() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/DeepCopyIrTree.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("definitelyNotNullCast.kt")
       public void testDefinitelyNotNullCast() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/definitelyNotNullCast.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("EnumMapGet.kt")
       public void testEnumMapGet() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/EnumMapGet.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exceptionInRepeatedAnnotation.kt")
       public void testExceptionInRepeatedAnnotation() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/exceptionInRepeatedAnnotation.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("falseSamConversion.kt")
       public void testFalseSamConversion() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/falseSamConversion.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("FieldAnnotationWithClasses.kt")
       public void testFieldAnnotationWithClasses() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/FieldAnnotationWithClasses.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("forEachOnZip.kt")
       public void testForEachOnZip() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/forEachOnZip.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("immutableName.kt")
       public void testImmutableName() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/immutableName.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("invokePriority.kt")
       public void testInvokePriority() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/invokePriority.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("invokePriorityComplex.kt")
       public void testInvokePriorityComplex() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/invokePriorityComplex.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("isAncestor.kt")
       public void testIsAncestor() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/isAncestor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KJKComplexHierarchyNestedLoop.kt")
       public void testKJKComplexHierarchyNestedLoop() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/KJKComplexHierarchyNestedLoop.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KtFirCompositeScope.kt")
       public void testKtFirCompositeScope() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/KtFirCompositeScope.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lightMember.kt")
       public void testLightMember() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/lightMember.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localScopesInAnonymousObject.kt")
       public void testLocalScopesInAnonymousObject() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/localScopesInAnonymousObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("malformedRawTypes.kt")
       public void testMalformedRawTypes() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/malformedRawTypes.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("NamedParameterInConcurrentMap.kt")
       public void testNamedParameterInConcurrentMap() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/NamedParameterInConcurrentMap.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overriddenFunctionReturningUnit.kt")
       public void testOverriddenFunctionReturningUnit() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/overriddenFunctionReturningUnit.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overriddenFunctionReturningUnit2.kt")
       public void testOverriddenFunctionReturningUnit2() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/overriddenFunctionReturningUnit2.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("qualifierPriority.kt")
       public void testQualifierPriority() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/qualifierPriority.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("receiverResolutionInLambda.kt")
       public void testReceiverResolutionInLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/receiverResolutionInLambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("resolveToLocalFromCallSite.kt")
       public void testResolveToLocalFromCallSite() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/resolveToLocalFromCallSite.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("selfReferenceToCompanionObject.kt")
       public void testSelfReferenceToCompanionObject() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/selfReferenceToCompanionObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("SpecialCallsWithLambdas.kt")
       public void testSpecialCallsWithLambdas() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/SpecialCallsWithLambdas.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("stringConstructors.kt")
       public void testStringConstructors() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/stringConstructors.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("TypeVariablesInWrappedSamCall.kt")
       public void testTypeVariablesInWrappedSamCall() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/TypeVariablesInWrappedSamCall.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("TypesEligibleForSimpleVisit.kt")
       public void testTypesEligibleForSimpleVisit() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/TypesEligibleForSimpleVisit.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("valueOfOrNull.kt")
       public void testValueOfOrNull() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/valueOfOrNull.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("weakHashMap.kt")
       public void testWeakHashMap() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/weakHashMap.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("WithValidityAssertion.kt")
       public void testWithValidityAssertion() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/WithValidityAssertion.kt");
@@ -7212,12 +7212,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties")
     @TestDataPath("$PROJECT_ROOT")
     public class Properties {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInProperties() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("explicitBackingFieldUnsupported.kt")
       public void testExplicitBackingFieldUnsupported() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/explicitBackingFieldUnsupported.kt");
@@ -7227,90 +7227,90 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField")
       @TestDataPath("$PROJECT_ROOT")
       public class BackingField {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInBackingField() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("backingFieldModifiers.kt")
         public void testBackingFieldModifiers() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/backingFieldModifiers.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("backingFieldVisibility.kt")
         public void testBackingFieldVisibility() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/backingFieldVisibility.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("backingFieldWithSmartTypeParameters.kt")
         public void testBackingFieldWithSmartTypeParameters() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/backingFieldWithSmartTypeParameters.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("explicitBackingFieldInInterface.kt")
         public void testExplicitBackingFieldInInterface() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldInInterface.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("explicitBackingFieldType.kt")
         public void testExplicitBackingFieldType() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldType.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("explicitBackingFieldsWithDelegates.kt")
         public void testExplicitBackingFieldsWithDelegates() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldsWithDelegates.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("filePrivateBackingFieldAccess.kt")
         public void testFilePrivateBackingFieldAccess() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/filePrivateBackingFieldAccess.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("lateinitBackingFields.kt")
         public void testLateinitBackingFields() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/lateinitBackingFields.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("localVariablesWithBackingFields.kt")
         public void testLocalVariablesWithBackingFields() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/localVariablesWithBackingFields.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("overriddenPropertiesWithExplicitBackingFields.kt")
         public void testOverriddenPropertiesWithExplicitBackingFields() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/overriddenPropertiesWithExplicitBackingFields.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("propertyTypeNarrowing.kt")
         public void testPropertyTypeNarrowing() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/propertyTypeNarrowing.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("randomWeirdBackingFields.kt")
         public void testRandomWeirdBackingFields() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/randomWeirdBackingFields.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("redundantExplicitBackingField.kt")
         public void testRedundantExplicitBackingField() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/redundantExplicitBackingField.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("untypedPropertyWithBackingFieldUsage.kt")
         public void testUntypedPropertyWithBackingFieldUsage() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/untypedPropertyWithBackingFieldUsage.kt");
@@ -7322,12 +7322,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/reinitializations")
     @TestDataPath("$PROJECT_ROOT")
     public class Reinitializations {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInReinitializations() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/reinitializations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructorVarWrite.kt")
       public void testConstructorVarWrite() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/reinitializations/constructorVarWrite.kt");
@@ -7338,18 +7338,18 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/smartcasts")
     @TestDataPath("$PROJECT_ROOT")
     public class Smartcasts {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInSmartcasts() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("assertIs.kt")
       public void testAssertIs() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/smartcasts/assertIs.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("tryWithLambdaInside.kt")
       public void testTryWithLambdaInside() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/smartcasts/tryWithLambdaInside.kt");

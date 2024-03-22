@@ -18,90 +18,90 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/testData/klib/header-klibs/compilation")
 @TestDataPath("$PROJECT_ROOT")
 public class NativeHeaderKlibCompilationTestGenerated extends AbstractNativeHeaderKlibCompilationTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInCompilation() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/header-klibs/compilation"), Pattern.compile("^([^\\.]+)$"), null, false);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("anonymousObject")
   public void testAnonymousObject() {
     runTest("native/native.tests/testData/klib/header-klibs/compilation/anonymousObject/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classes")
   public void testClasses() {
     runTest("native/native.tests/testData/klib/header-klibs/compilation/classes/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("clinit")
   public void testClinit() {
     runTest("native/native.tests/testData/klib/header-klibs/compilation/clinit/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineAnnotationInstantiation")
   public void testInlineAnnotationInstantiation() {
     runTest("native/native.tests/testData/klib/header-klibs/compilation/inlineAnnotationInstantiation/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineAnonymousObject")
   public void testInlineAnonymousObject() {
     runTest("native/native.tests/testData/klib/header-klibs/compilation/inlineAnonymousObject/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineCapture")
   public void testInlineCapture() {
     runTest("native/native.tests/testData/klib/header-klibs/compilation/inlineCapture/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineNoRegeneration")
   public void testInlineNoRegeneration() {
     runTest("native/native.tests/testData/klib/header-klibs/compilation/inlineNoRegeneration/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineReifiedFunction")
   public void testInlineReifiedFunction() {
     runTest("native/native.tests/testData/klib/header-klibs/compilation/inlineReifiedFunction/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineWhenMappings")
   public void testInlineWhenMappings() {
     runTest("native/native.tests/testData/klib/header-klibs/compilation/inlineWhenMappings/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("innerObjectRegeneration")
   public void testInnerObjectRegeneration() {
     runTest("native/native.tests/testData/klib/header-klibs/compilation/innerObjectRegeneration/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt-40133")
   public void testKt_40133() {
     runTest("native/native.tests/testData/klib/header-klibs/compilation/kt-40133/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("privateOnlyConstructors")
   public void testPrivateOnlyConstructors() {
     runTest("native/native.tests/testData/klib/header-klibs/compilation/privateOnlyConstructors/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("privateValueClassConstructor")
   public void testPrivateValueClassConstructor() {
     runTest("native/native.tests/testData/klib/header-klibs/compilation/privateValueClassConstructor/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("topLevel")
   public void testTopLevel() {
     runTest("native/native.tests/testData/klib/header-klibs/compilation/topLevel/");

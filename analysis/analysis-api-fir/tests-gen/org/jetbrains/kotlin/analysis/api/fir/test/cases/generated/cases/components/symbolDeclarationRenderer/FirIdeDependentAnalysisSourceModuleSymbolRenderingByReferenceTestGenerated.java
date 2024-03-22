@@ -40,30 +40,30 @@ public class FirIdeDependentAnalysisSourceModuleSymbolRenderingByReferenceTestGe
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSymbolRenderingByReference() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaEnhancedType.kt")
   public void testJavaEnhancedType() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/javaEnhancedType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaEnhancedTypeExternalAnnotation.kt")
   public void testJavaEnhancedTypeExternalAnnotation() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/javaEnhancedTypeExternalAnnotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaMethodWithMultipleTypeParametersBound.kt")
   public void testJavaMethodWithMultipleTypeParametersBound() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/javaMethodWithMultipleTypeParametersBound.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaMethodWithTypeParametersBound.kt")
   public void testJavaMethodWithTypeParametersBound() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/javaMethodWithTypeParametersBound.kt");

@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/tests-spec/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTestDataSpecTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "helpers", "linked/annotations", "linked/built-in-types-and-their-semantics", "linked/control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "linked/control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph", "linked/declarations/classifier-declaration/class-declaration/nested-and-inner-classifiers", "linked/declarations/classifier-declaration/classifier-initialization", "linked/declarations/classifier-declaration/data-class-declaration", "linked/declarations/function-declaration", "linked/declarations/property-declaration/property-initialization", "linked/declarations/type-alias", "linked/expressions/call-and-property-access-expressions", "linked/expressions/function-literals", "linked/inheritance", "linked/overload-resolution/c-level-partition", "linked/overload-resolution/determining-function-applicability-for-a-specific-call/rationale", "linked/overloadable-operators", "linked/statements/assignments/simple-assignments", "linked/type-inference/local-type-inference", "linked/type-inference/smart-casts/smart-cast-types", "linked/type-system/subtyping/subtyping-for-nullable-types", "linked/type-system/type-kinds/type-parameters");
   }
@@ -28,7 +28,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
   @TestMetadata("compiler/tests-spec/testData/diagnostics/linked")
   @TestDataPath("$PROJECT_ROOT")
   public class Linked {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInLinked() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "annotations", "built-in-types-and-their-semantics", "control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph", "declarations/classifier-declaration/class-declaration/nested-and-inner-classifiers", "declarations/classifier-declaration/classifier-initialization", "declarations/classifier-declaration/data-class-declaration", "declarations/function-declaration", "declarations/property-declaration/property-initialization", "declarations/type-alias", "expressions/call-and-property-access-expressions", "expressions/function-literals", "inheritance", "overload-resolution/c-level-partition", "overload-resolution/determining-function-applicability-for-a-specific-call/rationale", "overloadable-operators", "statements/assignments/simple-assignments", "type-inference/local-type-inference", "type-inference/smart-casts/smart-cast-types", "type-system/subtyping/subtyping-for-nullable-types", "type-system/type-kinds/type-parameters");
     }
@@ -37,7 +37,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis")
     @TestDataPath("$PROJECT_ROOT")
     public class Control__and_data_flow_analysis {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInControl__and_data_flow_analysis() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "performing-analysis-on-the-control-flow-graph");
       }
@@ -46,7 +46,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph")
       @TestDataPath("$PROJECT_ROOT")
       public class Control_flow_graph {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInControl_flow_graph() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -55,7 +55,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1")
         @TestDataPath("$PROJECT_ROOT")
         public class Expressions_1 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInExpressions_1() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -64,7 +64,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions")
           @TestDataPath("$PROJECT_ROOT")
           public class Conditional_expressions {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInConditional_expressions() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -73,7 +73,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1")
             @TestDataPath("$PROJECT_ROOT")
             public class P_1 {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInP_1() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -82,37 +82,37 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg")
               @TestDataPath("$PROJECT_ROOT")
               public class Neg {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg/1.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg/1.2.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.3.kt")
                 public void test1_3() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg/1.3.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.4.kt")
                 public void test1_4() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg/1.4.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg/2.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInNeg() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -122,25 +122,25 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/pos")
               @TestDataPath("$PROJECT_ROOT")
               public class Pos {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/pos/1.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/pos/1.2.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/pos/2.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInPos() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -155,7 +155,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations")
     @TestDataPath("$PROJECT_ROOT")
     public class Declarations {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInDeclarations() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "classifier-declaration/class-declaration/nested-and-inner-classifiers", "classifier-declaration/classifier-initialization", "classifier-declaration/data-class-declaration", "function-declaration", "property-declaration/property-initialization", "type-alias");
       }
@@ -164,7 +164,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration")
       @TestDataPath("$PROJECT_ROOT")
       public class Classifier_declaration {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInClassifier_declaration() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "class-declaration/nested-and-inner-classifiers", "classifier-initialization", "data-class-declaration");
         }
@@ -173,7 +173,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration")
         @TestDataPath("$PROJECT_ROOT")
         public class Class_declaration {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInClass_declaration() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "nested-and-inner-classifiers");
           }
@@ -182,7 +182,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes")
           @TestDataPath("$PROJECT_ROOT")
           public class Abstract_classes {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInAbstract_classes() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -191,7 +191,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1")
             @TestDataPath("$PROJECT_ROOT")
             public class P_1 {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInP_1() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -200,19 +200,19 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/neg")
               @TestDataPath("$PROJECT_ROOT")
               public class Neg {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/neg/1.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/neg/2.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInNeg() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -222,13 +222,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/pos")
               @TestDataPath("$PROJECT_ROOT")
               public class Pos {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/pos/2.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInPos() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -239,7 +239,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2")
             @TestDataPath("$PROJECT_ROOT")
             public class P_2 {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInP_2() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -248,67 +248,67 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg")
               @TestDataPath("$PROJECT_ROOT")
               public class Neg {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.10.kt")
                 public void test1_10() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.10.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.2.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.3.kt")
                 public void test1_3() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.3.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.4.kt")
                 public void test1_4() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.4.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.5.kt")
                 public void test1_5() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.5.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.6.kt")
                 public void test1_6() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.6.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.7.kt")
                 public void test1_7() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.7.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.8.kt")
                 public void test1_8() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.8.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.9.kt")
                 public void test1_9() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.9.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInNeg() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -318,31 +318,31 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos")
               @TestDataPath("$PROJECT_ROOT")
               public class Pos {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos/1.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos/1.2.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.3.kt")
                 public void test1_3() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos/1.3.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.4.kt")
                 public void test1_4() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos/1.4.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInPos() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -354,7 +354,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration")
           @TestDataPath("$PROJECT_ROOT")
           public class Constructor_declaration {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInConstructor_declaration() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -363,7 +363,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-4")
             @TestDataPath("$PROJECT_ROOT")
             public class P_4 {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInP_4() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -372,13 +372,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-4/pos")
               @TestDataPath("$PROJECT_ROOT")
               public class Pos {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-4/pos/1.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInPos() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -389,7 +389,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5")
             @TestDataPath("$PROJECT_ROOT")
             public class P_5 {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInP_5() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -398,31 +398,31 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg")
               @TestDataPath("$PROJECT_ROOT")
               public class Neg {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/1.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/1.2.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/2.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("3.1.kt")
                 public void test3_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/3.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInNeg() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -432,85 +432,85 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos")
               @TestDataPath("$PROJECT_ROOT")
               public class Pos {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.2.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.3.kt")
                 public void test1_3() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.3.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.4.kt")
                 public void test1_4() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.4.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.5.kt")
                 public void test1_5() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.5.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.2.kt")
                 public void test2_2() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.2.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.3.kt")
                 public void test2_3() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.3.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.4.kt")
                 public void test2_4() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.4.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("3.1.kt")
                 public void test3_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("3.2.kt")
                 public void test3_2() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.2.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("3.3.kt")
                 public void test3_3() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.3.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("3.4.kt")
                 public void test3_4() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.4.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInPos() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -524,7 +524,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration")
       @TestDataPath("$PROJECT_ROOT")
       public class Property_declaration {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInProperty_declaration() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "property-initialization");
         }
@@ -533,7 +533,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration")
         @TestDataPath("$PROJECT_ROOT")
         public class Local_property_declaration {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInLocal_property_declaration() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -542,7 +542,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration/p-1")
           @TestDataPath("$PROJECT_ROOT")
           public class P_1 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -551,13 +551,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration/p-1/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration/p-1/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -571,7 +571,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions")
     @TestDataPath("$PROJECT_ROOT")
     public class Expressions {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInExpressions() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "call-and-property-access-expressions", "function-literals");
       }
@@ -580,7 +580,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression")
       @TestDataPath("$PROJECT_ROOT")
       public class Additive_expression {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInAdditive_expression() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -589,7 +589,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression/p-4")
         @TestDataPath("$PROJECT_ROOT")
         public class P_4 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_4() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -598,13 +598,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression/p-4/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression/p-4/pos/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -616,7 +616,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics")
       @TestDataPath("$PROJECT_ROOT")
       public class Built_in_types_and_their_semantics {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInBuilt_in_types_and_their_semantics() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -625,7 +625,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1")
         @TestDataPath("$PROJECT_ROOT")
         public class Kotlin_nothing_1 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInKotlin_nothing_1() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -634,7 +634,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1")
           @TestDataPath("$PROJECT_ROOT")
           public class P_1 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -643,13 +643,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -661,7 +661,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit")
         @TestDataPath("$PROJECT_ROOT")
         public class Kotlin_unit {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInKotlin_unit() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -670,7 +670,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1")
           @TestDataPath("$PROJECT_ROOT")
           public class P_1 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -679,13 +679,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -698,7 +698,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions")
       @TestDataPath("$PROJECT_ROOT")
       public class Comparison_expressions {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInComparison_expressions() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -707,7 +707,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-1")
         @TestDataPath("$PROJECT_ROOT")
         public class P_1 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_1() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -716,13 +716,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-1/neg")
           @TestDataPath("$PROJECT_ROOT")
           public class Neg {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.1.kt")
             public void test2_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-1/neg/2.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -733,7 +733,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-4")
         @TestDataPath("$PROJECT_ROOT")
         public class P_4 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_4() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -742,13 +742,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-4/neg")
           @TestDataPath("$PROJECT_ROOT")
           public class Neg {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-4/neg/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -759,7 +759,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-5")
         @TestDataPath("$PROJECT_ROOT")
         public class P_5 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_5() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -768,13 +768,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-5/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-5/pos/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -786,7 +786,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression")
       @TestDataPath("$PROJECT_ROOT")
       public class Conditional_expression {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInConditional_expression() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -795,7 +795,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6")
         @TestDataPath("$PROJECT_ROOT")
         public class P_6 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_6() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -804,13 +804,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6/neg")
           @TestDataPath("$PROJECT_ROOT")
           public class Neg {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6/neg/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -820,13 +820,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6/pos/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -838,7 +838,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals")
       @TestDataPath("$PROJECT_ROOT")
       public class Constant_literals {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInConstant_literals() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -847,7 +847,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals")
         @TestDataPath("$PROJECT_ROOT")
         public class Boolean_literals {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInBoolean_literals() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -856,7 +856,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1")
           @TestDataPath("$PROJECT_ROOT")
           public class P_1 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -865,19 +865,19 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/neg/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.1.kt")
               public void test3_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/neg/3.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -887,25 +887,25 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.1.kt")
               public void test3_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/pos/3.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.2.kt")
               public void test3_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/pos/3.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -917,7 +917,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals")
         @TestDataPath("$PROJECT_ROOT")
         public class Character_literals {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInCharacter_literals() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -926,7 +926,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1")
           @TestDataPath("$PROJECT_ROOT")
           public class P_1 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -935,13 +935,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -951,13 +951,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -968,7 +968,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4")
           @TestDataPath("$PROJECT_ROOT")
           public class P_4 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_4() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -977,13 +977,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -993,19 +993,19 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/pos/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1017,7 +1017,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals")
         @TestDataPath("$PROJECT_ROOT")
         public class Integer_literals {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInInteger_literals() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -1026,7 +1026,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals")
           @TestDataPath("$PROJECT_ROOT")
           public class Binary_integer_literals {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInBinary_integer_literals() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -1035,7 +1035,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1")
             @TestDataPath("$PROJECT_ROOT")
             public class P_1 {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInP_1() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1044,31 +1044,31 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg")
               @TestDataPath("$PROJECT_ROOT")
               public class Neg {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/1.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/2.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.2.kt")
                 public void test2_2() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/2.2.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.3.kt")
                 public void test2_3() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/2.3.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInNeg() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -1080,7 +1080,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals")
           @TestDataPath("$PROJECT_ROOT")
           public class Decimal_integer_literals {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInDecimal_integer_literals() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -1089,7 +1089,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1")
             @TestDataPath("$PROJECT_ROOT")
             public class P_1 {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInP_1() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1098,25 +1098,25 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg")
               @TestDataPath("$PROJECT_ROOT")
               public class Neg {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg/2.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.2.kt")
                 public void test2_2() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg/2.2.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.3.kt")
                 public void test2_3() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg/2.3.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInNeg() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -1128,7 +1128,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals")
           @TestDataPath("$PROJECT_ROOT")
           public class Hexadecimal_integer_literals {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInHexadecimal_integer_literals() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -1137,7 +1137,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1")
             @TestDataPath("$PROJECT_ROOT")
             public class P_1 {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInP_1() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1146,37 +1146,37 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg")
               @TestDataPath("$PROJECT_ROOT")
               public class Neg {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/1.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/2.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.2.kt")
                 public void test2_2() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/2.2.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.3.kt")
                 public void test2_3() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/2.3.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.4.kt")
                 public void test2_4() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/2.4.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInNeg() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -1189,7 +1189,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals")
         @TestDataPath("$PROJECT_ROOT")
         public class Real_literals {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInReal_literals() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -1198,7 +1198,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1")
           @TestDataPath("$PROJECT_ROOT")
           public class P_1 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -1207,19 +1207,19 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.1.kt")
               public void test3_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/neg/3.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1229,31 +1229,31 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/pos/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.1.kt")
               public void test3_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/pos/3.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.2.kt")
               public void test3_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/pos/3.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1264,7 +1264,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2")
           @TestDataPath("$PROJECT_ROOT")
           public class P_2 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_2() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -1273,31 +1273,31 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.3.kt")
               public void test1_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg/1.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.4.kt")
               public void test1_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg/1.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1307,19 +1307,19 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/pos/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1330,7 +1330,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3")
           @TestDataPath("$PROJECT_ROOT")
           public class P_3 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_3() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -1339,25 +1339,25 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/neg/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/neg/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1367,55 +1367,55 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.3.kt")
               public void test1_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/1.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.4.kt")
               public void test1_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/1.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.5.kt")
               public void test1_5() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/1.5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.2.kt")
               public void test2_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/2.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.3.kt")
               public void test2_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos/2.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1426,7 +1426,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4")
           @TestDataPath("$PROJECT_ROOT")
           public class P_4 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_4() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -1435,37 +1435,37 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.2.kt")
               public void test2_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg/2.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.3.kt")
               public void test2_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg/2.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1475,37 +1475,37 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.3.kt")
               public void test1_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos/1.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.4.kt")
               public void test1_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos/1.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.5.kt")
               public void test1_5() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos/1.5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1516,7 +1516,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5")
           @TestDataPath("$PROJECT_ROOT")
           public class P_5 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_5() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -1525,37 +1525,37 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.3.kt")
               public void test1_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.4.kt")
               public void test1_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.5.kt")
               public void test1_5() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1567,7 +1567,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals")
         @TestDataPath("$PROJECT_ROOT")
         public class The_types_for_integer_literals {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInThe_types_for_integer_literals() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -1576,7 +1576,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1")
           @TestDataPath("$PROJECT_ROOT")
           public class P_1 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -1585,55 +1585,55 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.3.kt")
               public void test1_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.2.kt")
               public void test2_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.3.kt")
               public void test2_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.4.kt")
               public void test2_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.5.kt")
               public void test2_5() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/2.5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1643,37 +1643,37 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.2.kt")
               public void test2_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.3.kt")
               public void test2_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.4.kt")
               public void test2_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.5.kt")
               public void test2_5() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/2.5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1686,7 +1686,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression")
       @TestDataPath("$PROJECT_ROOT")
       public class Elvis_operator_expression {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInElvis_operator_expression() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -1695,7 +1695,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression/p-3")
         @TestDataPath("$PROJECT_ROOT")
         public class P_3 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_3() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -1704,13 +1704,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression/p-3/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression/p-3/pos/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -1722,7 +1722,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions")
       @TestDataPath("$PROJECT_ROOT")
       public class Equality_expressions {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInEquality_expressions() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -1731,7 +1731,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions")
         @TestDataPath("$PROJECT_ROOT")
         public class Value_equality_expressions {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInValue_equality_expressions() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -1740,7 +1740,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions/p-3")
           @TestDataPath("$PROJECT_ROOT")
           public class P_3 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_3() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -1749,13 +1749,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions/p-3/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions/p-3/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1768,7 +1768,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions")
       @TestDataPath("$PROJECT_ROOT")
       public class Jump_expressions {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInJump_expressions() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -1777,7 +1777,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression")
         @TestDataPath("$PROJECT_ROOT")
         public class Break_expression {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInBreak_expression() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -1786,7 +1786,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression/p-1")
           @TestDataPath("$PROJECT_ROOT")
           public class P_1 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -1795,13 +1795,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression/p-1/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression/p-1/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1813,7 +1813,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression")
         @TestDataPath("$PROJECT_ROOT")
         public class Continue_expression {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInContinue_expression() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -1822,7 +1822,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression/p-1")
           @TestDataPath("$PROJECT_ROOT")
           public class P_1 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -1831,13 +1831,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression/p-1/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression/p-1/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1849,7 +1849,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/p-2")
         @TestDataPath("$PROJECT_ROOT")
         public class P_2 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_2() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -1858,13 +1858,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/p-2/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/p-2/pos/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -1875,7 +1875,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions")
         @TestDataPath("$PROJECT_ROOT")
         public class Return_expressions {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInReturn_expressions() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -1884,7 +1884,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-1")
           @TestDataPath("$PROJECT_ROOT")
           public class P_1 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -1893,13 +1893,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-1/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-1/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1910,7 +1910,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-4")
           @TestDataPath("$PROJECT_ROOT")
           public class P_4 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_4() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -1919,13 +1919,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-4/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-4/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -1938,7 +1938,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression")
       @TestDataPath("$PROJECT_ROOT")
       public class Logical_conjunction_expression {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInLogical_conjunction_expression() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -1947,7 +1947,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2")
         @TestDataPath("$PROJECT_ROOT")
         public class P_2 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_2() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -1956,13 +1956,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2/neg")
           @TestDataPath("$PROJECT_ROOT")
           public class Neg {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2/neg/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -1972,13 +1972,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2/pos/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -1990,7 +1990,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression")
       @TestDataPath("$PROJECT_ROOT")
       public class Logical_disjunction_expression {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInLogical_disjunction_expression() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -1999,7 +1999,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2")
         @TestDataPath("$PROJECT_ROOT")
         public class P_2 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_2() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2008,13 +2008,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2/neg")
           @TestDataPath("$PROJECT_ROOT")
           public class Neg {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2/neg/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2024,13 +2024,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2/pos/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2042,7 +2042,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression")
       @TestDataPath("$PROJECT_ROOT")
       public class Multiplicative_expression {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInMultiplicative_expression() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -2051,7 +2051,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression/p-5")
         @TestDataPath("$PROJECT_ROOT")
         public class P_5 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_5() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2060,13 +2060,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression/p-5/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression/p-5/pos/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2078,7 +2078,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression")
       @TestDataPath("$PROJECT_ROOT")
       public class Not_null_assertion_expression {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInNot_null_assertion_expression() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -2087,7 +2087,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2")
         @TestDataPath("$PROJECT_ROOT")
         public class P_2 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_2() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2096,13 +2096,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2/pos/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2113,7 +2113,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-3")
         @TestDataPath("$PROJECT_ROOT")
         public class P_3 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_3() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2122,13 +2122,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-3/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-3/pos/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2140,7 +2140,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions")
       @TestDataPath("$PROJECT_ROOT")
       public class Prefix_expressions {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInPrefix_expressions() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -2149,7 +2149,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression")
         @TestDataPath("$PROJECT_ROOT")
         public class Logical_not_expression {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInLogical_not_expression() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2158,7 +2158,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression/p-3")
           @TestDataPath("$PROJECT_ROOT")
           public class P_3 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_3() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2167,13 +2167,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression/p-3/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression/p-3/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -2185,7 +2185,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression")
         @TestDataPath("$PROJECT_ROOT")
         public class Prefix_decrement_expression {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInPrefix_decrement_expression() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2194,7 +2194,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4")
           @TestDataPath("$PROJECT_ROOT")
           public class P_4 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_4() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2203,13 +2203,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -2220,7 +2220,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5")
           @TestDataPath("$PROJECT_ROOT")
           public class P_5 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_5() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2229,13 +2229,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5/neg/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -2247,7 +2247,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression")
         @TestDataPath("$PROJECT_ROOT")
         public class Prefix_increment_expression {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInPrefix_increment_expression() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2256,7 +2256,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-4")
           @TestDataPath("$PROJECT_ROOT")
           public class P_4 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_4() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2265,13 +2265,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -2282,7 +2282,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-5")
           @TestDataPath("$PROJECT_ROOT")
           public class P_5 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_5() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2291,13 +2291,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-5/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-5/neg/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -2309,7 +2309,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression")
         @TestDataPath("$PROJECT_ROOT")
         public class Unary_minus_expression {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInUnary_minus_expression() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2318,7 +2318,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression/p-3")
           @TestDataPath("$PROJECT_ROOT")
           public class P_3 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_3() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2327,13 +2327,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression/p-3/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression/p-3/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -2345,7 +2345,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression")
         @TestDataPath("$PROJECT_ROOT")
         public class Unary_plus_expression {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInUnary_plus_expression() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2354,7 +2354,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression/p-3")
           @TestDataPath("$PROJECT_ROOT")
           public class P_3 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_3() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2363,13 +2363,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression/p-3/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression/p-3/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -2382,7 +2382,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression")
       @TestDataPath("$PROJECT_ROOT")
       public class Range_expression {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInRange_expression() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -2391,7 +2391,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression/p-4")
         @TestDataPath("$PROJECT_ROOT")
         public class P_4 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_4() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2400,13 +2400,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression/p-4/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression/p-4/pos/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2418,7 +2418,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression")
       @TestDataPath("$PROJECT_ROOT")
       public class Try_expression {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInTry_expression() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -2427,7 +2427,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1")
         @TestDataPath("$PROJECT_ROOT")
         public class P_1 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_1() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2436,31 +2436,31 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg")
           @TestDataPath("$PROJECT_ROOT")
           public class Neg {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("3.1.kt")
             public void test3_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/3.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("4.1.kt")
             public void test4_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/4.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("5.1.kt")
             public void test5_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg/5.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2470,37 +2470,37 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("3.1.kt")
             public void test3_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/3.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("3.2.kt")
             public void test3_2() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/3.2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("4.1.kt")
             public void test4_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/4.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("4.2.kt")
             public void test4_2() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/4.2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2511,7 +2511,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2")
         @TestDataPath("$PROJECT_ROOT")
         public class P_2 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_2() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2520,13 +2520,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.1.kt")
             public void test2_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2/pos/2.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2537,7 +2537,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5")
         @TestDataPath("$PROJECT_ROOT")
         public class P_5 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_5() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2546,19 +2546,19 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5/pos/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.1.kt")
             public void test2_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5/pos/2.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2569,7 +2569,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8")
         @TestDataPath("$PROJECT_ROOT")
         public class P_8 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_8() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2578,13 +2578,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/neg")
           @TestDataPath("$PROJECT_ROOT")
           public class Neg {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/neg/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2594,13 +2594,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/pos/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2612,7 +2612,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions")
       @TestDataPath("$PROJECT_ROOT")
       public class Type_checking_and_containment_checking_expressions {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInType_checking_and_containment_checking_expressions() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -2621,7 +2621,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression")
         @TestDataPath("$PROJECT_ROOT")
         public class Containment_checking_expression {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInContainment_checking_expression() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2630,7 +2630,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5")
           @TestDataPath("$PROJECT_ROOT")
           public class P_5 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_5() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2639,13 +2639,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5/pos/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -2657,7 +2657,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression")
         @TestDataPath("$PROJECT_ROOT")
         public class Type_checking_expression {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInType_checking_expression() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2666,7 +2666,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4")
           @TestDataPath("$PROJECT_ROOT")
           public class P_4 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_4() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2675,13 +2675,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -2694,7 +2694,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression")
       @TestDataPath("$PROJECT_ROOT")
       public class When_expression {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInWhen_expression() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -2703,7 +2703,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions")
         @TestDataPath("$PROJECT_ROOT")
         public class Exhaustive_when_expressions {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInExhaustive_when_expressions() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2712,7 +2712,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2")
           @TestDataPath("$PROJECT_ROOT")
           public class P_2 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_2() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2721,49 +2721,49 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("11.1.kt")
               public void test11_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/11.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("11.2.kt")
               public void test11_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/11.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("11.3.kt")
               public void test11_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/11.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.1.kt")
               public void test3_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/3.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("9.1.kt")
               public void test9_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/9.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -2773,61 +2773,61 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("10.1.kt")
               public void test10_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/10.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("11.1.kt")
               public void test11_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/11.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("11.2.kt")
               public void test11_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/11.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("11.3.kt")
               public void test11_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/11.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.3.kt")
               public void test1_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/1.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.1.kt")
               public void test3_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/3.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("7.1.kt")
               public void test7_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/7.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -2839,7 +2839,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-1")
         @TestDataPath("$PROJECT_ROOT")
         public class P_1 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_1() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2848,19 +2848,19 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-1/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("3.1.kt")
             public void test3_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-1/pos/3.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("3.2.kt")
             public void test3_2() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-1/pos/3.2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2871,7 +2871,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2")
         @TestDataPath("$PROJECT_ROOT")
         public class P_2 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_2() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2880,19 +2880,19 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/neg")
           @TestDataPath("$PROJECT_ROOT")
           public class Neg {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.1.kt")
             public void test2_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/neg/2.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.2.kt")
             public void test2_2() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/neg/2.2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2902,37 +2902,37 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.2.kt")
             public void test1_2() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/1.2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.1.kt")
             public void test2_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/2.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.2.kt")
             public void test2_2() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/2.2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.3.kt")
             public void test2_3() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/2.3.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2943,7 +2943,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3")
         @TestDataPath("$PROJECT_ROOT")
         public class P_3 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_3() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2952,13 +2952,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3/neg")
           @TestDataPath("$PROJECT_ROOT")
           public class Neg {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.1.kt")
             public void test2_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3/neg/2.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2969,7 +2969,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4")
         @TestDataPath("$PROJECT_ROOT")
         public class P_4 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_4() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -2978,13 +2978,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/neg")
           @TestDataPath("$PROJECT_ROOT")
           public class Neg {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/neg/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -2994,13 +2994,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/pos/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -3011,7 +3011,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5")
         @TestDataPath("$PROJECT_ROOT")
         public class P_5 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_5() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -3020,13 +3020,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/neg")
           @TestDataPath("$PROJECT_ROOT")
           public class Neg {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/neg/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -3036,19 +3036,19 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/pos/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.2.kt")
             public void test1_2() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/pos/1.2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -3059,7 +3059,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6")
         @TestDataPath("$PROJECT_ROOT")
         public class P_6 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_6() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -3068,55 +3068,55 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg")
           @TestDataPath("$PROJECT_ROOT")
           public class Neg {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.2.kt")
             public void test1_2() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/1.2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("3.1.kt")
             public void test3_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/3.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("3.2.kt")
             public void test3_2() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/3.2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("5.1.kt")
             public void test5_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/5.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("5.2.kt")
             public void test5_2() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/5.2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("7.1.kt")
             public void test7_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/7.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("7.2.kt")
             public void test7_2() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/7.2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -3126,73 +3126,73 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.2.kt")
             public void test1_2() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.3.kt")
             public void test1_3() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.3.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.4.kt")
             public void test1_4() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.4.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("3.1.kt")
             public void test3_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/3.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("3.2.kt")
             public void test3_2() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/3.2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("5.1.kt")
             public void test5_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/5.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("5.2.kt")
             public void test5_2() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/5.2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("6.1.kt")
             public void test6_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/6.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("7.1.kt")
             public void test7_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/7.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("7.2.kt")
             public void test7_2() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/7.2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -3205,7 +3205,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution")
     @TestDataPath("$PROJECT_ROOT")
     public class Overload_resolution {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInOverload_resolution() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "c-level-partition", "determining-function-applicability-for-a-specific-call/rationale");
       }
@@ -3214,7 +3214,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs")
       @TestDataPath("$PROJECT_ROOT")
       public class Building_the_overload_candidate_set_ocs {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInBuilding_the_overload_candidate_set_ocs() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -3223,7 +3223,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver")
         @TestDataPath("$PROJECT_ROOT")
         public class Call_with_an_explicit_receiver {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInCall_with_an_explicit_receiver() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -3232,7 +3232,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver")
           @TestDataPath("$PROJECT_ROOT")
           public class Call_with_an_explicit_type_receiver {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInCall_with_an_explicit_type_receiver() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -3241,7 +3241,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver/p-3")
             @TestDataPath("$PROJECT_ROOT")
             public class P_3 {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInP_3() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -3250,13 +3250,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver/p-3/pos")
               @TestDataPath("$PROJECT_ROOT")
               public class Pos {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver/p-3/pos/2.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInPos() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -3268,7 +3268,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6")
           @TestDataPath("$PROJECT_ROOT")
           public class P_6 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_6() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -3277,103 +3277,103 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.3.kt")
               public void test1_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.4.kt")
               public void test1_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.5.kt")
               public void test1_5() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.2.kt")
               public void test2_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.3.kt")
               public void test2_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.4.kt")
               public void test2_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.1.kt")
               public void test3_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/3.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.2.kt")
               public void test3_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/3.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.1.kt")
               public void test4_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/4.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.2.kt")
               public void test4_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/4.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("5.1.kt")
               public void test5_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/5.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("5.2.kt")
               public void test5_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/5.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("6.1.kt")
               public void test6_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/6.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -3385,7 +3385,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters")
         @TestDataPath("$PROJECT_ROOT")
         public class Call_with_named_parameters {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInCall_with_named_parameters() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -3394,7 +3394,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1")
           @TestDataPath("$PROJECT_ROOT")
           public class P_1 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -3403,103 +3403,103 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.10.kt")
               public void test2_10() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.10.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.11.kt")
               public void test2_11() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.11.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.12.kt")
               public void test2_12() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.12.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.13.kt")
               public void test2_13() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.13.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.14.kt")
               public void test2_14() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.14.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.15.kt")
               public void test2_15() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.15.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.16.kt")
               public void test2_16() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.16.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.2.kt")
               public void test2_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.3.kt")
               public void test2_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.4.kt")
               public void test2_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.5.kt")
               public void test2_5() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.6.kt")
               public void test2_6() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.6.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.7.kt")
               public void test2_7() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.7.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.8.kt")
               public void test2_8() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.8.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.9.kt")
               public void test2_9() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.9.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -3510,7 +3510,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-5")
           @TestDataPath("$PROJECT_ROOT")
           public class P_5 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_5() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -3519,7 +3519,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-5/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -3531,7 +3531,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters")
         @TestDataPath("$PROJECT_ROOT")
         public class Call_with_specified_type_parameters {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInCall_with_specified_type_parameters() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -3540,7 +3540,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters/p-2")
           @TestDataPath("$PROJECT_ROOT")
           public class P_2 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_2() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -3549,13 +3549,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters/p-2/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters/p-2/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -3567,7 +3567,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions")
         @TestDataPath("$PROJECT_ROOT")
         public class Call_with_trailing_lambda_expressions {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInCall_with_trailing_lambda_expressions() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -3576,7 +3576,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1")
           @TestDataPath("$PROJECT_ROOT")
           public class P_1 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -3585,133 +3585,133 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.10.kt")
               public void test2_10() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.10.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.11.kt")
               public void test2_11() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.11.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.12.kt")
               public void test2_12() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.12.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.13.kt")
               public void test2_13() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.13.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.14.kt")
               public void test2_14() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.14.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.15.kt")
               public void test2_15() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.15.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.16.kt")
               public void test2_16() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.16.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.17.kt")
               public void test2_17() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.17.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.18.kt")
               public void test2_18() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.18.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.19.kt")
               public void test2_19() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.19.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.2.kt")
               public void test2_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.20.kt")
               public void test2_20() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.20.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.21.kt")
               public void test2_21() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.21.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.3.kt")
               public void test2_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.4.kt")
               public void test2_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.5.kt")
               public void test2_5() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.6.kt")
               public void test2_6() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.6.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.7.kt")
               public void test2_7() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.7.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.8.kt")
               public void test2_8() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.8.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.9.kt")
               public void test2_9() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.9.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -3723,7 +3723,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver")
         @TestDataPath("$PROJECT_ROOT")
         public class Call_without_an_explicit_receiver {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInCall_without_an_explicit_receiver() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -3732,7 +3732,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5")
           @TestDataPath("$PROJECT_ROOT")
           public class P_5 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_5() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -3741,49 +3741,49 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.3.kt")
               public void test2_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.4.kt")
               public void test2_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.5.kt")
               public void test2_5() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.1.kt")
               public void test4_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/4.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.2.kt")
               public void test4_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/4.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("6.1.kt")
               public void test6_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/6.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("6.4.kt")
               public void test6_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/6.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -3793,103 +3793,103 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.2.kt")
               public void test2_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.3.kt")
               public void test2_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.4.kt")
               public void test2_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.5.kt")
               public void test2_5() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.1.kt")
               public void test4_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.2.kt")
               public void test4_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.3.kt")
               public void test4_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.4.kt")
               public void test4_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.5.kt")
               public void test4_5() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.6.kt")
               public void test4_6() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.6.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("5.1.kt")
               public void test5_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/5.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("6.1.kt")
               public void test6_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("6.2.kt")
               public void test6_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("6.3.kt")
               public void test6_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("7.1.kt")
               public void test7_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/7.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -3901,7 +3901,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call")
         @TestDataPath("$PROJECT_ROOT")
         public class Infix_function_call {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInInfix_function_call() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -3910,7 +3910,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2")
           @TestDataPath("$PROJECT_ROOT")
           public class P_2 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_2() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -3919,37 +3919,37 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.3.kt")
               public void test1_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.4.kt")
               public void test1_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.5.kt")
               public void test4_5() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/4.5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -3959,37 +3959,37 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.1.kt")
               public void test4_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.2.kt")
               public void test4_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.3.kt")
               public void test4_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.4.kt")
               public void test4_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.5.kt")
               public void test4_5() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4001,7 +4001,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call")
         @TestDataPath("$PROJECT_ROOT")
         public class Operator_call {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInOperator_call() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -4010,7 +4010,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1")
           @TestDataPath("$PROJECT_ROOT")
           public class P_1 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -4019,55 +4019,55 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.2.kt")
               public void test2_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.4.kt")
               public void test2_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.5.kt")
               public void test2_5() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.6.kt")
               public void test2_6() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.6.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.7.kt")
               public void test2_7() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.7.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.8.kt")
               public void test2_8() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.8.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.9.kt")
               public void test2_9() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.9.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4077,25 +4077,25 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.2.kt")
               public void test2_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.3.kt")
               public void test2_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4106,7 +4106,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2")
           @TestDataPath("$PROJECT_ROOT")
           public class P_2 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_2() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -4115,43 +4115,43 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.1.kt")
               public void test3_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.2.kt")
               public void test3_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.3.kt")
               public void test3_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.4.kt")
               public void test3_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.5.kt")
               public void test3_5() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.6.kt")
               public void test3_6() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.6.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4162,7 +4162,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4")
           @TestDataPath("$PROJECT_ROOT")
           public class P_4 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_4() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -4171,13 +4171,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4187,13 +4187,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4206,7 +4206,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention")
       @TestDataPath("$PROJECT_ROOT")
       public class Callables_and_invoke_convention {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInCallables_and_invoke_convention() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -4215,7 +4215,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2")
         @TestDataPath("$PROJECT_ROOT")
         public class P_2 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_2() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -4224,25 +4224,25 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("10.1.kt")
             public void test10_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos/10.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("8.1.kt")
             public void test8_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos/8.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("9.1.kt")
             public void test9_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos/9.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -4254,7 +4254,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set")
       @TestDataPath("$PROJECT_ROOT")
       public class Choosing_the_most_specific_candidate_from_the_overload_candidate_set {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInChoosing_the_most_specific_candidate_from_the_overload_candidate_set() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -4263,7 +4263,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection")
         @TestDataPath("$PROJECT_ROOT")
         public class Algorithm_of_msc_selection {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInAlgorithm_of_msc_selection() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -4272,7 +4272,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11")
           @TestDataPath("$PROJECT_ROOT")
           public class P_11 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_11() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -4281,55 +4281,55 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.1.kt")
               public void test4_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.2.kt")
               public void test4_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.3.kt")
               public void test4_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.4.kt")
               public void test4_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.5.kt")
               public void test4_5() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("5.1.kt")
               public void test5_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/5.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4340,7 +4340,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12")
           @TestDataPath("$PROJECT_ROOT")
           public class P_12 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_12() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -4349,49 +4349,49 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.2.kt")
               public void test2_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.3.kt")
               public void test2_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.4.kt")
               public void test2_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.5.kt")
               public void test2_5() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.6.kt")
               public void test2_6() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.6.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.7.kt")
               public void test2_7() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.7.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4402,7 +4402,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14")
           @TestDataPath("$PROJECT_ROOT")
           public class P_14 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_14() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -4411,49 +4411,49 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.3.kt")
               public void test1_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.4.kt")
               public void test1_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.5.kt")
               public void test1_5() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.6.kt")
               public void test1_6() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.6.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.7.kt")
               public void test1_7() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.7.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4464,7 +4464,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17")
           @TestDataPath("$PROJECT_ROOT")
           public class P_17 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_17() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -4473,19 +4473,19 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17/neg/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.2.kt")
               public void test2_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17/neg/2.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4496,7 +4496,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3")
           @TestDataPath("$PROJECT_ROOT")
           public class P_3 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_3() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -4505,31 +4505,31 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.3.kt")
               public void test1_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.4.kt")
               public void test1_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4540,7 +4540,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9")
           @TestDataPath("$PROJECT_ROOT")
           public class P_9 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_9() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -4549,25 +4549,25 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.2.kt")
               public void test2_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg/2.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.3.kt")
               public void test2_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg/2.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4577,13 +4577,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4595,7 +4595,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1")
         @TestDataPath("$PROJECT_ROOT")
         public class Rationale_1 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInRationale_1() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -4604,7 +4604,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2")
           @TestDataPath("$PROJECT_ROOT")
           public class P_2 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_2() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -4613,13 +4613,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4630,7 +4630,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3")
           @TestDataPath("$PROJECT_ROOT")
           public class P_3 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_3() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -4639,13 +4639,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4658,7 +4658,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call")
       @TestDataPath("$PROJECT_ROOT")
       public class Determining_function_applicability_for_a_specific_call {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInDetermining_function_applicability_for_a_specific_call() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "rationale");
         }
@@ -4667,7 +4667,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description")
         @TestDataPath("$PROJECT_ROOT")
         public class Description {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInDescription() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -4676,7 +4676,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2")
           @TestDataPath("$PROJECT_ROOT")
           public class P_2 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_2() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -4685,13 +4685,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2/neg/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4704,7 +4704,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers")
       @TestDataPath("$PROJECT_ROOT")
       public class Receivers {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInReceivers() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -4713,7 +4713,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5")
         @TestDataPath("$PROJECT_ROOT")
         public class P_5 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_5() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -4722,25 +4722,25 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.1.kt")
             public void test2_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5/pos/2.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("3.1.kt")
             public void test3_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5/pos/3.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("5.1.kt")
             public void test5_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5/pos/5.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -4752,7 +4752,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references")
       @TestDataPath("$PROJECT_ROOT")
       public class Resolving_callable_references {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInResolving_callable_references() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -4761,7 +4761,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls")
         @TestDataPath("$PROJECT_ROOT")
         public class Bidirectional_resolution_for_callable_calls {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInBidirectional_resolution_for_callable_calls() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -4770,7 +4770,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-1")
           @TestDataPath("$PROJECT_ROOT")
           public class P_1 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -4779,13 +4779,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-1/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-1/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4796,7 +4796,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3")
           @TestDataPath("$PROJECT_ROOT")
           public class P_3 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_3() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -4805,13 +4805,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4821,31 +4821,31 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.3.kt")
               public void test1_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.4.kt")
               public void test1_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4857,7 +4857,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/p-2")
         @TestDataPath("$PROJECT_ROOT")
         public class P_2 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_2() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -4866,13 +4866,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/p-2/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.1.kt")
             public void test2_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/p-2/pos/2.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -4883,7 +4883,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call")
         @TestDataPath("$PROJECT_ROOT")
         public class Resolving_callable_references_not_used_as_arguments_to_a_call {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInResolving_callable_references_not_used_as_arguments_to_a_call() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -4892,7 +4892,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1")
           @TestDataPath("$PROJECT_ROOT")
           public class P_1 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -4901,37 +4901,37 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.3.kt")
               public void test1_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.4.kt")
               public void test1_4() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.5.kt")
               public void test1_5() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4941,25 +4941,25 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.3.kt")
               public void test1_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -4973,7 +4973,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements")
     @TestDataPath("$PROJECT_ROOT")
     public class Statements {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInStatements() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "assignments/simple-assignments");
       }
@@ -4982,7 +4982,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments")
       @TestDataPath("$PROJECT_ROOT")
       public class Assignments {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInAssignments() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "simple-assignments");
         }
@@ -4991,7 +4991,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments")
         @TestDataPath("$PROJECT_ROOT")
         public class Operator_assignments {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInOperator_assignments() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -5000,7 +5000,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2")
           @TestDataPath("$PROJECT_ROOT")
           public class P_2 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_2() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -5009,13 +5009,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -5025,13 +5025,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -5043,7 +5043,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-1")
         @TestDataPath("$PROJECT_ROOT")
         public class P_1 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_1() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -5052,13 +5052,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-1/neg")
           @TestDataPath("$PROJECT_ROOT")
           public class Neg {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.1.kt")
             public void test2_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-1/neg/2.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -5069,7 +5069,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2")
         @TestDataPath("$PROJECT_ROOT")
         public class P_2 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_2() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -5078,19 +5078,19 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2/neg")
           @TestDataPath("$PROJECT_ROOT")
           public class Neg {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2/neg/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.2.kt")
             public void test1_2() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2/neg/1.2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -5102,7 +5102,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements")
       @TestDataPath("$PROJECT_ROOT")
       public class Loop_statements {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInLoop_statements() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -5111,7 +5111,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement")
         @TestDataPath("$PROJECT_ROOT")
         public class Do_while_loop_statement {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInDo_while_loop_statement() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -5120,7 +5120,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-1")
           @TestDataPath("$PROJECT_ROOT")
           public class P_1 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -5129,13 +5129,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-1/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-1/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -5146,7 +5146,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-3")
           @TestDataPath("$PROJECT_ROOT")
           public class P_3 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_3() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -5155,13 +5155,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-3/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-3/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -5173,7 +5173,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement")
         @TestDataPath("$PROJECT_ROOT")
         public class While_loop_statement {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInWhile_loop_statement() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -5182,7 +5182,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-1")
           @TestDataPath("$PROJECT_ROOT")
           public class P_1 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -5191,13 +5191,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-1/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-1/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -5208,7 +5208,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-3")
           @TestDataPath("$PROJECT_ROOT")
           public class P_3 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_3() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -5217,13 +5217,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-3/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-3/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -5237,7 +5237,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-inference")
     @TestDataPath("$PROJECT_ROOT")
     public class Type_inference {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInType_inference() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "local-type-inference", "smart-casts/smart-cast-types");
       }
@@ -5246,7 +5246,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts")
       @TestDataPath("$PROJECT_ROOT")
       public class Smart_casts {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInSmart_casts() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "smart-cast-types");
         }
@@ -5255,7 +5255,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability")
         @TestDataPath("$PROJECT_ROOT")
         public class Smart_cast_sink_stability {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInSmart_cast_sink_stability() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -5264,7 +5264,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5")
           @TestDataPath("$PROJECT_ROOT")
           public class P_5 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_5() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -5273,13 +5273,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -5289,13 +5289,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -5309,7 +5309,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system")
     @TestDataPath("$PROJECT_ROOT")
     public class Type_system {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInType_system() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "subtyping/subtyping-for-nullable-types", "type-kinds/type-parameters");
       }
@@ -5318,7 +5318,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1")
       @TestDataPath("$PROJECT_ROOT")
       public class Introduction_1 {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInIntroduction_1() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -5327,7 +5327,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6")
         @TestDataPath("$PROJECT_ROOT")
         public class P_6 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_6() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -5336,25 +5336,25 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6/neg")
           @TestDataPath("$PROJECT_ROOT")
           public class Neg {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.1.kt")
             public void test2_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6/neg/2.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.2.kt")
             public void test2_2() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6/neg/2.2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.3.kt")
             public void test2_3() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6/neg/2.3.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -5365,7 +5365,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8")
         @TestDataPath("$PROJECT_ROOT")
         public class P_8 {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInP_8() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -5374,19 +5374,19 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.1.kt")
             public void test1_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8/pos/1.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.1.kt")
             public void test2_1() {
               runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8/pos/2.1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -5398,7 +5398,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping")
       @TestDataPath("$PROJECT_ROOT")
       public class Subtyping {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInSubtyping() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "subtyping-for-nullable-types");
         }
@@ -5407,7 +5407,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types")
         @TestDataPath("$PROJECT_ROOT")
         public class Subtyping_for_intersection_types {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInSubtyping_for_intersection_types() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -5416,7 +5416,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1")
           @TestDataPath("$PROJECT_ROOT")
           public class P_1 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -5425,25 +5425,25 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.3.kt")
               public void test1_3() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos/1.3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -5455,7 +5455,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules")
         @TestDataPath("$PROJECT_ROOT")
         public class Subtyping_rules {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInSubtyping_rules() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -5464,7 +5464,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2")
           @TestDataPath("$PROJECT_ROOT")
           public class P_2 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_2() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -5473,13 +5473,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -5492,7 +5492,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes")
       @TestDataPath("$PROJECT_ROOT")
       public class Type_contexts_and_scopes {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInType_contexts_and_scopes() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -5501,7 +5501,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts")
         @TestDataPath("$PROJECT_ROOT")
         public class Inner_and_nested_type_contexts {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInInner_and_nested_type_contexts() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -5510,7 +5510,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1")
           @TestDataPath("$PROJECT_ROOT")
           public class P_1 {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -5519,25 +5519,25 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.1.kt")
               public void test2_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg/2.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -5547,19 +5547,19 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.1.kt")
               public void test1_1() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/pos/1.1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.2.kt")
               public void test1_2() {
                 runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/pos/1.2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -5572,7 +5572,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds")
       @TestDataPath("$PROJECT_ROOT")
       public class Type_kinds {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInType_kinds() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "type-parameters");
         }
@@ -5581,7 +5581,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types")
         @TestDataPath("$PROJECT_ROOT")
         public class Built_in_types {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInBuilt_in_types() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -5590,7 +5590,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any")
           @TestDataPath("$PROJECT_ROOT")
           public class Kotlin_any {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInKotlin_any() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -5599,7 +5599,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1")
             @TestDataPath("$PROJECT_ROOT")
             public class P_1 {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInP_1() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -5608,19 +5608,19 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1/pos")
               @TestDataPath("$PROJECT_ROOT")
               public class Pos {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1/pos/1.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1/pos/1.2.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInPos() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -5632,7 +5632,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing")
           @TestDataPath("$PROJECT_ROOT")
           public class Kotlin_nothing {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInKotlin_nothing() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -5641,7 +5641,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1")
             @TestDataPath("$PROJECT_ROOT")
             public class P_1 {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInP_1() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -5650,13 +5650,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/neg")
               @TestDataPath("$PROJECT_ROOT")
               public class Neg {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/neg/2.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInNeg() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -5666,19 +5666,19 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos")
               @TestDataPath("$PROJECT_ROOT")
               public class Pos {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/1.1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
                   runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/1.2.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInPos() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -5694,7 +5694,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
   @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked")
   @TestDataPath("$PROJECT_ROOT")
   public class NotLinked {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInNotLinked() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
@@ -5703,7 +5703,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
     @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/annotations")
     @TestDataPath("$PROJECT_ROOT")
     public class Annotations {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInAnnotations() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
@@ -5712,7 +5712,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes")
       @TestDataPath("$PROJECT_ROOT")
       public class Annotation_classes {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInAnnotation_classes() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -5721,13 +5721,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes/neg")
         @TestDataPath("$PROJECT_ROOT")
         public class Neg {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("1.kt")
           public void test1() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes/neg/1.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInNeg() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -5738,7 +5738,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations")
       @TestDataPath("$PROJECT_ROOT")
       public class Type_annotations {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInType_annotations() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -5747,73 +5747,73 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg")
         @TestDataPath("$PROJECT_ROOT")
         public class Neg {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("1.kt")
           public void test1() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/1.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("10.kt")
           public void test10() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/10.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("11.kt")
           public void test11() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/11.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("2.kt")
           public void test2() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/2.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("3.kt")
           public void test3() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/3.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("4.kt")
           public void test4() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/4.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("5.kt")
           public void test5() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/5.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("6.kt")
           public void test6() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/6.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("7.kt")
           public void test7() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/7.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("8.kt")
           public void test8() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/8.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("9.kt")
           public void test9() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/9.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInNeg() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -5825,7 +5825,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
     @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/coercion-to-unit")
     @TestDataPath("$PROJECT_ROOT")
     public class Coercion_to_unit {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInCoercion_to_unit() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/coercion-to-unit"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
@@ -5834,13 +5834,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/coercion-to-unit/neg")
       @TestDataPath("$PROJECT_ROOT")
       public class Neg {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("1.kt")
         public void test1() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/coercion-to-unit/neg/1.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInNeg() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/coercion-to-unit/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -5851,7 +5851,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
     @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts")
     @TestDataPath("$PROJECT_ROOT")
     public class Contracts {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInContracts() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
@@ -5860,7 +5860,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis")
       @TestDataPath("$PROJECT_ROOT")
       public class Analysis {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInAnalysis() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -5869,7 +5869,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common")
         @TestDataPath("$PROJECT_ROOT")
         public class Common {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInCommon() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -5878,13 +5878,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common/neg")
           @TestDataPath("$PROJECT_ROOT")
           public class Neg {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.kt")
             public void test1() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common/neg/1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -5894,19 +5894,19 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.kt")
             public void test1() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common/pos/1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.kt")
             public void test2() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common/pos/2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -5917,7 +5917,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow")
         @TestDataPath("$PROJECT_ROOT")
         public class ControlFlow {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInControlFlow() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -5926,7 +5926,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization")
           @TestDataPath("$PROJECT_ROOT")
           public class Initialization {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInInitialization() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -5935,37 +5935,37 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.kt")
               public void test1() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg/1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.kt")
               public void test2() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg/2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.kt")
               public void test3() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg/3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.kt")
               public void test4() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg/4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("5.kt")
               public void test5() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg/5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -5975,49 +5975,49 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.kt")
               public void test1() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.kt")
               public void test2() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.kt")
               public void test3() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.kt")
               public void test4() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("5.kt")
               public void test5() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("6.kt")
               public void test6() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/6.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("7.kt")
               public void test7() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/7.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -6028,7 +6028,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode")
           @TestDataPath("$PROJECT_ROOT")
           public class UnreachableCode {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInUnreachableCode() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -6037,13 +6037,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.kt")
               public void test1() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/neg/1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -6053,49 +6053,49 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.kt")
               public void test1() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.kt")
               public void test2() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.kt")
               public void test3() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.kt")
               public void test4() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("5.kt")
               public void test5() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("6.kt")
               public void test6() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/6.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("7.kt")
               public void test7() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos/7.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -6107,7 +6107,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts")
         @TestDataPath("$PROJECT_ROOT")
         public class Smartcasts {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInSmartcasts() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -6116,97 +6116,97 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg")
           @TestDataPath("$PROJECT_ROOT")
           public class Neg {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.kt")
             public void test1() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("10.kt")
             public void test10() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/10.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("11.kt")
             public void test11() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/11.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("12.kt")
             public void test12() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/12.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("13.kt")
             public void test13() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/13.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("14.kt")
             public void test14() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/14.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("15.kt")
             public void test15() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/15.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.kt")
             public void test2() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("3.kt")
             public void test3() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/3.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("4.kt")
             public void test4() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/4.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("5.kt")
             public void test5() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/5.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("6.kt")
             public void test6() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/6.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("7.kt")
             public void test7() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/7.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("8.kt")
             public void test8() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/8.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("9.kt")
             public void test9() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/9.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -6216,91 +6216,91 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.kt")
             public void test1() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("10.kt")
             public void test10() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/10.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("11.kt")
             public void test11() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/11.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("12.kt")
             public void test12() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/12.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("13.kt")
             public void test13() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/13.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("14.kt")
             public void test14() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/14.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.kt")
             public void test2() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("3.kt")
             public void test3() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/3.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("4.kt")
             public void test4() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/4.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("5.kt")
             public void test5() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/5.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("6.kt")
             public void test6() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/6.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("7.kt")
             public void test7() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/7.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("8.kt")
             public void test8() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/8.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("9.kt")
             public void test9() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/9.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -6312,7 +6312,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations")
       @TestDataPath("$PROJECT_ROOT")
       public class Declarations {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInDeclarations() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -6321,7 +6321,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder")
         @TestDataPath("$PROJECT_ROOT")
         public class ContractBuilder {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInContractBuilder() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -6330,7 +6330,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common")
           @TestDataPath("$PROJECT_ROOT")
           public class Common {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInCommon() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -6339,115 +6339,115 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg")
             @TestDataPath("$PROJECT_ROOT")
             public class Neg {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.kt")
               public void test1() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("10.kt")
               public void test10() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/10.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("11.kt")
               public void test11() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/11.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("12.kt")
               public void test12() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/12.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("13.kt")
               public void test13() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/13.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("14.kt")
               public void test14() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/14.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("15.kt")
               public void test15() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/15.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("16.kt")
               public void test16() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/16.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("17.kt")
               public void test17() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/17.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("19.kt")
               public void test19() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/19.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.kt")
               public void test2() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("3.kt")
               public void test3() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/3.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("4.kt")
               public void test4() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/4.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("5.kt")
               public void test5() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/5.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("6.kt")
               public void test6() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/6.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("7.kt")
               public void test7() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/7.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("8.kt")
               public void test8() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/8.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("9.kt")
               public void test9() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/9.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -6457,19 +6457,19 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/pos")
             @TestDataPath("$PROJECT_ROOT")
             public class Pos {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("1.kt")
               public void test1() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/pos/1.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               @TestMetadata("2.kt")
               public void test2() {
                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/pos/2.kt");
               }
 
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -6480,7 +6480,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects")
           @TestDataPath("$PROJECT_ROOT")
           public class Effects {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInEffects() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -6489,7 +6489,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace")
             @TestDataPath("$PROJECT_ROOT")
             public class CallsInPlace {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInCallsInPlace() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -6498,19 +6498,19 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/neg")
               @TestDataPath("$PROJECT_ROOT")
               public class Neg {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.kt")
                 public void test1() {
                   runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/neg/1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.kt")
                 public void test2() {
                   runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/neg/2.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInNeg() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -6520,25 +6520,25 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/pos")
               @TestDataPath("$PROJECT_ROOT")
               public class Pos {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.kt")
                 public void test1() {
                   runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/pos/1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.kt")
                 public void test2() {
                   runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/pos/2.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("3.kt")
                 public void test3() {
                   runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/pos/3.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInPos() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -6549,7 +6549,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/common")
             @TestDataPath("$PROJECT_ROOT")
             public class Common {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInCommon() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/common"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -6558,13 +6558,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/common/neg")
               @TestDataPath("$PROJECT_ROOT")
               public class Neg {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.kt")
                 public void test1() {
                   runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/common/neg/1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInNeg() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/common/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -6575,7 +6575,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns")
             @TestDataPath("$PROJECT_ROOT")
             public class Returns {
-              @RepeatedTest(value = 3)
+              @RepeatedTest(value = 5)
               public void testAllFilesPresentInReturns() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
               }
@@ -6584,49 +6584,49 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg")
               @TestDataPath("$PROJECT_ROOT")
               public class Neg {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.kt")
                 public void test1() {
                   runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.kt")
                 public void test2() {
                   runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/2.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("3.kt")
                 public void test3() {
                   runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/3.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("4.kt")
                 public void test4() {
                   runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/4.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("5.kt")
                 public void test5() {
                   runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/5.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("6.kt")
                 public void test6() {
                   runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/6.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("7.kt")
                 public void test7() {
                   runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg/7.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInNeg() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -6636,31 +6636,31 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
               @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/pos")
               @TestDataPath("$PROJECT_ROOT")
               public class Pos {
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("1.kt")
                 public void test1() {
                   runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/pos/1.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("2.kt")
                 public void test2() {
                   runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/pos/2.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("3.kt")
                 public void test3() {
                   runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/pos/3.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 @TestMetadata("4.kt")
                 public void test4() {
                   runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/pos/4.kt");
                 }
 
-                @RepeatedTest(value = 3)
+                @RepeatedTest(value = 5)
                 public void testAllFilesPresentInPos() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -6673,7 +6673,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction")
         @TestDataPath("$PROJECT_ROOT")
         public class ContractFunction {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInContractFunction() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -6682,31 +6682,31 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg")
           @TestDataPath("$PROJECT_ROOT")
           public class Neg {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.kt")
             public void test1() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg/1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.kt")
             public void test2() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg/2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("3.kt")
             public void test3() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg/3.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("4.kt")
             public void test4() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg/4.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -6716,19 +6716,19 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.kt")
             public void test1() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/pos/1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.kt")
             public void test2() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/pos/2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
@@ -6741,7 +6741,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
     @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/dfa")
     @TestDataPath("$PROJECT_ROOT")
     public class Dfa {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInDfa() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/dfa"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
@@ -6750,277 +6750,277 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg")
       @TestDataPath("$PROJECT_ROOT")
       public class Neg {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("1.kt")
         public void test1() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/1.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("10.kt")
         public void test10() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/10.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("11.kt")
         public void test11() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/11.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("12.kt")
         public void test12() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/12.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("13.kt")
         public void test13() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/13.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("14.kt")
         public void test14() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/14.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("15.kt")
         public void test15() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/15.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("16.kt")
         public void test16() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/16.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("17.kt")
         public void test17() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/17.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("18.kt")
         public void test18() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/18.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("19.kt")
         public void test19() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/19.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("2.kt")
         public void test2() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/2.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("20.kt")
         public void test20() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/20.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("21.kt")
         public void test21() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/21.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("22.kt")
         public void test22() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/22.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("23.kt")
         public void test23() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/23.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("24.kt")
         public void test24() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/24.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("25.kt")
         public void test25() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/25.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("26.kt")
         public void test26() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/26.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("27.kt")
         public void test27() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/27.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("28.kt")
         public void test28() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/28.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("29.kt")
         public void test29() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/29.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("3.kt")
         public void test3() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/3.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("30.kt")
         public void test30() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/30.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("31.kt")
         public void test31() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/31.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("32.kt")
         public void test32() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/32.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("33.kt")
         public void test33() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/33.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("34.kt")
         public void test34() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/34.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("35.kt")
         public void test35() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/35.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("36.kt")
         public void test36() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/36.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("37.kt")
         public void test37() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/37.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("38.kt")
         public void test38() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/38.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("39.kt")
         public void test39() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/39.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("4.kt")
         public void test4() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/4.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("40.kt")
         public void test40() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/40.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("41.kt")
         public void test41() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/41.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("42.kt")
         public void test42() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/42.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("43.kt")
         public void test43() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/43.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("44.kt")
         public void test44() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/44.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("45.kt")
         public void test45() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/45.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("5.kt")
         public void test5() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/5.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("6.kt")
         public void test6() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/6.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("7.kt")
         public void test7() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/7.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("8.kt")
         public void test8() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/8.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("9.kt")
         public void test9() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/9.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInNeg() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -7030,445 +7030,445 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos")
       @TestDataPath("$PROJECT_ROOT")
       public class Pos {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("1.kt")
         public void test1() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/1.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("10.kt")
         public void test10() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/10.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("11.kt")
         public void test11() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/11.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("12.kt")
         public void test12() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/12.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("13.kt")
         public void test13() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/13.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("14.kt")
         public void test14() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/14.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("15.kt")
         public void test15() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/15.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("16.kt")
         public void test16() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/16.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("17.kt")
         public void test17() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/17.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("18.kt")
         public void test18() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/18.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("19.kt")
         public void test19() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/19.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("2.kt")
         public void test2() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/2.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("20.kt")
         public void test20() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/20.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("21.kt")
         public void test21() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/21.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("22.kt")
         public void test22() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/22.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("23.kt")
         public void test23() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/23.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("24.kt")
         public void test24() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/24.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("25.kt")
         public void test25() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/25.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("26.kt")
         public void test26() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/26.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("27.kt")
         public void test27() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/27.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("28.kt")
         public void test28() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/28.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("29.kt")
         public void test29() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/29.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("3.kt")
         public void test3() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/3.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("30.kt")
         public void test30() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/30.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("31.kt")
         public void test31() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/31.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("32.kt")
         public void test32() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/32.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("33.kt")
         public void test33() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/33.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("34.kt")
         public void test34() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/34.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("35.kt")
         public void test35() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/35.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("36.kt")
         public void test36() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/36.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("37.kt")
         public void test37() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/37.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("38.kt")
         public void test38() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/38.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("39.kt")
         public void test39() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/39.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("4.kt")
         public void test4() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/4.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("40.kt")
         public void test40() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/40.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("41.kt")
         public void test41() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/41.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("42.kt")
         public void test42() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/42.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("43.kt")
         public void test43() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/43.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("44.kt")
         public void test44() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/44.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("45.kt")
         public void test45() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/45.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("46.kt")
         public void test46() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/46.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("47.kt")
         public void test47() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/47.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("48.kt")
         public void test48() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/48.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("49.kt")
         public void test49() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/49.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("5.kt")
         public void test5() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/5.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("50.kt")
         public void test50() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/50.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("51.kt")
         public void test51() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/51.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("52.kt")
         public void test52() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/52.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("53.kt")
         public void test53() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/53.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("54.kt")
         public void test54() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/54.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("55.kt")
         public void test55() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/55.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("56.kt")
         public void test56() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/56.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("57.kt")
         public void test57() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/57.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("58.kt")
         public void test58() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/58.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("59.kt")
         public void test59() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/59.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("6.kt")
         public void test6() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/6.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("60.kt")
         public void test60() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/60.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("61.kt")
         public void test61() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/61.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("62.kt")
         public void test62() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/62.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("63.kt")
         public void test63() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/63.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("64.kt")
         public void test64() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/64.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("65.kt")
         public void test65() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/65.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("66.kt")
         public void test66() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/66.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("67.kt")
         public void test67() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/67.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("68.kt")
         public void test68() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/68.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("69.kt")
         public void test69() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/69.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("7.kt")
         public void test7() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/7.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("70.kt")
         public void test70() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/70.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("71.kt")
         public void test71() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/71.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("72.kt")
         public void test72() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/72.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("73.kt")
         public void test73() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/73.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("8.kt")
         public void test8() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/8.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("9.kt")
         public void test9() {
           runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/9.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInPos() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -7479,7 +7479,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
     @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/local-variables")
     @TestDataPath("$PROJECT_ROOT")
     public class Local_variables {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInLocal_variables() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/local-variables"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
@@ -7488,7 +7488,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/local-variables/type-parameters")
       @TestDataPath("$PROJECT_ROOT")
       public class Type_parameters {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInType_parameters() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/local-variables/type-parameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -7497,13 +7497,13 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/local-variables/type-parameters/neg")
         @TestDataPath("$PROJECT_ROOT")
         public class Neg {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("1.kt")
           public void test1() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/local-variables/type-parameters/neg/1.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInNeg() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/local-variables/type-parameters/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -7515,7 +7515,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
     @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/objects")
     @TestDataPath("$PROJECT_ROOT")
     public class Objects {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInObjects() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/objects"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
@@ -7524,7 +7524,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance")
       @TestDataPath("$PROJECT_ROOT")
       public class Inheritance {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInInheritance() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -7533,49 +7533,49 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg")
         @TestDataPath("$PROJECT_ROOT")
         public class Neg {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("1.kt")
           public void test1() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/1.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("2.kt")
           public void test2() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/2.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("3.kt")
           public void test3() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/3.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("4.kt")
           public void test4() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/4.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("5.kt")
           public void test5() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/5.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("6.kt")
           public void test6() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/6.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("7.kt")
           public void test7() {
             runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/7.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInNeg() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -7587,7 +7587,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
     @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution")
     @TestDataPath("$PROJECT_ROOT")
     public class Overload_resolution {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInOverload_resolution() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
@@ -7596,7 +7596,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
       @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs")
       @TestDataPath("$PROJECT_ROOT")
       public class Building_the_overload_candidate_set_ocs {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInBuilding_the_overload_candidate_set_ocs() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -7605,7 +7605,7 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call")
         @TestDataPath("$PROJECT_ROOT")
         public class Infix_function_call {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInInfix_function_call() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
@@ -7614,31 +7614,31 @@ public class FirIdeSpecTestGenerated extends AbstractLLFirDiagnosticCompilerTest
           @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/pos")
           @TestDataPath("$PROJECT_ROOT")
           public class Pos {
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("1.kt")
             public void test1() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/pos/1.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("2.kt")
             public void test2() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/pos/2.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("3.kt")
             public void test3() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/pos/3.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             @TestMetadata("4.kt")
             public void test4() {
               runTest("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/pos/4.kt");
             }
 
-            @RepeatedTest(value = 3)
+            @RepeatedTest(value = 5)
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }

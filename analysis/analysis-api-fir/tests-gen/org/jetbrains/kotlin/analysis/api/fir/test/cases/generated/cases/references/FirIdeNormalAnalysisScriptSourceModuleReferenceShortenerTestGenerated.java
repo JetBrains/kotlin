@@ -41,12 +41,12 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceShortenerTestGenerat
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInShortenRange() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("callInsideScriptExpression.kts")
   public void testCallInsideScriptExpression() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/callInsideScriptExpression.kts");
@@ -56,7 +56,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceShortenerTestGenerat
   @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts")
   @TestDataPath("$PROJECT_ROOT")
   public class Conflicts {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInConflicts() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -65,7 +65,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceShortenerTestGenerat
     @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName")
     @TestDataPath("$PROJECT_ROOT")
     public class ClassWithSameName {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInClassWithSameName() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -76,7 +76,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceShortenerTestGenerat
   @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses")
   @TestDataPath("$PROJECT_ROOT")
   public class NestedClasses {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInNestedClasses() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -85,7 +85,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceShortenerTestGenerat
     @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions")
     @TestDataPath("$PROJECT_ROOT")
     public class ClassHeaderPositions {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInClassHeaderPositions() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -96,7 +96,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceShortenerTestGenerat
   @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference")
   @TestDataPath("$PROJECT_ROOT")
   public class ThisReference {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInThisReference() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -105,7 +105,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceShortenerTestGenerat
     @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel")
     @TestDataPath("$PROJECT_ROOT")
     public class WithLabel {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInWithLabel() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
@@ -116,7 +116,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceShortenerTestGenerat
   @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/typeParameters")
   @TestDataPath("$PROJECT_ROOT")
   public class TypeParameters {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInTypeParameters() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/typeParameters"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }

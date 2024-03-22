@@ -41,7 +41,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleCollectDiagnosticsTestGenerat
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
@@ -50,18 +50,18 @@ public class FirIdeNormalAnalysisScriptSourceModuleCollectDiagnosticsTestGenerat
   @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression")
   @TestDataPath("$PROJECT_ROOT")
   public class Suppression {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInSuppression() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("scriptUninitializedTopLevelProperty.kts")
     public void testScriptUninitializedTopLevelProperty() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/scriptUninitializedTopLevelProperty.kts");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("scriptUninitializedTopLevelProperty2.kts")
     public void testScriptUninitializedTopLevelProperty2() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/scriptUninitializedTopLevelProperty2.kts");
@@ -72,7 +72,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleCollectDiagnosticsTestGenerat
   @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when")
   @TestDataPath("$PROJECT_ROOT")
   public class When {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInWhen() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }

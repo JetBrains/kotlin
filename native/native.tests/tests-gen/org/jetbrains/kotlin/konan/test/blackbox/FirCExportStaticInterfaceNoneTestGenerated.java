@@ -26,24 +26,24 @@ import java.util.regex.Pattern;
 @Tag("frontend-fir")
 @FirPipeline()
 public class FirCExportStaticInterfaceNoneTestGenerated extends AbstractNativeCExportTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInInterfaceNone() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CExport/InterfaceNone"), Pattern.compile("^([^_](.+))$"), null, false);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nativeRefs")
   public void testNativeRefs() {
     runTest("native/native.tests/testData/CExport/InterfaceNone/nativeRefs/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("primitiveTypes")
   public void testPrimitiveTypes() {
     runTest("native/native.tests/testData/CExport/InterfaceNone/primitiveTypes/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("smoke0")
   public void testSmoke0() {
     runTest("native/native.tests/testData/CExport/InterfaceNone/smoke0/");

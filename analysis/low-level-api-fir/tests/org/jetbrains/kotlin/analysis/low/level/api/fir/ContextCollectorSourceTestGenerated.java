@@ -19,234 +19,234 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/contextCollector")
 @TestDataPath("$PROJECT_ROOT")
 public class ContextCollectorSourceTestGenerated extends AbstractContextCollectorSourceTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInContextCollector() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classFunction.kt")
   public void testClassFunction() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/classFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classProperty.kt")
   public void testClassProperty() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/classProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("contextReceivers.kt")
   public void testContextReceivers() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/contextReceivers.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("contextReceiversClass.kt")
   public void testContextReceiversClass() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/contextReceiversClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enumValueFunction.kt")
   public void testEnumValueFunction() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/enumValueFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enumValuePropertyAccessor.kt")
   public void testEnumValuePropertyAccessor() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/enumValuePropertyAccessor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("extensionFunction.kt")
   public void testExtensionFunction() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/extensionFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("extensionLambdas.kt")
   public void testExtensionLambdas() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/extensionLambdas.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("file.kt")
   public void testFile() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/file.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fileAnnotation.kt")
   public void testFileAnnotation() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/fileAnnotation.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fileImport.kt")
   public void testFileImport() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/fileImport.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("fileImportInside.kt")
   public void testFileImportInside() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/fileImportInside.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("filePackage.kt")
   public void testFilePackage() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/filePackage.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("forLoopVariable.kt")
   public void testForLoopVariable() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/forLoopVariable.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("innerClasses.kt")
   public void testInnerClasses() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/innerClasses.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("KT-61728.kt")
   public void testKT_61728() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/KT-61728.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("lambdaArguments.kt")
   public void testLambdaArguments() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/lambdaArguments.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localClass.kt")
   public void testLocalClass() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/localClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localClassFunction.kt")
   public void testLocalClassFunction() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/localClassFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunction.kt")
   public void testLocalFunction() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/localFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localFunctionExpression.kt")
   public void testLocalFunctionExpression() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/localFunctionExpression.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedClass.kt")
   public void testNestedClass() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/nestedClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedClassFunction.kt")
   public void testNestedClassFunction() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/nestedClassFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("parameter.kt")
   public void testParameter() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/parameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("primaryConstructor.kt")
   public void testPrimaryConstructor() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/primaryConstructor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("primaryConstructorParameter.kt")
   public void testPrimaryConstructorParameter() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/primaryConstructorParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("primaryConstructorProperty.kt")
   public void testPrimaryConstructorProperty() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/primaryConstructorProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyAccessor.kt")
   public void testPropertyAccessor() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/propertyAccessor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyDelegateInitializer.kt")
   public void testPropertyDelegateInitializer() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/propertyDelegateInitializer.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("secondaryConstructor_superCallArgument.kt")
   public void testSecondaryConstructor_superCallArgument() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/secondaryConstructor_superCallArgument.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simple.kt")
   public void testSimple() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/simple.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("topLevelFunction.kt")
   public void testTopLevelFunction() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/topLevelFunction.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("topLevelProperty.kt")
   public void testTopLevelProperty() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/topLevelProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeAlias.kt")
   public void testTypeAlias() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/typeAlias.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeAliasInitializer.kt")
   public void testTypeAliasInitializer() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/typeAliasInitializer.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typeParameter.kt")
   public void testTypeParameter() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("wholeDeclaration_class.kt")
   public void testWholeDeclaration_class() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/wholeDeclaration_class.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("wholeDeclaration_fun.kt")
   public void testWholeDeclaration_fun() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/wholeDeclaration_fun.kt");
@@ -256,96 +256,96 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions")
   @TestDataPath("$PROJECT_ROOT")
   public class ClassHeaderPositions {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInClassHeaderPositions() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("contextReceiver.kt")
     public void testContextReceiver() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/contextReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("primaryConstructorParameter_initializerExpression.kt")
     public void testPrimaryConstructorParameter_initializerExpression() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/primaryConstructorParameter_initializerExpression.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("primaryConstructorParameter_typeRef.kt")
     public void testPrimaryConstructorParameter_typeRef() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/primaryConstructorParameter_typeRef.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallArgumentsExpression.kt")
     public void testSuperTypeCallArgumentsExpression() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallArgumentsExpression.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallArgumentsExpression_objectLiteral.kt")
     public void testSuperTypeCallArgumentsExpression_objectLiteral() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallArgumentsExpression_objectLiteral.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallArgumentsTypeRef.kt")
     public void testSuperTypeCallArgumentsTypeRef() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallArgumentsTypeRef.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallee.kt")
     public void testSuperTypeCallee() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallee.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCalleeGenerics.kt")
     public void testSuperTypeCalleeGenerics() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCalleeGenerics.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeCallee_objectLiteral.kt")
     public void testSuperTypeCallee_objectLiteral() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallee_objectLiteral.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeDelegatedExpression.kt")
     public void testSuperTypeDelegatedExpression() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeDelegatedExpression.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeDelegatedToCompanion.kt")
     public void testSuperTypeDelegatedToCompanion() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeDelegatedToCompanion.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeDelegatedToPrimaryConstructorParam.kt")
     public void testSuperTypeDelegatedToPrimaryConstructorParam() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeDelegatedToPrimaryConstructorParam.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeDelegatedTypeRef.kt")
     public void testSuperTypeDelegatedTypeRef() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeDelegatedTypeRef.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeRef.kt")
     public void testSuperTypeRef() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeRef.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superTypeRefGenerics.kt")
     public void testSuperTypeRefGenerics() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeRefGenerics.kt");
@@ -356,12 +356,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/error")
   @TestDataPath("$PROJECT_ROOT")
   public class Error {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInError() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/error"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("InvalidInitializer.kt")
     public void testInvalidInitializer() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/error/InvalidInitializer.kt");
@@ -372,7 +372,7 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/scripts")
   @TestDataPath("$PROJECT_ROOT")
   public class Scripts {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInScripts() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/scripts"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
@@ -382,114 +382,114 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/smartCasts")
   @TestDataPath("$PROJECT_ROOT")
   public class SmartCasts {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("afterIf.kt")
     public void testAfterIf() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/afterIf.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("afterLoop.kt")
     public void testAfterLoop() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/afterLoop.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInSmartCasts() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/smartCasts"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("andRight.kt")
     public void testAndRight() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/andRight.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("argument.kt")
     public void testArgument() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/argument.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("argumentAsReceiver.kt")
     public void testArgumentAsReceiver() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/argumentAsReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("beforeIf.kt")
     public void testBeforeIf() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/beforeIf.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("beforeLoop.kt")
     public void testBeforeLoop() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/beforeLoop.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("dispatchReceiver.kt")
     public void testDispatchReceiver() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/dispatchReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionReceiver.kt")
     public void testExtensionReceiver() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/extensionReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("insideLetOnNullableReceiver.kt")
     public void testInsideLetOnNullableReceiver() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/insideLetOnNullableReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("insideLoop.kt")
     public void testInsideLoop() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/insideLoop.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("onLabel.kt")
     public void testOnLabel() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onLabel.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("onReference.kt")
     public void testOnReference() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onReference.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("onType.kt")
     public void testOnType() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("orRight.kt")
     public void testOrRight() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/orRight.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("plainCheck.kt")
     public void testPlainCheck() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/plainCheck.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("require.kt")
     public void testRequire() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/require.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("when.kt")
     public void testWhen() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/when.kt");
@@ -500,48 +500,48 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/typeParameters")
   @TestDataPath("$PROJECT_ROOT")
   public class TypeParameters {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInTypeParameters() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/typeParameters"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("declaredInClass_fromContextReceiver.kt")
     public void testDeclaredInClass_fromContextReceiver() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromContextReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("declaredInClass_fromInner_typeBound.kt")
     public void testDeclaredInClass_fromInner_typeBound() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromInner_typeBound.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("declaredInClass_fromInner_typeRefInMember.kt")
     public void testDeclaredInClass_fromInner_typeRefInMember() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromInner_typeRefInMember.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("declaredInClass_fromNested_typeBound.kt")
     public void testDeclaredInClass_fromNested_typeBound() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromNested_typeBound.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("declaredInClass_fromNested_typeRefInMember.kt")
     public void testDeclaredInClass_fromNested_typeRefInMember() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromNested_typeRefInMember.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("declaredInClass_fromSuperType.kt")
     public void testDeclaredInClass_fromSuperType() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromSuperType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("declaredInClass_fromTypeBound.kt")
     public void testDeclaredInClass_fromTypeBound() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromTypeBound.kt");

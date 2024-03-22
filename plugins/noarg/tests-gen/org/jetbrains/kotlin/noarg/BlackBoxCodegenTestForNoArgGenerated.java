@@ -19,78 +19,78 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/noarg/testData/box")
 @TestDataPath("$PROJECT_ROOT")
 public class BlackBoxCodegenTestForNoArgGenerated extends AbstractBlackBoxCodegenTestForNoArg {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/noarg/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("initializers.kt")
   public void testInitializers() {
     runTest("plugins/noarg/testData/box/initializers.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("initializersWithoutInvokeInitializers.kt")
   public void testInitializersWithoutInvokeInitializers() {
     runTest("plugins/noarg/testData/box/initializersWithoutInvokeInitializers.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaAnnotationWithInnerEnum.kt")
   public void testJavaAnnotationWithInnerEnum() {
     runTest("plugins/noarg/testData/box/javaAnnotationWithInnerEnum.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt18245.kt")
   public void testKt18245() {
     runTest("plugins/noarg/testData/box/kt18245.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt18667.kt")
   public void testKt18667() {
     runTest("plugins/noarg/testData/box/kt18667.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt18668.kt")
   public void testKt18668() {
     runTest("plugins/noarg/testData/box/kt18668.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt53122.kt")
   public void testKt53122() {
     runTest("plugins/noarg/testData/box/kt53122.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localClassInInitiailzer.kt")
   public void testLocalClassInInitiailzer() {
     runTest("plugins/noarg/testData/box/localClassInInitiailzer.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nestedClass.kt")
   public void testNestedClass() {
     runTest("plugins/noarg/testData/box/nestedClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("sealedClassWithExistingNoargCtor.kt")
   public void testSealedClassWithExistingNoargCtor() {
     runTest("plugins/noarg/testData/box/sealedClassWithExistingNoargCtor.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simple.kt")
   public void testSimple() {
     runTest("plugins/noarg/testData/box/simple.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("subclass.kt")
   public void testSubclass() {
     runTest("plugins/noarg/testData/box/subclass.kt");

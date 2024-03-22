@@ -19,12 +19,12 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kotlinx-serialization/testData/boxWithoutRuntime")
 @TestDataPath("$PROJECT_ROOT")
 public class SerializationWithoutRuntimeIrBoxTestGenerated extends AbstractSerializationWithoutRuntimeIrBoxTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInBoxWithoutRuntime() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/boxWithoutRuntime"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("basic.kt")
   public void testBasic() {
     runTest("plugins/kotlinx-serialization/testData/boxWithoutRuntime/basic.kt");

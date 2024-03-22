@@ -40,108 +40,108 @@ public class FirIdeDependentAnalysisSourceModuleWhenMissingCasesTestGenerated ex
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInWhenMissingCases() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("boolean_else.kt")
   public void testBoolean_else() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/boolean_else.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("boolean_empty.kt")
   public void testBoolean_empty() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/boolean_empty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("boolean_noSubject.kt")
   public void testBoolean_noSubject() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/boolean_noSubject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("boolean_noSubjectIncorrectCode.kt")
   public void testBoolean_noSubjectIncorrectCode() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/boolean_noSubjectIncorrectCode.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("boolean_noSubject_else.kt")
   public void testBoolean_noSubject_else() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/boolean_noSubject_else.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("boolean_partial.kt")
   public void testBoolean_partial() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/boolean_partial.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enum_else.kt")
   public void testEnum_else() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/enum_else.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enum_empty.kt")
   public void testEnum_empty() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/enum_empty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enum_partial.kt")
   public void testEnum_partial() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/enum_partial.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nothing.kt")
   public void testNothing() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/nothing.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nullableBoolean.kt")
   public void testNullableBoolean() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/nullableBoolean.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nullableEnum.kt")
   public void testNullableEnum() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/nullableEnum.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nullableNothing.kt")
   public void testNullableNothing() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/nullableNothing.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("nullableSealedClass_empty.kt")
   public void testNullableSealedClass_empty() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/nullableSealedClass_empty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("sealedClass_else.kt")
   public void testSealedClass_else() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/sealedClass_else.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("sealedClass_empty.kt")
   public void testSealedClass_empty() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/sealedClass_empty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("sealedClass_partial.kt")
   public void testSealedClass_partial() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/sealedClass_partial.kt");

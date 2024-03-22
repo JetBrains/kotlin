@@ -40,7 +40,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleAnalysisApiExpressionPsiTy
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInForExpression() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

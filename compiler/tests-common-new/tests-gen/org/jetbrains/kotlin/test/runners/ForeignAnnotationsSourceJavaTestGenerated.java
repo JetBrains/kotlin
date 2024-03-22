@@ -21,138 +21,138 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
   @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/tests")
   @TestDataPath("$PROJECT_ROOT")
   public class Tests {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInTests() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("androidRecently.kt")
     public void testAndroidRecently() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/androidRecently.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("androidSdk.kt")
     public void testAndroidSdk() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/androidSdk.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("android_support.kt")
     public void testAndroid_support() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/android_support.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("androidx.kt")
     public void testAndroidx() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/androidx.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("aosp.kt")
     public void testAosp() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/aosp.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("checkerFramework.kt")
     public void testCheckerFramework() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/checkerFramework.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("eclipse.kt")
     public void testEclipse() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/eclipse.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("errorArgumentOfWarningAfter.kt")
     public void testErrorArgumentOfWarningAfter() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/errorArgumentOfWarningAfter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("errorArgumentOfWarningBefore.kt")
     public void testErrorArgumentOfWarningBefore() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/errorArgumentOfWarningBefore.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("findBugsSimple.kt")
     public void testFindBugsSimple() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/findBugsSimple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("irrelevantQualifierNicknames.kt")
     public void testIrrelevantQualifierNicknames() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/irrelevantQualifierNicknames.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt47833.kt")
     public void testKt47833() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt47833.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt47920.kt")
     public void testKt47920() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt47920.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt48316_multiModuleAnnotationDefault.kt")
     public void testKt48316_multiModuleAnnotationDefault() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt48316_multiModuleAnnotationDefault.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt50734.kt")
     public void testKt50734() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt50734.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lombokSimple.kt")
     public void testLombokSimple() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/lombokSimple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("multiple.kt")
     public void testMultiple() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/multiple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("rxjava.kt")
     public void testRxjava() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("rxjava3Default.kt")
     public void testRxjava3Default() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava3Default.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("rxjava3Errors.kt")
     public void testRxjava3Errors() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava3Errors.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("rxjava3Ignore.kt")
     public void testRxjava3Ignore() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava3Ignore.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("rxjava3Warnings.kt")
     public void testRxjava3Warnings() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/rxjava3Warnings.kt");
@@ -162,54 +162,54 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
     @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations")
     @TestDataPath("$PROJECT_ROOT")
     public class ExternalAnnotations {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInExternalAnnotations() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructorParameterNotNull.kt")
       public void testConstructorParameterNotNull() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations/constructorParameterNotNull.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructorParameterNotNull2.kt")
       public void testConstructorParameterNotNull2() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations/constructorParameterNotNull2.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("fieldNotNull.kt")
       public void testFieldNotNull() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations/fieldNotNull.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("fieldNotNullAnnotationWithPackage.kt")
       public void testFieldNotNullAnnotationWithPackage() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations/fieldNotNullAnnotationWithPackage.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("methodNotNull.kt")
       public void testMethodNotNull() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations/methodNotNull.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("methodNotNullFromAnotherModule.kt")
       public void testMethodNotNullFromAnotherModule() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations/methodNotNullFromAnotherModule.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("methodParameterNotNull.kt")
       public void testMethodParameterNotNull() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations/methodParameterNotNull.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("methodParameterNotNull2.kt")
       public void testMethodParameterNotNull2() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations/methodParameterNotNull2.kt");
@@ -220,36 +220,36 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
     @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305")
     @TestDataPath("$PROJECT_ROOT")
     public class Jsr305 {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInJsr305() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("dontIgnoreAnnotationsWithoutTarget.kt")
       public void testDontIgnoreAnnotationsWithoutTarget() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/dontIgnoreAnnotationsWithoutTarget.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nonNullNever.kt")
       public void testNonNullNever() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nonNullNever.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nullabilityNicknames.kt")
       public void testNullabilityNicknames() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityNicknames.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/simple.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("strange.kt")
       public void testStrange() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/strange.kt");
@@ -259,12 +259,12 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
       @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/ignore")
       @TestDataPath("$PROJECT_ROOT")
       public class Ignore {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInIgnore() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/ignore"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("parametersAreNonnullByDefault.kt")
         public void testParametersAreNonnullByDefault() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/ignore/parametersAreNonnullByDefault.kt");
@@ -275,66 +275,66 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
       @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings")
       @TestDataPath("$PROJECT_ROOT")
       public class NullabilityWarnings {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInNullabilityWarnings() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("elvis.kt")
         public void testElvis() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/elvis.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("expressionBodiedFunction.kt")
         public void testExpressionBodiedFunction() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/expressionBodiedFunction.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("kt65193.kt")
         public void testKt65193() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/kt65193.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("localInference.kt")
         public void testLocalInference() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/localInference.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("nullabilityGenerics.kt")
         public void testNullabilityGenerics() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/nullabilityGenerics.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("nullabilityNicknames.kt")
         public void testNullabilityNicknames() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/nullabilityNicknames.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("override.kt")
         public void testOverride() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/override.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("safeCalls.kt")
         public void testSafeCalls() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/safeCalls.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("simple.kt")
         public void testSimple() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/simple.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("strange.kt")
         public void testStrange() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/strange.kt");
@@ -344,126 +344,126 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes")
         @TestDataPath("$PROJECT_ROOT")
         public class FromPlatformTypes {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInFromPlatformTypes() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("arithmetic.kt")
           public void testArithmetic() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/arithmetic.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("array.kt")
           public void testArray() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/array.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("assignToVar.kt")
           public void testAssignToVar() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/assignToVar.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("conditions.kt")
           public void testConditions() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/conditions.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("dataFlowInfo.kt")
           public void testDataFlowInfo() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/dataFlowInfo.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("defaultParameters.kt")
           public void testDefaultParameters() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/defaultParameters.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("delegatedProperties.kt")
           public void testDelegatedProperties() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/delegatedProperties.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("delegation.kt")
           public void testDelegation() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/delegation.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("derefenceExtension.kt")
           public void testDerefenceExtension() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/derefenceExtension.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("derefenceMember.kt")
           public void testDerefenceMember() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/derefenceMember.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("expectedType.kt")
           public void testExpectedType() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/expectedType.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("for.kt")
           public void testFor() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/for.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("functionArguments.kt")
           public void testFunctionArguments() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/functionArguments.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("invoke.kt")
           public void testInvoke() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/invoke.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("kt6829.kt")
           public void testKt6829() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/kt6829.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("multiDeclaration.kt")
           public void testMultiDeclaration() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/multiDeclaration.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("passToJava.kt")
           public void testPassToJava() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/passToJava.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("primitiveArray.kt")
           public void testPrimitiveArray() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/primitiveArray.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("throw.kt")
           public void testThrow() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/throw.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("uselessElvisRightIsNull.kt")
           public void testUselessElvisRightIsNull() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/fromPlatformTypes/uselessElvisRightIsNull.kt");
@@ -474,54 +474,54 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault")
         @TestDataPath("$PROJECT_ROOT")
         public class TypeQualifierDefault {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInTypeQualifierDefault() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("equalsOnNonNull.kt")
           public void testEqualsOnNonNull() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/equalsOnNonNull.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("fieldsAreNullable.kt")
           public void testFieldsAreNullable() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/fieldsAreNullable.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("nullabilityFromOverridden.kt")
           public void testNullabilityFromOverridden() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/nullabilityFromOverridden.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("overridingDefaultQualifier.kt")
           public void testOverridingDefaultQualifier() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/overridingDefaultQualifier.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("parametersAreNonnullByDefault.kt")
           public void testParametersAreNonnullByDefault() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/parametersAreNonnullByDefault.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("parametersAreNonnullByDefaultPackage.kt")
           public void testParametersAreNonnullByDefaultPackage() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/parametersAreNonnullByDefaultPackage.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("springNullable.kt")
           public void testSpringNullable() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/springNullable.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("springNullablePackage.kt")
           public void testSpringNullablePackage() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/typeQualifierDefault/springNullablePackage.kt");
@@ -533,60 +533,60 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
       @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault")
       @TestDataPath("$PROJECT_ROOT")
       public class TypeQualifierDefault {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInTypeQualifierDefault() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("fieldsAreNullable.kt")
         public void testFieldsAreNullable() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/fieldsAreNullable.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("forceFlexibility.kt")
         public void testForceFlexibility() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/forceFlexibility.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("forceFlexibleOverOverrides.kt")
         public void testForceFlexibleOverOverrides() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/forceFlexibleOverOverrides.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("nullabilityFromOverridden.kt")
         public void testNullabilityFromOverridden() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/nullabilityFromOverridden.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("overridingDefaultQualifier.kt")
         public void testOverridingDefaultQualifier() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/overridingDefaultQualifier.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("parametersAreNonnullByDefault.kt")
         public void testParametersAreNonnullByDefault() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/parametersAreNonnullByDefault.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("parametersAreNonnullByDefaultPackage.kt")
         public void testParametersAreNonnullByDefaultPackage() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/parametersAreNonnullByDefaultPackage.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("springNullable.kt")
         public void testSpringNullable() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/springNullable.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("springNullablePackage.kt")
         public void testSpringNullablePackage() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/typeQualifierDefault/springNullablePackage.kt");
@@ -598,7 +598,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
     @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings")
     @TestDataPath("$PROJECT_ROOT")
     public class Jsr305NullabilityWarnings {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInJsr305NullabilityWarnings() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
@@ -607,60 +607,60 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
       @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration")
       @TestDataPath("$PROJECT_ROOT")
       public class Migration {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInMigration() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("customMigration.kt")
         public void testCustomMigration() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/customMigration.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("globalIgnore.kt")
         public void testGlobalIgnore() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/globalIgnore.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("globalWarningMigrationIgnore.kt")
         public void testGlobalWarningMigrationIgnore() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/globalWarningMigrationIgnore.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("migrationError.kt")
         public void testMigrationError() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/migrationError.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("migrationIgnore.kt")
         public void testMigrationIgnore() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/migrationIgnore.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("migrationWarning.kt")
         public void testMigrationWarning() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/migrationWarning.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("overrideConflicts.kt")
         public void testOverrideConflicts() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/overrideConflicts.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("specialCollision.kt")
         public void testSpecialCollision() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/specialCollision.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("stateRefinement.kt")
         public void testStateRefinement() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305NullabilityWarnings/migration/stateRefinement.kt");
@@ -672,12 +672,12 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
     @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/tests/typeQualifierDefault")
     @TestDataPath("$PROJECT_ROOT")
     public class TypeQualifierDefault {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInTypeQualifierDefault() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("defaultAndNicknameMigrationPolicy.kt")
       public void testDefaultAndNicknameMigrationPolicy() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/typeQualifierDefault/defaultAndNicknameMigrationPolicy.kt");
@@ -689,36 +689,36 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
   @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests")
   @TestDataPath("$PROJECT_ROOT")
   public class Java8Tests {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInJava8Tests() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("checkerFramework.kt")
     public void testCheckerFramework() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/checkerFramework.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("eclipse.kt")
     public void testEclipse() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/eclipse.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overrideOfMethodWithParametricNullness.kt")
     public void testOverrideOfMethodWithParametricNullness() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/overrideOfMethodWithParametricNullness.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeUseOnObject.kt")
     public void testTypeUseOnObject() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeUseOnObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("warningModeForHeadType.kt")
     public void testWarningModeForHeadType() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/warningModeForHeadType.kt");
@@ -728,12 +728,12 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
     @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify")
     @TestDataPath("$PROJECT_ROOT")
     public class Jspecify {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInJspecify() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("default.kt")
       public void testDefault() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/default.kt");
@@ -743,120 +743,120 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
       @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode")
       @TestDataPath("$PROJECT_ROOT")
       public class StrictMode {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInStrictMode() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("AnnotatedBoundsOfWildcard.kt")
         public void testAnnotatedBoundsOfWildcard() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/AnnotatedBoundsOfWildcard.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("Captured.kt")
         public void testCaptured() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Captured.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("Defaults.kt")
         public void testDefaults() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Defaults.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("DerivedAsNullableOrNotNull.kt")
         public void testDerivedAsNullableOrNotNull() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/DerivedAsNullableOrNotNull.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("IgnoreAnnotations.kt")
         public void testIgnoreAnnotations() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/IgnoreAnnotations.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("interconnectedGenerics.kt")
         public void testInterconnectedGenerics() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/interconnectedGenerics.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("kt47396.kt")
         public void testKt47396() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt47396.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("kt47422.kt")
         public void testKt47422() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt47422.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("kt47437.kt")
         public void testKt47437() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt47437.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("kt48261.kt")
         public void testKt48261() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt48261.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("NonPlatformTypeParameter.kt")
         public void testNonPlatformTypeParameter() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NonPlatformTypeParameter.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("NullMarkedWithStarType.kt")
         public void testNullMarkedWithStarType() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullMarkedWithStarType.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("NullnessUnspecifiedTypeParameter.kt")
         public void testNullnessUnspecifiedTypeParameter() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullnessUnspecifiedTypeParameter.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("SelfType.kt")
         public void testSelfType() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/SelfType.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("Simple.kt")
         public void testSimple() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Simple.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("TypeArgumentsFromParameterBounds.kt")
         public void testTypeArgumentsFromParameterBounds() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/TypeArgumentsFromParameterBounds.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("TypeParameterBounds.kt")
         public void testTypeParameterBounds() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/TypeParameterBounds.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("UnannotatedWildcard.kt")
         public void testUnannotatedWildcard() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/UnannotatedWildcard.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("WildcardsWithDefault.kt")
         public void testWildcardsWithDefault() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/WildcardsWithDefault.kt");
@@ -867,108 +867,108 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
       @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode")
       @TestDataPath("$PROJECT_ROOT")
       public class WarnMode {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInWarnMode() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("AnnotatedBoundsOfWildcard.kt")
         public void testAnnotatedBoundsOfWildcard() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/AnnotatedBoundsOfWildcard.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("Captured.kt")
         public void testCaptured() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Captured.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("Defaults.kt")
         public void testDefaults() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Defaults.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("DerivedAsNullableOrNotNull.kt")
         public void testDerivedAsNullableOrNotNull() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/DerivedAsNullableOrNotNull.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("IgnoreAnnotations.kt")
         public void testIgnoreAnnotations() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/IgnoreAnnotations.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("kt47899.kt")
         public void testKt47899() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/kt47899.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("kt65318.kt")
         public void testKt65318() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/kt65318.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("NonPlatformTypeParameter.kt")
         public void testNonPlatformTypeParameter() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NonPlatformTypeParameter.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("NullMarkedWithStarType.kt")
         public void testNullMarkedWithStarType() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullMarkedWithStarType.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("NullnessUnspecifiedTypeParameter.kt")
         public void testNullnessUnspecifiedTypeParameter() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullnessUnspecifiedTypeParameter.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("OverrideOfAnnotated.kt")
         public void testOverrideOfAnnotated() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/OverrideOfAnnotated.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("SelfType.kt")
         public void testSelfType() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/SelfType.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("Simple.kt")
         public void testSimple() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Simple.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("TypeArgumentsFromParameterBounds.kt")
         public void testTypeArgumentsFromParameterBounds() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/TypeArgumentsFromParameterBounds.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("TypeParameterBounds.kt")
         public void testTypeParameterBounds() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/TypeParameterBounds.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("UnannotatedWildcard.kt")
         public void testUnannotatedWildcard() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/UnannotatedWildcard.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("WildcardsWithDefault.kt")
         public void testWildcardsWithDefault() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/WildcardsWithDefault.kt");
@@ -980,12 +980,12 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
     @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld")
     @TestDataPath("$PROJECT_ROOT")
     public class JspecifyOld {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInJspecifyOld() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("default.kt")
       public void testDefault() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/default.kt");
@@ -995,102 +995,102 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
       @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode")
       @TestDataPath("$PROJECT_ROOT")
       public class StrictMode {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInStrictMode() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("AnnotatedBoundsOfWildcard.kt")
         public void testAnnotatedBoundsOfWildcard() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/AnnotatedBoundsOfWildcard.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("Captured.kt")
         public void testCaptured() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/Captured.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("Defaults.kt")
         public void testDefaults() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/Defaults.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("IgnoreAnnotations.kt")
         public void testIgnoreAnnotations() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/IgnoreAnnotations.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("kt47396.kt")
         public void testKt47396() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/kt47396.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("kt47422.kt")
         public void testKt47422() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/kt47422.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("kt47437.kt")
         public void testKt47437() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/kt47437.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("kt48261.kt")
         public void testKt48261() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/kt48261.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("NonPlatformTypeParameter.kt")
         public void testNonPlatformTypeParameter() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/NonPlatformTypeParameter.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("NullnessUnspecifiedTypeParameter.kt")
         public void testNullnessUnspecifiedTypeParameter() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/NullnessUnspecifiedTypeParameter.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("SelfType.kt")
         public void testSelfType() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/SelfType.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("Simple.kt")
         public void testSimple() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/Simple.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("TypeArgumentsFromParameterBounds.kt")
         public void testTypeArgumentsFromParameterBounds() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/TypeArgumentsFromParameterBounds.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("TypeParameterBounds.kt")
         public void testTypeParameterBounds() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/TypeParameterBounds.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("UnannotatedWildcard.kt")
         public void testUnannotatedWildcard() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/UnannotatedWildcard.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("WildcardsWithDefault.kt")
         public void testWildcardsWithDefault() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/strictMode/WildcardsWithDefault.kt");
@@ -1101,90 +1101,90 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
       @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode")
       @TestDataPath("$PROJECT_ROOT")
       public class WarnMode {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInWarnMode() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("AnnotatedBoundsOfWildcard.kt")
         public void testAnnotatedBoundsOfWildcard() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/AnnotatedBoundsOfWildcard.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("Captured.kt")
         public void testCaptured() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/Captured.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("Defaults.kt")
         public void testDefaults() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/Defaults.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("IgnoreAnnotations.kt")
         public void testIgnoreAnnotations() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/IgnoreAnnotations.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("kt47899.kt")
         public void testKt47899() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/kt47899.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("NonPlatformTypeParameter.kt")
         public void testNonPlatformTypeParameter() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/NonPlatformTypeParameter.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("NullnessUnspecifiedTypeParameter.kt")
         public void testNullnessUnspecifiedTypeParameter() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/NullnessUnspecifiedTypeParameter.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("OverrideOfAnnotated.kt")
         public void testOverrideOfAnnotated() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/OverrideOfAnnotated.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("SelfType.kt")
         public void testSelfType() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/SelfType.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("Simple.kt")
         public void testSimple() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/Simple.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("TypeArgumentsFromParameterBounds.kt")
         public void testTypeArgumentsFromParameterBounds() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/TypeArgumentsFromParameterBounds.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("TypeParameterBounds.kt")
         public void testTypeParameterBounds() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/TypeParameterBounds.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("UnannotatedWildcard.kt")
         public void testUnannotatedWildcard() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/UnannotatedWildcard.kt");
         }
 
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         @TestMetadata("WildcardsWithDefault.kt")
         public void testWildcardsWithDefault() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecifyOld/warnMode/WildcardsWithDefault.kt");
@@ -1196,48 +1196,48 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
     @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305")
     @TestDataPath("$PROJECT_ROOT")
     public class Jsr305 {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInJsr305() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("defaultAnnotationAppliedToType.kt")
       public void testDefaultAnnotationAppliedToType() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/defaultAnnotationAppliedToType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("defaultAnnotationAppliedToTypeForCompiledJava.kt")
       public void testDefaultAnnotationAppliedToTypeForCompiledJava() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/defaultAnnotationAppliedToTypeForCompiledJava.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overrideWithTypeUseInClasspath.kt")
       public void testOverrideWithTypeUseInClasspath() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/overrideWithTypeUseInClasspath.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overrideWithTypeUseInClasspathWithArray.kt")
       public void testOverrideWithTypeUseInClasspathWithArray() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/overrideWithTypeUseInClasspathWithArray.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("springNullableWithTypeUse.kt")
       public void testSpringNullableWithTypeUse() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/springNullableWithTypeUse.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeArguments.kt")
       public void testTypeArguments() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/typeArguments.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeUseVsMethodConflict.kt")
       public void testTypeUseVsMethodConflict() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/typeUseVsMethodConflict.kt");
@@ -1248,126 +1248,126 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
     @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc")
     @TestDataPath("$PROJECT_ROOT")
     public class Misc {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInMisc() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("annotatedPrimitiveArray.kt")
       public void testAnnotatedPrimitiveArray() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/annotatedPrimitiveArray.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("annotatedPrimitiveArray_before.kt")
       public void testAnnotatedPrimitiveArray_before() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/annotatedPrimitiveArray_before.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("annotatedTypeArguments.kt")
       public void testAnnotatedTypeArguments() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/annotatedTypeArguments.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classTypeParameterBound.kt")
       public void testClassTypeParameterBound() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/classTypeParameterBound.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classTypeParameterBoundWithWarnings.kt")
       public void testClassTypeParameterBoundWithWarnings() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/classTypeParameterBoundWithWarnings.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("enhancedRecursiveStarProjection.kt")
       public void testEnhancedRecursiveStarProjection() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/enhancedRecursiveStarProjection.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt48261.kt")
       public void testKt48261() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/kt48261.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("methodWithTypeParameter.kt")
       public void testMethodWithTypeParameter() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/methodWithTypeParameter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("mutabilityAndNullabilityForWarning.kt")
       public void testMutabilityAndNullabilityForWarning() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/mutabilityAndNullabilityForWarning.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("notNullVarargsOverrides.kt")
       public void testNotNullVarargsOverrides() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/notNullVarargsOverrides.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nullableVarargsOverrides.kt")
       public void testNullableVarargsOverrides() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/nullableVarargsOverrides.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("returnType.kt")
       public void testReturnType() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("returnTypeDifferentConstructor.kt")
       public void testReturnTypeDifferentConstructor() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnTypeDifferentConstructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("returnTypeOverrideInKotlin.kt")
       public void testReturnTypeOverrideInKotlin() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnTypeOverrideInKotlin.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("returnTypeWithWarnings.kt")
       public void testReturnTypeWithWarnings() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnTypeWithWarnings.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/simple.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("useTypeParameterAnnotationToEnhanceItsUsages.kt")
       public void testUseTypeParameterAnnotationToEnhanceItsUsages() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/useTypeParameterAnnotationToEnhanceItsUsages.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("valueParameter.kt")
       public void testValueParameter() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/valueParameter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("valueParameterWithWarnings.kt")
       public void testValueParameterWithWarnings() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/valueParameterWithWarnings.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("warningsBasedOnEnhancedBasedType.kt")
       public void testWarningsBasedOnEnhancedBasedType() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/warningsBasedOnEnhancedBasedType.kt");
@@ -1379,7 +1379,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
   @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests")
   @TestDataPath("$PROJECT_ROOT")
   public class Java11Tests {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInJava11Tests() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
@@ -1388,7 +1388,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
     @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify")
     @TestDataPath("$PROJECT_ROOT")
     public class Jspecify {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInJspecify() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
@@ -1397,7 +1397,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
       @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations")
       @TestDataPath("$PROJECT_ROOT")
       public class ModuleAnnotations {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInModuleAnnotations() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -1406,72 +1406,72 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict")
         @TestDataPath("$PROJECT_ROOT")
         public class Strict {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInStrict() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("basic.kt")
           public void testBasic() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/basic.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("composeWithClassDefaultAnnotation.kt")
           public void testComposeWithClassDefaultAnnotation() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/composeWithClassDefaultAnnotation.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("composeWithPackageDefaultAnnotation.kt")
           public void testComposeWithPackageDefaultAnnotation() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/composeWithPackageDefaultAnnotation.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("dependentModulesNoNullMarked.kt")
           public void testDependentModulesNoNullMarked() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/dependentModulesNoNullMarked.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("dependentModulesNullMarked.kt")
           public void testDependentModulesNullMarked() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/dependentModulesNullMarked.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt")
           public void testDontPropagateModuleAnnotationToAnotherModuleWithSamePackage() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("dotNamedModule.kt")
           public void testDotNamedModule() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/dotNamedModule.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("inheritanceAcrossModules.kt")
           public void testInheritanceAcrossModules() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/inheritanceAcrossModules.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("nestedClasses.kt")
           public void testNestedClasses() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/nestedClasses.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("overrideAtDeclarationLevel.kt")
           public void testOverrideAtDeclarationLevel() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/overrideAtDeclarationLevel.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("severalModulesDifferentPackages.kt")
           public void testSeveralModulesDifferentPackages() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/severalModulesDifferentPackages.kt");
@@ -1482,72 +1482,72 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn")
         @TestDataPath("$PROJECT_ROOT")
         public class Warn {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInWarn() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("basic.kt")
           public void testBasic() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/basic.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("composeWithClassDefaultAnnotation.kt")
           public void testComposeWithClassDefaultAnnotation() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/composeWithClassDefaultAnnotation.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("composeWithPackageDefaultAnnotation.kt")
           public void testComposeWithPackageDefaultAnnotation() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/composeWithPackageDefaultAnnotation.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("dependentModulesNoNullMarked.kt")
           public void testDependentModulesNoNullMarked() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/dependentModulesNoNullMarked.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("dependentModulesNullMarked.kt")
           public void testDependentModulesNullMarked() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/dependentModulesNullMarked.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt")
           public void testDontPropagateModuleAnnotationToAnotherModuleWithSamePackage() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("dotNamedModule.kt")
           public void testDotNamedModule() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/dotNamedModule.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("inheritanceAcrossModules.kt")
           public void testInheritanceAcrossModules() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/inheritanceAcrossModules.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("nestedClasses.kt")
           public void testNestedClasses() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/nestedClasses.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("overrideAtDeclarationLevel.kt")
           public void testOverrideAtDeclarationLevel() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/overrideAtDeclarationLevel.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("severalModulesDifferentPackages.kt")
           public void testSeveralModulesDifferentPackages() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/severalModulesDifferentPackages.kt");
@@ -1560,7 +1560,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
     @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld")
     @TestDataPath("$PROJECT_ROOT")
     public class JspecifyOld {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInJspecifyOld() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
@@ -1569,7 +1569,7 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
       @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations")
       @TestDataPath("$PROJECT_ROOT")
       public class ModuleAnnotations {
-        @RepeatedTest(value = 3)
+        @RepeatedTest(value = 5)
         public void testAllFilesPresentInModuleAnnotations() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
@@ -1578,72 +1578,72 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict")
         @TestDataPath("$PROJECT_ROOT")
         public class Strict {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInStrict() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("basic.kt")
           public void testBasic() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/basic.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("composeWithClassDefaultAnnotation.kt")
           public void testComposeWithClassDefaultAnnotation() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/composeWithClassDefaultAnnotation.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("composeWithPackageDefaultAnnotation.kt")
           public void testComposeWithPackageDefaultAnnotation() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/composeWithPackageDefaultAnnotation.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("dependentModulesNoNullMarked.kt")
           public void testDependentModulesNoNullMarked() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/dependentModulesNoNullMarked.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("dependentModulesNullMarked.kt")
           public void testDependentModulesNullMarked() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/dependentModulesNullMarked.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt")
           public void testDontPropagateModuleAnnotationToAnotherModuleWithSamePackage() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("dotNamedModule.kt")
           public void testDotNamedModule() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/dotNamedModule.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("inheritanceAcrossModules.kt")
           public void testInheritanceAcrossModules() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/inheritanceAcrossModules.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("nestedClasses.kt")
           public void testNestedClasses() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/nestedClasses.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("overrideAtDeclarationLevel.kt")
           public void testOverrideAtDeclarationLevel() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/overrideAtDeclarationLevel.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("severalModulesDifferentPackages.kt")
           public void testSeveralModulesDifferentPackages() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/strict/severalModulesDifferentPackages.kt");
@@ -1654,72 +1654,72 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn")
         @TestDataPath("$PROJECT_ROOT")
         public class Warn {
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           public void testAllFilesPresentInWarn() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("basic.kt")
           public void testBasic() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/basic.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("composeWithClassDefaultAnnotation.kt")
           public void testComposeWithClassDefaultAnnotation() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/composeWithClassDefaultAnnotation.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("composeWithPackageDefaultAnnotation.kt")
           public void testComposeWithPackageDefaultAnnotation() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/composeWithPackageDefaultAnnotation.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("dependentModulesNoNullMarked.kt")
           public void testDependentModulesNoNullMarked() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/dependentModulesNoNullMarked.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("dependentModulesNullMarked.kt")
           public void testDependentModulesNullMarked() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/dependentModulesNullMarked.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt")
           public void testDontPropagateModuleAnnotationToAnotherModuleWithSamePackage() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("dotNamedModule.kt")
           public void testDotNamedModule() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/dotNamedModule.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("inheritanceAcrossModules.kt")
           public void testInheritanceAcrossModules() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/inheritanceAcrossModules.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("nestedClasses.kt")
           public void testNestedClasses() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/nestedClasses.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("overrideAtDeclarationLevel.kt")
           public void testOverrideAtDeclarationLevel() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/overrideAtDeclarationLevel.kt");
           }
 
-          @RepeatedTest(value = 3)
+          @RepeatedTest(value = 5)
           @TestMetadata("severalModulesDifferentPackages.kt")
           public void testSeveralModulesDifferentPackages() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecifyOld/moduleAnnotations/warn/severalModulesDifferentPackages.kt");

@@ -18,60 +18,60 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/testData/CInterop/experimental/cases")
 @TestDataPath("$PROJECT_ROOT")
 public class CInteropExperimentalTestGenerated extends AbstractNativeCInteropExperimentalTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInCases() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CInterop/experimental/cases"), Pattern.compile("^([^_](.+))$"), null, false);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enum")
   public void testEnum() {
     runTest("native/native.tests/testData/CInterop/experimental/cases/enum/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("function")
   public void testFunction() {
     runTest("native/native.tests/testData/CInterop/experimental/cases/function/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("global")
   public void testGlobal() {
     runTest("native/native.tests/testData/CInterop/experimental/cases/global/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("objccategory")
   public void testObjccategory() {
     runTest("native/native.tests/testData/CInterop/experimental/cases/objccategory/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("objcclass")
   public void testObjcclass() {
     runTest("native/native.tests/testData/CInterop/experimental/cases/objcclass/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("objcprotocol")
   public void testObjcprotocol() {
     runTest("native/native.tests/testData/CInterop/experimental/cases/objcprotocol/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("objctypedef")
   public void testObjctypedef() {
     runTest("native/native.tests/testData/CInterop/experimental/cases/objctypedef/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("struct")
   public void testStruct() {
     runTest("native/native.tests/testData/CInterop/experimental/cases/struct/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("typedef")
   public void testTypedef() {
     runTest("native/native.tests/testData/CInterop/experimental/cases/typedef/");

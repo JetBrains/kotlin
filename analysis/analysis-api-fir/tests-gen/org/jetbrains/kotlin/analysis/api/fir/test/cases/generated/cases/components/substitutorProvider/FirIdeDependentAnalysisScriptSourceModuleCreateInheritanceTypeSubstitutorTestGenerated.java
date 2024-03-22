@@ -40,7 +40,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleCreateInheritanceTypeSubst
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInCreateInheritanceTypeSubstitutor() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

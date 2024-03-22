@@ -40,7 +40,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleContainingDeclarationProvider
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInContainingDeclarationForSetterParameter() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationForSetterParameter"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

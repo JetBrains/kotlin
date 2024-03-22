@@ -22,54 +22,54 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
   @TestMetadata("js/js.translator/testData/box/main")
   @TestDataPath("$PROJECT_ROOT")
   public class Main {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInMain() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/main"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("differentMains.kt")
     public void testDifferentMains() {
       runTest("js/js.translator/testData/box/main/differentMains.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("incremental.kt")
     public void testIncremental() {
       runTest("js/js.translator/testData/box/main/incremental.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("noArgs.kt")
     public void testNoArgs() {
       runTest("js/js.translator/testData/box/main/noArgs.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("js/js.translator/testData/box/main/simple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("suspendMain.kt")
     public void testSuspendMain() {
       runTest("js/js.translator/testData/box/main/suspendMain.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("suspendMainNoArgs.kt")
     public void testSuspendMainNoArgs() {
       runTest("js/js.translator/testData/box/main/suspendMainNoArgs.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("suspendMainThrows.kt")
     public void testSuspendMainThrows() {
       runTest("js/js.translator/testData/box/main/suspendMainThrows.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("twoMains.kt")
     public void testTwoMains() {
       runTest("js/js.translator/testData/box/main/twoMains.kt");
@@ -80,150 +80,150 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
   @TestMetadata("js/js.translator/testData/box/native")
   @TestDataPath("$PROJECT_ROOT")
   public class Native {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("accessToCompanionObjectFromInlineFun.kt")
     public void testAccessToCompanionObjectFromInlineFun() {
       runTest("js/js.translator/testData/box/native/accessToCompanionObjectFromInlineFun.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInNative() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/native"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("castToNativeClassChecked.kt")
     public void testCastToNativeClassChecked() {
       runTest("js/js.translator/testData/box/native/castToNativeClassChecked.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("castToNativeInterface.kt")
     public void testCastToNativeInterface() {
       runTest("js/js.translator/testData/box/native/castToNativeInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("castToNativeInterfaceChecked.kt")
     public void testCastToNativeInterfaceChecked() {
       runTest("js/js.translator/testData/box/native/castToNativeInterfaceChecked.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("castToNullableNativeInterface.kt")
     public void testCastToNullableNativeInterface() {
       runTest("js/js.translator/testData/box/native/castToNullableNativeInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("castToTypeParamBoundedByNativeInterface.kt")
     public void testCastToTypeParamBoundedByNativeInterface() {
       runTest("js/js.translator/testData/box/native/castToTypeParamBoundedByNativeInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("class.kt")
     public void testClass() {
       runTest("js/js.translator/testData/box/native/class.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classObject.kt")
     public void testClassObject() {
       runTest("js/js.translator/testData/box/native/classObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalValWithOverridenVar.kt")
     public void testExternalValWithOverridenVar() {
       runTest("js/js.translator/testData/box/native/externalValWithOverridenVar.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt2209.kt")
     public void testKt2209() {
       runTest("js/js.translator/testData/box/native/kt2209.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedElements.kt")
     public void testNestedElements() {
       runTest("js/js.translator/testData/box/native/nestedElements.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectFunWithVararg.kt")
     public void testObjectFunWithVararg() {
       runTest("js/js.translator/testData/box/native/objectFunWithVararg.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("passExtLambdaToNative.kt")
     public void testPassExtLambdaToNative() {
       runTest("js/js.translator/testData/box/native/passExtLambdaToNative.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("passMemberOrExtFromNative.kt")
     public void testPassMemberOrExtFromNative() {
       runTest("js/js.translator/testData/box/native/passMemberOrExtFromNative.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("passMemberOrExtToNative.kt")
     public void testPassMemberOrExtToNative() {
       runTest("js/js.translator/testData/box/native/passMemberOrExtToNative.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("passTopLevelFunctionFromNative.kt")
     public void testPassTopLevelFunctionFromNative() {
       runTest("js/js.translator/testData/box/native/passTopLevelFunctionFromNative.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("passTopLevelOrLocalFunctionToNative.kt")
     public void testPassTopLevelOrLocalFunctionToNative() {
       runTest("js/js.translator/testData/box/native/passTopLevelOrLocalFunctionToNative.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateExternal.kt")
     public void testPrivateExternal() {
       runTest("js/js.translator/testData/box/native/privateExternal.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("safeCastToNativeInterface.kt")
     public void testSafeCastToNativeInterface() {
       runTest("js/js.translator/testData/box/native/safeCastToNativeInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("secondaryConstructor.kt")
     public void testSecondaryConstructor() {
       runTest("js/js.translator/testData/box/native/secondaryConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("js/js.translator/testData/box/native/simple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleUndefined.kt")
     public void testSimpleUndefined() {
       runTest("js/js.translator/testData/box/native/simpleUndefined.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("useClassFromInlineFun.kt")
     public void testUseClassFromInlineFun() {
       runTest("js/js.translator/testData/box/native/useClassFromInlineFun.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("vararg.kt")
     public void testVararg() {
       runTest("js/js.translator/testData/box/native/vararg.kt");
@@ -234,7 +234,7 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
   @TestMetadata("js/js.translator/testData/box/esModules")
   @TestDataPath("$PROJECT_ROOT")
   public class EsModules {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInEsModules() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true, "jsExport", "native", "export", "crossModuleRef", "crossModuleRefPerFile", "crossModuleRefPerModule");
     }
@@ -243,12 +243,12 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     @TestMetadata("js/js.translator/testData/box/esModules/incremental")
     @TestDataPath("$PROJECT_ROOT")
     public class Incremental {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInIncremental() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/incremental"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("jsModule.kt")
       public void testJsModule() {
         runTest("js/js.translator/testData/box/esModules/incremental/jsModule.kt");
@@ -259,7 +259,7 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     @TestMetadata("js/js.translator/testData/box/esModules/inline")
     @TestDataPath("$PROJECT_ROOT")
     public class Inline {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInInline() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/inline"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
       }
@@ -269,66 +269,66 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     @TestMetadata("js/js.translator/testData/box/esModules/jsModule")
     @TestDataPath("$PROJECT_ROOT")
     public class JsModule {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInJsModule() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("externalClass.kt")
       public void testExternalClass() {
         runTest("js/js.translator/testData/box/esModules/jsModule/externalClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("externalClassNameClash.kt")
       public void testExternalClassNameClash() {
         runTest("js/js.translator/testData/box/esModules/jsModule/externalClassNameClash.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("externalFunction.kt")
       public void testExternalFunction() {
         runTest("js/js.translator/testData/box/esModules/jsModule/externalFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("externalFunctionNameClash.kt")
       public void testExternalFunctionNameClash() {
         runTest("js/js.translator/testData/box/esModules/jsModule/externalFunctionNameClash.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("externalObject.kt")
       public void testExternalObject() {
         runTest("js/js.translator/testData/box/esModules/jsModule/externalObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("externalPackage.kt")
       public void testExternalPackage() {
         runTest("js/js.translator/testData/box/esModules/jsModule/externalPackage.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("externalPackageInDifferentFile.kt")
       public void testExternalPackageInDifferentFile() {
         runTest("js/js.translator/testData/box/esModules/jsModule/externalPackageInDifferentFile.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("externalProperty.kt")
       public void testExternalProperty() {
         runTest("js/js.translator/testData/box/esModules/jsModule/externalProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("interfaces.kt")
       public void testInterfaces() {
         runTest("js/js.translator/testData/box/esModules/jsModule/interfaces.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevelVarargFun.kt")
       public void testTopLevelVarargFun() {
         runTest("js/js.translator/testData/box/esModules/jsModule/topLevelVarargFun.kt");
@@ -339,18 +339,18 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     @TestMetadata("js/js.translator/testData/box/esModules/jsName")
     @TestDataPath("$PROJECT_ROOT")
     public class JsName {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInJsName() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsName"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("defaultJsName.kt")
       public void testDefaultJsName() {
         runTest("js/js.translator/testData/box/esModules/jsName/defaultJsName.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("jsTopLevelClashes.kt")
       public void testJsTopLevelClashes() {
         runTest("js/js.translator/testData/box/esModules/jsName/jsTopLevelClashes.kt");
@@ -361,60 +361,60 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     @TestMetadata("js/js.translator/testData/box/esModules/kotlin.test")
     @TestDataPath("$PROJECT_ROOT")
     public class Kotlin_test {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInKotlin_test() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/kotlin.test"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("beforeAfter.kt")
       public void testBeforeAfter() {
         runTest("js/js.translator/testData/box/esModules/kotlin.test/beforeAfter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("ignore.kt")
       public void testIgnore() {
         runTest("js/js.translator/testData/box/esModules/kotlin.test/ignore.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("illegalParameters.kt")
       public void testIllegalParameters() {
         runTest("js/js.translator/testData/box/esModules/kotlin.test/illegalParameters.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("incremental.kt")
       public void testIncremental() {
         runTest("js/js.translator/testData/box/esModules/kotlin.test/incremental.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inherited.kt")
       public void testInherited() {
         runTest("js/js.translator/testData/box/esModules/kotlin.test/inherited.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("mpp.kt")
       public void testMpp() {
         runTest("js/js.translator/testData/box/esModules/kotlin.test/mpp.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nested.kt")
       public void testNested() {
         runTest("js/js.translator/testData/box/esModules/kotlin.test/nested.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("returnTestResult.kt")
       public void testReturnTestResult() {
         runTest("js/js.translator/testData/box/esModules/kotlin.test/returnTestResult.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("js/js.translator/testData/box/esModules/kotlin.test/simple.kt");
@@ -425,54 +425,54 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     @TestMetadata("js/js.translator/testData/box/esModules/main")
     @TestDataPath("$PROJECT_ROOT")
     public class Main {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInMain() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/main"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("differentMains.kt")
       public void testDifferentMains() {
         runTest("js/js.translator/testData/box/esModules/main/differentMains.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("incremental.kt")
       public void testIncremental() {
         runTest("js/js.translator/testData/box/esModules/main/incremental.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("noArgs.kt")
       public void testNoArgs() {
         runTest("js/js.translator/testData/box/esModules/main/noArgs.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("js/js.translator/testData/box/esModules/main/simple.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("suspendMain.kt")
       public void testSuspendMain() {
         runTest("js/js.translator/testData/box/esModules/main/suspendMain.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("suspendMainNoArgs.kt")
       public void testSuspendMainNoArgs() {
         runTest("js/js.translator/testData/box/esModules/main/suspendMainNoArgs.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("suspendMainThrows.kt")
       public void testSuspendMainThrows() {
         runTest("js/js.translator/testData/box/esModules/main/suspendMainThrows.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("twoMains.kt")
       public void testTwoMains() {
         runTest("js/js.translator/testData/box/esModules/main/twoMains.kt");
@@ -484,24 +484,24 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
   @TestMetadata("js/js.translator/testData/box/jsQualifier")
   @TestDataPath("$PROJECT_ROOT")
   public class JsQualifier {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInJsQualifier() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsQualifier"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classes.kt")
     public void testClasses() {
       runTest("js/js.translator/testData/box/jsQualifier/classes.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("interfaces.kt")
     public void testInterfaces() {
       runTest("js/js.translator/testData/box/jsQualifier/interfaces.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("js/js.translator/testData/box/jsQualifier/simple.kt");
@@ -512,24 +512,24 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
   @TestMetadata("js/js.translator/testData/box/reflection")
   @TestDataPath("$PROJECT_ROOT")
   public class Reflection {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInReflection() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/reflection"), Pattern.compile("^(findAssociatedObject(InSeparatedFile)?(Lazyness)?)\\.kt$"), null, TargetBackend.WASM, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("findAssociatedObject.kt")
     public void testFindAssociatedObject() {
       runTest("js/js.translator/testData/box/reflection/findAssociatedObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("findAssociatedObjectInSeparatedFile.kt")
     public void testFindAssociatedObjectInSeparatedFile() {
       runTest("js/js.translator/testData/box/reflection/findAssociatedObjectInSeparatedFile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("findAssociatedObjectLazyness.kt")
     public void testFindAssociatedObjectLazyness() {
       runTest("js/js.translator/testData/box/reflection/findAssociatedObjectLazyness.kt");
@@ -540,60 +540,60 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
   @TestMetadata("js/js.translator/testData/box/kotlin.test")
   @TestDataPath("$PROJECT_ROOT")
   public class Kotlin_test {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInKotlin_test() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/kotlin.test"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("beforeAfter.kt")
     public void testBeforeAfter() {
       runTest("js/js.translator/testData/box/kotlin.test/beforeAfter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("ignore.kt")
     public void testIgnore() {
       runTest("js/js.translator/testData/box/kotlin.test/ignore.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("illegalParameters.kt")
     public void testIllegalParameters() {
       runTest("js/js.translator/testData/box/kotlin.test/illegalParameters.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("incremental.kt")
     public void testIncremental() {
       runTest("js/js.translator/testData/box/kotlin.test/incremental.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inherited.kt")
     public void testInherited() {
       runTest("js/js.translator/testData/box/kotlin.test/inherited.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("mpp.kt")
     public void testMpp() {
       runTest("js/js.translator/testData/box/kotlin.test/mpp.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nested.kt")
     public void testNested() {
       runTest("js/js.translator/testData/box/kotlin.test/nested.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("returnTestResult.kt")
     public void testReturnTestResult() {
       runTest("js/js.translator/testData/box/kotlin.test/returnTestResult.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("js/js.translator/testData/box/kotlin.test/simple.kt");

@@ -40,36 +40,36 @@ public class FirStandaloneNormalAnalysisSourceModuleStaticDeclaredMemberScopeTes
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInStaticDeclaredMemberScope() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("class.kt")
   public void testClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope/class.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classWithJavaSuperclass.kt")
   public void testClassWithJavaSuperclass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope/classWithJavaSuperclass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("enumClass.kt")
   public void testEnumClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope/enumClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("innerClass.kt")
   public void testInnerClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope/innerClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaClass.kt")
   public void testJavaClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/staticDeclaredMemberScope/javaClass.kt");

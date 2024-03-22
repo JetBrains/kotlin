@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("js/js.translator/testData/box")
 @TestDataPath("$PROJECT_ROOT")
 public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true, "es6classes");
   }
@@ -29,18 +29,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/annotation")
   @TestDataPath("$PROJECT_ROOT")
   public class Annotation {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInAnnotation() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/annotation"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("annotationClass.kt")
     public void testAnnotationClass() {
       runTest("js/js.translator/testData/box/annotation/annotationClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("multipleEqualMethodsBug.kt")
     public void testMultipleEqualMethodsBug() {
       runTest("js/js.translator/testData/box/annotation/multipleEqualMethodsBug.kt");
@@ -51,36 +51,36 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/builtins")
   @TestDataPath("$PROJECT_ROOT")
   public class Builtins {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInBuiltins() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/builtins"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayToString.kt")
     public void testArrayToString() {
       runTest("js/js.translator/testData/box/builtins/arrayToString.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hashCode.kt")
     public void testHashCode() {
       runTest("js/js.translator/testData/box/builtins/hashCode.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("stringTemplateWithValueOf.kt")
     public void testStringTemplateWithValueOf() {
       runTest("js/js.translator/testData/box/builtins/stringTemplateWithValueOf.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superCallsToAnyMethods.kt")
     public void testSuperCallsToAnyMethods() {
       runTest("js/js.translator/testData/box/builtins/superCallsToAnyMethods.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("toString.kt")
     public void testToString() {
       runTest("js/js.translator/testData/box/builtins/toString.kt");
@@ -91,7 +91,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/callableReference")
   @TestDataPath("$PROJECT_ROOT")
   public class CallableReference {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInCallableReference() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/callableReference"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
@@ -100,60 +100,60 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/callableReference/function")
     @TestDataPath("$PROJECT_ROOT")
     public class Function {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInFunction() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/callableReference/function"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classMemberAndNonExtensionCompatibility.kt")
       public void testClassMemberAndNonExtensionCompatibility() {
         runTest("js/js.translator/testData/box/callableReference/function/classMemberAndNonExtensionCompatibility.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classMemberOverridden.kt")
       public void testClassMemberOverridden() {
         runTest("js/js.translator/testData/box/callableReference/function/classMemberOverridden.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructorsWithArgs.kt")
       public void testConstructorsWithArgs() {
         runTest("js/js.translator/testData/box/callableReference/function/constructorsWithArgs.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructorsWithArgsSimple.kt")
       public void testConstructorsWithArgsSimple() {
         runTest("js/js.translator/testData/box/callableReference/function/constructorsWithArgsSimple.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionFromTopLevel.kt")
       public void testExtensionFromTopLevel() {
         runTest("js/js.translator/testData/box/callableReference/function/extensionFromTopLevel.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("functionReferenceName.kt")
       public void testFunctionReferenceName() {
         runTest("js/js.translator/testData/box/callableReference/function/functionReferenceName.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localAndTopLevelExtensions.kt")
       public void testLocalAndTopLevelExtensions() {
         runTest("js/js.translator/testData/box/callableReference/function/localAndTopLevelExtensions.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("stringNativeExtension.kt")
       public void testStringNativeExtension() {
         runTest("js/js.translator/testData/box/callableReference/function/stringNativeExtension.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevelFromTopLevelWithArg.kt")
       public void testTopLevelFromTopLevelWithArg() {
         runTest("js/js.translator/testData/box/callableReference/function/topLevelFromTopLevelWithArg.kt");
@@ -164,24 +164,24 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/callableReference/property")
     @TestDataPath("$PROJECT_ROOT")
     public class Property {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInProperty() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/callableReference/property"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionProperty.kt")
       public void testExtensionProperty() {
         runTest("js/js.translator/testData/box/callableReference/property/extensionProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("memberProperty.kt")
       public void testMemberProperty() {
         runTest("js/js.translator/testData/box/callableReference/property/memberProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevelVar.kt")
       public void testTopLevelVar() {
         runTest("js/js.translator/testData/box/callableReference/property/topLevelVar.kt");
@@ -193,90 +193,90 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/char")
   @TestDataPath("$PROJECT_ROOT")
   public class Char {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInChar() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/char"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("charBinaryOperations.kt")
     public void testCharBinaryOperations() {
       runTest("js/js.translator/testData/box/char/charBinaryOperations.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("charCompareToIntrinsic.kt")
     public void testCharCompareToIntrinsic() {
       runTest("js/js.translator/testData/box/char/charCompareToIntrinsic.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("charConstantByUnicodeId.kt")
     public void testCharConstantByUnicodeId() {
       runTest("js/js.translator/testData/box/char/charConstantByUnicodeId.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("charConversions.kt")
     public void testCharConversions() {
       runTest("js/js.translator/testData/box/char/charConversions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("charElvis.kt")
     public void testCharElvis() {
       runTest("js/js.translator/testData/box/char/charElvis.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("charEquals.kt")
     public void testCharEquals() {
       runTest("js/js.translator/testData/box/char/charEquals.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("charInExternalDecl.kt")
     public void testCharInExternalDecl() {
       runTest("js/js.translator/testData/box/char/charInExternalDecl.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("charInStringTemplate.kt")
     public void testCharInStringTemplate() {
       runTest("js/js.translator/testData/box/char/charInStringTemplate.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("charIsCheck.kt")
     public void testCharIsCheck() {
       runTest("js/js.translator/testData/box/char/charIsCheck.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("charNoBoxing.kt")
     public void testCharNoBoxing() {
       runTest("js/js.translator/testData/box/char/charNoBoxing.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("charRanges.kt")
     public void testCharRanges() {
       runTest("js/js.translator/testData/box/char/charRanges.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("charUnaryOperations.kt")
     public void testCharUnaryOperations() {
       runTest("js/js.translator/testData/box/char/charUnaryOperations.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelCallables.kt")
     public void testTopLevelCallables() {
       runTest("js/js.translator/testData/box/char/topLevelCallables.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unboxedCharSpecials.kt")
     public void testUnboxedCharSpecials() {
       runTest("js/js.translator/testData/box/char/unboxedCharSpecials.kt");
@@ -287,78 +287,78 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/classObject")
   @TestDataPath("$PROJECT_ROOT")
   public class ClassObject {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("accessing.kt")
     public void testAccessing() {
       runTest("js/js.translator/testData/box/classObject/accessing.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInClassObject() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/classObject"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("contextDependentClassObjectName.kt")
     public void testContextDependentClassObjectName() {
       runTest("js/js.translator/testData/box/classObject/contextDependentClassObjectName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("defaultObjectSameNamesAsInOuter.kt")
     public void testDefaultObjectSameNamesAsInOuter() {
       runTest("js/js.translator/testData/box/classObject/defaultObjectSameNamesAsInOuter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("enumCompanionObject.kt")
     public void testEnumCompanionObject() {
       runTest("js/js.translator/testData/box/classObject/enumCompanionObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inTrait.kt")
     public void testInTrait() {
       runTest("js/js.translator/testData/box/classObject/inTrait.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("invokeOperatorInCompanionObject.kt")
     public void testInvokeOperatorInCompanionObject() {
       runTest("js/js.translator/testData/box/classObject/invokeOperatorInCompanionObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("namedClassObject.kt")
     public void testNamedClassObject() {
       runTest("js/js.translator/testData/box/classObject/namedClassObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectInCompanionObject.kt")
     public void testObjectInCompanionObject() {
       runTest("js/js.translator/testData/box/classObject/objectInCompanionObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectLazyInitialized.kt")
     public void testObjectLazyInitialized() {
       runTest("js/js.translator/testData/box/classObject/objectLazyInitialized.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("setVar.kt")
     public void testSetVar() {
       runTest("js/js.translator/testData/box/classObject/setVar.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("js/js.translator/testData/box/classObject/simple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("withInheritance.kt")
     public void testWithInheritance() {
       runTest("js/js.translator/testData/box/classObject/withInheritance.kt");
@@ -369,288 +369,288 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/closure")
   @TestDataPath("$PROJECT_ROOT")
   public class Closure {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInClosure() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/closure"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureArrayListInstance.kt")
     public void testClosureArrayListInstance() {
       runTest("js/js.translator/testData/box/closure/closureArrayListInstance.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureFunctionAsArgument.kt")
     public void testClosureFunctionAsArgument() {
       runTest("js/js.translator/testData/box/closure/closureFunctionAsArgument.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureFunctionByInnerFunction.kt")
     public void testClosureFunctionByInnerFunction() {
       runTest("js/js.translator/testData/box/closure/closureFunctionByInnerFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureGenericTypeValue.kt")
     public void testClosureGenericTypeValue() {
       runTest("js/js.translator/testData/box/closure/closureGenericTypeValue.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureInFewFunctionWithDifferentName.kt")
     public void testClosureInFewFunctionWithDifferentName() {
       runTest("js/js.translator/testData/box/closure/closureInFewFunctionWithDifferentName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureInNestedFunctions.kt")
     public void testClosureInNestedFunctions() {
       runTest("js/js.translator/testData/box/closure/closureInNestedFunctions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureInNestedFunctionsInMethod.kt")
     public void testClosureInNestedFunctionsInMethod() {
       runTest("js/js.translator/testData/box/closure/closureInNestedFunctionsInMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureInNestedFunctionsWhichMixedWithObject.kt")
     public void testClosureInNestedFunctionsWhichMixedWithObject() {
       runTest("js/js.translator/testData/box/closure/closureInNestedFunctionsWhichMixedWithObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureInNestedLambdasInObject.kt")
     public void testClosureInNestedLambdasInObject() {
       runTest("js/js.translator/testData/box/closure/closureInNestedLambdasInObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureInObject.kt")
     public void testClosureInObject() {
       runTest("js/js.translator/testData/box/closure/closureInObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureInWithInsideWith.kt")
     public void testClosureInWithInsideWith() {
       runTest("js/js.translator/testData/box/closure/closureInWithInsideWith.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureLambdaVarInLambda.kt")
     public void testClosureLambdaVarInLambda() {
       runTest("js/js.translator/testData/box/closure/closureLambdaVarInLambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureLocalFunction.kt")
     public void testClosureLocalFunction() {
       runTest("js/js.translator/testData/box/closure/closureLocalFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureLocalFunctionByInnerFunction.kt")
     public void testClosureLocalFunctionByInnerFunction() {
       runTest("js/js.translator/testData/box/closure/closureLocalFunctionByInnerFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureLocalFunctionByInnerFunctionInConstructor.kt")
     public void testClosureLocalFunctionByInnerFunctionInConstructor() {
       runTest("js/js.translator/testData/box/closure/closureLocalFunctionByInnerFunctionInConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureLocalInNestedObject.kt")
     public void testClosureLocalInNestedObject() {
       runTest("js/js.translator/testData/box/closure/closureLocalInNestedObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureLocalLiteralFunction.kt")
     public void testClosureLocalLiteralFunction() {
       runTest("js/js.translator/testData/box/closure/closureLocalLiteralFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureReceiverInLocalExtFunByLocalExtFun.kt")
     public void testClosureReceiverInLocalExtFunByLocalExtFun() {
       runTest("js/js.translator/testData/box/closure/closureReceiverInLocalExtFunByLocalExtFun.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureReferencingMember.kt")
     public void testClosureReferencingMember() {
       runTest("js/js.translator/testData/box/closure/closureReferencingMember.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureThisAndClassObject.kt")
     public void testClosureThisAndClassObject() {
       runTest("js/js.translator/testData/box/closure/closureThisAndClassObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureThisAndReceiver.kt")
     public void testClosureThisAndReceiver() {
       runTest("js/js.translator/testData/box/closure/closureThisAndReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureThisByUsingMethodFromParentClass.kt")
     public void testClosureThisByUsingMethodFromParentClass() {
       runTest("js/js.translator/testData/box/closure/closureThisByUsingMethodFromParentClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureThisInConstructor.kt")
     public void testClosureThisInConstructor() {
       runTest("js/js.translator/testData/box/closure/closureThisInConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureThisInExtLambdaInsideMethod.kt")
     public void testClosureThisInExtLambdaInsideMethod() {
       runTest("js/js.translator/testData/box/closure/closureThisInExtLambdaInsideMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureThisInFunctionWhichNamedSameAsParentClass.kt")
     public void testClosureThisInFunctionWhichNamedSameAsParentClass() {
       runTest("js/js.translator/testData/box/closure/closureThisInFunctionWhichNamedSameAsParentClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureThisInLambdaInsideMethod.kt")
     public void testClosureThisInLambdaInsideMethod() {
       runTest("js/js.translator/testData/box/closure/closureThisInLambdaInsideMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureThisInLambdaInsideObject.kt")
     public void testClosureThisInLambdaInsideObject() {
       runTest("js/js.translator/testData/box/closure/closureThisInLambdaInsideObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureThisInLocalFunction.kt")
     public void testClosureThisInLocalFunction() {
       runTest("js/js.translator/testData/box/closure/closureThisInLocalFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureValToScopeWithSameNameDeclaration.kt")
     public void testClosureValToScopeWithSameNameDeclaration() {
       runTest("js/js.translator/testData/box/closure/closureValToScopeWithSameNameDeclaration.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureVarToScopeWithSameNameDeclaration.kt")
     public void testClosureVarToScopeWithSameNameDeclaration() {
       runTest("js/js.translator/testData/box/closure/closureVarToScopeWithSameNameDeclaration.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("contextDependentClosureName.kt")
     public void testContextDependentClosureName() {
       runTest("js/js.translator/testData/box/closure/contextDependentClosureName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("deepInnerClassInLocalClass.kt")
     public void testDeepInnerClassInLocalClass() {
       runTest("js/js.translator/testData/box/closure/deepInnerClassInLocalClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("deepInnerClassInLocalClassFromExtension.kt")
     public void testDeepInnerClassInLocalClassFromExtension() {
       runTest("js/js.translator/testData/box/closure/deepInnerClassInLocalClassFromExtension.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("enclosingClassFromInnerLocalClass.kt")
     public void testEnclosingClassFromInnerLocalClass() {
       runTest("js/js.translator/testData/box/closure/enclosingClassFromInnerLocalClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("enclosingClassFromLocalClass.kt")
     public void testEnclosingClassFromLocalClass() {
       runTest("js/js.translator/testData/box/closure/enclosingClassFromLocalClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("implicitGenericReceiverInExtensionInLocalClass.kt")
     public void testImplicitGenericReceiverInExtensionInLocalClass() {
       runTest("js/js.translator/testData/box/closure/implicitGenericReceiverInExtensionInLocalClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("iteratingCallbacks.kt")
     public void testIteratingCallbacks() {
       runTest("js/js.translator/testData/box/closure/iteratingCallbacks.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaInLocalFun.kt")
     public void testLambdaInLocalFun() {
       runTest("js/js.translator/testData/box/closure/lambdaInLocalFun.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localConstructorAndMethod.kt")
     public void testLocalConstructorAndMethod() {
       runTest("js/js.translator/testData/box/closure/localConstructorAndMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localParameterInCallback.kt")
     public void testLocalParameterInCallback() {
       runTest("js/js.translator/testData/box/closure/localParameterInCallback.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectWithInvokeOperator.kt")
     public void testObjectWithInvokeOperator() {
       runTest("js/js.translator/testData/box/closure/objectWithInvokeOperator.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("recursiveExtFunction.kt")
     public void testRecursiveExtFunction() {
       runTest("js/js.translator/testData/box/closure/recursiveExtFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("recursiveFunction.kt")
     public void testRecursiveFunction() {
       runTest("js/js.translator/testData/box/closure/recursiveFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("recursiveFunctionWithSameNameDeclaration.kt")
     public void testRecursiveFunctionWithSameNameDeclaration() {
       runTest("js/js.translator/testData/box/closure/recursiveFunctionWithSameNameDeclaration.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superCallInsideLambda.kt")
     public void testSuperCallInsideLambda() {
       runTest("js/js.translator/testData/box/closure/superCallInsideLambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("withManyClosuresInNestedFunctionsAndObjects.kt")
     public void testWithManyClosuresInNestedFunctionsAndObjects() {
       runTest("js/js.translator/testData/box/closure/withManyClosuresInNestedFunctionsAndObjects.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("wrappedVariableInExtensionFun.kt")
     public void testWrappedVariableInExtensionFun() {
       runTest("js/js.translator/testData/box/closure/wrappedVariableInExtensionFun.kt");
@@ -660,48 +660,48 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/closure/inlineAnonymousFunctions")
     @TestDataPath("$PROJECT_ROOT")
     public class InlineAnonymousFunctions {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInInlineAnonymousFunctions() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/closure/inlineAnonymousFunctions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("closureCodeSize.kt")
       public void testClosureCodeSize() {
         runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/closureCodeSize.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("closureInWithInsideWith.kt")
       public void testClosureInWithInsideWith() {
         runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/closureInWithInsideWith.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inlineChain.kt")
       public void testInlineChain() {
         runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/inlineChain.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdaChain.kt")
       public void testLambdaChain() {
         runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/lambdaChain.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdaParameters.kt")
       public void testLambdaParameters() {
         runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/lambdaParameters.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localParameterInCallback.kt")
       public void testLocalParameterInCallback() {
         runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/localParameterInCallback.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("twiceRegeneratedAnonymousObject.kt")
       public void testTwiceRegeneratedAnonymousObject() {
         runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/twiceRegeneratedAnonymousObject.kt");
@@ -713,156 +713,156 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/coercion")
   @TestDataPath("$PROJECT_ROOT")
   public class Coercion {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInCoercion() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/coercion"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("bridgeChar.kt")
     public void testBridgeChar() {
       runTest("js/js.translator/testData/box/coercion/bridgeChar.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("charValParameter.kt")
     public void testCharValParameter() {
       runTest("js/js.translator/testData/box/coercion/charValParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classProperty.kt")
     public void testClassProperty() {
       runTest("js/js.translator/testData/box/coercion/classProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("defaultAccessors.kt")
     public void testDefaultAccessors() {
       runTest("js/js.translator/testData/box/coercion/defaultAccessors.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("derivedFunctionReturningChar.kt")
     public void testDerivedFunctionReturningChar() {
       runTest("js/js.translator/testData/box/coercion/derivedFunctionReturningChar.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("derivedFunctionReturningUnit.kt")
     public void testDerivedFunctionReturningUnit() {
       runTest("js/js.translator/testData/box/coercion/derivedFunctionReturningUnit.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("destructuringToUnit.kt")
     public void testDestructuringToUnit() {
       runTest("js/js.translator/testData/box/coercion/destructuringToUnit.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionReceiver.kt")
     public void testExtensionReceiver() {
       runTest("js/js.translator/testData/box/coercion/extensionReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("ifWithUnit.kt")
     public void testIfWithUnit() {
       runTest("js/js.translator/testData/box/coercion/ifWithUnit.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineFunReturningUnit.kt")
     public void testInlineFunReturningUnit() {
       runTest("js/js.translator/testData/box/coercion/inlineFunReturningUnit.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaParameters.kt")
     public void testLambdaParameters() {
       runTest("js/js.translator/testData/box/coercion/lambdaParameters.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("loopOverUnits.kt")
     public void testLoopOverUnits() {
       runTest("js/js.translator/testData/box/coercion/loopOverUnits.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyBridgeChar.kt")
     public void testPropertyBridgeChar() {
       runTest("js/js.translator/testData/box/coercion/propertyBridgeChar.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("receiverSmartCast.kt")
     public void testReceiverSmartCast() {
       runTest("js/js.translator/testData/box/coercion/receiverSmartCast.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("safeCallLetReturningUnit.kt")
     public void testSafeCallLetReturningUnit() {
       runTest("js/js.translator/testData/box/coercion/safeCallLetReturningUnit.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelProperty.kt")
     public void testTopLevelProperty() {
       runTest("js/js.translator/testData/box/coercion/topLevelProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("tryWithEmptyCatch.kt")
     public void testTryWithEmptyCatch() {
       runTest("js/js.translator/testData/box/coercion/tryWithEmptyCatch.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unitAsExtensionReceiver.kt")
     public void testUnitAsExtensionReceiver() {
       runTest("js/js.translator/testData/box/coercion/unitAsExtensionReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unitIsAs.kt")
     public void testUnitIsAs() {
       runTest("js/js.translator/testData/box/coercion/unitIsAs.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unitMaterializationInOverriddenMethod.kt")
     public void testUnitMaterializationInOverriddenMethod() {
       runTest("js/js.translator/testData/box/coercion/unitMaterializationInOverriddenMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unitMaterializationOnAssign.kt")
     public void testUnitMaterializationOnAssign() {
       runTest("js/js.translator/testData/box/coercion/unitMaterializationOnAssign.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unitMaterializationOnCall.kt")
     public void testUnitMaterializationOnCall() {
       runTest("js/js.translator/testData/box/coercion/unitMaterializationOnCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unitNullCheck.kt")
     public void testUnitNullCheck() {
       runTest("js/js.translator/testData/box/coercion/unitNullCheck.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unitSafeCall.kt")
     public void testUnitSafeCall() {
       runTest("js/js.translator/testData/box/coercion/unitSafeCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("whenWithUnit.kt")
     public void testWhenWithUnit() {
       runTest("js/js.translator/testData/box/coercion/whenWithUnit.kt");
@@ -873,114 +873,114 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/coroutines")
   @TestDataPath("$PROJECT_ROOT")
   public class Coroutines {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInCoroutines() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/coroutines"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("boxingUnboxingInsideTheSuspendFunction.kt")
     public void testBoxingUnboxingInsideTheSuspendFunction() {
       runTest("js/js.translator/testData/box/coroutines/boxingUnboxingInsideTheSuspendFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("debugStatement.kt")
     public void testDebugStatement() {
       runTest("js/js.translator/testData/box/coroutines/debugStatement.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("dynamicSuspendReturn.kt")
     public void testDynamicSuspendReturn() {
       runTest("js/js.translator/testData/box/coroutines/dynamicSuspendReturn.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("dynamicSuspendReturnWithArrayAccess.kt")
     public void testDynamicSuspendReturnWithArrayAccess() {
       runTest("js/js.translator/testData/box/coroutines/dynamicSuspendReturnWithArrayAccess.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("dynamicSuspendReturnWithOperator.kt")
     public void testDynamicSuspendReturnWithOperator() {
       runTest("js/js.translator/testData/box/coroutines/dynamicSuspendReturnWithOperator.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsCallInsideCoroutine.kt")
     public void testJsCallInsideCoroutine() {
       runTest("js/js.translator/testData/box/coroutines/jsCallInsideCoroutine.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt54382.kt")
     public void testKt54382() {
       runTest("js/js.translator/testData/box/coroutines/kt54382.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaWithValueClass.kt")
     public void testLambdaWithValueClass() {
       runTest("js/js.translator/testData/box/coroutines/lambdaWithValueClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localVarOptimization.kt")
     public void testLocalVarOptimization() {
       runTest("js/js.translator/testData/box/coroutines/localVarOptimization.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nativeExceptions.kt")
     public void testNativeExceptions() {
       runTest("js/js.translator/testData/box/coroutines/nativeExceptions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("onlyInlineSuspendFunction.kt")
     public void testOnlyInlineSuspendFunction() {
       runTest("js/js.translator/testData/box/coroutines/onlyInlineSuspendFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("suspendFunctionAsSupertypeIsCheck.kt")
     public void testSuspendFunctionAsSupertypeIsCheck() {
       runTest("js/js.translator/testData/box/coroutines/suspendFunctionAsSupertypeIsCheck.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("suspendFunctionIsAs.kt")
     public void testSuspendFunctionIsAs() {
       runTest("js/js.translator/testData/box/coroutines/suspendFunctionIsAs.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("suspendFunctionalInterface.kt")
     public void testSuspendFunctionalInterface() {
       runTest("js/js.translator/testData/box/coroutines/suspendFunctionalInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("suspendInvokeWithSuspendKlassRef.kt")
     public void testSuspendInvokeWithSuspendKlassRef() {
       runTest("js/js.translator/testData/box/coroutines/suspendInvokeWithSuspendKlassRef.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("suspendLambdaWithValueClass.kt")
     public void testSuspendLambdaWithValueClass() {
       runTest("js/js.translator/testData/box/coroutines/suspendLambdaWithValueClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("suspendMethodWithSuperCall.kt")
     public void testSuspendMethodWithSuperCall() {
       runTest("js/js.translator/testData/box/coroutines/suspendMethodWithSuperCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("tryFinally.kt")
     public void testTryFinally() {
       runTest("js/js.translator/testData/box/coroutines/tryFinally.kt");
@@ -991,102 +991,102 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/crossModuleRef")
   @TestDataPath("$PROJECT_ROOT")
   public class CrossModuleRef {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInCrossModuleRef() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/crossModuleRef"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callableObjectRef.kt")
     public void testCallableObjectRef() {
       runTest("js/js.translator/testData/box/crossModuleRef/callableObjectRef.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constructor.kt")
     public void testConstructor() {
       runTest("js/js.translator/testData/box/crossModuleRef/constructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inheritance.kt")
     public void testInheritance() {
       runTest("js/js.translator/testData/box/crossModuleRef/inheritance.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineJsModule.kt")
     public void testInlineJsModule() {
       runTest("js/js.translator/testData/box/crossModuleRef/inlineJsModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineJsModuleNonIdentifier.kt")
     public void testInlineJsModuleNonIdentifier() {
       runTest("js/js.translator/testData/box/crossModuleRef/inlineJsModuleNonIdentifier.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineJsModulePackage.kt")
     public void testInlineJsModulePackage() {
       runTest("js/js.translator/testData/box/crossModuleRef/inlineJsModulePackage.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineModule.kt")
     public void testInlineModule() {
       runTest("js/js.translator/testData/box/crossModuleRef/inlineModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineModuleNonIndentifier.kt")
     public void testInlineModuleNonIndentifier() {
       runTest("js/js.translator/testData/box/crossModuleRef/inlineModuleNonIndentifier.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambda.kt")
     public void testLambda() {
       runTest("js/js.translator/testData/box/crossModuleRef/lambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("object.kt")
     public void testObject() {
       runTest("js/js.translator/testData/box/crossModuleRef/object.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectInInlineClosure.kt")
     public void testObjectInInlineClosure() {
       runTest("js/js.translator/testData/box/crossModuleRef/objectInInlineClosure.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectIsObject.kt")
     public void testObjectIsObject() {
       runTest("js/js.translator/testData/box/crossModuleRef/objectIsObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelExtension.kt")
     public void testTopLevelExtension() {
       runTest("js/js.translator/testData/box/crossModuleRef/topLevelExtension.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelFunction.kt")
     public void testTopLevelFunction() {
       runTest("js/js.translator/testData/box/crossModuleRef/topLevelFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelMutableProperty.kt")
     public void testTopLevelMutableProperty() {
       runTest("js/js.translator/testData/box/crossModuleRef/topLevelMutableProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelProperty.kt")
     public void testTopLevelProperty() {
       runTest("js/js.translator/testData/box/crossModuleRef/topLevelProperty.kt");
@@ -1097,120 +1097,120 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/crossModuleRefIR")
   @TestDataPath("$PROJECT_ROOT")
   public class CrossModuleRefIR {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInCrossModuleRefIR() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/crossModuleRefIR"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callableObjectRef.kt")
     public void testCallableObjectRef() {
       runTest("js/js.translator/testData/box/crossModuleRefIR/callableObjectRef.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constructor.kt")
     public void testConstructor() {
       runTest("js/js.translator/testData/box/crossModuleRefIR/constructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("crossModuleJsExport.kt")
     public void testCrossModuleJsExport() {
       runTest("js/js.translator/testData/box/crossModuleRefIR/crossModuleJsExport.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("export.kt")
     public void testExport() {
       runTest("js/js.translator/testData/box/crossModuleRefIR/export.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inheritance.kt")
     public void testInheritance() {
       runTest("js/js.translator/testData/box/crossModuleRefIR/inheritance.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineJsModule.kt")
     public void testInlineJsModule() {
       runTest("js/js.translator/testData/box/crossModuleRefIR/inlineJsModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineJsModuleNonIdentifier.kt")
     public void testInlineJsModuleNonIdentifier() {
       runTest("js/js.translator/testData/box/crossModuleRefIR/inlineJsModuleNonIdentifier.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineJsModulePackage.kt")
     public void testInlineJsModulePackage() {
       runTest("js/js.translator/testData/box/crossModuleRefIR/inlineJsModulePackage.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineModule.kt")
     public void testInlineModule() {
       runTest("js/js.translator/testData/box/crossModuleRefIR/inlineModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineModuleNonIndentifier.kt")
     public void testInlineModuleNonIndentifier() {
       runTest("js/js.translator/testData/box/crossModuleRefIR/inlineModuleNonIndentifier.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambda.kt")
     public void testLambda() {
       runTest("js/js.translator/testData/box/crossModuleRefIR/lambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("object.kt")
     public void testObject() {
       runTest("js/js.translator/testData/box/crossModuleRefIR/object.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectInInlineClosure.kt")
     public void testObjectInInlineClosure() {
       runTest("js/js.translator/testData/box/crossModuleRefIR/objectInInlineClosure.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectIsObject.kt")
     public void testObjectIsObject() {
       runTest("js/js.translator/testData/box/crossModuleRefIR/objectIsObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("onlyMainModuleCall.kt")
     public void testOnlyMainModuleCall() {
       runTest("js/js.translator/testData/box/crossModuleRefIR/onlyMainModuleCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelExtension.kt")
     public void testTopLevelExtension() {
       runTest("js/js.translator/testData/box/crossModuleRefIR/topLevelExtension.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelFunction.kt")
     public void testTopLevelFunction() {
       runTest("js/js.translator/testData/box/crossModuleRefIR/topLevelFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelMutableProperty.kt")
     public void testTopLevelMutableProperty() {
       runTest("js/js.translator/testData/box/crossModuleRefIR/topLevelMutableProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelProperty.kt")
     public void testTopLevelProperty() {
       runTest("js/js.translator/testData/box/crossModuleRefIR/topLevelProperty.kt");
@@ -1221,54 +1221,54 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/dataClass")
   @TestDataPath("$PROJECT_ROOT")
   public class DataClass {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInDataClass() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/dataClass"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("components.kt")
     public void testComponents() {
       runTest("js/js.translator/testData/box/dataClass/components.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("copy.kt")
     public void testCopy() {
       runTest("js/js.translator/testData/box/dataClass/copy.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("equals.kt")
     public void testEquals() {
       runTest("js/js.translator/testData/box/dataClass/equals.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hashcode.kt")
     public void testHashcode() {
       runTest("js/js.translator/testData/box/dataClass/hashcode.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("keyrole.kt")
     public void testKeyrole() {
       runTest("js/js.translator/testData/box/dataClass/keyrole.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("override.kt")
     public void testOverride() {
       runTest("js/js.translator/testData/box/dataClass/override.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateFields.kt")
     public void testPrivateFields() {
       runTest("js/js.translator/testData/box/dataClass/privateFields.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("tostring.kt")
     public void testTostring() {
       runTest("js/js.translator/testData/box/dataClass/tostring.kt");
@@ -1279,12 +1279,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/dce")
   @TestDataPath("$PROJECT_ROOT")
   public class Dce {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInDce() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/dce"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("removeUnusedOverride.kt")
     public void testRemoveUnusedOverride() {
       runTest("js/js.translator/testData/box/dce/removeUnusedOverride.kt");
@@ -1295,144 +1295,144 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/defaultArguments")
   @TestDataPath("$PROJECT_ROOT")
   public class DefaultArguments {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInDefaultArguments() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/defaultArguments"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("complexExpressionAsConstructorDefaultArgument.kt")
     public void testComplexExpressionAsConstructorDefaultArgument() {
       runTest("js/js.translator/testData/box/defaultArguments/complexExpressionAsConstructorDefaultArgument.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("complexExpressionAsDefaultArgument.kt")
     public void testComplexExpressionAsDefaultArgument() {
       runTest("js/js.translator/testData/box/defaultArguments/complexExpressionAsDefaultArgument.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("complexExpressionAsOverriddenDefaultArgument.kt")
     public void testComplexExpressionAsOverriddenDefaultArgument() {
       runTest("js/js.translator/testData/box/defaultArguments/complexExpressionAsOverriddenDefaultArgument.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constructorCallWithDefArg1.kt")
     public void testConstructorCallWithDefArg1() {
       runTest("js/js.translator/testData/box/defaultArguments/constructorCallWithDefArg1.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constructorCallWithDefArg2.kt")
     public void testConstructorCallWithDefArg2() {
       runTest("js/js.translator/testData/box/defaultArguments/constructorCallWithDefArg2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("defArgsWithSuperCall.kt")
     public void testDefArgsWithSuperCall() {
       runTest("js/js.translator/testData/box/defaultArguments/defArgsWithSuperCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("defaultArgumentsInFunctionWithExpressionAsBody.kt")
     public void testDefaultArgumentsInFunctionWithExpressionAsBody() {
       runTest("js/js.translator/testData/box/defaultArguments/defaultArgumentsInFunctionWithExpressionAsBody.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("enumSuperConstructor.kt")
     public void testEnumSuperConstructor() {
       runTest("js/js.translator/testData/box/defaultArguments/enumSuperConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("enumWithDefArg.kt")
     public void testEnumWithDefArg() {
       runTest("js/js.translator/testData/box/defaultArguments/enumWithDefArg.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("enumWithOneDefArg.kt")
     public void testEnumWithOneDefArg() {
       runTest("js/js.translator/testData/box/defaultArguments/enumWithOneDefArg.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("enumWithTwoDefArgs.kt")
     public void testEnumWithTwoDefArgs() {
       runTest("js/js.translator/testData/box/defaultArguments/enumWithTwoDefArgs.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionFunWithDefArgs.kt")
     public void testExtensionFunWithDefArgs() {
       runTest("js/js.translator/testData/box/defaultArguments/extensionFunWithDefArgs.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalTailArgsClass.kt")
     public void testExternalTailArgsClass() {
       runTest("js/js.translator/testData/box/defaultArguments/externalTailArgsClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalTailArgsFun.kt")
     public void testExternalTailArgsFun() {
       runTest("js/js.translator/testData/box/defaultArguments/externalTailArgsFun.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("funInAbstractClassWithDefArg.kt")
     public void testFunInAbstractClassWithDefArg() {
       runTest("js/js.translator/testData/box/defaultArguments/funInAbstractClassWithDefArg.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inheritViaAnotherInterface.kt")
     public void testInheritViaAnotherInterface() {
       runTest("js/js.translator/testData/box/defaultArguments/inheritViaAnotherInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inheritViaAnotherInterfaceIndirectly.kt")
     public void testInheritViaAnotherInterfaceIndirectly() {
       runTest("js/js.translator/testData/box/defaultArguments/inheritViaAnotherInterfaceIndirectly.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("interfaceSuperCall.kt")
     public void testInterfaceSuperCall() {
       runTest("js/js.translator/testData/box/defaultArguments/interfaceSuperCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overloadFunWithDefArg.kt")
     public void testOverloadFunWithDefArg() {
       runTest("js/js.translator/testData/box/defaultArguments/overloadFunWithDefArg.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("primarySuperConstructor.kt")
     public void testPrimarySuperConstructor() {
       runTest("js/js.translator/testData/box/defaultArguments/primarySuperConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("secondarySuperConstructor.kt")
     public void testSecondarySuperConstructor() {
       runTest("js/js.translator/testData/box/defaultArguments/secondarySuperConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superCall.kt")
     public void testSuperCall() {
       runTest("js/js.translator/testData/box/defaultArguments/superCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("virtualCallWithDefArg.kt")
     public void testVirtualCallWithDefArg() {
       runTest("js/js.translator/testData/box/defaultArguments/virtualCallWithDefArg.kt");
@@ -1443,144 +1443,144 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/delegateProperty")
   @TestDataPath("$PROJECT_ROOT")
   public class DelegateProperty {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInDelegateProperty() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/delegateProperty"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("capturedLocalVal.kt")
     public void testCapturedLocalVal() {
       runTest("js/js.translator/testData/box/delegateProperty/capturedLocalVal.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("capturedLocalValNoInline.kt")
     public void testCapturedLocalValNoInline() {
       runTest("js/js.translator/testData/box/delegateProperty/capturedLocalValNoInline.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("capturedLocalVar.kt")
     public void testCapturedLocalVar() {
       runTest("js/js.translator/testData/box/delegateProperty/capturedLocalVar.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("capturedLocalVarNoInline.kt")
     public void testCapturedLocalVarNoInline() {
       runTest("js/js.translator/testData/box/delegateProperty/capturedLocalVarNoInline.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("clashingNameInSubclass.kt")
     public void testClashingNameInSubclass() {
       runTest("js/js.translator/testData/box/delegateProperty/clashingNameInSubclass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegateByExtensionProperty.kt")
     public void testDelegateByExtensionProperty() {
       runTest("js/js.translator/testData/box/delegateProperty/delegateByExtensionProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegateByTopLevelFun.kt")
     public void testDelegateByTopLevelFun() {
       runTest("js/js.translator/testData/box/delegateProperty/delegateByTopLevelFun.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegateByTopLevelProperty.kt")
     public void testDelegateByTopLevelProperty() {
       runTest("js/js.translator/testData/box/delegateProperty/delegateByTopLevelProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegateWithPropertyAccess.kt")
     public void testDelegateWithPropertyAccess() {
       runTest("js/js.translator/testData/box/delegateProperty/delegateWithPropertyAccess.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("getAsExtensionFun.kt")
     public void testGetAsExtensionFun() {
       runTest("js/js.translator/testData/box/delegateProperty/getAsExtensionFun.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localVal.kt")
     public void testLocalVal() {
       runTest("js/js.translator/testData/box/delegateProperty/localVal.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localVar.kt")
     public void testLocalVar() {
       runTest("js/js.translator/testData/box/delegateProperty/localVar.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localVarInc.kt")
     public void testLocalVarInc() {
       runTest("js/js.translator/testData/box/delegateProperty/localVarInc.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localVarPlusAssign.kt")
     public void testLocalVarPlusAssign() {
       runTest("js/js.translator/testData/box/delegateProperty/localVarPlusAssign.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("metadataReferentialEquality.kt")
     public void testMetadataReferentialEquality() {
       runTest("js/js.translator/testData/box/delegateProperty/metadataReferentialEquality.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("peculiarName.kt")
     public void testPeculiarName() {
       runTest("js/js.translator/testData/box/delegateProperty/peculiarName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyMetadata.kt")
     public void testPropertyMetadata() {
       runTest("js/js.translator/testData/box/delegateProperty/propertyMetadata.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("setAsExtensionFun.kt")
     public void testSetAsExtensionFun() {
       runTest("js/js.translator/testData/box/delegateProperty/setAsExtensionFun.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("js/js.translator/testData/box/delegateProperty/simple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelVal.kt")
     public void testTopLevelVal() {
       runTest("js/js.translator/testData/box/delegateProperty/topLevelVal.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelVar.kt")
     public void testTopLevelVar() {
       runTest("js/js.translator/testData/box/delegateProperty/topLevelVar.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unusedPropertyMetadata.kt")
     public void testUnusedPropertyMetadata() {
       runTest("js/js.translator/testData/box/delegateProperty/unusedPropertyMetadata.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("withGenerics.kt")
     public void testWithGenerics() {
       runTest("js/js.translator/testData/box/delegateProperty/withGenerics.kt");
@@ -1591,114 +1591,114 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/delegation")
   @TestDataPath("$PROJECT_ROOT")
   public class Delegation {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInDelegation() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/delegation"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("complexDelegation.kt")
     public void testComplexDelegation() {
       runTest("js/js.translator/testData/box/delegation/complexDelegation.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegationByArg.kt")
     public void testDelegationByArg() {
       runTest("js/js.translator/testData/box/delegation/delegationByArg.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegationByCompanionToNothing.kt")
     public void testDelegationByCompanionToNothing() {
       runTest("js/js.translator/testData/box/delegation/delegationByCompanionToNothing.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegationByExprWithArgs.kt")
     public void testDelegationByExprWithArgs() {
       runTest("js/js.translator/testData/box/delegation/delegationByExprWithArgs.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegationByFunExpr.kt")
     public void testDelegationByFunExpr() {
       runTest("js/js.translator/testData/box/delegation/delegationByFunExpr.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegationByIfExpr.kt")
     public void testDelegationByIfExpr() {
       runTest("js/js.translator/testData/box/delegation/delegationByIfExpr.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegationByInh.kt")
     public void testDelegationByInh() {
       runTest("js/js.translator/testData/box/delegation/delegationByInh.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegationByNewInstance.kt")
     public void testDelegationByNewInstance() {
       runTest("js/js.translator/testData/box/delegation/delegationByNewInstance.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegationChain.kt")
     public void testDelegationChain() {
       runTest("js/js.translator/testData/box/delegation/delegationChain.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegationEvaluationOrder1.kt")
     public void testDelegationEvaluationOrder1() {
       runTest("js/js.translator/testData/box/delegation/delegationEvaluationOrder1.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegationEvaluationOrder2.kt")
     public void testDelegationEvaluationOrder2() {
       runTest("js/js.translator/testData/box/delegation/delegationEvaluationOrder2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegationExtFun1.kt")
     public void testDelegationExtFun1() {
       runTest("js/js.translator/testData/box/delegation/delegationExtFun1.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegationExtFun2.kt")
     public void testDelegationExtFun2() {
       runTest("js/js.translator/testData/box/delegation/delegationExtFun2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegationExtProp.kt")
     public void testDelegationExtProp() {
       runTest("js/js.translator/testData/box/delegation/delegationExtProp.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegationExtensionPropertyDelegated.kt")
     public void testDelegationExtensionPropertyDelegated() {
       runTest("js/js.translator/testData/box/delegation/delegationExtensionPropertyDelegated.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegationToExternaInterface.kt")
     public void testDelegationToExternaInterface() {
       runTest("js/js.translator/testData/box/delegation/delegationToExternaInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsNamePropertyDelegation.kt")
     public void testJsNamePropertyDelegation() {
       runTest("js/js.translator/testData/box/delegation/jsNamePropertyDelegation.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("onObject.kt")
     public void testOnObject() {
       runTest("js/js.translator/testData/box/delegation/onObject.kt");
@@ -1709,138 +1709,138 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/dynamic")
   @TestDataPath("$PROJECT_ROOT")
   public class Dynamic {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInDynamic() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/dynamic"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("binaryOperations.kt")
     public void testBinaryOperations() {
       runTest("js/js.translator/testData/box/dynamic/binaryOperations.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callGetMethod.kt")
     public void testCallGetMethod() {
       runTest("js/js.translator/testData/box/dynamic/callGetMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callMethods.kt")
     public void testCallMethods() {
       runTest("js/js.translator/testData/box/dynamic/callMethods.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callSetMethod.kt")
     public void testCallSetMethod() {
       runTest("js/js.translator/testData/box/dynamic/callSetMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("compareTo.kt")
     public void testCompareTo() {
       runTest("js/js.translator/testData/box/dynamic/compareTo.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("dynamicArraySetWithLambda.kt")
     public void testDynamicArraySetWithLambda() {
       runTest("js/js.translator/testData/box/dynamic/dynamicArraySetWithLambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("equals.kt")
     public void testEquals() {
       runTest("js/js.translator/testData/box/dynamic/equals.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("getByBrackets.kt")
     public void testGetByBrackets() {
       runTest("js/js.translator/testData/box/dynamic/getByBrackets.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hashCode.kt")
     public void testHashCode() {
       runTest("js/js.translator/testData/box/dynamic/hashCode.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("identityEquals.kt")
     public void testIdentityEquals() {
       runTest("js/js.translator/testData/box/dynamic/identityEquals.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("incrementAndDecrement.kt")
     public void testIncrementAndDecrement() {
       runTest("js/js.translator/testData/box/dynamic/incrementAndDecrement.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("infixCall.kt")
     public void testInfixCall() {
       runTest("js/js.translator/testData/box/dynamic/infixCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("invoke.kt")
     public void testInvoke() {
       runTest("js/js.translator/testData/box/dynamic/invoke.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("is.kt")
     public void testIs() {
       runTest("js/js.translator/testData/box/dynamic/is.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("isJsPrimitiveType.kt")
     public void testIsJsPrimitiveType() {
       runTest("js/js.translator/testData/box/dynamic/isJsPrimitiveType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("iterator.kt")
     public void testIterator() {
       runTest("js/js.translator/testData/box/dynamic/iterator.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaParameterInlining.kt")
     public void testLambdaParameterInlining() {
       runTest("js/js.translator/testData/box/dynamic/lambdaParameterInlining.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("operationsWithAssignment.kt")
     public void testOperationsWithAssignment() {
       runTest("js/js.translator/testData/box/dynamic/operationsWithAssignment.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyAccess.kt")
     public void testPropertyAccess() {
       runTest("js/js.translator/testData/box/dynamic/propertyAccess.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertySideEffect.kt")
     public void testPropertySideEffect() {
       runTest("js/js.translator/testData/box/dynamic/propertySideEffect.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("setByBrackets.kt")
     public void testSetByBrackets() {
       runTest("js/js.translator/testData/box/dynamic/setByBrackets.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unaryOperations.kt")
     public void testUnaryOperations() {
       runTest("js/js.translator/testData/box/dynamic/unaryOperations.kt");
@@ -1851,90 +1851,90 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/enum")
   @TestDataPath("$PROJECT_ROOT")
   public class Enum {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("accessing.kt")
     public void testAccessing() {
       runTest("js/js.translator/testData/box/enum/accessing.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInEnum() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/enum"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("enumEntriesOnExportedEnum.kt")
     public void testEnumEntriesOnExportedEnum() {
       runTest("js/js.translator/testData/box/enum/enumEntriesOnExportedEnum.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("enumInheritedFromTrait.kt")
     public void testEnumInheritedFromTrait() {
       runTest("js/js.translator/testData/box/enum/enumInheritedFromTrait.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("enumIsComparable.kt")
     public void testEnumIsComparable() {
       runTest("js/js.translator/testData/box/enum/enumIsComparable.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("enumWithInheritance.kt")
     public void testEnumWithInheritance() {
       runTest("js/js.translator/testData/box/enum/enumWithInheritance.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("equals.kt")
     public void testEquals() {
       runTest("js/js.translator/testData/box/enum/equals.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("equalsNullUndefined.kt")
     public void testEqualsNullUndefined() {
       runTest("js/js.translator/testData/box/enum/equalsNullUndefined.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("implementsComparable.kt")
     public void testImplementsComparable() {
       runTest("js/js.translator/testData/box/enum/implementsComparable.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("initializationOrder.kt")
     public void testInitializationOrder() {
       runTest("js/js.translator/testData/box/enum/initializationOrder.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nativeEnum.kt")
     public void testNativeEnum() {
       runTest("js/js.translator/testData/box/enum/nativeEnum.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleEnum.kt")
     public void testSimpleEnum() {
       runTest("js/js.translator/testData/box/enum/simpleEnum.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("standardFunctions.kt")
     public void testStandardFunctions() {
       runTest("js/js.translator/testData/box/enum/standardFunctions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("standardMethods.kt")
     public void testStandardMethods() {
       runTest("js/js.translator/testData/box/enum/standardMethods.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superCallInEnumLiteral.kt")
     public void testSuperCallInEnumLiteral() {
       runTest("js/js.translator/testData/box/enum/superCallInEnumLiteral.kt");
@@ -1945,7 +1945,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/esModules")
   @TestDataPath("$PROJECT_ROOT")
   public class EsModules {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInEsModules() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
@@ -1954,102 +1954,102 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/esModules/crossModuleRef")
     @TestDataPath("$PROJECT_ROOT")
     public class CrossModuleRef {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInCrossModuleRef() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/crossModuleRef"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("callableObjectRef.kt")
       public void testCallableObjectRef() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRef/callableObjectRef.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructor.kt")
       public void testConstructor() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRef/constructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inheritance.kt")
       public void testInheritance() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRef/inheritance.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inlineJsModule.kt")
       public void testInlineJsModule() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRef/inlineJsModule.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inlineJsModuleNonIdentifier.kt")
       public void testInlineJsModuleNonIdentifier() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRef/inlineJsModuleNonIdentifier.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inlineJsModulePackage.kt")
       public void testInlineJsModulePackage() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRef/inlineJsModulePackage.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inlineModule.kt")
       public void testInlineModule() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRef/inlineModule.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inlineModuleNonIndentifier.kt")
       public void testInlineModuleNonIndentifier() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRef/inlineModuleNonIndentifier.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambda.kt")
       public void testLambda() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRef/lambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("object.kt")
       public void testObject() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRef/object.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("objectInInlineClosure.kt")
       public void testObjectInInlineClosure() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRef/objectInInlineClosure.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("objectIsObject.kt")
       public void testObjectIsObject() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRef/objectIsObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevelExtension.kt")
       public void testTopLevelExtension() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRef/topLevelExtension.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevelFunction.kt")
       public void testTopLevelFunction() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRef/topLevelFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevelMutableProperty.kt")
       public void testTopLevelMutableProperty() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRef/topLevelMutableProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevelProperty.kt")
       public void testTopLevelProperty() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRef/topLevelProperty.kt");
@@ -2060,102 +2060,102 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/esModules/crossModuleRefPerFile")
     @TestDataPath("$PROJECT_ROOT")
     public class CrossModuleRefPerFile {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInCrossModuleRefPerFile() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/crossModuleRefPerFile"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("callableObjectRef.kt")
       public void testCallableObjectRef() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/callableObjectRef.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructor.kt")
       public void testConstructor() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/constructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("eagerInitializationGlobal1.kt")
       public void testEagerInitializationGlobal1() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/eagerInitializationGlobal1.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("eagerInitializationGlobal2.kt")
       public void testEagerInitializationGlobal2() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/eagerInitializationGlobal2.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("eagerInitializationGlobal3.kt")
       public void testEagerInitializationGlobal3() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/eagerInitializationGlobal3.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inheritance.kt")
       public void testInheritance() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/inheritance.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inlineModule.kt")
       public void testInlineModule() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/inlineModule.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inlineModuleNonIndentifier.kt")
       public void testInlineModuleNonIndentifier() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/inlineModuleNonIndentifier.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambda.kt")
       public void testLambda() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/lambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("object.kt")
       public void testObject() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/object.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("objectInInlineClosure.kt")
       public void testObjectInInlineClosure() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/objectInInlineClosure.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("objectIsObject.kt")
       public void testObjectIsObject() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/objectIsObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevelExtension.kt")
       public void testTopLevelExtension() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/topLevelExtension.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevelFunction.kt")
       public void testTopLevelFunction() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/topLevelFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevelMutableProperty.kt")
       public void testTopLevelMutableProperty() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/topLevelMutableProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevelProperty.kt")
       public void testTopLevelProperty() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/topLevelProperty.kt");
@@ -2166,84 +2166,84 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/esModules/crossModuleRefPerModule")
     @TestDataPath("$PROJECT_ROOT")
     public class CrossModuleRefPerModule {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInCrossModuleRefPerModule() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/crossModuleRefPerModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("callableObjectRef.kt")
       public void testCallableObjectRef() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/callableObjectRef.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructor.kt")
       public void testConstructor() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/constructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inheritance.kt")
       public void testInheritance() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/inheritance.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inlineModule.kt")
       public void testInlineModule() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/inlineModule.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inlineModuleNonIndentifier.kt")
       public void testInlineModuleNonIndentifier() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/inlineModuleNonIndentifier.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambda.kt")
       public void testLambda() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/lambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("object.kt")
       public void testObject() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/object.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("objectInInlineClosure.kt")
       public void testObjectInInlineClosure() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/objectInInlineClosure.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("objectIsObject.kt")
       public void testObjectIsObject() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/objectIsObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevelExtension.kt")
       public void testTopLevelExtension() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/topLevelExtension.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevelFunction.kt")
       public void testTopLevelFunction() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/topLevelFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevelMutableProperty.kt")
       public void testTopLevelMutableProperty() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/topLevelMutableProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevelProperty.kt")
       public void testTopLevelProperty() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/topLevelProperty.kt");
@@ -2254,192 +2254,192 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/esModules/export")
     @TestDataPath("$PROJECT_ROOT")
     public class Export {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInExport() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/export"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("bridgeSavingAfterExport.kt")
       public void testBridgeSavingAfterExport() {
         runTest("js/js.translator/testData/box/esModules/export/bridgeSavingAfterExport.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("bridgeSavingAfterExportInExportedFile.kt")
       public void testBridgeSavingAfterExportInExportedFile() {
         runTest("js/js.translator/testData/box/esModules/export/bridgeSavingAfterExportInExportedFile.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("defaultInlineClassConstructorParam.kt")
       public void testDefaultInlineClassConstructorParam() {
         runTest("js/js.translator/testData/box/esModules/export/defaultInlineClassConstructorParam.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("defaultInlineClassConstructorParamInExportedFile.kt")
       public void testDefaultInlineClassConstructorParamInExportedFile() {
         runTest("js/js.translator/testData/box/esModules/export/defaultInlineClassConstructorParamInExportedFile.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exportAllFile.kt")
       public void testExportAllFile() {
         runTest("js/js.translator/testData/box/esModules/export/exportAllFile.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exportClassWithInitBlock.kt")
       public void testExportClassWithInitBlock() {
         runTest("js/js.translator/testData/box/esModules/export/exportClassWithInitBlock.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exportEnumClass.kt")
       public void testExportEnumClass() {
         runTest("js/js.translator/testData/box/esModules/export/exportEnumClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exportFileWithEnumClass.kt")
       public void testExportFileWithEnumClass() {
         runTest("js/js.translator/testData/box/esModules/export/exportFileWithEnumClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exportFileWithInterface.kt")
       public void testExportFileWithInterface() {
         runTest("js/js.translator/testData/box/esModules/export/exportFileWithInterface.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exportFileWithNestedClass.kt")
       public void testExportFileWithNestedClass() {
         runTest("js/js.translator/testData/box/esModules/export/exportFileWithNestedClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exportFileWithNestedObject.kt")
       public void testExportFileWithNestedObject() {
         runTest("js/js.translator/testData/box/esModules/export/exportFileWithNestedObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exportFileWithProtectedMembers.kt")
       public void testExportFileWithProtectedMembers() {
         runTest("js/js.translator/testData/box/esModules/export/exportFileWithProtectedMembers.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exportFileWithTopLevelProperty.kt")
       public void testExportFileWithTopLevelProperty() {
         runTest("js/js.translator/testData/box/esModules/export/exportFileWithTopLevelProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exportInnerClass.kt")
       public void testExportInnerClass() {
         runTest("js/js.translator/testData/box/esModules/export/exportInnerClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exportInterface.kt")
       public void testExportInterface() {
         runTest("js/js.translator/testData/box/esModules/export/exportInterface.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exportInterfaceWithoutClases.kt")
       public void testExportInterfaceWithoutClases() {
         runTest("js/js.translator/testData/box/esModules/export/exportInterfaceWithoutClases.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exportNestedClass.kt")
       public void testExportNestedClass() {
         runTest("js/js.translator/testData/box/esModules/export/exportNestedClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exportNestedObject.kt")
       public void testExportNestedObject() {
         runTest("js/js.translator/testData/box/esModules/export/exportNestedObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exportProtectedMembers.kt")
       public void testExportProtectedMembers() {
         runTest("js/js.translator/testData/box/esModules/export/exportProtectedMembers.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exportTopLevelProperty.kt")
       public void testExportTopLevelProperty() {
         runTest("js/js.translator/testData/box/esModules/export/exportTopLevelProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("fileNameClash.kt")
       public void testFileNameClash() {
         runTest("js/js.translator/testData/box/esModules/export/fileNameClash.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nonIndetifierModuleName.kt")
       public void testNonIndetifierModuleName() {
         runTest("js/js.translator/testData/box/esModules/export/nonIndetifierModuleName.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nonIndetifierModuleNameInExportedFile.kt")
       public void testNonIndetifierModuleNameInExportedFile() {
         runTest("js/js.translator/testData/box/esModules/export/nonIndetifierModuleNameInExportedFile.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overriddenChainNonExportIntermediate.kt")
       public void testOverriddenChainNonExportIntermediate() {
         runTest("js/js.translator/testData/box/esModules/export/overriddenChainNonExportIntermediate.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overriddenChainNonExportIntermediateInExportedFile.kt")
       public void testOverriddenChainNonExportIntermediateInExportedFile() {
         runTest("js/js.translator/testData/box/esModules/export/overriddenChainNonExportIntermediateInExportedFile.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overriddenExternalMethodWithSameNameMethod.kt")
       public void testOverriddenExternalMethodWithSameNameMethod() {
         runTest("js/js.translator/testData/box/esModules/export/overriddenExternalMethodWithSameNameMethod.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overriddenExternalMethodWithSameStableNameMethod.kt")
       public void testOverriddenExternalMethodWithSameStableNameMethod() {
         runTest("js/js.translator/testData/box/esModules/export/overriddenExternalMethodWithSameStableNameMethod.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overriddenExternalMethodWithSameStableNameMethodInExportedFile.kt")
       public void testOverriddenExternalMethodWithSameStableNameMethodInExportedFile() {
         runTest("js/js.translator/testData/box/esModules/export/overriddenExternalMethodWithSameStableNameMethodInExportedFile.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("reservedModuleName.kt")
       public void testReservedModuleName() {
         runTest("js/js.translator/testData/box/esModules/export/reservedModuleName.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("reservedModuleNameInExportedFile.kt")
       public void testReservedModuleNameInExportedFile() {
         runTest("js/js.translator/testData/box/esModules/export/reservedModuleNameInExportedFile.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("vararg.kt")
       public void testVararg() {
         runTest("js/js.translator/testData/box/esModules/export/vararg.kt");
@@ -2450,12 +2450,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/esModules/incremental")
     @TestDataPath("$PROJECT_ROOT")
     public class Incremental {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInIncremental() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/incremental"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("jsModule.kt")
       public void testJsModule() {
         runTest("js/js.translator/testData/box/esModules/incremental/jsModule.kt");
@@ -2466,12 +2466,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/esModules/inline")
     @TestDataPath("$PROJECT_ROOT")
     public class Inline {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInInline() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/inline"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inlinedObjectLiteralIsCheck.kt")
       public void testInlinedObjectLiteralIsCheck() {
         runTest("js/js.translator/testData/box/esModules/inline/inlinedObjectLiteralIsCheck.kt");
@@ -2482,48 +2482,48 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/esModules/jsExport")
     @TestDataPath("$PROJECT_ROOT")
     public class JsExport {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInJsExport() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsExport"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("dataClass.kt")
       public void testDataClass() {
         runTest("js/js.translator/testData/box/esModules/jsExport/dataClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exportedDefaultStub.kt")
       public void testExportedDefaultStub() {
         runTest("js/js.translator/testData/box/esModules/jsExport/exportedDefaultStub.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("interfaceWithCompanion.kt")
       public void testInterfaceWithCompanion() {
         runTest("js/js.translator/testData/box/esModules/jsExport/interfaceWithCompanion.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("jsExportInClass.kt")
       public void testJsExportInClass() {
         runTest("js/js.translator/testData/box/esModules/jsExport/jsExportInClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("perFileExportedApi.kt")
       public void testPerFileExportedApi() {
         runTest("js/js.translator/testData/box/esModules/jsExport/perFileExportedApi.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("privateInnerClass.kt")
       public void testPrivateInnerClass() {
         runTest("js/js.translator/testData/box/esModules/jsExport/privateInnerClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("recursiveExport.kt")
       public void testRecursiveExport() {
         runTest("js/js.translator/testData/box/esModules/jsExport/recursiveExport.kt");
@@ -2534,90 +2534,90 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/esModules/jsModule")
     @TestDataPath("$PROJECT_ROOT")
     public class JsModule {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInJsModule() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("externalClass.kt")
       public void testExternalClass() {
         runTest("js/js.translator/testData/box/esModules/jsModule/externalClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("externalClassNameClash.kt")
       public void testExternalClassNameClash() {
         runTest("js/js.translator/testData/box/esModules/jsModule/externalClassNameClash.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("externalClassWithDefaults.kt")
       public void testExternalClassWithDefaults() {
         runTest("js/js.translator/testData/box/esModules/jsModule/externalClassWithDefaults.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("externalConstructor.kt")
       public void testExternalConstructor() {
         runTest("js/js.translator/testData/box/esModules/jsModule/externalConstructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("externalFunction.kt")
       public void testExternalFunction() {
         runTest("js/js.translator/testData/box/esModules/jsModule/externalFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("externalFunctionNameClash.kt")
       public void testExternalFunctionNameClash() {
         runTest("js/js.translator/testData/box/esModules/jsModule/externalFunctionNameClash.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("externalObject.kt")
       public void testExternalObject() {
         runTest("js/js.translator/testData/box/esModules/jsModule/externalObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("externalPackage.kt")
       public void testExternalPackage() {
         runTest("js/js.translator/testData/box/esModules/jsModule/externalPackage.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("externalPackageInDifferentFile.kt")
       public void testExternalPackageInDifferentFile() {
         runTest("js/js.translator/testData/box/esModules/jsModule/externalPackageInDifferentFile.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("externalProperty.kt")
       public void testExternalProperty() {
         runTest("js/js.translator/testData/box/esModules/jsModule/externalProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("interfaces.kt")
       public void testInterfaces() {
         runTest("js/js.translator/testData/box/esModules/jsModule/interfaces.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("interfacesWithCompanion.kt")
       public void testInterfacesWithCompanion() {
         runTest("js/js.translator/testData/box/esModules/jsModule/interfacesWithCompanion.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("jsExternalInheritorsOnly.kt")
       public void testJsExternalInheritorsOnly() {
         runTest("js/js.translator/testData/box/esModules/jsModule/jsExternalInheritorsOnly.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevelVarargFun.kt")
       public void testTopLevelVarargFun() {
         runTest("js/js.translator/testData/box/esModules/jsModule/topLevelVarargFun.kt");
@@ -2628,18 +2628,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/esModules/jsName")
     @TestDataPath("$PROJECT_ROOT")
     public class JsName {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInJsName() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsName"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("defaultJsName.kt")
       public void testDefaultJsName() {
         runTest("js/js.translator/testData/box/esModules/jsName/defaultJsName.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("jsTopLevelClashes.kt")
       public void testJsTopLevelClashes() {
         runTest("js/js.translator/testData/box/esModules/jsName/jsTopLevelClashes.kt");
@@ -2650,60 +2650,60 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/esModules/kotlin.test")
     @TestDataPath("$PROJECT_ROOT")
     public class Kotlin_test {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInKotlin_test() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/kotlin.test"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("beforeAfter.kt")
       public void testBeforeAfter() {
         runTest("js/js.translator/testData/box/esModules/kotlin.test/beforeAfter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("ignore.kt")
       public void testIgnore() {
         runTest("js/js.translator/testData/box/esModules/kotlin.test/ignore.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("illegalParameters.kt")
       public void testIllegalParameters() {
         runTest("js/js.translator/testData/box/esModules/kotlin.test/illegalParameters.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("incremental.kt")
       public void testIncremental() {
         runTest("js/js.translator/testData/box/esModules/kotlin.test/incremental.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inherited.kt")
       public void testInherited() {
         runTest("js/js.translator/testData/box/esModules/kotlin.test/inherited.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("mpp.kt")
       public void testMpp() {
         runTest("js/js.translator/testData/box/esModules/kotlin.test/mpp.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nested.kt")
       public void testNested() {
         runTest("js/js.translator/testData/box/esModules/kotlin.test/nested.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("returnTestResult.kt")
       public void testReturnTestResult() {
         runTest("js/js.translator/testData/box/esModules/kotlin.test/returnTestResult.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("js/js.translator/testData/box/esModules/kotlin.test/simple.kt");
@@ -2714,54 +2714,54 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/esModules/main")
     @TestDataPath("$PROJECT_ROOT")
     public class Main {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInMain() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/main"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("differentMains.kt")
       public void testDifferentMains() {
         runTest("js/js.translator/testData/box/esModules/main/differentMains.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("incremental.kt")
       public void testIncremental() {
         runTest("js/js.translator/testData/box/esModules/main/incremental.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("noArgs.kt")
       public void testNoArgs() {
         runTest("js/js.translator/testData/box/esModules/main/noArgs.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("js/js.translator/testData/box/esModules/main/simple.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("suspendMain.kt")
       public void testSuspendMain() {
         runTest("js/js.translator/testData/box/esModules/main/suspendMain.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("suspendMainNoArgs.kt")
       public void testSuspendMainNoArgs() {
         runTest("js/js.translator/testData/box/esModules/main/suspendMainNoArgs.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("suspendMainThrows.kt")
       public void testSuspendMainThrows() {
         runTest("js/js.translator/testData/box/esModules/main/suspendMainThrows.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("twoMains.kt")
       public void testTwoMains() {
         runTest("js/js.translator/testData/box/esModules/main/twoMains.kt");
@@ -2772,18 +2772,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/esModules/native")
     @TestDataPath("$PROJECT_ROOT")
     public class Native {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInNative() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/native"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("importFunctionSyntax.kt")
       public void testImportFunctionSyntax() {
         runTest("js/js.translator/testData/box/esModules/native/importFunctionSyntax.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inheritanceInNativeClass.kt")
       public void testInheritanceInNativeClass() {
         runTest("js/js.translator/testData/box/esModules/native/inheritanceInNativeClass.kt");
@@ -2795,102 +2795,102 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/escapedIdentifiers")
   @TestDataPath("$PROJECT_ROOT")
   public class EscapedIdentifiers {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInEscapedIdentifiers() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/escapedIdentifiers"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classLikeMemberClassMangling.kt")
     public void testClassLikeMemberClassMangling() {
       runTest("js/js.translator/testData/box/escapedIdentifiers/classLikeMemberClassMangling.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classLikeMemberFieldMangling.kt")
     public void testClassLikeMemberFieldMangling() {
       runTest("js/js.translator/testData/box/escapedIdentifiers/classLikeMemberFieldMangling.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classLikeMemberFunctionMangling.kt")
     public void testClassLikeMemberFunctionMangling() {
       runTest("js/js.translator/testData/box/escapedIdentifiers/classLikeMemberFunctionMangling.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("dynamicEscapedField.kt")
     public void testDynamicEscapedField() {
       runTest("js/js.translator/testData/box/escapedIdentifiers/dynamicEscapedField.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalEscapedAMDTopLevel.kt")
     public void testExternalEscapedAMDTopLevel() {
       runTest("js/js.translator/testData/box/escapedIdentifiers/externalEscapedAMDTopLevel.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalEscapedClassFields.kt")
     public void testExternalEscapedClassFields() {
       runTest("js/js.translator/testData/box/escapedIdentifiers/externalEscapedClassFields.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalEscapedCommonJSTopLevel.kt")
     public void testExternalEscapedCommonJSTopLevel() {
       runTest("js/js.translator/testData/box/escapedIdentifiers/externalEscapedCommonJSTopLevel.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalEscapedTopLevel.kt")
     public void testExternalEscapedTopLevel() {
       runTest("js/js.translator/testData/box/escapedIdentifiers/externalEscapedTopLevel.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelExportedClass.kt")
     public void testTopLevelExportedClass() {
       runTest("js/js.translator/testData/box/escapedIdentifiers/topLevelExportedClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelExportedCompanion.kt")
     public void testTopLevelExportedCompanion() {
       runTest("js/js.translator/testData/box/escapedIdentifiers/topLevelExportedCompanion.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelExportedFunction.kt")
     public void testTopLevelExportedFunction() {
       runTest("js/js.translator/testData/box/escapedIdentifiers/topLevelExportedFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelExportedVariable.kt")
     public void testTopLevelExportedVariable() {
       runTest("js/js.translator/testData/box/escapedIdentifiers/topLevelExportedVariable.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelLocalClassMangling.kt")
     public void testTopLevelLocalClassMangling() {
       runTest("js/js.translator/testData/box/escapedIdentifiers/topLevelLocalClassMangling.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelLocalCompanionMangling.kt")
     public void testTopLevelLocalCompanionMangling() {
       runTest("js/js.translator/testData/box/escapedIdentifiers/topLevelLocalCompanionMangling.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelLocalFunctionMangling.kt")
     public void testTopLevelLocalFunctionMangling() {
       runTest("js/js.translator/testData/box/escapedIdentifiers/topLevelLocalFunctionMangling.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelLocalVariableMangling.kt")
     public void testTopLevelLocalVariableMangling() {
       runTest("js/js.translator/testData/box/escapedIdentifiers/topLevelLocalVariableMangling.kt");
@@ -2901,18 +2901,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/examples")
   @TestDataPath("$PROJECT_ROOT")
   public class Examples {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInExamples() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/examples"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("basicmethod.kt")
     public void testBasicmethod() {
       runTest("js/js.translator/testData/box/examples/basicmethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("newInstanceDefaultConstructor.kt")
     public void testNewInstanceDefaultConstructor() {
       runTest("js/js.translator/testData/box/examples/newInstanceDefaultConstructor.kt");
@@ -2923,252 +2923,252 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/export")
   @TestDataPath("$PROJECT_ROOT")
   public class Export {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInExport() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/export"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("bridgeSavingAfterExport.kt")
     public void testBridgeSavingAfterExport() {
       runTest("js/js.translator/testData/box/export/bridgeSavingAfterExport.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("bridgeSavingAfterExportInExportedFile.kt")
     public void testBridgeSavingAfterExportInExportedFile() {
       runTest("js/js.translator/testData/box/export/bridgeSavingAfterExportInExportedFile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("consumeExportedLateinitProperty.kt")
     public void testConsumeExportedLateinitProperty() {
       runTest("js/js.translator/testData/box/export/consumeExportedLateinitProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("defaultInlineClassConstructorParam.kt")
     public void testDefaultInlineClassConstructorParam() {
       runTest("js/js.translator/testData/box/export/defaultInlineClassConstructorParam.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("defaultInlineClassConstructorParamInExportedFile.kt")
     public void testDefaultInlineClassConstructorParamInExportedFile() {
       runTest("js/js.translator/testData/box/export/defaultInlineClassConstructorParamInExportedFile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("excludeMembersFromExport.kt")
     public void testExcludeMembersFromExport() {
       runTest("js/js.translator/testData/box/export/excludeMembersFromExport.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("excludeTopLevelFromExport.kt")
     public void testExcludeTopLevelFromExport() {
       runTest("js/js.translator/testData/box/export/excludeTopLevelFromExport.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("excludeTopLevelFromExportWithoutFileJsExport.kt")
     public void testExcludeTopLevelFromExportWithoutFileJsExport() {
       runTest("js/js.translator/testData/box/export/excludeTopLevelFromExportWithoutFileJsExport.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportAllFile.kt")
     public void testExportAllFile() {
       runTest("js/js.translator/testData/box/export/exportAllFile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportClassPropertiesInDifferentCombinations.kt")
     public void testExportClassPropertiesInDifferentCombinations() {
       runTest("js/js.translator/testData/box/export/exportClassPropertiesInDifferentCombinations.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportClassWithInitBlock.kt")
     public void testExportClassWithInitBlock() {
       runTest("js/js.translator/testData/box/export/exportClassWithInitBlock.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportClassWithInternal.kt")
     public void testExportClassWithInternal() {
       runTest("js/js.translator/testData/box/export/exportClassWithInternal.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportClassWithInternalOneFile.kt")
     public void testExportClassWithInternalOneFile() {
       runTest("js/js.translator/testData/box/export/exportClassWithInternalOneFile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportDefaultParameterAndOverrideIt.kt")
     public void testExportDefaultParameterAndOverrideIt() {
       runTest("js/js.translator/testData/box/export/exportDefaultParameterAndOverrideIt.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportEnumClass.kt")
     public void testExportEnumClass() {
       runTest("js/js.translator/testData/box/export/exportEnumClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportFileWithClassWithInternal.kt")
     public void testExportFileWithClassWithInternal() {
       runTest("js/js.translator/testData/box/export/exportFileWithClassWithInternal.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportFileWithEnumClass.kt")
     public void testExportFileWithEnumClass() {
       runTest("js/js.translator/testData/box/export/exportFileWithEnumClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportFileWithInterface.kt")
     public void testExportFileWithInterface() {
       runTest("js/js.translator/testData/box/export/exportFileWithInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportFileWithNestedClass.kt")
     public void testExportFileWithNestedClass() {
       runTest("js/js.translator/testData/box/export/exportFileWithNestedClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportFileWithNestedObject.kt")
     public void testExportFileWithNestedObject() {
       runTest("js/js.translator/testData/box/export/exportFileWithNestedObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportFileWithProtectedMembers.kt")
     public void testExportFileWithProtectedMembers() {
       runTest("js/js.translator/testData/box/export/exportFileWithProtectedMembers.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportInnerClass.kt")
     public void testExportInnerClass() {
       runTest("js/js.translator/testData/box/export/exportInnerClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportInterface.kt")
     public void testExportInterface() {
       runTest("js/js.translator/testData/box/export/exportInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportInterfaceWithoutClases.kt")
     public void testExportInterfaceWithoutClases() {
       runTest("js/js.translator/testData/box/export/exportInterfaceWithoutClases.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportNestedClass.kt")
     public void testExportNestedClass() {
       runTest("js/js.translator/testData/box/export/exportNestedClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportNestedObject.kt")
     public void testExportNestedObject() {
       runTest("js/js.translator/testData/box/export/exportNestedObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportProtectedMembers.kt")
     public void testExportProtectedMembers() {
       runTest("js/js.translator/testData/box/export/exportProtectedMembers.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nonIndetifierModuleName.kt")
     public void testNonIndetifierModuleName() {
       runTest("js/js.translator/testData/box/export/nonIndetifierModuleName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nonIndetifierModuleNameInExportedFile.kt")
     public void testNonIndetifierModuleNameInExportedFile() {
       runTest("js/js.translator/testData/box/export/nonIndetifierModuleNameInExportedFile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overriddenChainNonExportIntermediate.kt")
     public void testOverriddenChainNonExportIntermediate() {
       runTest("js/js.translator/testData/box/export/overriddenChainNonExportIntermediate.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overriddenChainNonExportIntermediateInExportedFile.kt")
     public void testOverriddenChainNonExportIntermediateInExportedFile() {
       runTest("js/js.translator/testData/box/export/overriddenChainNonExportIntermediateInExportedFile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overriddenExternalMethodWithSameNameMethod.kt")
     public void testOverriddenExternalMethodWithSameNameMethod() {
       runTest("js/js.translator/testData/box/export/overriddenExternalMethodWithSameNameMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overriddenExternalMethodWithSameStableNameMethod.kt")
     public void testOverriddenExternalMethodWithSameStableNameMethod() {
       runTest("js/js.translator/testData/box/export/overriddenExternalMethodWithSameStableNameMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overriddenExternalMethodWithSameStableNameMethodInExportedFile.kt")
     public void testOverriddenExternalMethodWithSameStableNameMethodInExportedFile() {
       runTest("js/js.translator/testData/box/export/overriddenExternalMethodWithSameStableNameMethodInExportedFile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overriddenPropertyFromInterface.kt")
     public void testOverriddenPropertyFromInterface() {
       runTest("js/js.translator/testData/box/export/overriddenPropertyFromInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overridenMethod.kt")
     public void testOverridenMethod() {
       runTest("js/js.translator/testData/box/export/overridenMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("reexport.kt")
     public void testReexport() {
       runTest("js/js.translator/testData/box/export/reexport.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("reservedModuleName.kt")
     public void testReservedModuleName() {
       runTest("js/js.translator/testData/box/export/reservedModuleName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("reservedModuleNameInExportedFile.kt")
     public void testReservedModuleNameInExportedFile() {
       runTest("js/js.translator/testData/box/export/reservedModuleNameInExportedFile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelAndClassCtrNameClash.kt")
     public void testTopLevelAndClassCtrNameClash() {
       runTest("js/js.translator/testData/box/export/topLevelAndClassCtrNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("vararg.kt")
     public void testVararg() {
       runTest("js/js.translator/testData/box/export/vararg.kt");
@@ -3179,7 +3179,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/expression")
   @TestDataPath("$PROJECT_ROOT")
   public class Expression {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInExpression() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
@@ -3188,174 +3188,174 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/expression/cast")
     @TestDataPath("$PROJECT_ROOT")
     public class Cast {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInCast() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/cast"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("castExtensionToKMutableProperty.kt")
       public void testCastExtensionToKMutableProperty() {
         runTest("js/js.translator/testData/box/expression/cast/castExtensionToKMutableProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("castExtensionToKProperty1.kt")
       public void testCastExtensionToKProperty1() {
         runTest("js/js.translator/testData/box/expression/cast/castExtensionToKProperty1.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("castToAny.kt")
       public void testCastToAny() {
         runTest("js/js.translator/testData/box/expression/cast/castToAny.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("castToArray.kt")
       public void testCastToArray() {
         runTest("js/js.translator/testData/box/expression/cast/castToArray.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("castToFunction.kt")
       public void testCastToFunction() {
         runTest("js/js.translator/testData/box/expression/cast/castToFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("castToGenericType.kt")
       public void testCastToGenericType() {
         runTest("js/js.translator/testData/box/expression/cast/castToGenericType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("castToGenericTypeWithMultipleUpperBounds.kt")
       public void testCastToGenericTypeWithMultipleUpperBounds() {
         runTest("js/js.translator/testData/box/expression/cast/castToGenericTypeWithMultipleUpperBounds.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("castToGenericTypeWithUpperBound.kt")
       public void testCastToGenericTypeWithUpperBound() {
         runTest("js/js.translator/testData/box/expression/cast/castToGenericTypeWithUpperBound.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("castToKMutableProperty0.kt")
       public void testCastToKMutableProperty0() {
         runTest("js/js.translator/testData/box/expression/cast/castToKMutableProperty0.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("castToKMutableProperty1.kt")
       public void testCastToKMutableProperty1() {
         runTest("js/js.translator/testData/box/expression/cast/castToKMutableProperty1.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("castToKProperty0.kt")
       public void testCastToKProperty0() {
         runTest("js/js.translator/testData/box/expression/cast/castToKProperty0.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("castToKProperty1.kt")
       public void testCastToKProperty1() {
         runTest("js/js.translator/testData/box/expression/cast/castToKProperty1.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("castToNotNull.kt")
       public void testCastToNotNull() {
         runTest("js/js.translator/testData/box/expression/cast/castToNotNull.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("castToNullable.kt")
       public void testCastToNullable() {
         runTest("js/js.translator/testData/box/expression/cast/castToNullable.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("checkThrowCCE.kt")
       public void testCheckThrowCCE() {
         runTest("js/js.translator/testData/box/expression/cast/checkThrowCCE.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("implicitCastToLong.kt")
       public void testImplicitCastToLong() {
         runTest("js/js.translator/testData/box/expression/cast/implicitCastToLong.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("primitiveToClass.kt")
       public void testPrimitiveToClass() {
         runTest("js/js.translator/testData/box/expression/cast/primitiveToClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("reifiedToNotNull.kt")
       public void testReifiedToNotNull() {
         runTest("js/js.translator/testData/box/expression/cast/reifiedToNotNull.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("reifiedToNullable1.kt")
       public void testReifiedToNullable1() {
         runTest("js/js.translator/testData/box/expression/cast/reifiedToNullable1.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("reifiedToNullable2.kt")
       public void testReifiedToNullable2() {
         runTest("js/js.translator/testData/box/expression/cast/reifiedToNullable2.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("safeCastToGenericTypeWithUpperBound.kt")
       public void testSafeCastToGenericTypeWithUpperBound() {
         runTest("js/js.translator/testData/box/expression/cast/safeCastToGenericTypeWithUpperBound.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("safeCastToNotNull.kt")
       public void testSafeCastToNotNull() {
         runTest("js/js.translator/testData/box/expression/cast/safeCastToNotNull.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("safeCastToNullable.kt")
       public void testSafeCastToNullable() {
         runTest("js/js.translator/testData/box/expression/cast/safeCastToNullable.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("safeCastToReifiedNotNull.kt")
       public void testSafeCastToReifiedNotNull() {
         runTest("js/js.translator/testData/box/expression/cast/safeCastToReifiedNotNull.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("safeCastToReifiedNullable.kt")
       public void testSafeCastToReifiedNullable() {
         runTest("js/js.translator/testData/box/expression/cast/safeCastToReifiedNullable.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("smartCastInExtensionFunction.kt")
       public void testSmartCastInExtensionFunction() {
         runTest("js/js.translator/testData/box/expression/cast/smartCastInExtensionFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("smartCastInFunction.kt")
       public void testSmartCastInFunction() {
         runTest("js/js.translator/testData/box/expression/cast/smartCastInFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("unsafeVarianceCast.kt")
       public void testUnsafeVarianceCast() {
         runTest("js/js.translator/testData/box/expression/cast/unsafeVarianceCast.kt");
@@ -3366,18 +3366,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/expression/compareTo")
     @TestDataPath("$PROJECT_ROOT")
     public class CompareTo {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInCompareTo() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/compareTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("booleanCompareTo.kt")
       public void testBooleanCompareTo() {
         runTest("js/js.translator/testData/box/expression/compareTo/booleanCompareTo.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("customCompareToMethod.kt")
       public void testCustomCompareToMethod() {
         runTest("js/js.translator/testData/box/expression/compareTo/customCompareToMethod.kt");
@@ -3388,12 +3388,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/expression/dollarParameter")
     @TestDataPath("$PROJECT_ROOT")
     public class DollarParameter {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInDollarParameter() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/dollarParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("dollarParameter.kt")
       public void testDollarParameter() {
         runTest("js/js.translator/testData/box/expression/dollarParameter/dollarParameter.kt");
@@ -3404,84 +3404,84 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/expression/equals")
     @TestDataPath("$PROJECT_ROOT")
     public class Equals {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInEquals() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/equals"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("arrays.kt")
       public void testArrays() {
         runTest("js/js.translator/testData/box/expression/equals/arrays.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("compareNullableListWithNull.kt")
       public void testCompareNullableListWithNull() {
         runTest("js/js.translator/testData/box/expression/equals/compareNullableListWithNull.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("compareNullablesWithCustomEquals.kt")
       public void testCompareNullablesWithCustomEquals() {
         runTest("js/js.translator/testData/box/expression/equals/compareNullablesWithCustomEquals.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("compareToNullWithCustomEquals.kt")
       public void testCompareToNullWithCustomEquals() {
         runTest("js/js.translator/testData/box/expression/equals/compareToNullWithCustomEquals.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("customEqualsMethod.kt")
       public void testCustomEqualsMethod() {
         runTest("js/js.translator/testData/box/expression/equals/customEqualsMethod.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("customEqualsMethodOnAny.kt")
       public void testCustomEqualsMethodOnAny() {
         runTest("js/js.translator/testData/box/expression/equals/customEqualsMethodOnAny.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("equalsBehaviorOnNull.kt")
       public void testEqualsBehaviorOnNull() {
         runTest("js/js.translator/testData/box/expression/equals/equalsBehaviorOnNull.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("equalsNullOrUndefined.kt")
       public void testEqualsNullOrUndefined() {
         runTest("js/js.translator/testData/box/expression/equals/equalsNullOrUndefined.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("explicitEqualsMethod.kt")
       public void testExplicitEqualsMethod() {
         runTest("js/js.translator/testData/box/expression/equals/explicitEqualsMethod.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("explicitEqualsMethodForPrimitives.kt")
       public void testExplicitEqualsMethodForPrimitives() {
         runTest("js/js.translator/testData/box/expression/equals/explicitEqualsMethodForPrimitives.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt2370.kt")
       public void testKt2370() {
         runTest("js/js.translator/testData/box/expression/equals/kt2370.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("stringsEqual.kt")
       public void testStringsEqual() {
         runTest("js/js.translator/testData/box/expression/equals/stringsEqual.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superEquals.kt")
       public void testSuperEquals() {
         runTest("js/js.translator/testData/box/expression/equals/superEquals.kt");
@@ -3492,228 +3492,228 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/expression/evaluationOrder")
     @TestDataPath("$PROJECT_ROOT")
     public class EvaluationOrder {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("2dangerousInExpression.kt")
       public void test2dangerousInExpression() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/2dangerousInExpression.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInEvaluationOrder() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/evaluationOrder"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("andAndWithBreakContinueReturn.kt")
       public void testAndAndWithBreakContinueReturn() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/andAndWithBreakContinueReturn.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("andAndWithSideEffect.kt")
       public void testAndAndWithSideEffect() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/andAndWithSideEffect.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("andAndWithTmpVarRhs.kt")
       public void testAndAndWithTmpVarRhs() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/andAndWithTmpVarRhs.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("assignToArrayElementWithSideEffect.kt")
       public void testAssignToArrayElementWithSideEffect() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/assignToArrayElementWithSideEffect.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("booleanAndOr.kt")
       public void testBooleanAndOr() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/booleanAndOr.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("callArgs.kt")
       public void testCallArgs() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/callArgs.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("callVarargs.kt")
       public void testCallVarargs() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/callVarargs.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("callWithBreakContinueReturn.kt")
       public void testCallWithBreakContinueReturn() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/callWithBreakContinueReturn.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("castWithBreakContinueReturn.kt")
       public void testCastWithBreakContinueReturn() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/castWithBreakContinueReturn.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("compareToIntrinsicWithSideEffect.kt")
       public void testCompareToIntrinsicWithSideEffect() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/compareToIntrinsicWithSideEffect.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("concatWithTerminator.kt")
       public void testConcatWithTerminator() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/concatWithTerminator.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("dangerousInline.kt")
       public void testDangerousInline() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/dangerousInline.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("dangerousInsideDangerous.kt")
       public void testDangerousInsideDangerous() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/dangerousInsideDangerous.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("deepExpression.kt")
       public void testDeepExpression() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/deepExpression.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("delegationCtorWithExpression.kt")
       public void testDelegationCtorWithExpression() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/delegationCtorWithExpression.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("elvisComplex.kt")
       public void testElvisComplex() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/elvisComplex.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("elvisWithBreakContinueReturn.kt")
       public void testElvisWithBreakContinueReturn() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/elvisWithBreakContinueReturn.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("emptyLoopWithBreakContinueReturnInCondition.kt")
       public void testEmptyLoopWithBreakContinueReturnInCondition() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/emptyLoopWithBreakContinueReturnInCondition.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("equalsIntrinsicWithSideEffect.kt")
       public void testEqualsIntrinsicWithSideEffect() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/equalsIntrinsicWithSideEffect.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("evaluationOrder1.kt")
       public void testEvaluationOrder1() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/evaluationOrder1.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("evaluationOrder2.kt")
       public void testEvaluationOrder2() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/evaluationOrder2.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("ifAsFunArgument.kt")
       public void testIfAsFunArgument() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/ifAsFunArgument.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("ifAsPlusArgument.kt")
       public void testIfAsPlusArgument() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/ifAsPlusArgument.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("ifWithComplex.kt")
       public void testIfWithComplex() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/ifWithComplex.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("intrinsicComplex.kt")
       public void testIntrinsicComplex() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/intrinsicComplex.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("intrinsicWithBreakContinueReturn.kt")
       public void testIntrinsicWithBreakContinueReturn() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/intrinsicWithBreakContinueReturn.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("literalFunctionAsArgumentWithSideEffect.kt")
       public void testLiteralFunctionAsArgumentWithSideEffect() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/literalFunctionAsArgumentWithSideEffect.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("loopWithBreakContinueReturnInCondition.kt")
       public void testLoopWithBreakContinueReturnInCondition() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/loopWithBreakContinueReturnInCondition.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("orOrWithBreakContinueReturn.kt")
       public void testOrOrWithBreakContinueReturn() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/orOrWithBreakContinueReturn.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("orOrWithSideEffect.kt")
       public void testOrOrWithSideEffect() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/orOrWithSideEffect.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("secondaryConstructorTemporaryVars.kt")
       public void testSecondaryConstructorTemporaryVars() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/secondaryConstructorTemporaryVars.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("singleComponentDestructuring.kt")
       public void testSingleComponentDestructuring() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/singleComponentDestructuring.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("throwableDelegation.kt")
       public void testThrowableDelegation() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/throwableDelegation.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenAsMinusArgument.kt")
       public void testWhenAsMinusArgument() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/whenAsMinusArgument.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenJsLiteralWithSideEffect.kt")
       public void testWhenJsLiteralWithSideEffect() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/whenJsLiteralWithSideEffect.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenWithComplexConditions.kt")
       public void testWhenWithComplexConditions() {
         runTest("js/js.translator/testData/box/expression/evaluationOrder/whenWithComplexConditions.kt");
@@ -3724,96 +3724,96 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/expression/for")
     @TestDataPath("$PROJECT_ROOT")
     public class For {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInFor() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/for"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("forIteratesOverArray.kt")
       public void testForIteratesOverArray() {
         runTest("js/js.translator/testData/box/expression/for/forIteratesOverArray.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("forIteratesOverLiteralRange.kt")
       public void testForIteratesOverLiteralRange() {
         runTest("js/js.translator/testData/box/expression/for/forIteratesOverLiteralRange.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("forIteratesOverNonLiteralRange.kt")
       public void testForIteratesOverNonLiteralRange() {
         runTest("js/js.translator/testData/box/expression/for/forIteratesOverNonLiteralRange.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("forIteratesOverSomethingWithIterator.kt")
       public void testForIteratesOverSomethingWithIterator() {
         runTest("js/js.translator/testData/box/expression/for/forIteratesOverSomethingWithIterator.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("forIteratesOverTypeParameter.kt")
       public void testForIteratesOverTypeParameter() {
         runTest("js/js.translator/testData/box/expression/for/forIteratesOverTypeParameter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("forOnEmptyArray.kt")
       public void testForOnEmptyArray() {
         runTest("js/js.translator/testData/box/expression/for/forOnEmptyArray.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("forWithComplexOneStatement.kt")
       public void testForWithComplexOneStatement() {
         runTest("js/js.translator/testData/box/expression/for/forWithComplexOneStatement.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("forWithEmptyBody.kt")
       public void testForWithEmptyBody() {
         runTest("js/js.translator/testData/box/expression/for/forWithEmptyBody.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("forWithSideEffectImElementAccessAndWithEmptyBody.kt")
       public void testForWithSideEffectImElementAccessAndWithEmptyBody() {
         runTest("js/js.translator/testData/box/expression/for/forWithSideEffectImElementAccessAndWithEmptyBody.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("labeledFor.kt")
       public void testLabeledFor() {
         runTest("js/js.translator/testData/box/expression/for/labeledFor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("labeledForWithContinue.kt")
       public void testLabeledForWithContinue() {
         runTest("js/js.translator/testData/box/expression/for/labeledForWithContinue.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("labeledForWithWhile.kt")
       public void testLabeledForWithWhile() {
         runTest("js/js.translator/testData/box/expression/for/labeledForWithWhile.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overArrayWithIndex.kt")
       public void testOverArrayWithIndex() {
         runTest("js/js.translator/testData/box/expression/for/overArrayWithIndex.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overCollectionWithIndex.kt")
       public void testOverCollectionWithIndex() {
         runTest("js/js.translator/testData/box/expression/for/overCollectionWithIndex.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("rangeOptimization.kt")
       public void testRangeOptimization() {
         runTest("js/js.translator/testData/box/expression/for/rangeOptimization.kt");
@@ -3824,216 +3824,216 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/expression/function")
     @TestDataPath("$PROJECT_ROOT")
     public class Function {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("adderClosure.kt")
       public void testAdderClosure() {
         runTest("js/js.translator/testData/box/expression/function/adderClosure.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInFunction() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/function"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("anonymousWithLambda.kt")
       public void testAnonymousWithLambda() {
         runTest("js/js.translator/testData/box/expression/function/anonymousWithLambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("callFunInInit.kt")
       public void testCallFunInInit() {
         runTest("js/js.translator/testData/box/expression/function/callFunInInit.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("closureWithParameter.kt")
       public void testClosureWithParameter() {
         runTest("js/js.translator/testData/box/expression/function/closureWithParameter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("closureWithParameterAndBoxing.kt")
       public void testClosureWithParameterAndBoxing() {
         runTest("js/js.translator/testData/box/expression/function/closureWithParameterAndBoxing.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("defaultParameters.kt")
       public void testDefaultParameters() {
         runTest("js/js.translator/testData/box/expression/function/defaultParameters.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("enclosingThis.kt")
       public void testEnclosingThis() {
         runTest("js/js.translator/testData/box/expression/function/enclosingThis.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("expressionAsExtFunction.kt")
       public void testExpressionAsExtFunction() {
         runTest("js/js.translator/testData/box/expression/function/expressionAsExtFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("expressionAsFunction.kt")
       public void testExpressionAsFunction() {
         runTest("js/js.translator/testData/box/expression/function/expressionAsFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("functionExpression.kt")
       public void testFunctionExpression() {
         runTest("js/js.translator/testData/box/expression/function/functionExpression.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("functionInsideFunction.kt")
       public void testFunctionInsideFunction() {
         runTest("js/js.translator/testData/box/expression/function/functionInsideFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("functionLiteral.kt")
       public void testFunctionLiteral() {
         runTest("js/js.translator/testData/box/expression/function/functionLiteral.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("functionLiteralAsLastParameter.kt")
       public void testFunctionLiteralAsLastParameter() {
         runTest("js/js.translator/testData/box/expression/function/functionLiteralAsLastParameter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("functionLiteralAsParameter.kt")
       public void testFunctionLiteralAsParameter() {
         runTest("js/js.translator/testData/box/expression/function/functionLiteralAsParameter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("functionUsedBeforeDeclaration.kt")
       public void testFunctionUsedBeforeDeclaration() {
         runTest("js/js.translator/testData/box/expression/function/functionUsedBeforeDeclaration.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("functionWithTwoParametersCall.kt")
       public void testFunctionWithTwoParametersCall() {
         runTest("js/js.translator/testData/box/expression/function/functionWithTwoParametersCall.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("implicitItParameter.kt")
       public void testImplicitItParameter() {
         runTest("js/js.translator/testData/box/expression/function/implicitItParameter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KT-921.kt")
       public void testKT_921() {
         runTest("js/js.translator/testData/box/expression/function/KT-921.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdaOrLocalFunInsideEnumMethod.kt")
       public void testLambdaOrLocalFunInsideEnumMethod() {
         runTest("js/js.translator/testData/box/expression/function/lambdaOrLocalFunInsideEnumMethod.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lambdaReturnValue.kt")
       public void testLambdaReturnValue() {
         runTest("js/js.translator/testData/box/expression/function/lambdaReturnValue.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localExtFunction.kt")
       public void testLocalExtFunction() {
         runTest("js/js.translator/testData/box/expression/function/localExtFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localInInitBlock.kt")
       public void testLocalInInitBlock() {
         runTest("js/js.translator/testData/box/expression/function/localInInitBlock.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("loopClosure.kt")
       public void testLoopClosure() {
         runTest("js/js.translator/testData/box/expression/function/loopClosure.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("mangling.kt")
       public void testMangling() {
         runTest("js/js.translator/testData/box/expression/function/mangling.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("manglingAnyMethods.kt")
       public void testManglingAnyMethods() {
         runTest("js/js.translator/testData/box/expression/function/manglingAnyMethods.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("manglingClashFunctionsAndClasses.kt")
       public void testManglingClashFunctionsAndClasses() {
         runTest("js/js.translator/testData/box/expression/function/manglingClashFunctionsAndClasses.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("manglingImportedFromObjectWithNI.kt")
       public void testManglingImportedFromObjectWithNI() {
         runTest("js/js.translator/testData/box/expression/function/manglingImportedFromObjectWithNI.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("namedArguments.kt")
       public void testNamedArguments() {
         runTest("js/js.translator/testData/box/expression/function/namedArguments.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overloadClassConstructorByFactoryMethod.kt")
       public void testOverloadClassConstructorByFactoryMethod() {
         runTest("js/js.translator/testData/box/expression/function/overloadClassConstructorByFactoryMethod.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overloadGeneric.kt")
       public void testOverloadGeneric() {
         runTest("js/js.translator/testData/box/expression/function/overloadGeneric.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overloadOverridenFun.kt")
       public void testOverloadOverridenFun() {
         runTest("js/js.translator/testData/box/expression/function/overloadOverridenFun.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overloadingWithInheritance.kt")
       public void testOverloadingWithInheritance() {
         runTest("js/js.translator/testData/box/expression/function/overloadingWithInheritance.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("vararg.kt")
       public void testVararg() {
         runTest("js/js.translator/testData/box/expression/function/vararg.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("varargUInt.kt")
       public void testVarargUInt() {
         runTest("js/js.translator/testData/box/expression/function/varargUInt.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenFunction.kt")
       public void testWhenFunction() {
         runTest("js/js.translator/testData/box/expression/function/whenFunction.kt");
@@ -4044,24 +4044,24 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/expression/identifierClash")
     @TestDataPath("$PROJECT_ROOT")
     public class IdentifierClash {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInIdentifierClash() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/identifierClash"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overloadedFun.kt")
       public void testOverloadedFun() {
         runTest("js/js.translator/testData/box/expression/identifierClash/overloadedFun.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("privateDeclarations.kt")
       public void testPrivateDeclarations() {
         runTest("js/js.translator/testData/box/expression/identifierClash/privateDeclarations.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("useVariableOfNameOfFunction.kt")
       public void testUseVariableOfNameOfFunction() {
         runTest("js/js.translator/testData/box/expression/identifierClash/useVariableOfNameOfFunction.kt");
@@ -4072,18 +4072,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/expression/identityEquals")
     @TestDataPath("$PROJECT_ROOT")
     public class IdentityEquals {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInIdentityEquals() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/identityEquals"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("identityEqualsMethod.kt")
       public void testIdentityEqualsMethod() {
         runTest("js/js.translator/testData/box/expression/identityEquals/identityEqualsMethod.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("identityEqualsMethodForPrimitives.kt")
       public void testIdentityEqualsMethodForPrimitives() {
         runTest("js/js.translator/testData/box/expression/identityEquals/identityEqualsMethodForPrimitives.kt");
@@ -4094,36 +4094,36 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/expression/if")
     @TestDataPath("$PROJECT_ROOT")
     public class If {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInIf() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/if"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("ifElseAsExpressionWithThrow.kt")
       public void testIfElseAsExpressionWithThrow() {
         runTest("js/js.translator/testData/box/expression/if/ifElseAsExpressionWithThrow.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("ifElseCurlyBraces.kt")
       public void testIfElseCurlyBraces() {
         runTest("js/js.translator/testData/box/expression/if/ifElseCurlyBraces.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("ifInsideLambda.kt")
       public void testIfInsideLambda() {
         runTest("js/js.translator/testData/box/expression/if/ifInsideLambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nestedIf.kt")
       public void testNestedIf() {
         runTest("js/js.translator/testData/box/expression/if/nestedIf.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("withEmptyBlocks.kt")
       public void testWithEmptyBlocks() {
         runTest("js/js.translator/testData/box/expression/if/withEmptyBlocks.kt");
@@ -4134,78 +4134,78 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/expression/invoke")
     @TestDataPath("$PROJECT_ROOT")
     public class Invoke {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInInvoke() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/invoke"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("explicitInvokeLambda.kt")
       public void testExplicitInvokeLambda() {
         runTest("js/js.translator/testData/box/expression/invoke/explicitInvokeLambda.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionInvoke.kt")
       public void testExtensionInvoke() {
         runTest("js/js.translator/testData/box/expression/invoke/extensionInvoke.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inheritFromFunctionTraits.kt")
       public void testInheritFromFunctionTraits() {
         runTest("js/js.translator/testData/box/expression/invoke/inheritFromFunctionTraits.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("internalFunctionFromSuperclass.kt")
       public void testInternalFunctionFromSuperclass() {
         runTest("js/js.translator/testData/box/expression/invoke/internalFunctionFromSuperclass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("invokeInExtensionFunctionLiteral.kt")
       public void testInvokeInExtensionFunctionLiteral() {
         runTest("js/js.translator/testData/box/expression/invoke/invokeInExtensionFunctionLiteral.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("invokeInFunctionLiteral.kt")
       public void testInvokeInFunctionLiteral() {
         runTest("js/js.translator/testData/box/expression/invoke/invokeInFunctionLiteral.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("invokeMethod.kt")
       public void testInvokeMethod() {
         runTest("js/js.translator/testData/box/expression/invoke/invokeMethod.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("invokeOnExprByConvention.kt")
       public void testInvokeOnExprByConvention() {
         runTest("js/js.translator/testData/box/expression/invoke/invokeOnExprByConvention.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("invokeWithDispatchAndExtensionReceivers.kt")
       public void testInvokeWithDispatchAndExtensionReceivers() {
         runTest("js/js.translator/testData/box/expression/invoke/invokeWithDispatchAndExtensionReceivers.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("invokeWithDispatchReceiver.kt")
       public void testInvokeWithDispatchReceiver() {
         runTest("js/js.translator/testData/box/expression/invoke/invokeWithDispatchReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("invokeWithExtensionReceiver.kt")
       public void testInvokeWithExtensionReceiver() {
         runTest("js/js.translator/testData/box/expression/invoke/invokeWithExtensionReceiver.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("invokeWithImplicitDispatchReceiverAndExtensionReceiver.kt")
       public void testInvokeWithImplicitDispatchReceiverAndExtensionReceiver() {
         runTest("js/js.translator/testData/box/expression/invoke/invokeWithImplicitDispatchReceiverAndExtensionReceiver.kt");
@@ -4216,264 +4216,264 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/expression/misc")
     @TestDataPath("$PROJECT_ROOT")
     public class Misc {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInMisc() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/misc"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classWithoutPackage.kt")
       public void testClassWithoutPackage() {
         runTest("js/js.translator/testData/box/expression/misc/classWithoutPackage.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("elvis.kt")
       public void testElvis() {
         runTest("js/js.translator/testData/box/expression/misc/elvis.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("elvisReturnNested.kt")
       public void testElvisReturnNested() {
         runTest("js/js.translator/testData/box/expression/misc/elvisReturnNested.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("elvisReturnSimple.kt")
       public void testElvisReturnSimple() {
         runTest("js/js.translator/testData/box/expression/misc/elvisReturnSimple.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("elvisWithThrow.kt")
       public void testElvisWithThrow() {
         runTest("js/js.translator/testData/box/expression/misc/elvisWithThrow.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exclExcl.kt")
       public void testExclExcl() {
         runTest("js/js.translator/testData/box/expression/misc/exclExcl.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exclExclResultIsComputedOnce.kt")
       public void testExclExclResultIsComputedOnce() {
         runTest("js/js.translator/testData/box/expression/misc/exclExclResultIsComputedOnce.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exclExclThrows.kt")
       public void testExclExclThrows() {
         runTest("js/js.translator/testData/box/expression/misc/exclExclThrows.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionLiteralCalledInsideExtensionFunction.kt")
       public void testExtensionLiteralCalledInsideExtensionFunction() {
         runTest("js/js.translator/testData/box/expression/misc/extensionLiteralCalledInsideExtensionFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionLiteralCreatedAtPackageLevel.kt")
       public void testExtensionLiteralCreatedAtPackageLevel() {
         runTest("js/js.translator/testData/box/expression/misc/extensionLiteralCreatedAtPackageLevel.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("funInConstructor.kt")
       public void testFunInConstructor() {
         runTest("js/js.translator/testData/box/expression/misc/funInConstructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("funInConstructorBlock.kt")
       public void testFunInConstructorBlock() {
         runTest("js/js.translator/testData/box/expression/misc/funInConstructorBlock.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inheritFromJetIterator.kt")
       public void testInheritFromJetIterator() {
         runTest("js/js.translator/testData/box/expression/misc/inheritFromJetIterator.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("intRange.kt")
       public void testIntRange() {
         runTest("js/js.translator/testData/box/expression/misc/intRange.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KT-1052.kt")
       public void testKT_1052() {
         runTest("js/js.translator/testData/box/expression/misc/KT-1052.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KT-1052-2.kt")
       public void testKT_1052_2() {
         runTest("js/js.translator/testData/box/expression/misc/KT-1052-2.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KT-1361-1.kt")
       public void testKT_1361_1() {
         runTest("js/js.translator/testData/box/expression/misc/KT-1361-1.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KT-1361-2.kt")
       public void testKT_1361_2() {
         runTest("js/js.translator/testData/box/expression/misc/KT-1361-2.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KT-1865.kt")
       public void testKT_1865() {
         runTest("js/js.translator/testData/box/expression/misc/KT-1865.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KT-2314.kt")
       public void testKT_2314() {
         runTest("js/js.translator/testData/box/expression/misc/KT-2314.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KT-5058.kt")
       public void testKT_5058() {
         runTest("js/js.translator/testData/box/expression/misc/KT-5058.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KT-740.kt")
       public void testKT_740() {
         runTest("js/js.translator/testData/box/expression/misc/KT-740.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KT-740-2.kt")
       public void testKT_740_2() {
         runTest("js/js.translator/testData/box/expression/misc/KT-740-2.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KT-740-3.kt")
       public void testKT_740_3() {
         runTest("js/js.translator/testData/box/expression/misc/KT-740-3.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("KT-817.kt")
       public void testKT_817() {
         runTest("js/js.translator/testData/box/expression/misc/KT-817.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt9443.kt")
       public void testKt9443() {
         runTest("js/js.translator/testData/box/expression/misc/kt9443.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("lazyProperty.kt")
       public void testLazyProperty() {
         runTest("js/js.translator/testData/box/expression/misc/lazyProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localProperty.kt")
       public void testLocalProperty() {
         runTest("js/js.translator/testData/box/expression/misc/localProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localVarAsFunction.kt")
       public void testLocalVarAsFunction() {
         runTest("js/js.translator/testData/box/expression/misc/localVarAsFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("packageLevelVarInPackage.kt")
       public void testPackageLevelVarInPackage() {
         runTest("js/js.translator/testData/box/expression/misc/packageLevelVarInPackage.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("packageLevelVarInRoot.kt")
       public void testPackageLevelVarInRoot() {
         runTest("js/js.translator/testData/box/expression/misc/packageLevelVarInRoot.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("packagePropertyCalledAsFun.kt")
       public void testPackagePropertyCalledAsFun() {
         runTest("js/js.translator/testData/box/expression/misc/packagePropertyCalledAsFun.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("propertiesWithExplicitlyDefinedAccessorsWithoutBodies.kt")
       public void testPropertiesWithExplicitlyDefinedAccessorsWithoutBodies() {
         runTest("js/js.translator/testData/box/expression/misc/propertiesWithExplicitlyDefinedAccessorsWithoutBodies.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("propertyAsFunCalledOnConstructor.kt")
       public void testPropertyAsFunCalledOnConstructor() {
         runTest("js/js.translator/testData/box/expression/misc/propertyAsFunCalledOnConstructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("rightAssocForGeneratedConditionalOperator.kt")
       public void testRightAssocForGeneratedConditionalOperator() {
         runTest("js/js.translator/testData/box/expression/misc/rightAssocForGeneratedConditionalOperator.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("safeCallComputesExpressionOnlyOnce.kt")
       public void testSafeCallComputesExpressionOnlyOnce() {
         runTest("js/js.translator/testData/box/expression/misc/safeCallComputesExpressionOnlyOnce.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("stackTraceAccessInsideInitBlock.kt")
       public void testStackTraceAccessInsideInitBlock() {
         runTest("js/js.translator/testData/box/expression/misc/stackTraceAccessInsideInitBlock.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("stackTraceCapturing.kt")
       public void testStackTraceCapturing() {
         runTest("js/js.translator/testData/box/expression/misc/stackTraceCapturing.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("stringInterpolationEvaluationOrder.kt")
       public void testStringInterpolationEvaluationOrder() {
         runTest("js/js.translator/testData/box/expression/misc/stringInterpolationEvaluationOrder.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("temporaryVariableCreatedInPackageInitializer.kt")
       public void testTemporaryVariableCreatedInPackageInitializer() {
         runTest("js/js.translator/testData/box/expression/misc/temporaryVariableCreatedInPackageInitializer.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("throwThrow.kt")
       public void testThrowThrow() {
         runTest("js/js.translator/testData/box/expression/misc/throwThrow.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("toGeneratorInStdlib.kt")
       public void testToGeneratorInStdlib() {
         runTest("js/js.translator/testData/box/expression/misc/toGeneratorInStdlib.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenReturnedWithoutBlock.kt")
       public void testWhenReturnedWithoutBlock() {
         runTest("js/js.translator/testData/box/expression/misc/whenReturnedWithoutBlock.kt");
@@ -4484,84 +4484,84 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/expression/stringClass")
     @TestDataPath("$PROJECT_ROOT")
     public class StringClass {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInStringClass() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/stringClass"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionMethods.kt")
       public void testExtensionMethods() {
         runTest("js/js.translator/testData/box/expression/stringClass/extensionMethods.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("intInTemplate.kt")
       public void testIntInTemplate() {
         runTest("js/js.translator/testData/box/expression/stringClass/intInTemplate.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt2227.kt")
       public void testKt2227() {
         runTest("js/js.translator/testData/box/expression/stringClass/kt2227.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt2227_2.kt")
       public void testKt2227_2() {
         runTest("js/js.translator/testData/box/expression/stringClass/kt2227_2.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("multipleExpressionsInTemplate.kt")
       public void testMultipleExpressionsInTemplate() {
         runTest("js/js.translator/testData/box/expression/stringClass/multipleExpressionsInTemplate.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nullableTypeInStringTemplate.kt")
       public void testNullableTypeInStringTemplate() {
         runTest("js/js.translator/testData/box/expression/stringClass/nullableTypeInStringTemplate.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("numbersInTemplate.kt")
       public void testNumbersInTemplate() {
         runTest("js/js.translator/testData/box/expression/stringClass/numbersInTemplate.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("objectToStringCallInTemplate.kt")
       public void testObjectToStringCallInTemplate() {
         runTest("js/js.translator/testData/box/expression/stringClass/objectToStringCallInTemplate.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("stringAssignment.kt")
       public void testStringAssignment() {
         runTest("js/js.translator/testData/box/expression/stringClass/stringAssignment.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("stringConstant.kt")
       public void testStringConstant() {
         runTest("js/js.translator/testData/box/expression/stringClass/stringConstant.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("stringInTemplate.kt")
       public void testStringInTemplate() {
         runTest("js/js.translator/testData/box/expression/stringClass/stringInTemplate.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("stringNotEqualToNumber.kt")
       public void testStringNotEqualToNumber() {
         runTest("js/js.translator/testData/box/expression/stringClass/stringNotEqualToNumber.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("subSequence.kt")
       public void testSubSequence() {
         runTest("js/js.translator/testData/box/expression/stringClass/subSequence.kt");
@@ -4572,24 +4572,24 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/expression/stringTemplates")
     @TestDataPath("$PROJECT_ROOT")
     public class StringTemplates {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInStringTemplates() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/stringTemplates"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nonStrings.kt")
       public void testNonStrings() {
         runTest("js/js.translator/testData/box/expression/stringTemplates/nonStrings.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("objectWithToString.kt")
       public void testObjectWithToString() {
         runTest("js/js.translator/testData/box/expression/stringTemplates/objectWithToString.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("stringValues.kt")
       public void testStringValues() {
         runTest("js/js.translator/testData/box/expression/stringTemplates/stringValues.kt");
@@ -4600,78 +4600,78 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/expression/try")
     @TestDataPath("$PROJECT_ROOT")
     public class Try {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInTry() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/try"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exceptionToString.kt")
       public void testExceptionToString() {
         runTest("js/js.translator/testData/box/expression/try/exceptionToString.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt22053.kt")
       public void testKt22053() {
         runTest("js/js.translator/testData/box/expression/try/kt22053.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("multipleCatchBlocks.kt")
       public void testMultipleCatchBlocks() {
         runTest("js/js.translator/testData/box/expression/try/multipleCatchBlocks.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nestedTryCatchInCatch.kt")
       public void testNestedTryCatchInCatch() {
         runTest("js/js.translator/testData/box/expression/try/nestedTryCatchInCatch.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overrideThrowableProperties.kt")
       public void testOverrideThrowableProperties() {
         runTest("js/js.translator/testData/box/expression/try/overrideThrowableProperties.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("rethrowExceptionIfNotCaught.kt")
       public void testRethrowExceptionIfNotCaught() {
         runTest("js/js.translator/testData/box/expression/try/rethrowExceptionIfNotCaught.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("tryCatchCorrectForSubclasses.kt")
       public void testTryCatchCorrectForSubclasses() {
         runTest("js/js.translator/testData/box/expression/try/tryCatchCorrectForSubclasses.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("tryCatchDynamic.kt")
       public void testTryCatchDynamic() {
         runTest("js/js.translator/testData/box/expression/try/tryCatchDynamic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("tryCatchExpr.kt")
       public void testTryCatchExpr() {
         runTest("js/js.translator/testData/box/expression/try/tryCatchExpr.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("tryCatchExpressionWithMessage.kt")
       public void testTryCatchExpressionWithMessage() {
         runTest("js/js.translator/testData/box/expression/try/tryCatchExpressionWithMessage.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("tryCatchThrowable.kt")
       public void testTryCatchThrowable() {
         runTest("js/js.translator/testData/box/expression/try/tryCatchThrowable.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("tryCatchWithDifferentParameterNames.kt")
       public void testTryCatchWithDifferentParameterNames() {
         runTest("js/js.translator/testData/box/expression/try/tryCatchWithDifferentParameterNames.kt");
@@ -4682,48 +4682,48 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/expression/typeCheck")
     @TestDataPath("$PROJECT_ROOT")
     public class TypeCheck {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInTypeCheck() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/typeCheck"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("complexIsInterface.kt")
       public void testComplexIsInterface() {
         runTest("js/js.translator/testData/box/expression/typeCheck/complexIsInterface.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt55758.kt")
       public void testKt55758() {
         runTest("js/js.translator/testData/box/expression/typeCheck/kt55758.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simpleAsClass.kt")
       public void testSimpleAsClass() {
         runTest("js/js.translator/testData/box/expression/typeCheck/simpleAsClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simpleAsInterface.kt")
       public void testSimpleAsInterface() {
         runTest("js/js.translator/testData/box/expression/typeCheck/simpleAsInterface.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simpleIsClass.kt")
       public void testSimpleIsClass() {
         runTest("js/js.translator/testData/box/expression/typeCheck/simpleIsClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simpleIsInterface.kt")
       public void testSimpleIsInterface() {
         runTest("js/js.translator/testData/box/expression/typeCheck/simpleIsInterface.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simpleIsObject.kt")
       public void testSimpleIsObject() {
         runTest("js/js.translator/testData/box/expression/typeCheck/simpleIsObject.kt");
@@ -4734,210 +4734,210 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/expression/when")
     @TestDataPath("$PROJECT_ROOT")
     public class When {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInWhen() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/when"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constantsInWhen.kt")
       public void testConstantsInWhen() {
         runTest("js/js.translator/testData/box/expression/when/constantsInWhen.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("doWhileWithOneStmWhen.kt")
       public void testDoWhileWithOneStmWhen() {
         runTest("js/js.translator/testData/box/expression/when/doWhileWithOneStmWhen.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("empty.kt")
       public void testEmpty() {
         runTest("js/js.translator/testData/box/expression/when/empty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("exhaustiveCheckException.kt")
       public void testExhaustiveCheckException() {
         runTest("js/js.translator/testData/box/expression/when/exhaustiveCheckException.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("externalEnumSubject.kt")
       public void testExternalEnumSubject() {
         runTest("js/js.translator/testData/box/expression/when/externalEnumSubject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("forWithOneStmWhen.kt")
       public void testForWithOneStmWhen() {
         runTest("js/js.translator/testData/box/expression/when/forWithOneStmWhen.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("ifInWhen.kt")
       public void testIfInWhen() {
         runTest("js/js.translator/testData/box/expression/when/ifInWhen.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("ifInWhenDanglingElseIssue.kt")
       public void testIfInWhenDanglingElseIssue() {
         runTest("js/js.translator/testData/box/expression/when/ifInWhenDanglingElseIssue.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("ifWithOneStmWhen.kt")
       public void testIfWithOneStmWhen() {
         runTest("js/js.translator/testData/box/expression/when/ifWithOneStmWhen.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt1665.kt")
       public void testKt1665() {
         runTest("js/js.translator/testData/box/expression/when/kt1665.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("matchNullableType.kt")
       public void testMatchNullableType() {
         runTest("js/js.translator/testData/box/expression/when/matchNullableType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("multipleCases.kt")
       public void testMultipleCases() {
         runTest("js/js.translator/testData/box/expression/when/multipleCases.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenAsExpression.kt")
       public void testWhenAsExpression() {
         runTest("js/js.translator/testData/box/expression/when/whenAsExpression.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenAsExpressionWithThrow.kt")
       public void testWhenAsExpressionWithThrow() {
         runTest("js/js.translator/testData/box/expression/when/whenAsExpressionWithThrow.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenConditionWithReturn.kt")
       public void testWhenConditionWithReturn() {
         runTest("js/js.translator/testData/box/expression/when/whenConditionWithReturn.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenEqualsPattern.kt")
       public void testWhenEqualsPattern() {
         runTest("js/js.translator/testData/box/expression/when/whenEqualsPattern.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenEvaluatesArgumentOnlyOnce.kt")
       public void testWhenEvaluatesArgumentOnlyOnce() {
         runTest("js/js.translator/testData/box/expression/when/whenEvaluatesArgumentOnlyOnce.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenExecutesOnlyOnce.kt")
       public void testWhenExecutesOnlyOnce() {
         runTest("js/js.translator/testData/box/expression/when/whenExecutesOnlyOnce.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenNotType.kt")
       public void testWhenNotType() {
         runTest("js/js.translator/testData/box/expression/when/whenNotType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenStatementWithRangeClause.kt")
       public void testWhenStatementWithRangeClause() {
         runTest("js/js.translator/testData/box/expression/when/whenStatementWithRangeClause.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenType.kt")
       public void testWhenType() {
         runTest("js/js.translator/testData/box/expression/when/whenType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenValue.kt")
       public void testWhenValue() {
         runTest("js/js.translator/testData/box/expression/when/whenValue.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenValueOrType.kt")
       public void testWhenValueOrType() {
         runTest("js/js.translator/testData/box/expression/when/whenValueOrType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenWithCharRangeClause.kt")
       public void testWhenWithCharRangeClause() {
         runTest("js/js.translator/testData/box/expression/when/whenWithCharRangeClause.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenWithCustomRangeClause.kt")
       public void testWhenWithCustomRangeClause() {
         runTest("js/js.translator/testData/box/expression/when/whenWithCustomRangeClause.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenWithIf.kt")
       public void testWhenWithIf() {
         runTest("js/js.translator/testData/box/expression/when/whenWithIf.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenWithIfConditionAndOnlyElse.kt")
       public void testWhenWithIfConditionAndOnlyElse() {
         runTest("js/js.translator/testData/box/expression/when/whenWithIfConditionAndOnlyElse.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenWithLongRangeClause.kt")
       public void testWhenWithLongRangeClause() {
         runTest("js/js.translator/testData/box/expression/when/whenWithLongRangeClause.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenWithMapRangeClause.kt")
       public void testWhenWithMapRangeClause() {
         runTest("js/js.translator/testData/box/expression/when/whenWithMapRangeClause.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenWithOneStmWhen.kt")
       public void testWhenWithOneStmWhen() {
         runTest("js/js.translator/testData/box/expression/when/whenWithOneStmWhen.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenWithOnlyElse.kt")
       public void testWhenWithOnlyElse() {
         runTest("js/js.translator/testData/box/expression/when/whenWithOnlyElse.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenWithRangeClause.kt")
       public void testWhenWithRangeClause() {
         runTest("js/js.translator/testData/box/expression/when/whenWithRangeClause.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whenWithoutExpression.kt")
       public void testWhenWithoutExpression() {
         runTest("js/js.translator/testData/box/expression/when/whenWithoutExpression.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whileWithOneStmWhen.kt")
       public void testWhileWithOneStmWhen() {
         runTest("js/js.translator/testData/box/expression/when/whileWithOneStmWhen.kt");
@@ -4948,36 +4948,36 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/expression/while")
     @TestDataPath("$PROJECT_ROOT")
     public class While {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInWhile() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/while"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("doWhileWithComplexCondition.kt")
       public void testDoWhileWithComplexCondition() {
         runTest("js/js.translator/testData/box/expression/while/doWhileWithComplexCondition.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("doWhileWithComplexConditionAndContinue.kt")
       public void testDoWhileWithComplexConditionAndContinue() {
         runTest("js/js.translator/testData/box/expression/while/doWhileWithComplexConditionAndContinue.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whileWithComplexCondition.kt")
       public void testWhileWithComplexCondition() {
         runTest("js/js.translator/testData/box/expression/while/whileWithComplexCondition.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whileWithComplexConditionAndContinue.kt")
       public void testWhileWithComplexConditionAndContinue() {
         runTest("js/js.translator/testData/box/expression/while/whileWithComplexConditionAndContinue.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("whileWithComplexOneStatement.kt")
       public void testWhileWithComplexOneStatement() {
         runTest("js/js.translator/testData/box/expression/while/whileWithComplexOneStatement.kt");
@@ -4989,108 +4989,108 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/extensionFunction")
   @TestDataPath("$PROJECT_ROOT")
   public class ExtensionFunction {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInExtensionFunction() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/extensionFunction"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionForSuperclass.kt")
     public void testExtensionForSuperclass() {
       runTest("js/js.translator/testData/box/extensionFunction/extensionForSuperclass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionFunctionCalledFromExtensionFunction.kt")
     public void testExtensionFunctionCalledFromExtensionFunction() {
       runTest("js/js.translator/testData/box/extensionFunction/extensionFunctionCalledFromExtensionFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionFunctionCalledFromFor.kt")
     public void testExtensionFunctionCalledFromFor() {
       runTest("js/js.translator/testData/box/extensionFunction/extensionFunctionCalledFromFor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionFunctionOnExpression.kt")
     public void testExtensionFunctionOnExpression() {
       runTest("js/js.translator/testData/box/extensionFunction/extensionFunctionOnExpression.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionInsideFunctionLiteral.kt")
     public void testExtensionInsideFunctionLiteral() {
       runTest("js/js.translator/testData/box/extensionFunction/extensionInsideFunctionLiteral.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionLiteralPassedToFunction.kt")
     public void testExtensionLiteralPassedToFunction() {
       runTest("js/js.translator/testData/box/extensionFunction/extensionLiteralPassedToFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionOnClassWithExplicitAndImplicitReceiver.kt")
     public void testExtensionOnClassWithExplicitAndImplicitReceiver() {
       runTest("js/js.translator/testData/box/extensionFunction/extensionOnClassWithExplicitAndImplicitReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionPropertyOnClassWithExplicitAndImplicitReceiver.kt")
     public void testExtensionPropertyOnClassWithExplicitAndImplicitReceiver() {
       runTest("js/js.translator/testData/box/extensionFunction/extensionPropertyOnClassWithExplicitAndImplicitReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionUsedInsideClass.kt")
     public void testExtensionUsedInsideClass() {
       runTest("js/js.translator/testData/box/extensionFunction/extensionUsedInsideClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionWithImplicitReceiver.kt")
     public void testExtensionWithImplicitReceiver() {
       runTest("js/js.translator/testData/box/extensionFunction/extensionWithImplicitReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("generic.kt")
     public void testGeneric() {
       runTest("js/js.translator/testData/box/extensionFunction/generic.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("implicitReceiverInExtension.kt")
     public void testImplicitReceiverInExtension() {
       runTest("js/js.translator/testData/box/extensionFunction/implicitReceiverInExtension.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inExternalInterface.kt")
     public void testInExternalInterface() {
       runTest("js/js.translator/testData/box/extensionFunction/inExternalInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("intExtension.kt")
     public void testIntExtension() {
       runTest("js/js.translator/testData/box/extensionFunction/intExtension.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superClassMemberInExtension.kt")
     public void testSuperClassMemberInExtension() {
       runTest("js/js.translator/testData/box/extensionFunction/superClassMemberInExtension.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("virtualExtension.kt")
     public void testVirtualExtension() {
       runTest("js/js.translator/testData/box/extensionFunction/virtualExtension.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("virtualExtensionOverride.kt")
     public void testVirtualExtensionOverride() {
       runTest("js/js.translator/testData/box/extensionFunction/virtualExtensionOverride.kt");
@@ -5101,48 +5101,48 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/extensionProperty")
   @TestDataPath("$PROJECT_ROOT")
   public class ExtensionProperty {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("absExtension.kt")
     public void testAbsExtension() {
       runTest("js/js.translator/testData/box/extensionProperty/absExtension.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInExtensionProperty() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/extensionProperty"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalExtensionProperty.kt")
     public void testExternalExtensionProperty() {
       runTest("js/js.translator/testData/box/extensionProperty/externalExtensionProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inClass.kt")
     public void testInClass() {
       runTest("js/js.translator/testData/box/extensionProperty/inClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateExtensionProperty.kt")
     public void testPrivateExtensionProperty() {
       runTest("js/js.translator/testData/box/extensionProperty/privateExtensionProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyWithGetterAndSetter.kt")
     public void testPropertyWithGetterAndSetter() {
       runTest("js/js.translator/testData/box/extensionProperty/propertyWithGetterAndSetter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simplePropertyWithGetter.kt")
     public void testSimplePropertyWithGetter() {
       runTest("js/js.translator/testData/box/extensionProperty/simplePropertyWithGetter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("withSameNameAndDiffReceiverType.kt")
     public void testWithSameNameAndDiffReceiverType() {
       runTest("js/js.translator/testData/box/extensionProperty/withSameNameAndDiffReceiverType.kt");
@@ -5153,138 +5153,138 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/incremental")
   @TestDataPath("$PROJECT_ROOT")
   public class Incremental {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInIncremental() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/incremental"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("catchScope.kt")
     public void testCatchScope() {
       runTest("js/js.translator/testData/box/incremental/catchScope.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("clashingPrivateDeclarations.kt")
     public void testClashingPrivateDeclarations() {
       runTest("js/js.translator/testData/box/incremental/clashingPrivateDeclarations.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classReferencingClass.kt")
     public void testClassReferencingClass() {
       runTest("js/js.translator/testData/box/incremental/classReferencingClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constValInInlineFun.kt")
     public void testConstValInInlineFun() {
       runTest("js/js.translator/testData/box/incremental/constValInInlineFun.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("coroutines.kt")
     public void testCoroutines() {
       runTest("js/js.translator/testData/box/incremental/coroutines.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("defaultArguments.kt")
     public void testDefaultArguments() {
       runTest("js/js.translator/testData/box/incremental/defaultArguments.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("enumUsage.kt")
     public void testEnumUsage() {
       runTest("js/js.translator/testData/box/incremental/enumUsage.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportedPackage.kt")
     public void testExportedPackage() {
       runTest("js/js.translator/testData/box/incremental/exportedPackage.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionReferencingClass.kt")
     public void testFunctionReferencingClass() {
       runTest("js/js.translator/testData/box/incremental/functionReferencingClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inline.kt")
     public void testInline() {
       runTest("js/js.translator/testData/box/incremental/inline.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineLambda.kt")
     public void testInlineLambda() {
       runTest("js/js.translator/testData/box/incremental/inlineLambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineModuleVariable.kt")
     public void testInlineModuleVariable() {
       runTest("js/js.translator/testData/box/incremental/inlineModuleVariable.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineSuspendFun.kt")
     public void testInlineSuspendFun() {
       runTest("js/js.translator/testData/box/incremental/inlineSuspendFun.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("interfaceInheritanceCrossModule.kt")
     public void testInterfaceInheritanceCrossModule() {
       runTest("js/js.translator/testData/box/incremental/interfaceInheritanceCrossModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsModule.kt")
     public void testJsModule() {
       runTest("js/js.translator/testData/box/incremental/jsModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("multipleExport.kt")
     public void testMultipleExport() {
       runTest("js/js.translator/testData/box/incremental/multipleExport.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("multipleReimport.kt")
     public void testMultipleReimport() {
       runTest("js/js.translator/testData/box/incremental/multipleReimport.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedClassesInDependency.kt")
     public void testNestedClassesInDependency() {
       runTest("js/js.translator/testData/box/incremental/nestedClassesInDependency.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("packagesWithSameName.kt")
     public void testPackagesWithSameName() {
       runTest("js/js.translator/testData/box/incremental/packagesWithSameName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("js/js.translator/testData/box/incremental/simple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("sourceMapSourceEmbedding.kt")
     public void testSourceMapSourceEmbedding() {
       runTest("js/js.translator/testData/box/incremental/sourceMapSourceEmbedding.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("syntheticStatement.kt")
     public void testSyntheticStatement() {
       runTest("js/js.translator/testData/box/incremental/syntheticStatement.kt");
@@ -5295,150 +5295,150 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/inheritance")
   @TestDataPath("$PROJECT_ROOT")
   public class Inheritance {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("abstractVarOverride.kt")
     public void testAbstractVarOverride() {
       runTest("js/js.translator/testData/box/inheritance/abstractVarOverride.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInInheritance() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inheritance"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("baseCall.kt")
     public void testBaseCall() {
       runTest("js/js.translator/testData/box/inheritance/baseCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("baseCallOrder.kt")
     public void testBaseCallOrder() {
       runTest("js/js.translator/testData/box/inheritance/baseCallOrder.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("baseClassDefinedAfterDerived.kt")
     public void testBaseClassDefinedAfterDerived() {
       runTest("js/js.translator/testData/box/inheritance/baseClassDefinedAfterDerived.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("childPrototype.kt")
     public void testChildPrototype() {
       runTest("js/js.translator/testData/box/inheritance/childPrototype.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classInheritsJsNameFromOtherModule.kt")
     public void testClassInheritsJsNameFromOtherModule() {
       runTest("js/js.translator/testData/box/inheritance/classInheritsJsNameFromOtherModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("complexInitializationOrder.kt")
     public void testComplexInitializationOrder() {
       runTest("js/js.translator/testData/box/inheritance/complexInitializationOrder.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("definitionOrder.kt")
     public void testDefinitionOrder() {
       runTest("js/js.translator/testData/box/inheritance/definitionOrder.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("delegatingToSecondaryCtor.kt")
     public void testDelegatingToSecondaryCtor() {
       runTest("js/js.translator/testData/box/inheritance/delegatingToSecondaryCtor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("fromFakeClasses.kt")
     public void testFromFakeClasses() {
       runTest("js/js.translator/testData/box/inheritance/fromFakeClasses.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("fromNativeInterface.kt")
     public void testFromNativeInterface() {
       runTest("js/js.translator/testData/box/inheritance/fromNativeInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("fromNestedNativeClass.kt")
     public void testFromNestedNativeClass() {
       runTest("js/js.translator/testData/box/inheritance/fromNestedNativeClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inheritExtensionsWithSameNames.kt")
     public void testInheritExtensionsWithSameNames() {
       runTest("js/js.translator/testData/box/inheritance/inheritExtensionsWithSameNames.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inheritFromCharIterator.kt")
     public void testInheritFromCharIterator() {
       runTest("js/js.translator/testData/box/inheritance/inheritFromCharIterator.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("initializationOrder.kt")
     public void testInitializationOrder() {
       runTest("js/js.translator/testData/box/inheritance/initializationOrder.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("initializersOfBasicClassExecute.kt")
     public void testInitializersOfBasicClassExecute() {
       runTest("js/js.translator/testData/box/inheritance/initializersOfBasicClassExecute.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt3499.kt")
     public void testKt3499() {
       runTest("js/js.translator/testData/box/inheritance/kt3499.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("methodOverride.kt")
     public void testMethodOverride() {
       runTest("js/js.translator/testData/box/inheritance/methodOverride.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nativeNativeKotlin.kt")
     public void testNativeNativeKotlin() {
       runTest("js/js.translator/testData/box/inheritance/nativeNativeKotlin.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overrideAnyMethods.kt")
     public void testOverrideAnyMethods() {
       runTest("js/js.translator/testData/box/inheritance/overrideAnyMethods.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("prototypeOrder.kt")
     public void testPrototypeOrder() {
       runTest("js/js.translator/testData/box/inheritance/prototypeOrder.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("valOverride.kt")
     public void testValOverride() {
       runTest("js/js.translator/testData/box/inheritance/valOverride.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("valuePassedToAncestorConstructor.kt")
     public void testValuePassedToAncestorConstructor() {
       runTest("js/js.translator/testData/box/inheritance/valuePassedToAncestorConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("withInitializeMethod.kt")
     public void testWithInitializeMethod() {
       runTest("js/js.translator/testData/box/inheritance/withInitializeMethod.kt");
@@ -5448,36 +5448,36 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/inheritance/interfaces")
     @TestDataPath("$PROJECT_ROOT")
     public class Interfaces {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("abstractClassInheritingDefaultMethod.kt")
       public void testAbstractClassInheritingDefaultMethod() {
         runTest("js/js.translator/testData/box/inheritance/interfaces/abstractClassInheritingDefaultMethod.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInInterfaces() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inheritance/interfaces"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("fromExternalInterface.kt")
       public void testFromExternalInterface() {
         runTest("js/js.translator/testData/box/inheritance/interfaces/fromExternalInterface.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("withDefaultMethod.kt")
       public void testWithDefaultMethod() {
         runTest("js/js.translator/testData/box/inheritance/interfaces/withDefaultMethod.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("withDefaultMethodFromSuperInterface.kt")
       public void testWithDefaultMethodFromSuperInterface() {
         runTest("js/js.translator/testData/box/inheritance/interfaces/withDefaultMethodFromSuperInterface.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("withDefaultProperty.kt")
       public void testWithDefaultProperty() {
         runTest("js/js.translator/testData/box/inheritance/interfaces/withDefaultProperty.kt");
@@ -5489,60 +5489,60 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/initialize")
   @TestDataPath("$PROJECT_ROOT")
   public class Initialize {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInInitialize() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/initialize"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classInitializer.kt")
     public void testClassInitializer() {
       runTest("js/js.translator/testData/box/initialize/classInitializer.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("complexPropertyInitializer.kt")
     public void testComplexPropertyInitializer() {
       runTest("js/js.translator/testData/box/initialize/complexPropertyInitializer.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("complexTopLevelPropertyInitializer.kt")
     public void testComplexTopLevelPropertyInitializer() {
       runTest("js/js.translator/testData/box/initialize/complexTopLevelPropertyInitializer.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("declarationInitializedWithThrow.kt")
     public void testDeclarationInitializedWithThrow() {
       runTest("js/js.translator/testData/box/initialize/declarationInitializedWithThrow.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lateinit.kt")
     public void testLateinit() {
       runTest("js/js.translator/testData/box/initialize/lateinit.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyInitializationOrder.kt")
     public void testPropertyInitializationOrder() {
       runTest("js/js.translator/testData/box/initialize/propertyInitializationOrder.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("rootPackageValInit.kt")
     public void testRootPackageValInit() {
       runTest("js/js.translator/testData/box/initialize/rootPackageValInit.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("rootValInit.kt")
     public void testRootValInit() {
       runTest("js/js.translator/testData/box/initialize/rootValInit.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("uninitializedLateinit.kt")
     public void testUninitializedLateinit() {
       runTest("js/js.translator/testData/box/initialize/uninitializedLateinit.kt");
@@ -5553,552 +5553,552 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/inline")
   @TestDataPath("$PROJECT_ROOT")
   public class Inline {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInInline() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inline"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("anonymousFunction.kt")
     public void testAnonymousFunction() {
       runTest("js/js.translator/testData/box/inline/anonymousFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("anonymousObjectInlineMethod.kt")
     public void testAnonymousObjectInlineMethod() {
       runTest("js/js.translator/testData/box/inline/anonymousObjectInlineMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayLiteralAliasing.kt")
     public void testArrayLiteralAliasing() {
       runTest("js/js.translator/testData/box/inline/arrayLiteralAliasing.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("astCopy.kt")
     public void testAstCopy() {
       runTest("js/js.translator/testData/box/inline/astCopy.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("blocksMaterialization.kt")
     public void testBlocksMaterialization() {
       runTest("js/js.translator/testData/box/inline/blocksMaterialization.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callFunction.kt")
     public void testCallFunction() {
       runTest("js/js.translator/testData/box/inline/callFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callInlineFunctionOnTopLevel.kt")
     public void testCallInlineFunctionOnTopLevel() {
       runTest("js/js.translator/testData/box/inline/callInlineFunctionOnTopLevel.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callInlineFunctionOnTopLevelSimple.kt")
     public void testCallInlineFunctionOnTopLevelSimple() {
       runTest("js/js.translator/testData/box/inline/callInlineFunctionOnTopLevelSimple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callableReference.kt")
     public void testCallableReference() {
       runTest("js/js.translator/testData/box/inline/callableReference.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callableReferenceClassMethod.kt")
     public void testCallableReferenceClassMethod() {
       runTest("js/js.translator/testData/box/inline/callableReferenceClassMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callableReferenceOfLocalFun.kt")
     public void testCallableReferenceOfLocalFun() {
       runTest("js/js.translator/testData/box/inline/callableReferenceOfLocalFun.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callableReferenceOfLocalInline.kt")
     public void testCallableReferenceOfLocalInline() {
       runTest("js/js.translator/testData/box/inline/callableReferenceOfLocalInline.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classObject.kt")
     public void testClassObject() {
       runTest("js/js.translator/testData/box/inline/classObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("continueInLoopWithInlinableCondition.kt")
     public void testContinueInLoopWithInlinableCondition() {
       runTest("js/js.translator/testData/box/inline/continueInLoopWithInlinableCondition.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("crossModuleUnsignedLiterals.kt")
     public void testCrossModuleUnsignedLiterals() {
       runTest("js/js.translator/testData/box/inline/crossModuleUnsignedLiterals.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("dontInlineFunctionCall.kt")
     public void testDontInlineFunctionCall() {
       runTest("js/js.translator/testData/box/inline/dontInlineFunctionCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("expressionBodyWithLambdaCall.kt")
     public void testExpressionBodyWithLambdaCall() {
       runTest("js/js.translator/testData/box/inline/expressionBodyWithLambdaCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extension.kt")
     public void testExtension() {
       runTest("js/js.translator/testData/box/inline/extension.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionWithManyArguments.kt")
     public void testExtensionWithManyArguments() {
       runTest("js/js.translator/testData/box/inline/extensionWithManyArguments.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalInlineWithSuppress.kt")
     public void testExternalInlineWithSuppress() {
       runTest("js/js.translator/testData/box/inline/externalInlineWithSuppress.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("fakeOverrideInlining.kt")
     public void testFakeOverrideInlining() {
       runTest("js/js.translator/testData/box/inline/fakeOverrideInlining.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("fakeOverrideInliningCrossModule.kt")
     public void testFakeOverrideInliningCrossModule() {
       runTest("js/js.translator/testData/box/inline/fakeOverrideInliningCrossModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("faultyRedundantCallElimination.kt")
     public void testFaultyRedundantCallElimination() {
       runTest("js/js.translator/testData/box/inline/faultyRedundantCallElimination.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("identityEquals.kt")
     public void testIdentityEquals() {
       runTest("js/js.translator/testData/box/inline/identityEquals.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("incrementProperty.kt")
     public void testIncrementProperty() {
       runTest("js/js.translator/testData/box/inline/incrementProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineCallInsideStringTemplate.kt")
     public void testInlineCallInsideStringTemplate() {
       runTest("js/js.translator/testData/box/inline/inlineCallInsideStringTemplate.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineCallNoInline.kt")
     public void testInlineCallNoInline() {
       runTest("js/js.translator/testData/box/inline/inlineCallNoInline.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineCapturingThis.kt")
     public void testInlineCapturingThis() {
       runTest("js/js.translator/testData/box/inline/inlineCapturingThis.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineChain.kt")
     public void testInlineChain() {
       runTest("js/js.translator/testData/box/inline/inlineChain.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineChainCrossModule.kt")
     public void testInlineChainCrossModule() {
       runTest("js/js.translator/testData/box/inline/inlineChainCrossModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineChainWithFewStatements.kt")
     public void testInlineChainWithFewStatements() {
       runTest("js/js.translator/testData/box/inline/inlineChainWithFewStatements.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineClassEquals.kt")
     public void testInlineClassEquals() {
       runTest("js/js.translator/testData/box/inline/inlineClassEquals.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineDefaultArgument.kt")
     public void testInlineDefaultArgument() {
       runTest("js/js.translator/testData/box/inline/inlineDefaultArgument.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineFunctionInLambda.kt")
     public void testInlineFunctionInLambda() {
       runTest("js/js.translator/testData/box/inline/inlineFunctionInLambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineGenericSimple.kt")
     public void testInlineGenericSimple() {
       runTest("js/js.translator/testData/box/inline/inlineGenericSimple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineIf.kt")
     public void testInlineIf() {
       runTest("js/js.translator/testData/box/inline/inlineIf.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineImportNameClash.kt")
     public void testInlineImportNameClash() {
       runTest("js/js.translator/testData/box/inline/inlineImportNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineInInlineWithLambda.kt")
     public void testInlineInInlineWithLambda() {
       runTest("js/js.translator/testData/box/inline/inlineInInlineWithLambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineInInlineWithLambdaPrivate.kt")
     public void testInlineInInlineWithLambdaPrivate() {
       runTest("js/js.translator/testData/box/inline/inlineInInlineWithLambdaPrivate.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineInc.kt")
     public void testInlineInc() {
       runTest("js/js.translator/testData/box/inline/inlineInc.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineIntSimple.kt")
     public void testInlineIntSimple() {
       runTest("js/js.translator/testData/box/inline/inlineIntSimple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineLambdaNoCapture.kt")
     public void testInlineLambdaNoCapture() {
       runTest("js/js.translator/testData/box/inline/inlineLambdaNoCapture.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineLambdaWithCapture.kt")
     public void testInlineLambdaWithCapture() {
       runTest("js/js.translator/testData/box/inline/inlineLambdaWithCapture.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineMethod.kt")
     public void testInlineMethod() {
       runTest("js/js.translator/testData/box/inline/inlineMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineNoReturn.kt")
     public void testInlineNoReturn() {
       runTest("js/js.translator/testData/box/inline/inlineNoReturn.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineOrder.kt")
     public void testInlineOrder() {
       runTest("js/js.translator/testData/box/inline/inlineOrder.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineSimpleAssignment.kt")
     public void testInlineSimpleAssignment() {
       runTest("js/js.translator/testData/box/inline/inlineSimpleAssignment.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlinedObjectLiteralIsCheck.kt")
     public void testInlinedObjectLiteralIsCheck() {
       runTest("js/js.translator/testData/box/inline/inlinedObjectLiteralIsCheck.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("innerOuterThis.kt")
     public void testInnerOuterThis() {
       runTest("js/js.translator/testData/box/inline/innerOuterThis.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("invokeOnField.kt")
     public void testInvokeOnField() {
       runTest("js/js.translator/testData/box/inline/invokeOnField.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("iteratorOnInlineFunctionResult.kt")
     public void testIteratorOnInlineFunctionResult() {
       runTest("js/js.translator/testData/box/inline/iteratorOnInlineFunctionResult.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsCode.kt")
     public void testJsCode() {
       runTest("js/js.translator/testData/box/inline/jsCode.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsCodeVarDeclared.kt")
     public void testJsCodeVarDeclared() {
       runTest("js/js.translator/testData/box/inline/jsCodeVarDeclared.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt26117.kt")
     public void testKt26117() {
       runTest("js/js.translator/testData/box/inline/kt26117.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt26466.kt")
     public void testKt26466() {
       runTest("js/js.translator/testData/box/inline/kt26466.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt26787.kt")
     public void testKt26787() {
       runTest("js/js.translator/testData/box/inline/kt26787.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaInLambda.kt")
     public void testLambdaInLambda() {
       runTest("js/js.translator/testData/box/inline/lambdaInLambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaReassignment.kt")
     public void testLambdaReassignment() {
       runTest("js/js.translator/testData/box/inline/lambdaReassignment.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaReassignmentWithCapture.kt")
     public void testLambdaReassignmentWithCapture() {
       runTest("js/js.translator/testData/box/inline/lambdaReassignmentWithCapture.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lastLabeledReturn.kt")
     public void testLastLabeledReturn() {
       runTest("js/js.translator/testData/box/inline/lastLabeledReturn.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localDeclarationsClash.kt")
     public void testLocalDeclarationsClash() {
       runTest("js/js.translator/testData/box/inline/localDeclarationsClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localInlineExtensionFunction.kt")
     public void testLocalInlineExtensionFunction() {
       runTest("js/js.translator/testData/box/inline/localInlineExtensionFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localInlineFunction.kt")
     public void testLocalInlineFunction() {
       runTest("js/js.translator/testData/box/inline/localInlineFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localInlineFunctionComplex.kt")
     public void testLocalInlineFunctionComplex() {
       runTest("js/js.translator/testData/box/inline/localInlineFunctionComplex.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localInlineFunctionDeclaredInLambda.kt")
     public void testLocalInlineFunctionDeclaredInLambda() {
       runTest("js/js.translator/testData/box/inline/localInlineFunctionDeclaredInLambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localInlineFunctionNameClash.kt")
     public void testLocalInlineFunctionNameClash() {
       runTest("js/js.translator/testData/box/inline/localInlineFunctionNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localInlineFunctionReference.kt")
     public void testLocalInlineFunctionReference() {
       runTest("js/js.translator/testData/box/inline/localInlineFunctionReference.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("loopWithInlinableCondition.kt")
     public void testLoopWithInlinableCondition() {
       runTest("js/js.translator/testData/box/inline/loopWithInlinableCondition.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("metadataForPublicFunction.kt")
     public void testMetadataForPublicFunction() {
       runTest("js/js.translator/testData/box/inline/metadataForPublicFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("multiDeclaration.kt")
     public void testMultiDeclaration() {
       runTest("js/js.translator/testData/box/inline/multiDeclaration.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("noInlineLambda.kt")
     public void testNoInlineLambda() {
       runTest("js/js.translator/testData/box/inline/noInlineLambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("operators.kt")
     public void testOperators() {
       runTest("js/js.translator/testData/box/inline/operators.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("params.kt")
     public void testParams() {
       runTest("js/js.translator/testData/box/inline/params.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateProperty.kt")
     public void testPrivateProperty() {
       runTest("js/js.translator/testData/box/inline/privateProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("recursiveDependency.kt")
     public void testRecursiveDependency() {
       runTest("js/js.translator/testData/box/inline/recursiveDependency.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("requireNotNull.kt")
     public void testRequireNotNull() {
       runTest("js/js.translator/testData/box/inline/requireNotNull.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("rootConstructor.kt")
     public void testRootConstructor() {
       runTest("js/js.translator/testData/box/inline/rootConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("safeCall.kt")
     public void testSafeCall() {
       runTest("js/js.translator/testData/box/inline/safeCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("sameNameOfDeclarationsInSameModule.kt")
     public void testSameNameOfDeclarationsInSameModule() {
       runTest("js/js.translator/testData/box/inline/sameNameOfDeclarationsInSameModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("severalClosures.kt")
     public void testSeveralClosures() {
       runTest("js/js.translator/testData/box/inline/severalClosures.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("severalUsage.kt")
     public void testSeveralUsage() {
       runTest("js/js.translator/testData/box/inline/severalUsage.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleDouble.kt")
     public void testSimpleDouble() {
       runTest("js/js.translator/testData/box/inline/simpleDouble.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleEnum.kt")
     public void testSimpleEnum() {
       runTest("js/js.translator/testData/box/inline/simpleEnum.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleInt.kt")
     public void testSimpleInt() {
       runTest("js/js.translator/testData/box/inline/simpleInt.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleLambda.kt")
     public void testSimpleLambda() {
       runTest("js/js.translator/testData/box/inline/simpleLambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleObject.kt")
     public void testSimpleObject() {
       runTest("js/js.translator/testData/box/inline/simpleObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleReturnFunctionWithResultUnused.kt")
     public void testSimpleReturnFunctionWithResultUnused() {
       runTest("js/js.translator/testData/box/inline/simpleReturnFunctionWithResultUnused.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("statementsAfterReturn.kt")
     public void testStatementsAfterReturn() {
       runTest("js/js.translator/testData/box/inline/statementsAfterReturn.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("thisImplicitlyCaptured.kt")
     public void testThisImplicitlyCaptured() {
       runTest("js/js.translator/testData/box/inline/thisImplicitlyCaptured.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("thisLiteralAliasing.kt")
     public void testThisLiteralAliasing() {
       runTest("js/js.translator/testData/box/inline/thisLiteralAliasing.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("vararg.kt")
     public void testVararg() {
       runTest("js/js.translator/testData/box/inline/vararg.kt");
@@ -6109,330 +6109,330 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/inlineEvaluationOrder")
   @TestDataPath("$PROJECT_ROOT")
   public class InlineEvaluationOrder {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInInlineEvaluationOrder() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inlineEvaluationOrder"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("alsoWithReassingment.kt")
     public void testAlsoWithReassingment() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/alsoWithReassingment.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("argumentOfCall.kt")
     public void testArgumentOfCall() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/argumentOfCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("argumentOfCallMultipleInlineCalls.kt")
     public void testArgumentOfCallMultipleInlineCalls() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/argumentOfCallMultipleInlineCalls.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("argumentOfInlineCall.kt")
     public void testArgumentOfInlineCall() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/argumentOfInlineCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("argumentOfNew.kt")
     public void testArgumentOfNew() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/argumentOfNew.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayAccess1.kt")
     public void testArrayAccess1() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/arrayAccess1.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayAccess2.kt")
     public void testArrayAccess2() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/arrayAccess2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayAccess3.kt")
     public void testArrayAccess3() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/arrayAccess3.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayAccessLhsDecomposed.kt")
     public void testArrayAccessLhsDecomposed() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/arrayAccessLhsDecomposed.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayLiteral.kt")
     public void testArrayLiteral() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/arrayLiteral.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayLiteralMultipleInlineCalls.kt")
     public void testArrayLiteralMultipleInlineCalls() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/arrayLiteralMultipleInlineCalls.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayLiteralNested.kt")
     public void testArrayLiteralNested() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/arrayLiteralNested.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("assignment.kt")
     public void testAssignment() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/assignment.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("binaryOperator.kt")
     public void testBinaryOperator() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/binaryOperator.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("binaryOperatorMultipleInlineCalls.kt")
     public void testBinaryOperatorMultipleInlineCalls() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/binaryOperatorMultipleInlineCalls.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callQualifier.kt")
     public void testCallQualifier() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/callQualifier.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callQualifierComplex.kt")
     public void testCallQualifierComplex() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/callQualifierComplex.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("capturedVarAsArgument.kt")
     public void testCapturedVarAsArgument() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/capturedVarAsArgument.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("conditional.kt")
     public void testConditional() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/conditional.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("conditionalElvis.kt")
     public void testConditionalElvis() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/conditionalElvis.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("conditionalNested.kt")
     public void testConditionalNested() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/conditionalNested.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("conditionalTestExpression.kt")
     public void testConditionalTestExpression() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/conditionalTestExpression.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("conditionalTestExpressionElvis.kt")
     public void testConditionalTestExpressionElvis() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/conditionalTestExpressionElvis.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("continueInExtractedDoWhile.kt")
     public void testContinueInExtractedDoWhile() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/continueInExtractedDoWhile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("doWhile.kt")
     public void testDoWhile() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/doWhile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("doWhileComplex.kt")
     public void testDoWhileComplex() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/doWhileComplex.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("for.kt")
     public void testFor() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/for.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("if.kt")
     public void testIf() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/if.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineFunctionAsParameterOfQualifiedCall.kt")
     public void testInlineFunctionAsParameterOfQualifiedCall() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/inlineFunctionAsParameterOfQualifiedCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaPropertyExtracted.kt")
     public void testLambdaPropertyExtracted() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/lambdaPropertyExtracted.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaWithClosure.kt")
     public void testLambdaWithClosure() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/lambdaWithClosure.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("logicalAnd.kt")
     public void testLogicalAnd() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/logicalAnd.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("logicalAndOrMultipleInlineCalls.kt")
     public void testLogicalAndOrMultipleInlineCalls() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/logicalAndOrMultipleInlineCalls.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("logicalOr.kt")
     public void testLogicalOr() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/logicalOr.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("methodCallQualifierWithSideEffect.kt")
     public void testMethodCallQualifierWithSideEffect() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/methodCallQualifierWithSideEffect.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("methodDecomposedWithBind.kt")
     public void testMethodDecomposedWithBind() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/methodDecomposedWithBind.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("methodInlineCallQualifierWithSideEffect.kt")
     public void testMethodInlineCallQualifierWithSideEffect() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/methodInlineCallQualifierWithSideEffect.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("multiDeclaration.kt")
     public void testMultiDeclaration() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/multiDeclaration.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("multiDeclarationComplex.kt")
     public void testMultiDeclarationComplex() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/multiDeclarationComplex.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedContinueInExtractedDoWhile.kt")
     public void testNestedContinueInExtractedDoWhile() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/nestedContinueInExtractedDoWhile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedInlineCall.kt")
     public void testNestedInlineCall() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/nestedInlineCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertiesInitializationOrder.kt")
     public void testPropertiesInitializationOrder() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/propertiesInitializationOrder.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertiesInitializationOrderSimple.kt")
     public void testPropertiesInitializationOrderSimple() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/propertiesInitializationOrderSimple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyAccessAfterModification.kt")
     public void testPropertyAccessAfterModification() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/propertyAccessAfterModification.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyAccessAndInitializer.kt")
     public void testPropertyAccessAndInitializer() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/propertyAccessAndInitializer.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyAccessExternalWithSideEffect.kt")
     public void testPropertyAccessExternalWithSideEffect() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/propertyAccessExternalWithSideEffect.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyAccessWithSideEffect.kt")
     public void testPropertyAccessWithSideEffect() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/propertyAccessWithSideEffect.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyWithSideEffectExtracted.kt")
     public void testPropertyWithSideEffectExtracted() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/propertyWithSideEffectExtracted.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyWithSideEffectPassedToInlineFunction.kt")
     public void testPropertyWithSideEffectPassedToInlineFunction() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/propertyWithSideEffectPassedToInlineFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("temporaryVarNonTrivial.kt")
     public void testTemporaryVarNonTrivial() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/temporaryVarNonTrivial.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("ternaryConditional.kt")
     public void testTernaryConditional() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/ternaryConditional.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("while.kt")
     public void testWhile() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/while.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("whileComplex.kt")
     public void testWhileComplex() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/whileComplex.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("whileConditionExtracted.kt")
     public void testWhileConditionExtracted() {
       runTest("js/js.translator/testData/box/inlineEvaluationOrder/whileConditionExtracted.kt");
@@ -6443,186 +6443,186 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/inlineMultiFile")
   @TestDataPath("$PROJECT_ROOT")
   public class InlineMultiFile {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInInlineMultiFile() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inlineMultiFile"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("anonymousObjectInSimilarFunctions.kt")
     public void testAnonymousObjectInSimilarFunctions() {
       runTest("js/js.translator/testData/box/inlineMultiFile/anonymousObjectInSimilarFunctions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("anonymousObjectOnCallSite.kt")
     public void testAnonymousObjectOnCallSite() {
       runTest("js/js.translator/testData/box/inlineMultiFile/anonymousObjectOnCallSite.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("anonymousObjectOnCallSiteSuperParams.kt")
     public void testAnonymousObjectOnCallSiteSuperParams() {
       runTest("js/js.translator/testData/box/inlineMultiFile/anonymousObjectOnCallSiteSuperParams.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("anonymousObjectOnDeclarationSite.kt")
     public void testAnonymousObjectOnDeclarationSite() {
       runTest("js/js.translator/testData/box/inlineMultiFile/anonymousObjectOnDeclarationSite.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("anonymousObjectOnDeclarationSiteSuperParams.kt")
     public void testAnonymousObjectOnDeclarationSiteSuperParams() {
       runTest("js/js.translator/testData/box/inlineMultiFile/anonymousObjectOnDeclarationSiteSuperParams.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("builders.kt")
     public void testBuilders() {
       runTest("js/js.translator/testData/box/inlineMultiFile/builders.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("buildersAndLambdaCapturing.kt")
     public void testBuildersAndLambdaCapturing() {
       runTest("js/js.translator/testData/box/inlineMultiFile/buildersAndLambdaCapturing.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("captureInlinable.kt")
     public void testCaptureInlinable() {
       runTest("js/js.translator/testData/box/inlineMultiFile/captureInlinable.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("captureInlinableAndOther.kt")
     public void testCaptureInlinableAndOther() {
       runTest("js/js.translator/testData/box/inlineMultiFile/captureInlinableAndOther.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("captureThisAndReceiver.kt")
     public void testCaptureThisAndReceiver() {
       runTest("js/js.translator/testData/box/inlineMultiFile/captureThisAndReceiver.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureChain.kt")
     public void testClosureChain() {
       runTest("js/js.translator/testData/box/inlineMultiFile/closureChain.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("defaultMethod.kt")
     public void testDefaultMethod() {
       runTest("js/js.translator/testData/box/inlineMultiFile/defaultMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("generics.kt")
     public void testGenerics() {
       runTest("js/js.translator/testData/box/inlineMultiFile/generics.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineInDefaultParameter.kt")
     public void testInlineInDefaultParameter() {
       runTest("js/js.translator/testData/box/inlineMultiFile/inlineInDefaultParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineMultiFileSimple.kt")
     public void testInlineMultiFileSimple() {
       runTest("js/js.translator/testData/box/inlineMultiFile/inlineMultiFileSimple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaCloning.kt")
     public void testLambdaCloning() {
       runTest("js/js.translator/testData/box/inlineMultiFile/lambdaCloning.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaInLambda2.kt")
     public void testLambdaInLambda2() {
       runTest("js/js.translator/testData/box/inlineMultiFile/lambdaInLambda2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaInLambdaNoInline.kt")
     public void testLambdaInLambdaNoInline() {
       runTest("js/js.translator/testData/box/inlineMultiFile/lambdaInLambdaNoInline.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateVarFromInline.kt")
     public void testPrivateVarFromInline() {
       runTest("js/js.translator/testData/box/inlineMultiFile/privateVarFromInline.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("regeneratedLambdaName.kt")
     public void testRegeneratedLambdaName() {
       runTest("js/js.translator/testData/box/inlineMultiFile/regeneratedLambdaName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("sameCaptured.kt")
     public void testSameCaptured() {
       runTest("js/js.translator/testData/box/inlineMultiFile/sameCaptured.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleCapturingInClass.kt")
     public void testSimpleCapturingInClass() {
       runTest("js/js.translator/testData/box/inlineMultiFile/simpleCapturingInClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleCapturingInPackage.kt")
     public void testSimpleCapturingInPackage() {
       runTest("js/js.translator/testData/box/inlineMultiFile/simpleCapturingInPackage.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleDefaultMethod.kt")
     public void testSimpleDefaultMethod() {
       runTest("js/js.translator/testData/box/inlineMultiFile/simpleDefaultMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("trait.kt")
     public void testTrait() {
       runTest("js/js.translator/testData/box/inlineMultiFile/trait.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("tryCatch.kt")
     public void testTryCatch() {
       runTest("js/js.translator/testData/box/inlineMultiFile/tryCatch.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("tryCatch2.kt")
     public void testTryCatch2() {
       runTest("js/js.translator/testData/box/inlineMultiFile/tryCatch2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("tryCatchFinally.kt")
     public void testTryCatchFinally() {
       runTest("js/js.translator/testData/box/inlineMultiFile/tryCatchFinally.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("use.kt")
     public void testUse() {
       runTest("js/js.translator/testData/box/inlineMultiFile/use.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("with.kt")
     public void testWith() {
       runTest("js/js.translator/testData/box/inlineMultiFile/with.kt");
@@ -6633,204 +6633,204 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/inlineMultiModule")
   @TestDataPath("$PROJECT_ROOT")
   public class InlineMultiModule {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInInlineMultiModule() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inlineMultiModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("anotherModuleValInClosure.kt")
     public void testAnotherModuleValInClosure() {
       runTest("js/js.translator/testData/box/inlineMultiModule/anotherModuleValInClosure.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callFunction.kt")
     public void testCallFunction() {
       runTest("js/js.translator/testData/box/inlineMultiModule/callFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callableReference.kt")
     public void testCallableReference() {
       runTest("js/js.translator/testData/box/inlineMultiModule/callableReference.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("calledByFqName.kt")
     public void testCalledByFqName() {
       runTest("js/js.translator/testData/box/inlineMultiModule/calledByFqName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionLambda.kt")
     public void testExtensionLambda() {
       runTest("js/js.translator/testData/box/inlineMultiModule/extensionLambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalInlineCallDecomposed.kt")
     public void testExternalInlineCallDecomposed() {
       runTest("js/js.translator/testData/box/inlineMultiModule/externalInlineCallDecomposed.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalInlineNewDecomposed.kt")
     public void testExternalInlineNewDecomposed() {
       runTest("js/js.translator/testData/box/inlineMultiModule/externalInlineNewDecomposed.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("fakeFunctionInAnotherModule.kt")
     public void testFakeFunctionInAnotherModule() {
       runTest("js/js.translator/testData/box/inlineMultiModule/fakeFunctionInAnotherModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("importObjectInstance.kt")
     public void testImportObjectInstance() {
       runTest("js/js.translator/testData/box/inlineMultiModule/importObjectInstance.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("importStdLib.kt")
     public void testImportStdLib() {
       runTest("js/js.translator/testData/box/inlineMultiModule/importStdLib.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineInInlineWithLambdaMultiModule.kt")
     public void testInlineInInlineWithLambdaMultiModule() {
       runTest("js/js.translator/testData/box/inlineMultiModule/inlineInInlineWithLambdaMultiModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineMemberFunWithLambda.kt")
     public void testInlineMemberFunWithLambda() {
       runTest("js/js.translator/testData/box/inlineMultiModule/inlineMemberFunWithLambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineableAliasForExternalDeclaration.kt")
     public void testInlineableAliasForExternalDeclaration() {
       runTest("js/js.translator/testData/box/inlineMultiModule/inlineableAliasForExternalDeclaration.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("internalFriend.kt")
     public void testInternalFriend() {
       runTest("js/js.translator/testData/box/inlineMultiModule/internalFriend.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("internalNameClash.kt")
     public void testInternalNameClash() {
       runTest("js/js.translator/testData/box/inlineMultiModule/internalNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("keywordAsMemberName.kt")
     public void testKeywordAsMemberName() {
       runTest("js/js.translator/testData/box/inlineMultiModule/keywordAsMemberName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt16144.kt")
     public void testKt16144() {
       runTest("js/js.translator/testData/box/inlineMultiModule/kt16144.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt16160.kt")
     public void testKt16160() {
       runTest("js/js.translator/testData/box/inlineMultiModule/kt16160.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambda.kt")
     public void testLambda() {
       runTest("js/js.translator/testData/box/inlineMultiModule/lambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaCalledInObjectLiteral.kt")
     public void testLambdaCalledInObjectLiteral() {
       runTest("js/js.translator/testData/box/inlineMultiModule/lambdaCalledInObjectLiteral.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaWithClosure.kt")
     public void testLambdaWithClosure() {
       runTest("js/js.translator/testData/box/inlineMultiModule/lambdaWithClosure.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localNameClash.kt")
     public void testLocalNameClash() {
       runTest("js/js.translator/testData/box/inlineMultiModule/localNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localObjectLiteralWithInheritance.kt")
     public void testLocalObjectLiteralWithInheritance() {
       runTest("js/js.translator/testData/box/inlineMultiModule/localObjectLiteralWithInheritance.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("method.kt")
     public void testMethod() {
       runTest("js/js.translator/testData/box/inlineMultiModule/method.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("operators.kt")
     public void testOperators() {
       runTest("js/js.translator/testData/box/inlineMultiModule/operators.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("parameterWithDefaultValue.kt")
     public void testParameterWithDefaultValue() {
       runTest("js/js.translator/testData/box/inlineMultiModule/parameterWithDefaultValue.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("property.kt")
     public void testProperty() {
       runTest("js/js.translator/testData/box/inlineMultiModule/property.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("reexportDuringInline.kt")
     public void testReexportDuringInline() {
       runTest("js/js.translator/testData/box/inlineMultiModule/reexportDuringInline.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("repeatedImport.kt")
     public void testRepeatedImport() {
       runTest("js/js.translator/testData/box/inlineMultiModule/repeatedImport.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("js/js.translator/testData/box/inlineMultiModule/simple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelNestedInline.kt")
     public void testTopLevelNestedInline() {
       runTest("js/js.translator/testData/box/inlineMultiModule/topLevelNestedInline.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeParametersMangling.kt")
     public void testTypeParametersMangling() {
       runTest("js/js.translator/testData/box/inlineMultiModule/typeParametersMangling.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typealiases.kt")
     public void testTypealiases() {
       runTest("js/js.translator/testData/box/inlineMultiModule/typealiases.kt");
@@ -6841,108 +6841,108 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/inlineSizeReduction")
   @TestDataPath("$PROJECT_ROOT")
   public class InlineSizeReduction {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInInlineSizeReduction() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inlineSizeReduction"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineImportCleanup.kt")
     public void testInlineImportCleanup() {
       runTest("js/js.translator/testData/box/inlineSizeReduction/inlineImportCleanup.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineLambdaCleanup.kt")
     public void testInlineLambdaCleanup() {
       runTest("js/js.translator/testData/box/inlineSizeReduction/inlineLambdaCleanup.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineOrder.kt")
     public void testInlineOrder() {
       runTest("js/js.translator/testData/box/inlineSizeReduction/inlineOrder.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lastBreak.kt")
     public void testLastBreak() {
       runTest("js/js.translator/testData/box/inlineSizeReduction/lastBreak.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("multiModuleDefaultArgsCleanup.kt")
     public void testMultiModuleDefaultArgsCleanup() {
       runTest("js/js.translator/testData/box/inlineSizeReduction/multiModuleDefaultArgsCleanup.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("noDuplicateVariableDeclaration.kt")
     public void testNoDuplicateVariableDeclaration() {
       runTest("js/js.translator/testData/box/inlineSizeReduction/noDuplicateVariableDeclaration.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("oneTopLevelReturn.kt")
     public void testOneTopLevelReturn() {
       runTest("js/js.translator/testData/box/inlineSizeReduction/oneTopLevelReturn.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyAssignment.kt")
     public void testPropertyAssignment() {
       runTest("js/js.translator/testData/box/inlineSizeReduction/propertyAssignment.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyReassignment.kt")
     public void testPropertyReassignment() {
       runTest("js/js.translator/testData/box/inlineSizeReduction/propertyReassignment.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyReferenceDoesNotProduceSideEffect.kt")
     public void testPropertyReferenceDoesNotProduceSideEffect() {
       runTest("js/js.translator/testData/box/inlineSizeReduction/propertyReferenceDoesNotProduceSideEffect.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("returnInlineCall.kt")
     public void testReturnInlineCall() {
       runTest("js/js.translator/testData/box/inlineSizeReduction/returnInlineCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleReturnFunction.kt")
     public void testSimpleReturnFunction() {
       runTest("js/js.translator/testData/box/inlineSizeReduction/simpleReturnFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("ternaryConditional.kt")
     public void testTernaryConditional() {
       runTest("js/js.translator/testData/box/inlineSizeReduction/ternaryConditional.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("this.kt")
     public void testThis() {
       runTest("js/js.translator/testData/box/inlineSizeReduction/this.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("valAssignment.kt")
     public void testValAssignment() {
       runTest("js/js.translator/testData/box/inlineSizeReduction/valAssignment.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("valDeclaration.kt")
     public void testValDeclaration() {
       runTest("js/js.translator/testData/box/inlineSizeReduction/valDeclaration.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("varargTemporaryVar.kt")
     public void testVarargTemporaryVar() {
       runTest("js/js.translator/testData/box/inlineSizeReduction/varargTemporaryVar.kt");
@@ -6953,60 +6953,60 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/inlineStdlib")
   @TestDataPath("$PROJECT_ROOT")
   public class InlineStdlib {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInInlineStdlib() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inlineStdlib"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callNameClash.kt")
     public void testCallNameClash() {
       runTest("js/js.translator/testData/box/inlineStdlib/callNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callableRefToFunInCurrentModule.kt")
     public void testCallableRefToFunInCurrentModule() {
       runTest("js/js.translator/testData/box/inlineStdlib/callableRefToFunInCurrentModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closure.kt")
     public void testClosure() {
       runTest("js/js.translator/testData/box/inlineStdlib/closure.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureInObjectLiteral.kt")
     public void testClosureInObjectLiteral() {
       runTest("js/js.translator/testData/box/inlineStdlib/closureInObjectLiteral.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("closureNested.kt")
     public void testClosureNested() {
       runTest("js/js.translator/testData/box/inlineStdlib/closureNested.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localNamesClash.kt")
     public void testLocalNamesClash() {
       runTest("js/js.translator/testData/box/inlineStdlib/localNamesClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("js/js.translator/testData/box/inlineStdlib/simple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("thisInExtension.kt")
     public void testThisInExtension() {
       runTest("js/js.translator/testData/box/inlineStdlib/thisInExtension.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unsafeCast.kt")
     public void testUnsafeCast() {
       runTest("js/js.translator/testData/box/inlineStdlib/unsafeCast.kt");
@@ -7017,12 +7017,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/intrinsics")
   @TestDataPath("$PROJECT_ROOT")
   public class Intrinsics {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInIntrinsics() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/intrinsics"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeof.kt")
     public void testTypeof() {
       runTest("js/js.translator/testData/box/intrinsics/typeof.kt");
@@ -7033,7 +7033,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/java")
   @TestDataPath("$PROJECT_ROOT")
   public class Java {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInJava() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/java"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
@@ -7042,12 +7042,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/java/abstractList")
     @TestDataPath("$PROJECT_ROOT")
     public class AbstractList {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInAbstractList() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/java/abstractList"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("iterator.kt")
       public void testIterator() {
         runTest("js/js.translator/testData/box/java/abstractList/iterator.kt");
@@ -7058,102 +7058,102 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/java/arrayList")
     @TestDataPath("$PROJECT_ROOT")
     public class ArrayList {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("access.kt")
       public void testAccess() {
         runTest("js/js.translator/testData/box/java/arrayList/access.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInArrayList() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/java/arrayList"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("arrayAccess.kt")
       public void testArrayAccess() {
         runTest("js/js.translator/testData/box/java/arrayList/arrayAccess.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructWithCapacity.kt")
       public void testConstructWithCapacity() {
         runTest("js/js.translator/testData/box/java/arrayList/constructWithCapacity.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructWithSideEffectParam.kt")
       public void testConstructWithSideEffectParam() {
         runTest("js/js.translator/testData/box/java/arrayList/constructWithSideEffectParam.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("containsAll.kt")
       public void testContainsAll() {
         runTest("js/js.translator/testData/box/java/arrayList/containsAll.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("emptyList.kt")
       public void testEmptyList() {
         runTest("js/js.translator/testData/box/java/arrayList/emptyList.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("indexOOB.kt")
       public void testIndexOOB() {
         runTest("js/js.translator/testData/box/java/arrayList/indexOOB.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("indexOf.kt")
       public void testIndexOf() {
         runTest("js/js.translator/testData/box/java/arrayList/indexOf.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("isEmpty.kt")
       public void testIsEmpty() {
         runTest("js/js.translator/testData/box/java/arrayList/isEmpty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("iterate.kt")
       public void testIterate() {
         runTest("js/js.translator/testData/box/java/arrayList/iterate.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("misc.kt")
       public void testMisc() {
         runTest("js/js.translator/testData/box/java/arrayList/misc.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("remove.kt")
       public void testRemove() {
         runTest("js/js.translator/testData/box/java/arrayList/remove.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("removeAll.kt")
       public void testRemoveAll() {
         runTest("js/js.translator/testData/box/java/arrayList/removeAll.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("removeWithIndexOutOfBounds.kt")
       public void testRemoveWithIndexOutOfBounds() {
         runTest("js/js.translator/testData/box/java/arrayList/removeWithIndexOutOfBounds.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("retainAll.kt")
       public void testRetainAll() {
         runTest("js/js.translator/testData/box/java/arrayList/retainAll.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("toArray.kt")
       public void testToArray() {
         runTest("js/js.translator/testData/box/java/arrayList/toArray.kt");
@@ -7165,30 +7165,30 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/jsAstOptimizations")
   @TestDataPath("$PROJECT_ROOT")
   public class JsAstOptimizations {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInJsAstOptimizations() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsAstOptimizations"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("deadCodeElimination.kt")
     public void testDeadCodeElimination() {
       runTest("js/js.translator/testData/box/jsAstOptimizations/deadCodeElimination.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineEmptyFunction.kt")
     public void testInlineEmptyFunction() {
       runTest("js/js.translator/testData/box/jsAstOptimizations/inlineEmptyFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("logicalOperators.kt")
     public void testLogicalOperators() {
       runTest("js/js.translator/testData/box/jsAstOptimizations/logicalOperators.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("tempVarDeclOnAssignment.kt")
     public void testTempVarDeclOnAssignment() {
       runTest("js/js.translator/testData/box/jsAstOptimizations/tempVarDeclOnAssignment.kt");
@@ -7199,216 +7199,216 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/jsCode")
   @TestDataPath("$PROJECT_ROOT")
   public class JsCode {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInJsCode() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsCode"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("break.kt")
     public void testBreak() {
       runTest("js/js.translator/testData/box/jsCode/break.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("catchScope.kt")
     public void testCatchScope() {
       runTest("js/js.translator/testData/box/jsCode/catchScope.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("codeFromVariable.kt")
     public void testCodeFromVariable() {
       runTest("js/js.translator/testData/box/jsCode/codeFromVariable.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("comments.kt")
     public void testComments() {
       runTest("js/js.translator/testData/box/jsCode/comments.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("compileTimeString.kt")
     public void testCompileTimeString() {
       runTest("js/js.translator/testData/box/jsCode/compileTimeString.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constantExpression.kt")
     public void testConstantExpression() {
       runTest("js/js.translator/testData/box/jsCode/constantExpression.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("continue.kt")
     public void testContinue() {
       runTest("js/js.translator/testData/box/jsCode/continue.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("doWhile.kt")
     public void testDoWhile() {
       runTest("js/js.translator/testData/box/jsCode/doWhile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("for.kt")
     public void testFor() {
       runTest("js/js.translator/testData/box/jsCode/for.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("forIn.kt")
     public void testForIn() {
       runTest("js/js.translator/testData/box/jsCode/forIn.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("forWithoutInit.kt")
     public void testForWithoutInit() {
       runTest("js/js.translator/testData/box/jsCode/forWithoutInit.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("function.kt")
     public void testFunction() {
       runTest("js/js.translator/testData/box/jsCode/function.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionName.kt")
     public void testFunctionName() {
       runTest("js/js.translator/testData/box/jsCode/functionName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("if.kt")
     public void testIf() {
       runTest("js/js.translator/testData/box/jsCode/if.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("init.kt")
     public void testInit() {
       runTest("js/js.translator/testData/box/jsCode/init.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("invocation.kt")
     public void testInvocation() {
       runTest("js/js.translator/testData/box/jsCode/invocation.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt41964.kt")
     public void testKt41964() {
       runTest("js/js.translator/testData/box/jsCode/kt41964.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt44981.kt")
     public void testKt44981() {
       runTest("js/js.translator/testData/box/jsCode/kt44981.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("label.kt")
     public void testLabel() {
       runTest("js/js.translator/testData/box/jsCode/label.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("labelNestedClash.kt")
     public void testLabelNestedClash() {
       runTest("js/js.translator/testData/box/jsCode/labelNestedClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("labelNestedClashWithKotlin.kt")
     public void testLabelNestedClashWithKotlin() {
       runTest("js/js.translator/testData/box/jsCode/labelNestedClashWithKotlin.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("labelSiblingClash.kt")
     public void testLabelSiblingClash() {
       runTest("js/js.translator/testData/box/jsCode/labelSiblingClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("literal.kt")
     public void testLiteral() {
       runTest("js/js.translator/testData/box/jsCode/literal.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("literalInVal.kt")
     public void testLiteralInVal() {
       runTest("js/js.translator/testData/box/jsCode/literalInVal.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("literalInValField.kt")
     public void testLiteralInValField() {
       runTest("js/js.translator/testData/box/jsCode/literalInValField.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("numberLiteralOverflow.kt")
     public void testNumberLiteralOverflow() {
       runTest("js/js.translator/testData/box/jsCode/numberLiteralOverflow.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("object.kt")
     public void testObject() {
       runTest("js/js.translator/testData/box/jsCode/object.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectExpression.kt")
     public void testObjectExpression() {
       runTest("js/js.translator/testData/box/jsCode/objectExpression.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectScopes.kt")
     public void testObjectScopes() {
       runTest("js/js.translator/testData/box/jsCode/objectScopes.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("operators.kt")
     public void testOperators() {
       runTest("js/js.translator/testData/box/jsCode/operators.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("quotes.kt")
     public void testQuotes() {
       runTest("js/js.translator/testData/box/jsCode/quotes.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("referenceToKotlin.kt")
     public void testReferenceToKotlin() {
       runTest("js/js.translator/testData/box/jsCode/referenceToKotlin.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("switch.kt")
     public void testSwitch() {
       runTest("js/js.translator/testData/box/jsCode/switch.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("tryCatchFinally.kt")
     public void testTryCatchFinally() {
       runTest("js/js.translator/testData/box/jsCode/tryCatchFinally.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("while.kt")
     public void testWhile() {
       runTest("js/js.translator/testData/box/jsCode/while.kt");
@@ -7419,42 +7419,42 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/jsExport")
   @TestDataPath("$PROJECT_ROOT")
   public class JsExport {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInJsExport() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsExport"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("dataClass.kt")
     public void testDataClass() {
       runTest("js/js.translator/testData/box/jsExport/dataClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportedDefaultStub.kt")
     public void testExportedDefaultStub() {
       runTest("js/js.translator/testData/box/jsExport/exportedDefaultStub.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("interfaceWithCompanion.kt")
     public void testInterfaceWithCompanion() {
       runTest("js/js.translator/testData/box/jsExport/interfaceWithCompanion.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsExportInClass.kt")
     public void testJsExportInClass() {
       runTest("js/js.translator/testData/box/jsExport/jsExportInClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privatePropertyAccessFromMethod.kt")
     public void testPrivatePropertyAccessFromMethod() {
       runTest("js/js.translator/testData/box/jsExport/privatePropertyAccessFromMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("recursiveExport.kt")
     public void testRecursiveExport() {
       runTest("js/js.translator/testData/box/jsExport/recursiveExport.kt");
@@ -7465,138 +7465,138 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/jsModule")
   @TestDataPath("$PROJECT_ROOT")
   public class JsModule {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInJsModule() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalClass.kt")
     public void testExternalClass() {
       runTest("js/js.translator/testData/box/jsModule/externalClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalClassNameClash.kt")
     public void testExternalClassNameClash() {
       runTest("js/js.translator/testData/box/jsModule/externalClassNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalClassWithDefaults.kt")
     public void testExternalClassWithDefaults() {
       runTest("js/js.translator/testData/box/jsModule/externalClassWithDefaults.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalConstructor.kt")
     public void testExternalConstructor() {
       runTest("js/js.translator/testData/box/jsModule/externalConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalFunction.kt")
     public void testExternalFunction() {
       runTest("js/js.translator/testData/box/jsModule/externalFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalFunctionNameClash.kt")
     public void testExternalFunctionNameClash() {
       runTest("js/js.translator/testData/box/jsModule/externalFunctionNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalFunctionPlain.kt")
     public void testExternalFunctionPlain() {
       runTest("js/js.translator/testData/box/jsModule/externalFunctionPlain.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalFunctionUmd.kt")
     public void testExternalFunctionUmd() {
       runTest("js/js.translator/testData/box/jsModule/externalFunctionUmd.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalFunctionUmdFallback.kt")
     public void testExternalFunctionUmdFallback() {
       runTest("js/js.translator/testData/box/jsModule/externalFunctionUmdFallback.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalObject.kt")
     public void testExternalObject() {
       runTest("js/js.translator/testData/box/jsModule/externalObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalPackage.kt")
     public void testExternalPackage() {
       runTest("js/js.translator/testData/box/jsModule/externalPackage.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalPackageInDifferentFile.kt")
     public void testExternalPackageInDifferentFile() {
       runTest("js/js.translator/testData/box/jsModule/externalPackageInDifferentFile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalPackagePlain.kt")
     public void testExternalPackagePlain() {
       runTest("js/js.translator/testData/box/jsModule/externalPackagePlain.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalPackageUmdFallback.kt")
     public void testExternalPackageUmdFallback() {
       runTest("js/js.translator/testData/box/jsModule/externalPackageUmdFallback.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalProperty.kt")
     public void testExternalProperty() {
       runTest("js/js.translator/testData/box/jsModule/externalProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("importCountCommonJS.kt")
     public void testImportCountCommonJS() {
       runTest("js/js.translator/testData/box/jsModule/importCountCommonJS.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("importCountUmd.kt")
     public void testImportCountUmd() {
       runTest("js/js.translator/testData/box/jsModule/importCountUmd.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("interfaces.kt")
     public void testInterfaces() {
       runTest("js/js.translator/testData/box/jsModule/interfaces.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("interfacesWithCompanion.kt")
     public void testInterfacesWithCompanion() {
       runTest("js/js.translator/testData/box/jsModule/interfacesWithCompanion.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt39378.kt")
     public void testKt39378() {
       runTest("js/js.translator/testData/box/jsModule/kt39378.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("sameExternalNames.kt")
     public void testSameExternalNames() {
       runTest("js/js.translator/testData/box/jsModule/sameExternalNames.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelVarargFun.kt")
     public void testTopLevelVarargFun() {
       runTest("js/js.translator/testData/box/jsModule/topLevelVarargFun.kt");
@@ -7607,132 +7607,132 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/jsName")
   @TestDataPath("$PROJECT_ROOT")
   public class JsName {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInJsName() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsName"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("avoidNameClash.kt")
     public void testAvoidNameClash() {
       runTest("js/js.translator/testData/box/jsName/avoidNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classes.kt")
     public void testClasses() {
       runTest("js/js.translator/testData/box/jsName/classes.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("defaultJsName.kt")
     public void testDefaultJsName() {
       runTest("js/js.translator/testData/box/jsName/defaultJsName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inheritFromRenamedNativeClass.kt")
     public void testInheritFromRenamedNativeClass() {
       runTest("js/js.translator/testData/box/jsName/inheritFromRenamedNativeClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inheritFromRenamedNativeClassMultimodule.kt")
     public void testInheritFromRenamedNativeClassMultimodule() {
       runTest("js/js.translator/testData/box/jsName/inheritFromRenamedNativeClassMultimodule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsName.kt")
     public void testJsName() {
       runTest("js/js.translator/testData/box/jsName/jsName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsNamePropertyAccessors.kt")
     public void testJsNamePropertyAccessors() {
       runTest("js/js.translator/testData/box/jsName/jsNamePropertyAccessors.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsTopLevelClashes.kt")
     public void testJsTopLevelClashes() {
       runTest("js/js.translator/testData/box/jsName/jsTopLevelClashes.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsTopLevelRenameReserved.kt")
     public void testJsTopLevelRenameReserved() {
       runTest("js/js.translator/testData/box/jsName/jsTopLevelRenameReserved.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("methodOfAbstractClass.kt")
     public void testMethodOfAbstractClass() {
       runTest("js/js.translator/testData/box/jsName/methodOfAbstractClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("methodOfInterface.kt")
     public void testMethodOfInterface() {
       runTest("js/js.translator/testData/box/jsName/methodOfInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("methodOfInterfaceWithDefinition.kt")
     public void testMethodOfInterfaceWithDefinition() {
       runTest("js/js.translator/testData/box/jsName/methodOfInterfaceWithDefinition.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("methodOfMultipleInterface.kt")
     public void testMethodOfMultipleInterface() {
       runTest("js/js.translator/testData/box/jsName/methodOfMultipleInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("methodOfOpenClass.kt")
     public void testMethodOfOpenClass() {
       runTest("js/js.translator/testData/box/jsName/methodOfOpenClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overriddenMethod.kt")
     public void testOverriddenMethod() {
       runTest("js/js.translator/testData/box/jsName/overriddenMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overridenFromInterface.kt")
     public void testOverridenFromInterface() {
       runTest("js/js.translator/testData/box/jsName/overridenFromInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("peculiarIdentifiers.kt")
     public void testPeculiarIdentifiers() {
       runTest("js/js.translator/testData/box/jsName/peculiarIdentifiers.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateMethod.kt")
     public void testPrivateMethod() {
       runTest("js/js.translator/testData/box/jsName/privateMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyAccessorFromOtherModule.kt")
     public void testPropertyAccessorFromOtherModule() {
       runTest("js/js.translator/testData/box/jsName/propertyAccessorFromOtherModule.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("secondaryConstructor.kt")
     public void testSecondaryConstructor() {
       runTest("js/js.translator/testData/box/jsName/secondaryConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleJsName.kt")
     public void testSimpleJsName() {
       runTest("js/js.translator/testData/box/jsName/simpleJsName.kt");
@@ -7743,42 +7743,42 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/jsQualifier")
   @TestDataPath("$PROJECT_ROOT")
   public class JsQualifier {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInJsQualifier() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsQualifier"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classes.kt")
     public void testClasses() {
       runTest("js/js.translator/testData/box/jsQualifier/classes.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("interfaces.kt")
     public void testInterfaces() {
       runTest("js/js.translator/testData/box/jsQualifier/interfaces.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("interfacesWithCompanion.kt")
     public void testInterfacesWithCompanion() {
       runTest("js/js.translator/testData/box/jsQualifier/interfacesWithCompanion.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("js/js.translator/testData/box/jsQualifier/simple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("umdFallback.kt")
     public void testUmdFallback() {
       runTest("js/js.translator/testData/box/jsQualifier/umdFallback.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("withModule.kt")
     public void testWithModule() {
       runTest("js/js.translator/testData/box/jsQualifier/withModule.kt");
@@ -7789,48 +7789,48 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/keep")
   @TestDataPath("$PROJECT_ROOT")
   public class Keep {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInKeep() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/keep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("keepClass.kt")
     public void testKeepClass() {
       runTest("js/js.translator/testData/box/keep/keepClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("keepInterface.kt")
     public void testKeepInterface() {
       runTest("js/js.translator/testData/box/keep/keepInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("keepMethod.kt")
     public void testKeepMethod() {
       runTest("js/js.translator/testData/box/keep/keepMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("keepNestedClass.kt")
     public void testKeepNestedClass() {
       runTest("js/js.translator/testData/box/keep/keepNestedClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("keepNestedClassIfKeptTopLevelClass.kt")
     public void testKeepNestedClassIfKeptTopLevelClass() {
       runTest("js/js.translator/testData/box/keep/keepNestedClassIfKeptTopLevelClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("keepOverriddenMethod.kt")
     public void testKeepOverriddenMethod() {
       runTest("js/js.translator/testData/box/keep/keepOverriddenMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("keepVarAnonymousClass.kt")
     public void testKeepVarAnonymousClass() {
       runTest("js/js.translator/testData/box/keep/keepVarAnonymousClass.kt");
@@ -7841,60 +7841,60 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/kotlin.test")
   @TestDataPath("$PROJECT_ROOT")
   public class Kotlin_test {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInKotlin_test() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/kotlin.test"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("beforeAfter.kt")
     public void testBeforeAfter() {
       runTest("js/js.translator/testData/box/kotlin.test/beforeAfter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("ignore.kt")
     public void testIgnore() {
       runTest("js/js.translator/testData/box/kotlin.test/ignore.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("illegalParameters.kt")
     public void testIllegalParameters() {
       runTest("js/js.translator/testData/box/kotlin.test/illegalParameters.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("incremental.kt")
     public void testIncremental() {
       runTest("js/js.translator/testData/box/kotlin.test/incremental.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inherited.kt")
     public void testInherited() {
       runTest("js/js.translator/testData/box/kotlin.test/inherited.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("mpp.kt")
     public void testMpp() {
       runTest("js/js.translator/testData/box/kotlin.test/mpp.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nested.kt")
     public void testNested() {
       runTest("js/js.translator/testData/box/kotlin.test/nested.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("returnTestResult.kt")
     public void testReturnTestResult() {
       runTest("js/js.translator/testData/box/kotlin.test/returnTestResult.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("js/js.translator/testData/box/kotlin.test/simple.kt");
@@ -7905,78 +7905,78 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/labels")
   @TestDataPath("$PROJECT_ROOT")
   public class Labels {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInLabels() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/labels"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("labelOnExpression.kt")
     public void testLabelOnExpression() {
       runTest("js/js.translator/testData/box/labels/labelOnExpression.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("labelWithVariableClashing.kt")
     public void testLabelWithVariableClashing() {
       runTest("js/js.translator/testData/box/labels/labelWithVariableClashing.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedInlineLabels.kt")
     public void testNestedInlineLabels() {
       runTest("js/js.translator/testData/box/labels/nestedInlineLabels.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedLabels.kt")
     public void testNestedLabels() {
       runTest("js/js.translator/testData/box/labels/nestedLabels.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedLabelsInlinedClashing.kt")
     public void testNestedLabelsInlinedClashing() {
       runTest("js/js.translator/testData/box/labels/nestedLabelsInlinedClashing.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedLabelsInlinedClashingAtFunctionsWithClosure.kt")
     public void testNestedLabelsInlinedClashingAtFunctionsWithClosure() {
       runTest("js/js.translator/testData/box/labels/nestedLabelsInlinedClashingAtFunctionsWithClosure.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("peculiarNames.kt")
     public void testPeculiarNames() {
       runTest("js/js.translator/testData/box/labels/peculiarNames.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("siblingLabels.kt")
     public void testSiblingLabels() {
       runTest("js/js.translator/testData/box/labels/siblingLabels.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("siblingLabelsInlined.kt")
     public void testSiblingLabelsInlined() {
       runTest("js/js.translator/testData/box/labels/siblingLabelsInlined.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("siblingLabelsInlinedClashing.kt")
     public void testSiblingLabelsInlinedClashing() {
       runTest("js/js.translator/testData/box/labels/siblingLabelsInlinedClashing.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleLabel.kt")
     public void testSimpleLabel() {
       runTest("js/js.translator/testData/box/labels/simpleLabel.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleLabelInlined.kt")
     public void testSimpleLabelInlined() {
       runTest("js/js.translator/testData/box/labels/simpleLabelInlined.kt");
@@ -7987,12 +7987,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/local")
   @TestDataPath("$PROJECT_ROOT")
   public class Local {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInLocal() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/local"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("contextDependentLocalClassName.kt")
     public void testContextDependentLocalClassName() {
       runTest("js/js.translator/testData/box/local/contextDependentLocalClassName.kt");
@@ -8003,54 +8003,54 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/main")
   @TestDataPath("$PROJECT_ROOT")
   public class Main {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInMain() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/main"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("differentMains.kt")
     public void testDifferentMains() {
       runTest("js/js.translator/testData/box/main/differentMains.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("incremental.kt")
     public void testIncremental() {
       runTest("js/js.translator/testData/box/main/incremental.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("noArgs.kt")
     public void testNoArgs() {
       runTest("js/js.translator/testData/box/main/noArgs.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("js/js.translator/testData/box/main/simple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("suspendMain.kt")
     public void testSuspendMain() {
       runTest("js/js.translator/testData/box/main/suspendMain.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("suspendMainNoArgs.kt")
     public void testSuspendMainNoArgs() {
       runTest("js/js.translator/testData/box/main/suspendMainNoArgs.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("suspendMainThrows.kt")
     public void testSuspendMainThrows() {
       runTest("js/js.translator/testData/box/main/suspendMainThrows.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("twoMains.kt")
     public void testTwoMains() {
       runTest("js/js.translator/testData/box/main/twoMains.kt");
@@ -8061,48 +8061,48 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/multiFile")
   @TestDataPath("$PROJECT_ROOT")
   public class MultiFile {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInMultiFile() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiFile"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classOfTheSameNameInAnotherPackage.kt")
     public void testClassOfTheSameNameInAnotherPackage() {
       runTest("js/js.translator/testData/box/multiFile/classOfTheSameNameInAnotherPackage.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classesInheritedFromOtherFile.kt")
     public void testClassesInheritedFromOtherFile() {
       runTest("js/js.translator/testData/box/multiFile/classesInheritedFromOtherFile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionsVisibleFromOtherFile.kt")
     public void testFunctionsVisibleFromOtherFile() {
       runTest("js/js.translator/testData/box/multiFile/functionsVisibleFromOtherFile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("importedDeclarationMangling.kt")
     public void testImportedDeclarationMangling() {
       runTest("js/js.translator/testData/box/multiFile/importedDeclarationMangling.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("packageAndMangledMethodDoNotClash.kt")
     public void testPackageAndMangledMethodDoNotClash() {
       runTest("js/js.translator/testData/box/multiFile/packageAndMangledMethodDoNotClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("packageAndPrivateDeclarationDoNotClash.kt")
     public void testPackageAndPrivateDeclarationDoNotClash() {
       runTest("js/js.translator/testData/box/multiFile/packageAndPrivateDeclarationDoNotClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("samePrivateVals.kt")
     public void testSamePrivateVals() {
       runTest("js/js.translator/testData/box/multiFile/samePrivateVals.kt");
@@ -8113,90 +8113,90 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/multiModule")
   @TestDataPath("$PROJECT_ROOT")
   public class MultiModule {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInMultiModule() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("clashedDeclLinkage.kt")
     public void testClashedDeclLinkage() {
       runTest("js/js.translator/testData/box/multiModule/clashedDeclLinkage.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("clashedInternalDeclarations.kt")
     public void testClashedInternalDeclarations() {
       runTest("js/js.translator/testData/box/multiModule/clashedInternalDeclarations.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportFromModules.kt")
     public void testExportFromModules() {
       runTest("js/js.translator/testData/box/multiModule/exportFromModules.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("interfaceMethodWithDefaultParameter.kt")
     public void testInterfaceMethodWithDefaultParameter() {
       runTest("js/js.translator/testData/box/multiModule/interfaceMethodWithDefaultParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localClassMetadata.kt")
     public void testLocalClassMetadata() {
       runTest("js/js.translator/testData/box/multiModule/localClassMetadata.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("moduleAndVariableNameClash.kt")
     public void testModuleAndVariableNameClash() {
       runTest("js/js.translator/testData/box/multiModule/moduleAndVariableNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateInterfaceMethodInheritance.kt")
     public void testPrivateInterfaceMethodInheritance() {
       runTest("js/js.translator/testData/box/multiModule/privateInterfaceMethodInheritance.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateInterfaceNameClash.kt")
     public void testPrivateInterfaceNameClash() {
       runTest("js/js.translator/testData/box/multiModule/privateInterfaceNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateNameClash.kt")
     public void testPrivateNameClash() {
       runTest("js/js.translator/testData/box/multiModule/privateNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("publishedApiMangling.kt")
     public void testPublishedApiMangling() {
       runTest("js/js.translator/testData/box/multiModule/publishedApiMangling.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("samePackageNames.kt")
     public void testSamePackageNames() {
       runTest("js/js.translator/testData/box/multiModule/samePackageNames.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("symbolRedeclaration.kt")
     public void testSymbolRedeclaration() {
       runTest("js/js.translator/testData/box/multiModule/symbolRedeclaration.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("transitiveDependency.kt")
     public void testTransitiveDependency() {
       runTest("js/js.translator/testData/box/multiModule/transitiveDependency.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("useElementsFromDefaultPackageInAnotherModule.kt")
     public void testUseElementsFromDefaultPackageInAnotherModule() {
       runTest("js/js.translator/testData/box/multiModule/useElementsFromDefaultPackageInAnotherModule.kt");
@@ -8207,7 +8207,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/multiModuleWrappers")
   @TestDataPath("$PROJECT_ROOT")
   public class MultiModuleWrappers {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInMultiModuleWrappers() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
@@ -8216,24 +8216,24 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/multiModuleWrappers/amd")
     @TestDataPath("$PROJECT_ROOT")
     public class Amd {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInAmd() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers/amd"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("jsModuleOnPackage.kt")
       public void testJsModuleOnPackage() {
         runTest("js/js.translator/testData/box/multiModuleWrappers/amd/jsModuleOnPackage.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("moduleWithNonIdentifierName.kt")
       public void testModuleWithNonIdentifierName() {
         runTest("js/js.translator/testData/box/multiModuleWrappers/amd/moduleWithNonIdentifierName.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("js/js.translator/testData/box/multiModuleWrappers/amd/simple.kt");
@@ -8244,24 +8244,24 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/multiModuleWrappers/common_js")
     @TestDataPath("$PROJECT_ROOT")
     public class Common_js {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInCommon_js() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers/common_js"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inlineFromModuleWithNonIdentifierName.kt")
       public void testInlineFromModuleWithNonIdentifierName() {
         runTest("js/js.translator/testData/box/multiModuleWrappers/common_js/inlineFromModuleWithNonIdentifierName.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("moduleWithNonIdentifierName.kt")
       public void testModuleWithNonIdentifierName() {
         runTest("js/js.translator/testData/box/multiModuleWrappers/common_js/moduleWithNonIdentifierName.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("js/js.translator/testData/box/multiModuleWrappers/common_js/simple.kt");
@@ -8272,24 +8272,24 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/multiModuleWrappers/plain")
     @TestDataPath("$PROJECT_ROOT")
     public class Plain {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInPlain() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers/plain"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inlineFromModuleWithNonIdentifierName.kt")
       public void testInlineFromModuleWithNonIdentifierName() {
         runTest("js/js.translator/testData/box/multiModuleWrappers/plain/inlineFromModuleWithNonIdentifierName.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("moduleWithNonIdentifierName.kt")
       public void testModuleWithNonIdentifierName() {
         runTest("js/js.translator/testData/box/multiModuleWrappers/plain/moduleWithNonIdentifierName.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("js/js.translator/testData/box/multiModuleWrappers/plain/simple.kt");
@@ -8300,18 +8300,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/multiModuleWrappers/umd")
     @TestDataPath("$PROJECT_ROOT")
     public class Umd {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInUmd() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers/umd"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("moduleWithNonIdentifierName.kt")
       public void testModuleWithNonIdentifierName() {
         runTest("js/js.translator/testData/box/multiModuleWrappers/umd/moduleWithNonIdentifierName.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("js/js.translator/testData/box/multiModuleWrappers/umd/simple.kt");
@@ -8323,60 +8323,60 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/multiPackage")
   @TestDataPath("$PROJECT_ROOT")
   public class MultiPackage {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInMultiPackage() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiPackage"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classesInheritedFromOtherPackage.kt")
     public void testClassesInheritedFromOtherPackage() {
       runTest("js/js.translator/testData/box/multiPackage/classesInheritedFromOtherPackage.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("createClassFromOtherPackage.kt")
     public void testCreateClassFromOtherPackage() {
       runTest("js/js.translator/testData/box/multiPackage/createClassFromOtherPackage.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("createClassFromOtherPackageUsingImport.kt")
     public void testCreateClassFromOtherPackageUsingImport() {
       runTest("js/js.translator/testData/box/multiPackage/createClassFromOtherPackageUsingImport.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("functionsVisibleFromOtherPackage.kt")
     public void testFunctionsVisibleFromOtherPackage() {
       runTest("js/js.translator/testData/box/multiPackage/functionsVisibleFromOtherPackage.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedPackageFunctionCalledFromOtherPackage.kt")
     public void testNestedPackageFunctionCalledFromOtherPackage() {
       runTest("js/js.translator/testData/box/multiPackage/nestedPackageFunctionCalledFromOtherPackage.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("packageVariableVisibleFromOtherPackage.kt")
     public void testPackageVariableVisibleFromOtherPackage() {
       runTest("js/js.translator/testData/box/multiPackage/packageVariableVisibleFromOtherPackage.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("reflectionFromOtherPackage.kt")
     public void testReflectionFromOtherPackage() {
       runTest("js/js.translator/testData/box/multiPackage/reflectionFromOtherPackage.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("subpackagesWithClashingNames.kt")
     public void testSubpackagesWithClashingNames() {
       runTest("js/js.translator/testData/box/multiPackage/subpackagesWithClashingNames.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("subpackagesWithClashingNamesUsingImport.kt")
     public void testSubpackagesWithClashingNamesUsingImport() {
       runTest("js/js.translator/testData/box/multiPackage/subpackagesWithClashingNamesUsingImport.kt");
@@ -8387,48 +8387,48 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/multideclaration")
   @TestDataPath("$PROJECT_ROOT")
   public class Multideclaration {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInMultideclaration() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multideclaration"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("multiValForArray.kt")
     public void testMultiValForArray() {
       runTest("js/js.translator/testData/box/multideclaration/multiValForArray.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("multiValForMap.kt")
     public void testMultiValForMap() {
       runTest("js/js.translator/testData/box/multideclaration/multiValForMap.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("multiValForRange.kt")
     public void testMultiValForRange() {
       runTest("js/js.translator/testData/box/multideclaration/multiValForRange.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("multiValInFor.kt")
     public void testMultiValInFor() {
       runTest("js/js.translator/testData/box/multideclaration/multiValInFor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("multiValInIntFor.kt")
     public void testMultiValInIntFor() {
       runTest("js/js.translator/testData/box/multideclaration/multiValInIntFor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("multiValInIntRangeFor.kt")
     public void testMultiValInIntRangeFor() {
       runTest("js/js.translator/testData/box/multideclaration/multiValInIntRangeFor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("multiValOrVar.kt")
     public void testMultiValOrVar() {
       runTest("js/js.translator/testData/box/multideclaration/multiValOrVar.kt");
@@ -8439,156 +8439,156 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/nameClashes")
   @TestDataPath("$PROJECT_ROOT")
   public class NameClashes {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInNameClashes() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/nameClashes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classAndCompanionObjectMembers.kt")
     public void testClassAndCompanionObjectMembers() {
       runTest("js/js.translator/testData/box/nameClashes/classAndCompanionObjectMembers.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constructorLocalVar.kt")
     public void testConstructorLocalVar() {
       runTest("js/js.translator/testData/box/nameClashes/constructorLocalVar.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constructorsCrossFile.kt")
     public void testConstructorsCrossFile() {
       runTest("js/js.translator/testData/box/nameClashes/constructorsCrossFile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("differenceInCapitalization.kt")
     public void testDifferenceInCapitalization() {
       runTest("js/js.translator/testData/box/nameClashes/differenceInCapitalization.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionFunctionAndProperty.kt")
     public void testExtensionFunctionAndProperty() {
       runTest("js/js.translator/testData/box/nameClashes/extensionFunctionAndProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionPropertiesWithDifferentReceivers.kt")
     public void testExtensionPropertiesWithDifferentReceivers() {
       runTest("js/js.translator/testData/box/nameClashes/extensionPropertiesWithDifferentReceivers.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionPropertyAndMethod.kt")
     public void testExtensionPropertyAndMethod() {
       runTest("js/js.translator/testData/box/nameClashes/extensionPropertyAndMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsNameAndPrivate.kt")
     public void testJsNameAndPrivate() {
       runTest("js/js.translator/testData/box/nameClashes/jsNameAndPrivate.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsQualifier.kt")
     public void testJsQualifier() {
       runTest("js/js.translator/testData/box/nameClashes/jsQualifier.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localFunctionInLambda.kt")
     public void testLocalFunctionInLambda() {
       runTest("js/js.translator/testData/box/nameClashes/localFunctionInLambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localFunctions.kt")
     public void testLocalFunctions() {
       runTest("js/js.translator/testData/box/nameClashes/localFunctions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("methodAndPrivateProperty.kt")
     public void testMethodAndPrivateProperty() {
       runTest("js/js.translator/testData/box/nameClashes/methodAndPrivateProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("methodOverload.kt")
     public void testMethodOverload() {
       runTest("js/js.translator/testData/box/nameClashes/methodOverload.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("methodOverloadInClassWithTwoUpperBounds.kt")
     public void testMethodOverloadInClassWithTwoUpperBounds() {
       runTest("js/js.translator/testData/box/nameClashes/methodOverloadInClassWithTwoUpperBounds.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nativeAndTopLevelFunction.kt")
     public void testNativeAndTopLevelFunction() {
       runTest("js/js.translator/testData/box/nameClashes/nativeAndTopLevelFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nativeDeclarationAndLocalVar.kt")
     public void testNativeDeclarationAndLocalVar() {
       runTest("js/js.translator/testData/box/nameClashes/nativeDeclarationAndLocalVar.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overloadClassGenericExtension.kt")
     public void testOverloadClassGenericExtension() {
       runTest("js/js.translator/testData/box/nameClashes/overloadClassGenericExtension.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overloadClassGenericExtensionInGenericScope.kt")
     public void testOverloadClassGenericExtensionInGenericScope() {
       runTest("js/js.translator/testData/box/nameClashes/overloadClassGenericExtensionInGenericScope.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overloadExtension.kt")
     public void testOverloadExtension() {
       runTest("js/js.translator/testData/box/nameClashes/overloadExtension.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overloadMethodsWithSameParameterPrivateTypeName.kt")
     public void testOverloadMethodsWithSameParameterPrivateTypeName() {
       runTest("js/js.translator/testData/box/nameClashes/overloadMethodsWithSameParameterPrivateTypeName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overloadMethodsWithSameParameterTypeName.kt")
     public void testOverloadMethodsWithSameParameterTypeName() {
       runTest("js/js.translator/testData/box/nameClashes/overloadMethodsWithSameParameterTypeName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("promiseThen.kt")
     public void testPromiseThen() {
       runTest("js/js.translator/testData/box/nameClashes/promiseThen.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyAndNativeMethod.kt")
     public void testPropertyAndNativeMethod() {
       runTest("js/js.translator/testData/box/nameClashes/propertyAndNativeMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("topLevelFunctionAndParameter.kt")
     public void testTopLevelFunctionAndParameter() {
       runTest("js/js.translator/testData/box/nameClashes/topLevelFunctionAndParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("withBuiltin.kt")
     public void testWithBuiltin() {
       runTest("js/js.translator/testData/box/nameClashes/withBuiltin.kt");
@@ -8599,258 +8599,258 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/native")
   @TestDataPath("$PROJECT_ROOT")
   public class Native {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("accessToCompanionObjectFromInlineFun.kt")
     public void testAccessToCompanionObjectFromInlineFun() {
       runTest("js/js.translator/testData/box/native/accessToCompanionObjectFromInlineFun.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInNative() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/native"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callbackOptionalParameter.kt")
     public void testCallbackOptionalParameter() {
       runTest("js/js.translator/testData/box/native/callbackOptionalParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("castToNativeClassChecked.kt")
     public void testCastToNativeClassChecked() {
       runTest("js/js.translator/testData/box/native/castToNativeClassChecked.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("castToNativeInterface.kt")
     public void testCastToNativeInterface() {
       runTest("js/js.translator/testData/box/native/castToNativeInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("castToNativeInterfaceChecked.kt")
     public void testCastToNativeInterfaceChecked() {
       runTest("js/js.translator/testData/box/native/castToNativeInterfaceChecked.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("castToNullableNativeInterface.kt")
     public void testCastToNullableNativeInterface() {
       runTest("js/js.translator/testData/box/native/castToNullableNativeInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("castToTypeParamBoundedByNativeInterface.kt")
     public void testCastToTypeParamBoundedByNativeInterface() {
       runTest("js/js.translator/testData/box/native/castToTypeParamBoundedByNativeInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("class.kt")
     public void testClass() {
       runTest("js/js.translator/testData/box/native/class.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classObject.kt")
     public void testClassObject() {
       runTest("js/js.translator/testData/box/native/classObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("equalsMangling.kt")
     public void testEqualsMangling() {
       runTest("js/js.translator/testData/box/native/equalsMangling.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("eval.kt")
     public void testEval() {
       runTest("js/js.translator/testData/box/native/eval.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exception.kt")
     public void testException() {
       runTest("js/js.translator/testData/box/native/exception.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalNestedEnum.kt")
     public void testExternalNestedEnum() {
       runTest("js/js.translator/testData/box/native/externalNestedEnum.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalValWithOverridenVar.kt")
     public void testExternalValWithOverridenVar() {
       runTest("js/js.translator/testData/box/native/externalValWithOverridenVar.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inheritanceFromNativeClass.kt")
     public void testInheritanceFromNativeClass() {
       runTest("js/js.translator/testData/box/native/inheritanceFromNativeClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inheritanceFromNativeTrait.kt")
     public void testInheritanceFromNativeTrait() {
       runTest("js/js.translator/testData/box/native/inheritanceFromNativeTrait.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inheritanceInNativeClass.kt")
     public void testInheritanceInNativeClass() {
       runTest("js/js.translator/testData/box/native/inheritanceInNativeClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt2209.kt")
     public void testKt2209() {
       runTest("js/js.translator/testData/box/native/kt2209.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("long.kt")
     public void testLong() {
       runTest("js/js.translator/testData/box/native/long.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nativeClassAsReifiedTypeArgument.kt")
     public void testNativeClassAsReifiedTypeArgument() {
       runTest("js/js.translator/testData/box/native/nativeClassAsReifiedTypeArgument.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nativeGetterAndNativeSetter.kt")
     public void testNativeGetterAndNativeSetter() {
       runTest("js/js.translator/testData/box/native/nativeGetterAndNativeSetter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nativeInvoke.kt")
     public void testNativeInvoke() {
       runTest("js/js.translator/testData/box/native/nativeInvoke.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedElements.kt")
     public void testNestedElements() {
       runTest("js/js.translator/testData/box/native/nestedElements.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectFunWithVararg.kt")
     public void testObjectFunWithVararg() {
       runTest("js/js.translator/testData/box/native/objectFunWithVararg.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overrideNativeOverloadedFunction.kt")
     public void testOverrideNativeOverloadedFunction() {
       runTest("js/js.translator/testData/box/native/overrideNativeOverloadedFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("passExtLambdaFromNative.kt")
     public void testPassExtLambdaFromNative() {
       runTest("js/js.translator/testData/box/native/passExtLambdaFromNative.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("passExtLambdaToNative.kt")
     public void testPassExtLambdaToNative() {
       runTest("js/js.translator/testData/box/native/passExtLambdaToNative.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("passMemberOrExtFromNative.kt")
     public void testPassMemberOrExtFromNative() {
       runTest("js/js.translator/testData/box/native/passMemberOrExtFromNative.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("passMemberOrExtToNative.kt")
     public void testPassMemberOrExtToNative() {
       runTest("js/js.translator/testData/box/native/passMemberOrExtToNative.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("passTopLevelFunctionFromNative.kt")
     public void testPassTopLevelFunctionFromNative() {
       runTest("js/js.translator/testData/box/native/passTopLevelFunctionFromNative.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("passTopLevelOrLocalFunctionToNative.kt")
     public void testPassTopLevelOrLocalFunctionToNative() {
       runTest("js/js.translator/testData/box/native/passTopLevelOrLocalFunctionToNative.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("print.kt")
     public void testPrint() {
       runTest("js/js.translator/testData/box/native/print.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateExternal.kt")
     public void testPrivateExternal() {
       runTest("js/js.translator/testData/box/native/privateExternal.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("safeCastToNativeInterface.kt")
     public void testSafeCastToNativeInterface() {
       runTest("js/js.translator/testData/box/native/safeCastToNativeInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("secondaryConstructor.kt")
     public void testSecondaryConstructor() {
       runTest("js/js.translator/testData/box/native/secondaryConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("js/js.translator/testData/box/native/simple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleUndefined.kt")
     public void testSimpleUndefined() {
       runTest("js/js.translator/testData/box/native/simpleUndefined.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("typeof.kt")
     public void testTypeof() {
       runTest("js/js.translator/testData/box/native/typeof.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("undefined.kt")
     public void testUndefined() {
       runTest("js/js.translator/testData/box/native/undefined.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("useClassFromInlineFun.kt")
     public void testUseClassFromInlineFun() {
       runTest("js/js.translator/testData/box/native/useClassFromInlineFun.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("valueClass.kt")
     public void testValueClass() {
       runTest("js/js.translator/testData/box/native/valueClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("vararg.kt")
     public void testVararg() {
       runTest("js/js.translator/testData/box/native/vararg.kt");
@@ -8861,114 +8861,114 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/nestedTypes")
   @TestDataPath("$PROJECT_ROOT")
   public class NestedTypes {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInNestedTypes() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/nestedTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("implicitOuterThisFromLambda.kt")
     public void testImplicitOuterThisFromLambda() {
       runTest("js/js.translator/testData/box/nestedTypes/implicitOuterThisFromLambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("implicitOuterThisFromLocalClass.kt")
     public void testImplicitOuterThisFromLocalClass() {
       runTest("js/js.translator/testData/box/nestedTypes/implicitOuterThisFromLocalClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inheritanceFromNestedBuiltIn.kt")
     public void testInheritanceFromNestedBuiltIn() {
       runTest("js/js.translator/testData/box/nestedTypes/inheritanceFromNestedBuiltIn.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inner.kt")
     public void testInner() {
       runTest("js/js.translator/testData/box/nestedTypes/inner.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("innerObjectRefFromConstructor.kt")
     public void testInnerObjectRefFromConstructor() {
       runTest("js/js.translator/testData/box/nestedTypes/innerObjectRefFromConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("innerReferenceFromChild.kt")
     public void testInnerReferenceFromChild() {
       runTest("js/js.translator/testData/box/nestedTypes/innerReferenceFromChild.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("innerWithMultipleArgs.kt")
     public void testInnerWithMultipleArgs() {
       runTest("js/js.translator/testData/box/nestedTypes/innerWithMultipleArgs.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("innerWithSecondaryConstructor.kt")
     public void testInnerWithSecondaryConstructor() {
       runTest("js/js.translator/testData/box/nestedTypes/innerWithSecondaryConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nested.kt")
     public void testNested() {
       runTest("js/js.translator/testData/box/nestedTypes/nested.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedInInterface.kt")
     public void testNestedInInterface() {
       runTest("js/js.translator/testData/box/nestedTypes/nestedInInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedObjectLazyInitialized.kt")
     public void testNestedObjectLazyInitialized() {
       runTest("js/js.translator/testData/box/nestedTypes/nestedObjectLazyInitialized.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("outerClassReferenceFromSecondaryConstructor.kt")
     public void testOuterClassReferenceFromSecondaryConstructor() {
       runTest("js/js.translator/testData/box/nestedTypes/outerClassReferenceFromSecondaryConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("outerCompanion.kt")
     public void testOuterCompanion() {
       runTest("js/js.translator/testData/box/nestedTypes/outerCompanion.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("outerNative.kt")
     public void testOuterNative() {
       runTest("js/js.translator/testData/box/nestedTypes/outerNative.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("outerObject.kt")
     public void testOuterObject() {
       runTest("js/js.translator/testData/box/nestedTypes/outerObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("outerThis.kt")
     public void testOuterThis() {
       runTest("js/js.translator/testData/box/nestedTypes/outerThis.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateFieldNotOverridenInNestedSubclass.kt")
     public void testPrivateFieldNotOverridenInNestedSubclass() {
       runTest("js/js.translator/testData/box/nestedTypes/privateFieldNotOverridenInNestedSubclass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("receivers.kt")
     public void testReceivers() {
       runTest("js/js.translator/testData/box/nestedTypes/receivers.kt");
@@ -8979,198 +8979,198 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/number")
   @TestDataPath("$PROJECT_ROOT")
   public class Number {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInNumber() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/number"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("assignmentIntOverflow.kt")
     public void testAssignmentIntOverflow() {
       runTest("js/js.translator/testData/box/number/assignmentIntOverflow.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("byteAndShortConversions.kt")
     public void testByteAndShortConversions() {
       runTest("js/js.translator/testData/box/number/byteAndShortConversions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constantPropagation.kt")
     public void testConstantPropagation() {
       runTest("js/js.translator/testData/box/number/constantPropagation.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("conversionsWithTruncation.kt")
     public void testConversionsWithTruncation() {
       runTest("js/js.translator/testData/box/number/conversionsWithTruncation.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("conversionsWithoutTruncation.kt")
     public void testConversionsWithoutTruncation() {
       runTest("js/js.translator/testData/box/number/conversionsWithoutTruncation.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("division.kt")
     public void testDivision() {
       runTest("js/js.translator/testData/box/number/division.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("doubleConversions.kt")
     public void testDoubleConversions() {
       runTest("js/js.translator/testData/box/number/doubleConversions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hashCode.kt")
     public void testHashCode() {
       runTest("js/js.translator/testData/box/number/hashCode.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hexadecimalConstant.kt")
     public void testHexadecimalConstant() {
       runTest("js/js.translator/testData/box/number/hexadecimalConstant.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("incDecOptimization.kt")
     public void testIncDecOptimization() {
       runTest("js/js.translator/testData/box/number/incDecOptimization.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("intBitOperations.kt")
     public void testIntBitOperations() {
       runTest("js/js.translator/testData/box/number/intBitOperations.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("intConversions.kt")
     public void testIntConversions() {
       runTest("js/js.translator/testData/box/number/intConversions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("intDivFloat.kt")
     public void testIntDivFloat() {
       runTest("js/js.translator/testData/box/number/intDivFloat.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("intIncDecOverflow.kt")
     public void testIntIncDecOverflow() {
       runTest("js/js.translator/testData/box/number/intIncDecOverflow.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("intMod.kt")
     public void testIntMod() {
       runTest("js/js.translator/testData/box/number/intMod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("intOverflow.kt")
     public void testIntOverflow() {
       runTest("js/js.translator/testData/box/number/intOverflow.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt2342.kt")
     public void testKt2342() {
       runTest("js/js.translator/testData/box/number/kt2342.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt26706.kt")
     public void testKt26706() {
       runTest("js/js.translator/testData/box/number/kt26706.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("longArray.kt")
     public void testLongArray() {
       runTest("js/js.translator/testData/box/number/longArray.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("longBinaryOperations.kt")
     public void testLongBinaryOperations() {
       runTest("js/js.translator/testData/box/number/longBinaryOperations.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("longBitOperations.kt")
     public void testLongBitOperations() {
       runTest("js/js.translator/testData/box/number/longBitOperations.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("longCompareToIntrinsic.kt")
     public void testLongCompareToIntrinsic() {
       runTest("js/js.translator/testData/box/number/longCompareToIntrinsic.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("longEqualsIntrinsic.kt")
     public void testLongEqualsIntrinsic() {
       runTest("js/js.translator/testData/box/number/longEqualsIntrinsic.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("longHashCode.kt")
     public void testLongHashCode() {
       runTest("js/js.translator/testData/box/number/longHashCode.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("longUnaryOperations.kt")
     public void testLongUnaryOperations() {
       runTest("js/js.translator/testData/box/number/longUnaryOperations.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("mixedTypesOverflow.kt")
     public void testMixedTypesOverflow() {
       runTest("js/js.translator/testData/box/number/mixedTypesOverflow.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("mulInt32.kt")
     public void testMulInt32() {
       runTest("js/js.translator/testData/box/number/mulInt32.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("numberCompareTo.kt")
     public void testNumberCompareTo() {
       runTest("js/js.translator/testData/box/number/numberCompareTo.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("numberConversions.kt")
     public void testNumberConversions() {
       runTest("js/js.translator/testData/box/number/numberConversions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("numberEquals.kt")
     public void testNumberEquals() {
       runTest("js/js.translator/testData/box/number/numberEquals.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("numberIncDec.kt")
     public void testNumberIncDec() {
       runTest("js/js.translator/testData/box/number/numberIncDec.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("numberIsCheck.kt")
     public void testNumberIsCheck() {
       runTest("js/js.translator/testData/box/number/numberIsCheck.kt");
@@ -9181,84 +9181,84 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/objectDeclaration")
   @TestDataPath("$PROJECT_ROOT")
   public class ObjectDeclaration {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInObjectDeclaration() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/objectDeclaration"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("contextDependentObjectName.kt")
     public void testContextDependentObjectName() {
       runTest("js/js.translator/testData/box/objectDeclaration/contextDependentObjectName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("dontPolluteObject.kt")
     public void testDontPolluteObject() {
       runTest("js/js.translator/testData/box/objectDeclaration/dontPolluteObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt3684.kt")
     public void testKt3684() {
       runTest("js/js.translator/testData/box/objectDeclaration/kt3684.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt37386.kt")
     public void testKt37386() {
       runTest("js/js.translator/testData/box/objectDeclaration/kt37386.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaInObjectInsideObject.kt")
     public void testLambdaInObjectInsideObject() {
       runTest("js/js.translator/testData/box/objectDeclaration/lambdaInObjectInsideObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectDeclaration.kt")
     public void testObjectDeclaration() {
       runTest("js/js.translator/testData/box/objectDeclaration/objectDeclaration.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectDeclarationWithVars.kt")
     public void testObjectDeclarationWithVars() {
       runTest("js/js.translator/testData/box/objectDeclaration/objectDeclarationWithVars.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectInMethod.kt")
     public void testObjectInMethod() {
       runTest("js/js.translator/testData/box/objectDeclaration/objectInMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectInObject.kt")
     public void testObjectInObject() {
       runTest("js/js.translator/testData/box/objectDeclaration/objectInObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectInObjectWithClosure.kt")
     public void testObjectInObjectWithClosure() {
       runTest("js/js.translator/testData/box/objectDeclaration/objectInObjectWithClosure.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectInheritingFromATrait.kt")
     public void testObjectInheritingFromATrait() {
       runTest("js/js.translator/testData/box/objectDeclaration/objectInheritingFromATrait.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectInheritingFromClass.kt")
     public void testObjectInheritingFromClass() {
       runTest("js/js.translator/testData/box/objectDeclaration/objectInheritingFromClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectWithMethods.kt")
     public void testObjectWithMethods() {
       runTest("js/js.translator/testData/box/objectDeclaration/objectWithMethods.kt");
@@ -9269,144 +9269,144 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/operatorOverloading")
   @TestDataPath("$PROJECT_ROOT")
   public class OperatorOverloading {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInOperatorOverloading() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/operatorOverloading"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("augmentedAssignmentLhs.kt")
     public void testAugmentedAssignmentLhs() {
       runTest("js/js.translator/testData/box/operatorOverloading/augmentedAssignmentLhs.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("binaryDivOverload.kt")
     public void testBinaryDivOverload() {
       runTest("js/js.translator/testData/box/operatorOverloading/binaryDivOverload.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("compareTo.kt")
     public void testCompareTo() {
       runTest("js/js.translator/testData/box/operatorOverloading/compareTo.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("compareToByName.kt")
     public void testCompareToByName() {
       runTest("js/js.translator/testData/box/operatorOverloading/compareToByName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaRhs.kt")
     public void testLambdaRhs() {
       runTest("js/js.translator/testData/box/operatorOverloading/lambdaRhs.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("notOverload.kt")
     public void testNotOverload() {
       runTest("js/js.translator/testData/box/operatorOverloading/notOverload.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("operatorOverloadOnPropertyCallGetterAndSetterOnlyOnce.kt")
     public void testOperatorOverloadOnPropertyCallGetterAndSetterOnlyOnce() {
       runTest("js/js.translator/testData/box/operatorOverloading/operatorOverloadOnPropertyCallGetterAndSetterOnlyOnce.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overloadPlusAssignArrayList.kt")
     public void testOverloadPlusAssignArrayList() {
       runTest("js/js.translator/testData/box/operatorOverloading/overloadPlusAssignArrayList.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overloadPlusAssignViaExtensionFunction.kt")
     public void testOverloadPlusAssignViaExtensionFunction() {
       runTest("js/js.translator/testData/box/operatorOverloading/overloadPlusAssignViaExtensionFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overloadPlusAssignViaPlusExtensionFunction.kt")
     public void testOverloadPlusAssignViaPlusExtensionFunction() {
       runTest("js/js.translator/testData/box/operatorOverloading/overloadPlusAssignViaPlusExtensionFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overloadPlusViaExtensionFunction.kt")
     public void testOverloadPlusViaExtensionFunction() {
       runTest("js/js.translator/testData/box/operatorOverloading/overloadPlusViaExtensionFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overloadUnaryOperationsViaExtensionFunctions.kt")
     public void testOverloadUnaryOperationsViaExtensionFunctions() {
       runTest("js/js.translator/testData/box/operatorOverloading/overloadUnaryOperationsViaExtensionFunctions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overloadedCallOnProperty.kt")
     public void testOverloadedCallOnProperty() {
       runTest("js/js.translator/testData/box/operatorOverloading/overloadedCallOnProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("plusAndMinusAsAnExpression.kt")
     public void testPlusAndMinusAsAnExpression() {
       runTest("js/js.translator/testData/box/operatorOverloading/plusAndMinusAsAnExpression.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("plusAssignNoReassign.kt")
     public void testPlusAssignNoReassign() {
       runTest("js/js.translator/testData/box/operatorOverloading/plusAssignNoReassign.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("plusOverload.kt")
     public void testPlusOverload() {
       runTest("js/js.translator/testData/box/operatorOverloading/plusOverload.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("postfixInc.kt")
     public void testPostfixInc() {
       runTest("js/js.translator/testData/box/operatorOverloading/postfixInc.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("postfixOnProperty.kt")
     public void testPostfixOnProperty() {
       runTest("js/js.translator/testData/box/operatorOverloading/postfixOnProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("prefixDecOverload.kt")
     public void testPrefixDecOverload() {
       runTest("js/js.translator/testData/box/operatorOverloading/prefixDecOverload.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("prefixIncReturnsCorrectValue.kt")
     public void testPrefixIncReturnsCorrectValue() {
       runTest("js/js.translator/testData/box/operatorOverloading/prefixIncReturnsCorrectValue.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unaryOnIntProperty.kt")
     public void testUnaryOnIntProperty() {
       runTest("js/js.translator/testData/box/operatorOverloading/unaryOnIntProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("unaryOnIntPropertyAsStatement.kt")
     public void testUnaryOnIntPropertyAsStatement() {
       runTest("js/js.translator/testData/box/operatorOverloading/unaryOnIntPropertyAsStatement.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("usingModInCaseModAssignNotAvailable.kt")
     public void testUsingModInCaseModAssignNotAvailable() {
       runTest("js/js.translator/testData/box/operatorOverloading/usingModInCaseModAssignNotAvailable.kt");
@@ -9417,36 +9417,36 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/package")
   @TestDataPath("$PROJECT_ROOT")
   public class Package {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInPackage() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/package"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classCreatedInDeeplyNestedPackage.kt")
     public void testClassCreatedInDeeplyNestedPackage() {
       runTest("js/js.translator/testData/box/package/classCreatedInDeeplyNestedPackage.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("deeplyNestedPackage.kt")
     public void testDeeplyNestedPackage() {
       runTest("js/js.translator/testData/box/package/deeplyNestedPackage.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("deeplyNestedPackageFunctionCalled.kt")
     public void testDeeplyNestedPackageFunctionCalled() {
       runTest("js/js.translator/testData/box/package/deeplyNestedPackageFunctionCalled.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("initializersOfNestedPackagesExecute.kt")
     public void testInitializersOfNestedPackagesExecute() {
       runTest("js/js.translator/testData/box/package/initializersOfNestedPackagesExecute.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nestedPackage.kt")
     public void testNestedPackage() {
       runTest("js/js.translator/testData/box/package/nestedPackage.kt");
@@ -9457,7 +9457,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/polyfills")
   @TestDataPath("$PROJECT_ROOT")
   public class Polyfills {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInPolyfills() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
@@ -9466,19 +9466,19 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/polyfills/acosh")
     @TestDataPath("$PROJECT_ROOT")
     public class Acosh {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("acoshWithExistedIntrinsic.kt")
       public void testAcoshWithExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/acosh/acoshWithExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("acoshWithoutExistedIntrinsic.kt")
       public void testAcoshWithoutExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/acosh/acoshWithoutExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInAcosh() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/acosh"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
@@ -9488,18 +9488,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/polyfills/asinh")
     @TestDataPath("$PROJECT_ROOT")
     public class Asinh {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInAsinh() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/asinh"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("asinhWithExistedIntrinsic.kt")
       public void testAsinhWithExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/asinh/asinhWithExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("asinhWithoutExistedIntrinsic.kt")
       public void testAsinhWithoutExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/asinh/asinhWithoutExistedIntrinsic.kt");
@@ -9510,18 +9510,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/polyfills/atanh")
     @TestDataPath("$PROJECT_ROOT")
     public class Atanh {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInAtanh() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/atanh"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("atanhWithExistedIntrinsic.kt")
       public void testAtanhWithExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/atanh/atanhWithExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("atanhWithoutExistedIntrinsic.kt")
       public void testAtanhWithoutExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/atanh/atanhWithoutExistedIntrinsic.kt");
@@ -9532,18 +9532,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/polyfills/clz32")
     @TestDataPath("$PROJECT_ROOT")
     public class Clz32 {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInClz32() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/clz32"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("clz32WithExistedIntrinsic.kt")
       public void testClz32WithExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/clz32/clz32WithExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("clz32WithoutExistedIntrinsic.kt")
       public void testClz32WithoutExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/clz32/clz32WithoutExistedIntrinsic.kt");
@@ -9554,18 +9554,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/polyfills/cosh")
     @TestDataPath("$PROJECT_ROOT")
     public class Cosh {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInCosh() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/cosh"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("coshWithExistedIntrinsic.kt")
       public void testCoshWithExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/cosh/coshWithExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("coshWithoutExistedIntrinsic.kt")
       public void testCoshWithoutExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/cosh/coshWithoutExistedIntrinsic.kt");
@@ -9576,18 +9576,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/polyfills/expm1")
     @TestDataPath("$PROJECT_ROOT")
     public class Expm1 {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInExpm1() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/expm1"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("expm1WithExistedIntrinsic.kt")
       public void testExpm1WithExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/expm1/expm1WithExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("expm1WithoutExistedIntrinsic.kt")
       public void testExpm1WithoutExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/expm1/expm1WithoutExistedIntrinsic.kt");
@@ -9598,18 +9598,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/polyfills/fill")
     @TestDataPath("$PROJECT_ROOT")
     public class Fill {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInFill() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/fill"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("arrayFillWithExistedIntrinsic.kt")
       public void testArrayFillWithExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/fill/arrayFillWithExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("arrayFillWithoutExistedIntrinsic.kt")
       public void testArrayFillWithoutExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/fill/arrayFillWithoutExistedIntrinsic.kt");
@@ -9620,18 +9620,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/polyfills/globalThis")
     @TestDataPath("$PROJECT_ROOT")
     public class GlobalThis {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInGlobalThis() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/globalThis"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("globalThisWithExistedIntrinsic.kt")
       public void testGlobalThisWithExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/globalThis/globalThisWithExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("globalThisWithoutExistedIntrinsic.kt")
       public void testGlobalThisWithoutExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/globalThis/globalThisWithoutExistedIntrinsic.kt");
@@ -9642,18 +9642,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/polyfills/hypot")
     @TestDataPath("$PROJECT_ROOT")
     public class Hypot {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInHypot() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/hypot"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("hypotWithExistedIntrinsic.kt")
       public void testHypotWithExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/hypot/hypotWithExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("hypotWithoutExistedIntrinsic.kt")
       public void testHypotWithoutExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/hypot/hypotWithoutExistedIntrinsic.kt");
@@ -9664,18 +9664,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/polyfills/imul")
     @TestDataPath("$PROJECT_ROOT")
     public class Imul {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInImul() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/imul"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("imulWithExistedIntrinsic.kt")
       public void testImulWithExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/imul/imulWithExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("imulWithoutExistedIntrinsic.kt")
       public void testImulWithoutExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/imul/imulWithoutExistedIntrinsic.kt");
@@ -9686,18 +9686,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/polyfills/isView")
     @TestDataPath("$PROJECT_ROOT")
     public class IsView {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInIsView() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/isView"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("isViewWithExistedIntrinsic.kt")
       public void testIsViewWithExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/isView/isViewWithExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("isViewWithoutExistedIntrinsic.kt")
       public void testIsViewWithoutExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/isView/isViewWithoutExistedIntrinsic.kt");
@@ -9708,18 +9708,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/polyfills/log10")
     @TestDataPath("$PROJECT_ROOT")
     public class Log10 {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInLog10() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/log10"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("log10WithExistedIntrinsic.kt")
       public void testLog10WithExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/log10/log10WithExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("log10WithoutExistedIntrinsic.kt")
       public void testLog10WithoutExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/log10/log10WithoutExistedIntrinsic.kt");
@@ -9730,18 +9730,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/polyfills/log1p")
     @TestDataPath("$PROJECT_ROOT")
     public class Log1p {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInLog1p() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/log1p"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("log1pWithExistedIntrinsic.kt")
       public void testLog1pWithExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/log1p/log1pWithExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("log1pWithoutExistedIntrinsic.kt")
       public void testLog1pWithoutExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/log1p/log1pWithoutExistedIntrinsic.kt");
@@ -9752,18 +9752,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/polyfills/log2")
     @TestDataPath("$PROJECT_ROOT")
     public class Log2 {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInLog2() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/log2"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("log2WithExistedIntrinsic.kt")
       public void testLog2WithExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/log2/log2WithExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("log2WithoutExistedIntrinsic.kt")
       public void testLog2WithoutExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/log2/log2WithoutExistedIntrinsic.kt");
@@ -9774,18 +9774,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/polyfills/sign")
     @TestDataPath("$PROJECT_ROOT")
     public class Sign {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInSign() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/sign"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("signWithExistedIntrinsic.kt")
       public void testSignWithExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/sign/signWithExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("signWithoutExistedIntrinsic.kt")
       public void testSignWithoutExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/sign/signWithoutExistedIntrinsic.kt");
@@ -9796,18 +9796,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/polyfills/sinh")
     @TestDataPath("$PROJECT_ROOT")
     public class Sinh {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInSinh() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/sinh"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("sinhWithExistedIntrinsic.kt")
       public void testSinhWithExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/sinh/sinhWithExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("sinhWithoutExistedIntrinsic.kt")
       public void testSinhWithoutExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/sinh/sinhWithoutExistedIntrinsic.kt");
@@ -9818,18 +9818,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/polyfills/sort")
     @TestDataPath("$PROJECT_ROOT")
     public class Sort {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInSort() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/sort"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("sortWithExistedIntrinsic.kt")
       public void testSortWithExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/sort/sortWithExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("sortWithoutExistedIntrinsic.kt")
       public void testSortWithoutExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/sort/sortWithoutExistedIntrinsic.kt");
@@ -9840,18 +9840,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/polyfills/tanh")
     @TestDataPath("$PROJECT_ROOT")
     public class Tanh {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInTanh() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/tanh"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("tanhWithExistedIntrinsic.kt")
       public void testTanhWithExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/tanh/tanhWithExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("tanhWithoutExistedIntrinsic.kt")
       public void testTanhWithoutExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/tanh/tanhWithoutExistedIntrinsic.kt");
@@ -9862,18 +9862,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/polyfills/trunc")
     @TestDataPath("$PROJECT_ROOT")
     public class Trunc {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInTrunc() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/trunc"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("truncWithExistedIntrinsic.kt")
       public void testTruncWithExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/trunc/truncWithExistedIntrinsic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("truncWithoutExistedIntrinsic.kt")
       public void testTruncWithoutExistedIntrinsic() {
         runTest("js/js.translator/testData/box/polyfills/trunc/truncWithoutExistedIntrinsic.kt");
@@ -9885,156 +9885,156 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/propertyAccess")
   @TestDataPath("$PROJECT_ROOT")
   public class PropertyAccess {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("accessToInstanceProperty.kt")
     public void testAccessToInstanceProperty() {
       runTest("js/js.translator/testData/box/propertyAccess/accessToInstanceProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInPropertyAccess() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/propertyAccess"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("booleanInExternals.kt")
     public void testBooleanInExternals() {
       runTest("js/js.translator/testData/box/propertyAccess/booleanInExternals.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("booleanInExternalsWithDiagnostic.kt")
     public void testBooleanInExternalsWithDiagnostic() {
       runTest("js/js.translator/testData/box/propertyAccess/booleanInExternalsWithDiagnostic.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classUsesPackageProperties.kt")
     public void testClassUsesPackageProperties() {
       runTest("js/js.translator/testData/box/propertyAccess/classUsesPackageProperties.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("configurable.kt")
     public void testConfigurable() {
       runTest("js/js.translator/testData/box/propertyAccess/configurable.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("customGetter.kt")
     public void testCustomGetter() {
       runTest("js/js.translator/testData/box/propertyAccess/customGetter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("customSetter.kt")
     public void testCustomSetter() {
       runTest("js/js.translator/testData/box/propertyAccess/customSetter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("enumerable.kt")
     public void testEnumerable() {
       runTest("js/js.translator/testData/box/propertyAccess/enumerable.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionLiteralSafeCall.kt")
     public void testExtensionLiteralSafeCall() {
       runTest("js/js.translator/testData/box/propertyAccess/extensionLiteralSafeCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("field.kt")
     public void testField() {
       runTest("js/js.translator/testData/box/propertyAccess/field.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("initInstanceProperties.kt")
     public void testInitInstanceProperties() {
       runTest("js/js.translator/testData/box/propertyAccess/initInstanceProperties.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("initValInConstructor.kt")
     public void testInitValInConstructor() {
       runTest("js/js.translator/testData/box/propertyAccess/initValInConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overloadedOverriddenFunctionPropertyName.kt")
     public void testOverloadedOverriddenFunctionPropertyName() {
       runTest("js/js.translator/testData/box/propertyAccess/overloadedOverriddenFunctionPropertyName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("packageCustomAccessors.kt")
     public void testPackageCustomAccessors() {
       runTest("js/js.translator/testData/box/propertyAccess/packageCustomAccessors.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("packagePropertyInitializer.kt")
     public void testPackagePropertyInitializer() {
       runTest("js/js.translator/testData/box/propertyAccess/packagePropertyInitializer.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("packagePropertySet.kt")
     public void testPackagePropertySet() {
       runTest("js/js.translator/testData/box/propertyAccess/packagePropertySet.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privateClassesWithPrivateMembers.kt")
     public void testPrivateClassesWithPrivateMembers() {
       runTest("js/js.translator/testData/box/propertyAccess/privateClassesWithPrivateMembers.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("privatePropertyAccessFromMethod.kt")
     public void testPrivatePropertyAccessFromMethod() {
       runTest("js/js.translator/testData/box/propertyAccess/privatePropertyAccessFromMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyAssignment.kt")
     public void testPropertyAssignment() {
       runTest("js/js.translator/testData/box/propertyAccess/propertyAssignment.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("publicNameClash.kt")
     public void testPublicNameClash() {
       runTest("js/js.translator/testData/box/propertyAccess/publicNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("setter.kt")
     public void testSetter() {
       runTest("js/js.translator/testData/box/propertyAccess/setter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleLateInitIsInitialized.kt")
     public void testSimpleLateInitIsInitialized() {
       runTest("js/js.translator/testData/box/propertyAccess/simpleLateInitIsInitialized.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("staticAccessorsWithJsName.kt")
     public void testStaticAccessorsWithJsName() {
       runTest("js/js.translator/testData/box/propertyAccess/staticAccessorsWithJsName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("subclassAccessorsWithJsNameInSuper.kt")
     public void testSubclassAccessorsWithJsNameInSuper() {
       runTest("js/js.translator/testData/box/propertyAccess/subclassAccessorsWithJsNameInSuper.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("twoClassesWithProperties.kt")
     public void testTwoClassesWithProperties() {
       runTest("js/js.translator/testData/box/propertyAccess/twoClassesWithProperties.kt");
@@ -10045,84 +10045,84 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/propertyOverride")
   @TestDataPath("$PROJECT_ROOT")
   public class PropertyOverride {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInPropertyOverride() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/propertyOverride"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("checkSupertypeOrder.kt")
     public void testCheckSupertypeOrder() {
       runTest("js/js.translator/testData/box/propertyOverride/checkSupertypeOrder.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exportedBaseClass.kt")
     public void testExportedBaseClass() {
       runTest("js/js.translator/testData/box/propertyOverride/exportedBaseClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("externalPropertyOverride.kt")
     public void testExternalPropertyOverride() {
       runTest("js/js.translator/testData/box/propertyOverride/externalPropertyOverride.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("initOverrideInConstructor.kt")
     public void testInitOverrideInConstructor() {
       runTest("js/js.translator/testData/box/propertyOverride/initOverrideInConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("initOverrideInConstructorComplex.kt")
     public void testInitOverrideInConstructorComplex() {
       runTest("js/js.translator/testData/box/propertyOverride/initOverrideInConstructorComplex.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("initOverrideInConstructorExplicitThis.kt")
     public void testInitOverrideInConstructorExplicitThis() {
       runTest("js/js.translator/testData/box/propertyOverride/initOverrideInConstructorExplicitThis.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("initOverrideVarInConstructor.kt")
     public void testInitOverrideVarInConstructor() {
       runTest("js/js.translator/testData/box/propertyOverride/initOverrideVarInConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overloadPrivateVal.kt")
     public void testOverloadPrivateVal() {
       runTest("js/js.translator/testData/box/propertyOverride/overloadPrivateVal.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overrideExtensionProperty.kt")
     public void testOverrideExtensionProperty() {
       runTest("js/js.translator/testData/box/propertyOverride/overrideExtensionProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overrideNotDirectlySuper.kt")
     public void testOverrideNotDirectlySuper() {
       runTest("js/js.translator/testData/box/propertyOverride/overrideNotDirectlySuper.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overrideValFromTraits.kt")
     public void testOverrideValFromTraits() {
       runTest("js/js.translator/testData/box/propertyOverride/overrideValFromTraits.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("overrideValWithBackendFiled.kt")
     public void testOverrideValWithBackendFiled() {
       runTest("js/js.translator/testData/box/propertyOverride/overrideValWithBackendFiled.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleOverride.kt")
     public void testSimpleOverride() {
       runTest("js/js.translator/testData/box/propertyOverride/simpleOverride.kt");
@@ -10133,72 +10133,72 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/range")
   @TestDataPath("$PROJECT_ROOT")
   public class Range {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInRange() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/range"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("creatingProgressions.kt")
     public void testCreatingProgressions() {
       runTest("js/js.translator/testData/box/range/creatingProgressions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("explicitRange.kt")
     public void testExplicitRange() {
       runTest("js/js.translator/testData/box/range/explicitRange.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("intDownTo.kt")
     public void testIntDownTo() {
       runTest("js/js.translator/testData/box/range/intDownTo.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("intInRange.kt")
     public void testIntInRange() {
       runTest("js/js.translator/testData/box/range/intInRange.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("intUpTo.kt")
     public void testIntUpTo() {
       runTest("js/js.translator/testData/box/range/intUpTo.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("iteratingOverRanges.kt")
     public void testIteratingOverRanges() {
       runTest("js/js.translator/testData/box/range/iteratingOverRanges.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("numberRangesOptimized.kt")
     public void testNumberRangesOptimized() {
       runTest("js/js.translator/testData/box/range/numberRangesOptimized.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("rangeEquals.kt")
     public void testRangeEquals() {
       runTest("js/js.translator/testData/box/range/rangeEquals.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("rangeSugarSyntax.kt")
     public void testRangeSugarSyntax() {
       runTest("js/js.translator/testData/box/range/rangeSugarSyntax.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("rangeToDoesNotIterate.kt")
     public void testRangeToDoesNotIterate() {
       runTest("js/js.translator/testData/box/range/rangeToDoesNotIterate.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("reverse.kt")
     public void testReverse() {
       runTest("js/js.translator/testData/box/range/reverse.kt");
@@ -10209,156 +10209,156 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/reflection")
   @TestDataPath("$PROJECT_ROOT")
   public class Reflection {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInReflection() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/reflection"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classJsName.kt")
     public void testClassJsName() {
       runTest("js/js.translator/testData/box/reflection/classJsName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("createInstance.kt")
     public void testCreateInstance() {
       runTest("js/js.translator/testData/box/reflection/createInstance.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("createInstanceByInstance.kt")
     public void testCreateInstanceByInstance() {
       runTest("js/js.translator/testData/box/reflection/createInstanceByInstance.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("external.kt")
     public void testExternal() {
       runTest("js/js.translator/testData/box/reflection/external.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("findAssociatedObject.kt")
     public void testFindAssociatedObject() {
       runTest("js/js.translator/testData/box/reflection/findAssociatedObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("findAssociatedObjectInSeparatedFile.kt")
     public void testFindAssociatedObjectInSeparatedFile() {
       runTest("js/js.translator/testData/box/reflection/findAssociatedObjectInSeparatedFile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("findAssociatedObjectLazyness.kt")
     public void testFindAssociatedObjectLazyness() {
       runTest("js/js.translator/testData/box/reflection/findAssociatedObjectLazyness.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("findAssociatedObject_oldBE.kt")
     public void testFindAssociatedObject_oldBE() {
       runTest("js/js.translator/testData/box/reflection/findAssociatedObject_oldBE.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kClass.kt")
     public void testKClass() {
       runTest("js/js.translator/testData/box/reflection/kClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kClassCompanion.kt")
     public void testKClassCompanion() {
       runTest("js/js.translator/testData/box/reflection/kClassCompanion.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kClassIsInstance.kt")
     public void testKClassIsInstance() {
       runTest("js/js.translator/testData/box/reflection/kClassIsInstance.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kClassLambda.kt")
     public void testKClassLambda() {
       runTest("js/js.translator/testData/box/reflection/kClassLambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kClassOnReifiedType.kt")
     public void testKClassOnReifiedType() {
       runTest("js/js.translator/testData/box/reflection/kClassOnReifiedType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kClassOnReifiedTypeInLambda.kt")
     public void testKClassOnReifiedTypeInLambda() {
       runTest("js/js.translator/testData/box/reflection/kClassOnReifiedTypeInLambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kClassOnReifiedTypeInLambda-advanced.kt")
     public void testKClassOnReifiedTypeInLambda_advanced() {
       runTest("js/js.translator/testData/box/reflection/kClassOnReifiedTypeInLambda-advanced.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kClassReifiedWithJsCall.kt")
     public void testKClassReifiedWithJsCall() {
       runTest("js/js.translator/testData/box/reflection/kClassReifiedWithJsCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kClassSimpleName.kt")
     public void testKClassSimpleName() {
       runTest("js/js.translator/testData/box/reflection/kClassSimpleName.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kClassSuspendFunction.kt")
     public void testKClassSuspendFunction() {
       runTest("js/js.translator/testData/box/reflection/kClassSuspendFunction.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kClassToAndFromJsClass.kt")
     public void testKClassToAndFromJsClass() {
       runTest("js/js.translator/testData/box/reflection/kClassToAndFromJsClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kClassWithJsCall.kt")
     public void testKClassWithJsCall() {
       runTest("js/js.translator/testData/box/reflection/kClassWithJsCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kJsClassWithJsCall.kt")
     public void testKJsClassWithJsCall() {
       runTest("js/js.translator/testData/box/reflection/kJsClassWithJsCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kTypeWithJsCall.kt")
     public void testKTypeWithJsCall() {
       runTest("js/js.translator/testData/box/reflection/kTypeWithJsCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("primitiveKClassOnReifiedType.kt")
     public void testPrimitiveKClassOnReifiedType() {
       runTest("js/js.translator/testData/box/reflection/primitiveKClassOnReifiedType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("primitives.kt")
     public void testPrimitives() {
       runTest("js/js.translator/testData/box/reflection/primitives.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("primitives-11.kt")
     public void testPrimitives_11() {
       runTest("js/js.translator/testData/box/reflection/primitives-11.kt");
@@ -10369,42 +10369,42 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/regression")
   @TestDataPath("$PROJECT_ROOT")
   public class Regression {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInRegression() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/regression"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("companionObjectInExternalInterface.kt")
     public void testCompanionObjectInExternalInterface() {
       runTest("js/js.translator/testData/box/regression/companionObjectInExternalInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("enumEntryInitOrder.kt")
     public void testEnumEntryInitOrder() {
       runTest("js/js.translator/testData/box/regression/enumEntryInitOrder.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt2470.kt")
     public void testKt2470() {
       runTest("js/js.translator/testData/box/regression/kt2470.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt52010.kt")
     public void testKt52010() {
       runTest("js/js.translator/testData/box/regression/kt52010.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("tmpInsidePrimaryConstructor.kt")
     public void testTmpInsidePrimaryConstructor() {
       runTest("js/js.translator/testData/box/regression/tmpInsidePrimaryConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("wrappers.kt")
     public void testWrappers() {
       runTest("js/js.translator/testData/box/regression/wrappers.kt");
@@ -10414,36 +10414,36 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/regression/stdlibTestSnippets")
     @TestDataPath("$PROJECT_ROOT")
     public class StdlibTestSnippets {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("abstractCollectionToArray.kt")
       public void testAbstractCollectionToArray() {
         runTest("js/js.translator/testData/box/regression/stdlibTestSnippets/abstractCollectionToArray.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInStdlibTestSnippets() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/regression/stdlibTestSnippets"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("arrayTest_plusInference.kt")
       public void testArrayTest_plusInference() {
         runTest("js/js.translator/testData/box/regression/stdlibTestSnippets/arrayTest_plusInference.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("iterableChunked.kt")
       public void testIterableChunked() {
         runTest("js/js.translator/testData/box/regression/stdlibTestSnippets/iterableChunked.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("json.kt")
       public void testJson() {
         runTest("js/js.translator/testData/box/regression/stdlibTestSnippets/json.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("throwable.kt")
       public void testThrowable() {
         runTest("js/js.translator/testData/box/regression/stdlibTestSnippets/throwable.kt");
@@ -10454,30 +10454,30 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("js/js.translator/testData/box/regression/typeChecks")
     @TestDataPath("$PROJECT_ROOT")
     public class TypeChecks {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInTypeChecks() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/regression/typeChecks"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("booleanOperatorsTypes.kt")
       public void testBooleanOperatorsTypes() {
         runTest("js/js.translator/testData/box/regression/typeChecks/booleanOperatorsTypes.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("emptyVarargInConstructorCall.kt")
       public void testEmptyVarargInConstructorCall() {
         runTest("js/js.translator/testData/box/regression/typeChecks/emptyVarargInConstructorCall.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("taggedArrayCopy.kt")
       public void testTaggedArrayCopy() {
         runTest("js/js.translator/testData/box/regression/typeChecks/taggedArrayCopy.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("toStringExtension.kt")
       public void testToStringExtension() {
         runTest("js/js.translator/testData/box/regression/typeChecks/toStringExtension.kt");
@@ -10489,126 +10489,126 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/reified")
   @TestDataPath("$PROJECT_ROOT")
   public class Reified {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInReified() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/reified"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("callChain.kt")
     public void testCallChain() {
       runTest("js/js.translator/testData/box/reified/callChain.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("capture.kt")
     public void testCapture() {
       runTest("js/js.translator/testData/box/reified/capture.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionFun.kt")
     public void testExtensionFun() {
       runTest("js/js.translator/testData/box/reified/extensionFun.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionLambda.kt")
     public void testExtensionLambda() {
       runTest("js/js.translator/testData/box/reified/extensionLambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extensionMethod.kt")
     public void testExtensionMethod() {
       runTest("js/js.translator/testData/box/reified/extensionMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("innerObject.kt")
     public void testInnerObject() {
       runTest("js/js.translator/testData/box/reified/innerObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("isBool.kt")
     public void testIsBool() {
       runTest("js/js.translator/testData/box/reified/isBool.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("isChar.kt")
     public void testIsChar() {
       runTest("js/js.translator/testData/box/reified/isChar.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("isClass.kt")
     public void testIsClass() {
       runTest("js/js.translator/testData/box/reified/isClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("isNumber.kt")
     public void testIsNumber() {
       runTest("js/js.translator/testData/box/reified/isNumber.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("isString.kt")
     public void testIsString() {
       runTest("js/js.translator/testData/box/reified/isString.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("isTNullable.kt")
     public void testIsTNullable() {
       runTest("js/js.translator/testData/box/reified/isTNullable.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambda.kt")
     public void testLambda() {
       runTest("js/js.translator/testData/box/reified/lambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("lambdaNameClash.kt")
     public void testLambdaNameClash() {
       runTest("js/js.translator/testData/box/reified/lambdaNameClash.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("method.kt")
     public void testMethod() {
       runTest("js/js.translator/testData/box/reified/method.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("multipleTypeParameters.kt")
     public void testMultipleTypeParameters() {
       runTest("js/js.translator/testData/box/reified/multipleTypeParameters.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("noValueParameters.kt")
     public void testNoValueParameters() {
       runTest("js/js.translator/testData/box/reified/noValueParameters.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("parameterSwap.kt")
     public void testParameterSwap() {
       runTest("js/js.translator/testData/box/reified/parameterSwap.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("vararg.kt")
     public void testVararg() {
       runTest("js/js.translator/testData/box/reified/vararg.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("withInlineTurnedOff.kt")
     public void testWithInlineTurnedOff() {
       runTest("js/js.translator/testData/box/reified/withInlineTurnedOff.kt");
@@ -10619,120 +10619,120 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/rtti")
   @TestDataPath("$PROJECT_ROOT")
   public class Rtti {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInRtti() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/rtti"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("collectionClassesIsCheck.kt")
     public void testCollectionClassesIsCheck() {
       runTest("js/js.translator/testData/box/rtti/collectionClassesIsCheck.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("exceptionIsInterface.kt")
     public void testExceptionIsInterface() {
       runTest("js/js.translator/testData/box/rtti/exceptionIsInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("isComparable.kt")
     public void testIsComparable() {
       runTest("js/js.translator/testData/box/rtti/isComparable.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("isJsPrimitiveNullableType.kt")
     public void testIsJsPrimitiveNullableType() {
       runTest("js/js.translator/testData/box/rtti/isJsPrimitiveNullableType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("isJsPrimitiveType.kt")
     public void testIsJsPrimitiveType() {
       runTest("js/js.translator/testData/box/rtti/isJsPrimitiveType.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("isObject.kt")
     public void testIsObject() {
       runTest("js/js.translator/testData/box/rtti/isObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("isReifiedObject.kt")
     public void testIsReifiedObject() {
       runTest("js/js.translator/testData/box/rtti/isReifiedObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("isSameClass.kt")
     public void testIsSameClass() {
       runTest("js/js.translator/testData/box/rtti/isSameClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("notIsOtherClass.kt")
     public void testNotIsOtherClass() {
       runTest("js/js.translator/testData/box/rtti/notIsOtherClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("objectExpression.kt")
     public void testObjectExpression() {
       runTest("js/js.translator/testData/box/rtti/objectExpression.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("onNativeObject.kt")
     public void testOnNativeObject() {
       runTest("js/js.translator/testData/box/rtti/onNativeObject.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("prototypeUsedToFindInterface.kt")
     public void testPrototypeUsedToFindInterface() {
       runTest("js/js.translator/testData/box/rtti/prototypeUsedToFindInterface.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("rttiForClass.kt")
     public void testRttiForClass() {
       runTest("js/js.translator/testData/box/rtti/rttiForClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("rttiForTrait.kt")
     public void testRttiForTrait() {
       runTest("js/js.translator/testData/box/rtti/rttiForTrait.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("rttiForTrait2.kt")
     public void testRttiForTrait2() {
       runTest("js/js.translator/testData/box/rtti/rttiForTrait2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("sideEffectMethod.kt")
     public void testSideEffectMethod() {
       runTest("js/js.translator/testData/box/rtti/sideEffectMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("sideEffectProperty.kt")
     public void testSideEffectProperty() {
       runTest("js/js.translator/testData/box/rtti/sideEffectProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("stdlibEmptyListClass.kt")
     public void testStdlibEmptyListClass() {
       runTest("js/js.translator/testData/box/rtti/stdlibEmptyListClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("subclassOfNativeIsInterface.kt")
     public void testSubclassOfNativeIsInterface() {
       runTest("js/js.translator/testData/box/rtti/subclassOfNativeIsInterface.kt");
@@ -10743,48 +10743,48 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/safeCall")
   @TestDataPath("$PROJECT_ROOT")
   public class SafeCall {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInSafeCall() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/safeCall"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("redundantSafeAccess.kt")
     public void testRedundantSafeAccess() {
       runTest("js/js.translator/testData/box/safeCall/redundantSafeAccess.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("safeAccess.kt")
     public void testSafeAccess() {
       runTest("js/js.translator/testData/box/safeCall/safeAccess.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("safeCall.kt")
     public void testSafeCall() {
       runTest("js/js.translator/testData/box/safeCall/safeCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("safeCallAndIntrinsic.kt")
     public void testSafeCallAndIntrinsic() {
       runTest("js/js.translator/testData/box/safeCall/safeCallAndIntrinsic.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("safeCallAndSideEffect.kt")
     public void testSafeCallAndSideEffect() {
       runTest("js/js.translator/testData/box/safeCall/safeCallAndSideEffect.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("safeCallReturnsNullIfFails.kt")
     public void testSafeCallReturnsNullIfFails() {
       runTest("js/js.translator/testData/box/safeCall/safeCallReturnsNullIfFails.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("safeExtensionFunctionCall.kt")
     public void testSafeExtensionFunctionCall() {
       runTest("js/js.translator/testData/box/safeCall/safeExtensionFunctionCall.kt");
@@ -10795,204 +10795,204 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/simple")
   @TestDataPath("$PROJECT_ROOT")
   public class Simple {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInSimple() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/simple"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("assign.kt")
     public void testAssign() {
       runTest("js/js.translator/testData/box/simple/assign.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("breakDoWhile.kt")
     public void testBreakDoWhile() {
       runTest("js/js.translator/testData/box/simple/breakDoWhile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("breakWhile.kt")
     public void testBreakWhile() {
       runTest("js/js.translator/testData/box/simple/breakWhile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classInstantiation.kt")
     public void testClassInstantiation() {
       runTest("js/js.translator/testData/box/simple/classInstantiation.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("comparison.kt")
     public void testComparison() {
       runTest("js/js.translator/testData/box/simple/comparison.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("complexExpressionAsConstructorParameter.kt")
     public void testComplexExpressionAsConstructorParameter() {
       runTest("js/js.translator/testData/box/simple/complexExpressionAsConstructorParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constructorWithParameter.kt")
     public void testConstructorWithParameter() {
       runTest("js/js.translator/testData/box/simple/constructorWithParameter.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constructorWithPropertiesAsParameters.kt")
     public void testConstructorWithPropertiesAsParameters() {
       runTest("js/js.translator/testData/box/simple/constructorWithPropertiesAsParameters.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("continueDoWhile.kt")
     public void testContinueDoWhile() {
       runTest("js/js.translator/testData/box/simple/continueDoWhile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("continueWhile.kt")
     public void testContinueWhile() {
       runTest("js/js.translator/testData/box/simple/continueWhile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("doWhile.kt")
     public void testDoWhile() {
       runTest("js/js.translator/testData/box/simple/doWhile.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("doWhile2.kt")
     public void testDoWhile2() {
       runTest("js/js.translator/testData/box/simple/doWhile2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("elseif.kt")
     public void testElseif() {
       runTest("js/js.translator/testData/box/simple/elseif.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("errorCodeDelegatedConstructorCall.kt")
     public void testErrorCodeDelegatedConstructorCall() {
       runTest("js/js.translator/testData/box/simple/errorCodeDelegatedConstructorCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("if.kt")
     public void testIf() {
       runTest("js/js.translator/testData/box/simple/if.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("ifElseAsExpression.kt")
     public void testIfElseAsExpression() {
       runTest("js/js.translator/testData/box/simple/ifElseAsExpression.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("methodDeclarationAndCall.kt")
     public void testMethodDeclarationAndCall() {
       runTest("js/js.translator/testData/box/simple/methodDeclarationAndCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("minusAssignOnProperty.kt")
     public void testMinusAssignOnProperty() {
       runTest("js/js.translator/testData/box/simple/minusAssignOnProperty.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("notBoolean.kt")
     public void testNotBoolean() {
       runTest("js/js.translator/testData/box/simple/notBoolean.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("plusAssign.kt")
     public void testPlusAssign() {
       runTest("js/js.translator/testData/box/simple/plusAssign.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("positiveAndNegativeNumbers.kt")
     public void testPositiveAndNegativeNumbers() {
       runTest("js/js.translator/testData/box/simple/positiveAndNegativeNumbers.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("postfixIntOperations.kt")
     public void testPostfixIntOperations() {
       runTest("js/js.translator/testData/box/simple/postfixIntOperations.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("prefixIntOperations.kt")
     public void testPrefixIntOperations() {
       runTest("js/js.translator/testData/box/simple/prefixIntOperations.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("primCtorDelegation1.kt")
     public void testPrimCtorDelegation1() {
       runTest("js/js.translator/testData/box/simple/primCtorDelegation1.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertiesAsParametersInitialized.kt")
     public void testPropertiesAsParametersInitialized() {
       runTest("js/js.translator/testData/box/simple/propertiesAsParametersInitialized.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertyAccess.kt")
     public void testPropertyAccess() {
       runTest("js/js.translator/testData/box/simple/propertyAccess.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("secCtorDelegation1.kt")
     public void testSecCtorDelegation1() {
       runTest("js/js.translator/testData/box/simple/secCtorDelegation1.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("secCtorDelegation2.kt")
     public void testSecCtorDelegation2() {
       runTest("js/js.translator/testData/box/simple/secCtorDelegation2.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("secCtorDelegation3.kt")
     public void testSecCtorDelegation3() {
       runTest("js/js.translator/testData/box/simple/secCtorDelegation3.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("secCtorDelegation4.kt")
     public void testSecCtorDelegation4() {
       runTest("js/js.translator/testData/box/simple/secCtorDelegation4.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simpleInitializer.kt")
     public void testSimpleInitializer() {
       runTest("js/js.translator/testData/box/simple/simpleInitializer.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("while.kt")
     public void testWhile() {
       runTest("js/js.translator/testData/box/simple/while.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("while2.kt")
     public void testWhile2() {
       runTest("js/js.translator/testData/box/simple/while2.kt");
@@ -11003,114 +11003,114 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/standardClasses")
   @TestDataPath("$PROJECT_ROOT")
   public class StandardClasses {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInStandardClasses() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/standardClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("any.kt")
     public void testAny() {
       runTest("js/js.translator/testData/box/standardClasses/any.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("array.kt")
     public void testArray() {
       runTest("js/js.translator/testData/box/standardClasses/array.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayAccess.kt")
     public void testArrayAccess() {
       runTest("js/js.translator/testData/box/standardClasses/arrayAccess.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayConstructorsWithLambda.kt")
     public void testArrayConstructorsWithLambda() {
       runTest("js/js.translator/testData/box/standardClasses/arrayConstructorsWithLambda.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayFactoryMethods.kt")
     public void testArrayFactoryMethods() {
       runTest("js/js.translator/testData/box/standardClasses/arrayFactoryMethods.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayFunctionConstructor.kt")
     public void testArrayFunctionConstructor() {
       runTest("js/js.translator/testData/box/standardClasses/arrayFunctionConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arrayIsFilledWithNulls.kt")
     public void testArrayIsFilledWithNulls() {
       runTest("js/js.translator/testData/box/standardClasses/arrayIsFilledWithNulls.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arraySize.kt")
     public void testArraySize() {
       runTest("js/js.translator/testData/box/standardClasses/arraySize.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arraySort.kt")
     public void testArraySort() {
       runTest("js/js.translator/testData/box/standardClasses/arraySort.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("arraysIterator.kt")
     public void testArraysIterator() {
       runTest("js/js.translator/testData/box/standardClasses/arraysIterator.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("charArrayGetSet.kt")
     public void testCharArrayGetSet() {
       runTest("js/js.translator/testData/box/standardClasses/charArrayGetSet.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hashMapTypeOfElement.kt")
     public void testHashMapTypeOfElement() {
       runTest("js/js.translator/testData/box/standardClasses/hashMapTypeOfElement.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("hashSetTypeOfElement.kt")
     public void testHashSetTypeOfElement() {
       runTest("js/js.translator/testData/box/standardClasses/hashSetTypeOfElement.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("mutableMapRemoveWithCollision.kt")
     public void testMutableMapRemoveWithCollision() {
       runTest("js/js.translator/testData/box/standardClasses/mutableMapRemoveWithCollision.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("stringBuilder.kt")
     public void testStringBuilder() {
       runTest("js/js.translator/testData/box/standardClasses/stringBuilder.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("stringPlus.kt")
     public void testStringPlus() {
       runTest("js/js.translator/testData/box/standardClasses/stringPlus.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("throwableConsistancy.kt")
     public void testThrowableConsistancy() {
       runTest("js/js.translator/testData/box/standardClasses/throwableConsistancy.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("throwableCtor.kt")
     public void testThrowableCtor() {
       runTest("js/js.translator/testData/box/standardClasses/throwableCtor.kt");
@@ -11121,42 +11121,42 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/superCall")
   @TestDataPath("$PROJECT_ROOT")
   public class SuperCall {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInSuperCall() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/superCall"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classSuperCall.kt")
     public void testClassSuperCall() {
       runTest("js/js.translator/testData/box/superCall/classSuperCall.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("intrinsic.kt")
     public void testIntrinsic() {
       runTest("js/js.translator/testData/box/superCall/intrinsic.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nativeSuperClass.kt")
     public void testNativeSuperClass() {
       runTest("js/js.translator/testData/box/superCall/nativeSuperClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("propertySuperAccess.kt")
     public void testPropertySuperAccess() {
       runTest("js/js.translator/testData/box/superCall/propertySuperAccess.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("superCallInPrivateMethod.kt")
     public void testSuperCallInPrivateMethod() {
       runTest("js/js.translator/testData/box/superCall/superCallInPrivateMethod.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("traitSuperCall.kt")
     public void testTraitSuperCall() {
       runTest("js/js.translator/testData/box/superCall/traitSuperCall.kt");
@@ -11167,60 +11167,60 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/trait")
   @TestDataPath("$PROJECT_ROOT")
   public class Trait {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInTrait() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/trait"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("checkImplementationCharacteristics.kt")
     public void testCheckImplementationCharacteristics() {
       runTest("js/js.translator/testData/box/trait/checkImplementationCharacteristics.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classDerivesFromClassAndTrait.kt")
     public void testClassDerivesFromClassAndTrait() {
       runTest("js/js.translator/testData/box/trait/classDerivesFromClassAndTrait.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("classDerivesFromTraitAndClass.kt")
     public void testClassDerivesFromTraitAndClass() {
       runTest("js/js.translator/testData/box/trait/classDerivesFromTraitAndClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("definitionOrder.kt")
     public void testDefinitionOrder() {
       runTest("js/js.translator/testData/box/trait/definitionOrder.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("example.kt")
     public void testExample() {
       runTest("js/js.translator/testData/box/trait/example.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("funDelegation.kt")
     public void testFunDelegation() {
       runTest("js/js.translator/testData/box/trait/funDelegation.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("traitAddsFunctionsToClass.kt")
     public void testTraitAddsFunctionsToClass() {
       runTest("js/js.translator/testData/box/trait/traitAddsFunctionsToClass.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("traitExtendsTrait.kt")
     public void testTraitExtendsTrait() {
       runTest("js/js.translator/testData/box/trait/traitExtendsTrait.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("traitExtendsTwoTraits.kt")
     public void testTraitExtendsTwoTraits() {
       runTest("js/js.translator/testData/box/trait/traitExtendsTwoTraits.kt");
@@ -11231,30 +11231,30 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @TestMetadata("js/js.translator/testData/box/vararg")
   @TestDataPath("$PROJECT_ROOT")
   public class Vararg {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInVararg() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/vararg"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsExternalInterfaceVararg.kt")
     public void testJsExternalInterfaceVararg() {
       runTest("js/js.translator/testData/box/vararg/jsExternalInterfaceVararg.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsExternalVarargCtor.kt")
     public void testJsExternalVarargCtor() {
       runTest("js/js.translator/testData/box/vararg/jsExternalVarargCtor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsExternalVarargFun.kt")
     public void testJsExternalVarargFun() {
       runTest("js/js.translator/testData/box/vararg/jsExternalVarargFun.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jsExternalVarargSuspend.kt")
     public void testJsExternalVarargSuspend() {
       runTest("js/js.translator/testData/box/vararg/jsExternalVarargSuspend.kt");

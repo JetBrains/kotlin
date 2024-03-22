@@ -22,18 +22,18 @@ import java.util.regex.Pattern;
 @EnforcedProperty(property = ClassLevelProperty.BINARY_LIBRARY_KIND, propertyValue = "DYNAMIC")
 @EnforcedProperty(property = ClassLevelProperty.C_INTERFACE_MODE, propertyValue = "V1")
 public class CExportDynamicInterfaceV1TestGenerated extends AbstractNativeCExportTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInInterfaceV1() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CExport/InterfaceV1"), Pattern.compile("^([^_](.+))$"), null, false);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt36639")
   public void testKt36639() {
     runTest("native/native.tests/testData/CExport/InterfaceV1/kt36639/");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("smoke0")
   public void testSmoke0() {
     runTest("native/native.tests/testData/CExport/InterfaceV1/smoke0/");

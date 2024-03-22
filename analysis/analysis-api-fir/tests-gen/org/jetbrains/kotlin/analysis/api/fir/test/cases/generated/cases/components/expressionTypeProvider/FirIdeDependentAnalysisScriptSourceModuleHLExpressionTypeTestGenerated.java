@@ -41,7 +41,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleHLExpressionTypeTestGenera
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInExpressionType() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
@@ -50,7 +50,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleHLExpressionTypeTestGenera
   @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment")
   @TestDataPath("$PROJECT_ROOT")
   public class Assignment {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInAssignment() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
@@ -60,7 +60,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleHLExpressionTypeTestGenera
   @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference")
   @TestDataPath("$PROJECT_ROOT")
   public class NameReference {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInNameReference() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }

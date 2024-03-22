@@ -19,30 +19,30 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/fir-plugin-prototype/testData/firLoadK2Compiled")
 @TestDataPath("$PROJECT_ROOT")
 public class FirLoadK2CompiledWithPluginJsKotlinTestGenerated extends AbstractFirLoadK2CompiledWithPluginJsKotlinTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInFirLoadK2Compiled() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir-plugin-prototype/testData/firLoadK2Compiled"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationsGeneratedInBackend.kt")
   public void testAnnotationsGeneratedInBackend() {
     runTest("plugins/fir-plugin-prototype/testData/firLoadK2Compiled/annotationsGeneratedInBackend.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("annotationsGeneratedInBackend_MPP.kt")
   public void testAnnotationsGeneratedInBackend_MPP() {
     runTest("plugins/fir-plugin-prototype/testData/firLoadK2Compiled/annotationsGeneratedInBackend_MPP.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simple.kt")
   public void testSimple() {
     runTest("plugins/fir-plugin-prototype/testData/firLoadK2Compiled/simple.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simple-lang-ver-2.1.kt")
   public void testSimple_lang_ver_2_1() {
     runTest("plugins/fir-plugin-prototype/testData/firLoadK2Compiled/simple-lang-ver-2.1.kt");

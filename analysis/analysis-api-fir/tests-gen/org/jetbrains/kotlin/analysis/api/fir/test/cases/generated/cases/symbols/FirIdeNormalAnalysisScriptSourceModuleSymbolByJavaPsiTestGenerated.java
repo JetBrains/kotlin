@@ -40,7 +40,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleSymbolByJavaPsiTestGenerated 
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSymbolByJavaPsi() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByJavaPsi"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

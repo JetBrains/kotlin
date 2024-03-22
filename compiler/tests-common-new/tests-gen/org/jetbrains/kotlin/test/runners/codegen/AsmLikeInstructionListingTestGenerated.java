@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/asmLike")
 @TestDataPath("$PROJECT_ROOT")
 public class AsmLikeInstructionListingTestGenerated extends AbstractAsmLikeInstructionListingTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInAsmLike() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/asmLike"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
   }
@@ -29,78 +29,78 @@ public class AsmLikeInstructionListingTestGenerated extends AbstractAsmLikeInstr
   @TestMetadata("compiler/testData/codegen/asmLike/receiverMangling")
   @TestDataPath("$PROJECT_ROOT")
   public class ReceiverMangling {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInReceiverMangling() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/asmLike/receiverMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("deepInline.kt")
     public void testDeepInline() {
       runTest("compiler/testData/codegen/asmLike/receiverMangling/deepInline.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("deepInlineWithLabels.kt")
     public void testDeepInlineWithLabels() {
       runTest("compiler/testData/codegen/asmLike/receiverMangling/deepInlineWithLabels.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("deepNoinlineWithLabels_after.kt")
     public void testDeepNoinlineWithLabels_after() {
       runTest("compiler/testData/codegen/asmLike/receiverMangling/deepNoinlineWithLabels_after.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("deepNoinlineWithLabels_before.kt")
     public void testDeepNoinlineWithLabels_before() {
       runTest("compiler/testData/codegen/asmLike/receiverMangling/deepNoinlineWithLabels_before.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("deepNoinline_after.kt")
     public void testDeepNoinline_after() {
       runTest("compiler/testData/codegen/asmLike/receiverMangling/deepNoinline_after.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("deepNoinline_before.kt")
     public void testDeepNoinline_before() {
       runTest("compiler/testData/codegen/asmLike/receiverMangling/deepNoinline_before.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineClassCapture.kt")
     public void testInlineClassCapture() {
       runTest("compiler/testData/codegen/asmLike/receiverMangling/inlineClassCapture.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("inlineReceivers.kt")
     public void testInlineReceivers() {
       runTest("compiler/testData/codegen/asmLike/receiverMangling/inlineReceivers.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("localFunctions.kt")
     public void testLocalFunctions() {
       runTest("compiler/testData/codegen/asmLike/receiverMangling/localFunctions.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("mangledNames.kt")
     public void testMangledNames() {
       runTest("compiler/testData/codegen/asmLike/receiverMangling/mangledNames.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nonInlineReceivers_after.kt")
     public void testNonInlineReceivers_after() {
       runTest("compiler/testData/codegen/asmLike/receiverMangling/nonInlineReceivers_after.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nonInlineReceivers_before.kt")
     public void testNonInlineReceivers_before() {
       runTest("compiler/testData/codegen/asmLike/receiverMangling/nonInlineReceivers_before.kt");
@@ -111,102 +111,102 @@ public class AsmLikeInstructionListingTestGenerated extends AbstractAsmLikeInstr
   @TestMetadata("compiler/testData/codegen/asmLike/typeAnnotations")
   @TestDataPath("$PROJECT_ROOT")
   public class TypeAnnotations {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInTypeAnnotations() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/asmLike/typeAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("complex.kt")
     public void testComplex() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/complex.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("constructor.kt")
     public void testConstructor() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/constructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("defaultArgs.kt")
     public void testDefaultArgs() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/defaultArgs.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("dontEmit.kt")
     public void testDontEmit() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/dontEmit.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("enumClassConstructor.kt")
     public void testEnumClassConstructor() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/enumClassConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("extension.kt")
     public void testExtension() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/extension.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("implicit.kt")
     public void testImplicit() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/implicit.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("innerClassConstructor.kt")
     public void testInnerClassConstructor() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/innerClassConstructor.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jvmOverload.kt")
     public void testJvmOverload() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/jvmOverload.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jvmStatic.kt")
     public void testJvmStatic() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/jvmStatic.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("notYetSupported.kt")
     public void testNotYetSupported() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/notYetSupported.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("property.kt")
     public void testProperty() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/property.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/simple.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("simple2Params.kt")
     public void testSimple2Params() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/simple2Params.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("staticNested.kt")
     public void testStaticNested() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/staticNested.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("syntheticAccessors.kt")
     public void testSyntheticAccessors() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/syntheticAccessors.kt");

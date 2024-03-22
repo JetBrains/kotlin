@@ -40,7 +40,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleExpectForActualTestGenerated 
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInExpectForActual() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

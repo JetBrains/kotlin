@@ -18,36 +18,36 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/scripting/scripting-tests/testData/diagnostics/testScripts")
 @TestDataPath("$PROJECT_ROOT")
 public class LLFirScriptDiagnosticCompilerTestDataTestGenerated extends AbstractLLFirScriptDiagnosticCompilerTestDataTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInTestScripts() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/diagnostics/testScripts"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("conflictingImportsWithJava.test.kts")
   public void testConflictingImportsWithJava_test() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/conflictingImportsWithJava.test.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("invokeResolve.test.kts")
   public void testInvokeResolve_test() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/invokeResolve.test.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("providedPropertiesShadowing.test.kts")
   public void testProvidedPropertiesShadowing_test() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/providedPropertiesShadowing.test.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("providedProperties.test.kts")
   public void testProvidedProperties_test() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/providedProperties.test.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("simple.test.kts")
   public void testSimple_test() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/simple.test.kts");

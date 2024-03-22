@@ -21,72 +21,72 @@ public class CInteropFModulesTestGenerated extends AbstractNativeCInteropFModule
   @TestMetadata("native/native.tests/testData/CInterop/simple/simpleDefs")
   @TestDataPath("$PROJECT_ROOT")
   public class SimpleDefs {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInSimpleDefs() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CInterop/simple/simpleDefs"), Pattern.compile("^([^_](.+))$"), null, false);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("filterA")
     public void testFilterA() {
       runTest("native/native.tests/testData/CInterop/simple/simpleDefs/filterA/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("filterAB")
     public void testFilterAB() {
       runTest("native/native.tests/testData/CInterop/simple/simpleDefs/filterAB/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("filterABC")
     public void testFilterABC() {
       runTest("native/native.tests/testData/CInterop/simple/simpleDefs/filterABC/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("filterAC")
     public void testFilterAC() {
       runTest("native/native.tests/testData/CInterop/simple/simpleDefs/filterAC/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("filterB")
     public void testFilterB() {
       runTest("native/native.tests/testData/CInterop/simple/simpleDefs/filterB/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("filterBC")
     public void testFilterBC() {
       runTest("native/native.tests/testData/CInterop/simple/simpleDefs/filterBC/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("filterC")
     public void testFilterC() {
       runTest("native/native.tests/testData/CInterop/simple/simpleDefs/filterC/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("full")
     public void testFull() {
       runTest("native/native.tests/testData/CInterop/simple/simpleDefs/full/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("modulesA")
     public void testModulesA() {
       runTest("native/native.tests/testData/CInterop/simple/simpleDefs/modulesA/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("modulesAB")
     public void testModulesAB() {
       runTest("native/native.tests/testData/CInterop/simple/simpleDefs/modulesAB/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("modulesB")
     public void testModulesB() {
       runTest("native/native.tests/testData/CInterop/simple/simpleDefs/modulesB/");
@@ -97,114 +97,114 @@ public class CInteropFModulesTestGenerated extends AbstractNativeCInteropFModule
   @TestMetadata("native/native.tests/testData/CInterop/framework/frameworkDefs")
   @TestDataPath("$PROJECT_ROOT")
   public class FrameworkDefs {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInFrameworkDefs() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CInterop/framework/frameworkDefs"), Pattern.compile("^([^_](.+))$"), null, false);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("childImportFModules")
     public void testChildImportFModules() {
       runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/childImportFModules/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("excludePod1")
     public void testExcludePod1() {
       runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/excludePod1/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("excludePod1Umbrella")
     public void testExcludePod1Umbrella() {
       runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/excludePod1Umbrella/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("explicitSubmodule")
     public void testExplicitSubmodule() {
       runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/explicitSubmodule/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("filterPod1")
     public void testFilterPod1() {
       runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/filterPod1/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("filterPod1A")
     public void testFilterPod1A() {
       runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/filterPod1A/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("filterPod1Umbrella")
     public void testFilterPod1Umbrella() {
       runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/filterPod1Umbrella/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("filterPod1UmbrellaPod1A")
     public void testFilterPod1UmbrellaPod1A() {
       runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/filterPod1UmbrellaPod1A/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("forwardEnum")
     public void testForwardEnum() {
       runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/forwardEnum/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("full")
     public void testFull() {
       runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/full/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("importsAngleAngle")
     public void testImportsAngleAngle() {
       runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/importsAngleAngle/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("importsAngleQuote")
     public void testImportsAngleQuote() {
       runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/importsAngleQuote/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("importsQuoteAngle")
     public void testImportsQuoteAngle() {
       runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/importsQuoteAngle/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("importsQuoteQuote")
     public void testImportsQuoteQuote() {
       runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/importsQuoteQuote/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("modulesPod1")
     public void testModulesPod1() {
       runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/modulesPod1/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("protocolDefs")
     public void testProtocolDefs() {
       runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/protocolDefs/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("twoChildren")
     public void testTwoChildren() {
       runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/twoChildren/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("visitOtherModules")
     public void testVisitOtherModules() {
       runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/visitOtherModules/");
@@ -215,18 +215,18 @@ public class CInteropFModulesTestGenerated extends AbstractNativeCInteropFModule
   @TestMetadata("native/native.tests/testData/CInterop/framework.macros/macrosDefs")
   @TestDataPath("$PROJECT_ROOT")
   public class MacrosDefs {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInMacrosDefs() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CInterop/framework.macros/macrosDefs"), Pattern.compile("^([^_](.+))$"), null, false);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("modulesPod1")
     public void testModulesPod1() {
       runTest("native/native.tests/testData/CInterop/framework.macros/macrosDefs/modulesPod1/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("myMacroType")
     public void testMyMacroType() {
       runTest("native/native.tests/testData/CInterop/framework.macros/macrosDefs/myMacroType/");
@@ -237,36 +237,36 @@ public class CInteropFModulesTestGenerated extends AbstractNativeCInteropFModule
   @TestMetadata("native/native.tests/testData/CInterop/builtins/builtinsDefs")
   @TestDataPath("$PROJECT_ROOT")
   public class BuiltinsDefs {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInBuiltinsDefs() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CInterop/builtins/builtinsDefs"), Pattern.compile("^([^_](.+))$"), null, false);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("filterA")
     public void testFilterA() {
       runTest("native/native.tests/testData/CInterop/builtins/builtinsDefs/filterA/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("filterStdargH")
     public void testFilterStdargH() {
       runTest("native/native.tests/testData/CInterop/builtins/builtinsDefs/filterStdargH/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("fullA")
     public void testFullA() {
       runTest("native/native.tests/testData/CInterop/builtins/builtinsDefs/fullA/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("fullStdargH")
     public void testFullStdargH() {
       runTest("native/native.tests/testData/CInterop/builtins/builtinsDefs/fullStdargH/");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("modulesA")
     public void testModulesA() {
       runTest("native/native.tests/testData/CInterop/builtins/builtinsDefs/modulesA/");

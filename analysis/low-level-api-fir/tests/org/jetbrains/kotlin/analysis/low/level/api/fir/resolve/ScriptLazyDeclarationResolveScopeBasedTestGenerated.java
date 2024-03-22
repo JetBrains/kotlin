@@ -18,126 +18,126 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/low-level-api-fir/testData/lazyResolveScopes")
 @TestDataPath("$PROJECT_ROOT")
 public class ScriptLazyDeclarationResolveScopeBasedTestGenerated extends AbstractScriptLazyDeclarationResolveScopeBasedTest {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInLazyResolveScopes() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveScopes"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("anonymousObjectScript.kts")
   public void testAnonymousObjectScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/anonymousObjectScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classDeclarationsScript.kts")
   public void testClassDeclarationsScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/classDeclarationsScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("classFromStatement.kts")
   public void testClassFromStatement() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/classFromStatement.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegateOverrideWithImplicitTypeInsideAnonymousObjectScript.kts")
   public void testDelegateOverrideWithImplicitTypeInsideAnonymousObjectScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/delegateOverrideWithImplicitTypeInsideAnonymousObjectScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegateOverrideWithImplicitTypeInsideAnonymousObjectWithSubstitutionScript.kts")
   public void testDelegateOverrideWithImplicitTypeInsideAnonymousObjectWithSubstitutionScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/delegateOverrideWithImplicitTypeInsideAnonymousObjectWithSubstitutionScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegateOverrideWithImplicitTypeInsideClassScript.kts")
   public void testDelegateOverrideWithImplicitTypeInsideClassScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/delegateOverrideWithImplicitTypeInsideClassScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegateOverrideWithImplicitTypeInsideClassWithSubstitutionScript.kts")
   public void testDelegateOverrideWithImplicitTypeInsideClassWithSubstitutionScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/delegateOverrideWithImplicitTypeInsideClassWithSubstitutionScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegateOverrideWithoutImplicitTypeInsideAnonymousObjectScript.kts")
   public void testDelegateOverrideWithoutImplicitTypeInsideAnonymousObjectScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/delegateOverrideWithoutImplicitTypeInsideAnonymousObjectScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegateOverrideWithoutImplicitTypeInsideAnonymousObjectWithSubstitutionScript.kts")
   public void testDelegateOverrideWithoutImplicitTypeInsideAnonymousObjectWithSubstitutionScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/delegateOverrideWithoutImplicitTypeInsideAnonymousObjectWithSubstitutionScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegateOverrideWithoutImplicitTypeInsideClassScript.kts")
   public void testDelegateOverrideWithoutImplicitTypeInsideClassScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/delegateOverrideWithoutImplicitTypeInsideClassScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegateOverrideWithoutImplicitTypeInsideClassWithSubstitutionScript.kts")
   public void testDelegateOverrideWithoutImplicitTypeInsideClassWithSubstitutionScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/delegateOverrideWithoutImplicitTypeInsideClassWithSubstitutionScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("intersectionOverride2Script.kts")
   public void testIntersectionOverride2Script() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/intersectionOverride2Script.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("intersectionOverrideScript.kts")
   public void testIntersectionOverrideScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/intersectionOverrideScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("intersectionOverrideWithImplicitTypeInsideAnonymousObjectScript.kts")
   public void testIntersectionOverrideWithImplicitTypeInsideAnonymousObjectScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/intersectionOverrideWithImplicitTypeInsideAnonymousObjectScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("intersectionOverrideWithoutImplicitTypeInsideAnonymousObjectScript.kts")
   public void testIntersectionOverrideWithoutImplicitTypeInsideAnonymousObjectScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/intersectionOverrideWithoutImplicitTypeInsideAnonymousObjectScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("localClassScript.kts")
   public void testLocalClassScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/localClassScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionOverrideWithImplicitTypeInsideAnonymousObjectScript.kts")
   public void testSubstitutionOverrideWithImplicitTypeInsideAnonymousObjectScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/substitutionOverrideWithImplicitTypeInsideAnonymousObjectScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionOverrideWithImplicitTypeInsideClassScript.kts")
   public void testSubstitutionOverrideWithImplicitTypeInsideClassScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/substitutionOverrideWithImplicitTypeInsideClassScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionOverrideWithoutImplicitTypeInsideAnonymousObjectScript.kts")
   public void testSubstitutionOverrideWithoutImplicitTypeInsideAnonymousObjectScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/substitutionOverrideWithoutImplicitTypeInsideAnonymousObjectScript.kts");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionOverrideWithoutImplicitTypeInsideClassScript.kts")
   public void testSubstitutionOverrideWithoutImplicitTypeInsideClassScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveScopes/substitutionOverrideWithoutImplicitTypeInsideClassScript.kts");

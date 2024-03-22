@@ -40,7 +40,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleTypeReferenceTestGenerated ex
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInTypeReference() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeProvider/typeReference"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

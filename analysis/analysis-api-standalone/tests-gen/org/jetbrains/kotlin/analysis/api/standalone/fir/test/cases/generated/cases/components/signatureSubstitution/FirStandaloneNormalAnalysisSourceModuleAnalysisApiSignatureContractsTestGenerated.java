@@ -40,18 +40,18 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiSignatureContract
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInSignatureContracts() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/signatureSubstitution/signatureContracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("members.kt")
   public void testMembers() {
     runTest("analysis/analysis-api/testData/components/signatureSubstitution/signatureContracts/members.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("topLevel.kt")
   public void testTopLevel() {
     runTest("analysis/analysis-api/testData/components/signatureSubstitution/signatureContracts/topLevel.kt");

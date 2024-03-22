@@ -19,60 +19,60 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend")
 @TestDataPath("$PROJECT_ROOT")
 public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirPsiDiagnosticsTestWithJvmIrBackend {
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInTestsWithJvmBackend() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("indirectInlineCycle.kt")
   public void testIndirectInlineCycle() {
     runTest("compiler/testData/diagnostics/testsWithJvmBackend/indirectInlineCycle.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inlineCycle.kt")
   public void testInlineCycle() {
     runTest("compiler/testData/diagnostics/testsWithJvmBackend/inlineCycle.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt57104.kt")
   public void testKt57104() {
     runTest("compiler/testData/diagnostics/testsWithJvmBackend/kt57104.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("kt57104_2.kt")
   public void testKt57104_2() {
     runTest("compiler/testData/diagnostics/testsWithJvmBackend/kt57104_2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multipleBigArityFunsImplemented.kt")
   public void testMultipleBigArityFunsImplemented() {
     runTest("compiler/testData/diagnostics/testsWithJvmBackend/multipleBigArityFunsImplemented.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("noWarningInLV1_5.kt")
   public void testNoWarningInLV1_5() {
     runTest("compiler/testData/diagnostics/testsWithJvmBackend/noWarningInLV1_5.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("propertyInlineCycle.kt")
   public void testPropertyInlineCycle() {
     runTest("compiler/testData/diagnostics/testsWithJvmBackend/propertyInlineCycle.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("suspendInlineCycle.kt")
   public void testSuspendInlineCycle() {
     runTest("compiler/testData/diagnostics/testsWithJvmBackend/suspendInlineCycle.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("suspensionPointInMonitor.kt")
   public void testSuspensionPointInMonitor() {
     runTest("compiler/testData/diagnostics/testsWithJvmBackend/suspensionPointInMonitor.kt");
@@ -82,18 +82,18 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
   @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/contextReceivers")
   @TestDataPath("$PROJECT_ROOT")
   public class ContextReceivers {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInContextReceivers() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt59590.kt")
     public void testKt59590() {
       runTest("compiler/testData/diagnostics/testsWithJvmBackend/contextReceivers/kt59590.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("kt59590WithContextReceiver.kt")
     public void testKt59590WithContextReceiver() {
       runTest("compiler/testData/diagnostics/testsWithJvmBackend/contextReceivers/kt59590WithContextReceiver.kt");
@@ -104,24 +104,24 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
   @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature")
   @TestDataPath("$PROJECT_ROOT")
   public class DuplicateJvmSignature {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInDuplicateJvmSignature() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("caseInProperties.kt")
     public void testCaseInProperties() {
       runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/caseInProperties.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("changingNullabilityOfOrdinaryClassIsBinaryCompatibleChange.kt")
     public void testChangingNullabilityOfOrdinaryClassIsBinaryCompatibleChange() {
       runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/changingNullabilityOfOrdinaryClassIsBinaryCompatibleChange.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("vararg.kt")
     public void testVararg() {
       runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/vararg.kt");
@@ -131,90 +131,90 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides")
     @TestDataPath("$PROJECT_ROOT")
     public class AccidentalOverrides {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("accidentalOverrideFromGrandparent.kt")
       public void testAccidentalOverrideFromGrandparent() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/accidentalOverrideFromGrandparent.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInAccidentalOverrides() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classFunctionOverriddenByProperty.kt")
       public void testClassFunctionOverriddenByProperty() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/classFunctionOverriddenByProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classFunctionOverriddenByPropertyInConstructor.kt")
       public void testClassFunctionOverriddenByPropertyInConstructor() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/classFunctionOverriddenByPropertyInConstructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classFunctionOverriddenByPropertyNoGetter.kt")
       public void testClassFunctionOverriddenByPropertyNoGetter() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/classFunctionOverriddenByPropertyNoGetter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classPropertyOverriddenByFunction.kt")
       public void testClassPropertyOverriddenByFunction() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/classPropertyOverriddenByFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("defaultFunction.kt")
       public void testDefaultFunction() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/defaultFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("delegatedFunctionOverriddenByProperty.kt")
       public void testDelegatedFunctionOverriddenByProperty() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/delegatedFunctionOverriddenByProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("genericClassFunction.kt")
       public void testGenericClassFunction() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/genericClassFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overridesNothing.kt")
       public void testOverridesNothing() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/overridesNothing.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("privateClassFunctionOverriddenByProperty.kt")
       public void testPrivateClassFunctionOverriddenByProperty() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/privateClassFunctionOverriddenByProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("traitFunctionOverriddenByProperty.kt")
       public void testTraitFunctionOverriddenByProperty() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/traitFunctionOverriddenByProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("traitFunctionOverriddenByPropertyNoImpl.kt")
       public void testTraitFunctionOverriddenByPropertyNoImpl() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/traitFunctionOverriddenByPropertyNoImpl.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("traitPropertyOverriddenByFunction.kt")
       public void testTraitPropertyOverriddenByFunction() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/traitPropertyOverriddenByFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("traitPropertyOverriddenByFunctionNoImpl.kt")
       public void testTraitPropertyOverriddenByFunctionNoImpl() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/traitPropertyOverriddenByFunctionNoImpl.kt");
@@ -225,24 +225,24 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges")
     @TestDataPath("$PROJECT_ROOT")
     public class Bridges {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInBridges() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("class.kt")
       public void testClass() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/class.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("fakeOverrideTrait.kt")
       public void testFakeOverrideTrait() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/fakeOverrideTrait.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("trait.kt")
       public void testTrait() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/trait.kt");
@@ -253,126 +253,126 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure")
     @TestDataPath("$PROJECT_ROOT")
     public class Erasure {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInErasure() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("clashFromInterfaceAndSuperClass.kt")
       public void testClashFromInterfaceAndSuperClass() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/clashFromInterfaceAndSuperClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("collections.kt")
       public void testCollections() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/collections.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("delegateToTwoTraits.kt")
       public void testDelegateToTwoTraits() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/delegateToTwoTraits.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("delegationAndOwnMethod.kt")
       public void testDelegationAndOwnMethod() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/delegationAndOwnMethod.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("delegationToTraitImplAndOwnMethod.kt")
       public void testDelegationToTraitImplAndOwnMethod() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/delegationToTraitImplAndOwnMethod.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("differentTypeParameterLists.kt")
       public void testDifferentTypeParameterLists() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/differentTypeParameterLists.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionProperties.kt")
       public void testExtensionProperties() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/extensionProperties.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("genericFunctions.kt")
       public void testGenericFunctions() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/genericFunctions.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("genericType.kt")
       public void testGenericType() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/genericType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inheritFromTwoTraits.kt")
       public void testInheritFromTwoTraits() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/inheritFromTwoTraits.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inheritGenericMethodsWithDifferentSubstitution.kt")
       public void testInheritGenericMethodsWithDifferentSubstitution() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/inheritGenericMethodsWithDifferentSubstitution.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kotlinAndJavaCollections.kt")
       public void testKotlinAndJavaCollections() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/kotlinAndJavaCollections.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nullableType.kt")
       public void testNullableType() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/nullableType.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("superTraitAndDelegationToTraitImpl.kt")
       public void testSuperTraitAndDelegationToTraitImpl() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/superTraitAndDelegationToTraitImpl.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("twoTraitsAndOwnFunction.kt")
       public void testTwoTraitsAndOwnFunction() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/twoTraitsAndOwnFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeMappedToJava.kt")
       public void testTypeMappedToJava() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/typeMappedToJava.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeParameter.kt")
       public void testTypeParameter() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/typeParameter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeParameterWithBound.kt")
       public void testTypeParameterWithBound() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/typeParameterWithBound.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeParameterWithTwoBounds.kt")
       public void testTypeParameterWithTwoBounds() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/typeParameterWithTwoBounds.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("typeParameterWithTwoBoundsInWhere.kt")
       public void testTypeParameterWithTwoBoundsInWhere() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/typeParameterWithTwoBoundsInWhere.kt");
@@ -383,18 +383,18 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/finalMembersFromBuiltIns")
     @TestDataPath("$PROJECT_ROOT")
     public class FinalMembersFromBuiltIns {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInFinalMembersFromBuiltIns() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/finalMembersFromBuiltIns"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("enumMembers.kt")
       public void testEnumMembers() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/finalMembersFromBuiltIns/enumMembers.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("waitNotifyGetClass.kt")
       public void testWaitNotifyGetClass() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/finalMembersFromBuiltIns/waitNotifyGetClass.kt");
@@ -405,114 +405,114 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty")
     @TestDataPath("$PROJECT_ROOT")
     public class FunctionAndProperty {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInFunctionAndProperty() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("class.kt")
       public void testClass() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/class.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classObject.kt")
       public void testClassObject() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/classObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classPropertyInConstructor.kt")
       public void testClassPropertyInConstructor() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/classPropertyInConstructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionFunctionAndNormalFunction.kt")
       public void testExtensionFunctionAndNormalFunction() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/extensionFunctionAndNormalFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("extensionPropertyAndFunction.kt")
       public void testExtensionPropertyAndFunction() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/extensionPropertyAndFunction.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("functionAndSetter.kt")
       public void testFunctionAndSetter() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/functionAndSetter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("functionAndVar.kt")
       public void testFunctionAndVar() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/functionAndVar.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localClass.kt")
       public void testLocalClass() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/localClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("localClassInClass.kt")
       public void testLocalClassInClass() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/localClassInClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("nestedClass.kt")
       public void testNestedClass() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/nestedClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("object.kt")
       public void testObject() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/object.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("objectExpression.kt")
       public void testObjectExpression() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/objectExpression.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("objectExpressionInConstructor.kt")
       public void testObjectExpressionInConstructor() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/objectExpressionInConstructor.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("privateClassPropertyNoClash.kt")
       public void testPrivateClassPropertyNoClash() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/privateClassPropertyNoClash.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevel.kt")
       public void testTopLevel() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/topLevel.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevelDifferentFiles.kt")
       public void testTopLevelDifferentFiles() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/topLevelDifferentFiles.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("topLevelGetter.kt")
       public void testTopLevelGetter() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/topLevelGetter.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("trait.kt")
       public void testTrait() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/trait.kt");
@@ -523,12 +523,12 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/inlineClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class InlineClasses {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInInlineClasses() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("declarationClash.kt")
       public void testDeclarationClash() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/inlineClasses/declarationClash.kt");
@@ -539,36 +539,36 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop")
     @TestDataPath("$PROJECT_ROOT")
     public class JavaInterop {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInJavaInterop() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("charAtAndOverload.kt")
       public void testCharAtAndOverload() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/charAtAndOverload.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("inheritFromJavaCollectionSubclassWithContainsOverload.kt")
       public void testInheritFromJavaCollectionSubclassWithContainsOverload() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/inheritFromJavaCollectionSubclassWithContainsOverload.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kjkPropertyAndExtensionProperty.kt")
       public void testKjkPropertyAndExtensionProperty() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/kjkPropertyAndExtensionProperty.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("overridesBuiltinNoMagic.kt")
       public void testOverridesBuiltinNoMagic() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/overridesBuiltinNoMagic.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("supertypeDifferentParameterNullability.kt")
       public void testSupertypeDifferentParameterNullability() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/supertypeDifferentParameterNullability.kt");
@@ -579,12 +579,12 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmName")
     @TestDataPath("$PROJECT_ROOT")
     public class JvmName {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInJvmName() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmName"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("conflictsWIthJvmNameInClass.kt")
       public void testConflictsWIthJvmNameInClass() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmName/conflictsWIthJvmNameInClass.kt");
@@ -595,12 +595,12 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmOverloads")
     @TestDataPath("$PROJECT_ROOT")
     public class JvmOverloads {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInJvmOverloads() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmOverloads"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("jvmOverloads.kt")
       public void testJvmOverloads() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmOverloads/jvmOverloads.kt");
@@ -611,36 +611,36 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmStatic")
     @TestDataPath("$PROJECT_ROOT")
     public class JvmStatic {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInJvmStatic() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("jjk.kt")
       public void testJjk() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmStatic/jjk.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("jk.kt")
       public void testJk() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmStatic/jk.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("jkjk.kt")
       public void testJkjk() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmStatic/jkjk.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("jvmStaticInCompanionObject.kt")
       public void testJvmStaticInCompanionObject() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmStatic/jvmStaticInCompanionObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("jvmStaticInObject.kt")
       public void testJvmStaticInObject() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmStatic/jvmStaticInObject.kt");
@@ -651,78 +651,78 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames")
     @TestDataPath("$PROJECT_ROOT")
     public class SpecialNames {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInSpecialNames() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classInitializer.kt")
       public void testClassInitializer() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/classInitializer.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classObject.kt")
       public void testClassObject() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/classObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classObjectCopiedField.kt")
       public void testClassObjectCopiedField() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/classObjectCopiedField.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("classObjectCopiedFieldObject.kt")
       public void testClassObjectCopiedFieldObject() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/classObjectCopiedFieldObject.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("dataClassCopy.kt")
       public void testDataClassCopy() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/dataClassCopy.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("defaults.kt")
       public void testDefaults() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/defaults.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("delegationBy.kt")
       public void testDelegationBy() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/delegationBy.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("enum.kt")
       public void testEnum() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/enum.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("innerClass.kt")
       public void testInnerClass() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/innerClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("innerClassField.kt")
       public void testInnerClassField() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/innerClassField.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("instance.kt")
       public void testInstance() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/instance.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("propertyMetadataCache.kt")
       public void testPropertyMetadataCache() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/propertyMetadataCache.kt");
@@ -733,42 +733,42 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/statics")
     @TestDataPath("$PROJECT_ROOT")
     public class Statics {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInStatics() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/statics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("jkjk.kt")
       public void testJkjk() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/statics/jkjk.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kotlinClassExtendsJavaClass.kt")
       public void testKotlinClassExtendsJavaClass() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/statics/kotlinClassExtendsJavaClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kotlinClassExtendsJavaClassExtendsJavaClass.kt")
       public void testKotlinClassExtendsJavaClassExtendsJavaClass() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/statics/kotlinClassExtendsJavaClassExtendsJavaClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kotlinClassImplementsJavaInterface.kt")
       public void testKotlinClassImplementsJavaInterface() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/statics/kotlinClassImplementsJavaInterface.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kotlinClassImplementsJavaInterfaceExtendsJavaInteface.kt")
       public void testKotlinClassImplementsJavaInterfaceExtendsJavaInteface() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/statics/kotlinClassImplementsJavaInterfaceExtendsJavaInteface.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kotlinMembersVsJavaNonVisibleStatics.kt")
       public void testKotlinMembersVsJavaNonVisibleStatics() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/statics/kotlinMembersVsJavaNonVisibleStatics.kt");
@@ -779,12 +779,12 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/synthesized")
     @TestDataPath("$PROJECT_ROOT")
     public class Synthesized {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInSynthesized() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/synthesized"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("enumValuesValueOf.kt")
       public void testEnumValuesValueOf() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/synthesized/enumValuesValueOf.kt");
@@ -795,42 +795,42 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl")
     @TestDataPath("$PROJECT_ROOT")
     public class TraitImpl {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInTraitImpl() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("defaultVsNonDefault.kt")
       public void testDefaultVsNonDefault() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/defaultVsNonDefault.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("kt43611.kt")
       public void testKt43611() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/kt43611.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("oneTrait.kt")
       public void testOneTrait() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/oneTrait.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("traitFunctionOverriddenByPropertyInTrait.kt")
       public void testTraitFunctionOverriddenByPropertyInTrait() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/traitFunctionOverriddenByPropertyInTrait.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("traitPropertyOverriddenByFunctionInTrait.kt")
       public void testTraitPropertyOverriddenByFunctionInTrait() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/traitPropertyOverriddenByFunctionInTrait.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("twoTraits.kt")
       public void testTwoTraits() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/twoTraits.kt");
@@ -841,42 +841,42 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class ValueClasses {
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       public void testAllFilesPresentInValueClasses() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("changingNullabilityOfOrdinaryClassIsBinaryCompatibleChange.kt")
       public void testChangingNullabilityOfOrdinaryClassIsBinaryCompatibleChange() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses/changingNullabilityOfOrdinaryClassIsBinaryCompatibleChange.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructorsJvmSignaturesClash.kt")
       public void testConstructorsJvmSignaturesClash() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses/constructorsJvmSignaturesClash.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("constructorsJvmSignaturesClashInlineClass.kt")
       public void testConstructorsJvmSignaturesClashInlineClass() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses/constructorsJvmSignaturesClashInlineClass.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("declarationClash.kt")
       public void testDeclarationClash() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses/declarationClash.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("functionsJvmSignaturesClash.kt")
       public void testFunctionsJvmSignaturesClash() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses/functionsJvmSignaturesClash.kt");
       }
 
-      @RepeatedTest(value = 3)
+      @RepeatedTest(value = 5)
       @TestMetadata("functionsJvmSignaturesClashInlineClass.kt")
       public void testFunctionsJvmSignaturesClashInlineClass() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses/functionsJvmSignaturesClashInlineClass.kt");
@@ -888,12 +888,12 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
   @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/multifileClasses")
   @TestDataPath("$PROJECT_ROOT")
   public class MultifileClasses {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInMultifileClasses() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("jvmSynthetic.kt")
     public void testJvmSynthetic() {
       runTest("compiler/testData/diagnostics/testsWithJvmBackend/multifileClasses/jvmSynthetic.kt");
@@ -904,7 +904,7 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
   @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/scripts")
   @TestDataPath("$PROJECT_ROOT")
   public class Scripts {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInScripts() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/scripts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
@@ -914,18 +914,18 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
   @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/typeOf")
   @TestDataPath("$PROJECT_ROOT")
   public class TypeOf {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInTypeOf() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/typeOf"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("nonReifiedTypeParameterWithRecursiveBound.kt")
     public void testNonReifiedTypeParameterWithRecursiveBound() {
       runTest("compiler/testData/diagnostics/testsWithJvmBackend/typeOf/nonReifiedTypeParameterWithRecursiveBound.kt");
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("suspendType.kt")
     public void testSuspendType() {
       runTest("compiler/testData/diagnostics/testsWithJvmBackend/typeOf/suspendType.kt");
@@ -936,12 +936,12 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
   @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses")
   @TestDataPath("$PROJECT_ROOT")
   public class ValueClasses {
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     public void testAllFilesPresentInValueClasses() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(value = 5)
     @TestMetadata("cloneable.kt")
     public void testCloneable() {
       runTest("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses/cloneable.kt");

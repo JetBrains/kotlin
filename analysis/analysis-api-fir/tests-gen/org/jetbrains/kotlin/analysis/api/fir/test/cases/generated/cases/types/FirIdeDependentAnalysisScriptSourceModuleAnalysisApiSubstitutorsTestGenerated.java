@@ -40,7 +40,7 @@ public class FirIdeDependentAnalysisScriptSourceModuleAnalysisApiSubstitutorsTes
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInTypeSubstitution() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/substitutors/typeSubstitution"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }

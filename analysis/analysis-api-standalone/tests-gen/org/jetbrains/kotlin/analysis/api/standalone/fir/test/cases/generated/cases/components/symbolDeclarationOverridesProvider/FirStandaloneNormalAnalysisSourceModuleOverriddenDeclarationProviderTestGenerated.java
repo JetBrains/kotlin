@@ -40,168 +40,168 @@ public class FirStandaloneNormalAnalysisSourceModuleOverriddenDeclarationProvide
     );
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   public void testAllFilesPresentInOverriddenSymbols() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("arraylistSubtype.kt")
   public void testArraylistSubtype() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/arraylistSubtype.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("backingField.kt")
   public void testBackingField() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/backingField.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegateOverrideWithImplicitTypeInsideAnonymousObject.kt")
   public void testDelegateOverrideWithImplicitTypeInsideAnonymousObject() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/delegateOverrideWithImplicitTypeInsideAnonymousObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("delegateOverrideWithoutImplicitTypeInsideAnonymousObject.kt")
   public void testDelegateOverrideWithoutImplicitTypeInsideAnonymousObject() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/delegateOverrideWithoutImplicitTypeInsideAnonymousObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inAnonymousClass.kt")
   public void testInAnonymousClass() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/inAnonymousClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inLocalClass.kt")
   public void testInLocalClass() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/inLocalClass.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("inOtherFile.kt")
   public void testInOtherFile() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/inOtherFile.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("intersectionOverride.kt")
   public void testIntersectionOverride() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/intersectionOverride.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("intersectionOverride2.kt")
   public void testIntersectionOverride2() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/intersectionOverride2.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("intersectionOverrideWithImplicitTypeInsideAnonymousObject.kt")
   public void testIntersectionOverrideWithImplicitTypeInsideAnonymousObject() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/intersectionOverrideWithImplicitTypeInsideAnonymousObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("intersectionOverrideWithoutImplicitTypeInsideAnonymousObject.kt")
   public void testIntersectionOverrideWithoutImplicitTypeInsideAnonymousObject() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/intersectionOverrideWithoutImplicitTypeInsideAnonymousObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("javaAccessors.kt")
   public void testJavaAccessors() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/javaAccessors.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("multipleInterfaces.kt")
   public void testMultipleInterfaces() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/multipleInterfaces.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("onEnumEntry.kt")
   public void testOnEnumEntry() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/onEnumEntry.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("parameterWithGeneratedProperty.kt")
   public void testParameterWithGeneratedProperty() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/parameterWithGeneratedProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("sequenceOfOverrides.kt")
   public void testSequenceOfOverrides() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/sequenceOfOverrides.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionOverrideFunctionDelegate.kt")
   public void testSubstitutionOverrideFunctionDelegate() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverrideFunctionDelegate.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionOverrideFunctionParameter.kt")
   public void testSubstitutionOverrideFunctionParameter() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverrideFunctionParameter.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionOverrideFunctionReturnType.kt")
   public void testSubstitutionOverrideFunctionReturnType() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverrideFunctionReturnType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionOverrideFunctionTransitive.kt")
   public void testSubstitutionOverrideFunctionTransitive() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverrideFunctionTransitive.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionOverrideFunctionTransitiveSameType.kt")
   public void testSubstitutionOverrideFunctionTransitiveSameType() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverrideFunctionTransitiveSameType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionOverrideProperty.kt")
   public void testSubstitutionOverrideProperty() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverrideProperty.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionOverridePropertyDelegate.kt")
   public void testSubstitutionOverridePropertyDelegate() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverridePropertyDelegate.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionOverridePropertyTransitive.kt")
   public void testSubstitutionOverridePropertyTransitive() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverridePropertyTransitive.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionOverridePropertyTransitiveSameType.kt")
   public void testSubstitutionOverridePropertyTransitiveSameType() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverridePropertyTransitiveSameType.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionOverrideWithImplicitTypeInsideAnonymousObject.kt")
   public void testSubstitutionOverrideWithImplicitTypeInsideAnonymousObject() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverrideWithImplicitTypeInsideAnonymousObject.kt");
   }
 
-  @RepeatedTest(value = 3)
+  @RepeatedTest(value = 5)
   @TestMetadata("substitutionOverrideWithoutImplicitTypeInsideAnonymousObject.kt")
   public void testSubstitutionOverrideWithoutImplicitTypeInsideAnonymousObject() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverrideWithoutImplicitTypeInsideAnonymousObject.kt");
