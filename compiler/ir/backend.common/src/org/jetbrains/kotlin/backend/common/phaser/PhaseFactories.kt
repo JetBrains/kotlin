@@ -60,7 +60,18 @@ private fun <Context : CommonBackendContext> createFilePhase(
 ): SimpleNamedCompilerPhase<Context, IrFile, IrFile> {
     val annotation = loadAnnotationAndCheckPrerequisites(loweringClass, previouslyCreatedPhases)
 
-    return makeIrFilePhase(createLoweringPass, annotation.name, annotation.description)
+    return createSimpleNamedCompilerPhase(
+        name = annotation.name,
+        description = annotation.description,
+        preactions = defaultConditions,
+        postactions = defaultConditions,
+        prerequisite = emptySet(),
+        outputIfNotEnabled = { _, _, _, irFile -> irFile },
+        op = { context, irFile ->
+            createLoweringPass(context).lower(irFile)
+            irFile
+        },
+    )
 }
 
 private fun <Context : CommonBackendContext> createModulePhase(
