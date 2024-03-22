@@ -1,6 +1,6 @@
 // WITH_FIR_TEST_COMPILER_PLUGIN
 // DUMP_IR
-// CHECK_COMPOSABLE_CALL
+// CHECK_CALLS_WITH_ANNOTATION: org.jetbrains.kotlin.fir.plugin.MyComposable
 
 // MODULE: main
 // FILE: main.kt
