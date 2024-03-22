@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.lower.*
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 private val validateIrBeforeLowering = makeIrModulePhase(
     ::JvmIrValidationBeforeLoweringPhase,
@@ -260,6 +258,9 @@ private val jvmFilePhases = listOf(
     defaultArgumentInjectorPhase,
     defaultArgumentCleanerPhase,
 
+    fragmentLocalFunctionPatchLowering,
+    reflectiveAccessLowering,
+
     interfacePhase,
     inheritedDefaultMethodsOnClassesPhase,
     replaceDefaultImplsOverriddenSymbolsPhase,
@@ -305,68 +306,32 @@ private val jvmFilePhases = listOf(
     fakeLocalVariablesForIrInlinerLowering,
 )
 
-val jvmLoweringPhases = buildJvmLoweringPhases("IrLowering", listOf("PerformByIrFile" to jvmFilePhases))
+val jvmLoweringPhases = SameTypeNamedCompilerPhase(
+    name = "IrLowering",
+    description = "IR lowering",
+    nlevels = 1,
+    actions = setOf(defaultDumper, validationAction),
+    lower = externalPackageParentPatcherPhase then
+            fragmentSharedVariablesLowering then
+            validateIrBeforeLowering then
+            processOptionalAnnotationsPhase then
+            expectDeclarationsRemovingPhase then
+            constEvaluationPhase then
+            serializeIrPhase then
+            scriptsToClassesPhase then
+            fileClassPhase then
+            jvmStaticInObjectPhase then
+            repeatedAnnotationPhase then
 
-private fun buildJvmLoweringPhases(
-    name: String,
-    phases: List<Pair<String, List<SimpleNamedCompilerPhase<JvmBackendContext, IrFile, IrFile>>>>,
-): SameTypeNamedCompilerPhase<JvmBackendContext, IrModuleFragment> {
-    return SameTypeNamedCompilerPhase(
-        name = name,
-        description = "IR lowering",
-        nlevels = 1,
-        actions = setOf(defaultDumper, validationAction),
-        lower =
-        externalPackageParentPatcherPhase then
-                fragmentSharedVariablesLowering then
-                validateIrBeforeLowering then
-                processOptionalAnnotationsPhase then
-                expectDeclarationsRemovingPhase then
-                constEvaluationPhase then
-                serializeIrPhase then
-                scriptsToClassesPhase then
-                fileClassPhase then
-                jvmStaticInObjectPhase then
-                repeatedAnnotationPhase then
+            functionInliningPhase then
+            apiVersionIsAtLeastEvaluationPhase then
+            createSeparateCallForInlinedLambdas then
+            markNecessaryInlinedClassesAsRegenerated then
+            inlinedClassReferencesBoxingPhase then
 
-                functionInliningPhase then
-                apiVersionIsAtLeastEvaluationPhase then
-                createSeparateCallForInlinedLambdas then
-                markNecessaryInlinedClassesAsRegenerated then
-                inlinedClassReferencesBoxingPhase then
+            performByIrFile("PerformByIrFile", lower = jvmFilePhases) then
 
-                buildLoweringsPhase(phases) then
-                generateMultifileFacadesPhase then
-                resolveInlineCallsPhase then
-                validateIrAfterLowering
-    )
-}
-
-// Build a compiler phase from a list of lowering sequences: each subsequence is run
-// in parallel per file, and each parallel composition is run in sequence.
-private fun buildLoweringsPhase(
-    perModuleLowerings: List<Pair<String, List<SimpleNamedCompilerPhase<JvmBackendContext, IrFile, IrFile>>>>,
-): CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment> =
-    perModuleLowerings.map { (name, lowerings) -> performByIrFile(name, lower = lowerings) }
-        .reduce<
-                CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment>,
-                CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment>
-                > { result, phase -> result then phase }
-
-
-val jvmFragmentLoweringPhases = run {
-    val defaultArgsPhase = jvmFilePhases.indexOf(defaultArgumentCleanerPhase)
-    val loweringsUpToAndIncludingDefaultArgsPhase = jvmFilePhases.subList(0, defaultArgsPhase + 1)
-    val remainingLowerings = jvmFilePhases.subList(defaultArgsPhase + 1, jvmFilePhases.size)
-    buildJvmLoweringPhases(
-        "IrFragmentLowering",
-        listOf(
-            "PrefixOfIRPhases" to loweringsUpToAndIncludingDefaultArgsPhase,
-            "FragmentLowerings" to listOf(
-                fragmentLocalFunctionPatchLowering,
-                reflectiveAccessLowering,
-            ),
-            "SuffixOfIRPhases" to remainingLowerings
-        )
-    )
-}
+            generateMultifileFacadesPhase then
+            resolveInlineCallsPhase then
+            validateIrAfterLowering
+)

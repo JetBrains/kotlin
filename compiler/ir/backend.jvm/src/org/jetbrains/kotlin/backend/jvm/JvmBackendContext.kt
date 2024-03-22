@@ -86,10 +86,8 @@ class JvmBackendContext(
 
     val config: JvmBackendConfig = state.config
 
-    // If not-null, this is populated by LocalDeclarationsLowering with the intermediate data
-    // allowing mapping from local function captures to parameters and accurate transformation
-    // of calls to local functions from code fragments (i.e. the expression evaluator).
-    var localDeclarationsLoweringData: MutableMap<IrFunction, LocalFunctionData>? = null
+    // If this is not null, the JVM IR backend is invoked in the context of Evaluate Expression in the IDE.
+    var evaluatorData: JvmEvaluatorData? = null
 
     // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
     // annotated with @JvmPackageName, the correct name is recorded here.

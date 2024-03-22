@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -24,9 +27,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-
-// Used from CodeFragmentCompiler for IDE Debugger Plug-In
-@Suppress("unused")
 val fragmentLocalFunctionPatchLowering = makeIrFilePhase(
     ::FragmentLocalFunctionPatchLowering,
     name = "FragmentLocalFunctionPatching",
@@ -44,12 +44,11 @@ internal class FragmentLocalFunctionPatchLowering(
     val context: JvmBackendContext
 ) : IrElementTransformerVoidWithContext(), FileLoweringPass {
 
-    lateinit var localDeclarationsData: Map<IrFunction, JvmBackendContext.LocalFunctionData>
+    private lateinit var localDeclarationsData: Map<IrFunction, JvmBackendContext.LocalFunctionData>
 
     override fun lower(irFile: IrFile) {
-        context.localDeclarationsLoweringData?.let {
-            localDeclarationsData = it
-        } ?: return
+        val evaluatorData = context.evaluatorData ?: return
+        localDeclarationsData = evaluatorData.localDeclarationsLoweringData
         irFile.transformChildrenVoid(this)
     }
 

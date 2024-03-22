@@ -36,7 +36,7 @@ internal class JvmLocalDeclarationsLowering(context: JvmBackendContext) : LocalD
         newParameterToOld: Map<IrValueParameter, IrValueParameter>,
         newParameterToCaptured: Map<IrValueParameter, IrValueSymbol>,
     ) {
-        val data = (context as JvmBackendContext).localDeclarationsLoweringData ?: return
+        val data = (context as JvmBackendContext).evaluatorData?.localDeclarationsLoweringData ?: return
         for ((localFunction, localContext) in localFunctions) {
             data[localFunction] = JvmBackendContext.LocalFunctionData(localContext, newParameterToOld, newParameterToCaptured)
         }

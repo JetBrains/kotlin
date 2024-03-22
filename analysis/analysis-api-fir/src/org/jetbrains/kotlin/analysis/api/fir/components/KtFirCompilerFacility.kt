@@ -530,8 +530,6 @@ internal class KtFirCompilerFacility(
             shouldReferenceUndiscoveredExpectSymbols = false, // TODO it was true
         )
 
-        val phaseConfig = PhaseConfig(if (isCodeFragment) jvmFragmentLoweringPhases else jvmLoweringPhases)
-
         @OptIn(ObsoleteDescriptorBasedAPI::class)
         val evaluatorFragmentInfoForPsi2Ir = runIf<EvaluatorFragmentInfo?>(isCodeFragment) {
             val irFile = irModuleFragment.files.single { (it.fileEntry as? PsiIrFileEntry)?.psiFile is KtCodeFragment }
@@ -542,7 +540,7 @@ internal class KtFirCompilerFacility(
 
         return JvmIrCodegenFactory(
             configuration,
-            phaseConfig,
+            PhaseConfig(jvmLoweringPhases),
             jvmGeneratorExtensions = jvmGeneratorExtensions,
             evaluatorFragmentInfoForPsi2Ir = evaluatorFragmentInfoForPsi2Ir,
             ideCodegenSettings = ideCodegenSettings,
