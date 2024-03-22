@@ -441,7 +441,11 @@ class FirTypeIntersectionScopeContext(
         createIntersectionOverrideSymbol: (CallableId, Collection<FirCallableSymbol<*>>, Boolean) -> S,
         createCopy: (S, F, deferredReturnTypeCalculation: DeferredCallableCopyReturnType?, returnType: ConeKotlinType?) -> F
     ): S {
-        val key = mostSpecific.first() as S
+        // Picking a `var` avoids `VAR_OVERRIDDEN_BY_VAL` reported for intersection overrides.
+        // It's fine because in cases where the code becomes green due to not reporting this diagnostic,
+        // the user is required to provide an explicit override of such a property in a non-abstract subclass.
+        // See: compiler/testData/diagnostics/tests/varOverriddenByValThroughIntersection.kt.
+        val key = mostSpecific.find { it is FirPropertySymbol && it.isVar } as? S ?: mostSpecific.first() as S
         val keyFir = key.fir
         val callableId = CallableId(dispatchReceiverType.classId ?: keyFir.dispatchReceiverClassLookupTagOrNull()?.classId!!, keyFir.name)
         val newSymbol = createIntersectionOverrideSymbol(callableId, overrides, containsMultipleNonSubsumed)
