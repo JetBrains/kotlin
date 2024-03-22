@@ -42,6 +42,12 @@ public class FirIdeNormalAnalysisSourceModuleRendererTestGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("actualInheritance.kt")
+  public void testActualInheritance() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/actualInheritance.kt");
+  }
+
+  @Test
   public void testAllFilesPresentInRenderDeclaration() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }

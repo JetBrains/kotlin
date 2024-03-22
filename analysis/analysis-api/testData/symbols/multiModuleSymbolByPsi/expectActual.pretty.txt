@@ -1,49 +1,50 @@
 // FILE: Common.kt
 
-object A
+expect object A
 
-class B(s: kotlin.String)
+expect class Bexpect constructor(s: kotlin.String)
 
-    constructor(s: kotlin.String)
+    expect constructor(s: kotlin.String)
 
-    constructor(n: kotlin.Int)
+    expect constructor(n: kotlin.Int)
 
-    class Nested
+    expect class Nested
 
-    fun bar()
+    expect fun bar()
 
-    val n: kotlin.Int
+    expect val n: kotlin.Int
 
-class C
+expect class C
 
-    class Nested
+    expect class Nested
 
-fun baz()
+expect fun baz()
 
-var m: kotlin.Int
+expect var m: kotlin.Int
 
 // FILE: JvmAndroid.kt
 
-object A
+actual object A
 
-class B(s: kotlin.String)
+actual class Bactual constructor(s: kotlin.String)
 
-    constructor(s: kotlin.String)
+    actual constructor(s: kotlin.String)
 
-    constructor(n: kotlin.Int)
+    actual constructor(n: kotlin.Int)
 
-    class Nested
+    actual class Nested
 
-    fun bar()
+    actual fun bar()
 
-    val n: kotlin.Int
+    actual val n: kotlin.Int
 
-typealias C = sample.D
+actual typealias C = sample.D
 
 class D
 
     class Nested
 
-fun baz()
+actual fun baz()
 
-var m: kotlin.Int
+actual var m: kotlin.Int
+

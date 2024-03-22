@@ -1,0 +1,11 @@
+expect abstract class A {
+  expect abstract fun foo()
+}
+
+actual abstract class A {
+  actual abstract fun foo()
+}
+
+class Bar : A() {
+  override fun foo()
+}
