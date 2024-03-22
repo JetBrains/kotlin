@@ -284,6 +284,14 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         if (genericSafeCasts) BridgesPolicy.BOX_UNBOX_CASTS else BridgesPolicy.BOX_UNBOX_ONLY
     }
 
+    val llvmModulePasses: String? by lazy {
+        configuration.get(KonanConfigKeys.LLVM_MODULE_PASSES)
+    }
+
+    val llvmLTOPasses: String? by lazy {
+        configuration.get(KonanConfigKeys.LLVM_LTO_PASSES)
+    }
+
     init {
         // NB: producing LIBRARY is enabled on any combination of hosts/targets
         if (produce != CompilerOutputKind.LIBRARY && !platformManager.isEnabled(target)) {
