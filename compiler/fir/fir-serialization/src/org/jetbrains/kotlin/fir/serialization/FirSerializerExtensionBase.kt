@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.Class.Builder
@@ -111,7 +114,8 @@ abstract class FirSerializerExtensionBase(
         )
 
         if (!Flags.HAS_CONSTANT.get(proto.flags)) return
-        property.initializer?.toConstantValue<ConstantValue<*>>(session, constValueProvider)?.let {
+        val evaluatedInitializer = (property.evaluatedInitializer as? FirEvaluatorResult.Evaluated)?.result as? FirExpression
+        evaluatedInitializer?.toConstantValue<ConstantValue<*>>(session, constValueProvider)?.let {
             proto.setExtension(protocol.compileTimeValue, annotationSerializer.valueProto(it).build())
         }
     }
