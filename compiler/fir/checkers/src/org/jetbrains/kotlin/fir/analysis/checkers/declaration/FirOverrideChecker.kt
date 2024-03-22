@@ -184,8 +184,8 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         else -> FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING
     }
 
-    private val FirCallableSymbol<*>.wouldMissDiagnosticInK1 get() =
-        this is FirPropertyAccessorSymbol && propertySymbol.isIntersectionOverride
+    private val FirCallableSymbol<*>.wouldMissDiagnosticInK1: Boolean
+        get() = this is FirPropertyAccessorSymbol && propertySymbol.isIntersectionOverride && visibility != propertySymbol.visibility
 
     private fun checkModality(
         overriddenSymbols: List<FirCallableSymbol<*>>,
