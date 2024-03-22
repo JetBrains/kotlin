@@ -1,0 +1,97 @@
+// CHECK:
+//   Mangled name: NoTarget
+//   Public signature: /NoTarget|null[0]
+open annotation class NoTarget : Annotation {
+  // CHECK:
+  //   Mangled name: NoTarget#<init>(){}
+  //   Public signature: /NoTarget.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: ParameterOnly
+//   Public signature: /ParameterOnly|null[0]
+@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER])
+open annotation class ParameterOnly : Annotation {
+  // CHECK:
+  //   Mangled name: ParameterOnly#<init>(){}
+  //   Public signature: /ParameterOnly.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: PropValueField
+//   Public signature: /PropValueField|null[0]
+@Target(allowedTargets = [AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FIELD])
+open annotation class PropValueField : Annotation {
+  // CHECK:
+  //   Mangled name: PropValueField#<init>(){}
+  //   Public signature: /PropValueField.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: PropertyOnly
+//   Public signature: /PropertyOnly|null[0]
+@Target(allowedTargets = [AnnotationTarget.PROPERTY])
+open annotation class PropertyOnly : Annotation {
+  // CHECK:
+  //   Mangled name: PropertyOnly#<init>(){}
+  //   Public signature: /PropertyOnly.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: PropertyOnly2
+//   Public signature: /PropertyOnly2|null[0]
+@Target(allowedTargets = [AnnotationTarget.PROPERTY])
+open annotation class PropertyOnly2 : Annotation {
+  // CHECK:
+  //   Mangled name: PropertyOnly2#<init>(){}
+  //   Public signature: /PropertyOnly2.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Foo
+//   Public signature: /Foo|null[0]
+class Foo {
+  // CHECK:
+  //   Mangled name: Foo{}param
+  //   Public signature: /Foo.param|-6591747831987860505[0]
+  //   Public signature debug description: {}param
+  @PropertyOnly
+  @PropertyOnly2
+  var param: Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Foo#<get-param>(){}
+    //   Public signature: /Foo.param.<get-param>|-2254761560948865399[0]
+    //   Public signature debug description: <get-param>(){}
+    // CHECK JVM_IR:
+    //   Mangled name: Foo#<get-param>(){}kotlin.Int
+    //   Public signature: /Foo.param.<get-param>|7734428107887914597[0]
+    //   Public signature debug description: <get-param>(){}kotlin.Int
+    get
+    // CHECK:
+    //   Mangled name: Foo#<set-param>(kotlin.Int){}
+    //   Public signature: /Foo.param.<set-param>|7155977423495228622[0]
+    //   Public signature debug description: <set-param>(kotlin.Int){}
+    set
+
+  // CHECK:
+  //   Mangled name: Foo#<init>(kotlin.Int){}
+  //   Public signature: /Foo.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  constructor(@NoTarget @PropValueField @ParameterOnly param: Int) /* primary */
+
+}

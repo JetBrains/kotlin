@@ -207,7 +207,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
                 val receiverCalleeReference = receiver.calleeReference as? FirSimpleNamedReference ?: return
                 val receiverName = receiverCalleeReference.name.takeIf { !it.isSpecial } ?: return
 
-                val symbol = scopes.filterIsInstance<FirAbstractImportingScope>().firstNotNullOfOrNull {
+                val symbol = scopes.firstNotNullOfOrNull {
                     it.getSingleClassifier(receiverName) as? FirClassSymbol<*>
                 } ?: return
 

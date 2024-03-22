@@ -4384,6 +4384,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/properties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
+    @Test
+    @TestMetadata("targetOnPrimaryCtorParameter.kt")
+    public void testTargetOnPrimaryCtorParameter() {
+      runTest("compiler/testData/ir/irText/properties/targetOnPrimaryCtorParameter.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/ir/irText/properties/backingField")
     @TestDataPath("$PROJECT_ROOT")
