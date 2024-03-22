@@ -275,11 +275,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
     val llvmModulePasses: String? by lazy {
-        configuration.get(BinaryOptions.llvmModulePasses)
+        configuration.get(KonanConfigKeys.LLVM_MODULE_PASSES)
     }
 
     val llvmLTOPasses: String? by lazy {
-        configuration.get(BinaryOptions.llvmLTOPasses)
+        configuration.get(KonanConfigKeys.LLVM_LTO_PASSES)
     }
 
     init {

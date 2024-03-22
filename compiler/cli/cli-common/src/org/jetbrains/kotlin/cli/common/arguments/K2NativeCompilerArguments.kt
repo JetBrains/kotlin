@@ -468,6 +468,12 @@ The default value is 1."""
     @Argument(value = "-Xkonan-data-dir", description = "Custom path to the location of konan distributions.")
     var konanDataDir: String? = null
 
+    @Argument(value = "-Xllvm-module-passes", description = "Custom set of LLVM passes to as the ModuleOptimizationPipeline.")
+    var llvmModulePasses: String? = null
+
+    @Argument(value = "-Xllvm-lto-passes", description = "Custom set of LLVM passes to run as the LTOOptimizationPipeline.")
+    var llvmLTOPasses: String? = null
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
         super.configureAnalysisFlags(collector, languageVersion).also {
             val optInList = it[AnalysisFlags.optIn] as List<*>
