@@ -68,8 +68,8 @@ interface IVarDefault {
 
 abstract class A1 : WithVal(), IVal
 abstract class B1 : WithVar(), IVal
-<!VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL!>abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>C1<!> : WithProtectedVar(), IVal<!>
-<!VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL!>abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>D1<!> : WithInternalVar(), IVal<!>
+abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>C1<!> : WithProtectedVar(), IVal
+abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>D1<!> : WithInternalVar(), IVal
 abstract class E1 : WithVarInternalSet(), IVal
 abstract class F1 : WithVarProtectedSet(), IVal
 abstract class G1 : WithVarPrivateSet(), IVal
@@ -84,8 +84,8 @@ abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING, CANNOT_WEAKEN_ACCESS_PR
 
 abstract class A3 : IVal, WithVal()
 abstract class B3 : IVal, WithVar()
-<!VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL!>abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>C3<!> : IVal, WithProtectedVar()<!>
-<!VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL, VAR_OVERRIDDEN_BY_VAL!>abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>D3<!> : IVal, WithInternalVar()<!>
+abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>C3<!> : IVal, WithProtectedVar()
+abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>D3<!> : IVal, WithInternalVar()
 abstract class E3 : IVal, WithVarInternalSet()
 abstract class F3 : IVal, WithVarProtectedSet()
 abstract class G3 : IVal, WithVarPrivateSet()
@@ -100,8 +100,8 @@ abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING, CANNOT_WEAKEN_ACCESS_PR
 
 abstract class A5 : WithVal(), IValDefault
 abstract class B5 : WithVar(), IValDefault
-<!VAR_OVERRIDDEN_BY_VAL!>abstract class C5 : WithProtectedVar(), IValDefault<!>
-<!VAR_OVERRIDDEN_BY_VAL!>abstract class D5 : WithInternalVar(), IValDefault<!>
+abstract class C5 : WithProtectedVar(), IValDefault
+abstract class D5 : WithInternalVar(), IValDefault
 abstract class E5 : WithVarInternalSet(), IValDefault
 abstract class F5 : WithVarProtectedSet(), IValDefault
 abstract class G5 : WithVarPrivateSet(), IValDefault
@@ -116,8 +116,8 @@ abstract class G6 : WithVarPrivateSet(), IVarDefault
 
 abstract class A7 : IValDefault, WithVal()
 abstract class B7 : IValDefault, WithVar()
-<!VAR_OVERRIDDEN_BY_VAL!>abstract class C7 : IValDefault, WithProtectedVar()<!>
-<!VAR_OVERRIDDEN_BY_VAL!>abstract class D7 : IValDefault, WithInternalVar()<!>
+abstract class C7 : IValDefault, WithProtectedVar()
+abstract class D7 : IValDefault, WithInternalVar()
 abstract class E7 : IValDefault, WithVarInternalSet()
 abstract class F7 : IValDefault, WithVarProtectedSet()
 abstract class G7 : IValDefault, WithVarPrivateSet()
