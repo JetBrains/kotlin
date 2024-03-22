@@ -1,6 +1,5 @@
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
-// RENDER_DIAGNOSTICS_FULL_TEXT
-// ISSUE: KT-57014, KT-66730
+// LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN
+// ISSUE: KT-57014
 // FULL_JDK
 // JVM_TARGET: 1.8
 
@@ -17,35 +16,14 @@ public interface StringSupplier {
 // FILE: test.kt
 import java.util.function.Supplier
 
-inline fun run(fn: () -> Unit) = fn()
-
 fun main() {
     Supplier<String> {
-        foo()
+        <!ARGUMENT_TYPE_MISMATCH!>foo()<!>
     }
 
     Supplier<String> {
-        if (true) return@Supplier foo()
-        run { return@Supplier foo() }
-        try {
-            if (true) return@Supplier foo()
-            2
-        } finally {
-            Unit
-        }
+        if (true) return@Supplier <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>foo()<!>
         ""
-    }
-
-    Supplier<String?> {
-        foo()
-    }
-
-    Supplier<_> {
-        foo()
-    }
-
-    Supplier {
-        foo()
     }
 
     object : Supplier<String> {

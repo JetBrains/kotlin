@@ -1,0 +1,17 @@
+/test.kt:(152,157): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
+
+/test.kt:(222,227): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
+
+/test.kt:(222,227): error: Return type mismatch: expected 'kotlin.String', actual 'kotlin.String?'.
+
+/test.kt:(258,263): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
+
+/test.kt:(258,263): error: Return type mismatch: expected 'kotlin.String', actual 'kotlin.String?'.
+
+/test.kt:(318,323): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
+
+/test.kt:(318,323): error: Return type mismatch: expected 'kotlin.String', actual 'kotlin.String?'.
+
+/test.kt:(583,590): error: Return type of 'get' is not a subtype of the return type of the overridden member 'fun get(): String'.
+
+/test.kt:(659,662): error: Return type of 'get' is not a subtype of the return type of the overridden member 'fun get(): String'.

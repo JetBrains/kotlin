@@ -3657,6 +3657,12 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val messageSuffix: String
     }
 
+    interface TypeMismatchWhenFlexibilityChanges : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = TypeMismatchWhenFlexibilityChanges::class
+        val expectedType: KtType
+        val actualType: KtType
+    }
+
     interface UpperBoundCannotBeArray : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = UpperBoundCannotBeArray::class
     }
