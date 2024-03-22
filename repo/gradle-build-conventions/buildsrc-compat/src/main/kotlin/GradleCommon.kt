@@ -684,13 +684,13 @@ fun Project.configureDokkaPublication(
             } else {
                 tasks.register<DokkaTask>(dokkaTaskName)
             }
+
+            val javaDocDokkaDependency = project.dependencies.create("org.jetbrains.dokka:javadoc-plugin:${DokkaVersion.version}")
             dokkaTask.configure {
                 description = "Generates documentation in 'javadoc' format for '${variantSourceSet.javadocTaskName}' variant"
                 notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
 
-                plugins.dependencies.add(
-                    project.dependencies.create("org.jetbrains.dokka:javadoc-plugin:${DokkaVersion.version}")
-                )
+                plugins.dependencies.add(javaDocDokkaDependency)
 
                 dokkaSourceSets {
                     named(commonSourceSet.name) {
@@ -732,6 +732,7 @@ fun Project.configureDokkaPublication(
 
             tasks.register<DokkaTask>("dokkaKotlinlangDocumentation") {
                 description = "Generates documentation reference for Kotlinlang"
+                notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
 
                 dokkaSourceSets {
                     pluginsMapConfiguration.put(
