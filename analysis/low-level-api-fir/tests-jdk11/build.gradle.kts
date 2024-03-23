@@ -10,7 +10,7 @@ dependencies {
     testImplementation(project(":analysis:analysis-api"))
     testImplementation(project(":analysis:low-level-api-fir"))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
-    testImplementation("org.jetbrains.kotlinx:lincheck:2.24")
+    testImplementation(libs.lincheck)
 
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 }
