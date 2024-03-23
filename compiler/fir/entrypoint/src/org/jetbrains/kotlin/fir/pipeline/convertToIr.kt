@@ -73,29 +73,40 @@ fun FirResult.convertToIrAndActualize(
     actualizerTypeContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
     fir2IrResultPostCompute: (ModuleCompilerAnalyzedOutput, Fir2IrResult) -> Unit = { _, _ -> },
 ): Fir2IrActualizedResult {
-    val commonMemberStorage = Fir2IrCommonMemberStorage(FirBasedSignatureComposer.create(firMangler, fir2IrConfiguration))
-
     require(outputs.isNotEmpty()) { "No modules found" }
 
+    val commonMemberStorage = Fir2IrCommonMemberStorage(FirBasedSignatureComposer.create(firMangler, fir2IrConfiguration))
+
     var irBuiltIns: IrBuiltInsOverFir? = null
-    val irOutputs = outputs.map {
-        convertToIr(
-            it,
+    // Initialize components in reversed order for more correct builtins initialization (on platform source set)
+    val reversedOutputsAndComponents = outputs.reversed().map {
+        val fir2IrComponents = Fir2IrConverter.createComponents(
+            it.session,
+            kotlinBuiltIns,
+            it.scopeSession,
+            IrFactoryImpl,
             // We need to build all modules before rebuilding fake overrides
             // to avoid fixing declaration storages
             fir2IrExtensions,
             fir2IrConfiguration,
-            commonMemberStorage = commonMemberStorage,
-            irBuiltIns = irBuiltIns,
-            irMangler,
             visibilityConverter,
-            kotlinBuiltIns,
             actualizerTypeContextProvider,
-        ).also { result ->
-            fir2IrResultPostCompute(it, result)
-            if (irBuiltIns == null) {
-                irBuiltIns = result.components.irBuiltIns
-            }
+            commonMemberStorage,
+            irMangler,
+            Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO KT-60526: replace with appropriate (probably empty) implementation for other backends.
+            irBuiltIns,
+        )
+        irBuiltIns = irBuiltIns ?: fir2IrComponents.irBuiltIns
+        Pair(it, fir2IrComponents)
+    }
+
+    fir2IrExtensions.registerDeclarations(commonMemberStorage.symbolTable)
+
+    // Convert FIR to IR in normal order
+    val irOutputs = reversedOutputsAndComponents.reversed().map {
+        val (firOutput, components) = it
+        Fir2IrConverter.generateIrModuleFragment(components, firOutput.fir, commonMemberStorage).also { fir2IrResult ->
+            fir2IrResultPostCompute(firOutput, fir2IrResult)
         }
     }
 
@@ -229,29 +240,6 @@ private fun IrFakeOverrideBuilder.buildForAll(
             }
         }
     }
-}
-
-private fun convertToIr(
-    firOutput: ModuleCompilerAnalyzedOutput,
-    fir2IrExtensions: Fir2IrExtensions,
-    fir2IrConfiguration: Fir2IrConfiguration,
-    commonMemberStorage: Fir2IrCommonMemberStorage,
-    irBuiltIns: IrBuiltInsOverFir?,
-    irMangler: KotlinMangler.IrMangler,
-    visibilityConverter: Fir2IrVisibilityConverter,
-    kotlinBuiltIns: KotlinBuiltIns,
-    typeContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
-): Fir2IrResult {
-    return Fir2IrConverter.createIrModuleFragment(
-        firOutput.session, firOutput.scopeSession, firOutput.fir,
-        fir2IrExtensions, fir2IrConfiguration,
-        irMangler, IrFactoryImpl, visibilityConverter,
-        Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO KT-60526: replace with appropriate (probably empty) implementation for other backends.
-        kotlinBuiltIns = kotlinBuiltIns,
-        commonMemberStorage = commonMemberStorage,
-        initializedIrBuiltIns = irBuiltIns,
-        typeContextProvider = typeContextProvider
-    )
 }
 
 fun IrPluginContext.applyIrGenerationExtensions(irModuleFragment: IrModuleFragment, irGenerationExtensions: Collection<IrGenerationExtension>) {

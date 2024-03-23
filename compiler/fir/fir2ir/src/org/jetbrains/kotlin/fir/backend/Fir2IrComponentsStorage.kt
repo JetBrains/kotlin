@@ -26,7 +26,7 @@ class Fir2IrComponentsStorage(
     override val configuration: Fir2IrConfiguration,
     override val visibilityConverter: Fir2IrVisibilityConverter,
     irFakeOverrideBuilderProvider: (IrBuiltIns) -> IrFakeOverrideBuilder,
-    moduleDescriptor: FirModuleDescriptor,
+    val moduleDescriptor: FirModuleDescriptor,
     commonMemberStorage: Fir2IrCommonMemberStorage,
     irMangler: KotlinMangler.IrMangler,
     specialSymbolProvider: Fir2IrSpecialSymbolProvider,
