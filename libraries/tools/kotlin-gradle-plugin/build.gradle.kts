@@ -27,6 +27,23 @@ kotlin {
             )
         )
     }
+
+    tasks.named<Test>("test") {
+        useJUnit {
+            exclude("**/*LincheckTest.class")
+        }
+    }
+
+    tasks.register<Test>("lincheckTest") {
+        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+
+        jvmArgs(
+            "--add-opens", "java.base/jdk.internal.misc=ALL-UNNAMED",
+            "--add-exports", "java.base/jdk.internal.util=ALL-UNNAMED",
+            "--add-exports", "java.base/sun.security.action=ALL-UNNAMED"
+        )
+        filter { include("**/*LincheckTest.class") }
+    }
 }
 
 apiValidation {
@@ -126,6 +143,7 @@ dependencies {
     testImplementation(libs.junit4)
     testImplementation(project(":kotlin-gradle-statistics"))
     testImplementation(project(":kotlin-tooling-metadata"))
+    testImplementation(libs.lincheck)
 }
 
 configurations.commonCompileClasspath.get().exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-core")
@@ -306,5 +324,6 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
     tasks.named("check") {
         dependsOn("functionalTest")
+        dependsOn("lincheckTest")
     }
 }
