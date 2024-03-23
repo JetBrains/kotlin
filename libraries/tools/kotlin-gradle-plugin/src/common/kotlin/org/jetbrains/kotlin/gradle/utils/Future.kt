@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.IllegalLifecycle
 import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 import java.io.Serializable
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -151,16 +154,23 @@ private class MappedFutureImpl<T, R>(
 
     override suspend fun await(): R {
         if (value.isCompleted) return value.getCompleted()
-        value.complete(transform(future.await()))
-        transform = { throw IllegalStateException("Unexpected 'transform' in future") }
+        // await can happen concurrently, but only one of them will go to the critical block
+        // and actually perform transformation.
+        // others will be early-returned
+        val valueToMap = future.await()
+        synchronized(value) {
+            if (value.isCompleted) return@synchronized
+            value.complete(transform(valueToMap))
+            transform = { throw IllegalStateException("Unexpected 'transform' in future") }
+        }
         return value.getCompleted()
     }
 
-    override fun getOrThrow(): R {
+    override fun getOrThrow(): R = synchronized(value) {
         if (value.isCompleted) return value.getCompleted()
         value.complete(transform(future.getOrThrow()))
         transform = { throw IllegalStateException("Unexpected 'transform' in future") }
-        return value.getCompleted()
+        value.getCompleted()
     }
 
     private fun writeReplace(): Any {
@@ -225,57 +235,58 @@ private class LazyFutureImpl<T>(private val future: Lazy<Future<T>>) : Future<T>
 }
 
 /**
- * Simple, Single Threaded, replacement for kotlinx.coroutines.CompletableDeferred.
+ * Simple, with primitive synchronization, replacement for kotlinx.coroutines.CompletableDeferred.
  */
 private class Completable<T>(
     private var value: Result<T>? = null,
 ) {
     constructor(value: T) : this(Result.success(value))
 
-    val isCompleted: Boolean get() = value != null
+    private val lock = ReentrantReadWriteLock()
+
+    val isCompleted: Boolean get() = lock.read { value != null }
 
     private val waitingContinuations = mutableListOf<Continuation<Result<T>>>()
 
     fun completeWith(result: Result<T>) {
-        check(value == null) { "Already completed with $value" }
-        value = result
+        val continuations = lock.write {
+            check(value == null) { "Already completed with $value" }
+            value = result
 
-        /* Capture and clear current waiting continuations */
-        val continuations = waitingContinuations.toList()
-        waitingContinuations.clear()
+            /* Capture and clear current waiting continuations */
+            waitingContinuations.toList().also { waitingContinuations.clear() }
+        }
 
+        /** it is safe to process continuations outside write lock
+         * because after write block all [await] calls will be shortcut due to [value] presence
+         * thus no more [waitingContinuations] adding. */
         continuations.forEach { continuation ->
             continuation.resume(result)
         }
-
-        /*
-        Safety check:
-        We do not expect any coroutines waiting:
-        Any continuation that, during its above .resume, calls into '.await()' shall
-        directly resume and receive the value currently set.
-
-        If the waiting continuations are not empty, then those would be leaking.
-         */
-        assert(waitingContinuations.isEmpty())
     }
 
     fun complete(value: T) {
         completeWith(Result.success(value))
     }
 
-    fun getCompleted(): T {
+    fun getCompleted(): T = lock.read {
         val value = this.value ?: throw IllegalStateException("Not completed yet")
-        return value.getOrThrow()
+        value.getOrThrow()
     }
 
     suspend fun await(): T {
+        val readLock = lock.readLock()
+        readLock.lock()
         val value = this.value
         if (value != null) {
-            return value.getOrThrow()
+            return value.getOrThrow().also { readLock.unlock() }
         }
 
         return suspendCoroutine<Result<T>> { continuation ->
             waitingContinuations.add(continuation)
+            /** As soon as we add to waitlist we can release the lock
+             * so during [completeWith] continuation will be completed. */
+            readLock.unlock()
         }.getOrThrow()
     }
 }
