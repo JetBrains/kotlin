@@ -22,7 +22,11 @@ import kotlin.test.fail
 // We are using the latest available AGP in this test suite as a max version
 // to ensure AGP and MPP integration is not broken.
 // This integration allows AGP to configure android target in MPP.
-@AndroidTestVersions(minVersion = TestVersions.AGP.AGP_82, maxVersion = TestVersions.AGP.AGP_83)
+@AndroidTestVersions(
+    minVersion = TestVersions.AGP.AGP_82,
+    maxVersion = TestVersions.AGP.AGP_85,
+    additionalVersions = [TestVersions.AGP.AGP_84],
+)
 @AndroidGradlePluginTests
 class ExternalAndroidTargetIT : KGPBaseTest() {
 
