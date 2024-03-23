@@ -710,7 +710,7 @@ class Fir2IrConverter(
             return dependsOnTransitive.associate { it.friendsMapName() to friendNames }
         }
 
-        fun createIrModuleFragment(
+        fun createFir2IrComponentsStorage(
             session: FirSession,
             scopeSession: ScopeSession,
             firFiles: List<FirFile>,
@@ -723,11 +723,9 @@ class Fir2IrConverter(
             kotlinBuiltIns: KotlinBuiltIns,
             commonMemberStorage: Fir2IrCommonMemberStorage,
             initializedIrBuiltIns: IrBuiltInsOverFir?,
-            typeContextProvider: (IrBuiltIns) -> IrTypeSystemContext
-        ): Fir2IrResult {
-            session.lazyDeclarationResolver.disableLazyResolveContractChecks()
-            val moduleDescriptor = FirModuleDescriptor.createSourceModuleDescriptor(session, kotlinBuiltIns)
-            val components = Fir2IrComponentsStorage(
+            typeContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
+        ): Fir2IrComponentsStorage {
+            return Fir2IrComponentsStorage(
                 session,
                 scopeSession,
                 irFactory,
@@ -745,16 +743,24 @@ class Fir2IrConverter(
                         fir2IrExtensions.externalOverridabilityConditions
                     )
                 },
-                moduleDescriptor,
+                FirModuleDescriptor.createSourceModuleDescriptor(session, kotlinBuiltIns),
                 commonMemberStorage,
                 irMangler,
                 specialSymbolProvider,
-                initializedIrBuiltIns
+                initializedIrBuiltIns,
             )
+        }
 
-            fir2IrExtensions.registerDeclarations(commonMemberStorage.symbolTable)
+        fun generateIrModuleFragment(
+            components: Fir2IrComponentsStorage,
+            firFiles: List<FirFile>,
+            commonMemberStorage: Fir2IrCommonMemberStorage,
+        ): Fir2IrResult {
+            val session = components.session
 
-            val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, components.irBuiltIns)
+            session.lazyDeclarationResolver.disableLazyResolveContractChecks()
+
+            val irModuleFragment = IrModuleFragmentImpl(components.moduleDescriptor, components.irBuiltIns)
 
             val allFirFiles = buildList {
                 addAll(firFiles)
@@ -763,15 +769,11 @@ class Fir2IrConverter(
                 generatedFiles.forEach { components.firProvider.recordFile(it) }
             }
 
-            components.converter.runSourcesConversion(
-                allFirFiles,
-                irModuleFragment,
-                components.fir2IrVisitor
-            )
+            components.converter.runSourcesConversion(allFirFiles, irModuleFragment, components.fir2IrVisitor)
 
             commonMemberStorage.registerFirProvider(session.moduleData, components.firProvider)
 
-            return Fir2IrResult(irModuleFragment, components, moduleDescriptor)
+            return Fir2IrResult(irModuleFragment, components, components.moduleDescriptor)
         }
     }
 }
