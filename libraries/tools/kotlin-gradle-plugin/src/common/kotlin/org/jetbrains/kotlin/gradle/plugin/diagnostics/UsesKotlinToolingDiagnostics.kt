@@ -22,6 +22,9 @@ internal interface UsesKotlinToolingDiagnosticsParameters {
 
     @get:Internal
     val diagnosticRenderingOptions: Property<ToolingDiagnosticRenderingOptions>
+
+    @get:Internal
+    val projectPath: Property<String>
 }
 
 internal interface UsesKotlinToolingDiagnostics : UsesKotlinToolingDiagnosticsParameters, Task {

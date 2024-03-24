@@ -18,6 +18,7 @@ internal val KotlinToolingDiagnosticsSetupAction = KotlinProjectSetupAction {
         it.usesService(collectorProvider)
         it.toolingDiagnosticsCollector.value(collectorProvider)
         it.diagnosticRenderingOptions.set(diagnosticRenderingOptions)
+        it.projectPath.set(project.path)
     }
 
     // Launch checkers. Note that they are invoked eagerly to give them a fine-grained

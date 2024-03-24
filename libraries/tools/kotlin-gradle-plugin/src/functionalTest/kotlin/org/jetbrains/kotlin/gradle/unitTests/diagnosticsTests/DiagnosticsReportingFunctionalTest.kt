@@ -156,7 +156,7 @@ class DiagnosticsReportingFunctionalTest {
             tasks.register("taskThatUsesKotlinToolingDiagnostics", TaskConformingToUsesKotlinToolingDiagnostics::class.java) {
                 it.reportDiagnostic(diagnostic)
             }.get()
-            assertNoDiagnostics()
+            assertContainsDiagnostic(diagnostic)
         }
     }
 }
