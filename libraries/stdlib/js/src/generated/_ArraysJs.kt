@@ -305,8 +305,6 @@ public actual infix fun <T> Array<out T>?.contentEquals(other: Array<out T>?): B
  * Checks if the two specified arrays are *structurally* equal to one another.
  * 
  * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
- * Elements are compared for equality using the [equals][Any.equals] function.
- * For floating point numbers, it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  * 
  * The arrays are also considered structurally equal if both are `null`.
  * 
@@ -324,8 +322,6 @@ public actual infix fun ByteArray?.contentEquals(other: ByteArray?): Boolean {
  * Checks if the two specified arrays are *structurally* equal to one another.
  * 
  * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
- * Elements are compared for equality using the [equals][Any.equals] function.
- * For floating point numbers, it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  * 
  * The arrays are also considered structurally equal if both are `null`.
  * 
@@ -343,8 +339,6 @@ public actual infix fun ShortArray?.contentEquals(other: ShortArray?): Boolean {
  * Checks if the two specified arrays are *structurally* equal to one another.
  * 
  * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
- * Elements are compared for equality using the [equals][Any.equals] function.
- * For floating point numbers, it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  * 
  * The arrays are also considered structurally equal if both are `null`.
  * 
@@ -362,8 +356,6 @@ public actual infix fun IntArray?.contentEquals(other: IntArray?): Boolean {
  * Checks if the two specified arrays are *structurally* equal to one another.
  * 
  * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
- * Elements are compared for equality using the [equals][Any.equals] function.
- * For floating point numbers, it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  * 
  * The arrays are also considered structurally equal if both are `null`.
  * 
@@ -419,8 +411,6 @@ public actual infix fun DoubleArray?.contentEquals(other: DoubleArray?): Boolean
  * Checks if the two specified arrays are *structurally* equal to one another.
  * 
  * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
- * Elements are compared for equality using the [equals][Any.equals] function.
- * For floating point numbers, it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  * 
  * The arrays are also considered structurally equal if both are `null`.
  * 
@@ -438,8 +428,6 @@ public actual infix fun BooleanArray?.contentEquals(other: BooleanArray?): Boole
  * Checks if the two specified arrays are *structurally* equal to one another.
  * 
  * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
- * Elements are compared for equality using the [equals][Any.equals] function.
- * For floating point numbers, it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  * 
  * The arrays are also considered structurally equal if both are `null`.
  * 
