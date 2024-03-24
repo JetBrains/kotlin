@@ -76,14 +76,13 @@ fun FirResult.convertToIrAndActualize(
     require(outputs.isNotEmpty()) { "No modules found" }
 
     val commonMemberStorage = Fir2IrCommonMemberStorage(FirBasedSignatureComposer.create(firMangler, fir2IrConfiguration))
+    fir2IrExtensions.registerDeclarations(commonMemberStorage.symbolTable)
 
-    var irBuiltIns: IrBuiltInsOverFir? = null
-    // Initialize components in reversed order for more correct builtins initialization (on platform source set)
-    val reversedOutputsAndComponents = outputs.reversed().map {
-        val fir2IrComponents = Fir2IrConverter.createComponents(
-            it.session,
+    fun ModuleCompilerAnalyzedOutput.createComponentsStorage(irBuiltIns: IrBuiltInsOverFir?): Fir2IrComponentsStorage {
+        return Fir2IrConverter.createComponents(
+            session,
             kotlinBuiltIns,
-            it.scopeSession,
+            scopeSession,
             IrFactoryImpl,
             // We need to build all modules before rebuilding fake overrides
             // to avoid fixing declaration storages
@@ -96,33 +95,45 @@ fun FirResult.convertToIrAndActualize(
             Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO KT-60526: replace with appropriate (probably empty) implementation for other backends.
             irBuiltIns,
         )
-        irBuiltIns = irBuiltIns ?: fir2IrComponents.irBuiltIns
-        Pair(it, fir2IrComponents)
     }
 
-    fir2IrExtensions.registerDeclarations(commonMemberStorage.symbolTable)
+    val platformFirOutput = outputs.last()
+    val platformComponentsStorage = platformFirOutput.createComponentsStorage(irBuiltIns = null)
 
-    // Convert FIR to IR in normal order
-    val irOutputs = reversedOutputsAndComponents.reversed().map {
-        val (firOutput, components) = it
-        Fir2IrConverter.generateIrModuleFragment(components, firOutput.fir, commonMemberStorage).also { fir2IrResult ->
-            fir2IrResultPostCompute(firOutput, fir2IrResult)
+    val dependentIrModules = mutableListOf<IrModuleFragment>()
+    lateinit var mainIrModule: IrModuleFragment
+    lateinit var pluginContext: Fir2IrPluginContext
+
+    for (firOutput in outputs) {
+        val isMainModule = firOutput === platformFirOutput
+        val componentsStorage = if (isMainModule) {
+            platformComponentsStorage
+        } else {
+            firOutput.createComponentsStorage(platformComponentsStorage.irBuiltIns)
+        }
+
+        val irModule = Fir2IrConverter.generateIrModuleFragment(componentsStorage, firOutput.fir, commonMemberStorage).also {
+            fir2IrResultPostCompute(firOutput, it)
+        }
+
+        if (isMainModule) {
+            mainIrModule = irModule.irModuleFragment
+            pluginContext = irModule.pluginContext
+        } else {
+            dependentIrModules.add(irModule.irModuleFragment)
         }
     }
 
-    val (irModuleFragment, components, pluginContext) = irOutputs.last()
-    val allIrModules = irOutputs.map { it.irModuleFragment }
-
-    val irActualizer = if (allIrModules.size == 1) null else IrActualizer(
+    val irActualizer = if (dependentIrModules.isEmpty()) null else IrActualizer(
         KtDiagnosticReporterWithImplicitIrBasedContext(
             fir2IrConfiguration.diagnosticReporter,
             fir2IrConfiguration.languageVersionSettings
         ),
-        actualizerTypeContextProvider(irModuleFragment.irBuiltins),
+        actualizerTypeContextProvider(mainIrModule.irBuiltins),
         fir2IrConfiguration.expectActualTracker,
         fir2IrConfiguration.useFirBasedFakeOverrideGenerator,
-        irModuleFragment,
-        allIrModules.dropLast(1),
+        mainIrModule,
+        dependentIrModules,
     )
 
     if (!fir2IrConfiguration.useFirBasedFakeOverrideGenerator) {
@@ -132,23 +143,23 @@ fun FirResult.convertToIrAndActualize(
         // always enabled
         irActualizer?.actualizeClassifiers()
         val temporaryResolver = SpecialFakeOverrideSymbolsResolver(emptyMap())
-        components.fakeOverrideBuilder.buildForAll(allIrModules, temporaryResolver)
+        platformComponentsStorage.fakeOverrideBuilder.buildForAll(dependentIrModules + mainIrModule, temporaryResolver)
     }
     val expectActualMap = irActualizer?.actualizeCallablesAndMergeModules() ?: emptyMap()
-    val fakeOverrideResolver = runIf(!components.configuration.useFirBasedFakeOverrideGenerator) {
+    val fakeOverrideResolver = runIf(!platformComponentsStorage.configuration.useFirBasedFakeOverrideGenerator) {
         val fakeOverrideResolver = SpecialFakeOverrideSymbolsResolver(expectActualMap)
-        irModuleFragment.acceptVoid(SpecialFakeOverrideSymbolsResolverVisitor(fakeOverrideResolver))
+        mainIrModule.acceptVoid(SpecialFakeOverrideSymbolsResolverVisitor(fakeOverrideResolver))
         @OptIn(Fir2IrSymbolsMappingForLazyClasses.SymbolRemapperInternals::class)
-        components.symbolsMappingForLazyClasses.initializeSymbolMap(fakeOverrideResolver)
+        platformComponentsStorage.symbolsMappingForLazyClasses.initializeSymbolMap(fakeOverrideResolver)
         fakeOverrideResolver
     }
-    Fir2IrConverter.evaluateConstants(irModuleFragment, components)
+    Fir2IrConverter.evaluateConstants(mainIrModule, platformComponentsStorage)
     val actualizationResult = irActualizer?.runChecksAndFinalize(expectActualMap)
 
-    fakeOverrideResolver?.cacheFakeOverridesOfAllClasses(irModuleFragment)
+    fakeOverrideResolver?.cacheFakeOverridesOfAllClasses(mainIrModule)
 
-    pluginContext.applyIrGenerationExtensions(irModuleFragment, irGeneratorExtensions)
-    return Fir2IrActualizedResult(irModuleFragment, components, pluginContext, actualizationResult)
+    pluginContext.applyIrGenerationExtensions(mainIrModule, irGeneratorExtensions)
+    return Fir2IrActualizedResult(mainIrModule, platformComponentsStorage, pluginContext, actualizationResult)
 }
 
 
