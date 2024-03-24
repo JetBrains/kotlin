@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -18,12 +19,11 @@ import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.renderer.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val selectedElement = testServices.expressionMarkerProvider.getSelectedElementOfTypeByDirective(mainFile, mainModule) as KtElement
 
         val actual = resolveWithClearCaches(mainFile) { session ->

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.analyzeCopy
 import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSourceFilePreprocessor
@@ -90,7 +91,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
      * @see isMainFile
      * @see AnalysisApiTestDirectives.MAIN_FILE_NAME
      */
-    protected open fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+    protected open fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         throw UnsupportedOperationException(
             "The test case is not fully implemented. " +
                     "'${::doTestByMainFile.name}', '${::doTestByMainModuleAndOptionalMainFile.name}' or '${::doTestByModuleStructure.name}' should be overridden"
@@ -98,7 +99,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     }
 
     /**
-     * Consider implementing this method if you have logic around [TestModule], or you don't always have a [mainFile] and have some custom
+     * Consider implementing this method if you have logic around [KtTestModule], or you don't always have a [mainFile] and have some custom
      * logic for such exceptional cases (e.g., taking the first file from [mainModule]).
      *
      * Examples of use cases:
@@ -107,7 +108,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
      * - Find a declaration by qualified name and invoke some logic
      * - Process all files in the module
      *
-     * Only one [TestModule] can be the main one.
+     * Only one [KtTestModule] can be the main one.
      *
      * The main module is selected based on the following rules:
      *
@@ -124,22 +125,26 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
      * @see isMainModule
      * @see AnalysisApiTestDirectives.MAIN_MODULE
      */
-    protected open fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: TestModule, testServices: TestServices) {
+    protected open fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
         doTestByMainFile(mainFile ?: error("The main file is not found"), mainModule, testServices)
     }
 
     /**
-     * Consider implementing this method if your test logic needs the whole [KtTestModuleStructure].
+     * Consider implementing this method if your test logic needs the whole
+     * [KtTestModuleStructure][org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure].
      *
      * Examples of use cases:
      *
      * - Find all files in all modules
      * - Find two declarations from different files and different modules and compare them
      *
+     * The [KtTestModuleStructure][org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure] can be accessed via
+     * [ktTestModuleStructure] on [testServices].
+     *
      * Use only if [doTestByMainModuleAndOptionalMainFile] is not suitable for your use case.
      */
-    protected open fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val (mainFile, mainModule) = findMainFileAndModule(moduleStructure, testServices)
+    protected open fun doTestByModuleStructure(testServices: TestServices) {
+        val (mainFile, mainModule) = findMainFileAndModule(testServices)
         doTestByMainModuleAndOptionalMainFile(mainFile, mainModule, testServices)
     }
 
@@ -160,10 +165,10 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         configurator.configureTest(builder, disposable)
     }
 
-    data class ModuleWithMainFile(val mainFile: KtFile?, val module: TestModule)
+    data class ModuleWithMainFile(val mainFile: KtFile?, val module: KtTestModule)
 
-    protected fun findMainFileAndModule(moduleStructure: TestModuleStructure, testServices: TestServices): ModuleWithMainFile {
-        findMainFileByMarkers(moduleStructure, testServices)?.let { return it }
+    protected fun findMainFileAndModule(testServices: TestServices): ModuleWithMainFile {
+        findMainFileByMarkers(testServices)?.let { return it }
 
         // We have this search not at the beginning of the function as we should prefer marked files to
         // a main module with one file
@@ -172,8 +177,8 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         return ModuleWithMainFile(mainFile, mainModule)
     }
 
-    private fun findMainFileByMarkers(moduleStructure: TestModuleStructure, testServices: TestServices): ModuleWithMainFile? {
-        return moduleStructure.modules.singleOrZeroValue(
+    private fun findMainFileByMarkers(testServices: TestServices): ModuleWithMainFile? {
+        return testServices.ktTestModuleStructure.mainModules.singleOrZeroValue(
             transformer = { module ->
                 // We don't want to accept one-file modules without additional checks as it can be some intermediate
                 // module that is not intended to be the main
@@ -181,51 +186,51 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
                     ModuleWithMainFile(mainFile, module)
                 }
             },
-            ambiguityValueRenderer = { "'${it.module.name}' with '${it.mainFile?.name}'" },
+            ambiguityValueRenderer = { "'${it.module.testModule.name}' with '${it.mainFile?.name}'" },
         )
     }
 
-    protected fun findMainModule(testServices: TestServices): TestModule? {
-        val testModules = testServices.moduleStructure.modules
+    protected fun findMainModule(testServices: TestServices): KtTestModule? {
+        val modules = testServices.ktTestModuleStructure.mainModules
         // One-module test, nothing to search
-        testModules.singleOrNull()?.let { return it }
+        modules.singleOrNull()?.let { return it }
 
-        return testModules.singleOrZeroValue(
+        return modules.singleOrZeroValue(
             transformer = { module -> module.takeIf { isMainModule(module, testServices) } },
-            ambiguityValueRenderer = { it.name },
+            ambiguityValueRenderer = { it.testModule.name },
         )
     }
 
-    protected open fun isMainModule(module: TestModule, testServices: TestServices): Boolean {
-        return AnalysisApiTestDirectives.MAIN_MODULE in module.directives ||
+    protected open fun isMainModule(ktTestModule: KtTestModule, testServices: TestServices): Boolean {
+        return AnalysisApiTestDirectives.MAIN_MODULE in ktTestModule.testModule.directives ||
                 // Multiplatform modules can have '-' delimiter for a platform definition
-                module.name.substringBefore('-') == ModuleStructureExtractor.DEFAULT_MODULE_NAME
+                ktTestModule.testModule.name.substringBefore('-') == ModuleStructureExtractor.DEFAULT_MODULE_NAME
     }
 
     protected fun findMainFile(
-        module: TestModule,
+        ktTestModule: KtTestModule,
         testServices: TestServices,
         acceptSingleFileWithoutAdditionalChecks: Boolean = true,
     ): KtFile? {
-        val ktFiles = testServices.ktTestModuleStructure.getKtTestModule(module).ktFiles
+        val ktFiles = ktTestModule.ktFiles
         if (acceptSingleFileWithoutAdditionalChecks) {
             // Simple case with one file
             ktFiles.singleOrNull()?.let { return it }
         }
 
         return ktFiles.singleOrZeroValue(
-            transformer = { file -> file.takeIf { isMainFile(file, module, testServices) } },
+            transformer = { file -> file.takeIf { isMainFile(file, ktTestModule, testServices) } },
             ambiguityValueRenderer = { it.name },
         )
     }
 
     protected val TestModule.mainFileName: String get() = directives.singleOrZeroValue(AnalysisApiTestDirectives.MAIN_FILE_NAME) ?: "main"
 
-    protected open fun isMainFile(file: KtFile, module: TestModule, testServices: TestServices): Boolean {
+    protected open fun isMainFile(file: KtFile, ktTestModule: KtTestModule, testServices: TestServices): Boolean {
         val expressionMarkerProvider = testServices.expressionMarkerProvider
         return expressionMarkerProvider.getCaretPositionOrNull(file) != null ||
                 expressionMarkerProvider.getSelectedRangeOrNull(file) != null ||
-                file.virtualFile.nameWithoutExtension == module.mainFileName
+                file.virtualFile.nameWithoutExtension == ktTestModule.testModule.mainFileName
     }
 
     protected fun AssertionsService.assertEqualsToTestDataFileSibling(
@@ -293,7 +298,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         testDataPath = configurator.computeTestDataPath(Paths.get(path))
         val testConfiguration = createTestConfiguration()
         testServices = testConfiguration.testServices
-        val moduleStructure = createModuleStructure(testConfiguration)
+        createAndRegisterTestModuleStructure(testConfiguration)
 
         if (configurator.analyseInDependentSession && isDependentModeDisabledForTheTest()) {
             return
@@ -311,8 +316,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
             return
         }
 
-
-        doTestByModuleStructure(moduleStructure, testServices)
+        doTestByModuleStructure(testServices)
     }
 
     @AfterEach
@@ -330,14 +334,13 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         return testConfiguration
     }
 
-    private fun createModuleStructure(testConfiguration: TestConfiguration): TestModuleStructure {
+    private fun createAndRegisterTestModuleStructure(testConfiguration: TestConfiguration) {
         val moduleStructure = testConfiguration.moduleStructureExtractor.splitTestDataByModules(
             testDataPath.toString(),
             testConfiguration.directives,
         )
 
         testServices.register(TestModuleStructure::class, moduleStructure)
-        return moduleStructure
     }
 
     private fun prepareToTheAnalysis(testConfiguration: TestConfiguration) {

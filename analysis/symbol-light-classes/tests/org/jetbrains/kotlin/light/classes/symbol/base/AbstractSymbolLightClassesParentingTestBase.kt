@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.base
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AssertionsService
 import org.junit.Assume
 import java.nio.file.Path
@@ -33,7 +33,13 @@ open class AbstractSymbolLightClassesParentingTestBase(
         val IGNORE_PARENTING_CHECK by directive(description = "Ignore the test")
     }
 
-    override fun getRenderResult(ktFile: KtFile, ktFiles: List<KtFile>, testDataFile: Path, module: TestModule, project: Project): String {
+    override fun getRenderResult(
+        ktFile: KtFile,
+        ktFiles: List<KtFile>,
+        testDataFile: Path,
+        module: KtTestModule,
+        project: Project,
+    ): String {
         throw IllegalStateException("This test is not rendering light elements")
     }
 

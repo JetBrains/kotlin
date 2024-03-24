@@ -10,16 +10,16 @@ import org.jetbrains.kotlin.analysis.api.components.KtScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KtScopeKind
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.TestScopeRenderer.renderForTests
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractFileImportingScopeContextTest : AbstractAnalysisApiBasedTest() {
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
-        val renderDefaultImportingScope = Directives.RENDER_DEFAULT_IMPORTING_SCOPE in mainModule.directives
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
+        val renderDefaultImportingScope = Directives.RENDER_DEFAULT_IMPORTING_SCOPE in mainModule.testModule.directives
 
         analyseForTest(mainFile) {
             val ktScopeContext = mainFile.getImportingScopeContext()

@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractTypeTest : AbstractAnalysisApiBasedTest() {
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = analyseForTest(mainFile.declarations.first()) {
             val type = getType(mainFile, mainModule, testServices)
             DebugSymbolRenderer(renderTypeByProperties = true).renderType(type)
@@ -24,5 +24,5 @@ abstract class AbstractTypeTest : AbstractAnalysisApiBasedTest() {
     }
 
     context(KtAnalysisSession)
-    protected abstract fun getType(ktFile: KtFile, module: TestModule, testServices: TestServices): KtType
+    protected abstract fun getType(ktFile: KtFile, module: KtTestModule, testServices: TestServices): KtType
 }

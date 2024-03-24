@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMember
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import java.nio.file.Path
@@ -29,8 +29,8 @@ abstract class AbstractSymbolLightClassesAnnotationEqualityTest(
     override val currentExtension: String,
     override val isTestAgainstCompiledCode: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {
-    override fun doLightClassTest(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
-        val directives = module.directives
+    override fun doLightClassTest(ktFiles: List<KtFile>, module: KtTestModule, testServices: TestServices) {
+        val directives = module.testModule.directives
         val expectedAnnotations = directives[Directives.EXPECTED]
         val unexpectedAnnotations = directives[Directives.UNEXPECTED]
         val qualifiersToCheck = expectedAnnotations + unexpectedAnnotations
@@ -74,12 +74,18 @@ abstract class AbstractSymbolLightClassesAnnotationEqualityTest(
         }
     }
 
-    override fun getRenderResult(ktFile: KtFile, ktFiles: List<KtFile>, testDataFile: Path, module: TestModule, project: Project): String {
+    override fun getRenderResult(
+        ktFile: KtFile,
+        ktFiles: List<KtFile>,
+        testDataFile: Path,
+        module: KtTestModule,
+        project: Project,
+    ): String {
         throw UnsupportedOperationException()
     }
 
-    private fun findLightDeclaration(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices): PsiMember {
-        val directives = module.directives
+    private fun findLightDeclaration(ktFiles: List<KtFile>, module: KtTestModule, testServices: TestServices): PsiMember {
+        val directives = module.testModule.directives
         val lightElementClassQualifier = directives.singleValue(Directives.PSI)
         val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFiles.first())
         val lightElements = declaration.toLightElements()

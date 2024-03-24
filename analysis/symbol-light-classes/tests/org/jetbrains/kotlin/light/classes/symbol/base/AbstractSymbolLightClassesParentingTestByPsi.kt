@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.base
 
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.light.classes.symbol.base.service.getLightClassesFromFile
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
@@ -17,8 +17,8 @@ abstract class AbstractSymbolLightClassesParentingTestByPsi(
     currentExtension: String,
     stopIfCompilationErrorDirectivePresent: Boolean,
 ) : AbstractSymbolLightClassesParentingTestBase(configurator, currentExtension, stopIfCompilationErrorDirectivePresent) {
-    override fun doLightClassTest(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
-        val elementVisitor = createLightElementsVisitor(module.directives, testServices.assertions)
+    override fun doLightClassTest(ktFiles: List<KtFile>, module: KtTestModule, testServices: TestServices) {
+        val elementVisitor = createLightElementsVisitor(module.testModule.directives, testServices.assertions)
         for (ktFile in ktFiles) {
             for (psiClass in getLightClassesFromFile(ktFile)) {
                 psiClass.accept(elementVisitor)

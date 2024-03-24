@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
@@ -31,7 +31,7 @@ private const val USE_SITE_ELEMENT_NAME = "usesite"
  * The declaration symbol is found via a symbol name at the bottom of the test file, such as `// class: Declaration` (see [SymbolByFqName]).
  */
 abstract class AbstractVisibilityCheckerTest : AbstractAnalysisApiBasedTest() {
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actualText = analyseForTest(mainFile) {
             val declarationSymbol = with(SymbolByFqName.getSymbolDataFromFile(testDataPath)) {
                 toSymbols(mainFile).singleOrNull() as? KtSymbolWithVisibility

@@ -11,16 +11,23 @@ import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KtTypeRendererForSo
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KtUsualClassTypeRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractSealedInheritorsTest : AbstractAnalysisApiBasedTest() {
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
-        analyseForTest(mainFile) {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
+        doTestByKtFile(mainFile, testServices)
+    }
+
+    /**
+     * [ktFile] may be a fake file for dangling module tests.
+     */
+    protected fun doTestByKtFile(ktFile: KtFile, testServices: TestServices) {
+        analyseForTest(ktFile) {
             val actualText = with(SymbolByFqName.getSymbolDataFromFile(testDataPath)) {
-                val classSymbol = toSymbols(mainFile).singleOrNull() as? KtNamedClassOrObjectSymbol
+                val classSymbol = toSymbols(ktFile).singleOrNull() as? KtNamedClassOrObjectSymbol
                     ?: error("Expected a single named class to be specified.")
 
                 classSymbol.getSealedClassInheritors().joinToString("\n\n") { inheritor ->

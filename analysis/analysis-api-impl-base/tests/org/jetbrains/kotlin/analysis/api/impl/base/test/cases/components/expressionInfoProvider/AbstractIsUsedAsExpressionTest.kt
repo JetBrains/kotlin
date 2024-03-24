@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider
 
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractIsUsedAsExpressionTest : AbstractAnalysisApiBasedTest() {
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val expression = testServices.expressionMarkerProvider.getSelectedElementOfType<KtExpression>(mainFile).let {
             if (it is KtBlockExpression && it.statements.size == 1 && it.textRange == it.statements.single().textRange) {
                 it.statements.single()
@@ -21,7 +21,7 @@ abstract class AbstractIsUsedAsExpressionTest : AbstractAnalysisApiBasedTest() {
                 it
             }
         }
-        val actual = StringBuilder();
+        val actual = StringBuilder()
 
         analyseForTest(expression) {
             actual.appendLine("expression: $expression")

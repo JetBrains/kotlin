@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractClassIdConsistenc
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.utils.ignoreExceptionIfIgnoreDirectivePresent
 import org.jetbrains.kotlin.name.ClassId
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
 import org.jetbrains.kotlin.psi.stubs.StubUtils
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -30,7 +30,7 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
 abstract class AbstractClassIdConsistencyTest : AbstractAnalysisApiBasedTest() {
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         testServices.moduleStructure.allDirectives.ignoreExceptionIfIgnoreDirectivePresent(IGNORE_CONSISTENCY_CHECK) {
             mainFile.forEachDescendantOfType<KtClassLikeDeclaration> { declaration ->
                 val classId = declaration.getClassId()

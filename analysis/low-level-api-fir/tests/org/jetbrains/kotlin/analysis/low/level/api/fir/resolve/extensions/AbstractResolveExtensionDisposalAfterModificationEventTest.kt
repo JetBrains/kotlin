@@ -16,12 +16,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.directives.publishModificationEventByDirective
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
@@ -31,19 +30,17 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractResolveExtensionDisposalAfterModificationEventTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(
         mainFile: KtFile,
-        mainModule: TestModule,
+        mainModule: KtTestModule,
         testServices: TestServices,
     ) {
-        val project = mainFile.project
-        val ktTestModule = testServices.ktTestModuleStructure.getKtTestModule(mainModule)
-        val session = LLFirSessionCache.getInstance(project).getSession(ktTestModule.ktModule)
+        val session = LLFirSessionCache.getInstance(mainFile.project).getSession(mainModule.ktModule)
         val resolveExtension = session.llResolveExtensionTool!!.extensions.single() as KtResolveExtensionWithDisposalTracker
 
         testServices.assertions.assertFalse(resolveExtension.isDisposed) {
             "The resolve extension should not be disposed before the modification event is published."
         }
 
-        ktTestModule.publishModificationEventByDirective()
+        mainModule.publishModificationEventByDirective()
 
         testServices.assertions.assertTrue(resolveExtension.isDisposed) {
             "The resolve extension should be disposed after the modification event has been published."

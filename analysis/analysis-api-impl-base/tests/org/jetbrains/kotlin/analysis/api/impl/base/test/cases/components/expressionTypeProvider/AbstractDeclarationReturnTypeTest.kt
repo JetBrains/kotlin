@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider
 
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.utils.getNameWithPositionString
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractDeclarationReturnTypeTest : AbstractAnalysisApiBasedTest() {
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = buildString {
             mainFile.accept(object : KtTreeVisitor<Int>() {
                 override fun visitDeclaration(declaration: KtDeclaration, indent: Int): Void? {

@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiEnumConstantInitializer
 import com.intellij.psi.search.GlobalSearchScope
 import junit.framework.TestCase
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.LightClassTestCommon
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.light.classes.symbol.base.service.getLightClassesFro
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.model.TestModule
 import java.nio.file.Path
 
 abstract class AbstractSymbolLightClassesByPsiTest(
@@ -25,7 +25,13 @@ abstract class AbstractSymbolLightClassesByPsiTest(
     override val currentExtension: String,
     override val isTestAgainstCompiledCode: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {
-    override fun getRenderResult(ktFile: KtFile, ktFiles: List<KtFile>, testDataFile: Path, module: TestModule, project: Project): String {
+    override fun getRenderResult(
+        ktFile: KtFile,
+        ktFiles: List<KtFile>,
+        testDataFile: Path,
+        module: KtTestModule,
+        project: Project,
+    ): String {
         val finder = JavaElementFinder.getInstance(project)
         val lightClasses = ktFiles.flatMap { getLightClassesFromFile(it) }
         if (lightClasses.isEmpty()) {

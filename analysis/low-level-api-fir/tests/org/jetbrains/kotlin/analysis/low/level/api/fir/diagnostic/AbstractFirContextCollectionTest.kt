@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getDiagnostics
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.BeforeElementDiagnosticCollectionHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.beforeElementDiagnosticCollectionHandler
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.useFirSessionConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 
 abstract class AbstractFirContextCollectionTest : AbstractAnalysisApiBasedTest() {
@@ -43,12 +42,11 @@ abstract class AbstractFirContextCollectionTest : AbstractAnalysisApiBasedTest()
         }
     }
 
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         resolveWithClearCaches(mainFile) { firResolveSession ->
             check(firResolveSession.isSourceSession)
 
-            val module = firResolveSession.getModule(mainFile)
-            val session = firResolveSession.getSessionFor(module) as LLFirResolvableModuleSession
+            val session = firResolveSession.getSessionFor(mainModule.ktModule) as LLFirResolvableModuleSession
             val handler = session.beforeElementDiagnosticCollectionHandler as BeforeElementTestDiagnosticCollectionHandler
 
             val fileStructureCache = session.moduleComponents.fileStructureCache

@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
@@ -28,17 +28,16 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import java.lang.IllegalArgumentException
 
 abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
-        performTestByMainFile(mainFile, testServices, testPrefix = null)
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
+        performTestByMainFile(mainFile, mainModule, testServices, testPrefix = null)
 
         val fakeFile = createFileCopy(mainFile)
-        performTestByMainFile(fakeFile, testServices, testPrefix = "copy")
+        performTestByMainFile(fakeFile, mainModule, testServices, testPrefix = "copy")
     }
 
     private fun createFileCopy(file: KtFile): KtFile {
@@ -51,11 +50,8 @@ abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
         return fakeFile
     }
 
-    private fun performTestByMainFile(mainFile: KtFile, testServices: TestServices, testPrefix: String?) {
-        val project = mainFile.project
-        val sourceModule = ProjectStructureProvider.getModule(project, mainFile, contextualModule = null)
-
-        val resolveSession = sourceModule.getFirResolveSession(project)
+    private fun performTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices, testPrefix: String?) {
+        val resolveSession = mainModule.ktModule.getFirResolveSession(mainFile.project)
         val session = resolveSession.useSiteFirSession
         val sessionHolder = SessionHolderImpl(session, session.getScopeSession())
 

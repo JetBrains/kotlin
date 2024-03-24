@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inheritorsProvider
 
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractDanglingFileSealedInheritorsTest : AbstractSealedInheritorsTest() {
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val ktPsiFactory = KtPsiFactory.contextual(mainFile, markGenerated = true, eventSystemEnabled = false)
         val fakeKtFile = ktPsiFactory.createFile("fake.kt", mainFile.text)
 
-        super.doTestByMainFile(fakeKtFile, mainModule, testServices)
+        doTestByKtFile(fakeKtFile, testServices)
     }
 }

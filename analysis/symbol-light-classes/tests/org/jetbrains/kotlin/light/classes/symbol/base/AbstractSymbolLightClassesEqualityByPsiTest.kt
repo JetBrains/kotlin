@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.light.classes.symbol.base
 
 import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.light.classes.symbol.base.service.getLightClassesFromFile
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
 open class AbstractSymbolLightClassesEqualityByPsiTest(
@@ -17,7 +17,7 @@ open class AbstractSymbolLightClassesEqualityByPsiTest(
     currentExtension: String,
     stopIfCompilationErrorDirectivePresent: Boolean
 ) : AbstractSymbolLightClassesEqualityTestBase(configurator, currentExtension, stopIfCompilationErrorDirectivePresent) {
-    override fun lightClassesToCheck(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices): Collection<PsiClass> {
+    override fun lightClassesToCheck(ktFiles: List<KtFile>, module: KtTestModule, testServices: TestServices): Collection<PsiClass> {
         return ktFiles.flatMap { getLightClassesFromFile(it) }
     }
 }

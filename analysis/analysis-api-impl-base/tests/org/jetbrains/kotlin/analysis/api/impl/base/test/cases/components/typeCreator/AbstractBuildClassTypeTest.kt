@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCr
 
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KtTypeRendererForDebug
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.TypeParser
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
@@ -25,8 +25,8 @@ abstract class AbstractBuildClassTypeTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
-        val typeString = mainModule.directives.singleValue(Directives.CLASS_TYPE)
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
+        val typeString = mainModule.testModule.directives.singleValue(Directives.CLASS_TYPE)
         val actual = analyseForTest(mainFile) {
             val ktType = TypeParser.parseTypeFromString(typeString, mainFile, mainFile)
             buildString {

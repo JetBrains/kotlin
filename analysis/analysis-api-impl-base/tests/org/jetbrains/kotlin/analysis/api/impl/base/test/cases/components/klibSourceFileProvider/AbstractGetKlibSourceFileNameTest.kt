@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.getName
-import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.util.DummyLogger
@@ -29,7 +28,7 @@ import org.jetbrains.kotlin.konan.file.File as KonanFile
  * Reads through the declarations provided in the .klib and renders their `klibSourceFile`
  */
 abstract class AbstractGetKlibSourceFileNameTest : AbstractAnalysisApiBasedTest() {
-    override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
+    override fun doTestByModuleStructure(testServices: TestServices) {
         val mainModule = testServices.ktTestModuleStructure.mainModules
             .let { modules -> if (modules.size == 1) modules.first() else fail("Expected single main module. Found $modules") }
 

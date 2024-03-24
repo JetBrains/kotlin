@@ -14,20 +14,18 @@ import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerPro
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractSymbolRestoreFromDifferentModuleTest : AbstractAnalysisApiBasedTest() {
     private val defaultRenderer = KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
 
-    override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
+    override fun doTestByModuleStructure(testServices: TestServices) {
         val declaration =
-            testServices.expressionMarkerProvider.getElementsOfTypeAtCarets<KtDeclaration>(moduleStructure, testServices).single().first
+            testServices.expressionMarkerProvider.getElementsOfTypeAtCarets<KtDeclaration>(testServices).single().first
 
         val restoreAt =
             testServices.expressionMarkerProvider.getElementsOfTypeAtCarets<KtElement>(
-                moduleStructure,
                 testServices,
                 caretTag = "restoreAt"
             ).single().first

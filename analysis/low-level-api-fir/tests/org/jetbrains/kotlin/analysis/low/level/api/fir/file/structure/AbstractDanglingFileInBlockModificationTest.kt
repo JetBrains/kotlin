@@ -9,22 +9,21 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
 
 abstract class AbstractDanglingFileInBlockModificationTes : AbstractInBlockModificationTest() {
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val selectedElement = testServices.expressionMarkerProvider.getSelectedElementOfTypeByDirective(mainFile, mainModule)
 
         val ktPsiFactory = KtPsiFactory.contextual(mainFile, markGenerated = true, eventSystemEnabled = true)
         val fakeKtFile = ktPsiFactory.createFile(mainFile.name, mainFile.text)
         val fakeSelectedElement = PsiTreeUtil.findSameElementInCopy(selectedElement, fakeKtFile)
 
-        doTest(fakeKtFile, fakeSelectedElement, testServices.moduleStructure, testServices)
+        doTest(fakeKtFile, fakeSelectedElement, testServices)
     }
 }
 

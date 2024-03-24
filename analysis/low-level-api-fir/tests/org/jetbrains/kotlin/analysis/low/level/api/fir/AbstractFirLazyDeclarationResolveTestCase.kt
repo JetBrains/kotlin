@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 
 /**
  * Test that we do not resolve declarations we do not need & do not build bodies for them
@@ -43,11 +44,10 @@ import org.jetbrains.kotlin.test.services.TestServices
 abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBasedTest() {
     protected fun findFirDeclarationToResolve(
         ktFile: KtFile,
-        moduleStructure: TestModuleStructure,
         testServices: TestServices,
         firResolveSession: LLFirResolveSession,
     ): Pair<FirElementWithResolveState, ((FirResolvePhase) -> Unit)> = when {
-        Directives.RESOLVE_FILE in moduleStructure.allDirectives -> {
+        Directives.RESOLVE_FILE in testServices.moduleStructure.allDirectives -> {
             val session = firResolveSession.useSiteFirSession as LLFirResolvableModuleSession
             val file = session.moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
             file to fun(phase: FirResolvePhase) {
@@ -55,14 +55,14 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
             }
         }
         else -> {
-            val ktDeclaration = if (Directives.RESOLVE_SCRIPT in moduleStructure.allDirectives) {
+            val ktDeclaration = if (Directives.RESOLVE_SCRIPT in testServices.moduleStructure.allDirectives) {
                 ktFile.script!!
             } else {
                 testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFile)
             }
 
             val declarationSymbol = ktDeclaration.resolveToFirSymbol(firResolveSession)
-            val firDeclaration = chooseMemberDeclarationIfNeeded(declarationSymbol, moduleStructure, firResolveSession)
+            val firDeclaration = chooseMemberDeclarationIfNeeded(declarationSymbol, testServices.moduleStructure, firResolveSession)
             firDeclaration.fir to fun(phase: FirResolvePhase) {
                 firDeclaration.lazyResolveToPhase(phase)
             }

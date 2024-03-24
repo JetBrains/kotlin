@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtCompilerTarget
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -90,10 +91,10 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         ).map { it.name }
     }
 
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
-        val testFile = mainModule.files.single { it.name == mainFile.name }
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
+        val testFile = mainModule.testModule.files.single { it.name == mainFile.name }
 
-        val annotationToCheckCalls = mainModule.directives[Directives.CHECK_CALLS_WITH_ANNOTATION].singleOrNull()
+        val annotationToCheckCalls = mainModule.testModule.directives[Directives.CHECK_CALLS_WITH_ANNOTATION].singleOrNull()
         val irCollector = CollectingIrGenerationExtension(annotationToCheckCalls)
 
         val project = mainFile.project
@@ -101,8 +102,8 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
             .registerExtension(irCollector, LoadingOrder.LAST, project)
 
         val compilerConfiguration = CompilerConfiguration().apply {
-            put(CommonConfigurationKeys.MODULE_NAME, mainModule.name)
-            put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, mainModule.languageVersionSettings)
+            put(CommonConfigurationKeys.MODULE_NAME, mainModule.testModule.name)
+            put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, mainModule.testModule.languageVersionSettings)
             put(JVMConfigurationKeys.IR, true)
 
             testFile.directives[Directives.CODE_FRAGMENT_CLASS_NAME].singleOrNull()

@@ -14,12 +14,11 @@ import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModu
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractMultiModuleSymbolByPsiTest : AbstractAnalysisApiBasedTest() {
-    override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
+    override fun doTestByModuleStructure(testServices: TestServices) {
         val files = testServices.ktTestModuleStructure.allMainKtFiles
         val debugRenderer = DebugSymbolRenderer()
 

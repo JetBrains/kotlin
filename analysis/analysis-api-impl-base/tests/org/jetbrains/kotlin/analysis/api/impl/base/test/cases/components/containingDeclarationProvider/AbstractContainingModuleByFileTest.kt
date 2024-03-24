@@ -7,19 +7,20 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.contai
 
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractContainingModuleByFileTest : AbstractAnalysisApiBasedTest() {
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         analyseForTest(mainFile) {
             val fileSymbol = mainFile.getFileSymbol()
             val module = fileSymbol.getContainingModule()
 
             val providerModule = ProjectStructureProvider.getModule(mainFile.project, mainFile, contextualModule = null)
             assert(module == providerModule)
+            assert(module == mainModule.ktModule)
 
             val actualString = buildString {
                 append("File: ").appendLine(mainFile.name)

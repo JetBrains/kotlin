@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.base
 
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.LightClassTestCommon
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
@@ -17,14 +17,14 @@ abstract class AbstractSymbolLightClassesParentingTestByFqName(
     currentExtension: String,
     stopIfCompilationErrorDirectivePresent: Boolean,
 ) : AbstractSymbolLightClassesParentingTestBase(configurator, currentExtension, stopIfCompilationErrorDirectivePresent) {
-    override fun doLightClassTest(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
+    override fun doLightClassTest(ktFiles: List<KtFile>, module: KtTestModule, testServices: TestServices) {
         val fqName = LightClassTestCommon.fqNameInTestDataFile(testDataPath.toFile())
 
         val ktFile = ktFiles.first()
         val lightClass = findLightClass(fqName, ktFile.project) ?: return
 
         ignoreExceptionIfIgnoreDirectivePresent(module) {
-            lightClass.accept(createLightElementsVisitor(module.directives, testServices.assertions))
+            lightClass.accept(createLightElementsVisitor(module.testModule.directives, testServices.assertions))
         }
     }
 }
