@@ -18,6 +18,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
@@ -55,6 +56,7 @@ constructor(
     val binary: NativeBinary,
     private val objectFactory: ObjectFactory,
     private val execOperations: ExecOperations,
+    private val providerFactory: ProviderFactory,
 ) : AbstractKotlinCompileTool<K2NativeCompilerArguments>(objectFactory),
     UsesKonanPropertiesBuildService,
     UsesBuildMetricsService,
@@ -200,15 +202,16 @@ constructor(
             .configurations
             .detachedResolvable()
             .apply @Suppress("DEPRECATION") {
-                val apiConfiguration = project.configurations.getByName(compilation.apiConfigurationName)
-                dependencies.addAll(apiConfiguration.allDependencies)
+                compilation.internal.configurations.apiConfiguration.allDependencies.all { dependency ->
+                    dependencies.addLater(providerFactory.provider { dependency })
+                }
                 usesPlatformOf(compilation.target)
                 attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(compilation.target))
                 attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             }
 
     @get:Internal
-    val apiFiles = apiFilesConfiguration.filterKlibsPassedToCompiler()
+    val apiFiles: FileCollection = apiFilesConfiguration.filterKlibsPassedToCompiler()
 
     private val externalDependenciesArgs by lazy {
         @Suppress("DEPRECATION")
