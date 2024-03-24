@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -13,10 +14,8 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.ERROR
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.WARNING
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
-import org.jetbrains.kotlin.gradle.util.applyKotlinJvmPlugin
-import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.checkDiagnostics
-import org.jetbrains.kotlin.gradle.util.set
 import org.junit.Test
 
 class DiagnosticsReportingFunctionalTest {
@@ -148,6 +147,18 @@ class DiagnosticsReportingFunctionalTest {
             checkDiagnostics("suppressForWarningsDoesntWorkForErrors")
         }
     }
+
+    @Test
+    fun testTaskThatUsesKotlinToolingDiagnostics() {
+        buildProject {
+            applyKotlinJvmPlugin()
+            val diagnostic = testDiagnostic(severity = ERROR)
+            tasks.register("taskThatUsesKotlinToolingDiagnostics", TaskConformingToUsesKotlinToolingDiagnostics::class.java) {
+                it.reportDiagnostic(diagnostic)
+            }.get()
+            assertNoDiagnostics()
+        }
+    }
 }
 
 private fun buildProjectWithMockedCheckers(
@@ -170,11 +181,12 @@ private fun buildProjectWithMockedCheckers(
     return project
 }
 
+private fun testDiagnostic(severity: Severity) = ToolingDiagnostic("TEST_DIAGNOSTIC", "This is a test diagnostic\n\nIt has multiple lines of text", severity)
 
 private fun Project.reportTestDiagnostic(severity: Severity = WARNING) {
     kotlinToolingDiagnosticsCollector.report(
         project,
-        ToolingDiagnostic("TEST_DIAGNOSTIC", "This is a test diagnostic\n\nIt has multiple lines of text", severity)
+        testDiagnostic(severity)
     )
 }
 
@@ -217,3 +229,5 @@ internal object MockPerBuildChecker : KotlinGradleProjectChecker {
         project.reportOnePerBuildTestDiagnostic()
     }
 }
+
+abstract class TaskConformingToUsesKotlinToolingDiagnostics: DefaultTask(), UsesKotlinToolingDiagnostics
