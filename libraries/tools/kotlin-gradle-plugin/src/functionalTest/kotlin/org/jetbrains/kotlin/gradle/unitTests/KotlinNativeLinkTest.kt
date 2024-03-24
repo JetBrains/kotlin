@@ -47,7 +47,9 @@ class KotlinNativeLinkTest {
         b.evaluate()
 
         assertEquals(
-            emptySet(),
+            hashSetOf(
+                a.layout.buildDirectory.file("classes/kotlin/linuxArm64/main/klib/a.klib").get().asFile
+            ),
             apiFiles.resolve(),
         )
     }

@@ -201,8 +201,9 @@ constructor(
             .configurations
             .detachedResolvable()
             .apply @Suppress("DEPRECATION") {
-                val apiConfiguration = project.configurations.getByName(compilation.apiConfigurationName)
-                dependencies.addAll(apiConfiguration.allDependencies)
+                compilation.internal.configurations.apiConfiguration.allDependencies.all {
+                    dependencies.add(it)
+                }
                 usesPlatformOf(compilation.target)
                 attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(compilation.target))
                 attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
