@@ -15,8 +15,13 @@ import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
 import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.logMultiple
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.util.constructedClass
+import org.jetbrains.kotlin.ir.util.getAllSuperclasses
 
 private val DataFlowIR.Node.isAlloc
     get() = this is DataFlowIR.Node.NewObject || this is DataFlowIR.Node.AllocInstance
@@ -479,6 +484,7 @@ internal object EscapeAnalysis {
     ) {
 
         private val symbols = context.ir.symbols
+        private val throwable = symbols.throwable.owner
 
         private fun DataFlowIR.Type.resolved(): DataFlowIR.Type.Declared {
             if (this is DataFlowIR.Type.Declared) return this
@@ -540,7 +546,11 @@ internal object EscapeAnalysis {
 
             context.logMultiple {
                 with(stats) {
-                    +"Managed to alloc on stack: ${stackAllocsCount * 100.0 / (globalAllocsCount + stackAllocsCount)}%"
+                    +"Managed to alloc on stack"
+                    +("    everything (including globals): $totalStackAllocsCount out of ${totalGlobalAllocsCount + totalStackAllocsCount}" +
+                            " (${totalStackAllocsCount * 100.0 / (totalGlobalAllocsCount + totalStackAllocsCount)}%)")
+                    +("    interesting (without globals) : $filteredStackAllocsCount out of ${filteredGlobalAllocsCount + filteredStackAllocsCount}" +
+                            " (${filteredStackAllocsCount * 100.0 / (filteredGlobalAllocsCount + filteredStackAllocsCount)}%)")
                     +"Total ea result size: $totalEAResultSize"
                     +"Total points-to graph size: $totalPTGSize"
                     +"Total data flow graph size: $totalDFGSize"
@@ -555,8 +565,10 @@ internal object EscapeAnalysis {
         }
 
         private class Stats {
-            var globalAllocsCount = 0
-            var stackAllocsCount = 0
+            var totalGlobalAllocsCount = 0
+            var totalStackAllocsCount = 0
+            var filteredGlobalAllocsCount = 0
+            var filteredStackAllocsCount = 0
             var totalEAResultSize = 0
             var totalPTGSize = 0
             var totalDFGSize = 0
@@ -639,15 +651,31 @@ internal object EscapeAnalysis {
                 stats.totalPTGSize += graph.allNodes.size
                 stats.totalDFGSize += intraproceduralAnalysisResults[function]!!.function.body.allScopes.sumOf { it.nodes.size }
 
+                val functionSymbol = graph.functionSymbol
                 for (node in graph.nodes.keys) {
                     node.ir?.let {
                         val lifetime = graph.lifetimeOf(node)
 
+                        // Filter out some irrelevant cases (like globals and exceptions).
+                        val isFilteredOut = functionSymbol.isStaticFieldInitializer ||
+                                (functionSymbol.irFunction as? IrConstructor)
+                                        ?.constructedClass?.kind?.let { kind ->
+                                            kind == ClassKind.ENUM_CLASS || kind == ClassKind.OBJECT
+                                        } == true ||
+                                (it is IrConstructorCall &&
+                                        throwable in it.symbol.owner.constructedClass.getAllSuperclasses())
+
                         if (node.isAlloc) {
-                            if (lifetime == Lifetime.GLOBAL)
-                                ++stats.globalAllocsCount
-                            if (lifetime == Lifetime.STACK)
-                                ++stats.stackAllocsCount
+                            if (lifetime == Lifetime.GLOBAL) {
+                                ++stats.totalGlobalAllocsCount
+                                if (!isFilteredOut)
+                                    ++stats.filteredGlobalAllocsCount
+                            }
+                            if (lifetime == Lifetime.STACK) {
+                                ++stats.totalStackAllocsCount
+                                if (!isFilteredOut)
+                                    ++stats.filteredStackAllocsCount
+                            }
 
                             lifetimes[it] = lifetime
                         }
