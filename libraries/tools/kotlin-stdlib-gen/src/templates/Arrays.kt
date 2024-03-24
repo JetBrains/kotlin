@@ -87,6 +87,40 @@ object ArrayOps : TemplateGroupBase() {
         annotation("""@DeprecatedSinceKotlin(hiddenSince = "1.4")""")
     }
 
+    private fun MemberBuilder.contentEqualsDoc(nullabilityNote: String = "") {
+        doc {
+            """
+            Checks if the two specified arrays are *structurally* equal to one another.
+
+            Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+            """
+        }
+        if (f != ArraysOfUnsigned) {
+            doc {
+                doc + """Elements are compared for equality using the [equals][Any.equals] function.
+                For floating point numbers, it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+                """
+            }
+        }
+        doc {
+            doc + nullabilityNote
+        }
+        if (f == ArraysOfObjects) {
+            doc {
+                doc + """
+                If the arrays contain nested arrays, use [contentDeepEquals] to recursively compare their elements.
+                """
+            }
+        }
+        doc {
+            doc + """
+            @param other the array to compare with this array.
+            @return `true` if both arrays are structurally equal, `false` otherwise.
+            """
+        }
+        sample("samples.collections.Arrays.ContentOperations.contentEquals")
+    }
+
     val f_contentEquals = fn("contentEquals(other: SELF)") {
         platforms(Platform.Native)
         include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
@@ -94,23 +128,9 @@ object ArrayOps : TemplateGroupBase() {
         since("1.1")
         deprecatedNonNullArrayFunction()
         infix(true)
-        doc {
-            """
-            Returns `true` if the two specified arrays are *structurally* equal to one another,
-            i.e. contain the same number of the same elements in the same order.
-            """
-        }
         returns("Boolean")
+        contentEqualsDoc()
         body { "return this.contentEquals(other)" }
-        if (f == ArraysOfUnsigned) {
-            return@builder
-        }
-        doc {
-            doc + """
-            The elements are compared for equality with the [equals][Any.equals] function.
-            For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
-            """
-        }
     }
 
     val f_contentEquals_nullable = fn("contentEquals(other: SELF?)") {
@@ -118,24 +138,16 @@ object ArrayOps : TemplateGroupBase() {
     } builder {
         since("1.4")
         infix(true)
-        doc {
-            """
-            Returns `true` if the two specified arrays are *structurally* equal to one another,
-            i.e. contain the same number of the same elements in the same order.
-            """
-        }
         receiver("SELF?")
         returns("Boolean")
+        contentEqualsDoc(
+            nullabilityNote = """
+            The arrays are also considered structurally equal if both are `null`.
+            """
+        )
         if (family == ArraysOfUnsigned) {
             body { "return this?.storage.contentEquals(other?.storage)" }
             return@builder
-        }
-
-        doc {
-            doc + """
-            The elements are compared for equality with the [equals][Any.equals] function.
-            For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
-            """
         }
         on(Platform.JVM) {
             inlineOnly()
@@ -164,25 +176,39 @@ object ArrayOps : TemplateGroupBase() {
         }
     }
 
+    private fun MemberBuilder.contentDeepEqualsDoc(nullabilityNote: String = "") {
+        doc {
+            """
+            Checks if the two specified arrays are *deeply* equal to one another.
+
+            Two arrays are considered deeply equal if they have the same size, and elements at corresponding indices are deeply equal.
+            That is, if two corresponding elements are nested arrays, they are also compared deeply.
+            Elements of other types are compared for equality using the [equals][Any.equals] function.
+            For floating point numbers, it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+            """
+        }
+        doc {
+            doc + nullabilityNote
+        }
+        doc {
+            doc + """
+            If any of the arrays contain themselves at any nesting level, the behavior is undefined.
+
+            @param other the array to compare deeply with this array.
+            @return `true` if both arrays are deeply equal, `false` otherwise.
+            """
+        }
+        sample("samples.collections.Arrays.ContentOperations.contentDeepEquals")
+    }
+
     val f_contentDeepEquals = fn("contentDeepEquals(other: SELF)") {
         include(ArraysOfObjects)
     } builder {
         since("1.1")
         annotation("@kotlin.internal.LowPriorityInOverloadResolution")
         infix(true)
-        doc {
-            """
-            Returns `true` if the two specified arrays are *deeply* equal to one another,
-            i.e. contain the same number of the same elements in the same order.
-
-            If two corresponding elements are nested arrays, they are also compared deeply.
-            If any of arrays contains itself on any nesting level the behavior is undefined.
-
-            The elements of other types are compared for equality with the [equals][Any.equals] function.
-            For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
-            """
-        }
         returns("Boolean")
+        contentDeepEqualsDoc()
         body { "return this.contentDeepEquals(other)" }
         on(Platform.JVM) {
             inlineOnly()
@@ -195,22 +221,13 @@ object ArrayOps : TemplateGroupBase() {
     } builder {
         since("1.4")
         infix(true)
-        doc {
-            """
-            Returns `true` if the two specified arrays are *deeply* equal to one another,
-            i.e. contain the same number of the same elements in the same order.
-            
-            The specified arrays are also considered deeply equal if both are `null`.
-
-            If two corresponding elements are nested arrays, they are also compared deeply.
-            If any of arrays contains itself on any nesting level the behavior is undefined.
-
-            The elements of other types are compared for equality with the [equals][Any.equals] function.
-            For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
-            """
-        }
         receiver("SELF?")
         returns("Boolean")
+        contentDeepEqualsDoc(
+            nullabilityNote = """
+            The arrays are also considered deeply equal if both are `null`.
+            """
+        )
         on(Platform.JVM) {
             inlineOnly()
             annotation("""@JvmName("contentDeepEqualsNullable")""")

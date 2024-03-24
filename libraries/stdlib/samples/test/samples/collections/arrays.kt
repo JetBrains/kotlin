@@ -175,6 +175,38 @@ class Arrays {
 
             assertPrints(matrix.contentDeepToString(), "[[3, 7, 9], [0, 1, 0], [2, 4, 8]]")
         }
+
+        @Sample
+        fun contentEquals() {
+            val array = arrayOf("apples", "oranges", "lime")
+
+            // the same size and equal elements
+            assertPrints(array.contentEquals(arrayOf("apples", "oranges", "lime")), "true")
+
+            // different size
+            assertPrints(array.contentEquals(arrayOf("apples", "oranges")), "false")
+
+            // the elements at index 1 are not equal
+            assertPrints(array.contentEquals(arrayOf("apples", "lime", "oranges")), "false")
+        }
+
+        @Sample
+        fun contentDeepEquals() {
+            val identityMatrix = arrayOf(
+                intArrayOf(1, 0),
+                intArrayOf(0, 1)
+            )
+            val reflectionMatrix = arrayOf(
+                intArrayOf(1, 0),
+                intArrayOf(0, -1)
+            )
+
+            // the elements at index [1][1] are not equal
+            assertPrints(identityMatrix.contentDeepEquals(reflectionMatrix), "false")
+
+            reflectionMatrix[1][1] = 1
+            assertPrints(identityMatrix.contentDeepEquals(reflectionMatrix), "true")
+        }
     }
 
     class CopyOfOperations {
