@@ -52,10 +52,11 @@ import kotlin.io.path.nameWithoutExtension
  * The base class for all Analysis API-based tests.
  *
  * There are three test entry points:
- * * [doTestByMainFile] – test cases with dedicated main file.
- * Supports everything from single-file cases to multi-platform multi-module multi-file cases
- * * [doTestByMainModuleAndOptionalMainFile] – test cases rather around modules than files
- * * [doTestByModuleStructure] – all other cases with fully custom logic
+ *
+ * - [doTestByMainFile] – test cases with a dedicated main file.
+ *   Supports everything from single-file cases to multi-platform multi-module multi-file cases.
+ * - [doTestByMainModuleAndOptionalMainFile] – test cases rather around modules than files
+ * - [doTestByModuleStructure] – all other cases with fully custom logic
  *
  * Look at the KDoc of the corresponding method for more details.
  *
@@ -67,23 +68,23 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     abstract val configurator: AnalysisApiTestConfigurator
 
     /**
-     * Consider implementing this method if you can choose some main file in your test case.
-     * It can be, for example, a file with caret.
+     * Consider implementing this method if you can choose some main file in your test case. It can be, for example, a file with a caret.
      *
      * Examples of use cases:
-     * * Collect diagnostics of the file
-     * * Get an element at the caret and invoke some logic
-     * * Do some operations on [mainFile] and dump a state of other files in [mainModule]
+     *
+     * - Collect diagnostics of the file
+     * - Get an element at the caret and invoke some logic
+     * - Do some operations on [mainFile] and dump a state of other files in [mainModule]
      *
      * Only one [KtFile] can be the main one.
      *
-     * What is the main file?
-     * Any of:
-     * * It is a single file in [main][isMainModule] module
-     * * It is a single file in the project
-     * * The file has a selected expression
-     * * The file has a caret
-     * * The file name is equal to "main" or equal to the defined [AnalysisApiTestDirectives.MAIN_FILE_NAME]
+     * The main file is selected based on the following rules:
+     *
+     * - A single file in the [main][isMainModule] module
+     * - A single file in the project
+     * - The file has a selected expression
+     * - The file has a caret
+     * - The file name is equal to "main" or equal to the defined [AnalysisApiTestDirectives.MAIN_FILE_NAME]
      *
      * @see findMainFile
      * @see isMainFile
@@ -97,25 +98,25 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     }
 
     /**
-     * Consider implementing this method if you have logic around [TestModule],
-     * or you don't always have a [mainFile] and have some custom logic for such exceptional cases
-     * (e.g., the first file from [mainModule]).
+     * Consider implementing this method if you have logic around [TestModule], or you don't always have a [mainFile] and have some custom
+     * logic for such exceptional cases (e.g., taking the first file from [mainModule]).
      *
      * Examples of use cases:
-     * * Find all declarations in the module
-     * * Find a declaration by qualified name and invoke some logic
-     * * Process all files in the module
+     *
+     * - Find all declarations in the module
+     * - Find a declaration by qualified name and invoke some logic
+     * - Process all files in the module
      *
      * Only one [TestModule] can be the main one.
      *
-     * What is the main module?
-     * Any of:
-     * * It is a single module
-     * * It has a main file (see [doTestByMainFile] for details)
-     * * The module has a defined [AnalysisApiTestDirectives.MAIN_MODULE] directive
-     * * The module name is equal to [ModuleStructureExtractor.DEFAULT_MODULE_NAME]
+     * The main module is selected based on the following rules:
      *
-     * Use only if [doTestByMainFile] is not suitable for your use case
+     * - It is the only module
+     * - It has a main file (see [doTestByMainFile] for details)
+     * - The module has a defined [AnalysisApiTestDirectives.MAIN_MODULE] directive
+     * - The module name is equal to [ModuleStructureExtractor.DEFAULT_MODULE_NAME]
+     *
+     * Use [doTestByMainModuleAndOptionalMainFile] only if [doTestByMainFile] is not suitable for your use case.
      *
      * @param mainFile a dedicated main file if it exists (see [findMainFile])
      *
@@ -128,13 +129,14 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     }
 
     /**
-     * Consider implementing this method if you have logic around [TestModuleStructure].
+     * Consider implementing this method if your test logic needs the whole [KtTestModuleStructure].
      *
      * Examples of use cases:
-     * * Find all files in all modules
-     * * Find two declarations from different files and different modules and compare them
      *
-     * Use only if [doTestByMainModuleAndOptionalMainFile] is not suitable for your use case
+     * - Find all files in all modules
+     * - Find two declarations from different files and different modules and compare them
+     *
+     * Use only if [doTestByMainModuleAndOptionalMainFile] is not suitable for your use case.
      */
     protected open fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
         val (mainFile, mainModule) = findMainFileAndModule(moduleStructure, testServices)
