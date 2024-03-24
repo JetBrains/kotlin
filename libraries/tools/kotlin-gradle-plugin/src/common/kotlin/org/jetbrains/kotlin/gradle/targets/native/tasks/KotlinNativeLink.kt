@@ -7,6 +7,7 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Action
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
@@ -22,6 +23,7 @@ import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -29,7 +31,6 @@ import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.UsesXcodeVersion
-import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
@@ -194,16 +195,20 @@ constructor(
         (binary as? Framework)?.embedBitcodeMode ?: objectFactory.property()
 
     @get:Internal
-    val apiFiles = project
-        .configurations
-        .detachedResolvable()
-        .apply @Suppress("DEPRECATION") {
-            val apiConfiguration = project.configurations.getByName(compilation.apiConfigurationName)
-            dependencies.addAll(apiConfiguration.allDependencies)
-            usesPlatformOf(compilation.target)
-            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(compilation.target))
-            attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        }.filterKlibsPassedToCompiler()
+    internal val apiFilesConfiguration: Configuration
+        get() = project
+            .configurations
+            .detachedResolvable()
+            .apply @Suppress("DEPRECATION") {
+                val apiConfiguration = project.configurations.getByName(compilation.apiConfigurationName)
+                dependencies.addAll(apiConfiguration.allDependencies)
+                usesPlatformOf(compilation.target)
+                attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(compilation.target))
+                attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+            }
+
+    @get:Internal
+    val apiFiles = apiFilesConfiguration.filterKlibsPassedToCompiler()
 
     private val externalDependenciesArgs by lazy {
         @Suppress("DEPRECATION")
