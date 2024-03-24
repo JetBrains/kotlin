@@ -6785,30 +6785,40 @@ public expect fun BooleanArray.asList(): List<Boolean>
 public expect fun CharArray.asList(): List<Char>
 
 /**
- * Returns `true` if the two specified arrays are *deeply* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *deeply* equal to one another.
  * 
- * If two corresponding elements are nested arrays, they are also compared deeply.
- * If any of arrays contains itself on any nesting level the behavior is undefined.
+ * Two arrays are considered deeply equal if they have the same size, and elements at corresponding indices are deeply equal.
+ * That is, if two corresponding elements are nested arrays, they are also compared deeply.
+ * Elements of other types are compared for equality using the [equals][Any.equals] function.
+ * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  * 
- * The elements of other types are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * If any of the arrays contain themselves at any nesting level, the behavior is undefined.
+ * 
+ * @param other the array to compare deeply with this array.
+ * @return `true` if the two arrays are deeply equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentDeepEquals
  */
 @SinceKotlin("1.1")
 @kotlin.internal.LowPriorityInOverloadResolution
 public expect infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>): Boolean
 
 /**
- * Returns `true` if the two specified arrays are *deeply* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *deeply* equal to one another.
  * 
- * The specified arrays are also considered deeply equal if both are `null`.
+ * Two arrays are considered deeply equal if they have the same size, and elements at corresponding indices are deeply equal.
+ * That is, if two corresponding elements are nested arrays, they are also compared deeply.
+ * Elements of other types are compared for equality using the [equals][Any.equals] function.
+ * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  * 
- * If two corresponding elements are nested arrays, they are also compared deeply.
- * If any of arrays contains itself on any nesting level the behavior is undefined.
+ * The arrays are also considered deeply equal if both are `null`.
  * 
- * The elements of other types are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * If any of the arrays contain themselves at any nesting level, the behavior is undefined.
+ * 
+ * @param other the array to compare deeply with this array.
+ * @return `true` if the two arrays are deeply equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentDeepEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun <T> Array<out T>?.contentDeepEquals(other: Array<out T>?): Boolean
@@ -6858,91 +6868,144 @@ public expect fun <T> Array<out T>.contentDeepToString(): String
 public expect fun <T> Array<out T>?.contentDeepToString(): String
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * Elements are compared for equality using the [equals][Any.equals] function.
+ * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * If the arrays contain nested arrays, use [contentDeepEquals] to recursively compare their elements.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.arrayContentEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun <T> Array<out T>?.contentEquals(other: Array<out T>?): Boolean
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun ByteArray?.contentEquals(other: ByteArray?): Boolean
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun ShortArray?.contentEquals(other: ShortArray?): Boolean
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun IntArray?.contentEquals(other: IntArray?): Boolean
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun LongArray?.contentEquals(other: LongArray?): Boolean
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * Elements are compared for equality using the [equals][Any.equals] function.
+ * This means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.doubleArrayContentEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun FloatArray?.contentEquals(other: FloatArray?): Boolean
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * Elements are compared for equality using the [equals][Any.equals] function.
+ * This means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.doubleArrayContentEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun DoubleArray?.contentEquals(other: DoubleArray?): Boolean
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.booleanArrayContentEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun BooleanArray?.contentEquals(other: BooleanArray?): Boolean
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.charArrayContentEquals
  */
 @SinceKotlin("1.4")
 public expect infix fun CharArray?.contentEquals(other: CharArray?): Boolean

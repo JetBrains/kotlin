@@ -89,6 +89,16 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
         }
     }
 
+    /**
+     * Checks if the two specified lists are *structurally* equal to one another.
+     *
+     * Two lists are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+     * Elements are compared for equality using the [equals][Any.equals] function.
+     * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+     *
+     * @param other the list to compare with this list.
+     * @return `true` if [other] is a [List] that is structurally equal to this list, `false` otherwise.
+     */
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other !is List<*>) return false

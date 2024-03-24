@@ -3308,8 +3308,16 @@ public inline fun ShortArray.asUShortArray(): UShortArray {
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
+ * 
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3318,8 +3326,16 @@ public infix fun UIntArray?.contentEquals(other: UIntArray?): Boolean {
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
+ * 
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3328,8 +3344,16 @@ public infix fun ULongArray?.contentEquals(other: ULongArray?): Boolean {
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
+ * 
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3338,8 +3362,16 @@ public infix fun UByteArray?.contentEquals(other: UByteArray?): Boolean {
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
+ * 
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
