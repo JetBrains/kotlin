@@ -41,10 +41,12 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
     }
 
     fun report(from: UsesKotlinToolingDiagnosticsParameters, logger: Logger, diagnostic: ToolingDiagnostic) {
-        val options = from.diagnosticRenderingOptions.get()
-        if (!diagnostic.isSuppressed(options)) {
-            renderReportedDiagnostic(diagnostic, logger, options)
-        }
+        handleDiagnostic(
+            logger = logger,
+            projectPath = from.projectPath.get(),
+            diagnostic = diagnostic,
+            options = from.diagnosticRenderingOptions.get()
+        )
     }
 
     fun reportOncePerGradleProject(fromProject: Project, diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.id) {
@@ -64,15 +66,23 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
     }
 
     private fun handleDiagnostic(project: Project, diagnostic: ToolingDiagnostic) {
-        val options = ToolingDiagnosticRenderingOptions.forProject(project)
+        handleDiagnostic(
+            logger = project.logger,
+            projectPath = project.path,
+            diagnostic = diagnostic,
+            options = ToolingDiagnosticRenderingOptions.forProject(project)
+        )
+    }
+
+    private fun handleDiagnostic(logger: Logger, projectPath: String, diagnostic: ToolingDiagnostic, options: ToolingDiagnosticRenderingOptions) {
         if (diagnostic.isSuppressed(options)) return
 
         if (isTransparent) {
-            renderReportedDiagnostic(diagnostic, project.logger, options)
+            renderReportedDiagnostic(diagnostic, logger, options)
             return
         }
 
-        rawDiagnosticsFromProject.compute(project.path) { _, previousListIfAny ->
+        rawDiagnosticsFromProject.compute(projectPath) { _, previousListIfAny ->
             previousListIfAny?.apply { add(diagnostic) } ?: mutableListOf(diagnostic)
         }
 
