@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
 import java.io.ByteArrayOutputStream
@@ -42,7 +43,8 @@ class WasmCompilerResult(
     val jsWrapper: String,
     val wasm: ByteArray,
     val debugInformation: DebugInformation?,
-    val dts: String?
+    val dts: String?,
+    val wasmInterfaceStub: ByteArray?,
 )
 
 class DebugInformation(
@@ -185,6 +187,7 @@ fun compileWasm(
         jsWrapper = compiledWasmModule.generateAsyncWasiWrapper("./$baseFileName.wasm")
     }
 
+    val stubByteArray = createWasmStub(linkedModule, allModules.last().descriptor.name.asString())
 
     return WasmCompilerResult(
         wat = wat,
@@ -195,8 +198,69 @@ fun compileWasm(
             sourceMapGeneratorForBinary?.generate(),
             sourceMapGeneratorForText?.generate(),
         ),
-        dts = typeScriptFragment?.raw
+        dts = typeScriptFragment?.raw,
+        wasmInterfaceStub = stubByteArray
     )
+}
+
+private fun createWasmStub(
+    linkedModule: WasmModule,
+    moduleName: String,
+): ByteArray {
+    val os = ByteArrayOutputStream()
+    val stubExports = mutableListOf<WasmExport<*>>()
+    val stubImportedFunctions: List<WasmFunction.Imported> = linkedModule.importedFunctions
+    val stubExportedFunctions = mutableListOf<WasmFunction.Defined>()
+
+    for (export in linkedModule.exports) {
+        when (export) {
+            is WasmExport.Function -> {
+                val function = export.field
+                check(function is WasmFunction.Defined)
+                val stubFunction = WasmFunction.Defined(
+                    function.name,
+                    function.type,
+                    locals = function.type.owner.parameterTypes.mapIndexed { index, wasmType ->
+                        WasmLocal(index, "", wasmType, true)
+                    }.toMutableList(),
+                    instructions = mutableListOf(WasmInstrWithoutLocation(WasmOp.UNREACHABLE))
+                )
+                stubExports += WasmExport.Function(export.name, stubFunction)
+                stubExportedFunctions += stubFunction
+            }
+            is WasmExport.Memory -> {
+                stubExports += export
+            }
+            else -> error("Unsupported")
+        }
+    }
+    val stubFunctionTypes: List<WasmFunctionType> =
+        (stubImportedFunctions + stubExportedFunctions).map { it.type.owner }
+
+    val stubMemories: List<WasmMemory> = linkedModule.memories
+
+    val stubModule = WasmModule(
+        functionTypes = stubFunctionTypes,
+        importsInOrder = stubImportedFunctions,
+        importedFunctions = stubImportedFunctions,
+        definedFunctions = stubExportedFunctions,
+        memories = stubMemories,
+        exports = stubExports,
+    )
+
+    stubModule.calculateIds()
+
+    val wasmIrToBinary =
+        WasmIrToBinary(
+            os,
+            stubModule,
+            moduleName,
+            false,
+            null
+        )
+
+    wasmIrToBinary.appendWasmModule()
+    return os.toByteArray()
 }
 
 //language=js
@@ -422,6 +486,10 @@ fun writeCompilationResult(
         File(dir, "$fileNameBase.wat").writeText(result.wat)
     }
     File(dir, "$fileNameBase.wasm").writeBytes(result.wasm)
+
+    if (result.wasmInterfaceStub != null) {
+        File(dir, "$fileNameBase.stub.wasm").writeBytes(result.wasmInterfaceStub)
+    }
 
     if (result.jsUninstantiatedWrapper != null) {
         File(dir, "$fileNameBase.uninstantiated.mjs").writeText(result.jsUninstantiatedWrapper)
