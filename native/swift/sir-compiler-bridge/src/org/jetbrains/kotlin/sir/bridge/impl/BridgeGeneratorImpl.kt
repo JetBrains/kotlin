@@ -14,7 +14,7 @@ private const val stdintHeader = "stdint.h"
 
 internal class BridgeGeneratorImpl : BridgeGenerator {
     override fun generate(request: BridgeRequest): FunctionBridge {
-        val (kotlinReturnType, _) = bridgeType(request.callable.returnType)
+        val returnTypeBridge = bridgeType(request.callable.returnType)
         val parameterBridges = request.callable.allParameters.mapIndexed { index, value -> bridgeParameter(value, index) }
 
         val cDeclaration = request.createCDeclaration()
@@ -22,8 +22,8 @@ internal class BridgeGeneratorImpl : BridgeGenerator {
             bridgeName = request.bridgeName,
             cName = request.cDeclarationName(),
             functionFqName = request.fqName,
-            returnType = kotlinReturnType,
-            parameterBridges = parameterBridges.map { it.kotlin }
+            returnTypeBridge = returnTypeBridge,
+            parameterBridges = parameterBridges
         )
         return FunctionBridge(
             KotlinFunctionBridge(kotlinBridge, listOf(exportAnnotationFqName)),
@@ -37,8 +37,9 @@ internal class BridgeGeneratorImpl : BridgeGenerator {
 // 1. there can be limit for declaration names in Clang compiler
 // 1. this name will be UGLY in the debug session
 internal fun BridgeRequest.cDeclarationName(): String {
-    val nameSuffixForOverloadSimulation = cParameters().joinToString(separator = "_", transform = { it.type.repr })
-    val suffixString = if (cParameters().isNotEmpty()) "__TypesOfArguments__${nameSuffixForOverloadSimulation}__" else ""
+    val bridgeParameters = bridgeParameters()
+    val nameSuffixForOverloadSimulation = bridgeParameters.joinToString(separator = "_", transform = { it.bridge.cType.repr })
+    val suffixString = if (bridgeParameters.isNotEmpty()) "__TypesOfArguments__${nameSuffixForOverloadSimulation}__" else ""
     val result = "${bridgeName}${suffixString}"
     return result
 }
@@ -47,18 +48,28 @@ private fun createKotlinBridge(
     bridgeName: String,
     cName: String,
     functionFqName: List<String>,
-    returnType: KotlinType,
-    parameterBridges: List<KotlinBridgeParameter>,
+    returnTypeBridge: Bridge,
+    parameterBridges: List<BridgeParameter>,
 ): List<String> {
-    val declaration = createKotlinDeclarationSignature(bridgeName, returnType, parameterBridges)
+    val declaration = createKotlinDeclarationSignature(bridgeName, returnTypeBridge, parameterBridges)
     val annotation = "@${exportAnnotationFqName.substringAfterLast('.')}(\"${cName}\")"
-    val resultName = "result"
-    val callSite = createCallSite(functionFqName, parameterBridges.map { it.name }, resultName)
+
+    val callSite = run {
+        val functionName = functionFqName.joinToString(separator = ".")
+        val parameters = parameterBridges.joinToString(", ") { "__${it.name}" }
+        "$functionName($parameters)"
+    }
+
+    val parameters = parameterBridges.map { "val __${it.name} = ${it.bridge.generateSwiftToKotlinConversion(it.name)}" }
+
+    val resultName = "_result"
+    val result = returnTypeBridge.generateKotlinToSwiftConversion(resultName)
+
     return """
         $annotation
-        $declaration {
-            $callSite
-            return $resultName
+        $declaration {${parameters.takeIf { it.isNotEmpty() }?.joinToString(separator = "") { "\n            $it" } ?: ""}
+            val $resultName = $callSite
+            return $result
         }
     """.trimIndent().lines()
 }
@@ -68,46 +79,47 @@ private fun createCallSite(functionFqName: List<String>, parameterNames: List<St
     return "val $resultName = $functionCall"
 }
 
-private fun createKotlinDeclarationSignature(bridgeName: String, returnType: KotlinType, parameters: List<KotlinBridgeParameter>): String {
+private fun createKotlinDeclarationSignature(bridgeName: String, returnTypeBridge: Bridge, parameters: List<BridgeParameter>): String {
     return "public fun $bridgeName(${
         parameters.joinToString(
             separator = ", ",
-            transform = { "${it.name}: ${it.type.repr}" }
+            transform = { "${it.name}: ${it.bridge.kotlinType.repr}" }
         )
-    }): ${returnType.repr}"
+    }): ${returnTypeBridge.kotlinType.repr}"
 }
 
 private fun BridgeRequest.createCDeclaration(): List<String> {
-    val cParameters = cParameters().joinToString(separator = ", ", transform = { "${it.type.repr} ${it.name}" })
-    val declaration = "${bridgeType(callable.returnType).second.repr} ${cDeclarationName()}($cParameters);"
+    val cParameters = bridgeParameters().joinToString(separator = ", ", transform = { "${it.bridge.cType.repr} ${it.name}" })
+    val declaration = "${bridgeType(callable.returnType).cType.repr} ${cDeclarationName()}($cParameters);"
     return listOf(declaration)
 }
 
-private fun BridgeRequest.cParameters() = callable.allParameters
+private fun BridgeRequest.bridgeParameters() = callable.allParameters
     .mapIndexed { index, value -> bridgeParameter(value, index) }
-    .map { it.c }
 
-private fun bridgeType(type: SirType): Pair<KotlinType, CType> {
+private fun bridgeType(type: SirType): Bridge {
     require(type is SirNominalType)
+
     return when (type.type) {
-        SirSwiftModule.void -> (KotlinType.Unit to CType.Void)
+        SirSwiftModule.void -> Bridge.AsIs(type,KotlinType.Unit, CType.Void)
 
-        SirSwiftModule.bool -> (KotlinType.Boolean to CType.Bool)
+        SirSwiftModule.bool -> Bridge.AsIs(type, KotlinType.Boolean, CType.Bool)
 
-        SirSwiftModule.int8 -> (KotlinType.Byte to CType.Int8)
-        SirSwiftModule.int16 -> (KotlinType.Short to CType.Int16)
-        SirSwiftModule.int32 -> (KotlinType.Int to CType.Int32)
-        SirSwiftModule.int64 -> (KotlinType.Long to CType.Int64)
+        SirSwiftModule.int8 -> Bridge.AsIs(type, KotlinType.Byte, CType.Int8)
+        SirSwiftModule.int16 -> Bridge.AsIs(type, KotlinType.Short, CType.Int16)
+        SirSwiftModule.int32 -> Bridge.AsIs(type, KotlinType.Int, CType.Int32)
+        SirSwiftModule.int64 -> Bridge.AsIs(type, KotlinType.Long, CType.Int64)
 
-        SirSwiftModule.uint8 -> (KotlinType.UByte to CType.UInt8)
-        SirSwiftModule.uint16 -> (KotlinType.UShort to CType.UInt16)
-        SirSwiftModule.uint32 -> (KotlinType.UInt to CType.UInt32)
-        SirSwiftModule.uint64 -> (KotlinType.ULong to CType.UInt64)
+        SirSwiftModule.uint8 -> Bridge.AsIs(type, KotlinType.UByte, CType.UInt8)
+        SirSwiftModule.uint16 -> Bridge.AsIs(type, KotlinType.UShort, CType.UInt16)
+        SirSwiftModule.uint32 -> Bridge.AsIs(type, KotlinType.UInt, CType.UInt32)
+        SirSwiftModule.uint64 -> Bridge.AsIs(type, KotlinType.ULong, CType.UInt64)
 
-        SirSwiftModule.double -> (KotlinType.Double to CType.Double)
-        SirSwiftModule.float -> (KotlinType.Float to CType.Float)
+        SirSwiftModule.double -> Bridge.AsIs(type, KotlinType.Double, CType.Double)
+        SirSwiftModule.float -> Bridge.AsIs(type, KotlinType.Float, CType.Float)
 
-        else -> error("Unsupported type: ${type.type.name}")
+        // TODO: Right now, we just assume everything nominal that we do not recognize is a class. We should make this decision looking at kotlin type?
+        else -> Bridge.AsObject(type, KotlinType.Object, CType.UIntPtr)
     }
 }
 
@@ -115,10 +127,10 @@ private fun bridgeParameter(parameter: SirParameter, index: Int): BridgeParamete
     val bridgeParameterName = parameter.name?.let(::createBridgeParameterName) ?: "_$index"
     // TODO: Remove this check when non-trivial type bridges are supported
     check(!parameter.type.isVoid) { "The parameter $bridgeParameterName can not have Void type" }
-    val (kotlinType, cType) = bridgeType(parameter.type)
+    val bridge = bridgeType(parameter.type)
     return BridgeParameter(
-        KotlinBridgeParameter(bridgeParameterName, kotlinType),
-        CBridgeParameter(bridgeParameterName, cType)
+        name = bridgeParameterName,
+        bridge = bridge
     )
 }
 
@@ -128,13 +140,8 @@ public fun createBridgeParameterName(kotlinName: String): String {
 }
 
 internal data class BridgeParameter(
-    val kotlin: KotlinBridgeParameter,
-    val c: CBridgeParameter,
-)
-
-internal data class CBridgeParameter(
     val name: String,
-    val type: CType,
+    val bridge: Bridge,
 )
 
 public enum class CType(public val repr: String) {
@@ -154,12 +161,9 @@ public enum class CType(public val repr: String) {
 
     Float("float"),
     Double("double"),
-}
 
-internal data class KotlinBridgeParameter(
-    val name: String,
-    val type: KotlinType,
-)
+    UIntPtr("uintptr_t"),
+}
 
 internal enum class KotlinType(val repr: String) {
     Unit("Unit"),
@@ -178,4 +182,28 @@ internal enum class KotlinType(val repr: String) {
 
     Float("Float"),
     Double("Double"),
+
+    Object(repr = "COpaquePointer")
+}
+
+internal sealed class Bridge(
+    val swiftType: SirType,
+    val kotlinType: KotlinType,
+    val cType: CType,
+) {
+    class AsIs(swiftType: SirType, kotlinType: KotlinType, cType: CType) : Bridge(swiftType, kotlinType, cType) {
+        override fun generateSwiftToKotlinConversion(parameterName: String): String = parameterName
+
+        override fun generateKotlinToSwiftConversion(parameterName: String): String = parameterName
+    }
+
+    class AsObject(swiftType: SirType, kotlinType: KotlinType, cType: CType) : Bridge(swiftType, kotlinType, cType) {
+        override fun generateSwiftToKotlinConversion(parameterName: String): String = "dereferenceSpecialRef($parameterName)"
+
+        override fun generateKotlinToSwiftConversion(parameterName: String): String = "createSpecialRef($parameterName)"
+    }
+
+    abstract fun generateSwiftToKotlinConversion(parameterName: String): String
+
+    abstract fun generateKotlinToSwiftConversion(parameterName: String): String
 }

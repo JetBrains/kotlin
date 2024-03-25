@@ -21,9 +21,9 @@ void test(uintptr_t obj1, uintptr_t obj2, _Bool (*comparator)(uintptr_t, uintptr
         }
 
         release_object(obj1);
-        dispose_object(obj2);
+        dispose_object(obj1);
 
-        release_object(obj1);
+        release_object(obj2);
         dispose_object(obj2);
 }
 

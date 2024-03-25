@@ -2,31 +2,33 @@ import kotlin.native.internal.ExportedBridge
 
 @ExportedBridge("namespace_main_foo_get")
 public fun namespace_main_foo_get(): Int {
-    val result = namespace.main.foo()
-    return result
+    val _result = namespace.main.foo()
+    return _result
 }
 
 @ExportedBridge("namespace_main_bar_get")
 public fun namespace_main_bar_get(): Int {
-    val result = namespace.main.bar()
-    return result
+    val _result = namespace.main.bar()
+    return _result
 }
 
 @ExportedBridge("namespace_main_bar_set__TypesOfArguments__int32_t__")
 public fun namespace_main_bar_set(newValue: Int): Unit {
-    val result = namespace.main.bar(newValue)
-    return result
+    val __newValue = newValue
+    val _result = namespace.main.bar(__newValue)
+    return _result
 }
 
 @ExportedBridge("namespace_main_foobar__TypesOfArguments__int32_t__")
 public fun namespace_main_foobar(param: Int): Int {
-    val result = namespace.main.foobar(param)
-    return result
+    val __param = param
+    val _result = namespace.main.foobar(__param)
+    return _result
 }
 
 @ExportedBridge("__root___baz")
 public fun __root___baz(): Int {
-    val result = baz()
-    return result
+    val _result = baz()
+    return _result
 }
 

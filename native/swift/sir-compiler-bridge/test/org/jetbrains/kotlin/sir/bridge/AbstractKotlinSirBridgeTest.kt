@@ -6,14 +6,8 @@
 package org.jetbrains.kotlin.sir.bridge
 
 import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.sir.SirCallableKind
-import org.jetbrains.kotlin.sir.SirNominalType
-import org.jetbrains.kotlin.sir.SirParameter
-import org.jetbrains.kotlin.sir.SirType
-import org.jetbrains.kotlin.sir.builder.buildFunction
-import org.jetbrains.kotlin.sir.builder.buildGetter
-import org.jetbrains.kotlin.sir.builder.buildSetter
-import org.jetbrains.kotlin.sir.builder.buildVariable
+import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.builder.*
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -69,6 +63,11 @@ private fun parseType(typeName: String): SirType {
         "ushort" -> SirSwiftModule.uint16
         "uint" -> SirSwiftModule.uint32
         "ulong" -> SirSwiftModule.uint64
+
+        "any" -> buildClass {
+            name = "MyClass"
+            origin = SirOrigin.ExternallyDefined(name="MyClass")
+        }
 
         else -> error("Unknown type: $typeName")
     }.let { SirNominalType(it) }

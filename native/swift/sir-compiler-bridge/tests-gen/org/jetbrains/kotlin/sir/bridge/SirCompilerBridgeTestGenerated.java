@@ -24,6 +24,12 @@ public class SirCompilerBridgeTestGenerated extends AbstractKotlinSirBridgeTest 
   }
 
   @Test
+  @TestMetadata("class_types")
+  public void testClass_types() {
+    runTest("native/swift/sir-compiler-bridge/testData/class_types/");
+  }
+
+  @Test
   @TestMetadata("multiple_requests")
   public void testMultiple_requests() {
     runTest("native/swift/sir-compiler-bridge/testData/multiple_requests/");
