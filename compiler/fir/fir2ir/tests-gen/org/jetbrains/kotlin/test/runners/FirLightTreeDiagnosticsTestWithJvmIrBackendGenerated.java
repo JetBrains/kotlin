@@ -563,6 +563,24 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("charAtAndOverloadWithAbstractGetOpenCharAt.kt")
+      public void testCharAtAndOverloadWithAbstractGetOpenCharAt() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/charAtAndOverloadWithAbstractGetOpenCharAt.kt");
+      }
+
+      @Test
+      @TestMetadata("charAtAndOverloadWithFinalGet.kt")
+      public void testCharAtAndOverloadWithFinalGet() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/charAtAndOverloadWithFinalGet.kt");
+      }
+
+      @Test
+      @TestMetadata("charAtFinalAndOverload.kt")
+      public void testCharAtFinalAndOverload() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/charAtFinalAndOverload.kt");
+      }
+
+      @Test
       @TestMetadata("inheritFromJavaCollectionSubclassWithContainsOverload.kt")
       public void testInheritFromJavaCollectionSubclassWithContainsOverload() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop/inheritFromJavaCollectionSubclassWithContainsOverload.kt");
