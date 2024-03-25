@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 abstract class AbstractSessionInvalidationTest : AbstractAnalysisApiBasedTest() {
     protected abstract val modificationEventKind: ModificationEventKind
 
-    override fun doTestByModuleStructure(testServices: TestServices) {
+    override fun doTest(testServices: TestServices) {
         val allKtModules = testServices.ktTestModuleStructure.mainModules.map { it.ktModule }
 
         val sessionsBeforeModification = getSessionsFor(allKtModules)

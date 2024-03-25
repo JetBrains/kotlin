@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractSymbolRestoreFromDifferentModuleTest : AbstractAnalysisApiBasedTest() {
     private val defaultRenderer = KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
 
-    override fun doTestByModuleStructure(testServices: TestServices) {
+    override fun doTest(testServices: TestServices) {
         val declaration =
             testServices.expressionMarkerProvider.getElementsOfTypeAtCarets<KtDeclaration>(testServices).single().first
 

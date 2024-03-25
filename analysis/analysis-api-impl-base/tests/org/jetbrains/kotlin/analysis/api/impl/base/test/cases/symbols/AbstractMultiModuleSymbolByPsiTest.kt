@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractMultiModuleSymbolByPsiTest : AbstractAnalysisApiBasedTest() {
-    override fun doTestByModuleStructure(testServices: TestServices) {
+    override fun doTest(testServices: TestServices) {
         val files = testServices.ktTestModuleStructure.allMainKtFiles
         val debugRenderer = DebugSymbolRenderer()
 

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.types.Variance
 import kotlin.collections.single
 
 abstract class AbstractCreateInheritanceTypeSubstitutorTest : AbstractAnalysisApiBasedTest() {
-    override fun doTestByModuleStructure(testServices: TestServices) {
+    override fun doTest(testServices: TestServices) {
         val baseClass = testServices.expressionMarkerProvider
             .getElementsOfTypeAtCarets<KtClassOrObject>(testServices, "base")
             .single().first

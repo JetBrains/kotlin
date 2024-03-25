@@ -57,13 +57,13 @@ import kotlin.io.path.nameWithoutExtension
  * - [doTestByMainFile] – test cases with a dedicated main file.
  *   Supports everything from single-file cases to multi-platform multi-module multi-file cases.
  * - [doTestByMainModuleAndOptionalMainFile] – test cases rather around modules than files
- * - [doTestByModuleStructure] – all other cases with fully custom logic
+ * - [doTest] – all other cases with fully custom logic
  *
  * Look at the KDoc of the corresponding method for more details.
  *
  * @see doTestByMainFile
  * @see doTestByMainModuleAndOptionalMainFile
- * @see doTestByModuleStructure
+ * @see doTest
  */
 abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     abstract val configurator: AnalysisApiTestConfigurator
@@ -94,7 +94,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     protected open fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         throw UnsupportedOperationException(
             "The test case is not fully implemented. " +
-                    "'${::doTestByMainFile.name}', '${::doTestByMainModuleAndOptionalMainFile.name}' or '${::doTestByModuleStructure.name}' should be overridden"
+                    "'${::doTestByMainFile.name}', '${::doTestByMainModuleAndOptionalMainFile.name}' or '${::doTest.name}' should be overridden"
         )
     }
 
@@ -143,7 +143,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
      *
      * Use only if [doTestByMainModuleAndOptionalMainFile] is not suitable for your use case.
      */
-    protected open fun doTestByModuleStructure(testServices: TestServices) {
+    protected open fun doTest(testServices: TestServices) {
         val (mainFile, mainModule) = findMainFileAndModule(testServices)
         doTestByMainModuleAndOptionalMainFile(mainFile, mainModule, testServices)
     }
@@ -316,7 +316,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
             return
         }
 
-        doTestByModuleStructure(testServices)
+        doTest(testServices)
     }
 
     @AfterEach

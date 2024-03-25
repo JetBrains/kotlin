@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.konan.file.File as KonanFile
  * Reads through the declarations provided in the .klib and renders their `klibSourceFile`
  */
 abstract class AbstractGetKlibSourceFileNameTest : AbstractAnalysisApiBasedTest() {
-    override fun doTestByModuleStructure(testServices: TestServices) {
+    override fun doTest(testServices: TestServices) {
         val mainModule = testServices.ktTestModuleStructure.mainModules
             .let { modules -> if (modules.size == 1) modules.first() else fail("Expected single main module. Found $modules") }
 
