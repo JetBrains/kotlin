@@ -107,14 +107,11 @@ class LauncherReplTest : TestCaseWithTmpdir() {
     }
 
     private fun writeInputsToOutStream(dataOutStream: OutputStream, inputIter: Iterator<Pair<String?, String>>) {
-        val writer = dataOutStream.writer()
-        val eol = System.getProperty("line.separator")
+        val writer = PrintWriter(/* out = */ dataOutStream.writer(), /* autoFlush = */ true)
 
         fun writeNextInput(nextInput: String) {
             with(writer) {
-                write(nextInput)
-                write(eol)
-                flush()
+                println(nextInput)
             }
         }
 
@@ -123,6 +120,7 @@ class LauncherReplTest : TestCaseWithTmpdir() {
             writeNextInput(nextInput)
         }
         writeNextInput(":quit")
+        writer.close()
     }
 
     private fun assertOutputMatches(
