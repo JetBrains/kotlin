@@ -10,11 +10,13 @@ import com.sun.jdi.event.*
 import com.sun.jdi.request.EventRequest.SUSPEND_ALL
 import com.sun.jdi.request.StepRequest
 import com.sun.tools.jdi.SocketAttachingConnector
+import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultDirectives
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.BOX_MAIN_FILE_NAME
 import org.jetbrains.kotlin.test.utils.*
 import java.io.File
@@ -160,10 +162,21 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
         virtualMachine.resume()
     }
 
-    fun Location.formatAsExpectation(visibleVars: List<LocalVariableRecord>? = null) =
-        formatAsSteppingTestExpectation(sourceName(), lineNumber(), method().name(), method().isSynthetic, visibleVars)
+    protected fun Location.formatAsExpectation(visibleVars: List<LocalVariableRecord>?): String {
+        val fileNames =
+            testServices.moduleStructure.modules.flatMap { it.files }.map { it.name } +
+                    SourceMapper.FAKE_FILE_NAME
+        return formatAsSteppingTestExpectation(
+            sourceName(),
+            // Do not render line numbers outside of test sources (i.e. from stdlib): they can change and it's not a part of this test.
+            lineNumber().takeIf { sourceName() in fileNames },
+            method().name(),
+            method().isSynthetic,
+            visibleVars
+        )
+    }
 
-    fun setupMethodEntryAndExitRequests(virtualMachine: VirtualMachine) {
+    private fun setupMethodEntryAndExitRequests(virtualMachine: VirtualMachine) {
         val manager = virtualMachine.eventRequestManager()
 
         val methodEntryReq = manager.createMethodEntryRequest()
@@ -199,7 +212,7 @@ class SteppingDebugRunner(testServices: TestServices) : DebugRunner(testServices
             } else SteppingTestLoggedData(
                 location.lineNumber(),
                 location.method().isSynthetic,
-                location.formatAsExpectation()
+                location.formatAsExpectation(null)
             )
         loggedItems.add(data)
     }

@@ -208,14 +208,18 @@ private fun compressSequencesWithoutLineNumber(loggedItems: List<SteppingTestLog
 
 fun formatAsSteppingTestExpectation(
     sourceName: String,
-    lineNumber: Int,
+    lineNumber: Int?,
     functionName: String,
     isSynthetic: Boolean,
     visibleVars: List<LocalVariableRecord>? = null
-) = buildString {
+): String = buildString {
     append(sourceName)
     append(':')
-    append(lineNumber)
+    if (lineNumber != null) {
+        append(lineNumber)
+    } else {
+        append("...")
+    }
     append(' ')
     append(functionName)
     if (isSynthetic)
