@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
 
+// todo: replace suppress with @ConsistentCopyVisibility annotation after bootstrap
+@Suppress("DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING")
 data class ImplicitSmartCasts private constructor(val receiverTypes: Map<ImplicitReceiver, KotlinType>) {
     operator fun plus(other: ImplicitSmartCasts) = ImplicitSmartCasts(receiverTypes + other.receiverTypes)
 
