@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.doesDataClassCopyRespectConstructorVisibility
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -20,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.resolve.fqName
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirDataClassNonPublicConstructorChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -34,8 +32,8 @@ object FirDataClassNonPublicConstructorChecker : FirRegularClassChecker(MppCheck
         if (primaryConstructor.visibility == Visibilities.Public) {
             return
         }
-        val isAlreadyAnnotated = declaration.hasAnnotation(StandardNames.CONSISTENT_DATA_COPY_VISIBILITY, context.session) ||
-                declaration.hasAnnotation(StandardNames.INCONSISTENT_DATA_COPY_VISIBILITY, context.session)
+        val isAlreadyAnnotated = declaration.hasAnnotation(StandardClassIds.Annotations.ConsistentDataCopyVisibility, context.session) ||
+                declaration.hasAnnotation(StandardClassIds.Annotations.InconsistentDataCopyVisibility, context.session)
         if (isAlreadyAnnotated) {
             return
         }

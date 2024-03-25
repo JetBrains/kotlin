@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.doesDataClassCopyRespectConstructorVisibility
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
@@ -18,13 +17,13 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visibilityChecker
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
@@ -328,10 +327,10 @@ class FirStatusResolver(
             DataClassResolver.isCopy(declaration.name)
         ) {
             return when {
-                containingClass.hasAnnotation(StandardNames.INCONSISTENT_DATA_COPY_VISIBILITY, session) ->
+                containingClass.hasAnnotation(StandardClassIds.Annotations.InconsistentDataCopyVisibility, session) ->
                     Visibilities.Public
                 session.languageVersionSettings.doesDataClassCopyRespectConstructorVisibility() ||
-                        containingClass.hasAnnotation(StandardNames.CONSISTENT_DATA_COPY_VISIBILITY, session) ->
+                        containingClass.hasAnnotation(StandardClassIds.Annotations.ConsistentDataCopyVisibility, session) ->
                     containingClass.primaryConstructorIfAny(session)?.fir?.visibility ?: fallbackVisibility
                 else -> fallbackVisibility
             }

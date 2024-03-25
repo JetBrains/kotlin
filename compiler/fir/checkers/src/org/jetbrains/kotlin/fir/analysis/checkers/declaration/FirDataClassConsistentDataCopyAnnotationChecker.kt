@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.doesDataClassCopyRespectConstructorVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -16,12 +15,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.resolve.fqName
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirDataClassConsistentDataCopyAnnotationChecker : FirClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        val consistentCopy = declaration.getAnnotationByClassId(StandardNames.CONSISTENT_DATA_COPY_VISIBILITY, context.session)
-        val inconsistentCopy = declaration.getAnnotationByClassId(StandardNames.INCONSISTENT_DATA_COPY_VISIBILITY, context.session)
+        val consistentCopy = declaration.getAnnotationByClassId(StandardClassIds.Annotations.ConsistentDataCopyVisibility, context.session)
+        val inconsistentCopy = declaration.getAnnotationByClassId(StandardClassIds.Annotations.InconsistentDataCopyVisibility, context.session)
 
         when {
             consistentCopy != null && (declaration !is FirRegularClass || !declaration.isData) -> {
@@ -50,7 +49,7 @@ object FirDataClassConsistentDataCopyAnnotationChecker : FirClassChecker(MppChec
                     reporter.reportOn(
                         consistentCopy.source,
                         FirErrors.REDUNDANT_ANNOTATION,
-                        StandardNames.CONSISTENT_DATA_COPY_VISIBILITY,
+                        StandardClassIds.Annotations.ConsistentDataCopyVisibility,
                         context
                     )
                 }
