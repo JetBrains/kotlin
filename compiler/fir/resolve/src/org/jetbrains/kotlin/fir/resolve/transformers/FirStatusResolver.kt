@@ -328,10 +328,10 @@ class FirStatusResolver(
             DataClassResolver.isCopy(declaration.name)
         ) {
             return when {
-                containingClass.annotations.any { it.fqName(session) == StandardNames.INCONSISTENT_DATA_COPY_VISIBILITY } ->
+                containingClass.hasAnnotation(StandardNames.INCONSISTENT_DATA_COPY_VISIBILITY, session) ->
                     Visibilities.Public
                 session.languageVersionSettings.doesDataClassCopyRespectConstructorVisibility() ||
-                        containingClass.annotations.any { it.fqName(session) == StandardNames.CONSISTENT_DATA_COPY_VISIBILITY } ->
+                        containingClass.hasAnnotation(StandardNames.CONSISTENT_DATA_COPY_VISIBILITY, session) ->
                     containingClass.primaryConstructorIfAny(session)?.fir?.visibility ?: fallbackVisibility
                 else -> fallbackVisibility
             }

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -33,10 +34,8 @@ object FirDataClassNonPublicConstructorChecker : FirRegularClassChecker(MppCheck
         if (primaryConstructor.visibility == Visibilities.Public) {
             return
         }
-        val isAlreadyAnnotated = declaration.annotations.any {
-            val fqName = it.fqName(context.session)
-            fqName == StandardNames.CONSISTENT_DATA_COPY_VISIBILITY || fqName == StandardNames.INCONSISTENT_DATA_COPY_VISIBILITY
-        }
+        val isAlreadyAnnotated = declaration.hasAnnotation(StandardNames.CONSISTENT_DATA_COPY_VISIBILITY, context.session) ||
+                declaration.hasAnnotation(StandardNames.INCONSISTENT_DATA_COPY_VISIBILITY, context.session)
         if (isAlreadyAnnotated) {
             return
         }

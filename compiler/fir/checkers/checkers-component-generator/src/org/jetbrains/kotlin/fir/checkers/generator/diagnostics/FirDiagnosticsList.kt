@@ -373,7 +373,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val REDUNDANT_ANNOTATION by warning<KtAnnotationEntry> {
-            parameter<FqName>("annotation")
+            parameter<ClassId>("annotation")
         }
 
         val ANNOTATION_ON_SUPERCLASS by deprecationError<KtAnnotationEntry>(LanguageFeature.ProhibitUseSiteTargetAnnotationsOnSuperTypes)

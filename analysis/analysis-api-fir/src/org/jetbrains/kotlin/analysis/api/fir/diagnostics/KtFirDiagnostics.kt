@@ -790,7 +790,7 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     interface RedundantAnnotation : KtFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = RedundantAnnotation::class
-        val annotation: FqName
+        val annotation: ClassId
     }
 
     interface AnnotationOnSuperclassError : KtFirDiagnostic<KtAnnotationEntry> {

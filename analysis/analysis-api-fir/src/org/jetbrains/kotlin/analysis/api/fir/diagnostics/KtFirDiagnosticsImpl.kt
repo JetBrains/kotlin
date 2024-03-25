@@ -942,7 +942,7 @@ internal class OverrideDeprecationImpl(
 ) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.OverrideDeprecation
 
 internal class RedundantAnnotationImpl(
-    override val annotation: FqName,
+    override val annotation: ClassId,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KtFirDiagnostic.RedundantAnnotation

@@ -13,19 +13,15 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.fqName
 
 object FirDataClassConsistentDataCopyAnnotationChecker : FirClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        val consistentCopy =
-            declaration.annotations.firstOrNull { it.fqName(context.session) == StandardNames.CONSISTENT_DATA_COPY_VISIBILITY }
-        val inconsistentCopy =
-            declaration.annotations.firstOrNull { it.fqName(context.session) == StandardNames.INCONSISTENT_DATA_COPY_VISIBILITY }
+        val consistentCopy = declaration.getAnnotationByClassId(StandardNames.CONSISTENT_DATA_COPY_VISIBILITY, context.session)
+        val inconsistentCopy = declaration.getAnnotationByClassId(StandardNames.INCONSISTENT_DATA_COPY_VISIBILITY, context.session)
 
         when {
             consistentCopy != null && (declaration !is FirRegularClass || !declaration.isData) -> {
