@@ -9393,12 +9393,6 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
-      @TestMetadata("deprecationPhase2_consistentDataCopy.kt")
-      public void testDeprecationPhase2_consistentDataCopy() {
-        runTest("compiler/testData/diagnostics/tests/dataClassNonPublicConstructor/deprecationPhase2_consistentDataCopy.kt");
-      }
-
-      @Test
       @TestMetadata("deprecationPhase2_customCopy.kt")
       public void testDeprecationPhase2_customCopy() {
         runTest("compiler/testData/diagnostics/tests/dataClassNonPublicConstructor/deprecationPhase2_customCopy.kt");
