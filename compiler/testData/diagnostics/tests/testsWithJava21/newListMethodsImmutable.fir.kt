@@ -15,6 +15,8 @@ fun bar(x: List<String>) {
 fun baz(x: ArrayDeque<String>, y: LinkedHashSet<String>) {
     x.addFirst("")
     x.addLast("")
+    x.addFirst(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    x.addLast(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     x.removeFirst()
     x.removeLast()
     x.<!UNRESOLVED_REFERENCE!>getFirst<!>()
@@ -24,6 +26,8 @@ fun baz(x: ArrayDeque<String>, y: LinkedHashSet<String>) {
 
     y.addFirst("")
     y.addLast("")
+    y.addFirst(null)
+    y.addLast(null)
     y.removeFirst()
     y.removeLast()
     y.getFirst()
