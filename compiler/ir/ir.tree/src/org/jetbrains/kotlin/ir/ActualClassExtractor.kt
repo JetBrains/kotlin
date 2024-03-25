@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir
 
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.name.ClassId
 
 abstract class ActualClassExtractor {
-    abstract fun extract(classId: ClassId): IrClassSymbol?
+    abstract fun extract(expectIrClass: IrClass): IrClassSymbol?
 }

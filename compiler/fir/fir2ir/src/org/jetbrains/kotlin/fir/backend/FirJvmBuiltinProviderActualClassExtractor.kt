@@ -8,15 +8,24 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
 import org.jetbrains.kotlin.ir.ActualClassExtractor
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.ir.util.classIdOrFail
+import org.jetbrains.kotlin.ir.util.isAnnotation
+import org.jetbrains.kotlin.name.StandardClassIds
 
-class FirBuiltinsActualClassExtractor(
+class FirJvmBuiltinProviderActualClassExtractor(
     val provider: FirBuiltinSymbolProvider,
     val classifierStorage: Fir2IrClassifierStorage,
 ) : ActualClassExtractor() {
-    override fun extract(classId: ClassId): IrClassSymbol? {
-        val regularClassSymbol = provider.getRegularClassSymbolByClassId(classId) ?: return null
+    companion object {
+        val ActualizeByJvmBuiltinProviderFqName = StandardClassIds.Annotations.ActualizeByJvmBuiltinProvider.asSingleFqName()
+    }
+
+    override fun extract(expectIrClass: IrClass): IrClassSymbol? {
+        if (expectIrClass.annotations.none { it.isAnnotation(ActualizeByJvmBuiltinProviderFqName) }) return null
+
+        val regularClassSymbol = provider.getRegularClassSymbolByClassId(expectIrClass.classIdOrFail) ?: return null
         return classifierStorage.getIrClassSymbol(regularClassSymbol)
     }
 }

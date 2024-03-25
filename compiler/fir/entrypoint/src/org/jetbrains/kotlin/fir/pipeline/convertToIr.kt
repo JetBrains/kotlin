@@ -136,7 +136,7 @@ fun FirResult.convertToIrAndActualize(
     ) {
         val dependencyProviders = (platformFirOutput.session.symbolProvider as FirCachingCompositeSymbolProvider).providers
         val builtinsSymbolProvider = dependencyProviders.filterIsInstance<FirBuiltinSymbolProvider>().single()
-        FirBuiltinsActualClassExtractor(builtinsSymbolProvider, platformComponentsStorage.classifierStorage)
+        FirJvmBuiltinProviderActualClassExtractor(builtinsSymbolProvider, platformComponentsStorage.classifierStorage)
     }
 
     val irActualizer = if (dependentIrModules.isEmpty()) null else IrActualizer(

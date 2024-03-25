@@ -25,6 +25,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         StandardClassIds.Annotations.SinceKotlin,
         StandardClassIds.Annotations.Suppress,
         StandardClassIds.Annotations.WasExperimental,
+        StandardClassIds.Annotations.ActualizeByJvmBuiltinProvider,
         OptInNames.OPT_IN_CLASS_ID,
     )
 

@@ -211,8 +211,8 @@ private class ActualDeclarationsCollector(
     }
 
     private fun collectExtraActualClasses(expectClass: IrClass) {
+        val actualClassSymbol = actualClassExtractor!!.extract(expectClass) ?: return
         val classId = expectClass.classIdOrFail
-        val actualClassSymbol = actualClassExtractor!!.extract(classId) ?: return
         if (actualClasses.containsKey(classId)) return // TODO: report actual classes collision?
 
         actualClasses[classId] = actualClassSymbol
