@@ -21,6 +21,7 @@ package androidx.compose.compiler.plugins.kotlin.lower
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.hasComposableAnnotation
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -83,7 +84,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualsForExpect
  */
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class CopyDefaultValuesFromExpectLowering(
-    pluginContext: IrPluginContext
+    private val pluginContext: IrPluginContext
 ) : ModuleLoweringPass, IrElementTransformerVoid() {
 
     private val symbolTable = pluginContext.symbolTable
@@ -124,8 +125,15 @@ class CopyDefaultValuesFromExpectLowering(
         module.transformChildrenVoid(this)
     }
 
-    private inline fun <reified T : IrFunction> T.findActualForExpected(): T =
-        symbolTable.referenceFunction(descriptor.findActualForExpect()).owner as T
+    private inline fun <reified T : IrFunction> T.findActualForExpected(): T {
+        val symbol = symbolTable.referenceFunction(descriptor.findActualForExpect())
+        if (!symbol.isBound) {
+            // some actual symbols might be coming from incremental compilation and they are not
+            // directly linked by default.
+            (pluginContext as? IrPluginContextImpl)?.linker?.getDeclaration(symbol)
+        }
+        return symbol.owner as T
+    }
 
     private fun IrProperty.findActualForExpected(): IrProperty =
         symbolTable.descriptorExtension.referenceProperty(
