@@ -47,6 +47,12 @@ val expectedNullableUnitExplicitReturnUnitAndString: () -> Unit? = l@ {
     <!TYPE_MISMATCH!>""<!>
 }
 
+fun expectedFlexibleUnitImplicitReturnString() {
+    A.foo = l@ {
+        ""
+    }
+}
+
 fun expectedFlexibleUnitExplicitReturnUnitAndString() {
     A.foo = l@ {
         if ("0".hashCode() == 42) return@l Unit
@@ -100,6 +106,10 @@ fun test() {
     run<Unit?> l@ {
         if ("0".hashCode() == 42) return@l Unit
         <!TYPE_MISMATCH!>""<!>
+    }
+
+    A.run l@ {
+        ""
     }
 
     A.run l@ {
