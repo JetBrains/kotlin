@@ -250,7 +250,6 @@ class FirStatusResolver(
                 isLocal -> Visibilities.Local
                 else -> resolveVisibility(declaration, containingClass, containingProperty, overriddenStatuses)
             }
-            Visibilities.Private -> Visibilities.Private
             else -> status.visibility
         }
 
