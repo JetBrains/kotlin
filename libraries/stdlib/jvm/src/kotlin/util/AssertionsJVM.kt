@@ -17,6 +17,12 @@ internal object _Assertions {
 /**
  * Throws an [AssertionError] if the [value] is false
  * and runtime assertions have been enabled on the JVM using the *-ea* JVM option.
+ *
+ * Depending on value of `-Xassertions` compiler flag, argument [value] is either
+ * evaluated or accessed lazily. When `-Xassertions=legacy` or
+ * `-Xassertions=always-enable` the argument is evaluated regardless of whether
+ * runtime assertions are enabled, to make it lazy, use `-Xassertions=jvm`. When
+ * `-Xassertions=always-disable`, the [value] is ignored and not evaluated.
  */
 @kotlin.internal.InlineOnly
 public inline fun assert(value: Boolean) {
@@ -26,6 +32,12 @@ public inline fun assert(value: Boolean) {
 /**
  * Throws an [AssertionError] calculated by [lazyMessage] if the [value] is false
  * and runtime assertions have been enabled on the JVM using the *-ea* JVM option.
+ *
+ * Depending on value of `-Xassertions` compiler flag, argument [value] is either
+ * evaluated or accessed lazily. When `-Xassertions=legacy` or
+ * `-Xassertions=always-enable` the argument is evaluated regardless of whether
+ * runtime assertions are enabled, to make it lazy, use `-Xassertions=jvm`. When
+ * `-Xassertions=always-disable`, the [value] is ignored and not evaluated.
  */
 @kotlin.internal.InlineOnly
 public inline fun assert(value: Boolean, lazyMessage: () -> Any) {
