@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.config.doesDataClassCopyRespectConstructorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -42,7 +43,9 @@ object FirDataClassConsistentDataCopyAnnotationChecker : FirClassChecker(MppChec
                     )
                 }
 
-                if (consistentCopy != null && context.languageVersionSettings.doesDataClassCopyRespectConstructorVisibility()) {
+                if (consistentCopy != null && (context.languageVersionSettings.doesDataClassCopyRespectConstructorVisibility() ||
+                            declaration.primaryConstructorIfAny(context.session)?.visibility == Visibilities.Public)
+                ) {
                     reporter.reportOn(
                         consistentCopy.source,
                         FirErrors.REDUNDANT_ANNOTATION,
