@@ -39,7 +39,10 @@ uint8_t* FixedBlockPage::TryAllocate() noexcept {
         nextFree_.first += blockSize_;
         return cells_[next].data;
     }
-    if (next >= end_) return nullptr;
+    if (next >= end_) {
+        allocatedSizeTracker_.onPageOverflow(end_ * sizeof(FixedBlockCell));
+        return nullptr;
+    }
     nextFree_ = cells_[next].nextFree;
     memset(&cells_[next], 0, sizeof(cells_[next]));
     return cells_[next].data;
@@ -50,6 +53,7 @@ bool FixedBlockPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQ
     FixedCellRange nextFree = nextFree_; // Accessing the previous free list structure.
     FixedCellRange* prevRange = &nextFree_; // Creating the new free list structure.
     uint32_t prevLive = -blockSize_;
+    std::size_t aliveBlocksCount = 0;
     for (uint32_t cell = 0 ; cell < end_ ; cell += blockSize_) {
         // Go through the occupied cells.
         for (; cell < nextFree.first ; cell += blockSize_) {
@@ -57,6 +61,7 @@ bool FixedBlockPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQ
                 // We should null this cell out, but we will do so in batch later.
                 continue;
             }
+            ++aliveBlocksCount;
             if (prevLive + blockSize_ < cell) {
                 // We found an alive cell that ended a run of swept cells or a known unoccupied range.
                 uint32_t prevCell = cell - blockSize_;
@@ -82,6 +87,9 @@ bool FixedBlockPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQ
         // And we're done.
         break;
     }
+
+    allocatedSizeTracker_.afterSweep(aliveBlocksCount * blockSize_ * sizeof(FixedBlockCell));
+
     // The page is alive iff a range stored in the page header covers the entire page.
     return nextFree_.first > 0 || nextFree_.last < end_;
 }
@@ -102,6 +110,5 @@ std::vector<uint8_t*> FixedBlockPage::GetAllocatedBlocks() noexcept {
     }
     return allocated;
 }
-
 
 } // namespace kotlin::alloc

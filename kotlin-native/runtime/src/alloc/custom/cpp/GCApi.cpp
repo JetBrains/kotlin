@@ -117,8 +117,7 @@ void* SafeAlloc(uint64_t size) noexcept {
         konan::consoleErrorf("Out of memory trying to allocate %" PRIu64 "bytes: %s. Aborting.\n", size, strerror(errno));
         std::abort();
     }
-    auto previousSize = allocatedBytesCounter.fetch_add(static_cast<size_t>(size), std::memory_order_relaxed);
-    OnMemoryAllocation(previousSize + static_cast<size_t>(size));
+    allocatedBytesCounter.fetch_add(static_cast<size_t>(size), std::memory_order_relaxed);
     CustomAllocDebug("SafeAlloc(%zu) = %p", static_cast<size_t>(size), memory);
     return memory;
 }
