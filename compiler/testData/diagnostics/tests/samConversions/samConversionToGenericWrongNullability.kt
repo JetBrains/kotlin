@@ -24,6 +24,20 @@ fun main() {
         foo()
     }
 
+    Supplier<String>(
+        fun(): String {
+            if (true) return <!TYPE_MISMATCH, TYPE_MISMATCH!>foo()<!>
+            return ""
+        }
+    )
+
+    Supplier<String>(
+        <!TYPE_MISMATCH!>fun(): String? {
+            if (true) return foo()
+            return ""
+        }<!>
+    )
+
     Supplier<String> {
         if (true) return@Supplier foo()
         run { return@Supplier foo() }

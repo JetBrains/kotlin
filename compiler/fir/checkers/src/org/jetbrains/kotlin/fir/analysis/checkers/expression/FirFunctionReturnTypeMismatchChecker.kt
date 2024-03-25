@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.expressions.isExhaustive
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
@@ -53,11 +54,32 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker(MppChec
             context.session.builtinTypes.unitType.coneType
         else
             targetElement.returnTypeRef.coneType
-        if (targetElement is FirAnonymousFunction &&
-            sourceKind is KtFakeSourceElementKind.ImplicitReturn.FromLastStatement &&
-            functionReturnType.isUnit
-        ) {
-            return
+        if (targetElement is FirAnonymousFunction) {
+            if (sourceKind is KtFakeSourceElementKind.ImplicitReturn.FromLastStatement &&
+                functionReturnType.isUnit
+            ) {
+                return
+            }
+            if (targetElement.isLambda) {
+                // In lambda, we normally have ARGUMENT_TYPE_MISMATCH or some other diagnostic(s) at return statement
+                // Exceptions:
+                when {
+                    // 1) lambda inferred to Unit (coercion-to-Unit case), e.g. testLocalReturnSecondUnit
+                    // val a = b@ {
+                    //    if (flag) return@b 4 // Should be error
+                    //    return@b
+                    // }
+                    functionReturnType.isUnit -> {}
+                    // 2) return without explicitly given argument (implicit Unit case), e.g. testKt66277
+                    // val x: () -> Any = l@ {
+                    //    if ("0".hashCode() == 42) return@l // Should be error (explicit return@l Unit would be Ok)
+                    //    ""
+                    // }
+                    resultExpression is FirUnitExpression && resultExpression.source?.kind is KtFakeSourceElementKind.ImplicitUnit -> {}
+                    // Otherwise, we don't want to report anything
+                    else -> return
+                }
+            }
         }
 
         val typeContext = context.session.typeContext

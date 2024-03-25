@@ -118,7 +118,7 @@ fun test() {
     }
 
     run<Unit?> l@ {
-        return@l <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>""<!>
+        return@l <!ARGUMENT_TYPE_MISMATCH!>""<!>
     }
 
     A.run l@ {
