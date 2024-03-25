@@ -117,8 +117,21 @@ abstract class AbstractField<Field : AbstractField<Field>> {
         open val withGetter: Boolean
             get() = false
 
+
+        /**
+         * The field will have to be initialized explicitly in the implementation class constructor.
+         */
         data object Required : ImplementationDefaultStrategy
+
+        /**
+         * The field will be `lateinit var`.
+         */
         data object Lateinit : ImplementationDefaultStrategy
+
+        /**
+         * - If [withGetter] == false - the field will be a stored property, initialized to [defaultValue].
+         * - If [withGetter] == true - the field will be a computed property, with getter returning [defaultValue].
+         */
         data class DefaultValue(
             override val defaultValue: String,
             override val withGetter: Boolean,
