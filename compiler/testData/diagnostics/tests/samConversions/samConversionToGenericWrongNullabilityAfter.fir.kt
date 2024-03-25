@@ -21,8 +21,22 @@ fun main() {
         <!ARGUMENT_TYPE_MISMATCH!>foo()<!>
     }
 
+    Supplier<String>(
+        fun(): String {
+            if (true) return <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>foo()<!>
+            return ""
+        }
+    )
+
+    Supplier<String>(
+        <!ARGUMENT_TYPE_MISMATCH!>fun(): String? {
+            if (true) return foo()
+            return ""
+        }<!>
+    )
+
     Supplier<String> {
-        if (true) return@Supplier <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>foo()<!>
+        if (true) return@Supplier <!ARGUMENT_TYPE_MISMATCH!>foo()<!>
         ""
     }
 

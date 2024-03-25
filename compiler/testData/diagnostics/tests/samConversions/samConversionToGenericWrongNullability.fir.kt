@@ -24,11 +24,25 @@ fun main() {
         <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!>
     }
 
+    Supplier<String>(
+        fun(): String {
+            if (true) return <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH, TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!>
+            return ""
+        }
+    )
+
+    Supplier<String>(
+        fun(): String? {
+            if (true) return <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!>
+            return ""
+        }
+    )
+
     Supplier<String> {
-        if (true) return@Supplier <!RETURN_TYPE_MISMATCH, TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!>
-        run { return@Supplier <!RETURN_TYPE_MISMATCH, TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!> }
+        if (true) return@Supplier <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!>
+        run { return@Supplier <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!> }
         try {
-            if (true) return@Supplier <!RETURN_TYPE_MISMATCH, TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!>
+            if (true) return@Supplier <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!>
             2
         } finally {
             Unit
