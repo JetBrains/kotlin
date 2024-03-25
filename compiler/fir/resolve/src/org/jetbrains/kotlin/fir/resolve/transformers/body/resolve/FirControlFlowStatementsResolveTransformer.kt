@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.TemporaryInferenceSessionHook
-import org.jetbrains.kotlin.fir.resolve.transformWhenSubjectExpressionUsingSmartcastInfo
+import org.jetbrains.kotlin.fir.resolve.transformExpressionUsingSmartcastInfo
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
 import org.jetbrains.kotlin.fir.resolve.withExpectedType
@@ -142,7 +142,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         data: ResolutionMode
     ): FirStatement {
         dataFlowAnalyzer.exitWhenSubjectExpression(whenSubjectExpression)
-        return components.transformWhenSubjectExpressionUsingSmartcastInfo(whenSubjectExpression)
+        return components.transformExpressionUsingSmartcastInfo(whenSubjectExpression)
     }
 
     // ------------------------------- Try/catch expressions -------------------------------
