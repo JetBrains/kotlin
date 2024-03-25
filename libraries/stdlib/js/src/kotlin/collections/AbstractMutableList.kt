@@ -100,7 +100,7 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
     }
 
     /**
-     * Checks if the two specified lists are structurally equal to one another.
+     * Checks if the two specified lists are *structurally* equal to one another.
      *
      * Two lists are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
      * Elements are compared for equality using the [equals][Any.equals] function.
