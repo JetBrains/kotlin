@@ -264,7 +264,7 @@ object FirErrors {
     val DATA_CLASS_CONSISTENT_COPY_AND_INCONSISTENT_COPY_ARE_INCOMPATIBLE_ANNOTATIONS: KtDiagnosticFactory0 by error0<KtAnnotationEntry>()
     val DATA_CLASS_CONSISTENT_COPY_WRONG_ANNOTATION_TARGET: KtDiagnosticFactory0 by error0<KtAnnotationEntry>()
     val DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED: KtDiagnosticFactoryForDeprecation0 by deprecationError0<KtPrimaryConstructor>(ErrorAboutDataClassCopyVisibilityChange, SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
-    val DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE: KtDiagnosticFactoryForDeprecation0 by deprecationError0<KtNameReferenceExpression>(ErrorAboutDataClassCopyVisibilityChange)
+    val DATA_CLASS_INVISIBLE_COPY_USAGE: KtDiagnosticFactoryForDeprecation0 by deprecationError0<KtNameReferenceExpression>(ErrorAboutDataClassCopyVisibilityChange)
     val DATA_CLASS_WITHOUT_PARAMETERS: KtDiagnosticFactory0 by error0<KtNamedDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val DATA_CLASS_VARARG_PARAMETER: KtDiagnosticFactory0 by error0<KtParameter>()
     val DATA_CLASS_NOT_PROPERTY_PARAMETER: KtDiagnosticFactory0 by error0<KtParameter>()

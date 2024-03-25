@@ -777,15 +777,15 @@ internal class DataClassCopyVisibilityWillBeChangedWarningImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtPrimaryConstructor>(firDiagnostic, token), KtFirDiagnostic.DataClassCopyVisibilityWillBeChangedWarning
 
-internal class DataClassCopyUsageWillBecomeInaccessibleErrorImpl(
+internal class DataClassInvisibleCopyUsageErrorImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtNameReferenceExpression>(firDiagnostic, token), KtFirDiagnostic.DataClassCopyUsageWillBecomeInaccessibleError
+) : KtAbstractFirDiagnostic<KtNameReferenceExpression>(firDiagnostic, token), KtFirDiagnostic.DataClassInvisibleCopyUsageError
 
-internal class DataClassCopyUsageWillBecomeInaccessibleWarningImpl(
+internal class DataClassInvisibleCopyUsageWarningImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtNameReferenceExpression>(firDiagnostic, token), KtFirDiagnostic.DataClassCopyUsageWillBecomeInaccessibleWarning
+) : KtAbstractFirDiagnostic<KtNameReferenceExpression>(firDiagnostic, token), KtFirDiagnostic.DataClassInvisibleCopyUsageWarning
 
 internal class DataClassWithoutParametersImpl(
     firDiagnostic: KtPsiDiagnostic,

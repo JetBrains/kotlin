@@ -885,14 +885,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE.errorFactory) { firDiagnostic ->
-        DataClassCopyUsageWillBecomeInaccessibleErrorImpl(
+    add(FirErrors.DATA_CLASS_INVISIBLE_COPY_USAGE.errorFactory) { firDiagnostic ->
+        DataClassInvisibleCopyUsageErrorImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE.warningFactory) { firDiagnostic ->
-        DataClassCopyUsageWillBecomeInaccessibleWarningImpl(
+    add(FirErrors.DATA_CLASS_INVISIBLE_COPY_USAGE.warningFactory) { firDiagnostic ->
+        DataClassInvisibleCopyUsageWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

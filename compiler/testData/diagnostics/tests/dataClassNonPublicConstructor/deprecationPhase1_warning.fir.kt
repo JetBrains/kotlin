@@ -13,17 +13,17 @@ data class Data <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!>
 }
 
 fun topLevel(data: Data) {
-    data.<!DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE_WARNING!>copy<!>()
+    data.<!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>()
 }
 
 fun Data.topLevelExtension() {
-    <!DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE_WARNING!>copy<!>()
+    <!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>()
 }
 
 fun local() {
     data class Local <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!> constructor(val x: Int)
 
     fun Local.foo() {
-        <!DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE_WARNING!>copy<!>()
+        <!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>()
     }
 }

@@ -326,7 +326,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             PositioningStrategy.VISIBILITY_MODIFIER
         )
 
-        val DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE by deprecationError<KtNameReferenceExpression>(
+        val DATA_CLASS_INVISIBLE_COPY_USAGE by deprecationError<KtNameReferenceExpression>(
             LanguageFeature.ErrorAboutDataClassCopyVisibilityChange
         )
 

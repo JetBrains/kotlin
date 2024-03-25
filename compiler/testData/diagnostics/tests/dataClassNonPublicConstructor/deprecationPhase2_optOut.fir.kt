@@ -4,5 +4,5 @@
 data class Data private constructor(val x: Int)
 
 fun usage(data: Data) {
-    data.<!DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE_ERROR!>copy<!>()
+    data.<!DATA_CLASS_INVISIBLE_COPY_USAGE_ERROR!>copy<!>()
 }

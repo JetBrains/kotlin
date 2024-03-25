@@ -172,7 +172,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_INHERITANC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DANGEROUS_CHARACTERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_CONSISTENT_COPY_AND_INCONSISTENT_COPY_ARE_INCOMPATIBLE_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_CONSISTENT_COPY_WRONG_ANNOTATION_TARGET
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_INVISIBLE_COPY_USAGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_NOT_PROPERTY_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_OVERRIDE_CONFLICT
@@ -1011,7 +1011,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             """.trimIndent() // Two empty lines at the end to append "This will become an error in" message
         )
         map.put(
-            DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE,
+            DATA_CLASS_INVISIBLE_COPY_USAGE,
             "This 'copy()' exposes the non-public primary constructor of a 'data class'. Please migrate the usage. " +
                     "See the appropriate 'data class' documentation " +
                     "or contact the 'data class' author for migration guidance."

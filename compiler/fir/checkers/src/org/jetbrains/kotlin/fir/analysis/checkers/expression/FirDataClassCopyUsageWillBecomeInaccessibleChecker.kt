@@ -52,7 +52,7 @@ object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirFunctionCallCheck
             // We don't check the presence of @InconsistentDataCopyVisibility annotations on purpose.
             // Even if the 'copy' is exposed, call-sites need to migrate.
             if (!isConstructorVisible) {
-                reporter.reportOn(expression.calleeReference.source, FirErrors.DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE, context)
+                reporter.reportOn(expression.calleeReference.source, FirErrors.DATA_CLASS_INVISIBLE_COPY_USAGE, context)
             }
         }
     }
