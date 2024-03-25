@@ -124,6 +124,20 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 (resultType as? ConeErrorType)?.diagnostic?.let {
                     callee.replaceDiagnostic(it)
                 }
+
+                // For situations like:
+                // buildList {
+                //    val myList: MutableList<String> = this
+                // }
+                // We need to add a constraint `MutableList<Ev> <: MutableList<String>`
+                data.expectedType?.coneTypeOrNull?.let { expectedType ->
+                    context.inferenceSession.addSubtypeConstraintIfCompatible(
+                        lowerType = resultType,
+                        upperType = expectedType,
+                        qualifiedAccessExpression,
+                    )
+                }
+
                 qualifiedAccessExpression.resultType = resultType
                 qualifiedAccessExpression
             }

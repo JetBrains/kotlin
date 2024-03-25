@@ -1,8 +1,5 @@
 // ISSUE: KT-65300
 
-// IGNORE_BACKEND_K2: ANY
-// REASON: red code (see corresponding diagnostic test)
-
 fun box(): String {
     build {
         val typeInfoSourceValue: () -> Buildee<TargetType> = { this }

@@ -1,9 +1,8 @@
 // ISSUE: KT-65300
 
 // IGNORE_LIGHT_ANALYSIS
-// IGNORE_BACKEND: ANY
+// IGNORE_BACKEND_K1: ANY
 // REASON: compile-time failure in K1 (java.lang.NullPointerException @ org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.DescriptorExportCheckerVisitor.isExported)
-// REASON: red code in K2 (see corresponding diagnostic test)
 
 fun box(): String {
     build {

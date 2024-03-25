@@ -1,3 +1,6 @@
+// FIR_IDENTICAL
+// ISSUE: KT-65300
+
 fun test() {
     // simple function call
     build {

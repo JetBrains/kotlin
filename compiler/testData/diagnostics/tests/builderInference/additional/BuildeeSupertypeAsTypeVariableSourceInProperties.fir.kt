@@ -1,11 +1,12 @@
 // WITH_REFLECT
 // DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
+// ISSUE: KT-65300
 
 import kotlin.reflect.KProperty
 
 fun test() {
     // initialization of an immutable local value
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    build {
         val baseA: BaseBuildee<TargetType> = this
     }
 
@@ -21,7 +22,7 @@ fun test() {
     }
 
     // body of a getter of an immutable property
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    build {
         class LocalWrapper {
             val baseC: BaseBuildee<TargetType>
                 get() = this@build
@@ -29,7 +30,7 @@ fun test() {
     }
 
     // initialization of a mutable property's backing field
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    build {
         class LocalWrapper {
             var baseD: BaseBuildee<TargetType> = this@build
                 set(value) {
