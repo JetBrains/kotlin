@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// LANGUAGE: +DataClassCopyRespectsConstructorVisibility
+// LANGUAGE: +ErrorAboutDataClassCopyVisibilityChange, +DataClassCopyRespectsConstructorVisibility
 @ConsistentDataCopyVisibility
 data class Data private constructor(val x: Int)
 
