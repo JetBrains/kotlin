@@ -10,6 +10,7 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "AnyPage.hpp"
 #include "AtomicStack.hpp"
 #include "CustomFinalizerProcessor.hpp"
 #include "ExtraObjectCell.hpp"
@@ -18,7 +19,7 @@
 
 namespace kotlin::alloc {
 
-class alignas(8) ExtraObjectPage {
+class alignas(kPageAlignment) ExtraObjectPage : public AnyPage<ExtraObjectPage> {
 public:
     using GCSweepScope = gc::GCHandle::GCSweepExtraObjectsScope;
 
@@ -34,13 +35,10 @@ public:
     bool Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
 
 private:
-    friend class AtomicStack<ExtraObjectPage>;
-
     ExtraObjectPage() noexcept;
 
-    // Used for linking pages together in `pages` queue or in `unswept` queue.
-    std::atomic<ExtraObjectPage*> next_;
     std::atomic<ExtraObjectCell*> nextFree_;
+
     ExtraObjectCell cells_[];
 };
 
