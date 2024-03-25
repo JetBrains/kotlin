@@ -17946,6 +17946,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("genericWildcardUpperBound.kt")
+        public void testGenericWildcardUpperBound() {
+          runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/genericWildcardUpperBound.kt");
+        }
+
+        @Test
         @TestMetadata("invokeCallWithCapturedReceiver.kt")
         public void testInvokeCallWithCapturedReceiver() {
           runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/invokeCallWithCapturedReceiver.kt");
