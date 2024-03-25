@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.doesDataClassCopyRespectConstructorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -15,7 +16,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.isData
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.fqName
 
 object FirDataClassConsistentDataCopyAnnotationChecker : FirClassChecker(MppCheckerKind.Common) {
@@ -46,7 +49,9 @@ object FirDataClassConsistentDataCopyAnnotationChecker : FirClassChecker(MppChec
                     )
                 }
 
-                if (consistentCopy != null && context.languageVersionSettings.doesDataClassCopyRespectConstructorVisibility()) {
+                if (consistentCopy != null && (context.languageVersionSettings.doesDataClassCopyRespectConstructorVisibility() ||
+                            declaration.primaryConstructorIfAny(context.session)?.visibility == Visibilities.Public)
+                ) {
                     reporter.reportOn(
                         consistentCopy.source,
                         FirErrors.REDUNDANT_ANNOTATION,
