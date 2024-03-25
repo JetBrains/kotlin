@@ -77,8 +77,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
                 isWrongConditionOnNode(it, coneEffect, returnValue, function, logicSystem, dataFlowInfo, argumentIdentifiers, context)
             }
             if (wrongCondition) {
-                // TODO, KT-59813: reportOn(firEffect.source, ...)
-                reporter.reportOn(contractDescription.source, FirErrors.WRONG_IMPLIES_CONDITION, context)
+                reporter.reportOn(firEffect.source, FirErrors.WRONG_IMPLIES_CONDITION, context)
             }
         }
     }

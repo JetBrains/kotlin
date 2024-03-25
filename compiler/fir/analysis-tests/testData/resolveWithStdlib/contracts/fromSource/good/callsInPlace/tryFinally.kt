@@ -23,7 +23,7 @@ inline fun test_2(f: () -> Int): Int {
 
 @OptIn(ExperimentalContracts::class)
 inline fun test_3(f: () -> Unit) {
-    <!WRONG_INVOCATION_KIND!>contract { callsInPlace(f, InvocationKind.EXACTLY_ONCE) }<!> // should be error
+    contract { <!WRONG_INVOCATION_KIND!>callsInPlace(f, InvocationKind.EXACTLY_ONCE)<!> } // should be error
     try {
         f()
     } catch (_: Exception) {
@@ -66,7 +66,7 @@ inline fun test_6(f: () -> Int): Int {
 
 @OptIn(ExperimentalContracts::class)
 inline fun test_7(f: () -> Unit) {
-    <!WRONG_INVOCATION_KIND!>contract { callsInPlace(f, InvocationKind.EXACTLY_ONCE) }<!> // should be error
+    contract { <!WRONG_INVOCATION_KIND!>callsInPlace(f, InvocationKind.EXACTLY_ONCE)<!> } // should be error
     try {
         f()
     } catch (_: Exception) {
@@ -78,7 +78,7 @@ inline fun test_7(f: () -> Unit) {
 
 @OptIn(ExperimentalContracts::class)
 inline fun test_8(f: () -> Int): Int {
-    <!WRONG_INVOCATION_KIND!>contract { callsInPlace(f, InvocationKind.EXACTLY_ONCE) }<!> // should be error
+    contract { <!WRONG_INVOCATION_KIND!>callsInPlace(f, InvocationKind.EXACTLY_ONCE)<!> } // should be error
     try {
         return f()
     } catch (_: Exception) {
