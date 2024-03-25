@@ -1,0 +1,8 @@
+public class JavaClass1 {
+    public String changing() {
+        return "";
+    }
+
+    public void nonChanging() {
+    }
+}

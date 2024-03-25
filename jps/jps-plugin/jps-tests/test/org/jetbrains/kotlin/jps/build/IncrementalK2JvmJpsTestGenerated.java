@@ -1328,6 +1328,11 @@ public class IncrementalK2JvmJpsTestGenerated extends AbstractIncrementalK2JvmJp
         runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignature/");
       }
 
+      @TestMetadata("changeSignatureJKJ")
+      public void testChangeSignatureJKJ() {
+        runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignatureJKJ/");
+      }
+
       @TestMetadata("changeSignaturePackagePrivate")
       public void testChangeSignaturePackagePrivate() {
         runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignaturePackagePrivate/");
@@ -1472,6 +1477,19 @@ public class IncrementalK2JvmJpsTestGenerated extends AbstractIncrementalK2JvmJp
 
         public void testAllFilesPresentInChangeSignature() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignature"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+        }
+      }
+
+      @TestMetadata("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignatureJKJ")
+      @TestDataPath("$PROJECT_ROOT")
+      @RunWith(JUnit3RunnerWithInners.class)
+      public static class ChangeSignatureJKJ extends AbstractIncrementalK2JvmJpsTest {
+        private void runTest(String testDataFilePath) {
+          KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInChangeSignatureJKJ() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignatureJKJ"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
         }
       }
 

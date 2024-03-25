@@ -373,6 +373,7 @@ open class FirFrontendFacade(
                     lookupTracker = null,
                     enumWhenTracker = null,
                     importTracker = null,
+                    javaClassesTracker = null,
                     predefinedJavaComponents,
                     needRegisterJavaElementFinder = true,
                     registerExtraComponents = ::registerExtraComponents,

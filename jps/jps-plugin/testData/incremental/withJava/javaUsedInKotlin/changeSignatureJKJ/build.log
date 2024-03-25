@@ -1,0 +1,29 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/JavaClass1.class
+End of files
+Exit code: NOTHING_DONE
+------------------------------------------
+Compiling files:
+  src/JavaClass1.java
+End of files
+Cleaning output files:
+  out/production/module/KotlinFun2Kt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/Use2Kt.class
+End of files
+Compiling files:
+  src/kotlinFun2.kt
+  src/use2.kt
+End of files
+Exit code: OK
+------------------------------------------
+Cleaning output files:
+  out/production/module/JavaClass3.class
+End of files
+Exit code: NOTHING_DONE
+------------------------------------------
+Compiling files:
+  src/JavaClass3.java
+End of files
