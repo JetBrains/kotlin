@@ -147,14 +147,14 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
             computeDependencyProviderList = { session ->
                 if (languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation) && !moduleData.isCommon) {
                     listOf(
-                        JvmClassFileBasedSymbolProvider(
+                        /*JvmClassFileBasedSymbolProvider(
                             session,
                             moduleDataProvider,
                             session.kotlinScopeProvider,
                             packagePartProvider!!,
                             projectEnvironment.getKotlinClassFinder(scope!!),
                             projectEnvironment.getFirJavaFacade(session, moduleDataProvider.allModuleData.last(), scope)
-                        ),
+                        ),*/
                         FirBuiltinSymbolProvider(session, session.moduleData, session.kotlinScopeProvider),
                     )
                 } else {

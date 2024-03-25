@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -53,7 +54,9 @@ object FirConstPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
 
         val initializer = declaration.initializer
         if (initializer == null) {
-            reporter.reportOn(declaration.source, FirErrors.CONST_VAL_WITHOUT_INITIALIZER, context)
+            if (!context.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
+                reporter.reportOn(declaration.source, FirErrors.CONST_VAL_WITHOUT_INITIALIZER, context)
+            }
             return
         }
 

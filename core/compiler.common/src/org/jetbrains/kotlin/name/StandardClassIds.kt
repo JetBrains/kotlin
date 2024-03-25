@@ -198,6 +198,8 @@ object StandardClassIds {
 
         val ActualizeByJvmBuiltinProvider = "ActualizeByJvmBuiltinProvider".baseId()
 
+        val ExperimentalStdlibApi = "ExperimentalStdlibApi".baseId()
+
         object ParameterNames {
             val value = Name.identifier("value")
 

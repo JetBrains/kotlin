@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.deserialization.FirBuiltinAnnotationDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
@@ -80,9 +82,16 @@ open class FirBuiltinSymbolProvider(
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
-        return allPackageFragments[classId.packageFqName]?.firstNotNullOfOrNull {
+        /*if (session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation) &&
+            (classId == StandardClassIds.Annotations.ExperimentalStdlibApi || classId == )
+        ) {
+            return null
+        }*/
+
+        val result = allPackageFragments[classId.packageFqName]?.firstNotNullOfOrNull {
             it.getClassLikeSymbolByClassId(classId)
         } ?: syntheticFunctionInterfaceProvider.getClassLikeSymbolByClassId(classId)
+        return result
     }
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {

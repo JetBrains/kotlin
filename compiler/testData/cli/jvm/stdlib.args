@@ -1,6 +1,6 @@
-$TESTDATA_DIR$/stdlib/common.kt
-$TESTDATA_DIR$/stdlib/platform.kt
--Xcommon-sources=$TESTDATA_DIR$/stdlib/common.kt
+$TESTDATA_DIR$/stdlib/common
+$TESTDATA_DIR$/stdlib/platform
+-Xcommon-sources=$TESTDATA_DIR$/stdlib/common
 -language-version
 2.0
 -cp
