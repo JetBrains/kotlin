@@ -814,7 +814,7 @@ internal class KtFirCallResolver(
     private fun FirVariableAssignment.toPartiallyAppliedSymbol(): KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol>? {
         val variableRef = calleeReference as? FirResolvedNamedReference ?: return null
         val variableSymbol = variableRef.resolvedSymbol as? FirVariableSymbol<*> ?: return null
-        val substitutor = unwrapLValue()?.createConeSubstitutorFromTypeArguments(rootModuleSession) ?: return null
+        val substitutor = unwrapLValue()?.createConeSubstitutorFromTypeArguments() ?: return null
         val ktSignature = variableSymbol.toKtSignature()
         return KtPartiallyAppliedSymbol(
             with(analysisSession) { ktSignature.substitute(substitutor.toKtSubstitutor()) },
@@ -828,7 +828,7 @@ internal class KtFirCallResolver(
     ): KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol>? {
         val operationSymbol =
             (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirNamedFunctionSymbol ?: return null
-        val substitutor = createConeSubstitutorFromTypeArguments(rootModuleSession) ?: return null
+        val substitutor = createConeSubstitutorFromTypeArguments() ?: return null
         val explicitReceiver = this.explicitReceiver
         val dispatchReceiver = this.dispatchReceiver
         val extensionReceiver = this.extensionReceiver
