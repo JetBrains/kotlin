@@ -274,12 +274,6 @@
     public void registerExtensionPoint(java.lang.String, java.lang.String, com.intellij.openapi.extensions.ExtensionPoint$Kind);
 }
 
-# Serialization plugin
-
--keep class com.intellij.openapi.util.io.JarUtil {
-    public static java.lang.String getJarAttribute(java.io.File, java.util.jar.Attributes$Name);
-}
-
 # used in REPL
 # TODO: pack jline directly to scripting-compiler jars instead
 -keep class org.jline.reader.LineReaderBuilder { *; }
