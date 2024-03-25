@@ -997,30 +997,32 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             """
                 Non-public primary constructor is exposed via the generated 'copy()' method of the 'data' class.
 
-                The generated 'copy()' will change it's visibility in future releases.
+                The generated 'copy()' will change its visibility in future releases.
 
                 To suppress the warning do one of the following:
-                - Annotate the data class with '@ConsistentDataCopyVisibility' annotation.
-                - Use '-Xconsistent-data-class-copy-visibility' compiler flag.
-                - Annotate the data class with '@InconsistentDataCopyVisibility' annotation 
-                  (Discouraged, but useful if you want to keep binary compatibility).
+                - Annotate the data class with the '@ConsistentDataCopyVisibility' annotation.
+                - Use the '-Xconsistent-data-class-copy-visibility' compiler flag.
+                - Annotate the data class with the '@InconsistentDataCopyVisibility' annotation 
+                  (Discouraged, but can be used to keep binary compatibility).
 
-                See more in the '@ConsistentDataCopyVisibility' and '@InconsistentDataCopyVisibility' annotations KDoc.
+                To learn more, see the documentation of the '@ConsistentDataCopyVisibility' and '@InconsistentDataCopyVisibility' annotations.
 
 
             """.trimIndent() // Two empty lines at the end to append "This will become an error in" message
         )
         map.put(
             DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE,
-            "This 'copy()' exposes 'data class' non-public primary constructor. Please migrate the usage."
+            "This 'copy()' exposes the non-public primary constructor of a 'data class'. Please migrate the usage. " +
+                    "See the appropriate 'data class' documentation " +
+                    "or contact 'data class' author for the migration guidance."
         )
         map.put(
             DATA_CLASS_CONSISTENT_COPY_AND_INCONSISTENT_COPY_ARE_INCOMPATIBLE_ANNOTATIONS,
-            "'@ConsistentDataCopyVisibility' and '@InconsistentDataCopyVisibility' are incompatible"
+            "'@ConsistentDataCopyVisibility' and '@InconsistentDataCopyVisibility' are incompatible."
         )
         map.put(
             DATA_CLASS_CONSISTENT_COPY_WRONG_ANNOTATION_TARGET,
-            "'@ConsistentDataCopyVisibility' and '@InconsistentDataCopyVisibility' can only be applied to data classes"
+            "'@ConsistentDataCopyVisibility' and '@InconsistentDataCopyVisibility' can only be applied to data classes."
         )
         map.put(DATA_CLASS_WITHOUT_PARAMETERS, "Data class must have at least one primary constructor parameter.")
         map.put(DATA_CLASS_VARARG_PARAMETER, "Primary constructor vararg parameters are prohibited for data classes.")
@@ -1080,7 +1082,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             EMPTY,
             EMPTY
         )
-        map.put(REDUNDANT_ANNOTATION, "Annotation ''{0}'' is redundant", TO_STRING)
+        map.put(REDUNDANT_ANNOTATION, "Annotation ''{0}'' is redundant.", TO_STRING)
         map.put(ANNOTATION_ON_SUPERCLASS, "Annotations on superclasses are meaningless.")
         map.put(RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION, "Expression annotations with retention other than SOURCE are prohibited.")
         map.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''.", TO_STRING)

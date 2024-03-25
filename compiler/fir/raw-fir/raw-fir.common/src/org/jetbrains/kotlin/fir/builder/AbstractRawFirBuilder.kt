@@ -1204,7 +1204,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
         dispatchReceiverType = dispatchReceiver
         resolvePhase = this@createDataClassCopyFunction.resolvePhase
         // We need to resolve annotations on the data class. It's not possible to do it on RAW_FIR phase.
-        // We will resolve the visibility later on the STATUS phase
+        // We will resolve the visibility later in the STATUS phase
         status = if (isFromLibrary) {
             FirResolvedDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL, EffectiveVisibility.Unknown)
         } else {

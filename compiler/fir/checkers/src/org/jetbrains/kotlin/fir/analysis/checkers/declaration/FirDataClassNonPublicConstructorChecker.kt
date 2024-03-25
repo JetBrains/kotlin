@@ -29,6 +29,10 @@ object FirDataClassNonPublicConstructorChecker : FirRegularClassChecker(MppCheck
         if (declaration.classKind != ClassKind.CLASS || !declaration.isData) {
             return
         }
+        val primaryConstructor = declaration.primaryConstructorIfAny(context.session) ?: return
+        if (primaryConstructor.visibility == Visibilities.Public) {
+            return
+        }
         val isAlreadyAnnotated = declaration.annotations.any {
             val fqName = it.fqName(context.session)
             fqName == StandardNames.CONSISTENT_DATA_COPY_VISIBILITY || fqName == StandardNames.INCONSISTENT_DATA_COPY_VISIBILITY
@@ -36,10 +40,6 @@ object FirDataClassNonPublicConstructorChecker : FirRegularClassChecker(MppCheck
         if (isAlreadyAnnotated) {
             return
         }
-        val primaryConstructor = declaration.primaryConstructorIfAny(context.session) ?: return
-
-        if (primaryConstructor.visibility != Visibilities.Public) {
-            reporter.reportOn(primaryConstructor.source, FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED, context)
-        }
+        reporter.reportOn(primaryConstructor.source, FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED, context)
     }
 }

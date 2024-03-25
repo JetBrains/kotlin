@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// LANGUAGE: +DataClassCopyRespectsConstructorVisibility
+// LANGUAGE: -ErrorAboutDataClassCopyVisibilityChange, -DataClassCopyRespectsConstructorVisibility
 @kotlin.ConsistentDataCopyVisibility
 class Foo
 

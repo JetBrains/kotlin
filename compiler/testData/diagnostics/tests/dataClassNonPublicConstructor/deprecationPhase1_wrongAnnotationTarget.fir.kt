@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// LANGUAGE: +DataClassCopyRespectsConstructorVisibility
+// LANGUAGE: -ErrorAboutDataClassCopyVisibilityChange, -DataClassCopyRespectsConstructorVisibility
 <!DATA_CLASS_CONSISTENT_COPY_WRONG_ANNOTATION_TARGET!>@kotlin.ConsistentDataCopyVisibility<!>
 class Foo
 

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.doesDataClassCopyRespectConstructorVisibility
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -26,24 +24,20 @@ import org.jetbrains.kotlin.resolve.DataClassResolver
 
 object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        // Optimization. isCopyAlreadyInaccessible will check it anyway
-        if (context.languageVersionSettings.doesDataClassCopyRespectConstructorVisibility()) {
-            return
-        }
         val dataClass = expression.resolvedType.toRegularClassSymbol(context.session) ?: return
         val copyFunction = expression.calleeReference.symbol as? FirCallableSymbol ?: return
         if (DataClassResolver.isCopy(copyFunction.name) && copyFunction.origin == FirDeclarationOrigin.Synthetic.DataClassMember) {
             val dataClassConstructor = dataClass.primaryConstructorSymbol(context.session) ?: return
 
             @OptIn(SymbolInternals::class)
-            val isCopyAlreadyBecameInaccessible = !context.session.visibilityChecker.isVisible(
+            val hasCopyAlreadyBecameInaccessible = !context.session.visibilityChecker.isVisible(
                 copyFunction.fir as? FirMemberDeclaration ?: return,
                 context.session,
                 context.containingFile ?: return,
                 context.containingDeclarations,
                 dispatchReceiver = null
             )
-            if (isCopyAlreadyBecameInaccessible) {
+            if (hasCopyAlreadyBecameInaccessible) {
                 return
             }
 
@@ -55,7 +49,7 @@ object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirFunctionCallCheck
                 context.containingDeclarations,
                 dispatchReceiver = null
             )
-            // We don't check presence @InconsistentDataCopyVisibility annotations, on purpose.
+            // We don't check the presence of @InconsistentDataCopyVisibility annotations on purpose.
             // Even if the 'copy' is exposed, call-sites need to migrate.
             if (!isConstructorVisible) {
                 reporter.reportOn(expression.calleeReference.source, FirErrors.DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE, context)
