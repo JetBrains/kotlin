@@ -33,6 +33,9 @@ uint8_t* SingleObjectPage::Data() noexcept {
 
 uint8_t* SingleObjectPage::TryAllocate() noexcept {
     if (isAllocated_) return nullptr;
+
+    allocatedSizeTracker_.onPageOverflow(size_);
+
     isAllocated_ = true;
     return Data();
 }
@@ -42,6 +45,9 @@ bool SingleObjectPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalize
     if (SweepObject(Data(), finalizerQueue, sweepHandle)) {
         return true;
     }
+
+    allocatedSizeTracker_.afterSweep(0);
+
     isAllocated_ = false;
     return false;
 }

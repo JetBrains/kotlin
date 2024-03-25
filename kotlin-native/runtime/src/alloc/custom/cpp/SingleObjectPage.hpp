@@ -10,13 +10,14 @@
 #include <cstdint>
 #include <vector>
 
+#include "AnyPage.hpp"
 #include "AtomicStack.hpp"
 #include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
 
 namespace kotlin::alloc {
 
-class alignas(8) SingleObjectPage {
+class alignas(kPageAlignment) SingleObjectPage : public AnyPage<SingleObjectPage> {
 public:
     using GCSweepScope = gc::GCHandle::GCSweepScope;
 
@@ -33,7 +34,6 @@ public:
     bool Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
 
 private:
-    friend class AtomicStack<SingleObjectPage>;
     friend class Heap;
 
     explicit SingleObjectPage(size_t size) noexcept;
@@ -41,7 +41,6 @@ private:
     // Testing method
     std::vector<uint8_t*> GetAllocatedBlocks() noexcept;
 
-    std::atomic<SingleObjectPage*> next_;
     bool isAllocated_ = false;
     size_t size_;
     struct alignas(8) {

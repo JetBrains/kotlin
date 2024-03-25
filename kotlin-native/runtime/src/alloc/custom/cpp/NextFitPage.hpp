@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <vector>
 
+#include "AnyPage.hpp"
 #include "AtomicStack.hpp"
 #include "Cell.hpp"
 #include "ExtraObjectPage.hpp"
@@ -17,7 +18,7 @@
 
 namespace kotlin::alloc {
 
-class alignas(8) NextFitPage {
+class alignas(kPageAlignment) NextFitPage : public AnyPage<NextFitPage> {
 public:
     using GCSweepScope = gc::GCHandle::GCSweepScope;
 
@@ -45,8 +46,7 @@ private:
     // found, update to the largest one.
     void UpdateCurBlock(uint32_t cellsNeeded) noexcept;
 
-    friend class AtomicStack<NextFitPage>;
-    std::atomic<NextFitPage*> next_;
+    std::size_t GetAllocatedSizeBytes() noexcept;
 
     Cell* curBlock_;
     Cell cells_[]; // cells_[0] is reserved for an empty block
