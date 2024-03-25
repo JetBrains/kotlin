@@ -1623,6 +1623,13 @@ public final annotation class ExperimentalUnsignedTypes : kotlin.Annotation {
     public constructor ExperimentalUnsignedTypes()
 }
 
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS})
+@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE)
+@kotlin.SinceKotlin(version = "2.0")
+public final annotation class ExposedCopyVisibility : kotlin.Annotation {
+    public constructor ExposedCopyVisibility()
+}
+
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE})
 @kotlin.annotation.MustBeDocumented
 public final annotation class ExtensionFunctionType : kotlin.Annotation {
@@ -1843,13 +1850,6 @@ public open class IllegalStateException : kotlin.RuntimeException {
     public constructor IllegalStateException(message: kotlin.String?, cause: kotlin.Throwable?)
 
     public constructor IllegalStateException(cause: kotlin.Throwable?)
-}
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS})
-@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE)
-@kotlin.SinceKotlin(version = "2.0")
-public final annotation class ExposedCopyVisibility : kotlin.Annotation {
-    public constructor ExposedCopyVisibility()
 }
 
 public open class IndexOutOfBoundsException : kotlin.RuntimeException {
