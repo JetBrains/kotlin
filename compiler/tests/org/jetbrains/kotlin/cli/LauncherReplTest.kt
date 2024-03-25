@@ -120,6 +120,7 @@ class LauncherReplTest : TestCaseWithTmpdir() {
             writeNextInput(nextInput)
         }
         writeNextInput(":quit")
+        writer.close()
     }
 
     private fun assertOutputMatches(
