@@ -16,7 +16,7 @@ private fun UNSUPPORTED_OPERATION() {
 
 @PublishedApi
 internal fun <E> createListFrom(array: JsReadonlyArray<E>): List<E> =
-    ArrayList<E>(array.asDynamic().slice().unsafeCast<Array<Any?>>()).asReadonly()
+    ArrayList<E>(array.asDynamic().slice().unsafeCast<Array<Any?>>()).build()
 
 @PublishedApi
 internal fun <E> createMutableListFrom(array: JsReadonlyArray<E>): MutableList<E> =
