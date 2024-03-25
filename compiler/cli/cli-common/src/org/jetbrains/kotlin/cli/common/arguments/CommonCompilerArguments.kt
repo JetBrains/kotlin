@@ -597,11 +597,11 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         }
 
     @Argument(
-        value = "-Xconsistent-data-copy-visibility",
-        description = "The effect of this compiler flag is the same as applying @ConsistentDataCopyVisibility annotation to all data classes in the module. " +
+        value = "-Xconsistent-data-class-copy-visibility",
+        description = "The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. " +
                 "See https://youtrack.jetbrains.com/issue/KT-11914"
     )
-    var consistentDataCopyVisibility = false
+    var consistentDataClassCopyVisibility = false
         set(value) {
             checkFrozen()
             field = value
@@ -770,7 +770,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             put(AnalysisFlags.extendedCompilerChecks, extendedCompilerChecks)
             put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
             put(AnalysisFlags.muteExpectActualClassesWarning, expectActualClasses)
-            put(AnalysisFlags.consistentDataCopyVisibility, consistentDataCopyVisibility)
+            put(AnalysisFlags.consistentDataClassCopyVisibility, consistentDataClassCopyVisibility)
             put(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
             put(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)
         }

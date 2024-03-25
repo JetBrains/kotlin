@@ -157,8 +157,8 @@ object StandardClassIds {
         val DeprecatedSinceKotlin = "DeprecatedSinceKotlin".baseId()
         val RequireKotlin = "RequireKotlin".internalId()
 
-        val ConsistentDataCopyVisibility = "ConsistentDataCopyVisibility".baseId()
-        val InconsistentDataCopyVisibility = "InconsistentDataCopyVisibility".baseId()
+        val ConsistentCopyVisibility = "ConsistentCopyVisibility".baseId()
+        val ExposedCopyVisibility = "ExposedCopyVisibility".baseId()
 
         val HidesMembers = "HidesMembers".internalId()
         val DynamicExtension = "DynamicExtension".internalId()

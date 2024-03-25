@@ -32,8 +32,8 @@ object FirDataClassNonPublicConstructorChecker : FirRegularClassChecker(MppCheck
         if (primaryConstructor.visibility == Visibilities.Public) {
             return
         }
-        val isAlreadyAnnotated = declaration.hasAnnotation(StandardClassIds.Annotations.ConsistentDataCopyVisibility, context.session) ||
-                declaration.hasAnnotation(StandardClassIds.Annotations.InconsistentDataCopyVisibility, context.session)
+        val isAlreadyAnnotated = declaration.hasAnnotation(StandardClassIds.Annotations.ConsistentCopyVisibility, context.session) ||
+                declaration.hasAnnotation(StandardClassIds.Annotations.ExposedCopyVisibility, context.session)
         if (isAlreadyAnnotated) {
             return
         }

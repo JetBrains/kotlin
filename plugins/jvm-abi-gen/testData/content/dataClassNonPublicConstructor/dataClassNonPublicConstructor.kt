@@ -1,7 +1,7 @@
 package test
 
-@ConsistentDataCopyVisibility
+@ConsistentCopyVisibility
 data class PrivateConstructor private constructor(val x: Int)
 
-@ConsistentDataCopyVisibility
+@ConsistentCopyVisibility
 data class InternalConstructor internal constructor(val x: Int)

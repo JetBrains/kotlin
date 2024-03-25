@@ -1,5 +1,5 @@
 // WITH_STDLIB
 // LANGUAGE: -ErrorAboutDataClassCopyVisibilityChange, -DataClassCopyRespectsConstructorVisibility
-@kotlin.ConsistentDataCopyVisibility
-@kotlin.InconsistentDataCopyVisibility
+@kotlin.ConsistentCopyVisibility
+@kotlin.ExposedCopyVisibility
 data class Data private constructor(val x: Int)

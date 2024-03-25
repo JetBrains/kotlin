@@ -68,7 +68,7 @@ object AnalysisFlags {
     val muteExpectActualClassesWarning by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val consistentDataCopyVisibility by AnalysisFlag.Delegates.Boolean
+    val consistentDataClassCopyVisibility by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
     val allowFullyQualifiedNameInKClass by AnalysisFlag.Delegates.Boolean
@@ -81,6 +81,6 @@ object AnalysisFlags {
 }
 
 fun LanguageVersionSettings.doesDataClassCopyRespectConstructorVisibility(): Boolean {
-    return getFlag(AnalysisFlags.consistentDataCopyVisibility) ||
+    return getFlag(AnalysisFlags.consistentDataClassCopyVisibility) ||
             supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)
 }

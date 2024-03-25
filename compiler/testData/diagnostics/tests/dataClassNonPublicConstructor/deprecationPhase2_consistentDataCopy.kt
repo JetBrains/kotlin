@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // LANGUAGE: +ErrorAboutDataClassCopyVisibilityChange, -DataClassCopyRespectsConstructorVisibility
-@kotlin.ConsistentDataCopyVisibility
+@kotlin.ConsistentCopyVisibility
 data class Data private constructor(val x: Int)
 
 fun local(data: Data) {

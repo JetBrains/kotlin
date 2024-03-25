@@ -1,7 +1,7 @@
 public abstract interface annotation class kotlin/BuilderInference : java/lang/annotation/Annotation {
 }
 
-public abstract interface annotation class kotlin/ConsistentDataCopyVisibility : java/lang/annotation/Annotation {
+public abstract interface annotation class kotlin/ConsistentCopyVisibility : java/lang/annotation/Annotation {
 }
 
 public abstract interface annotation class kotlin/ContextFunctionTypeParams : java/lang/annotation/Annotation {
@@ -71,7 +71,7 @@ public abstract interface annotation class kotlin/ExtensionFunctionType : java/l
 public abstract interface class kotlin/Function {
 }
 
-public abstract interface annotation class kotlin/InconsistentDataCopyVisibility : java/lang/annotation/Annotation {
+public abstract interface annotation class kotlin/ExposedCopyVisibility : java/lang/annotation/Annotation {
 }
 
 public final class kotlin/KotlinNothingValueException : java/lang/RuntimeException {

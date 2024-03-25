@@ -170,7 +170,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_CONSTRUCTO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_GENERIC_UPPER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_INHERITANCE_HIERARCHY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DANGEROUS_CHARACTERS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_CONSISTENT_COPY_AND_INCONSISTENT_COPY_ARE_INCOMPATIBLE_ANNOTATIONS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_CONSISTENT_COPY_AND_EXPOSED_COPY_ARE_INCOMPATIBLE_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_CONSISTENT_COPY_WRONG_ANNOTATION_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_INVISIBLE_COPY_USAGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED
@@ -1000,12 +1000,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
                 The generated 'copy()' will change its visibility in future releases.
 
                 To suppress the warning do one of the following:
-                - Annotate the data class with the '@ConsistentDataCopyVisibility' annotation.
+                - Annotate the data class with the '@ConsistentCopyVisibility' annotation.
                 - Use the '-Xconsistent-data-class-copy-visibility' compiler flag.
-                - Annotate the data class with the '@InconsistentDataCopyVisibility' annotation 
+                - Annotate the data class with the '@ExposedCopyVisibility' annotation 
                   (Discouraged, but can be used to keep binary compatibility).
 
-                To learn more, see the documentation of the '@ConsistentDataCopyVisibility' and '@InconsistentDataCopyVisibility' annotations.
+                To learn more, see the documentation of the '@ConsistentCopyVisibility' and '@ExposedCopyVisibility' annotations.
 
 
             """.trimIndent() // Two empty lines at the end to append "This will become an error in" message
@@ -1017,12 +1017,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
                     "or contact the 'data class' author for migration guidance."
         )
         map.put(
-            DATA_CLASS_CONSISTENT_COPY_AND_INCONSISTENT_COPY_ARE_INCOMPATIBLE_ANNOTATIONS,
-            "'@ConsistentDataCopyVisibility' and '@InconsistentDataCopyVisibility' are incompatible."
+            DATA_CLASS_CONSISTENT_COPY_AND_EXPOSED_COPY_ARE_INCOMPATIBLE_ANNOTATIONS,
+            "'@ConsistentCopyVisibility' and '@ExposedCopyVisibility' are incompatible."
         )
         map.put(
             DATA_CLASS_CONSISTENT_COPY_WRONG_ANNOTATION_TARGET,
-            "'@ConsistentDataCopyVisibility' and '@InconsistentDataCopyVisibility' can only be applied to data classes."
+            "'@ConsistentCopyVisibility' and '@ExposedCopyVisibility' can only be applied to data classes."
         )
         map.put(DATA_CLASS_WITHOUT_PARAMETERS, "Data class must have at least one primary constructor parameter.")
         map.put(DATA_CLASS_VARARG_PARAMETER, "Primary constructor vararg parameters are prohibited for data classes.")

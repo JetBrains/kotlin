@@ -861,8 +861,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.DATA_CLASS_CONSISTENT_COPY_AND_INCONSISTENT_COPY_ARE_INCOMPATIBLE_ANNOTATIONS) { firDiagnostic ->
-        DataClassConsistentCopyAndInconsistentCopyAreIncompatibleAnnotationsImpl(
+    add(FirErrors.DATA_CLASS_CONSISTENT_COPY_AND_EXPOSED_COPY_ARE_INCOMPATIBLE_ANNOTATIONS) { firDiagnostic ->
+        DataClassConsistentCopyAndExposedCopyAreIncompatibleAnnotationsImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

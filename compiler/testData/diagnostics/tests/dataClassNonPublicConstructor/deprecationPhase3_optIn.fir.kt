@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // LANGUAGE: +ErrorAboutDataClassCopyVisibilityChange, +DataClassCopyRespectsConstructorVisibility
-<!REDUNDANT_ANNOTATION!>@ConsistentDataCopyVisibility<!>
+<!REDUNDANT_ANNOTATION!>@ConsistentCopyVisibility<!>
 data class Data private constructor(val x: Int)
 
 fun usage(data: Data) {
