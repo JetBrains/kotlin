@@ -1014,7 +1014,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             DATA_CLASS_COPY_USAGE_WILL_BECOME_INACCESSIBLE,
             "This 'copy()' exposes the non-public primary constructor of a 'data class'. Please migrate the usage. " +
                     "See the appropriate 'data class' documentation " +
-                    "or contact 'data class' author for the migration guidance."
+                    "or contact the 'data class' author for migration guidance."
         )
         map.put(
             DATA_CLASS_CONSISTENT_COPY_AND_INCONSISTENT_COPY_ARE_INCOMPATIBLE_ANNOTATIONS,
