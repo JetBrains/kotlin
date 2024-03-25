@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirBuilderConfigurator
-import org.jetbrains.kotlin.generators.tree.AbstractField
 
 object BuilderConfigurator : AbstractFirBuilderConfigurator<FirTreeBuilder>(FirTreeBuilder.elements) {
     override fun configureBuilders() = with(FirTreeBuilder) {
