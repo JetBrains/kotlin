@@ -2493,7 +2493,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             NON_PUBLIC_CALL_FROM_PUBLIC_INLINE_DEPRECATION,
             "Public-API inline function cannot access non-public-API ''{0}''. " +
-                    "This will become an error in ${formatKotlinWithVersion(LanguageFeature.ProhibitPrivateOperatorCallInInline)}.",
+                    "This will become an error in Kotlin ${LanguageFeature.ProhibitPrivateOperatorCallInInline.sinceVersion?.versionString}.",
             SYMBOL,
             SYMBOL
         )
@@ -2698,14 +2698,5 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             TO_STRING,
             TO_STRING
         )
-    }
-
-    fun formatKotlinWithVersion(feature: LanguageFeature): String {
-        val sinceVersion = feature.sinceVersion
-        return if (sinceVersion != null) {
-            "Kotlin ${sinceVersion.versionString}"
-        } else {
-            "a future release"
-        }
     }
 }

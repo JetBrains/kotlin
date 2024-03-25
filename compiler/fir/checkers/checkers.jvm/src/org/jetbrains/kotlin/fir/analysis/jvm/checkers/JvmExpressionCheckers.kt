@@ -40,8 +40,7 @@ object JvmExpressionCheckers : ExpressionCheckers() {
             FirSuperCallWithDefaultsChecker,
             FirJvmSuspensionPointInsideMutexLockChecker,
             FirJvmInconsistentOperatorFromJavaCallChecker,
-            FirJvmPolymorphicSignatureCallChecker,
-            FirJavaSamConstructorNullabilityChecker,
+            FirJvmPolymorphicSignatureCallChecker
         )
 
     override val annotationCheckers: Set<FirAnnotationChecker>
