@@ -36,9 +36,9 @@ var Boolean.case_3: () -> Unit
         return {}
     }
     set(value) {
-        <!WRONG_INVOCATION_KIND!><!CONTRACT_NOT_ALLOWED!>contract<!> {
-            callsInPlace(value, InvocationKind.EXACTLY_ONCE)
-        }<!>
+        <!CONTRACT_NOT_ALLOWED!>contract<!> {
+            <!WRONG_INVOCATION_KIND!>callsInPlace(value, InvocationKind.EXACTLY_ONCE)<!>
+        }
     }
 
 // TESTCASE NUMBER: 4

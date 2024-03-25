@@ -57,11 +57,9 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         )
 
         for ((symbol, uses) in leakedSymbols) {
-            // TODO, KT-59813: reportOn(argumentsCalledInPlace[symbol].source, ...)
-            reporter.reportOn(contract.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol, context)
+            reporter.reportOn(argumentsCalledInPlace[symbol]?.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol, context)
             for (use in uses) {
-                val source = use.source ?: continue
-                reporter.reportOn(source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol, context)
+                reporter.reportOn(use.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol, context)
             }
         }
 
@@ -69,8 +67,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
             val requiredRange = (firEffect.effect as ConeCallsEffectDeclaration).kind
             val foundRange = invocationData.getValue(graph.exitNode)[NormalPath]?.get(symbol)?.withoutMarker ?: EventOccurrencesRange.ZERO
             if (foundRange !in requiredRange) {
-                // TODO, KT-59813: reportOn(firEffect.source, ...)
-                reporter.reportOn(contract.source, FirErrors.WRONG_INVOCATION_KIND, symbol, requiredRange, foundRange, context)
+                reporter.reportOn(firEffect.source, FirErrors.WRONG_INVOCATION_KIND, symbol, requiredRange, foundRange, context)
             }
         }
     }

@@ -7,11 +7,11 @@ fun bar(x: () -> Unit) {
 
 @ExperimentalContracts
 fun foo(x: () -> Unit, y: () -> Unit, z: () -> Unit) {
-    <!LEAKED_IN_PLACE_LAMBDA, LEAKED_IN_PLACE_LAMBDA, LEAKED_IN_PLACE_LAMBDA!>contract {
-        callsInPlace(x, InvocationKind.AT_MOST_ONCE)
-        callsInPlace(y, InvocationKind.AT_MOST_ONCE)
-        callsInPlace(z, InvocationKind.AT_MOST_ONCE)
-    }<!>
+    contract {
+        <!LEAKED_IN_PLACE_LAMBDA!>callsInPlace(x, InvocationKind.AT_MOST_ONCE)<!>
+        <!LEAKED_IN_PLACE_LAMBDA!>callsInPlace(y, InvocationKind.AT_MOST_ONCE)<!>
+        <!LEAKED_IN_PLACE_LAMBDA!>callsInPlace(z, InvocationKind.AT_MOST_ONCE)<!>
+    }
 
     if (true) {
         bar(<!LEAKED_IN_PLACE_LAMBDA!>x<!>)

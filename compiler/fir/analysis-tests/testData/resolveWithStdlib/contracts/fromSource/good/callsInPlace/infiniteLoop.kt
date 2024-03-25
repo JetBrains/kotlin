@@ -5,7 +5,7 @@ fun getCondition(): Boolean = true
 
 @OptIn(ExperimentalContracts::class)
 fun test_1(f: () -> Unit) {
-    <!WRONG_INVOCATION_KIND!>contract { callsInPlace(f, InvocationKind.AT_LEAST_ONCE) }<!>
+    contract { <!WRONG_INVOCATION_KIND!>callsInPlace(f, InvocationKind.AT_LEAST_ONCE)<!> }
     while (true) {
         f()
     }
@@ -21,7 +21,7 @@ fun test_2(f: () -> Unit) {
 
 @OptIn(ExperimentalContracts::class)
 fun test_3(f: () -> Unit) {
-    <!WRONG_INVOCATION_KIND!>contract { callsInPlace(f, InvocationKind.AT_LEAST_ONCE) }<!>
+    contract { <!WRONG_INVOCATION_KIND!>callsInPlace(f, InvocationKind.AT_LEAST_ONCE)<!> }
     while (getCondition()) {
         f()
     }
