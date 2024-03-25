@@ -14,6 +14,6 @@ dependencies {
 }
 
 projectTest(parallel = true) {
-    dependsOn(":plugins:compose-compiler-plugin:temp:compiler:publish")
+    dependsOn(":plugins:compose-compiler-plugin:compiler:publish")
     workingDir = rootDir
 }

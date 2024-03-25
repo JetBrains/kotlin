@@ -77,7 +77,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-lombok-compiler-plugin.embeddable",
     ":kotlinx-serialization-compiler-plugin.embeddable",
     ":kotlin-annotation-processing-embeddable",
-    ":plugins:compose-compiler-plugin:temp:compiler",
+    ":plugins:compose-compiler-plugin:compiler",
     ":kotlin-script-runtime",
     ":kotlin-scripting-common",
     ":kotlin-scripting-jvm",
@@ -113,7 +113,7 @@ fun Task.dependsOnKotlinGradlePluginPublish() {
     kotlinGradlePluginAndItsRequired
         .filter {
             // Compose compiler plugin does not assemble with LV 1.9 and should not be a part of the dist bundle for now
-            it != ":plugins:compose-compiler-plugin:temp:compiler"
+            it != ":plugins:compose-compiler-plugin:compiler"
         }
         .forEach { dependency ->
             processDependent(dependency) {

@@ -5,7 +5,7 @@ plugins {
 kotlin.jvmToolchain(11)
 
 dependencies {
-    compileOnly(project(":plugins:compose-compiler-plugin:temp:compiler-hosted"))
+    compileOnly(project(":plugins:compose-compiler-plugin:compiler-hosted"))
 }
 
 description = "Compiler plugin that enables Compose"
