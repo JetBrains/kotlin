@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.actualizer
 import org.jetbrains.kotlin.backend.common.actualizer.checker.IrExpectActualCheckers
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
+import org.jetbrains.kotlin.ir.ActualClassExtractor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -35,7 +36,8 @@ class IrActualizer(
     expectActualTracker: ExpectActualTracker?,
     val useFirBasedFakeOverrideGenerator: Boolean,
     val mainFragment: IrModuleFragment,
-    val dependentFragments: List<IrModuleFragment>
+    val dependentFragments: List<IrModuleFragment>,
+    actualClassExtractor: ActualClassExtractor? = null
 ) {
     private val collector = ExpectActualCollector(
         mainFragment,
@@ -43,6 +45,7 @@ class IrActualizer(
         typeSystemContext,
         ktDiagnosticReporter,
         expectActualTracker,
+        actualClassExtractor,
     )
 
     private val classActualizationInfo = collector.collectClassActualizationInfo()

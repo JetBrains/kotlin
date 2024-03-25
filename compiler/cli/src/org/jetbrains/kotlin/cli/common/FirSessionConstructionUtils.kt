@@ -75,6 +75,7 @@ fun <F> prepareJvmSessions(
     var firJvmIncrementalCompilationSymbolProviders: FirJvmIncrementalCompilationSymbolProviders? = null
     var firJvmIncrementalCompilationSymbolProvidersIsInitialized = false
 
+    val packagePartProvider = projectEnvironment.getPackagePartProvider(librariesScope)
     return prepareSessions(
         files, configuration, rootModuleName, JvmPlatforms.unspecifiedJvmPlatform,
         JvmPlatformAnalyzerServices, metadataCompilationMode = false, libraryList, isCommonSource, isScript, fileBelongsToModule,
@@ -86,7 +87,7 @@ fun <F> prepareJvmSessions(
                 projectEnvironment,
                 extensionRegistrars,
                 librariesScope,
-                projectEnvironment.getPackagePartProvider(librariesScope),
+                packagePartProvider,
                 configuration.languageVersionSettings,
                 predefinedJavaComponents = predefinedJavaComponents,
                 registerExtraComponents = {},
@@ -123,6 +124,9 @@ fun <F> prepareJvmSessions(
             needRegisterJavaElementFinder = true,
             registerExtraComponents = {},
             sessionConfigurator,
+            libraryList.moduleDataProvider,
+            packagePartProvider,
+            librariesScope,
         )
     }
 }

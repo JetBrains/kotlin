@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.fir.scopes.impl.FirDelegatedMembersFilter
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
@@ -87,6 +90,9 @@ object FirSessionFactoryHelper {
             needRegisterJavaElementFinder,
             registerExtraComponents = {},
             init = sessionConfigurator,
+            dependencyList.moduleDataProvider,
+            packagePartProvider,
+            librariesScope,
         )
     }
 
@@ -144,5 +150,47 @@ object FirSessionFactoryHelper {
         register(FirOverridesBackwardCompatibilityHelper::class, FirDefaultOverridesBackwardCompatibilityHelper)
         register(FirDelegatedMembersFilter::class, FirDelegatedMembersFilter.Default)
         register(FirPlatformSpecificCastChecker::class, FirPlatformSpecificCastChecker.Default)
+    }
+
+    fun computeDependencyProviderList(session: FirSession, moduleData: FirModuleData): List<FirSymbolProvider> {
+        // dependsOnDependencies can actualize declarations from their dependencies. Because actual declarations can be more specific
+        // (e.g. have additional supertypes), the modules must be ordered from most specific (i.e. actual) to most generic (i.e. expect)
+        // to prevent false positive resolution errors (see KT-57369 for an example).
+        return (moduleData.dependencies + moduleData.friendDependencies + moduleData.allDependsOnDependencies)
+            .mapNotNull { session.sessionProvider?.getSession(it) }
+            .flatMap { it.symbolProvider.flatten() }
+            .distinct()
+            .sortedBy { it.session.kind }
+    }
+
+    /* It eliminates dependency and composite providers since the current dependency provider is composite in fact.
+     *  To prevent duplications and resolving errors, library or source providers from other modules should be filtered out during flattening.
+     *  It depends on the session's kind of the top-level provider */
+    private fun FirSymbolProvider.flatten(): List<FirSymbolProvider> {
+        val originalSession = session.takeIf { it.kind == FirSession.Kind.Source }
+        val result = mutableListOf<FirSymbolProvider>()
+
+        fun FirSymbolProvider.collectProviders() {
+            when {
+                // When provider is composite, unwrap all contained providers and recurse.
+                this is FirCachingCompositeSymbolProvider -> {
+                    for (provider in providers) {
+                        provider.collectProviders()
+                    }
+                }
+
+                // Make sure only source symbol providers from the same session as the original symbol provider are flattened. A composite
+                // symbol provider can contain source symbol providers from multiple sessions that may represent dependency symbol providers
+                // which should not be propagated transitively.
+                originalSession != null && session.kind == FirSession.Kind.Source && session == originalSession ||
+                        originalSession == null && session.kind == FirSession.Kind.Library -> {
+                    result.add(this)
+                }
+            }
+        }
+
+        collectProviders()
+
+        return result
     }
 }

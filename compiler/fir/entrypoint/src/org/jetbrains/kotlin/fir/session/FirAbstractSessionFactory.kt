@@ -16,11 +16,7 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirLibrarySessionProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.*
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
@@ -92,7 +88,10 @@ abstract class FirAbstractSessionFactory {
             FirSession, FirKotlinScopeProvider, FirSymbolProvider,
             FirSwitchableExtensionDeclarationsSymbolProvider?,
             dependencies: List<FirSymbolProvider>,
-        ) -> List<FirSymbolProvider>
+        ) -> List<FirSymbolProvider>,
+        computeDependencyProviderList: (FirSession) -> List<FirSymbolProvider> = {
+            FirSessionFactoryHelper.computeDependencyProviderList(it, moduleData)
+        }
     ): FirSession {
         return FirCliSession(sessionProvider, FirSession.Kind.Source).apply session@{
             moduleData.bindSession(this@session)
@@ -120,7 +119,7 @@ abstract class FirAbstractSessionFactory {
             }.configure()
             registerCommonComponentsAfterExtensionsAreConfigured()
 
-            val dependencyProviders = computeDependencyProviderList(moduleData)
+            val dependencyProviders = computeDependencyProviderList(this@session)
             val generatedSymbolsProvider = FirSwitchableExtensionDeclarationsSymbolProvider.createIfNeeded(this)
 
             val providers = createProviders(
@@ -142,47 +141,5 @@ abstract class FirAbstractSessionFactory {
             generatedSymbolsProvider?.let { register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it) }
             register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, FirCachingCompositeSymbolProvider(this, dependencyProviders))
         }
-    }
-
-    private fun FirSession.computeDependencyProviderList(moduleData: FirModuleData): List<FirSymbolProvider> {
-        // dependsOnDependencies can actualize declarations from their dependencies. Because actual declarations can be more specific
-        // (e.g. have additional supertypes), the modules must be ordered from most specific (i.e. actual) to most generic (i.e. expect)
-        // to prevent false positive resolution errors (see KT-57369 for an example).
-        return (moduleData.dependencies + moduleData.friendDependencies + moduleData.allDependsOnDependencies)
-            .mapNotNull { sessionProvider?.getSession(it) }
-            .flatMap { it.symbolProvider.flatten() }
-            .distinct()
-            .sortedBy { it.session.kind }
-    }
-
-    /* It eliminates dependency and composite providers since the current dependency provider is composite in fact.
-    *  To prevent duplications and resolving errors, library or source providers from other modules should be filtered out during flattening.
-    *  It depends on the session's kind of the top-level provider */
-    private fun FirSymbolProvider.flatten(): List<FirSymbolProvider> {
-        val originalSession = session.takeIf { it.kind == FirSession.Kind.Source }
-        val result = mutableListOf<FirSymbolProvider>()
-
-        fun FirSymbolProvider.collectProviders() {
-            when {
-                // When provider is composite, unwrap all contained providers and recurse.
-                this is FirCachingCompositeSymbolProvider -> {
-                    for (provider in providers) {
-                        provider.collectProviders()
-                    }
-                }
-
-                // Make sure only source symbol providers from the same session as the original symbol provider are flattened. A composite
-                // symbol provider can contain source symbol providers from multiple sessions that may represent dependency symbol providers
-                // which should not be propagated transitively.
-                originalSession != null && session.kind == FirSession.Kind.Source && session == originalSession ||
-                        originalSession == null && session.kind == FirSession.Kind.Library -> {
-                    result.add(this)
-                }
-            }
-        }
-
-        collectProviders()
-
-        return result
     }
 }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.actualizer.SpecialFakeOverrideSymbols
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -20,7 +21,11 @@ import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -36,6 +41,7 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 data class FirResult(val outputs: List<ModuleCompilerAnalyzedOutput>)
@@ -124,16 +130,23 @@ fun FirResult.convertToIrAndActualize(
         }
     }
 
+    val languageVersionSettings = fir2IrConfiguration.languageVersionSettings
+    val builtinsActualClassExtractor = runIf(
+        platformFirOutput.session.moduleData.platform.isJvm() && languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)
+    ) {
+        val dependencyProviders = (platformFirOutput.session.symbolProvider as FirCachingCompositeSymbolProvider).providers
+        val builtinsSymbolProvider = dependencyProviders.filterIsInstance<FirBuiltinSymbolProvider>().single()
+        FirBuiltinsActualClassExtractor(builtinsSymbolProvider, platformComponentsStorage.classifierStorage)
+    }
+
     val irActualizer = if (dependentIrModules.isEmpty()) null else IrActualizer(
-        KtDiagnosticReporterWithImplicitIrBasedContext(
-            fir2IrConfiguration.diagnosticReporter,
-            fir2IrConfiguration.languageVersionSettings
-        ),
+        KtDiagnosticReporterWithImplicitIrBasedContext(fir2IrConfiguration.diagnosticReporter, languageVersionSettings),
         actualizerTypeContextProvider(mainIrModule.irBuiltins),
         fir2IrConfiguration.expectActualTracker,
         fir2IrConfiguration.useFirBasedFakeOverrideGenerator,
         mainIrModule,
         dependentIrModules,
+        builtinsActualClassExtractor,
     )
 
     if (!fir2IrConfiguration.useFirBasedFakeOverrideGenerator) {

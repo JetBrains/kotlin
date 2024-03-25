@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
+import org.jetbrains.kotlin.ir.ActualClassExtractor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -48,6 +49,7 @@ internal class ExpectActualCollector(
     private val typeSystemContext: IrTypeSystemContext,
     private val diagnosticsReporter: IrDiagnosticReporter,
     private val expectActualTracker: ExpectActualTracker?,
+    private val actualClassExtractor: ActualClassExtractor?,
 ) {
 
     fun collect(actualDeclarations: ClassActualizationInfo): MutableMap<IrSymbol, IrSymbol> {
@@ -60,7 +62,7 @@ internal class ExpectActualCollector(
     fun collectClassActualizationInfo(): ClassActualizationInfo {
         val expectTopLevelClasses = ExpectTopLevelClassesCollector.collect(dependentFragments)
         val fragmentsWithActuals = dependentFragments.drop(1) + mainFragment
-        return ActualDeclarationsCollector.collectActualsFromFragments(fragmentsWithActuals, expectTopLevelClasses)
+        return ActualDeclarationsCollector.collectActualsFromFragments(fragmentsWithActuals, expectTopLevelClasses, actualClassExtractor)
     }
 
     private fun matchAllExpectDeclarations(
@@ -119,12 +121,16 @@ private class ExpectTopLevelClassesCollector {
 
 private class ActualDeclarationsCollector(
     private val expectTopLevelClasses: Map<ClassId, IrClassSymbol>,
+    private val actualClassExtractor: ActualClassExtractor?,
 ) {
     companion object {
-        fun collectActualsFromFragments(fragments: List<IrModuleFragment>, expectTopLevelClasses: Map<ClassId, IrClassSymbol>): ClassActualizationInfo {
-            val collector = ActualDeclarationsCollector(expectTopLevelClasses)
+        fun collectActualsFromFragments(fragments: List<IrModuleFragment>, expectTopLevelClasses: Map<ClassId, IrClassSymbol>, actualClassExtractor: ActualClassExtractor?): ClassActualizationInfo {
+            val collector = ActualDeclarationsCollector(expectTopLevelClasses, actualClassExtractor)
             for (fragment in fragments) {
                 collector.collect(fragment)
+            }
+            if (actualClassExtractor != null) {
+                collector.collectExtraActualClasses()
             }
             return ClassActualizationInfo(
                 collector.actualClasses,
@@ -194,6 +200,27 @@ private class ActualDeclarationsCollector(
             is IrFunction -> {
                 if (element.isExpect) return
                 recordActualCallable(element, element.callableId)
+            }
+        }
+    }
+
+    private fun collectExtraActualClasses() {
+        for (classSymbol in expectTopLevelClasses.values) {
+            collectExtraActualClasses(classSymbol.owner)
+        }
+    }
+
+    private fun collectExtraActualClasses(expectClass: IrClass) {
+        val classId = expectClass.classIdOrFail
+        val actualClassSymbol = actualClassExtractor!!.extract(classId) ?: return
+        if (actualClasses.containsKey(classId)) return // TODO: report actual classes collision?
+
+        actualClasses[classId] = actualClassSymbol
+        //actualSymbolsToFile[element.symbol] = currentFile // TODO: correct initialization of currentFile (is it required?)
+
+        for (declaration in expectClass.declarations) {
+            if (declaration is IrClass) {
+                collectExtraActualClasses(declaration)
             }
         }
     }

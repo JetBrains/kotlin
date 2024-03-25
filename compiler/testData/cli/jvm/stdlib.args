@@ -1,0 +1,13 @@
+$TESTDATA_DIR$/stdlib/common.kt
+$TESTDATA_DIR$/stdlib/platform.kt
+-Xcommon-sources=$TESTDATA_DIR$/stdlib/common.kt
+-language-version
+2.0
+-cp
+.
+-d
+$TEMP_DIR$
+-XXLanguage\:+MultiPlatformProjects
+-Xallow-kotlin-package
+-Xexpect-actual-classes
+-Xstdlib-compilation
