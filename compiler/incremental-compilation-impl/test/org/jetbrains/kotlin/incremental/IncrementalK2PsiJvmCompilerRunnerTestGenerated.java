@@ -54,7 +54,7 @@ public class IncrementalK2PsiJvmCompilerRunnerTestGenerated extends AbstractIncr
     }
 
     public void testAllFilesPresentInPureKotlin() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^.*Expect.*)|(^removeMemberTypeAlias)|(^addMemberTypeAlias)|(^companionConstantChanged))"), TargetBackend.JVM_IR, false);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^.*Expect.*)|(^removeMemberTypeAlias)|(^addMemberTypeAlias))"), TargetBackend.JVM_IR, false);
     }
 
     @TestMetadata("annotations")
@@ -110,6 +110,11 @@ public class IncrementalK2PsiJvmCompilerRunnerTestGenerated extends AbstractIncr
     @TestMetadata("classSignatureUnchanged")
     public void testClassSignatureUnchanged() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/classSignatureUnchanged/");
+    }
+
+    @TestMetadata("companionConstantChanged")
+    public void testCompanionConstantChanged() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/companionConstantChanged/");
     }
 
     @TestMetadata("compilationErrorThenFixedOtherPackage")
