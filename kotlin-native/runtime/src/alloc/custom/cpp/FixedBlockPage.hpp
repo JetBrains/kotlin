@@ -13,6 +13,7 @@
 #include "AtomicStack.hpp"
 #include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
+#include "AnyPage.hpp"
 
 namespace kotlin::alloc {
 
@@ -29,7 +30,7 @@ struct alignas(8) FixedBlockCell {
     };
 };
 
-class alignas(8) FixedBlockPage {
+class alignas(kPageAlignment) FixedBlockPage : public AnyPage<FixedBlockPage> {
 public:
     using GCSweepScope = gc::GCHandle::GCSweepScope;
 
@@ -50,10 +51,6 @@ public:
 private:
     explicit FixedBlockPage(uint32_t blockSize) noexcept;
 
-    friend class AtomicStack<FixedBlockPage>;
-
-    // Used for linking pages together in `pages` queue or in `unswept` queue.
-    std::atomic<FixedBlockPage*> next_;
     FixedCellRange nextFree_;
     uint32_t blockSize_;
     uint32_t end_;

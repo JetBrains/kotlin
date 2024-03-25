@@ -39,6 +39,7 @@ void ExtraObjectPage::Destroy() noexcept {
 mm::ExtraObjectData* ExtraObjectPage::TryAllocate() noexcept {
     auto* next = nextFree_.load(std::memory_order_relaxed);
     if (next >= cells_ + EXTRA_OBJECT_COUNT) {
+        allocatedSizeTracker_.onPageOverflow(EXTRA_OBJECT_COUNT * sizeof(mm::ExtraObjectData));
         return nullptr;
     }
     ExtraObjectCell* freeBlock = next;
@@ -52,8 +53,8 @@ bool ExtraObjectPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizer
     // `end` is after the last legal allocation of a block, but does not
     // necessarily match an actual block starting point.
     ExtraObjectCell* end = cells_ + EXTRA_OBJECT_COUNT;
-    bool alive = false;
     std::atomic<ExtraObjectCell*>* nextFree = &nextFree_;
+    std::size_t aliveBytes = 0;
     for (ExtraObjectCell* cell = cells_; cell < end; ++cell) {
         // If the current cell is free, move on.
         if (cell == nextFree->load(std::memory_order_relaxed)) {
@@ -61,8 +62,8 @@ bool ExtraObjectPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizer
             continue;
         }
         if (SweepExtraObject(cell->Data(), sweepHandle)) {
-            // If the current cell was marked, it's alive, and the whole page is alive.
-            alive = true;
+            // If the current cell was marked, it's alive
+            aliveBytes += sizeof(mm::ExtraObjectData);
         } else {
             // Free the current block and insert it into the free list.
             cell->next_.store(nextFree->load(std::memory_order_relaxed), std::memory_order_relaxed);
@@ -70,7 +71,10 @@ bool ExtraObjectPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizer
             nextFree = &cell->next_;
         }
     }
-    return alive;
+
+    allocatedSizeTracker_.afterSweep(aliveBytes);
+
+    return aliveBytes > 0;
 }
 
 } // namespace kotlin::alloc

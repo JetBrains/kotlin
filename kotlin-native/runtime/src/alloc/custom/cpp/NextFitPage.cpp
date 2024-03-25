@@ -34,20 +34,25 @@ uint8_t* NextFitPage::TryAllocate(uint32_t blockSize) noexcept {
     CustomAllocDebug("NextFitPage@%p::TryAllocate(%u)", this, blockSize);
     // +1 accounts for header, since cell->size also includes header cell
     uint32_t cellsNeeded = blockSize + 1;
-    uint8_t* block = curBlock_->TryAllocate(cellsNeeded);
-    if (block) return block;
+    uint8_t* allocated = curBlock_->TryAllocate(cellsNeeded);
+    if (allocated) return allocated;
+
     UpdateCurBlock(cellsNeeded);
-    return curBlock_->TryAllocate(cellsNeeded);
+    allocated = curBlock_->TryAllocate(cellsNeeded);
+    if (allocated) return allocated;
+
+    allocatedSizeTracker_.onPageOverflow(GetAllocatedSizeBytes());
+    return nullptr;
 }
 
 bool NextFitPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
     CustomAllocDebug("NextFitPage@%p::Sweep()", this);
     Cell* end = cells_ + NEXT_FIT_PAGE_CELL_COUNT;
-    bool alive = false;
+    std::size_t aliveBytes = 0;
     for (Cell* block = cells_ + 1; block != end; block = block->Next()) {
         if (block->isAllocated_) {
             if (SweepObject(block->data_, finalizerQueue, sweepHandle)) {
-                alive = true;
+                aliveBytes += block->size_ * sizeof(Cell);
             } else {
                 block->Deallocate();
             }
@@ -66,7 +71,12 @@ bool NextFitPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueu
         if (block->size_ > maxBlock->size_) maxBlock = block;
     }
     curBlock_ = maxBlock;
-    return alive;
+
+    RuntimeAssert(aliveBytes == GetAllocatedSizeBytes(),
+                  "Sweep counted %zu alive bytes, while GetAllocatedSizeBytes() returns %zu", aliveBytes, GetAllocatedSizeBytes());
+    allocatedSizeTracker_.afterSweep(aliveBytes);
+
+    return aliveBytes > 0;
 }
 
 void NextFitPage::UpdateCurBlock(uint32_t cellsNeeded) noexcept {
@@ -114,6 +124,17 @@ std::vector<uint8_t*> NextFitPage::GetAllocatedBlocks() noexcept {
         }
     }
     return allocated;
+}
+
+std::size_t NextFitPage::GetAllocatedSizeBytes() noexcept {
+    std::size_t allocatedBytes = 0;
+    Cell* end = cells_ + NEXT_FIT_PAGE_CELL_COUNT;
+    for (Cell* block = cells_ + 1; block != end; block = block->Next()) {
+        if (block->isAllocated_) {
+            allocatedBytes += block->size_ * sizeof(Cell);
+        }
+    }
+    return allocatedBytes;
 }
 
 } // namespace kotlin::alloc
