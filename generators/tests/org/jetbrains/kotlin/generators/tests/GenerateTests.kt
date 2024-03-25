@@ -56,12 +56,10 @@ private class ExcludePattern {
         private const val MEMBER_ALIAS = "(^removeMemberTypeAlias)|(^addMemberTypeAlias)"
 
         private const val ALL_EXPECT = "(^.*Expect.*)"
-        private const val COMPANION_CONSTANT = "(^companionConstantChanged)"
 
         internal val forK2 = listOf(
             ALL_EXPECT, // KT-63125 - Partially related to single-module expect-actual tests, but regexp is really wide
             MEMBER_ALIAS, // KT-55195 - Invalid for K2
-            COMPANION_CONSTANT // KT-56242 - Work in progress
         ).joinToString("|")
     }
 }
