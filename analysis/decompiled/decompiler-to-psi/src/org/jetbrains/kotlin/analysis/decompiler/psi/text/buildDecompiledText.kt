@@ -55,11 +55,6 @@ private fun CallableMemberDescriptor.syntheticMemberMustNotBeWrittenToDecompiled
     val containingClass = containingDeclaration as? ClassDescriptor ?: return false
 
     return when {
-        containingClass.isData && containingClass.kind != ClassKind.OBJECT -> {
-            // we want to materialize every synthetic data class function except for the 'copy' (for historical reasons)
-            name == StandardNames.DATA_CLASS_COPY
-        }
-
         containingClass.kind == ClassKind.ENUM_CLASS -> {
             name in arrayOf(
                 StandardNames.ENUM_VALUES,

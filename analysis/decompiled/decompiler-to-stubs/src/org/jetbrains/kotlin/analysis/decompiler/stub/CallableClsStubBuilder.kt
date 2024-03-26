@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -53,14 +52,14 @@ fun createDeclarationsStubs(
     propertyProtos: List<ProtoBuf.Property>,
 ) {
     for (propertyProto in propertyProtos) {
-        if (mustNotBeWrittenToStubs(propertyProto.flags, outerContext.nameResolver.getName(propertyProto.name), protoContainer)) {
+        if (mustNotBeWrittenToStubs(propertyProto.flags)) {
             continue
         }
 
         PropertyClsStubBuilder(parentStub, outerContext, protoContainer, propertyProto).build()
     }
     for (functionProto in functionProtos) {
-        if (mustNotBeWrittenToStubs(functionProto.flags, outerContext.nameResolver.getName(functionProto.name), protoContainer)) {
+        if (mustNotBeWrittenToStubs(functionProto.flags)) {
             continue
         }
 
@@ -91,26 +90,8 @@ fun createConstructorStub(
 /**
  * @see org.jetbrains.kotlin.analysis.decompiler.psi.text.mustNotBeWrittenToDecompiledText
  */
-private fun mustNotBeWrittenToStubs(flags: Int, name: Name, protoContainer: ProtoContainer): Boolean {
-    return when (Flags.MEMBER_KIND.get(flags)) {
-        MemberKind.FAKE_OVERRIDE -> true
-        //TODO: fix decompiler to use sane criteria
-        MemberKind.SYNTHESIZED -> syntheticMemberMustNotBeWrittenToStubs(name, protoContainer)
-        else -> false
-    }
-}
-
-private fun syntheticMemberMustNotBeWrittenToStubs(name: Name, protoContainer: ProtoContainer): Boolean {
-    val containingClass = protoContainer as? ProtoContainer.Class ?: return false
-
-    return when {
-        containingClass.isData && containingClass.kind != ProtoBuf.Class.Kind.OBJECT -> {
-            // we want to materialize every synthetic data class function except for the 'copy' (for historical reasons)
-            name == StandardNames.DATA_CLASS_COPY
-        }
-
-        else -> false
-    }
+private fun mustNotBeWrittenToStubs(flags: Int): Boolean {
+    return Flags.MEMBER_KIND.get(flags) == MemberKind.FAKE_OVERRIDE
 }
 
 abstract class CallableClsStubBuilder(
