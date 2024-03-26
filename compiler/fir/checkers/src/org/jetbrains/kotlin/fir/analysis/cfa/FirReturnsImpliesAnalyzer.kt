@@ -136,7 +136,8 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
             val identifier = argumentIdentifiers[i]
             // Might be unknown if there are no statements made about that parameter, but it's still possible that trivial
             // contracts are valid. E.g. `returns() implies (x is String)` when `x`'s *original type* is already `String`.
-            knownVariables[identifier] ?: RealVariable(identifier, i == 0, null, i, PropertyStability.STABLE_VALUE)
+            knownVariables[identifier]
+                ?: RealVariable(identifier, identifier.symbol.correspondingParameterType, i == 0, null, i)
         }
 
         val conditionStatements = logicSystem.approveContractStatement(
@@ -144,7 +145,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
         ) { logicSystem.approveOperationStatement(flow, it) } ?: return true
 
         return !conditionStatements.values.all { requirement ->
-            val originalType = requirement.variable.identifier.symbol.correspondingParameterType ?: return@all true
+            val originalType = requirement.variable.originalType ?: return@all true
             val requiredType = requirement.smartCastedType(typeContext, originalType)
             val actualType = flow.getTypeStatement(requirement.variable).smartCastedType(typeContext, originalType)
             actualType.isSubtypeOf(typeContext, requiredType)

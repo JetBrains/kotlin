@@ -34919,6 +34919,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("varOnFinalReceiver.kt")
+      public void testVarOnFinalReceiver() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/varOnFinalReceiver.kt");
+      }
+
+      @Test
       @TestMetadata("variableRedeclaration.kt")
       public void testVariableRedeclaration() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/variableRedeclaration.kt");

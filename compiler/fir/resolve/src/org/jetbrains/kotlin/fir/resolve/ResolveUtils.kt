@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.dfa.PropertyStability
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirAnonymousFunctionReturnExpressionInfo
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -519,7 +518,7 @@ private fun FirSmartCastExpressionBuilder.applyResultTypeRef() {
 
 private fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSmartcastInfo(
     expression: T,
-    stability: PropertyStability,
+    smartcastStability: SmartcastStability,
     typesFromSmartCast: MutableList<ConeKotlinType>,
 ): FirSmartCastExpression? {
     val originalType = expression.resolvedType.fullyExpandedType(session)
@@ -535,13 +534,6 @@ private fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSm
         source = expression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
         type = intersectedType
     }
-
-    val smartcastStability = stability.impliedSmartcastStability
-        ?: if (dataFlowAnalyzer.isAccessToUnstableLocalVariable(expression, intersectedType)) {
-            SmartcastStability.CAPTURED_VARIABLE
-        } else {
-            SmartcastStability.STABLE_VALUE
-        }
 
     // Example (1): if (x is String) { ... }, where x: dynamic
     //   the dynamic type will "consume" all other, erasing information.
