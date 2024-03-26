@@ -251,7 +251,7 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                     object : IrElementVisitorVoid {
                         override fun visitSimpleFunction(declaration: IrSimpleFunction) {
                             val composer = declaration.valueParameters.firstOrNull {
-                                it.name == KtxNameConventions.COMPOSER_PARAMETER
+                                it.name == ComposeNames.COMPOSER_PARAMETER
                             }
                             val oldComposer = currentComposer
                             if (composer != null) currentComposer = composer
@@ -268,7 +268,7 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                             val value = expression.symbol.owner
                             if (
                                 value is IrValueParameter && value.name ==
-                                KtxNameConventions.COMPOSER_PARAMETER
+                                ComposeNames.COMPOSER_PARAMETER
                             ) {
                                 assertEquals(
                                     "Composer unexpectedly captured",

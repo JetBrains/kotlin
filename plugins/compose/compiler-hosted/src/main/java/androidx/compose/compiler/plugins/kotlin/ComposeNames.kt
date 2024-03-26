@@ -2,7 +2,7 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.jetbrains.kotlin.name.Name
 
-object KtxNameConventions {
+object ComposeNames {
     val COMPOSER = Name.identifier("composer")
     val COMPOSER_PARAMETER = Name.identifier("\$composer")
     val CHANGED_PARAMETER = Name.identifier("\$changed")
@@ -25,4 +25,5 @@ object KtxNameConventions {
     val ENDTOMARKER = Name.identifier("endToMarker")
     val REMEMBER_COMPOSABLE_LAMBDA = "rememberComposableLambda"
     val REMEMBER_COMPOSABLE_LAMBDAN = "rememberComposableLambdaN"
+    val DEFAULT_IMPLS = Name.identifier("ComposeDefaultImpls")
 }

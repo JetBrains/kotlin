@@ -18,8 +18,8 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
+import androidx.compose.compiler.plugins.kotlin.ComposeNames
 import androidx.compose.compiler.plugins.kotlin.FeatureFlags
-import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.copyWithNewTypeParams
@@ -500,7 +500,7 @@ class ComposerParamTransformer(
     }
 
     private fun IrSimpleFunction.copyWithComposerParam(): IrSimpleFunction {
-        assert(explicitParameters.lastOrNull()?.name != KtxNameConventions.COMPOSER_PARAMETER) {
+        assert(explicitParameters.lastOrNull()?.name != ComposeNames.COMPOSER_PARAMETER) {
             "Attempted to add composer param to $this, but it has already been added."
         }
         return copy().also { fn ->
@@ -544,14 +544,14 @@ class ComposerParamTransformer(
 
             // $composer
             val composerParam = fn.addValueParameter {
-                name = KtxNameConventions.COMPOSER_PARAMETER
+                name = ComposeNames.COMPOSER_PARAMETER
                 type = composerType.makeNullable()
                 origin = IrDeclarationOrigin.DEFINED
                 isAssignable = true
             }
 
             // $changed[n]
-            val changed = KtxNameConventions.CHANGED_PARAMETER.identifier
+            val changed = ComposeNames.CHANGED_PARAMETER.identifier
             for (i in 0 until changedParamCount(realParams, fn.thisParamCount)) {
                 fn.addValueParameter(
                     if (i == 0) changed else "$changed$i",
@@ -561,7 +561,7 @@ class ComposerParamTransformer(
 
             // $default[n]
             if (oldFn.requiresDefaultParameter()) {
-                val defaults = KtxNameConventions.DEFAULT_PARAMETER.identifier
+                val defaults = ComposeNames.DEFAULT_PARAMETER.identifier
                 for (i in 0 until defaultParamCount(currentParams)) {
                     fn.addValueParameter(
                         if (i == 0) defaults else "$defaults$i",
@@ -688,7 +688,7 @@ class ComposerParamTransformer(
      */
     private fun IrFunction.externallyTransformed(): Boolean =
         decoysEnabled && valueParameters.firstOrNull {
-            it.name == KtxNameConventions.COMPOSER_PARAMETER
+            it.name == ComposeNames.COMPOSER_PARAMETER
         } != null
 
     /**

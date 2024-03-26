@@ -150,6 +150,19 @@ class ComposeIrGenerationExtension(
 
         functionKeyTransformer.lower(moduleFragment)
 
+        if (!useK2) {
+            CopyDefaultValuesFromExpectLowering(pluginContext).lower(moduleFragment)
+        }
+
+        // Generate default wrappers for virtual functions
+        ComposableDefaultParamLowering(
+            pluginContext,
+            symbolRemapper,
+            metrics,
+            stabilityInferencer,
+            featureFlags
+        ).lower(moduleFragment)
+
         // Memoize normal lambdas and wrap composable lambdas
         ComposerLambdaMemoization(
             pluginContext,
@@ -158,10 +171,6 @@ class ComposeIrGenerationExtension(
             stabilityInferencer,
             featureFlags,
         ).lower(moduleFragment)
-
-        if (!useK2) {
-            CopyDefaultValuesFromExpectLowering(pluginContext).lower(moduleFragment)
-        }
 
         val mangler = when {
             pluginContext.platform.isJs() -> JsManglerIr

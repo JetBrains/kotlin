@@ -249,7 +249,7 @@ class ModuleMetricsImpl(
                     is IrField -> decl
                     else -> continue
                 }
-                if (field.name == KtxNameConventions.STABILITY_FLAG) continue
+                if (field.name == ComposeNames.STABILITY_FLAG) continue
                 append("  ")
                 val fieldStability = stabilityOf(field.type)
                 append("${fieldStability.simpleHumanReadable()} ")

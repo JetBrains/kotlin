@@ -65,8 +65,6 @@ object ComposeErrors {
         FirValueParameterSymbol, // marked
         FirCallableSymbol<*>>()
 
-    val ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE by error0<PsiElement>()
-
     val COMPOSABLE_SUSPEND_FUN by error0<PsiElement>(
         SourceElementPositioningStrategies.DECLARATION_NAME
     )

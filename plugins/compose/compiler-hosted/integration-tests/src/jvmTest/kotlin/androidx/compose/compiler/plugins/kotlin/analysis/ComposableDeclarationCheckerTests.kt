@@ -278,7 +278,7 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
             """
             import androidx.compose.runtime.Composable
             interface A {
-                @Composable fun foo(x: Int = <!ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE!>0<!>)
+                @Composable fun foo(x: Int = 0)
             }
         """
         )
@@ -290,7 +290,7 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
             """
             import androidx.compose.runtime.Composable
             interface A {
-                @Composable fun foo(x: Int = <!ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE!>0<!>) {}
+                @Composable fun foo(x: Int = 0) {}
             }
         """
         )
@@ -302,7 +302,7 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
             """
             import androidx.compose.runtime.Composable
             abstract class A {
-                @Composable abstract fun foo(x: Int = <!ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE!>0<!>)
+                @Composable abstract fun foo(x: Int = 0)
             }
         """
         )
@@ -314,7 +314,7 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
             """
             import androidx.compose.runtime.Composable
             open class A {
-                @Composable open fun foo(x: Int = <!ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE!>0<!>) {}
+                @Composable open fun foo(x: Int = 0) {}
             }
         """
         )

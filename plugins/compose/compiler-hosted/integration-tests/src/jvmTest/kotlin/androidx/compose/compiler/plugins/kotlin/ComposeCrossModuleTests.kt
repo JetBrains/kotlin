@@ -1224,6 +1224,60 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         )
     }
 
+    @Test
+    fun defaultParametersInFakeOverrideVirtualComposableFunctions() {
+        compile(
+            mapOf(
+                "Base" to mapOf(
+                    "base/Base.kt" to """
+                    package base
+
+                    import androidx.compose.runtime.Composable
+
+                    open class Test {
+                        @Composable open fun Test(content: @Composable () -> Unit = {}) = content()
+                        open fun runTest(content: @Composable () -> Unit = {}) {}
+                    }
+                    """
+                ),
+                "Intermediate" to mapOf(
+                    "intermediate/Intermediate.kt" to """
+                    package intermediate
+
+                    import androidx.compose.runtime.Composable
+                    import base.Test
+
+                    open class DeviceTest : Test() {
+                        @Composable open fun DeviceTest(content: @Composable () -> Unit = {}) = content()
+                    }
+                    """
+                ),
+                "Main" to mapOf(
+                    "Main.kt" to """
+                    package main
+
+                    import base.Test
+                    import intermediate.DeviceTest
+                    import androidx.compose.runtime.Composable
+
+                    class MainTest : DeviceTest()
+
+                    @Composable fun CallWithDefaults(test: Test, deviceTest: DeviceTest, mainTest: MainTest) {
+                        test.runTest {
+                            test.Test()
+                            test.Test { }
+                            deviceTest.Test()
+                            deviceTest.DeviceTest()
+                            mainTest.Test()
+                            mainTest.DeviceTest()
+                        }
+                    }
+                    """
+                )
+            )
+        )
+    }
+
     private fun compile(
         modules: Map<String, Map<String, String>>,
         dumpClasses: Boolean = false,
