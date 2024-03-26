@@ -332,13 +332,13 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                             source = null,
                             ConstantValueKind.Short,
                             argument.value as Short,
-                            setType = false
+                            setType = true
                         )
                         IrConstKind.String -> buildLiteralExpression(
                             source = null,
                             ConstantValueKind.String,
                             argument.value as String,
-                            setType = false
+                            setType = true
                         )
                     }
                 }
