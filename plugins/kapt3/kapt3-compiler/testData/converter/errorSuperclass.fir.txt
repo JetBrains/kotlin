@@ -31,7 +31,7 @@ package test;
 @kotlin.Metadata()
 @Anno()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
-public final class ClassWithParent extends Foo implements Bar, Baz, java.lang.CharSequence {
+public final class ClassWithParent implements java.lang.CharSequence {
 
     public ClassWithParent() {
         super();

@@ -97,6 +97,7 @@ private class StubGenerator(
     private val keepKdocComments = options[KaptFlag.KEEP_KDOC_COMMENTS_IN_STUBS]
     private val dumpDefaultParameterValues = options[KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES]
     private val onError = if (options[KaptFlag.STRICT]) logger::error else logger::warn
+    private val correctErrorTypes = options[KaptFlag.CORRECT_ERROR_TYPES]
 
 
     fun generateStubs(): Map<KtLightClass, KaptStub?> =
@@ -238,6 +239,7 @@ private class StubGenerator(
                         ?.referencedTypes
                         ?.asList()
                         ?.let { if (!psiClass.isInterface) it.take(1) else it }
+                        ?.filterNot { isErrorType(it) }
                         ?.takeIf { it.isNotEmpty() }
                         ?.let { superClasses ->
                             printWithNoIndent(" extends ")
@@ -251,6 +253,7 @@ private class StubGenerator(
                 psiClass.implementsList
                     ?.referencedTypes
                     ?.filterNot { it.qualifiedName.startsWith("kotlin.collections.") || it.qualifiedName == "java.lang.Record" }
+                    ?.filterNot { isErrorType(it) }
                     ?.takeIf { it.isNotEmpty() }
                     ?.let { interfaces ->
                         printWithNoIndent(" implements ")
@@ -430,17 +433,21 @@ private class StubGenerator(
             }
 
             private fun recordErrorTypes(type: PsiType) {
-                if (type is PsiEllipsisType) {
+                if (type is PsiArrayType) {
                     recordErrorTypes(type.componentType)
-                    return
+                } else if (type is PsiClassType) {
+                    type.typeArguments().forEach { (it as? PsiType)?.let { recordErrorTypes(it) }}
+                    if (type.qualifiedNameOrNull == null) {
+                        recordUnresolvedQualifier(type.qualifiedName)
+                    }
                 }
-                if (type.qualifiedNameOrNull == null) {
-                    recordUnresolvedQualifier(type.qualifiedName)
-                }
-                when (type) {
-                    is PsiClassType -> type.typeArguments().forEach { (it as? PsiType)?.let { recordErrorTypes(it) } }
-                    is PsiArrayType -> recordErrorTypes(type.componentType)
-                }
+            }
+
+            private fun isErrorType(type: PsiType): Boolean {
+                if (correctErrorTypes) return false
+                if (type is PsiArrayType && isErrorType(type.componentType)) return true
+                if (type is PsiClassType && type.qualifiedNameOrNull == null && "$." !in type.qualifiedName) return true
+                return false
             }
 
             private fun elementMapping(lightClass: PsiClass): Multimap<KtElement, PsiElement> =
@@ -458,12 +465,23 @@ private class StubGenerator(
             private fun Printer.printTypeSignature(type: PsiType, annotated: Boolean) {
                 var typeToPrint = if (type is PsiEllipsisType) type.componentType else type
                 if (typeToPrint is PsiClassType && isErroneous(typeToPrint)) typeToPrint = typeToPrint.rawType()
+                if (isErrorType(typeToPrint)) {
+                    printWithNoIndent("error.NonExistentClass")
+                    return
+                }
                 val repr = typeToPrint.getCanonicalText(annotated)
                     .replace('$', '.') // Some mapped and marker types contain $ for some reason
                     .replace("..", ".$") // Fixes KT-65399 and similar issues with synthetic classes with names starting with $
                     .replace(",", ", ") // Type parameters
                 printWithNoIndent(repr)
                 if (type is PsiEllipsisType) printWithNoIndent("...")
+            }
+
+            private fun isErroneous(type: PsiType): Boolean {
+                if (type.canonicalText == StandardNames.NON_EXISTENT_CLASS.asString()) return true
+                if (type is PsiArrayType) return isErroneous(type.componentType)
+                if (type is PsiClassType) return (!correctErrorTypes && type.qualifiedNameOrNull == null) || type.parameters.any { isErroneous(it) }
+                return false
             }
 
             private fun Printer.printTypeParams(typeParameters: Array<PsiTypeParameter>) {
@@ -792,12 +810,6 @@ private fun paramName(info: PsiParameter): String {
         defaultName == SpecialNames.IMPLICIT_SET_PARAMETER.asString() -> "p0"
         else -> "p${info.parameterIndex()}_${info.name.hashCode().ushr(1)}"
     }
-}
-
-private fun isErroneous(type: PsiType): Boolean {
-    if (type.canonicalText == StandardNames.NON_EXISTENT_CLASS.asString()) return true
-    if (type is PsiClassType) return type.parameters.any { isErroneous(it) }
-    return false
 }
 
 private fun getKDocComment(psiElement: PsiElement): String? {
