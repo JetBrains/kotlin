@@ -36,15 +36,15 @@ class FirLazyDelegatedConstructorCallBuilder : FirAnnotationContainerBuilder {
         )
     }
 
+    @Deprecated("Modification of 'annotations' has no impact for FirLazyDelegatedConstructorCallBuilder", level = DeprecationLevel.HIDDEN)
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+
     @Deprecated("Modification of 'source' has no impact for FirLazyDelegatedConstructorCallBuilder", level = DeprecationLevel.HIDDEN)
     override var source: KtSourceElement?
         get() = throw IllegalStateException()
         set(_) {
             throw IllegalStateException()
         }
-
-    @Deprecated("Modification of 'annotations' has no impact for FirLazyDelegatedConstructorCallBuilder", level = DeprecationLevel.HIDDEN)
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
 }
 
 @OptIn(ExperimentalContracts::class)

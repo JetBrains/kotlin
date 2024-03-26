@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.fir.visitors.transformInplace
 class FirMultiDelegatedConstructorCallImpl @FirImplementationDetail constructor(
     override val delegatedConstructorCalls: MutableList<FirDelegatedConstructorCall>,
 ) : FirMultiDelegatedConstructorCall() {
-    override val source: KtSourceElement?
-        get() = delegatedConstructorCalls.last().source
     override val annotations: List<FirAnnotation>
         get() = delegatedConstructorCalls.last().annotations
     override val argumentList: FirArgumentList
@@ -36,6 +34,8 @@ class FirMultiDelegatedConstructorCallImpl @FirImplementationDetail constructor(
         get() = delegatedConstructorCalls.last().dispatchReceiver
     override val calleeReference: FirReference
         get() = delegatedConstructorCalls.last().calleeReference
+    override val source: KtSourceElement?
+        get() = delegatedConstructorCalls.last().source
     override val isThis: Boolean
         get() = delegatedConstructorCalls.last().isThis
     override val isSuper: Boolean
@@ -78,6 +78,9 @@ class FirMultiDelegatedConstructorCallImpl @FirImplementationDetail constructor(
     override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression?) {}
 
     override fun replaceCalleeReference(newCalleeReference: FirReference) {}
+
+    @FirImplementationDetail
+    override fun replaceSource(newSource: KtSourceElement?) {}
 
     override fun replaceDelegatedConstructorCalls(newDelegatedConstructorCalls: List<FirDelegatedConstructorCall>) {
         delegatedConstructorCalls.clear()

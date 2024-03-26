@@ -22,24 +22,24 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 @FirBuilderDsl
 class FirDelegatedConstructorCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder {
-    override var source: KtSourceElement? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
     lateinit var constructedTypeRef: FirTypeRef
     var dispatchReceiver: FirExpression? = null
     lateinit var calleeReference: FirReference
+    override var source: KtSourceElement? = null
     var isThis: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 
     override fun build(): FirDelegatedConstructorCall {
         return FirDelegatedConstructorCallImpl(
-            source,
             annotations.toMutableOrEmpty(),
             argumentList,
             contextReceiverArguments.toMutableOrEmpty(),
             constructedTypeRef,
             dispatchReceiver,
             calleeReference,
+            source,
             isThis,
         )
     }

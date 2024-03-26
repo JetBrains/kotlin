@@ -13,6 +13,11 @@ import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.utils.SmartPrinter
 
+private val elementsWithReplaceSource = setOf(
+    FirTreeBuilder.qualifiedAccessExpression,
+    FirTreeBuilder.delegatedConstructorCall,
+)
+
 internal class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Element, Field>(printer) {
 
     override fun makeFieldPrinter(printer: SmartPrinter) = object : AbstractFieldPrinter<Field>(printer) {}
@@ -42,7 +47,7 @@ internal class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<El
             }
 
             allFields.filter { it.withReplace }.forEach {
-                val override = overriddenFieldsHaveSameClass[it, it] && !(it.name == "source" && element == FirTreeBuilder.qualifiedAccessExpression)
+                val override = overriddenFieldsHaveSameClass[it, it] && !(it.name == "source" && element in elementsWithReplaceSource)
                 it.replaceDeclaration(override, forceNullable = it.useNullableForReplace)
                 for (overriddenType in it.overriddenTypes) {
                     it.replaceDeclaration(true, overriddenType)

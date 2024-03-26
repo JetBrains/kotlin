@@ -401,7 +401,7 @@ private fun mapInapplicableCandidateError(
             is AmbiguousInterceptedSymbol -> FirErrors.PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL.createOn(source, rootCause.pluginNames)
 
             is MissingInnerClassConstructorReceiver -> FirErrors.INNER_CLASS_CONSTRUCTOR_NO_RECEIVER.createOn(
-                source,
+                qualifiedAccessSource ?: source,
                 rootCause.candidateSymbol
             )
 
