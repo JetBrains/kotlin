@@ -7,6 +7,15 @@ package org.jetbrains.kotlin.fir.types
 
 import kotlin.reflect.KClass
 
+/**
+ * [AbbreviatedTypeAttribute] stores the abbreviated type ([coneType]) of its owning expanded type. In the compiler, it is used exclusively
+ * for rendering the abbreviated typed in place of the expanded type. The Analysis API uses this attribute for additional purposes such as
+ * navigation to the type alias.
+ *
+ * The abbreviated type may not always be resolvable from a use-site session. For example, the owning expanded type may come from a library
+ * `L2` with a dependency on another library `L1` containing the type alias declaration. If the use-site session depends on `L2` but not on
+ * `L1`, the abbreviated type won't be resolvable even if the expanded type is.
+ */
 class AbbreviatedTypeAttribute(
     override val coneType: ConeKotlinType,
 ) : ConeAttributeWithConeType<AbbreviatedTypeAttribute>() {
