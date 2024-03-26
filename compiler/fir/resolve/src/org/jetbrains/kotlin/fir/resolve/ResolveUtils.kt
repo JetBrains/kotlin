@@ -611,7 +611,7 @@ fun FirCallableDeclaration.getContainingClass(session: FirSession): FirRegularCl
 internal fun FirFunction.forbiddenNamedArgumentsTargetOrNull(
     session: FirSession,
     // NB: with originScope given this function will try to find overridden declaration with allowed parameter names
-    // for intersection/substitution overrides
+    // for intersection/substitution overrides, delegated declarations, and Java declarations.
     originScope: FirTypeScope? = null,
 ): ForbiddenNamedArgumentsTarget? {
     if (hasStableParameterNames) return null
@@ -623,6 +623,10 @@ internal fun FirFunction.forbiddenNamedArgumentsTargetOrNull(
         FirDeclarationOrigin.IntersectionOverride, is FirDeclarationOrigin.SubstitutionOverride, FirDeclarationOrigin.Delegated -> {
             val initial = unwrapFakeOverridesOrDelegated().forbiddenNamedArgumentsTargetOrNull(session) ?: return null
             initial.takeUnless { hasOverrideThatAllowsNamedArguments(session, originScope) }
+        }
+
+        FirDeclarationOrigin.Enhancement -> {
+            ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION.takeUnless { hasOverrideThatAllowsNamedArguments(session, originScope) }
         }
 
         FirDeclarationOrigin.BuiltIns -> ForbiddenNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE

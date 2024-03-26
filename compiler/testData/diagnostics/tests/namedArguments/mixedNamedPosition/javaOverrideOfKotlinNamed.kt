@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: J.java
 public class J implements I {
     @Override
