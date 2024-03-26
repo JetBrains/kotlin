@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.utils.toMetadataVersion
 import org.jetbrains.kotlin.kapt3.base.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.stubs.MembersPositionComparator
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.psiUtil.children
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.utils.Printer
@@ -423,12 +422,10 @@ private class StubGenerator(
             }
 
             private fun reportIfIllegalTypeUsage(
-                containingClass: PsiClass,
-                type: PsiType,
+                typeName: String,
             ) {
-                val typeName = type.simpleNameOrNull ?: return
                 if (typeName in importsFromRoot && reportedTypes.add(typeName)) {
-                    onError("${containingClass.qualifiedName}: Can't reference type '${typeName}' from default package in Java stub.")
+                    onError("${psiClass.qualifiedName}: Can't reference type '${typeName}' from default package in Java stub.")
                 }
             }
 
@@ -580,6 +577,10 @@ private class StubGenerator(
                 val qname = if (rawQualifiedName.startsWith(packageName) && rawQualifiedName.lastIndexOf('.') == packageName.length)
                     rawQualifiedName.substring(packageName.length + 1)
                 else rawQualifiedName
+
+                val simpleTypeName = qname.substringAfterLast('.')
+                reportIfIllegalTypeUsage(simpleTypeName)
+
                 if (separateLine) printIndent()
                 printWithNoIndent("@", qname, "(")
 
@@ -700,7 +701,7 @@ private class StubGenerator(
                     return false
                 }
 
-                reportIfIllegalTypeUsage(psiClass, type)
+                type.simpleNameOrNull?.let { reportIfIllegalTypeUsage(it) }
 
                 return true
             }

@@ -1224,6 +1224,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     ): JCAnnotation? {
         val annotationType = Type.getType(annotation.desc)
         val fqName = treeMaker.getQualifiedName(annotationType)
+        reportIfIllegalTypeUsage(containingClass, annotationType)
 
         if (filtered) {
             if (BLACKLISTED_ANNOTATIONS.any { fqName.startsWith(it) }) return null
