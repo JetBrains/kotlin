@@ -21791,6 +21791,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("uninitializedSuperType.kt")
+      public void testUninitializedSuperType() {
+        runTest("compiler/testData/diagnostics/tests/inner/uninitializedSuperType.kt");
+      }
+
+      @Test
       @TestMetadata("visibility.kt")
       public void testVisibility() {
         runTest("compiler/testData/diagnostics/tests/inner/visibility.kt");

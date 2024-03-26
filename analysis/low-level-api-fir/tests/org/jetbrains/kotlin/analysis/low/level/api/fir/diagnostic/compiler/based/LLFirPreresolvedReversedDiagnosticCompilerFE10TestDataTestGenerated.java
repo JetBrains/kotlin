@@ -21791,6 +21791,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("uninitializedSuperType.kt")
+      public void testUninitializedSuperType() {
+        runTest("compiler/testData/diagnostics/tests/inner/uninitializedSuperType.kt");
+      }
+
+      @Test
       @TestMetadata("visibility.kt")
       public void testVisibility() {
         runTest("compiler/testData/diagnostics/tests/inner/visibility.kt");
