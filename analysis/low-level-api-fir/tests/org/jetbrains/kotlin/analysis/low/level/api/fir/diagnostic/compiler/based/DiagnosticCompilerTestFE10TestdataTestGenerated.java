@@ -39401,6 +39401,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("optionalGetOrNullOnProjections.kt")
+      public void testOptionalGetOrNullOnProjections() {
+        runTest("compiler/testData/diagnostics/tests/targetedBuiltIns/optionalGetOrNullOnProjections.kt");
+      }
+
+      @Test
+      @TestMetadata("optionalGetOrNullOnStarProjection.kt")
+      public void testOptionalGetOrNullOnStarProjection() {
+        runTest("compiler/testData/diagnostics/tests/targetedBuiltIns/optionalGetOrNullOnStarProjection.kt");
+      }
+
+      @Test
       @TestMetadata("removeIf.kt")
       public void testRemoveIf() {
         runTest("compiler/testData/diagnostics/tests/targetedBuiltIns/removeIf.kt");

@@ -1,0 +1,7 @@
+package
+
+public val collection: kotlin.collections.Collection<*>
+public val first: java.util.Optional<in kotlin.Nothing!>!
+public val result: kotlin.Any?
+public val stream: java.util.stream.Stream<out kotlin.Any?>
+
