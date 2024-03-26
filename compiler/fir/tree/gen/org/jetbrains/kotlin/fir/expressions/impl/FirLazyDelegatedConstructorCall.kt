@@ -26,8 +26,6 @@ class FirLazyDelegatedConstructorCall @FirImplementationDetail constructor(
     override var calleeReference: FirReference,
     override val isThis: Boolean,
 ) : FirDelegatedConstructorCall() {
-    override val source: KtSourceElement?
-        get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
     override val annotations: List<FirAnnotation>
         get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
     override val argumentList: FirArgumentList
@@ -35,6 +33,8 @@ class FirLazyDelegatedConstructorCall @FirImplementationDetail constructor(
     override val contextReceiverArguments: List<FirExpression>
         get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
     override val dispatchReceiver: FirExpression?
+        get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
+    override val source: KtSourceElement?
         get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
     override val isSuper: Boolean
         get() = !isThis
@@ -78,4 +78,7 @@ class FirLazyDelegatedConstructorCall @FirImplementationDetail constructor(
     override fun replaceCalleeReference(newCalleeReference: FirReference) {
         calleeReference = newCalleeReference
     }
+
+    @FirImplementationDetail
+    override fun replaceSource(newSource: KtSourceElement?) {}
 }

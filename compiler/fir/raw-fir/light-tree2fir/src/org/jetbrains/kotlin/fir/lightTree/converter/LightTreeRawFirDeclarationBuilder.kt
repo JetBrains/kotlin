@@ -663,7 +663,7 @@ class LightTreeRawFirDeclarationBuilder(
                     symbol = FirAnonymousObjectSymbol(context.packageFqName)
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
-                    val delegatedSelfType = objectLiteral.toDelegatedSelfType(this)
+                    val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this)
                     registerSelfType(delegatedSelfType)
 
                     var modifiers = Modifier()

@@ -211,7 +211,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val EXPECT_CLASS_AS_FUNCTION by error<PsiElement> {
             parameter<FirRegularClassSymbol>("classSymbol")
         }
-        val INNER_CLASS_CONSTRUCTOR_NO_RECEIVER by error<PsiElement> {
+        val INNER_CLASS_CONSTRUCTOR_NO_RECEIVER by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<FirRegularClassSymbol>("classSymbol")
         }
         val PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL by error<PsiElement> {

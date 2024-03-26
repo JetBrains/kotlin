@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
@@ -44,7 +42,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
-import org.jetbrains.kotlin.sourceKindForIncOrDec
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -1375,6 +1372,23 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         // without adding `context.withTowerDataContext(context.getTowerDataContextForConstructorResolution())`
         val result = callCompleter.completeCall(resolvedCall, ResolutionMode.ContextIndependent)
         dataFlowAnalyzer.exitDelegatedConstructorCall(result, data.forceFullCompletion)
+
+        // Update source of delegated constructor call when supertype isn't initialized
+        val sourceKind = result.source?.kind
+        if (containingConstructor.isPrimary &&
+            sourceKind is KtFakeSourceElementKind &&
+            // Delegated constructor calls of primary constructors with uninitialized supertypes have the whole class as source
+            result.source == containingClass.source?.fakeElement(sourceKind)
+        ) {
+            val superTypeRef = containingClass.superTypeRefs.firstOrNull {
+                it.coneType == result.toResolvedCallableSymbol()?.resolvedReturnType
+            }
+            @OptIn(FirImplementationDetail::class)
+            if (superTypeRef?.source?.kind is KtRealSourceElementKind) {
+                result.replaceSource(superTypeRef.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall))
+            }
+        }
+
         return result
     }
 
