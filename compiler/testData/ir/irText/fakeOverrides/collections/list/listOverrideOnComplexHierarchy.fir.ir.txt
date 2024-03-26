@@ -1589,10 +1589,14 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> declared in <root>.KotlinInterface2
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<kotlin.Int>
+    FUN FAKE_OVERRIDE name:remove visibility:public modality:ABSTRACT <> ($this:<root>.Java2, i:kotlin.Int) returnType:@[FlexibleNullability] kotlin.Boolean? [fake_override]
+      overridden:
+        public abstract fun remove (i: kotlin.Int): @[FlexibleNullability] kotlin.Boolean? declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+      VALUE_PARAMETER name:i index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:remove visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<kotlin.Int>, element:kotlin.Int) returnType:kotlin.Boolean [fake_override]
       overridden:
         public abstract fun remove (element: kotlin.Int): kotlin.Boolean declared in <root>.KotlinInterface2
-        public abstract fun remove (i: kotlin.Int): @[FlexibleNullability] kotlin.Boolean? declared in <root>.Java2
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableCollection<kotlin.Int>
       VALUE_PARAMETER name:element index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:removeAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<kotlin.Int>, elements:kotlin.collections.Collection<kotlin.Int>) returnType:kotlin.Boolean [fake_override]
@@ -1736,6 +1740,7 @@ FILE fqName:<root> fileName:/1.kt
     FUN name:remove visibility:public modality:OPEN <> ($this:<root>.H, element:kotlin.Int) returnType:kotlin.Boolean
       overridden:
         public abstract fun remove (element: kotlin.Int): kotlin.Boolean declared in <root>.G
+        public abstract fun remove (i: kotlin.Int): @[FlexibleNullability] kotlin.Boolean? declared in <root>.G
       $this: VALUE_PARAMETER name:<this> type:<root>.H
       VALUE_PARAMETER name:element index:0 type:kotlin.Int
       BLOCK_BODY
