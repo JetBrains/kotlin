@@ -6,6 +6,8 @@ public open class PrivateMembersInHierarchy : R|kotlin/Any| {
 
         private open fun method(): R|kotlin/Unit|
 
+        private open fun method(): R|kotlin/Unit|
+
         public constructor(): R|test/PrivateMembersInHierarchy.Sub|
 
     }

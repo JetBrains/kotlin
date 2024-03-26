@@ -22291,6 +22291,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("overrideWithTypeParameterReverse.kt")
+      public void testOverrideWithTypeParameterReverse() {
+        runTest("compiler/testData/diagnostics/tests/j+k/overrideWithTypeParameterReverse.kt");
+      }
+
+      @Test
+      @TestMetadata("overrideWithTypeParameterReverseAfter.kt")
+      public void testOverrideWithTypeParameterReverseAfter() {
+        runTest("compiler/testData/diagnostics/tests/j+k/overrideWithTypeParameterReverseAfter.kt");
+      }
+
+      @Test
       @TestMetadata("packagePrivateClassStaticMember.kt")
       public void testPackagePrivateClassStaticMember() {
         runTest("compiler/testData/diagnostics/tests/j+k/packagePrivateClassStaticMember.kt");

@@ -22,7 +22,7 @@ open class DnnNullable : Super {
     override fun <B : Any?> foo(klass: Class<B & Any>): B = TODO()
 }
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class DnnNullableSub<!> : OtherSuper, DnnNullable()
+class DnnNullableSub : OtherSuper, DnnNullable()
 
 open class Nullable : Super {
     override fun <B : Any?> foo(klass: Class<B>): B = TODO()

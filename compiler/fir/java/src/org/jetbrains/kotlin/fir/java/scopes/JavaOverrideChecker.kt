@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
@@ -242,6 +243,7 @@ class JavaOverrideChecker internal constructor(
 
     override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean {
         if (overrideCandidate.isStatic != baseDeclaration.isStatic) return false
+        if (Visibilities.isPrivate(baseDeclaration.visibility)) return false
 
         overrideCandidate.lazyResolveToPhase(FirResolvePhase.TYPES)
         baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
@@ -305,6 +307,7 @@ class JavaOverrideChecker internal constructor(
 
     override fun isOverriddenProperty(overrideCandidate: FirCallableDeclaration, baseDeclaration: FirProperty): Boolean {
         if (baseDeclaration.modality == Modality.FINAL) return false
+        if (Visibilities.isPrivate(baseDeclaration.visibility)) return false
 
         overrideCandidate.lazyResolveToPhase(FirResolvePhase.TYPES)
         baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
