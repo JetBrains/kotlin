@@ -24,9 +24,8 @@ repositories {
     }
 }
 
-val buildToolsVersion = "r29.0.3"
+val buildToolsVersion = "r34"
 val platformToolsVersion = "r35.0.0"
-val sdkToolsVersion = "4333796" /*26.1.1*/
 
 dependencies {
     implicitDependencies("google:build-tools:$buildToolsVersion:linux@zip")
@@ -36,10 +35,6 @@ dependencies {
     implicitDependencies("google:platform-tools:$platformToolsVersion:linux@zip")
     implicitDependencies("google:platform-tools:$platformToolsVersion:windows@zip")
     implicitDependencies("google:platform-tools:$platformToolsVersion:darwin@zip")
-
-    implicitDependencies("google:sdk-tools-linux:$sdkToolsVersion@zip")
-    implicitDependencies("google:sdk-tools-windows:$sdkToolsVersion@zip")
-    implicitDependencies("google:sdk-tools-darwin:$sdkToolsVersion@zip")
 }
 
 val androidSdk by configurations.creating
@@ -76,11 +71,6 @@ val preparePlatform by task<DefaultTask> {
 val prepareSdk by task<DefaultTask> {
     doLast {}
     dependsOn(preparePlatform)
-}
-
-val prepareEmulator by task<DefaultTask> {
-    doLast {}
-    dependsOn(prepareSdk)
 }
 
 interface Injected {
@@ -143,10 +133,7 @@ fun unzipSdkTask(
 unzipSdkTask("platform", "26_r02", "platforms/android-26", "", androidPlatform, 1, prepareTask = preparePlatform)
 unzipSdkTask("android_m2repository", "r44", "extras/android", "")
 unzipSdkTask("platform-tools", platformToolsVersion, "", toolsOsDarwin)
-unzipSdkTask("sdk-tools-$toolsOsDarwin", sdkToolsVersion, "", "")
-unzipSdkTask("build-tools", buildToolsVersion, "build-tools/29.0.3", toolsOs, buildTools, 1)
-unzipSdkTask("armeabi-v7a", "19", "system-images/android-19/default","r05", prepareTask = prepareEmulator)
-unzipSdkTask("x86", "19", "system-images/android-19/default", "r06", prepareTask = prepareEmulator)
+unzipSdkTask("build-tools", buildToolsVersion, "build-tools/${buildToolsVersion.removePrefix("r")}", toolsOs, buildTools, 1)
 
 val clean by task<Delete> {
     delete(layout.buildDirectory)

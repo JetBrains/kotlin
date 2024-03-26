@@ -48,8 +48,14 @@ android {
         create("nexus") {
             // A lower resolution device is used here for better emulator performance
             device = "Nexus One"
-            apiLevel = 30
-            systemImageSource = "aosp-atd"
+
+            if (project.hasProperty("forceArmEmulator")) {
+                apiLevel = 27
+                systemImageSource = "aosp"
+            } else {
+                apiLevel = 30
+                systemImageSource = "aosp-atd"
+            }
         }
     }
 }
@@ -66,7 +72,6 @@ val jarTestFolders by tasks.registering {
 
     doLast {
         testClassesDirectories.forEach { dir ->
-            logger.info("Jar {} folder", dir.name)
             ant.withGroovyBuilder {
                 "jar"("basedir" to dir.path, "destfile" to "libs/${dir.name}.jar")
             }
@@ -93,6 +98,17 @@ dependencies {
             configuration(project.fileTree("libs") { include("${flavor.name}.jar") })
             if (flavor.name.startsWith("reflect")) {
                 configuration(kotlin("reflect", kotlin_version))
+            }
+        }
+    }
+}
+
+if (project.hasProperty("forceArmEmulator")) {
+    tasks.withType<com.android.build.gradle.internal.tasks.ManagedDeviceInstrumentationTestSetupTask> {
+        doFirst {
+            org.gradle.api.internal.provider.AbstractProperty::class.java.getDeclaredField("value").also {
+                it.isAccessible = true
+                it.set(abi, org.gradle.api.internal.provider.Providers.of("arm64-v8a"))
             }
         }
     }
