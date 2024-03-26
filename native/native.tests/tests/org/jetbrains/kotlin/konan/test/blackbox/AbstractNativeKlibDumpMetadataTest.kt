@@ -42,7 +42,8 @@ abstract class AbstractNativeKlibDumpMetadataTest : AbstractNativeSimpleTest() {
         val isFir = testRunSettings.get<PipelineType>() == PipelineType.K2
         val isFirIdentical = firIdentical(testPathFull)
 
-        (KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS + null).forEach { signatureVersion: KotlinIrSignatureVersion? ->
+        val versions = KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS + null
+        versions.forEach { signatureVersion: KotlinIrSignatureVersion? ->
             val metadataDump = klib.dumpMetadata(
                 kotlinNativeClassLoader.classLoader,
                 printSignatures = signatureVersion != null,
@@ -52,11 +53,12 @@ abstract class AbstractNativeKlibDumpMetadataTest : AbstractNativeSimpleTest() {
             val testDataFileK1 = testDataFile(testPathFull, signatureVersion, isFir = false)
             val testDataFileK2 = testDataFile(testPathFull, signatureVersion, isFir = true)
 
-            checkTestDataFilesNotEqual(testPathFull, testDataFileK1, testDataFileK2)
-
             val testDataFile = if (isFir && !isFirIdentical) testDataFileK2 else testDataFileK1
 
             assertEqualsToFile(testDataFile, metadataDump)
+        }
+        if (!isFirIdentical) {
+            checkFirIdentical(testPathFull, versions)
         }
     }
 
@@ -88,27 +90,26 @@ abstract class AbstractNativeKlibDumpMetadataTest : AbstractNativeSimpleTest() {
         }
     }
 
-    private fun checkTestDataFilesNotEqual(kotlinTestDataFile: File, testDataFileK1: File, testDataFileK2: File) {
-        if (testDataFileK1.exists() && testDataFileK2.exists()) {
-            val originalText = testDataFileK1.readText().trimEnd()
-            val firText = testDataFileK2.readText().trimEnd()
-
-            val sameDumps = originalText == firText
-
-            if (sameDumps) {
+    private fun checkFirIdentical(kotlinTestDataFile: File, versions: Collection<KotlinIrSignatureVersion?>) {
+        val allDumpsAreIdentical = versions.all { signatureVersion ->
+            val testDataFileK1 = testDataFile(kotlinTestDataFile, signatureVersion, isFir = false)
+            val testDataFileK2 = testDataFile(kotlinTestDataFile, signatureVersion, isFir = true)
+            equalDumps(testDataFileK1, testDataFileK2)
+        }
+        if (allDumpsAreIdentical) {
+            versions.forEach { signatureVersion ->
+                val testDataFileK2 = testDataFile(kotlinTestDataFile, signatureVersion, isFir = true)
                 testDataFileK2.delete()
-
-                kotlinTestDataFile.writeText("// FIR_IDENTICAL\n" + kotlinTestDataFile.readText())
-
-                fail {
-                    """
-                        Dump files are equal. Please re-run the test.
-                        K1: ${testDataFileK1.absolutePath}
-                        K2: ${testDataFileK2.absolutePath}
-                    """.trimIndent()
-                }
             }
+            kotlinTestDataFile.writeText("// FIR_IDENTICAL\n" + kotlinTestDataFile.readText())
+            fail { "Dump files are equal. Please re-run the test.".trimIndent() }
         }
     }
 
+    private fun equalDumps(testDataFileK1: File, testDataFileK2: File): Boolean {
+        if (!testDataFileK1.exists() || !testDataFileK2.exists()) return true
+        val originalText = testDataFileK1.readText().trimEnd()
+        val firText = testDataFileK2.readText().trimEnd()
+        return originalText == firText
+    }
 }
