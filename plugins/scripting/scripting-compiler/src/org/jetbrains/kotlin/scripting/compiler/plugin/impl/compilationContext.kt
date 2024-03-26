@@ -314,9 +314,8 @@ private fun createInitialCompilerConfiguration(
         checkPluginsArguments(messageCollector, false, pluginClasspaths, pluginOptions, pluginConfigurations)
         if (pluginClasspaths.isNotEmpty() || pluginConfigurations.isNotEmpty()) {
             PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, this)
-        } else {
-            loadPlugins()
         }
+        loadPlugins()
     }
 }
 
