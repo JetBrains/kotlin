@@ -194,6 +194,18 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
     }
 }
 
+// The meaning of this function is this: if you have two expressions and in all possible
+// executions either the two produce equal values or one of them throws, then these two
+// expressions are interchangeable in type statements. For example, saying that `x` is
+// a String is equivalent to saying that `x as T` is a String, as the two have identical
+// runtime values (unless `x as T` throws, in which case everything is true anyway).
+//
+// This equivalence relation produces equivalence classes on FIR expressions, and
+// `unwrapElement` does a "best attempt" at providing a consistent representative for an
+// expression's equivalence class. It can fail to do so and return different representatives
+// for different expressions in the same class, which will make DFA miss some smart casts.
+// That's not great, but acceptable. What's not acceptable is returning expressions from
+// other equivalence classes: that would create incorrect smart casts, and that's bad.
 private tailrec fun FirElement.unwrapElement(): FirElement {
     return when (this) {
         is FirWhenSubjectExpression -> whenRef.value.let { it.subjectVariable ?: it.subject ?: return this }.unwrapElement()
@@ -203,6 +215,7 @@ private tailrec fun FirElement.unwrapElement(): FirElement {
         is FirCheckNotNullCall -> argument.unwrapElement()
         is FirDesugaredAssignmentValueReferenceExpression -> expressionRef.value.unwrapElement()
         is FirVariableAssignment -> lValue.unwrapElement()
+        is FirTypeOperatorCall -> if (operation == FirOperation.AS) argument.unwrapElement() else this
         else -> this
     }
 }

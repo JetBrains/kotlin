@@ -418,10 +418,6 @@ abstract class FirDataFlowAnalyzer(
                 }
                 if (!type.canBeNull(components.session)) {
                     flow.commitOperationStatement(operandVariable notEq null)
-                } else {
-                    val expressionVariable = variableStorage.createSynthetic(typeOperatorCall)
-                    flow.addImplication((expressionVariable notEq null) implies (operandVariable notEq null))
-                    flow.addImplication((expressionVariable eq null) implies (operandVariable eq null))
                 }
             }
 
