@@ -1,0 +1,37 @@
+# copy
+../correctErrorTypesOn/ap
+ap
+
+# copy
+../correctErrorTypesOn/Test.kt
+Test.kt
+
+# mkdir
+output/ap
+output/stubs
+output/classes
+output/javaClasses
+output/sources
+
+# kotlinc
+-language-version 1.9
+-cp %KOTLIN_STDLIB%
+-d output/ap
+ap/Processor.kt
+
+# kapt
+-language-version 1.9
+-Kapt-mode=apt
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-classpath=output/ap
+-Kapt-processors=apt.SampleApt
+-d output/classes
+-cp output/ap:%KOTLIN_STDLIB%
+Test.kt
+
+# after
+Return code: 1
+
+error: error: NonExistentClass type occurred
