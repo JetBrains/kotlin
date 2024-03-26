@@ -254,7 +254,7 @@ internal class KlibAbiDumpMerger {
         // then try to parse a manifest
         while (hasNext()) {
             val next = peek()!!
-            if (!next.startsWith(COMMENT_PREFIX)) break
+            if (!next.startsWith(COMMENT_PREFIX) || next.startsWith(TARGETS_LIST_PREFIX)) break
             next()
             // There's no manifest in merged files
             check(!isMergedFile) { "Unexpected header line: $next" }

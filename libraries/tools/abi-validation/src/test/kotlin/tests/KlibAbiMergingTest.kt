@@ -336,4 +336,28 @@ class KlibAbiMergingTest {
             KlibAbiDumpMerger().merge(file("/merge/stdlib_native_common.abi"), "target")
         }
     }
+
+    @Test
+    fun mergeDumpsWithNonOverlappingDeclarations() {
+        val dump = dumpToFile(KlibAbiDumpMerger().apply {
+            merge(file("/merge/non-overlapping/linux-arm64.klib.abi"))
+            merge(file("/merge/non-overlapping/linux-x64.klib.abi"))
+        })
+
+        assertContentEquals(
+            lines("/merge/non-overlapping/merged.klib.abi"),
+            Files.readAllLines(dump.toPath()).asSequence()
+        )
+    }
+
+    @Test
+    fun loadMergedDumpWithNonOverlappingDeclarations() {
+        val dump = dumpToFile(KlibAbiDumpMerger().apply {
+            merge(file("/merge/non-overlapping/merged.klib.abi"))
+        })
+        assertContentEquals(
+            lines("/merge/non-overlapping/merged.klib.abi"),
+            Files.readAllLines(dump.toPath()).asSequence()
+        )
+    }
 }
