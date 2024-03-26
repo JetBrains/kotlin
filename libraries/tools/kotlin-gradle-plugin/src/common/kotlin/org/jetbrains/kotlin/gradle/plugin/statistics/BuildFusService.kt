@@ -114,7 +114,9 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
             // so there is a change that no VariantImplementationFactory will be found
             return gradle.sharedServices.registerIfAbsent(serviceName, BuildFusService::class.java) { spec ->
                 spec.parameters.configurationMetrics.add(project.provider {
-                    //Since Gradle 8.0 provider's calculation is made in BuildFinishFlowAction and VariantImplementationFactories is not initialized at that moment
+                    //isProjectIsolationEnabled and isConfigurationCacheRequested should be calculated beforehand
+                    // because since Gradle 8.0 provider's calculation is made in BuildFinishFlowAction
+                    // and VariantImplementationFactories is not initialized at that moment
                     collectGeneralConfigurationTimeMetrics(
                         project,
                         gradle,
