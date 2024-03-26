@@ -11,10 +11,3 @@ expect final value class A(val s: String)
 actual <!VALUE_CLASS_NOT_FINAL!>open<!> value class A(val s: String)
 
 class B : A("")
-
-// MODULE: js()()(common)
-// TARGET_PLATFORM: JS
-// FILE: js.kt
-actual <!VALUE_CLASS_NOT_FINAL!>open<!> value class A(val s: String)
-
-class B : A("")

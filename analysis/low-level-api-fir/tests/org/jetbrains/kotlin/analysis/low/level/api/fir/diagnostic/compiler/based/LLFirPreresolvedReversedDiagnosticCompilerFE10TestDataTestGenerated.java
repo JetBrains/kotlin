@@ -26876,39 +26876,9 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
-        @TestMetadata("valueClassExtendsClass.kt")
-        public void testValueClassExtendsClass() {
-          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassExtendsClass.kt");
-        }
-
-        @Test
         @TestMetadata("valueClassNotFinal.kt")
         public void testValueClassNotFinal() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassNotFinal.kt");
-        }
-
-        @Test
-        @TestMetadata("valueClassNotTopLevel.kt")
-        public void testValueClassNotTopLevel() {
-          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassNotTopLevel.kt");
-        }
-
-        @Test
-        @TestMetadata("valueClassWithContextReceiver.kt")
-        public void testValueClassWithContextReceiver() {
-          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithContextReceiver.kt");
-        }
-
-        @Test
-        @TestMetadata("valueClassWithDelegatedPropertyCustom.kt")
-        public void testValueClassWithDelegatedPropertyCustom() {
-          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithDelegatedPropertyCustom.kt");
-        }
-
-        @Test
-        @TestMetadata("valueClassWithDelegatedPropertyStandard.kt")
-        public void testValueClassWithDelegatedPropertyStandard() {
-          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithDelegatedPropertyStandard.kt");
         }
 
         @Test
@@ -26930,21 +26900,9 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
-        @TestMetadata("valueClassWithNonFinalParameter.kt")
-        public void testValueClassWithNonFinalParameter() {
-          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithNonFinalParameter.kt");
-        }
-
-        @Test
         @TestMetadata("valueClassWithPropertyWithBackingField.kt")
         public void testValueClassWithPropertyWithBackingField() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithPropertyWithBackingField.kt");
-        }
-
-        @Test
-        @TestMetadata("valueClassWithRecursiveProperty.kt")
-        public void testValueClassWithRecursiveProperty() {
-          runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithRecursiveProperty.kt");
         }
 
         @Test
