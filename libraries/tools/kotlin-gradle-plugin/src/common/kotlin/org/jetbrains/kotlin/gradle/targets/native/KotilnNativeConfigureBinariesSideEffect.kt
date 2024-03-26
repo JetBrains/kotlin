@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.statistics.NativeLinkTaskMetrics
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
@@ -101,6 +102,7 @@ private fun Project.createLinkTask(binary: NativeBinary) {
         task.disallowSourceChanges()
     }
 
+    NativeLinkTaskMetrics.collectMetrics(this)
 
     if (binary !is TestExecutable) {
         tasks.named(binary.compilation.target.artifactsTaskName).dependsOn(linkTask)

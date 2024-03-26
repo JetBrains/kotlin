@@ -42,6 +42,7 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     KOTLIN_OFFICIAL_CODESTYLE(OVERRIDE, SAFE),
     KOTLIN_PROGRESSIVE_MODE(OVERRIDE, SAFE),
     KOTLIN_KTS_USED(OR, SAFE),
+    KOTLIN_INCREMENTAL_NATIVE_ENABLED(OR, SAFE),
 
     JS_GENERATE_EXTERNALS(OR, SAFE),
 
@@ -84,6 +85,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     COCOAPODS_PLUGIN_ENABLED(OR, SAFE);
 
     companion object {
-        const val VERSION = 6
+        const val VERSION = 7
     }
 }
