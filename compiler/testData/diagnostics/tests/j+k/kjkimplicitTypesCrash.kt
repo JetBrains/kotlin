@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-66392
 // FILE: Java1.java
 public class Java1 extends KotlinClass  {
@@ -10,7 +11,7 @@ public class Java1 extends KotlinClass  {
 // FILE: test.kt
 // The order of Kotlin classes is important
 class B : Java1() {
-    <!ACCIDENTAL_OVERRIDE!>override var e<!> = super.e
+    override var e = super.e
 }
 
 open class KotlinClass {
