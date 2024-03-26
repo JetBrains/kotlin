@@ -169,13 +169,6 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             required = false,
             allowMultipleOccurrences = false
         )
-        val HIDE_FROM_OBJC_OPTION = CliOption(
-            "hideFromObjC",
-            "<true|false>",
-            "Add HiddenFromObjC annotation to Composable declarations",
-            required = false,
-            allowMultipleOccurrences = false
-        )
         val STRONG_SKIPPING_OPTION = CliOption(
             "experimentalStrongSkipping",
             "<true|false>",
@@ -214,7 +207,6 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         STRONG_SKIPPING_OPTION,
         STABLE_CONFIG_PATH_OPTION,
         TRACE_MARKERS_OPTION,
-        HIDE_FROM_OBJC_OPTION,
     )
 
     override fun processOption(
@@ -262,10 +254,6 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             ComposeConfiguration.DECOYS_ENABLED_KEY,
             value == "true"
         )
-        HIDE_FROM_OBJC_OPTION -> configuration.put(
-            ComposeConfiguration.HIDE_FROM_OBJC_ENABLED_KEY,
-            value == "true"
-        )
         STRONG_SKIPPING_OPTION -> configuration.put(
             ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY,
             value == "true"
@@ -294,28 +282,19 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
         configuration: CompilerConfiguration
     ) {
         if (checkCompilerVersion(configuration)) {
+            val hideFromObjCDeclarationsSet = HideFromObjCDeclarationsSet()
 
             registerCommonExtensions(project)
-
-            val hideFromObjC = configuration.get(
-                ComposeConfiguration.HIDE_FROM_OBJC_ENABLED_KEY,
-                true
-            )
-            val hideFromObjCDeclarationsSet = if (hideFromObjC) {
-                val set = HideFromObjCDeclarationsSet()
-                registerNativeExtensions(project, set)
-                set
-            } else {
-                null
-            }
 
             IrGenerationExtension.registerExtension(
                 project,
                 createComposeIrExtension(
                     configuration,
-                    hideFromObjCDeclarationsSet = hideFromObjCDeclarationsSet
+                    hideFromObjCDeclarationsSet
                 )
             )
+
+            registerNativeExtensions(project, hideFromObjCDeclarationsSet)
         }
     }
 
@@ -425,14 +404,12 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
 
         fun registerNativeExtensions(
             project: Project,
-            hideFromObjCDeclarationsSet: HideFromObjCDeclarationsSet?
+            hideFromObjCDeclarationsSet: HideFromObjCDeclarationsSet
         ) {
-            if (hideFromObjCDeclarationsSet != null) {
-                DescriptorSerializerPlugin.registerExtension(
-                    project,
-                    AddHiddenFromObjCSerializationPlugin(hideFromObjCDeclarationsSet)
-                )
-            }
+            DescriptorSerializerPlugin.registerExtension(
+                project,
+                AddHiddenFromObjCSerializationPlugin(hideFromObjCDeclarationsSet)
+            )
         }
 
         fun createComposeIrExtension(
