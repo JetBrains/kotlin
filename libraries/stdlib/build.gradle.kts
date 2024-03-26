@@ -87,10 +87,11 @@ kotlin {
                                 "-module-name", "kotlin-stdlib-common",
                                 "-Xexpect-actual-classes",
                                 "-Xexplicit-api=strict",
+                                "-Xstdlib-compilation",
                                 diagnosticNamesArg,
                             )
                         )
-                        mainCompilationWithK1()
+                        //mainCompilationWithK1()
                         // workaround for compiling legacy MPP metadata, remove when this compilation is not needed anymore
                         // restate the list of opt-ins
                         optIn.addAll(commonOptIns)
@@ -127,10 +128,11 @@ kotlin {
                                 "-Xuse-14-inline-classes-mangling-scheme",
                                 "-Xno-new-java-annotation-targets",
                                 "-Xlink-via-signatures",
+                                "-Xstdlib-compilation",
                                 diagnosticNamesArg,
                             )
                         )
-                        mainCompilationWithK1()
+                        //mainCompilationWithK1()
                     }
                 }
                 defaultSourceSet {
@@ -155,10 +157,11 @@ kotlin {
                                 "-Xmultifile-parts-inherit",
                                 "-Xno-new-java-annotation-targets",
                                 "-Xexplicit-api=strict",
+                                "-Xstdlib-compilation",
                                 diagnosticNamesArg,
                             )
                         )
-                        mainCompilationWithK1()
+                        //mainCompilationWithK1()
                     }
                 }
             }
@@ -174,10 +177,11 @@ kotlin {
                                 "-Xmultifile-parts-inherit",
                                 "-Xno-new-java-annotation-targets",
                                 "-Xexplicit-api=strict",
+                                "-Xstdlib-compilation",
                                 diagnosticNamesArg,
                             )
                         )
-                        mainCompilationWithK1()
+                        //mainCompilationWithK1()
                     }
                 }
             }
@@ -236,6 +240,7 @@ kotlin {
                     freeCompilerArgs += listOf(
                         "-Xallow-kotlin-package",
                         "-Xexpect-actual-classes",
+                        "-Xstdlib-compilation",
                     )
                 }
             }
@@ -252,7 +257,7 @@ kotlin {
                     }
                 }
                 compileTaskProvider.configure {
-                    compilerOptions.mainCompilationWithK1()
+                    //compilerOptions.mainCompilationWithK1()
                 }
             }
         }
@@ -268,6 +273,7 @@ kotlin {
                 kotlinOptions.freeCompilerArgs += listOfNotNull(
                     "-Xallow-kotlin-package",
                     "-Xexpect-actual-classes",
+                    "-Xstdlib-compilation",
                     diagnosticNamesArg
                 )
             }
@@ -276,7 +282,7 @@ kotlin {
                 kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
                 kotlinOptions.allWarningsAsErrors = true
                 compileTaskProvider.configure {
-                    compilerOptions.mainCompilationWithK1()
+                    //compilerOptions.mainCompilationWithK1()
                 }
             }
         }
@@ -591,6 +597,8 @@ kotlin {
 
         all sourceSet@ {
             languageSettings {
+                languageVersion = "2.0"
+
                 // TODO: progressiveMode = use build property 'test.progressive.mode'
                 if (this@sourceSet == jvmCompileOnlyDeclarations) {
                     return@languageSettings
