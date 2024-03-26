@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.defaultParameterResolver
-import org.jetbrains.kotlin.fir.resolve.getAsForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.fir.resolve.forbiddenNamedArgumentsTargetOrNull
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -124,7 +124,7 @@ private class FirCallArgumentsProcessor(
     val result: LinkedHashMap<FirValueParameter, ResolvedCallArgument> = LinkedHashMap(function.valueParameters.size)
 
     val forbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget? by lazy {
-        function.getAsForbiddenNamedArgumentsTarget(useSiteSession, originScope as? FirTypeScope)
+        function.forbiddenNamedArgumentsTargetOrNull(useSiteSession, originScope as? FirTypeScope)
     }
 
     private enum class State {
@@ -346,7 +346,7 @@ private class FirCallArgumentsProcessor(
             if (symbol != null && function.isSubstitutionOrIntersectionOverride) {
                 var allowedParameters: List<FirValueParameterSymbol>? = null
                 (originScope as? FirTypeScope)?.processOverriddenFunctions(symbol) {
-                    if (it.fir.getAsForbiddenNamedArgumentsTarget(useSiteSession) != null) {
+                    if (it.fir.forbiddenNamedArgumentsTargetOrNull(useSiteSession) != null) {
                         return@processOverriddenFunctions ProcessorAction.NEXT
                     }
                     val someParameterSymbols = it.valueParameterSymbols
@@ -384,7 +384,7 @@ private class FirCallArgumentsProcessor(
                 }
                 if (matchedIndex != -1) {
                     (originScope as? FirTypeScope)?.processOverriddenFunctions(symbol) {
-                        if (it.fir.getAsForbiddenNamedArgumentsTarget(useSiteSession) != null) {
+                        if (it.fir.forbiddenNamedArgumentsTargetOrNull(useSiteSession) != null) {
                             return@processOverriddenFunctions ProcessorAction.NEXT
                         }
                         it.valueParameterSymbols.findAndReportValueParameterWithDifferentName()
