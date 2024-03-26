@@ -73,6 +73,12 @@ public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirL
   }
 
   @Test
+  @TestMetadata("composableFunctionNamedArgument.kt")
+  public void testComposableFunctionNamedArgument() {
+    runTest("plugins/fir-plugin-prototype/testData/box/composableFunctionNamedArgument.kt");
+  }
+
+  @Test
   @TestMetadata("expectComposableFunction.kt")
   public void testExpectComposableFunction() {
     runTest("plugins/fir-plugin-prototype/testData/box/expectComposableFunction.kt");

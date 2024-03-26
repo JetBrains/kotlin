@@ -1,0 +1,27 @@
+FILE: main.kt
+    public abstract interface IFoo : R|kotlin/Any| {
+        public abstract var callFoo: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction1<@R|kotlin/ParameterName|(name = String(task))  kotlin/String, kotlin/Unit>|
+            public get(): R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction1<@R|kotlin/ParameterName|(name = String(task))  kotlin/String, kotlin/Unit>|
+            public set(value: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction1<@R|kotlin/ParameterName|(name = String(task))  kotlin/String, kotlin/Unit>|): R|kotlin/Unit|
+
+    }
+    public final data class Foo : R|IFoo| {
+        public constructor(callFoo: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction1<@R|kotlin/ParameterName|(name = String(task))  kotlin/String, kotlin/Unit>|): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override var callFoo: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction1<@R|kotlin/ParameterName|(name = String(task))  kotlin/String, kotlin/Unit>| = R|<local>/callFoo|
+            public get(): R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction1<@R|kotlin/ParameterName|(name = String(task))  kotlin/String, kotlin/Unit>|
+            public set(value: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction1<@R|kotlin/ParameterName|(name = String(task))  kotlin/String, kotlin/Unit>|): R|kotlin/Unit|
+
+        public final operator fun component1(): R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction1<@R|kotlin/ParameterName|(name = String(task))  kotlin/String, kotlin/Unit>|
+
+        public final fun copy(callFoo: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction1<@R|kotlin/ParameterName|(name = String(task))  kotlin/String, kotlin/Unit>| = this@R|/Foo|.R|/Foo.callFoo|): R|Foo|
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/MyComposable|() public final fun runFoo(f: R|IFoo|): R|kotlin/Unit| {
+        R|<local>/f|.R|/IFoo.callFoo|.R|SubstitutionOverride<some/MyComposableFunction1.invoke: R|kotlin/Unit|><Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): some/MyComposableFunction1.invoke>#|(String(Task1))
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }
