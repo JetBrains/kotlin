@@ -418,16 +418,18 @@ include ":compiler:build-tools:kotlin-build-tools-api",
         ":compiler:build-tools:kotlin-build-tools-impl",
         ":compiler:build-tools:kotlin-build-tools-api-tests"
 
-include ":plugins:compose-compiler-plugin:temp",
-        ":plugins:compose-compiler-plugin:temp:compiler",
-        ":plugins:compose-compiler-plugin:temp:compiler:integration-tests",
-        ":plugins:compose-compiler-plugin:temp:compiler-hosted"
+if (!buildProperties.inJpsBuildIdeaSync) {
+    include ":plugins:compose-compiler-plugin:temp",
+            ":plugins:compose-compiler-plugin:temp:compiler",
+            ":plugins:compose-compiler-plugin:temp:compiler:integration-tests",
+            ":plugins:compose-compiler-plugin:temp:compiler-hosted"
 
-// Experimental modules (will be deleted after a transition period), should be placed into plugins/compose-compiler-plugin folder
-include ":plugins:compose-compiler-plugin:compiler",
-        ":plugins:compose-compiler-plugin:compiler:integration-tests",
-        ":plugins:compose-compiler-plugin:compiler-hosted",
-        ":plugins:compose-compiler-plugin:testutils-gradle-plugin"
+    // Experimental modules (will be deleted after a transition period), should be placed into plugins/compose-compiler-plugin folder
+    include ":plugins:compose-compiler-plugin:compiler",
+            ":plugins:compose-compiler-plugin:compiler:integration-tests",
+            ":plugins:compose-compiler-plugin:compiler-hosted",
+            ":plugins:compose-compiler-plugin:testutils-gradle-plugin"
+}
 
 // Swift Export modules
 include ":native:swift:sir",
@@ -866,10 +868,12 @@ project(':kotlin-atomicfu-compiler-plugin-embeddable').projectDir = file("$rootD
 project(':kotlinx-atomicfu-runtime').projectDir = file("$rootDir/plugins/atomicfu/atomicfu-runtime")
 project(':atomicfu').projectDir = file("$rootDir/libraries/tools/atomicfu")
 
-project(':plugins:compose-compiler-plugin:temp').projectDir = file("$rootDir/plugins/compose")
-project(':plugins:compose-compiler-plugin:temp:compiler').projectDir = file("$rootDir/plugins/compose/compiler")
-project(':plugins:compose-compiler-plugin:temp:compiler:integration-tests').projectDir = file("$rootDir/plugins/compose/compiler/integration-tests")
-project(':plugins:compose-compiler-plugin:temp:compiler-hosted').projectDir = file("$rootDir/plugins/compose/compiler-hosted")
+if (!buildProperties.inJpsBuildIdeaSync) {
+    project(':plugins:compose-compiler-plugin:temp').projectDir = file("$rootDir/plugins/compose")
+    project(':plugins:compose-compiler-plugin:temp:compiler').projectDir = file("$rootDir/plugins/compose/compiler")
+    project(':plugins:compose-compiler-plugin:temp:compiler:integration-tests').projectDir = file("$rootDir/plugins/compose/compiler/integration-tests")
+    project(':plugins:compose-compiler-plugin:temp:compiler-hosted').projectDir = file("$rootDir/plugins/compose/compiler-hosted")
+}
 
 project(':kotlin-scripting-ide-services-unshaded').projectDir = "$rootDir/plugins/scripting/scripting-ide-services" as File
 project(':kotlin-scripting-ide-services-test').projectDir = "$rootDir/plugins/scripting/scripting-ide-services-test" as File
