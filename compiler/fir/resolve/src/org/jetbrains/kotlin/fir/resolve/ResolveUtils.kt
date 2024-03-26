@@ -608,7 +608,7 @@ fun FirCallableDeclaration.getContainingClass(session: FirSession): FirRegularCl
         session.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirRegularClass
     }
 
-fun FirFunction.getAsForbiddenNamedArgumentsTarget(
+internal fun FirFunction.forbiddenNamedArgumentsTargetOrNull(
     session: FirSession,
     // NB: with originScope given this function will try to find overridden declaration with allowed parameter names
     // for intersection/substitution overrides
@@ -618,26 +618,34 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(
 
     return when (origin) {
         FirDeclarationOrigin.ImportedFromObjectOrStatic ->
-            importedFromObjectOrStaticData?.original?.getAsForbiddenNamedArgumentsTarget(session)
+            importedFromObjectOrStaticData?.original?.forbiddenNamedArgumentsTargetOrNull(session)
 
         FirDeclarationOrigin.IntersectionOverride, is FirDeclarationOrigin.SubstitutionOverride, FirDeclarationOrigin.Delegated -> {
-            var result: ForbiddenNamedArgumentsTarget? =
-                unwrapFakeOverridesOrDelegated().getAsForbiddenNamedArgumentsTarget(session) ?: return null
-            originScope?.processOverriddenFunctions(symbol as FirNamedFunctionSymbol) {
-                if (it.fir.getAsForbiddenNamedArgumentsTarget(session) == null) {
-                    result = null
-                    ProcessorAction.STOP
-                } else {
-                    ProcessorAction.NEXT
-                }
-            }
-            result
+            val initial = unwrapFakeOverridesOrDelegated().forbiddenNamedArgumentsTargetOrNull(session) ?: return null
+            initial.takeUnless { hasOverrideThatAllowsNamedArguments(session, originScope) }
         }
 
         FirDeclarationOrigin.BuiltIns -> ForbiddenNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
         is FirDeclarationOrigin.Plugin -> null // TODO: figure out what to do with plugin generated functions
         else -> ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION
     }
+}
+
+private fun FirFunction.hasOverrideThatAllowsNamedArguments(
+    session: FirSession,
+    originScope: FirTypeScope?,
+): Boolean {
+    var result = false
+    originScope?.processOverriddenFunctions(symbol as FirNamedFunctionSymbol) {
+        // If an override allows named arguments, it overrides the initial result.
+        if (it.fir.forbiddenNamedArgumentsTargetOrNull(session) == null) {
+            result = true
+            ProcessorAction.STOP
+        } else {
+            ProcessorAction.NEXT
+        }
+    }
+    return result
 }
 
 @OptIn(ExperimentalContracts::class)
