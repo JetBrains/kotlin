@@ -1,3 +1,4 @@
+// SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 
 // FILE: Java1.java

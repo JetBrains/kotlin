@@ -1,3 +1,4 @@
+// SKIP_KT_DUMP
 // FIR_IDENTICAL
 
 // FILE: 1.kt

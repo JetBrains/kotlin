@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 
 // MODULE: separate
