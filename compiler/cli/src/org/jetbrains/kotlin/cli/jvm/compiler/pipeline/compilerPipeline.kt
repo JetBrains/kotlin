@@ -77,7 +77,8 @@ fun compileModulesUsingFrontendIrAndLightTree(
     buildFile: File?,
     module: Module,
     targetDescription: String,
-    checkSourceFiles: Boolean
+    checkSourceFiles: Boolean,
+    isPrintingVersion: Boolean,
 ): Boolean {
     ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -96,6 +97,7 @@ fun compileModulesUsingFrontendIrAndLightTree(
     }
 
     if (checkSourceFiles && groupedSources.isEmpty() && buildFile == null) {
+        if (isPrintingVersion) return true
         messageCollector.report(CompilerMessageSeverity.ERROR, "No source files")
         return false
     }

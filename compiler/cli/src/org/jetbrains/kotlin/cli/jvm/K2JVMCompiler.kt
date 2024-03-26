@@ -155,7 +155,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 compileModulesUsingFrontendIrAndLightTree(
                     projectEnvironment, configuration, messageCollector, buildFile, chunk.single(), targetDescription,
-                    checkSourceFiles = !arguments.allowNoSourceFiles && !arguments.version
+                    checkSourceFiles = !arguments.allowNoSourceFiles,
+                    isPrintingVersion = arguments.version,
                 )
             } else {
                 val environment = createCoreEnvironment(

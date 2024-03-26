@@ -119,6 +119,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace(KtTestUtil.getJdk17Home().getAbsolutePath().replace("\\", "/"), "$JDK_17")
                 .replaceAll("info: executable production duration: \\d+ms", "info: executable production duration: [time]")
                 .replace(KotlinCompilerVersion.VERSION, "$VERSION$")
+                .replace(System.getProperty("java.runtime.version"), "$JVM_VERSION$")
                 .replace(" " + JvmMetadataVersion.INSTANCE, " $ABI_VERSION$")
                 .replace(" " + JsMetadataVersion.INSTANCE, " $ABI_VERSION$")
                 .replace(" " + JvmMetadataVersion.INSTANCE_NEXT, " $ABI_VERSION_NEXT$")

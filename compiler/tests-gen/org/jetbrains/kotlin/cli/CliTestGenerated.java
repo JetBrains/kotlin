@@ -1260,6 +1260,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.args");
     }
 
+    @TestMetadata("version.args")
+    public void testVersion() {
+      runTest("compiler/testData/cli/jvm/version.args");
+    }
+
     @TestMetadata("warningJdkWithNoJdk.args")
     public void testWarningJdkWithNoJdk() {
       runTest("compiler/testData/cli/jvm/warningJdkWithNoJdk.args");
