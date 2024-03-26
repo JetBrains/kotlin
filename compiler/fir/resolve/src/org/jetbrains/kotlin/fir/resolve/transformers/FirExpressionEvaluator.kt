@@ -50,7 +50,7 @@ object FirExpressionEvaluator {
         }
 
         val initializer = property.initializer
-        if (initializer == null || !initializer.canBeEvaluated(session, type)) {
+        if (initializer == null || !initializer.canBeEvaluated(session)) {
             return null
         }
 
@@ -62,7 +62,7 @@ object FirExpressionEvaluator {
         if (!valueParameter.containingFunctionSymbol.isAnnotationConstructor(session)) return null
 
         val defaultValueToEvaluate = valueParameter.defaultValue ?: return null
-        if (!defaultValueToEvaluate.canBeEvaluated(session, valueParameter.returnTypeRef.coneTypeOrNull)) {
+        if (!defaultValueToEvaluate.canBeEvaluated(session)) {
             return null
         }
         return defaultValueToEvaluate.evaluate(session)
@@ -71,7 +71,7 @@ object FirExpressionEvaluator {
     fun evaluateAnnotationArguments(annotationCall: FirAnnotationCall, session: FirSession): Map<Name, FirEvaluatorResult>? {
         val argumentList = annotationCall.argumentList as? FirResolvedArgumentList ?: return null
 
-        if (argumentList.mapping.any { (expr, parameter) -> !expr.canBeEvaluated(session, parameter.returnTypeRef.coneTypeOrNull) }) {
+        if (argumentList.mapping.any { (expr, _) -> !expr.canBeEvaluated(session) }) {
             return null
         }
 
@@ -92,12 +92,9 @@ object FirExpressionEvaluator {
         return argumentMapping.mapValues { (_, expression) -> expression.evaluate(session) }
     }
 
-    private fun FirExpression?.canBeEvaluated(session: FirSession, expectedType: ConeKotlinType? = null): Boolean {
+    private fun FirExpression?.canBeEvaluated(session: FirSession): Boolean {
         val intrinsicConstEvaluation = session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
         if (this == null || intrinsicConstEvaluation || this is FirLazyExpression || !isResolved) return false
-
-        if (expectedType != null && !resolvedType.isSubtypeOf(expectedType, session)) return false
-
         return canBeEvaluatedAtCompileTime(this, session, allowErrors = false, calledOnCheckerStage = false)
     }
 
