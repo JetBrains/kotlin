@@ -48,16 +48,16 @@ val expectedNullableUnitExplicitReturnUnitAndString: () -> Unit? = <!INITIALIZER
 }<!>
 
 fun expectedFlexibleUnitImplicitReturnString() {
-    A.foo = l@ <!ASSIGNMENT_TYPE_MISMATCH("kotlin.Function0<kotlin.Unit!>; kotlin.Function0<kotlin.String>")!>{
+    A.foo = l@ {
         ""
-    }<!>
+    }
 }
 
 fun expectedFlexibleUnitExplicitReturnUnitAndString() {
-    A.foo = l@ <!ASSIGNMENT_TYPE_MISMATCH("kotlin.Function0<kotlin.Unit!>; kotlin.Function0<kotlin.Any>")!>{
+    A.foo = l@ {
         if ("0".hashCode() == 42) return@l Unit
         ""
-    }<!>
+    }
 }
 
 val expectedNullableUnitExplicitReturnString: () -> Unit? = <!INITIALIZER_TYPE_MISMATCH!>l@ {
@@ -65,9 +65,9 @@ val expectedNullableUnitExplicitReturnString: () -> Unit? = <!INITIALIZER_TYPE_M
 }<!>
 
 fun expectedFlexibleUnitExplicitReturnString() {
-    A.foo = l@ <!ASSIGNMENT_TYPE_MISMATCH!>{
-        return@l ""
-    }<!>
+    A.foo = l@ {
+        return@l <!RETURN_TYPE_MISMATCH!>""<!>
+    }
 }
 
 val expectedNullableUnitExplicitReturnNull: () -> Unit? = l@ {
@@ -76,7 +76,7 @@ val expectedNullableUnitExplicitReturnNull: () -> Unit? = l@ {
 
 fun expectedFlexibleUnitExplicitReturnNull() {
     A.foo = l@ {
-        return@l null
+        return@l <!NULL_FOR_NONNULL_TYPE!>null<!>
     }
 }
 
@@ -130,6 +130,6 @@ fun test() {
     }
 
     A.run l@ {
-        return@l null
+        return@l <!NULL_FOR_NONNULL_TYPE!>null<!>
     }
 }

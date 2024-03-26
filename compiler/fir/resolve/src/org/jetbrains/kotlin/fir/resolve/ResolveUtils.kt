@@ -82,8 +82,8 @@ internal fun FirAnonymousFunction.computeReturnType(
     val expandedExpectedReturnType = expectedReturnType?.fullyExpandedType(session)
     val unitType = session.builtinTypes.unitType.type
     if (isLambda) {
-        if (expandedExpectedReturnType?.isUnit == true) {
-            // If the expected type is Unit, always infer the lambda's type to the expected type.
+        if (expandedExpectedReturnType?.isUnitOrFlexibleUnit == true) {
+            // If the expected type is Unit or flexible Unit, always infer the lambda's type to Unit.
             // If a return statement in a lambda has a different type, RETURN_TYPE_MISMATCH will be reported for that return statement
             // by FirFunctionReturnTypeMismatchChecker.
             //
@@ -94,6 +94,9 @@ internal fun FirAnonymousFunction.computeReturnType(
             //
             // Without this check, INITIALIZER_TYPE_MISMATCH would be reported on the whole lambda expression,
             // because the return type of the lambda would be inferred to String.
+            //
+            // NOTE: If the lambda's expected type is flexible Unit, we forbid returning null from such a lambda.
+            // See KT-66909.
             return unitType
         }
 
@@ -109,11 +112,7 @@ internal fun FirAnonymousFunction.computeReturnType(
             //
             // Without this check, INITIALIZER_TYPE_MISMATCH would be reported on the whole lambda expression,
             // because the return type of the lambda would be inferred to Unit.
-            //
-            // The only exception is when the expected type is flexible Unit (Unit!).
-            // In that case, the presence of an expressionless return forces the return type of the lambda to be inferred to plain Unit.
-            // Any attempt to return null from that lambda should be reported as an error.
-            return if (expandedExpectedReturnType != null && !expandedExpectedReturnType.isUnitOrFlexibleUnit) {
+            return if (expandedExpectedReturnType != null) {
                 expectedReturnType
             } else {
                 unitType

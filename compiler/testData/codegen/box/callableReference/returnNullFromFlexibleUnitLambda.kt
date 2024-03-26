@@ -3,7 +3,9 @@
 // WITH_STDLIB
 // DUMP_IR
 // FIR_IDENTICAL
+
 // IGNORE_BACKEND_K2: ANY
+// ^ This test results in compilation error on K2 (KT-66954)
 
 // FILE: A.java
 import org.jetbrains.annotations.NotNull;
