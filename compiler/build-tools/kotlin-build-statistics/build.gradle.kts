@@ -26,7 +26,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5, parallel = true)
+projectTest(jUnitMode = JUnitMode.JUnit5, parallel = false)
 
 publish()
 

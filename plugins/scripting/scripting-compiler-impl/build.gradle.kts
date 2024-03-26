@@ -51,6 +51,6 @@ runtimeJar()
 sourcesJar()
 javadocJar()
 
-projectTest {
+projectTest(parallel = false) {
     workingDir = rootDir
 }

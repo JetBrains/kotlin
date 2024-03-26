@@ -191,7 +191,7 @@ fun Project.wasmProjectTest(
 ): TaskProvider<Test> {
     return projectTest(
         taskName = taskName,
-        parallel = true,
+        parallel = false,
         jUnitMode = JUnitMode.JUnit5
     ) {
         workingDir = rootDir

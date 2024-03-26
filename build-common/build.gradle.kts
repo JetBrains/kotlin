@@ -47,8 +47,8 @@ javadocJar()
 
 testsJar()
 
-projectTest(parallel = true)
+projectTest(parallel = false)
 
-projectTest("testJUnit5", jUnitMode = JUnitMode.JUnit5, parallel = true) {
+projectTest("testJUnit5", jUnitMode = JUnitMode.JUnit5, parallel = false) {
     useJUnitPlatform()
 }

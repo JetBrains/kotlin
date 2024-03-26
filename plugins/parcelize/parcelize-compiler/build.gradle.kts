@@ -93,7 +93,7 @@ val prepareRobolectricDependencies by tasks.registering(Copy::class) {
     into(robolectricDependencyDir)
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
+projectTest(jUnitMode = JUnitMode.JUnit5, parallel = false) {
     useJUnitPlatform()
     dependsOn(parcelizeRuntimeForTests)
     dependsOn(robolectricClasspath)

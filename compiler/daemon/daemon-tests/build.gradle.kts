@@ -23,7 +23,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
+projectTest(parallel = false, jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
     workingDir = rootDir
 

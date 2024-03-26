@@ -8,7 +8,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
+projectTest(parallel = false) {
     workingDir = rootDir
 }
 

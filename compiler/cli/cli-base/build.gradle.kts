@@ -38,6 +38,6 @@ allprojects {
 
 testsJar {}
 
-projectTest {
+projectTest(parallel = false) {
     workingDir = rootDir
 }

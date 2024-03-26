@@ -35,7 +35,8 @@ fun Project.codegenTest(
 ): TaskProvider<Test> = projectTest(
     taskName = "codegenTarget${targetInTestClass}Jvm${jvm}Test",
     jUnitMode = JUnitMode.JUnit5,
-    maxMetaspaceSizeMb = 1024
+    maxMetaspaceSizeMb = 1024,
+    parallel = false,
 ) {
     dependsOn(":dist")
     workingDir = rootDir

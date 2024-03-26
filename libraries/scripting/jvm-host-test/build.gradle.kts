@@ -40,7 +40,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = false) {
     dependsOn(":dist")
     workingDir = rootDir
 }
@@ -53,7 +53,7 @@ projectTest(parallel = true) {
 //    classpath = embeddableTestRuntime
 //}
 
-projectTest(taskName = "testWithK1", parallel = true) {
+projectTest(taskName = "testWithK1", parallel = false) {
     dependsOn(":dist")
     workingDir = rootDir
     doFirst {

@@ -59,7 +59,8 @@ projectTest(
     defineJDKEnvVariables = listOf(
         JdkMajorVersion.JDK_11_0, // e.g. org.jetbrains.kotlin.test.runners.ForeignAnnotationsCompiledJavaTestGenerated.Java11Tests
         JdkMajorVersion.JDK_21_0, // e.g. org.jetbrains.kotlin.test.runners.codegen.FirLightTreeBlackBoxModernJdkCodegenTestGenerated.TestsWithJava21
-    )
+    ),
+    parallel = false,
 ) {
     dependsOn(":dist")
     workingDir = rootDir

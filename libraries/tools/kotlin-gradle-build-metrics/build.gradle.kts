@@ -21,7 +21,7 @@ dependencies {
     testImplementation(libs.junit4)
 }
 
-projectTest {
+projectTest(parallel = false) {
     workingDir = rootDir
 }
 

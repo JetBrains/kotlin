@@ -41,12 +41,12 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = false) {
     workingDir = rootDir
     useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 }
 
-projectTest("testJvmICWithJdk11", parallel = true) {
+projectTest("testJvmICWithJdk11", parallel = false) {
     workingDir = rootDir
     useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
     filter {

@@ -92,7 +92,7 @@ dependencies {
 }
 
 
-projectTest(parallel = true) {
+projectTest(parallel = false) {
     workingDir = rootDir
 }
 

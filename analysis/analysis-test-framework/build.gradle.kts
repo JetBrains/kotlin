@@ -31,7 +31,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
+projectTest(jUnitMode = JUnitMode.JUnit5, parallel = false) {
     dependsOn(":plugins:fir-plugin-prototype:plugin-annotations:jar")
     workingDir = rootDir
     useJUnitPlatform()

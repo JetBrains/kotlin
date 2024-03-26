@@ -57,7 +57,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = false) {
     workingDir = rootDir
 }
 

@@ -27,7 +27,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
+projectTest(jUnitMode = JUnitMode.JUnit5, parallel = false) {
     workingDir = rootDir
     useJUnitPlatform()
 }

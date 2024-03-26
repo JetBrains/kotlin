@@ -83,7 +83,7 @@ kotlin {
     }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
+projectTest(jUnitMode = JUnitMode.JUnit5, parallel = false) {
     dependsOn(":dist", ":plugins:scripting:test-script-definition:testJar")
     workingDir = rootDir
     useJUnitPlatform()

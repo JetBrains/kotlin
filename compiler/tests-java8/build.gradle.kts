@@ -20,7 +20,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = false) {
     dependsOn(":dist")
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))

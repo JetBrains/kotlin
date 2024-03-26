@@ -158,7 +158,7 @@ tasks.named("validatePlugins") {
     enabled = false
 }
 
-projectTest {
+projectTest(parallel = false) {
     workingDir = rootDir
 }
 

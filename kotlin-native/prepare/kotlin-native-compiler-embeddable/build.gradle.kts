@@ -96,7 +96,7 @@ sourceSets {
     }
 }
 
-projectTest {
+projectTest(parallel = false) {
     /**
      * It's expected that test should be executed on CI, but currently this project under `kotlin.native.enabled`
      */

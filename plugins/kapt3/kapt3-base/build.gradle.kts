@@ -21,7 +21,7 @@ sourceSets {
 
 testsJar {}
 
-projectTest {
+projectTest(parallel = false) {
     useJUnitPlatform()
     workingDir = rootDir
 }

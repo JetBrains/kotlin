@@ -27,7 +27,7 @@ sourceSets {
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt")
 
-projectTest(parallel = true) {
+projectTest(parallel = false) {
     dependsOn(":dist")
     workingDir = rootDir
 }

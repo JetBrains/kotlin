@@ -46,7 +46,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = false) {
     dependsOn(":dist")
     workingDir = rootDir
     val testRuntimeProvider = project.provider { testJsr223Runtime.asPath }
@@ -58,7 +58,7 @@ projectTest(parallel = true) {
     }
 }
 
-projectTest(taskName = "embeddableTest", parallel = true) {
+projectTest(taskName = "embeddableTest", parallel = false) {
     workingDir = rootDir
     dependsOn(embeddableTestRuntime)
     classpath = embeddableTestRuntime

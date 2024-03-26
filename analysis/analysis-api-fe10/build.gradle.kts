@@ -56,7 +56,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
+projectTest(jUnitMode = JUnitMode.JUnit5, parallel = false) {
     dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()

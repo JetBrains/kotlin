@@ -31,7 +31,7 @@ sourceSets {
     }
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
+projectTest(parallel = false, jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist", ":plugins:scripting:test-script-definition:testJar")
     workingDir = rootDir
     useJUnitPlatform()

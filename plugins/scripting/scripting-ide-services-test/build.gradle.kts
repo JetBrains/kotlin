@@ -57,7 +57,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = false) {
     dependsOn(":kotlin-compiler:distKotlinc")
     workingDir = rootDir
     doFirst {
@@ -67,7 +67,7 @@ projectTest(parallel = true) {
 
 // This doesn;t work now due to conflicts between embeddable compiler contents and intellij sdk modules
 // To make it work, the dependencies to the intellij sdk should be eliminated
-projectTest(taskName = "embeddableTest", parallel = true) {
+projectTest(taskName = "embeddableTest", parallel = false) {
     workingDir = rootDir
     dependsOn(embeddableTestRuntime)
     classpath = embeddableTestRuntime

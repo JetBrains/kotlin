@@ -69,7 +69,8 @@ projectTest(
         JdkMajorVersion.JDK_11_0,
         JdkMajorVersion.JDK_17_0,
         JdkMajorVersion.JDK_21_0
-    )
+    ),
+    parallel = false,
 ) {
     dependsOn(":dist")
     workingDir = rootDir

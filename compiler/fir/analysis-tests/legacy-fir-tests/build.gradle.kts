@@ -48,7 +48,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 }
 
-projectTest(parallel = true, maxHeapSizeMb = 3072) {
+projectTest(parallel = false, maxHeapSizeMb = 3072) {
     dependsOn(":dist")
     workingDir = rootDir
 }

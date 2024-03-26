@@ -109,7 +109,7 @@ artifacts {
     }
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
+projectTest(parallel = false, jUnitMode = JUnitMode.JUnit5) {
     workingDir = rootDir
     useJUnitPlatform()
     setUpJsIrBoxTests()

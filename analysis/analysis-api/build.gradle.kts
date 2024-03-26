@@ -43,6 +43,6 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 
 testsJar()
 
-projectTest {
+projectTest(parallel = false) {
     workingDir = rootDir
 }

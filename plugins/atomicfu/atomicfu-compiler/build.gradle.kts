@@ -163,7 +163,7 @@ sourceSets {
 testsJar()
 useD8Plugin()
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
+projectTest(jUnitMode = JUnitMode.JUnit5, parallel = false) {
     useJUnitPlatform {
         // Exclude all tests with the "atomicfu-native" tag. They should be launched by another test task.
         excludeTags("atomicfu-native")

@@ -74,7 +74,7 @@ sourcesJar()
 javadocJar()
 testsJar()
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
+projectTest(parallel = false, jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
     useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 

@@ -37,7 +37,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
+projectTest(parallel = false) {
     dependsOn(":dist")
     val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
     doFirst {

@@ -69,7 +69,7 @@ kaptTestTask("testJdk21", JavaLanguageVersion.of(21))
 fun Project.kaptTestTask(name: String, javaLanguageVersion: JavaLanguageVersion) {
     val service = extensions.getByType<JavaToolchainService>()
 
-    projectTest(taskName = name, parallel = true) {
+    projectTest(taskName = name, parallel = false) {
         useJUnitPlatform {
             excludeTags = setOf("IgnoreJDK11")
         }

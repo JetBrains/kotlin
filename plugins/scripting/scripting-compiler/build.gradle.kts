@@ -63,7 +63,7 @@ javadocJar()
 
 testsJar()
 
-projectTest(parallel = true) {
+projectTest(parallel = false) {
     dependsOn(":dist")
     workingDir = rootDir
     val scriptClasspath = testSourceSet.output.classesDirs.joinToString(File.pathSeparator)
@@ -72,7 +72,7 @@ projectTest(parallel = true) {
     }
 }
 
-projectTest(taskName = "testWithK1", parallel = true) {
+projectTest(taskName = "testWithK1", parallel = false) {
     dependsOn(":dist")
     workingDir = rootDir
     val scriptClasspath = testSourceSet.output.classesDirs.joinToString(File.pathSeparator)

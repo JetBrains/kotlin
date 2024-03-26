@@ -51,7 +51,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 }
 
-projectTest {
+projectTest(parallel = false) {
     workingDir = rootDir
 }
 

@@ -74,7 +74,7 @@ val prepareRobolectricDependencies by tasks.registering(Copy::class) {
     into(robolectricDependencyDir)
 }
 
-projectTest {
+projectTest(parallel = false) {
     dependsOn(androidExtensionsRuntimeForTests)
     dependsOn(robolectricClasspath)
 

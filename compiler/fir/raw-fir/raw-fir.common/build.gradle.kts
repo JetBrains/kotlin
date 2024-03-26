@@ -30,6 +30,6 @@ sourceSets {
     "test" { none() }
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = false) {
     workingDir = rootDir
 }

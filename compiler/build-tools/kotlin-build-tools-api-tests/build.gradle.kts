@@ -92,7 +92,7 @@ testing {
                     }
                 }
                 targets.all {
-                    projectTest(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5) {
+                    projectTest(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, parallel = false) {
                         ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
                     }
                 }
@@ -116,7 +116,7 @@ testing {
             }
 
             targets.all {
-                projectTest(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5) {
+                projectTest(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, parallel = false) {
                     systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
                 }
             }

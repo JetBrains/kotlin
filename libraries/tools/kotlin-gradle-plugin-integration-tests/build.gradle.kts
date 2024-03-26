@@ -233,7 +233,8 @@ fun Test.advanceGradleVersion() {
 projectTest(
     "test",
     shortenTempRootName = shortenTempRootName,
-    jUnitMode = JUnitMode.JUnit5
+    jUnitMode = JUnitMode.JUnit5,
+    parallel = false,
 ) {
     includeMppAndAndroid(false)
     includeNative(false)
@@ -242,7 +243,8 @@ projectTest(
 projectTest(
     "testAdvanceGradleVersion",
     shortenTempRootName = shortenTempRootName,
-    jUnitMode = JUnitMode.JUnit5
+    jUnitMode = JUnitMode.JUnit5,
+    parallel = false,
 ) {
     advanceGradleVersion()
     includeMppAndAndroid(false)
@@ -254,7 +256,8 @@ if (splitGradleIntegrationTestTasks) {
     projectTest(
         "testMppAndAndroid",
         shortenTempRootName = shortenTempRootName,
-        jUnitMode = JUnitMode.JUnit5
+        jUnitMode = JUnitMode.JUnit5,
+        parallel = false,
     ) {
         includeMppAndAndroid(true)
     }
@@ -262,7 +265,8 @@ if (splitGradleIntegrationTestTasks) {
     projectTest(
         "testAdvanceGradleVersionMppAndAndroid",
         shortenTempRootName = shortenTempRootName,
-        jUnitMode = JUnitMode.JUnit5
+        jUnitMode = JUnitMode.JUnit5,
+        parallel = false,
     ) {
         advanceGradleVersion()
         includeMppAndAndroid(true)

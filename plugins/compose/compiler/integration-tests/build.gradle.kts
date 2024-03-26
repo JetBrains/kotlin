@@ -13,7 +13,7 @@ dependencies {
     testImplementation(gradleTestKit())
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = false) {
     dependsOn(":plugins:compose-compiler-plugin:temp:compiler:publish")
     workingDir = rootDir
 }

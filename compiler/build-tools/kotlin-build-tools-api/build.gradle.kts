@@ -30,6 +30,6 @@ tasks.named<KotlinCompile>("compileTestKotlin") {
     }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
+projectTest(jUnitMode = JUnitMode.JUnit5, parallel = false) {
     useJUnitPlatform()
 }

@@ -23,7 +23,7 @@ sourceSets {
     }
 }
 
-projectTest() {
+projectTest(parallel = false) {
     dependsOn(":dist")
     workingDir = rootDir
 }

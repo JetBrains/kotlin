@@ -354,7 +354,7 @@ fun Test.setUpBoxTests() {
     forwardProperties()
 }
 
-val test = projectTest(jUnitMode = JUnitMode.JUnit5) {
+val test = projectTest(jUnitMode = JUnitMode.JUnit5, parallel = false) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = true, firEnabled = true, es6Enabled = true)
 
     inputs.dir(rootDir.resolve("compiler/cli/cli-common/resources")) // compiler.xml
@@ -369,38 +369,38 @@ val test = projectTest(jUnitMode = JUnitMode.JUnit5) {
     configureTestDistribution()
 }
 
-val jsTest = projectTest("jsTest", jUnitMode = JUnitMode.JUnit5) {
+val jsTest = projectTest("jsTest", jUnitMode = JUnitMode.JUnit5, parallel = false) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false, firEnabled = false, es6Enabled = false)
     useJUnitPlatform()
 }
 
-projectTest("jsIrTest", jUnitMode = JUnitMode.JUnit5) {
+projectTest("jsIrTest", jUnitMode = JUnitMode.JUnit5, parallel = false) {
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = false, es6Enabled = false)
     useJUnitPlatform()
 }
 
-projectTest("jsIrES6Test", jUnitMode = JUnitMode.JUnit5) {
+projectTest("jsIrES6Test", jUnitMode = JUnitMode.JUnit5, parallel = false) {
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = false, es6Enabled = true)
     useJUnitPlatform()
 }
 
-projectTest("jsFirTest", jUnitMode = JUnitMode.JUnit5) {
+projectTest("jsFirTest", jUnitMode = JUnitMode.JUnit5, parallel = false) {
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = true, es6Enabled = false)
     useJUnitPlatform()
 }
 
-projectTest("jsFirES6Test", jUnitMode = JUnitMode.JUnit5) {
+projectTest("jsFirES6Test", jUnitMode = JUnitMode.JUnit5, parallel = false) {
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = true, es6Enabled = true)
     useJUnitPlatform()
 }
 
-projectTest("quickTest", jUnitMode = JUnitMode.JUnit5) {
+projectTest("quickTest", jUnitMode = JUnitMode.JUnit5, parallel = false) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false, firEnabled = false, es6Enabled = false)
     systemProperty("kotlin.js.skipMinificationTest", "true")
     useJUnitPlatform()
 }
 
-projectTest("jsStdlibApiTest", parallel = true, maxHeapSizeMb = 4096) {
+projectTest("jsStdlibApiTest", parallel = false, maxHeapSizeMb = 4096) {
     setupV8()
     setupNodeJs()
     dependsOn(npmInstall)
@@ -474,7 +474,7 @@ val runMocha by tasks.registering {
     finalizedBy(mochaTest)
 }
 
-projectTest("invalidationTest", jUnitMode = JUnitMode.JUnit5) {
+projectTest("invalidationTest", jUnitMode = JUnitMode.JUnit5, parallel = false) {
     workingDir = rootDir
 
     useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
