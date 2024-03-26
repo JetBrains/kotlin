@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.utils.withIndent
 public class SirAsSwiftSourcesPrinter(
     private val printer: SmartPrinter = SmartPrinter(StringBuilder()),
     private val session: SirTreeAccessor = SirTreeAccessorImpl(),
-) : SirTreeAccessor by session, IndentingPrinter by printer {
+) : IndentingPrinter by printer {
 
     public companion object {
         public fun print(module: SirModule, printer: SirAsSwiftSourcesPrinter = SirAsSwiftSourcesPrinter()): String {
@@ -32,7 +32,7 @@ public class SirAsSwiftSourcesPrinter(
         printExtensions()
     }
 
-    private fun SirModule.printImports() {
+    private fun SirModule.printImports() = with(session) {
         val imports = allImports().toList()
         imports.forEach {
             it.print()
@@ -42,7 +42,7 @@ public class SirAsSwiftSourcesPrinter(
         }
     }
 
-    private fun SirModule.printExtensions() {
+    private fun SirModule.printExtensions() = with(session) {
         val extensions = allExtensions().toList()
         extensions.forEach {
             it.print()
@@ -66,7 +66,7 @@ public class SirAsSwiftSourcesPrinter(
         println("}")
     }
 
-    private fun SirDeclarationContainer.printChildren() {
+    private fun SirDeclarationContainer.printChildren() = with(session) {
         allPackageEnums().forEach {
             it.print()
         }
