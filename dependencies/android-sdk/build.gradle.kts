@@ -25,8 +25,9 @@ repositories {
 }
 
 val buildToolsVersion = "r29.0.3"
-val platformToolsVersion = "r35.0.0"
-val sdkToolsVersion = "4333796" // 26.1.1
+val platformToolsVersion = "r28.0.1"
+val sdkToolsVersion = "4333796" /*26.1.1*/
+val emulatorVersion = "5264690"
 
 dependencies {
     implicitDependencies("google:build-tools:$buildToolsVersion:linux@zip")
@@ -40,12 +41,17 @@ dependencies {
     implicitDependencies("google:sdk-tools-linux:$sdkToolsVersion@zip")
     implicitDependencies("google:sdk-tools-windows:$sdkToolsVersion@zip")
     implicitDependencies("google:sdk-tools-darwin:$sdkToolsVersion@zip")
+
+    implicitDependencies("google:emulator-linux:$emulatorVersion@zip")
+    implicitDependencies("google:emulator-windows:$emulatorVersion@zip")
+    implicitDependencies("google:emulator-darwin:$emulatorVersion@zip")
 }
 
 val androidSdk by configurations.creating
 val androidJar by configurations.creating
 val androidPlatform by configurations.creating
 val buildTools by configurations.creating
+val androidEmulator by configurations.creating
 
 val sdkDestDirName = "androidSdk"
 
@@ -145,6 +151,7 @@ unzipSdkTask("android_m2repository", "r44", "extras/android", "")
 unzipSdkTask("platform-tools", platformToolsVersion, "", toolsOsDarwin)
 unzipSdkTask("sdk-tools-$toolsOsDarwin", sdkToolsVersion, "", "")
 unzipSdkTask("build-tools", buildToolsVersion, "build-tools/${buildToolsVersion.removePrefix("r")}", toolsOs, buildTools, 1)
+unzipSdkTask("emulator-$toolsOsDarwin", emulatorVersion, "", "", prepareTask = prepareEmulator)
 unzipSdkTask("armeabi-v7a", "19", "system-images/android-19/default","r05", prepareTask = prepareEmulator)
 unzipSdkTask("x86", "19", "system-images/android-19/default", "r06", prepareTask = prepareEmulator)
 
@@ -158,4 +165,8 @@ artifacts.add(androidSdk.name, layout.buildDirectory.dir(sdkDestDirName)) {
 
 artifacts.add(androidJar.name, layout.buildDirectory.file("$sdkDestDirName/platforms/android-26/android.jar")) {
     builtBy(preparePlatform)
+}
+
+artifacts.add(androidEmulator.name, layout.buildDirectory.dir(sdkDestDirName)) {
+    builtBy(prepareEmulator)
 }

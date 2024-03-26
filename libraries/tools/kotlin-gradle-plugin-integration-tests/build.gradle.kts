@@ -503,6 +503,7 @@ tasks.withType<Test> {
     }
 
     useAndroidSdk()
+    useAndroidEmulator()
 
     val shouldApplyJunitPlatform = name !in setOf(
         allParallelTestsTask.name,

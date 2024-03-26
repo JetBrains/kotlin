@@ -6,20 +6,16 @@
 package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.internal.logging.LoggingConfigurationBuildOptions.StacktraceOption
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 
 @DisplayName("codegen tests on android")
-@AndroidTestVersions(minVersion = TestVersions.AGP.AGP_84, maxVersion = TestVersions.AGP.AGP_84)
-/*
- * Non-virtualized runners are necessary with current configuration.
- * This build utilizes the Android Emulator to execute codegen tests,
- * requiring a VM hypervisor for optimal performance.
- * Nested virtualization on CI runners except physical Macs fails.
- */
-@OsCondition(enabledOnCI = [OS.MAC])
+@AndroidTestVersions(minVersion = TestVersions.AGP.AGP_71, maxVersion = TestVersions.AGP.AGP_71)
+@GradleTestVersions(minVersion = TestVersions.Gradle.G_6_9, maxVersion = TestVersions.Gradle.G_6_9)
+@OsCondition(supportedOn = [OS.MAC, OS.LINUX], enabledOnCI = [OS.MAC, OS.LINUX])
 @AndroidCodegenTests
 class AndroidCodegenIT : KGPBaseTest() {
     @GradleAndroidTest
@@ -32,15 +28,23 @@ class AndroidCodegenIT : KGPBaseTest() {
             "codegen-tests",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                androidVersion = agpVersion,
-                freeArgs = listOf("-Pandroid.useAndroidX=true", "-Pandroid.experimental.testOptions.managedDevices.setupTimeoutMinutes=0"),
-                logLevel = LogLevel.LIFECYCLE
+                freeArgs = listOf("-Pandroid.useAndroidX=true"),
+                logLevel = LogLevel.INFO,
+                stacktraceMode = StacktraceOption.STACKTRACE_SHORT_OPTION
             ),
             enableGradleDebug = false,
             buildJdk = jdkVersion.location
         ) {
-            build("assembleAndroidTest", forceOutput = true, enableGradleDaemonMemoryLimitInMb = 6000)
-            build("nexusCheck", forceOutput = true, enableGradleDaemonMemoryLimitInMb = 6000)
+//            makeSnapshotTo("/Users/Iaroslav.Postovalov/IdeaProjects/kotlin/build/snapshot/codegen-tests")
+//            build(
+//                "assembleAndroidTest",
+//                enableGradleDaemonMemoryLimitInMb = 6000
+//            )
+//            build(
+//                "nexusCheck",
+//                forceOutput = true,
+//                enableGradleDaemonMemoryLimitInMb = 6000
+//            )
         }
     }
 }

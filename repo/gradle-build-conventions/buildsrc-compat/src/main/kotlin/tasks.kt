@@ -339,6 +339,10 @@ object TaskUtils {
     fun useAndroidJar(task: Task) {
         task.useAndroidConfiguration(systemPropertyName = "android.jar", configName = "androidJar")
     }
+
+    fun useAndroidEmulator(task: Task) {
+        task.useAndroidConfiguration(systemPropertyName = "android.sdk", configName = "androidEmulator")
+    }
 }
 
 private fun Task.useAndroidConfiguration(systemPropertyName: String, configName: String) {
@@ -370,6 +374,10 @@ private fun Task.useAndroidConfiguration(systemPropertyName: String, configName:
 
 fun Task.useAndroidSdk() {
     TaskUtils.useAndroidSdk(this)
+}
+
+fun Task.useAndroidEmulator() {
+    TaskUtils.useAndroidEmulator(this)
 }
 
 fun Task.useAndroidJar() {
