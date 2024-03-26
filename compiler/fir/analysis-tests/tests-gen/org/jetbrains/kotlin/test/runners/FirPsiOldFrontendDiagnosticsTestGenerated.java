@@ -25086,6 +25086,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("javaOverrideOfKotlinNamed.kt")
+        public void testJavaOverrideOfKotlinNamed() {
+          runTest("compiler/testData/diagnostics/tests/namedArguments/mixedNamedPosition/javaOverrideOfKotlinNamed.kt");
+        }
+
+        @Test
         @TestMetadata("oldInference.kt")
         public void testOldInference() {
           runTest("compiler/testData/diagnostics/tests/namedArguments/mixedNamedPosition/oldInference.kt");
