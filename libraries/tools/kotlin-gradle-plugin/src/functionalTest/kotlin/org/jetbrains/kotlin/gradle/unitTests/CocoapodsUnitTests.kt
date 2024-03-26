@@ -58,4 +58,16 @@ class CocoapodsUnitTests {
             assertContainsDiagnostic(CocoapodsPluginDiagnostics.DeprecatedPropertiesUsed(listOf(FRAMEWORK_PATHS_PROPERTY, HEADER_PATHS_PROPERTY)))
         }
     }
+
+    @Test
+    fun test() {
+        buildProjectWithMPP {
+            applyCocoapodsPlugin()
+            kotlin {
+                iosSimulatorArm64()
+                iosX64()
+            }
+        }.evaluate().tasks.getByName("fatFramework")
+    }
+
 }

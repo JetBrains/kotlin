@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -143,8 +145,13 @@ internal constructor(
     /**
      * A base name for the fat framework.
      */
-    @Input
-    var baseName: String = project.name
+    @get:Input
+    var baseName: String
+        get() = baseNameProvider.get()
+        set(value) = baseNameProvider.set(value)
+
+    @get:Internal
+    internal val baseNameProvider: Property<String> = objectFactory.property(project.name)
 
     @get:Internal
     internal val defaultDestinationDir: Provider<Directory> = projectLayout.buildDirectory.dir("fat-framework")

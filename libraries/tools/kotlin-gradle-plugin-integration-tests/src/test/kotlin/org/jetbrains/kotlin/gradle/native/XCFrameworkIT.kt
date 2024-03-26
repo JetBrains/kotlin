@@ -27,19 +27,19 @@ class XCFrameworkIT : KGPBaseTest() {
                 assertTasksExecuted(":shared:linkDebugFrameworkIosX64")
                 assertTasksExecuted(":shared:linkDebugFrameworkIosArm64")
                 assertTasksExecuted(":shared:linkDebugFrameworkIosSimulatorArm64")
-                assertTasksExecuted(":shared:assembleDebugIosSimulatorFatFrameworkForSharedXCFramework")
+                assertTasksExecuted(":shared:assembleDebugIosSimulatorUniversalFrameworkForSharedXCFramework")
                 assertTasksExecuted(":shared:linkDebugFrameworkWatchosArm32")
                 assertTasksExecuted(":shared:linkDebugFrameworkWatchosArm64")
                 assertTasksExecuted(":shared:linkDebugFrameworkWatchosDeviceArm64")
                 assertTasksExecuted(":shared:linkDebugFrameworkWatchosSimulatorArm64")
                 assertTasksExecuted(":shared:linkDebugFrameworkWatchosX64")
-                assertTasksExecuted(":shared:assembleDebugWatchosFatFrameworkForSharedXCFramework")
-                assertTasksExecuted(":shared:assembleDebugWatchosSimulatorFatFrameworkForSharedXCFramework")
+                assertTasksExecuted(":shared:assembleDebugWatchosUniversalFrameworkForSharedXCFramework")
+                assertTasksExecuted(":shared:assembleDebugWatchosSimulatorUniversalFrameworkForSharedXCFramework")
                 assertTasksExecuted(":shared:assembleSharedDebugXCFramework")
                 assertDirectoryInProjectExists("shared/build/XCFrameworks/debug/shared.xcframework")
                 assertDirectoryInProjectExists("shared/build/XCFrameworks/debug/shared.xcframework/ios-arm64_x86_64-simulator/dSYMs/shared.framework.dSYM")
-                assertDirectoryInProjectExists("shared/build/sharedXCFrameworkTemp/fatframework/debug/watchos/shared.framework")
-                assertDirectoryInProjectExists("shared/build/sharedXCFrameworkTemp/fatframework/debug/watchos/shared.framework.dSYM")
+                assertDirectoryInProjectExists("shared/build/XCFrameworkTemp/shared/universalFramework/debug/watchos/shared.framework")
+                assertDirectoryInProjectExists("shared/build/XCFrameworkTemp/shared/universalFramework/debug/watchos/shared.framework.dSYM")
             }
 
             build("assembleSharedDebugXCFramework") {
@@ -49,7 +49,7 @@ class XCFrameworkIT : KGPBaseTest() {
                 assertTasksUpToDate(":shared:linkDebugFrameworkWatchosArm64")
                 assertTasksUpToDate(":shared:linkDebugFrameworkWatchosDeviceArm64")
                 assertTasksUpToDate(":shared:linkDebugFrameworkWatchosX64")
-                assertTasksUpToDate(":shared:assembleDebugWatchosFatFrameworkForSharedXCFramework")
+                assertTasksUpToDate(":shared:assembleDebugWatchosUniversalFrameworkForSharedXCFramework")
                 assertTasksUpToDate(":shared:assembleSharedDebugXCFramework")
             }
         }
@@ -70,7 +70,7 @@ class XCFrameworkIT : KGPBaseTest() {
                 assertTasksExecuted(":shared:assembleOtherDebugXCFramework")
                 assertDirectoryInProjectExists("shared/build/XCFrameworks/debug/other.xcframework")
                 assertDirectoryInProjectExists("shared/build/XCFrameworks/debug/other.xcframework/ios-arm64/dSYMs/shared.framework.dSYM")
-                assertHasDiagnostic(KotlinToolingDiagnostics.XCFrameworkDifferentInnerFrameworksName)
+                assertHasDiagnostic(KotlinToolingDiagnostics.XCFrameworkNameIsDifferentFromInnerFrameworksName)
             }
         }
     }
@@ -115,7 +115,7 @@ class XCFrameworkIT : KGPBaseTest() {
                 .replaceFirst("baseName = \"shared\"", "baseName = \"awesome\"")
 
             buildAndFail("tasks") {
-                assertOutputContains("All inner frameworks in XCFramework 'shared' should have same names. But there are two with 'awesome' and 'shared' names")
+                assertOutputContains("All inner frameworks in XCFramework 'shared' (RELEASE) should have same names. But there are two with 'awesome' and 'shared' names")
             }
         }
     }
