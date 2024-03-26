@@ -76,7 +76,8 @@ class BuiltInsSerializer(
 
         private fun createMessageCollector() = object : GroupingMessageCollector(
             PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, false),
-            false
+            false,
+            false,
         ) {
             override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
                 // Only report diagnostics without a particular location because there's plenty of errors in built-in sources

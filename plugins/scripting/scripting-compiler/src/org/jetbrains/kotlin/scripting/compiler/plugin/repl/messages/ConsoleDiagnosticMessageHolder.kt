@@ -18,7 +18,8 @@ class ConsoleDiagnosticMessageHolder : MessageCollectorBasedReporter,
 
     override val messageCollector: GroupingMessageCollector = GroupingMessageCollector(
         PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.WITHOUT_PATHS, false),
-        false
+        false,
+        false,
     )
 
     override fun renderMessage(): String {

@@ -56,7 +56,8 @@ class DiagnosticMessagesTextHandler(
         val diagnosticsFullTextCollector =
             GroupingMessageCollector(
                 PrintingMessageCollector(diagnosticsFullTextPrintStream, MessageRenderer.SYSTEM_INDEPENDENT_RELATIVE_PATHS, true),
-                false
+                false,
+                false,
             )
 
         AnalyzerWithCompilerReport.reportDiagnostics(

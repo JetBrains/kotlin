@@ -64,6 +64,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.progressiveMode = from.progressiveMode
     to.relativePathBases = from.relativePathBases?.copyOf()
     to.renderInternalDiagnosticNames = from.renderInternalDiagnosticNames
+    to.reportAllWarnings = from.reportAllWarnings
     to.reportOutputFiles = from.reportOutputFiles
     to.reportPerf = from.reportPerf
     to.script = from.script

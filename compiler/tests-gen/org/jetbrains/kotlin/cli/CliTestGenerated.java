@@ -1140,6 +1140,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/recordAsSingleFileRoot.args");
     }
 
+    @TestMetadata("reportAllWarnings.args")
+    public void testReportAllWarnings() {
+      runTest("compiler/testData/cli/jvm/reportAllWarnings.args");
+    }
+
     @TestMetadata("reportInternalDiagnosticNames.args")
     public void testReportInternalDiagnosticNames() {
       runTest("compiler/testData/cli/jvm/reportInternalDiagnosticNames.args");

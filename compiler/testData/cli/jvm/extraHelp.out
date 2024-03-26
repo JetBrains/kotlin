@@ -216,6 +216,7 @@ where advanced options include:
   -Xklib-relative-path-base  Provide a base path to compute the source's relative paths in klib (default is empty).
   -Xrender-internal-diagnostic-names
                              Render the internal names of warnings and errors.
+  -Xreport-all-warnings      Report all warnings even if errors are found.
   -Xreport-output-files      Report the source-to-output file mapping.
   -Xreport-perf              Report detailed performance statistics.
   -Xself-upper-bound-inference Support inferring type arguments from the self-type upper bounds of the corresponding type parameters.

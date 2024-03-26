@@ -87,7 +87,7 @@ open class IncrementalFirJvmCompilerRunner(
         isIncremental: Boolean
     ): Pair<ExitCode, Collection<File>> {
 //        val isIncremental = true // TODO
-        val collector = GroupingMessageCollector(messageCollector, args.allWarningsAsErrors)
+        val collector = GroupingMessageCollector(messageCollector, args.allWarningsAsErrors, args.reportAllWarnings)
         // from K2JVMCompiler (~)
         val moduleName = args.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
         val targetId = TargetId(moduleName, "java-production") // TODO: get rid of magic constant

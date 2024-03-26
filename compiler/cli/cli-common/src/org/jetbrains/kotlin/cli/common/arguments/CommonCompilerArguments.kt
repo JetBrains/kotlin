@@ -688,6 +688,13 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             field = value
         }
 
+    @Argument(value = "-Xreport-all-warnings", description = "Report all warnings even if errors are found.")
+    var reportAllWarnings = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(
         value = "-Xfragments",
         valueDescription = "<fragment name>",
