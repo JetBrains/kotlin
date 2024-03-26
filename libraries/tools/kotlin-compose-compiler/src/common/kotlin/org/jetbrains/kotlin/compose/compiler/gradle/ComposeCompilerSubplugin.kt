@@ -64,8 +64,6 @@ class ComposeCompilerGradleSubplugin
         return project.provider {
             val options = mutableListOf<SubpluginOption>()
 
-            options += SubpluginOption("liveLiterals", composeCompilerExtension.liveLiterals.toString())
-            options += SubpluginOption("liveLiteralsEnabled", composeCompilerExtension.liveLiteralsEnabled.toString())
             options += SubpluginOption("generateFunctionKeyMetaClasses", composeCompilerExtension.generateFunctionKeyMetaClasses.toString())
             if(kotlinExtensionConfiguration == null) // TODO: Is there a better way to check if AGP already set the option?
                 options += SubpluginOption("sourceInformation", composeCompilerExtension.sourceInformation.toString())
@@ -74,7 +72,6 @@ class ComposeCompilerGradleSubplugin
             options += SubpluginOption("intrinsicRemember", composeCompilerExtension.intrinsicRemember.toString())
             options += SubpluginOption("nonSkippingGroupOptimization", composeCompilerExtension.nonSkippingGroupOptimization.toString())
             options += SubpluginOption("suppressKotlinVersionCompatibilityCheck", composeCompilerExtension.suppressKotlinVersionCompatibilityCheck.toString())
-            options += SubpluginOption("generateDecoys", composeCompilerExtension.generateDecoys.toString())
             options += SubpluginOption("experimentalStrongSkipping", composeCompilerExtension.experimentalStrongSkipping.toString())
             options += SubpluginOption("stabilityConfigurationPath", composeCompilerExtension.stabilityConfigurationPath)
             options += SubpluginOption("traceMarkersEnabled", composeCompilerExtension.traceMarkersEnabled.toString())
