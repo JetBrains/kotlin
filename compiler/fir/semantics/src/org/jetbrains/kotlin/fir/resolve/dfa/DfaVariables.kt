@@ -5,10 +5,22 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.originalOrSelf
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.SmartcastStability
 
 data class Identifier(
@@ -30,55 +42,39 @@ sealed class DataFlowVariable(private val variableIndexForDebug: Int) : Comparab
     override fun compareTo(other: DataFlowVariable): Int = variableIndexForDebug.compareTo(other.variableIndexForDebug)
 }
 
-enum class PropertyStability(val impliedSmartcastStability: SmartcastStability?) {
-    // Immutable and no custom getter or local.
-    // Smartcast is definitely safe regardless of usage.
-    STABLE_VALUE(SmartcastStability.STABLE_VALUE),
+private enum class PropertyStability(
+    val inherentInstability: SmartcastStability?,
+    val checkModule: Boolean = false,
+    val checkReceiver: Boolean = false,
+) {
+    // Private vals can only be accessed from the same scope, so they're always safe to smart cast.
+    // Constant values (e.g. singleton objects) cannot be reassigned no matter what, so they're always safe
+    // to smart cast as well, although this is not very useful.
+    PRIVATE_OR_CONST_VAL(null),
 
-    // Smartcast may or may not be safe, depending on whether there are concurrent writes to this local variable.
-    LOCAL_VAR(null),
+    // Public final vals can be accessed from different modules, which are not necessarily recompiled
+    // when the module declaring the property changes, so smart casting them there is unsafe.
+    PUBLIC_FINAL_VAL(null, checkModule = true),
 
-    // Smartcast is always unsafe regardless of usage.
+    // Public open vals can be overridden with custom getters, so smart casting them is only safe
+    // if the receiver is known to be of a final type that doesn't do that.
+    PUBLIC_OPEN_VAL(null, checkModule = true, checkReceiver = true),
+
+    CAPTURED_VARIABLE(SmartcastStability.CAPTURED_VARIABLE),
     EXPECT_PROPERTY(SmartcastStability.EXPECT_PROPERTY),
-
-    // Open or custom getter.
-    // Smartcast is always unsafe regardless of usage.
     PROPERTY_WITH_GETTER(SmartcastStability.PROPERTY_WITH_GETTER),
-
-    // Protected / public member value from another module.
-    // Smartcast is always unsafe regardless of usage.
-    ALIEN_PUBLIC_PROPERTY(SmartcastStability.ALIEN_PUBLIC_PROPERTY),
-
-    // Mutable member property of a class or object.
-    // Smartcast is always unsafe regardless of usage.
     MUTABLE_PROPERTY(SmartcastStability.MUTABLE_PROPERTY),
-
-    // Delegated property of a class or object.
-    // Smartcast is always unsafe regardless of usage.
     DELEGATED_PROPERTY(SmartcastStability.DELEGATED_PROPERTY);
-
-    fun combineWithReceiverStability(receiverStability: PropertyStability?): PropertyStability {
-        if (receiverStability == null) return this
-        if (this == LOCAL_VAR) {
-            require(receiverStability == STABLE_VALUE || receiverStability == LOCAL_VAR) {
-                "LOCAL_VAR can have only stable or local receiver, but got $receiverStability"
-            }
-            return this
-        }
-        return maxOf(this, receiverStability)
-    }
 }
 
 class RealVariable(
     val identifier: Identifier,
+    val originalType: ConeKotlinType?,
     val isThisReference: Boolean,
     val explicitReceiverVariable: DataFlowVariable?,
     variableIndexForDebug: Int,
-    stability: PropertyStability,
 ) : DataFlowVariable(variableIndexForDebug) {
     val dependentVariables = mutableSetOf<RealVariable>()
-
-    val stability: PropertyStability = stability.combineWithReceiverStability((explicitReceiverVariable as? RealVariable)?.stability)
 
     override fun equals(other: Any?): Boolean {
         return this === other
@@ -95,6 +91,56 @@ class RealVariable(
     init {
         if (explicitReceiverVariable is RealVariable) {
             explicitReceiverVariable.dependentVariables.add(this)
+        }
+    }
+
+    fun getStability(flow: Flow, session: FirSession): SmartcastStability {
+        if (!isThisReference) {
+            val stability = propertyStability
+            stability.inherentInstability?.let { return it }
+            val dispatchReceiver = identifier.dispatchReceiver as? RealVariable
+            if (stability.checkReceiver && dispatchReceiver?.hasFinalType(flow, session) == false)
+                return SmartcastStability.PROPERTY_WITH_GETTER
+            if (stability.checkModule && !(identifier.symbol.fir as FirVariable).isInCurrentOrFriendModule(session))
+                return SmartcastStability.ALIEN_PUBLIC_PROPERTY
+            // Members of unstable values should always be unstable, as the receiver could've changed.
+            dispatchReceiver?.getStability(flow, session)?.takeIf { it != SmartcastStability.STABLE_VALUE }?.let { return it }
+            // No need to check extension receiver, as properties with one cannot be stable by symbol stability.
+        }
+        return SmartcastStability.STABLE_VALUE
+    }
+
+    private fun hasFinalType(flow: Flow, session: FirSession): Boolean =
+        originalType?.isFinal(session) == true || flow.getTypeStatement(this)?.exactType?.any { it.isFinal(session) } == true
+
+    private val propertyStability: PropertyStability by lazy {
+        when (val fir = identifier.symbol.fir) {
+            !is FirVariable -> PropertyStability.PRIVATE_OR_CONST_VAL // named object or containing class for a static field reference
+            is FirEnumEntry -> PropertyStability.PRIVATE_OR_CONST_VAL
+            is FirErrorProperty -> PropertyStability.PRIVATE_OR_CONST_VAL
+            is FirValueParameter -> PropertyStability.PRIVATE_OR_CONST_VAL
+            is FirBackingField -> when {
+                fir.isVal -> PropertyStability.PRIVATE_OR_CONST_VAL
+                else -> PropertyStability.MUTABLE_PROPERTY
+            }
+            is FirField -> when {
+                fir.isFinal -> PropertyStability.PUBLIC_FINAL_VAL
+                else -> PropertyStability.MUTABLE_PROPERTY
+            }
+            is FirProperty -> when {
+                fir.isExpect -> PropertyStability.EXPECT_PROPERTY
+                fir.delegate != null -> PropertyStability.DELEGATED_PROPERTY
+                // Local vars are only *sometimes* unstable (when there are concurrent assignments). `FirDataFlowAnalyzer`
+                // will check that at each use site individually and mark the access as stable when possible.
+                fir.isLocal && fir.isVar -> PropertyStability.CAPTURED_VARIABLE
+                fir.isLocal -> PropertyStability.PRIVATE_OR_CONST_VAL
+                fir.isVar -> PropertyStability.MUTABLE_PROPERTY
+                fir.receiverParameter != null -> PropertyStability.PROPERTY_WITH_GETTER
+                fir.getter !is FirDefaultPropertyAccessor? -> PropertyStability.PROPERTY_WITH_GETTER
+                fir.visibility == Visibilities.Private -> PropertyStability.PRIVATE_OR_CONST_VAL
+                fir.isFinal -> PropertyStability.PUBLIC_FINAL_VAL
+                else -> PropertyStability.PUBLIC_OPEN_VAL
+            }
         }
     }
 }
@@ -124,4 +170,20 @@ private infix fun FirElement.isEqualsTo(other: FirElement): Boolean {
     if (packageFqName != other.packageFqName) return false
     if (classId != other.classId) return false
     return true
+}
+
+private fun ConeKotlinType.isFinal(session: FirSession): Boolean = when (this) {
+    is ConeFlexibleType -> lowerBound.isFinal(session)
+    is ConeDefinitelyNotNullType -> original.isFinal(session)
+    is ConeClassLikeType -> toSymbol(session)?.fullyExpandedClass(session)?.isFinal == true
+    is ConeIntersectionType -> intersectedTypes.any { it.isFinal(session) }
+    else -> false
+}
+
+private fun FirVariable.isInCurrentOrFriendModule(session: FirSession): Boolean {
+    val propertyModuleData = originalOrSelf().moduleData
+    val currentModuleData = session.moduleData
+    return propertyModuleData == currentModuleData ||
+            propertyModuleData in currentModuleData.friendDependencies ||
+            propertyModuleData in currentModuleData.allDependsOnDependencies
 }
