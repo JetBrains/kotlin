@@ -69,10 +69,6 @@ object FirExpressionEvaluator {
     }
 
     fun evaluateAnnotationArguments(annotationCall: FirAnnotationCall, session: FirSession): Map<Name, FirEvaluatorResult>? {
-        if (annotationCall.annotationTypeRef is FirErrorTypeRef) {
-            return null
-        }
-
         val argumentList = annotationCall.argumentList as? FirResolvedArgumentList ?: return null
 
         if (argumentList.mapping.any { (expr, parameter) -> !expr.canBeEvaluated(session, parameter.returnTypeRef.coneTypeOrNull) }) {
@@ -85,10 +81,6 @@ object FirExpressionEvaluator {
     fun evaluateAnnotationArguments(annotation: FirAnnotation, session: FirSession): Map<Name, FirEvaluatorResult>? {
         if (annotation is FirAnnotationCall) {
             return evaluateAnnotationArguments(annotation, session)
-        }
-
-        if (annotation.annotationTypeRef is FirErrorTypeRef) {
-            return null
         }
 
         val argumentMapping = annotation.argumentMapping.mapping
