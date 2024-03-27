@@ -94,6 +94,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/CompanionObject.kt");
   }
 
+  @TestMetadata("CompanionObjectWithAConflictingProperty.kt")
+  public void testCompanionObjectWithAConflictingProperty() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/CompanionObjectWithAConflictingProperty.kt");
+  }
+
   @TestMetadata("Constructors.kt")
   public void testConstructors() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Constructors.kt");

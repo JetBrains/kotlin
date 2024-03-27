@@ -73,7 +73,7 @@ D'E"F\G$H */;
 
   private final error.NonExistentClass intConst = 30 /* initializer type: int */;
 
-  private final int f1 = 2 /* initializer type: int */;
+  private final int f1$1 = 2 /* initializer type: int */;
 
   private final long e = 2L /* initializer type: long */;
 

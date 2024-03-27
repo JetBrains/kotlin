@@ -95,11 +95,11 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
         get() = classOrObjectDeclaration?.hasModifier(KtTokens.INNER_KEYWORD) ?: withClassOrObjectSymbol { it.isInner }
 
     context(KtAnalysisSession)
-    protected fun addFieldsFromCompanionIfNeeded(
+    internal fun addFieldsFromCompanionIfNeeded(
         result: MutableList<KtLightField>,
         classOrObjectSymbol: KtNamedClassOrObjectSymbol,
+        nameGenerator: SymbolLightField.FieldNameGenerator,
     ) {
-        val nameGenerator = SymbolLightField.FieldNameGenerator()
         classOrObjectSymbol.companionObject
             ?.getDeclaredMemberScope()
             ?.getCallableSymbols()

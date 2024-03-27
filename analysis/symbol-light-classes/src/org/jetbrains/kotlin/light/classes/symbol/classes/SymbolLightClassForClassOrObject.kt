@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObject
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod
@@ -230,10 +231,11 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
             // First, add static fields: companion object and fields from companion object
             addCompanionObjectFieldIfNeeded(result, classOrObjectSymbol)
-            addFieldsFromCompanionIfNeeded(result, classOrObjectSymbol)
+            val nameGenerator = SymbolLightField.FieldNameGenerator()
+            addFieldsFromCompanionIfNeeded(result, classOrObjectSymbol, nameGenerator)
 
             // Then, add instance fields: properties from parameters, and then member properties
-            addPropertyBackingFields(result, classOrObjectSymbol)
+            addPropertyBackingFields(result, classOrObjectSymbol, nameGenerator)
 
             // Next, add INSTANCE field if non-local named object
             addInstanceFieldIfNeeded(result, classOrObjectSymbol)

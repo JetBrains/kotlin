@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
@@ -85,7 +86,7 @@ internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject
     override fun getOwnFields(): List<KtLightField> = cachedValue {
         withClassOrObjectSymbol { classOrObjectSymbol ->
             mutableListOf<KtLightField>().apply {
-                addPropertyBackingFields(this, classOrObjectSymbol)
+                addPropertyBackingFields(this, classOrObjectSymbol, SymbolLightField.FieldNameGenerator())
             }
         }
     }
