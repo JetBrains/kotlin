@@ -216,7 +216,8 @@ fun Project.projectTest(
             "-XX:+UseCodeCacheFlushing",
             "-XX:ReservedCodeCacheSize=${reservedCodeCacheSizeMb}m",
             "-XX:MaxMetaspaceSize=${maxMetaspaceSizeMb}m",
-            "-Djna.nosys=true"
+            "-Djna.nosys=true",
+            "-XX:+AlwaysPreTouch",
         )
 
         val nativeMemoryTracking = project.providers.gradleProperty("kotlin.build.test.process.NativeMemoryTracking")
@@ -237,6 +238,9 @@ fun Project.projectTest(
         if (minHeapSizeMb != null) {
             minHeapSize = "${minHeapSizeMb}m"
         }
+        
+        maxHeapSize = "6g"
+        minHeapSize = "6g"
 
         systemProperty("idea.is.unit.test", "true")
         systemProperty("idea.home.path", project.ideaHomePathForTests().get().asFile.canonicalPath)
