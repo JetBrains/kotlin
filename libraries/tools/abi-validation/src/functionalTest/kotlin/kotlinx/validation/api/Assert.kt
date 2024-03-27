@@ -24,6 +24,13 @@ internal fun BuildResult.assertTaskFailure(task: String) {
     assertTaskOutcome(TaskOutcome.FAILED, task)
 }
 
+/**
+ * Helper `fun` for asserting a [TaskOutcome] to be equal to [TaskOutcome.SKIPPED]
+ */
+internal fun BuildResult.assertTaskSkipped(task: String) {
+    assertTaskOutcome(TaskOutcome.SKIPPED, task)
+}
+
 private fun BuildResult.assertTaskOutcome(taskOutcome: TaskOutcome, taskName: String) {
     assertEquals(taskOutcome, task(taskName)?.outcome)
 }
