@@ -152,6 +152,9 @@ public inline fun ulongArrayOf(vararg elements: kotlin.ULong): kotlin.ULongArray
 public inline fun ushortArrayOf(vararg elements: kotlin.UShort): kotlin.UShortArray
 
 @kotlin.internal.InlineOnly
+public inline fun <T, R> via(supplier: T, block: (T) -> R): R
+
+@kotlin.internal.InlineOnly
 public inline fun <T, R> with(receiver: T, block: T.() -> R): R
 
 @kotlin.SinceKotlin(version = "1.4")

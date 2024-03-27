@@ -58,6 +58,19 @@ public inline fun <T, R> T.run(block: T.() -> R): R {
 }
 
 /**
+ * Calls the specified function [block] with the given [supplier] as its supplier and returns its result.
+ *
+ * For detailed usage information see the documentation for [scope functions](https://kotlinlang.org/docs/reference/scope-functions.html#via).
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T, R> via(supplier: T, block: (T) -> R): R {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return block(supplier)
+}
+
+/**
  * Calls the specified function [block] with the given [receiver] as its receiver and returns its result.
  *
  * For detailed usage information see the documentation for [scope functions](https://kotlinlang.org/docs/reference/scope-functions.html#with).
