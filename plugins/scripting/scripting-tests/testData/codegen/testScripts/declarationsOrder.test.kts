@@ -3,5 +3,6 @@ fun foo() {
     bar()
 }
 
-fun bar() {}
+bar()
 
+fun bar() {}

@@ -25,15 +25,33 @@ public class ScriptWithCustomDefBlackBoxCodegenTestGenerated extends AbstractScr
   }
 
   @Test
-  @TestMetadata("declarationsOrder1.test.kts")
-  public void testDeclarationsOrder1_test() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/declarationsOrder1.test.kts");
+  @TestMetadata("declarationsOrder.test.kts")
+  public void testDeclarationsOrder_test() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/declarationsOrder.test.kts");
   }
 
   @Test
-  @TestMetadata("declarationsOrder2.test.kts")
-  public void testDeclarationsOrder2_test() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/declarationsOrder2.test.kts");
+  @TestMetadata("declarationsOrderTopLevelProperty.test.kts")
+  public void testDeclarationsOrderTopLevelProperty_test() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/declarationsOrderTopLevelProperty.test.kts");
+  }
+
+  @Test
+  @TestMetadata("declarationsOrderExtension.test.kts")
+  public void testDeclarationsOrderExtension_test() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/declarationsOrderExtension.test.kts");
+  }
+
+  @Test
+  @TestMetadata("declarationsOrderWith.test.kts")
+  public void testDeclarationsOrderWith_test() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/declarationsOrderWith.test.kts");
+  }
+
+  @Test
+  @TestMetadata("declarationsOrderSingleExpression.test.kts")
+  public void testDeclarationsSingleExpression_test() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/declarationsOrderSingleExpression.test.kts");
   }
 
   @Test
