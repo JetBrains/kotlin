@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaRetur
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -470,9 +471,9 @@ private fun ConstraintSystemError.toDiagnostic(
             val position = position.from
             val argument =
                 when (position) {
-                    // TODO, KT-59810: Support other ReceiverConstraintPositionImpl, LHSArgumentConstraintPositionImpl
                     is ConeArgumentConstraintPosition -> position.argument
                     is ConeLambdaArgumentConstraintPosition -> position.lambda
+                    is ConeReceiverConstraintPosition -> position.argument
                     else -> null
                 }
 
