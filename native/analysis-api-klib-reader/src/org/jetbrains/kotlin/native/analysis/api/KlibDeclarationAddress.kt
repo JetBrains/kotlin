@@ -20,6 +20,8 @@ public sealed class KlibClassifierAddress : KlibDeclarationAddress() {
     public abstract val classId: ClassId
 }
 
+// todo: replace suppress with @ConsistentCopyVisibility annotation after bootstrap
+@Suppress("DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING")
 public data class KlibClassAddress internal constructor(
     override val libraryPath: Path,
     public override val sourceFileName: String?,
@@ -27,6 +29,8 @@ public data class KlibClassAddress internal constructor(
     public override val classId: ClassId,
 ) : KlibClassifierAddress()
 
+// todo: replace suppress with @ConsistentCopyVisibility annotation after bootstrap
+@Suppress("DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING")
 public data class KlibTypeAliasAddress internal constructor(
     override val libraryPath: Path,
     override val packageFqName: FqName,
@@ -42,6 +46,8 @@ public sealed class KlibCallableAddress : KlibDeclarationAddress() {
     public abstract val callableName: Name
 }
 
+// todo: replace suppress with @ConsistentCopyVisibility annotation after bootstrap
+@Suppress("DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING")
 public data class KlibPropertyAddress internal constructor(
     override val libraryPath: Path,
     override val sourceFileName: String?,
@@ -49,6 +55,8 @@ public data class KlibPropertyAddress internal constructor(
     override val callableName: Name,
 ) : KlibCallableAddress()
 
+// todo: replace suppress with @ConsistentCopyVisibility annotation after bootstrap
+@Suppress("DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING")
 public data class KlibFunctionAddress internal constructor(
     override val libraryPath: Path,
     override val sourceFileName: String?,

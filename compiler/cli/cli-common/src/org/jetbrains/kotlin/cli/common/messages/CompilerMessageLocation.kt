@@ -29,6 +29,8 @@ interface CompilerMessageSourceLocation : Serializable {
     val lineContent: String? // related to the (start) line/column only, used to show start position in the console output
 }
 
+// todo: replace suppress with @ConsistentCopyVisibility annotation after bootstrap
+@Suppress("DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING")
 data class CompilerMessageLocation private constructor(
     override val path: String,
     override val line: Int,
@@ -51,6 +53,8 @@ data class CompilerMessageLocation private constructor(
     }
 }
 
+// todo: replace suppress with @ConsistentCopyVisibility annotation after bootstrap
+@Suppress("DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING")
 data class CompilerMessageLocationWithRange private constructor(
     override val path: String,
     override val line: Int,
