@@ -755,6 +755,12 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingT
         }
 
         @Test
+        @TestMetadata("AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt")
+        public void testAnnotatedTypeParameterBoundsInNullUnmarkedContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt");
+        }
+
+        @Test
         @TestMetadata("Captured.kt")
         public void testCaptured() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Captured.kt");
@@ -815,9 +821,117 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingT
         }
 
         @Test
+        @TestMetadata("NullMarkedVsPackageNullUnmarked.kt")
+        public void testNullMarkedVsPackageNullUnmarked() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullMarkedVsPackageNullUnmarked.kt");
+        }
+
+        @Test
+        @TestMetadata("NullMarkedVsTypeNullUnmarked.kt")
+        public void testNullMarkedVsTypeNullUnmarked() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullMarkedVsTypeNullUnmarked.kt");
+        }
+
+        @Test
         @TestMetadata("NullMarkedWithStarType.kt")
         public void testNullMarkedWithStarType() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullMarkedWithStarType.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarked.kt")
+        public void testNullUnmarked() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarked.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedAndNullMarkedConflictA.kt")
+        public void testNullUnmarkedAndNullMarkedConflictA() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedAndNullMarkedConflictA.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedAndNullMarkedConflictB.kt")
+        public void testNullUnmarkedAndNullMarkedConflictB() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedAndNullMarkedConflictB.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedJavaRawTypeInNonNullContext.kt")
+        public void testNullUnmarkedJavaRawTypeInNonNullContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedJavaRawTypeInNonNullContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedJavaRawTypeInNullableContext.kt")
+        public void testNullUnmarkedJavaRawTypeInNullableContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedJavaRawTypeInNullableContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedJavaWildcardsInNonNullContext.kt")
+        public void testNullUnmarkedJavaWildcardsInNonNullContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedJavaWildcardsInNonNullContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedJavaWildcardsInNullableContext.kt")
+        public void testNullUnmarkedJavaWildcardsInNullableContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedJavaWildcardsInNullableContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedTypeArgumentInNonNullContext.kt")
+        public void testNullUnmarkedTypeArgumentInNonNullContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedTypeArgumentInNonNullContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedTypeArgumentInNullableContext.kt")
+        public void testNullUnmarkedTypeArgumentInNullableContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedTypeArgumentInNullableContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedTypeParameterInNonNullContext.kt")
+        public void testNullUnmarkedTypeParameterInNonNullContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedTypeParameterInNonNullContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedTypeParameterInNullableContext.kt")
+        public void testNullUnmarkedTypeParameterInNullableContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedTypeParameterInNullableContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedTypeVariableInNonNullContext.kt")
+        public void testNullUnmarkedTypeVariableInNonNullContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedTypeVariableInNonNullContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedTypeVariableInNullableContext.kt")
+        public void testNullUnmarkedTypeVariableInNullableContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedTypeVariableInNullableContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedVsPackageNullMarked.kt")
+        public void testNullUnmarkedVsPackageNullMarked() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedVsPackageNullMarked.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedVsParametricNullness.kt")
+        public void testNullUnmarkedVsParametricNullness() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedVsParametricNullness.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedVsTypeNullMarked.kt")
+        public void testNullUnmarkedVsTypeNullMarked() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedVsTypeNullMarked.kt");
         }
 
         @Test
@@ -897,6 +1011,12 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingT
         }
 
         @Test
+        @TestMetadata("AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt")
+        public void testAnnotatedTypeParameterBoundsInNullUnmarkedContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt");
+        }
+
+        @Test
         @TestMetadata("Captured.kt")
         public void testCaptured() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Captured.kt");
@@ -939,9 +1059,117 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingT
         }
 
         @Test
+        @TestMetadata("NullMarkedVsPackageNullUnmarked.kt")
+        public void testNullMarkedVsPackageNullUnmarked() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullMarkedVsPackageNullUnmarked.kt");
+        }
+
+        @Test
+        @TestMetadata("NullMarkedVsTypeNullUnmarked.kt")
+        public void testNullMarkedVsTypeNullUnmarked() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullMarkedVsTypeNullUnmarked.kt");
+        }
+
+        @Test
         @TestMetadata("NullMarkedWithStarType.kt")
         public void testNullMarkedWithStarType() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullMarkedWithStarType.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarked.kt")
+        public void testNullUnmarked() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarked.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedAndNullMarkedConflictA.kt")
+        public void testNullUnmarkedAndNullMarkedConflictA() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedAndNullMarkedConflictA.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedAndNullMarkedConflictB.kt")
+        public void testNullUnmarkedAndNullMarkedConflictB() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedAndNullMarkedConflictB.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedJavaRawTypeInNonNullContext.kt")
+        public void testNullUnmarkedJavaRawTypeInNonNullContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedJavaRawTypeInNonNullContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedJavaRawTypeInNullableContext.kt")
+        public void testNullUnmarkedJavaRawTypeInNullableContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedJavaRawTypeInNullableContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedJavaWildcardsInNonNullContext.kt")
+        public void testNullUnmarkedJavaWildcardsInNonNullContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedJavaWildcardsInNonNullContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedJavaWildcardsInNullableContext.kt")
+        public void testNullUnmarkedJavaWildcardsInNullableContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedJavaWildcardsInNullableContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedTypeArgumentInNonNullContext.kt")
+        public void testNullUnmarkedTypeArgumentInNonNullContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedTypeArgumentInNonNullContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedTypeArgumentInNullableContext.kt")
+        public void testNullUnmarkedTypeArgumentInNullableContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedTypeArgumentInNullableContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedTypeParameterInNonNullContext.kt")
+        public void testNullUnmarkedTypeParameterInNonNullContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedTypeParameterInNonNullContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedTypeParameterInNullableContext.kt")
+        public void testNullUnmarkedTypeParameterInNullableContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedTypeParameterInNullableContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedTypeVariableInNonNullContext.kt")
+        public void testNullUnmarkedTypeVariableInNonNullContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedTypeVariableInNonNullContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedTypeVariableInNullableContext.kt")
+        public void testNullUnmarkedTypeVariableInNullableContext() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedTypeVariableInNullableContext.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedVsPackageNullMarked.kt")
+        public void testNullUnmarkedVsPackageNullMarked() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedVsPackageNullMarked.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedVsParametricNullness.kt")
+        public void testNullUnmarkedVsParametricNullness() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedVsParametricNullness.kt");
+        }
+
+        @Test
+        @TestMetadata("NullUnmarkedVsTypeNullMarked.kt")
+        public void testNullUnmarkedVsTypeNullMarked() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedVsTypeNullMarked.kt");
         }
 
         @Test
@@ -1514,6 +1742,24 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingT
           }
 
           @Test
+          @TestMetadata("NullUnmarkedAndNullMarkedConflictA.kt")
+          public void testNullUnmarkedAndNullMarkedConflictA() {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/NullUnmarkedAndNullMarkedConflictA.kt");
+          }
+
+          @Test
+          @TestMetadata("NullUnmarkedAndNullMarkedConflictB.kt")
+          public void testNullUnmarkedAndNullMarkedConflictB() {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/NullUnmarkedAndNullMarkedConflictB.kt");
+          }
+
+          @Test
+          @TestMetadata("NullUnmarkedVsModuleNullMarked.kt")
+          public void testNullUnmarkedVsModuleNullMarked() {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/NullUnmarkedVsModuleNullMarked.kt");
+          }
+
+          @Test
           @TestMetadata("overrideAtDeclarationLevel.kt")
           public void testOverrideAtDeclarationLevel() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/strict/overrideAtDeclarationLevel.kt");
@@ -1587,6 +1833,24 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingT
           @TestMetadata("nestedClasses.kt")
           public void testNestedClasses() {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/nestedClasses.kt");
+          }
+
+          @Test
+          @TestMetadata("NullUnmarkedAndNullMarkedConflictA.kt")
+          public void testNullUnmarkedAndNullMarkedConflictA() {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/NullUnmarkedAndNullMarkedConflictA.kt");
+          }
+
+          @Test
+          @TestMetadata("NullUnmarkedAndNullMarkedConflictB.kt")
+          public void testNullUnmarkedAndNullMarkedConflictB() {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/NullUnmarkedAndNullMarkedConflictB.kt");
+          }
+
+          @Test
+          @TestMetadata("NullUnmarkedVsModuleNullMarked.kt")
+          public void testNullUnmarkedVsModuleNullMarked() {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java11Tests/jspecify/moduleAnnotations/warn/NullUnmarkedVsModuleNullMarked.kt");
           }
 
           @Test
