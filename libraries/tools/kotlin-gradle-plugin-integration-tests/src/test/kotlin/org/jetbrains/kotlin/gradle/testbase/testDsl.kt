@@ -27,7 +27,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.*
 import kotlin.test.assertTrue
-import kotlin.test.fail
 
 /**
  * Create a new test project.
@@ -918,7 +917,7 @@ private fun TestProject.configureSingleNativeTargetInSubFolders(preset: String =
         }
 }
 
-private fun GradleProject.configureLocalRepository(localRepoDir: Path) {
+internal fun GradleProject.configureLocalRepository(localRepoDir: Path) {
     projectPath.toFile().walkTopDown()
         .filter { it.isFile && it.name in buildFileNames }
         .forEach { file ->

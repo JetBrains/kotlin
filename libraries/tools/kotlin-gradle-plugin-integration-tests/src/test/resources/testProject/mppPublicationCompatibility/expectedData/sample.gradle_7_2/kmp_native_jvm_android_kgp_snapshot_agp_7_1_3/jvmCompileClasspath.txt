@@ -1,0 +1,6 @@
+org.jetbrains:annotations:13.0 => [compile]
+project :kmp_native_jvm_android_kgp_snapshot_agp_7_1_3 => [jvmCompileClasspath]
+sample.gradle_7_2:kmp_native_jvm_android_kgp_snapshot_agp_7_1_3-jvm:1.0 => [jvmApiElements-published]
+sample.gradle_7_2:kmp_native_jvm_android_kgp_snapshot_agp_7_1_3:1.0 => [jvmApiElements-published]
+sample.gradle_8_4:kmp_native_jvm_android_kgp_snapshot_agp_max-jvm:1.0 => [jvmApiElements-published]
+sample.gradle_8_4:kmp_native_jvm_android_kgp_snapshot_agp_max:1.0 => [jvmApiElements-published]
