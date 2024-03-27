@@ -52,7 +52,7 @@ open class FirJvmSerializerExtension(
     private val bindings: JvmSerializationBindings,
     private val localDelegatedProperties: List<FirProperty>,
     private val approximator: AbstractTypeApproximator,
-    private val scopeSession: ScopeSession,
+    override val scopeSession: ScopeSession,
     private val globalBindings: JvmSerializationBindings,
     private val useTypeTable: Boolean,
     private val moduleName: String,

@@ -176,7 +176,7 @@ internal class FirMetadataSerializer(
                     scopeSession,
                     actualizedExpectDeclarations = null,
                     FirKLibSerializerExtension(
-                        session, session.firProvider, metadataVersion, constValueProvider = null,
+                        session, scopeSession, session.firProvider, metadataVersion, constValueProvider = null,
                         allowErrorTypes = false, exportKDoc = false,
                         additionalMetadataProvider = null
                     ),

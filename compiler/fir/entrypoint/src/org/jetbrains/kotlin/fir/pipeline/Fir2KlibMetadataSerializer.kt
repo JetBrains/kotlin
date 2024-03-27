@@ -83,6 +83,7 @@ class Fir2KlibMetadataSerializer(
             actualizedExpectDeclarations,
             FirKLibSerializerExtension(
                 session,
+                scopeSession,
                 firProvider,
                 metadataVersion,
                 components?.let(::ConstValueProviderImpl),
