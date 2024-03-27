@@ -1,2 +1,2 @@
-PsiType: @MyAnno("array") java.lang.String @MyAnno("type") []
+PsiType: @MyAnno("type") java.lang.String @MyAnno("array") []
 KtType: @MyAnno(value = "array") kotlin.Array<out @MyAnno(value = "type") kotlin.String?>?
