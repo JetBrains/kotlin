@@ -1,2 +1,2 @@
 PsiType: java.lang.String
-KtType: kotlin.String?
+KtType: kotlin.String!
