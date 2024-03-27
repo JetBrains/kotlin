@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.declarations.*
@@ -50,14 +49,4 @@ class Fir2IrCommonMemberStorage(val firSignatureComposer: FirBasedSignatureCompo
     val fakeOverridesInClass: MutableMap<IrClass, MutableMap<Fir2IrDeclarationStorage.FirOverrideKey, FirCallableDeclaration>> = mutableMapOf()
 
     val irForFirSessionDependantDeclarationMap: MutableMap<Fir2IrDeclarationStorage.FakeOverrideIdentifier, IrSymbol> = mutableMapOf()
-
-    fun registerFirProvider(moduleData: FirModuleData, firProvider: FirProviderWithGeneratedFiles) {
-        require(moduleData !in _previousFirProviders) { "FirProvider for $moduleData already registered"}
-        _previousFirProviders[moduleData] = firProvider
-    }
-
-    val previousFirProviders: Map<FirModuleData, FirProviderWithGeneratedFiles>
-        get() = _previousFirProviders
-
-    private val _previousFirProviders: MutableMap<FirModuleData, FirProviderWithGeneratedFiles> = mutableMapOf()
 }

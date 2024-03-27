@@ -14,12 +14,14 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -78,6 +80,12 @@ fun FirResult.convertToIrAndActualize(
     val commonMemberStorage = Fir2IrCommonMemberStorage(FirBasedSignatureComposer.create(firMangler, fir2IrConfiguration))
     fir2IrExtensions.registerDeclarations(commonMemberStorage.symbolTable)
 
+    val firProvidersWithGeneratedFiles: MutableMap<FirModuleData, FirProviderWithGeneratedFiles> = mutableMapOf()
+    for (firOutput in outputs) {
+        val session = firOutput.session
+        firProvidersWithGeneratedFiles[session.moduleData] = FirProviderWithGeneratedFiles(session, firProvidersWithGeneratedFiles)
+    }
+
     fun ModuleCompilerAnalyzedOutput.createFir2IrComponentsStorage(irBuiltIns: IrBuiltInsOverFir?): Fir2IrComponentsStorage {
         return Fir2IrConverter.createFir2IrComponentsStorage(
             session,
@@ -95,6 +103,7 @@ fun FirResult.convertToIrAndActualize(
             commonMemberStorage,
             irBuiltIns,
             actualizerTypeContextProvider,
+            firProvidersWithGeneratedFiles.getValue(session.moduleData),
         )
     }
 
@@ -113,7 +122,7 @@ fun FirResult.convertToIrAndActualize(
             firOutput.createFir2IrComponentsStorage(platformComponentsStorage.irBuiltIns)
         }
 
-        val irFragment = Fir2IrConverter.generateIrModuleFragment(componentsStorage, firOutput.fir, commonMemberStorage).also {
+        val irFragment = Fir2IrConverter.generateIrModuleFragment(componentsStorage, firOutput.fir).also {
             fir2IrResultPostCompute(firOutput, it)
         }
 
