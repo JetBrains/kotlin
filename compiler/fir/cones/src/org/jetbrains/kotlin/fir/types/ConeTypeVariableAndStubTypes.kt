@@ -91,18 +91,6 @@ sealed class ConeStubType(val constructor: ConeStubTypeConstructor, override val
     }
 }
 
-open class ConeStubTypeForChainInference(
-    constructor: ConeStubTypeConstructor,
-    nullability: ConeNullability
-) : ConeStubType(constructor, nullability) {
-    constructor(variable: ConeTypeVariable, nullability: ConeNullability) : this(
-        ConeStubTypeConstructor(
-            variable,
-            isTypeVariableInSubtyping = false
-        ), nullability
-    )
-}
-
 class ConeStubTypeForTypeVariableInSubtyping(
     constructor: ConeStubTypeConstructor,
     nullability: ConeNullability

@@ -141,7 +141,6 @@ object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCh
             }
             is ConeIntegerConstantOperatorType,
             is ConeIntegerLiteralConstantType,
-            is ConeStubTypeForChainInference,
             is ConeStubTypeForTypeVariableInSubtyping,
             is ConeTypeVariableType,
             -> return false

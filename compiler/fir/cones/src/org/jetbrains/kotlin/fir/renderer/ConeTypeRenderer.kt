@@ -120,10 +120,6 @@ open class ConeTypeRenderer(
                 builder.append(")")
             }
 
-            is ConeStubTypeForChainInference -> {
-                builder.append("Stub (chain inference): ${type.constructor.variable}")
-            }
-
             is ConeStubType -> {
                 builder.append("Stub (subtyping): ${type.constructor.variable}")
             }
