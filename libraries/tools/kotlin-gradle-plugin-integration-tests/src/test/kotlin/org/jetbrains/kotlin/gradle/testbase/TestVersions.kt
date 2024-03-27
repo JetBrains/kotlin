@@ -39,6 +39,7 @@ interface TestVersions {
 
     object Kotlin {
         const val STABLE_RELEASE = "1.9.21"
+        const val MPP_MIN_SUPPORTED = "1.7.21"
 
         // Copied from KOTLIN_VERSION.kt file
         val CURRENT
