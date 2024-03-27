@@ -1,6 +1,6 @@
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface A /* A*/ {
-  public abstract @org.jetbrains.annotations.NotNull() int[] x();//  x()
+  public abstract int @org.jetbrains.annotations.NotNull() [] x();//  x()
 }
 
 public final class AnnotationWithVaragArgumentsKt /* AnnotationWithVaragArgumentsKt*/ {
@@ -24,11 +24,11 @@ public final class AnnotationWithVaragArgumentsKt /* AnnotationWithVaragArgument
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface B /* B*/ {
-  public abstract @org.jetbrains.annotations.NotNull() int[] y();//  y()
-
   public abstract @org.jetbrains.annotations.NotNull() java.lang.String x();//  x()
 
   public abstract @org.jetbrains.annotations.NotNull() java.lang.String z();//  z()
+
+  public abstract int @org.jetbrains.annotations.NotNull() [] y();//  y()
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)

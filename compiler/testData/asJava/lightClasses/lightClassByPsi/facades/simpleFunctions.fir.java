@@ -8,9 +8,9 @@ public final class SimpleFunctionsKt /* SimpleFunctionsKt*/ {
   @org.jetbrains.annotations.NotNull()
   public static final native @org.jetbrains.annotations.NotNull() java.lang.String externalFun(int);//  externalFun(int)
 
-  private static final /* vararg */ @org.jetbrains.annotations.NotNull() java.lang.String bar3(@org.jetbrains.annotations.NotNull() Foo.Inner, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Inner...);//  bar3(@org.jetbrains.annotations.NotNull() Foo.Inner, @org.jetbrains.annotations.NotNull() Inner @org.jetbrains.annotations.NotNull() [])
+  private static final /* vararg */ @org.jetbrains.annotations.NotNull() java.lang.String bar3(@org.jetbrains.annotations.NotNull() Foo.Inner, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Inner @org.jetbrains.annotations.NotNull() ...);//  bar3(@org.jetbrains.annotations.NotNull() Foo.Inner, @org.jetbrains.annotations.NotNull() Inner @org.jetbrains.annotations.NotNull() [])
 
-  public static final /* vararg */ void nullableVararg(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object...);//  nullableVararg(@org.jetbrains.annotations.Nullable() java.lang.Object @org.jetbrains.annotations.Nullable() [])
+  public static final /* vararg */ void nullableVararg(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.Nullable() java.lang.Object @org.jetbrains.annotations.Nullable() ...);//  nullableVararg(@org.jetbrains.annotations.Nullable() java.lang.Object @org.jetbrains.annotations.Nullable() [])
 
   public static final int bar4();//  bar4()
 

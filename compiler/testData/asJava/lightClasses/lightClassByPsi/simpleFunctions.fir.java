@@ -8,11 +8,11 @@ public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.NotNull()
   public final native @org.jetbrains.annotations.NotNull() java.lang.String externalFun(int);//  externalFun(int)
 
-  private final /* vararg */ @org.jetbrains.annotations.NotNull() java.lang.String bar3(@org.jetbrains.annotations.NotNull() Foo.Inner, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Foo.Inner...);//  bar3(@org.jetbrains.annotations.NotNull() Foo.Inner, @org.jetbrains.annotations.NotNull() Foo.Inner @org.jetbrains.annotations.NotNull() [])
+  private final /* vararg */ @org.jetbrains.annotations.NotNull() java.lang.String bar3(@org.jetbrains.annotations.NotNull() Foo.Inner, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Foo.Inner @org.jetbrains.annotations.NotNull() ...);//  bar3(@org.jetbrains.annotations.NotNull() Foo.Inner, @org.jetbrains.annotations.NotNull() Foo.Inner @org.jetbrains.annotations.NotNull() [])
 
   public  Foo();//  .ctor()
 
-  public final /* vararg */ void nullableVararg(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object...);//  nullableVararg(@org.jetbrains.annotations.Nullable() java.lang.Object @org.jetbrains.annotations.Nullable() [])
+  public final /* vararg */ void nullableVararg(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.Nullable() java.lang.Object @org.jetbrains.annotations.Nullable() ...);//  nullableVararg(@org.jetbrains.annotations.Nullable() java.lang.Object @org.jetbrains.annotations.Nullable() [])
 
   public final int bar4();//  bar4()
 
