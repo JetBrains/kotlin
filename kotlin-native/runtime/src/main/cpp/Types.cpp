@@ -103,9 +103,25 @@ KVector4f Kotlin_Interop_Vector4f_of(KFloat f0, KFloat f1, KFloat f2, KFloat f3)
  * To avoid illegal bitcast from/to function types the following function
  * return type MUST be <4 x float> and explicit type cast is done on the variable type.
  */
-KVector4f Kotlin_Interop_Vector4i32_of(KInt f0, KInt f1, KInt f2, KInt f3) {
-	KInt __attribute__ ((__vector_size__(16))) v4i = {f0, f1, f2, f3};
+
+KVector4f Kotlin_Interop_Vector4i32_of(KInt i0, KInt i1, KInt i2, KInt i3) {
+	KInt __attribute__ ((__vector_size__(16))) v4i = {i0, i1, i2, i3};
 	return (KVector4f)v4i;
+}
+
+KVector4f Kotlin_Interop_Vector8i16_of(KShort s0, KShort s1, KShort s2, KShort s3, KShort s4, KShort s5, KShort s6, KShort s7) {
+    KShort __attribute__ ((__vector_size__(16))) v8s = {s0, s1, s2, s3, s4, s5, s6, s7};
+    return (KVector4f)v8s;
+}
+
+KVector4f Kotlin_Interop_Vector2i64_of(KLong l0, KLong l1) {
+    KLong __attribute__ ((__vector_size__(16))) v2l = {l0, l1};
+    return (KVector4f)v2l;
+}
+
+KVector4f Kotlin_Interop_Vector2f64_of(KDouble d0, KDouble d1) {
+    KDouble __attribute__ ((__vector_size__(16))) v2d = {d0, d1};
+    return (KVector4f)v2d;
 }
 
 long Kotlin_longTypeProvider() {
